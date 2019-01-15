@@ -26,8 +26,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
@@ -110,18 +110,17 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	 * Given a ScmRepository, check if the Credentials of its ScmServer are well defined and returns it.
 	 * @param scmRepository The ScmRepository to check
 	 * @return The Credentials if they are well defined
-	 * @throws BugTrackerNoCredentialsException If no Credentials were defined for the ScmServer
+	 * @throws ScmNoCredentialsException If no Credentials were defined for the ScmServer
 	 */
 	private Credentials checkAndReturnCredentials(ScmRepository scmRepository) {
 		ScmServer server = scmRepository.getScmServer();
 		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
-		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
-			throw new BugTrackerNoCredentialsException(
-				"Cannot authenticate to the remote server mapped to the repository '" + scmRepository.getName() + "' " +
+		Supplier<ScmNoCredentialsException> throwIfNull = () -> {
+			throw new ScmNoCredentialsException(
+				"Cannot authenticate to the remote server containing the repository '" + scmRepository.getName() + "' " +
 					"because no valid credentials were found for authentication. " +
 					"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
-					+ "Please contact your administrator in order to fix the situation.", null
-			);
+					+ "Please contact your administrator in order to fix the situation.");
 		};
 		return maybeCredentials.orElseThrow(throwIfNull);
 	}

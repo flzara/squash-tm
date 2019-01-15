@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.scmserver
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException
+import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException
 import org.squashtest.tm.core.scm.spi.ScmConnector
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
@@ -188,7 +188,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		when:
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
-			thrown BugTrackerNoCredentialsException
+			thrown ScmNoCredentialsException
 	}
 
 	def "#updateBranch(long, String) - [Nominal] Should update the working branch of the ScmRepository"() {
@@ -257,7 +257,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			scmRepositoryManagerService.updateBranch(repo.id, "develop")
 		then:
 			1 * scmRepositoryDao.save(repo)
-			thrown BugTrackerNoCredentialsException
+			thrown ScmNoCredentialsException
 	}
 
 	def "#isOneRepositoryBoundToProject(Collection<Long>) - [Yes] Should verify that at least one ScmRepository is bound to a Project and return true"() {

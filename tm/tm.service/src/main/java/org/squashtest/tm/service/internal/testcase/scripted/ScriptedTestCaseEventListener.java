@@ -28,6 +28,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.project.Project;
@@ -127,7 +128,8 @@ public class ScriptedTestCaseEventListener {
 	/**
 	 * Given a ScmRepository, check that credentials exist for its ScmServer and are valid.
 	 * Then try to synchronise the repository with the remote one.
-	 * @param scm The ScmRepository to synchronize.
+	 * @param scm The ScmRepository to synchronize
+	 * @throws ScmNoCredentialsException if no credentials were defined
 	 */
 	private void synchronizeRepository(ScmRepository scm) {
 		ScmServer server = scm.getScmServer();
@@ -135,12 +137,12 @@ public class ScriptedTestCaseEventListener {
 
 		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
 
-		Supplier<BugTrackerNoCredentialsException> throwIfNull = () -> {
-			throw new BugTrackerNoCredentialsException(
-				"Cannot authenticate to the remote server mapped to the repository '" + scm.getName() + "' " +
+		Supplier<ScmNoCredentialsException> throwIfNull = () -> {
+			throw new ScmNoCredentialsException(
+				"Cannot authenticate to the remote server containing the repository '" + scm.getName() + "' " +
 				"because no valid credentials were found for authentication. " +
 				"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
-				+ "Please contact your administrator in order to fix the situation.", null);
+				+ "Please contact your administrator in order to fix the situation.");
 		};
 
 		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
