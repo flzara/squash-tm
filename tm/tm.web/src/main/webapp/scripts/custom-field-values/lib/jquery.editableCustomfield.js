@@ -65,7 +65,7 @@ define([ "jquery","app/util/StringUtil", "underscore", "ckeditor",  "squash.conf
 		'NUMERIC' : {
 			_build : function(elt, def){
 				var content = elt.text();
-				var input = $('<input type="text" value="'+content+'" />');
+				var input = $('<input type="text" value="'+content+'" maxlength="15"/>');
 				elt.empty();
 				elt.append(input);
 			},
