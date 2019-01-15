@@ -141,20 +141,6 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public String updateFolder(long scmRepositoryId, String newFolderPath) {
-		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
-		String formerFolderPath = scmRepository.getWorkingFolderPath();
-		if(formerFolderPath.equals(newFolderPath)) {
-			LOGGER.debug("Did not update the ScmRepository folder path because the submitted path is identical to the former one");
-			return formerFolderPath;
-		}
-		scmRepository.setWorkingFolderPath(newFolderPath);
-		scmRepositoryDao.save(scmRepository);
-		return newFolderPath;
-	}
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	public String updateBranch(long scmRepositoryId, String newBranch) throws IOException {
 		ScmRepository scmRepository = scmRepositoryDao.getOne(scmRepositoryId);
 		String formerBranch = scmRepository.getWorkingBranch();

@@ -50,26 +50,6 @@ define(['jquery', 'backbone', 'squash.translator', 'workspace.routing', 'app/uti
 		/**
 		* Prepare the configuration of the dialog for folder path modification.
 		*/
-		openForFolder: function(event) {
-			var self = this;
-
-			var title = translator.get('title.ChangeWorkingFolderPath');
-			var label = translator.get('label.WorkingFolderPath');
-
-			var tableCell = event.currentTarget;
-			var folderPath = $(tableCell).text();
-
-			var row = tableCell.parentElement;
-			// notify repository ID
-			self.repositoryId = self.table.fnGetData(row)['repository-id'];
-			// notify mode
-			self.mode = 'folder';
-
-			self.adaptAndOpenDialog(title, label, folderPath);
-		},
-		/**
-		* Prepare the configuration of the dialog for folder path modification.
-		*/
 		openForBranch: function(event) {
 			var self = this;
 

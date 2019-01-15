@@ -48,12 +48,6 @@ public class ScmRepositoryManagementAdminController {
 		scmRepositoryManager.deleteScmRepositories(scmRepositoriesIds);
 	}
 
-	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = FOLDER)
-	@ResponseBody
-	public String updateFolder(@PathVariable long scmRepositoryId, String folder) {
-		return scmRepositoryManager.updateFolder(scmRepositoryId, folder);
-	}
-
 	@RequestMapping(value = "/{scmRepositoryId}", method = RequestMethod.POST, params = BRANCH)
 	@ResponseBody
 	public String updateBranch(@PathVariable long scmRepositoryId, String branch) throws IOException {
