@@ -401,7 +401,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 							$("#iteration-test-plans-table").squashTable().refresh();
 						}
 					})
-					.error(deferred.reject);
+					.error(deferred.reject());
 
 
 			});
@@ -440,7 +440,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 						/* Issue #6438: We have to refresh the test-plan table
                      * if we just copied a test-suite in an iteration. */
 					})
-					.error(deferred.reject);
+					.error(deferred.reject());
 
 
 			});
