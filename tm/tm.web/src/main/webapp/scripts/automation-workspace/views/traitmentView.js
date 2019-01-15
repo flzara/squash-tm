@@ -71,7 +71,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [7],
                         "mDataProp": "priority"
-                    },{
+                    }, {
                         "bSortable": true,
                         "aTargets": [8],
                         "mDataProp": "status"
@@ -89,10 +89,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" class="table-button view-eye"></a>';
                         }
                     }, {
-												"mDataProp": "writableAutom",
-												"bVisible": false,
-												"aTargets": [11]
-										}, {
+                        "mDataProp": "writableAutom",
+                        "bVisible": false,
+                        "aTargets": [11]
+                    }, {
                         "bSortable": false,
                         "aTargets": [12],
                         "mDataProp": "checkbox",
@@ -106,12 +106,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var input = "";
                             var $row = $(row);
                             if (row['writableAutom']) {
-															if (checked) {
-																	input = '<input type="checkbox" class="editor-active" checked>';
-																	$row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
-															} else {
-																	input = '<input type="checkbox" class="editor-active">';
-															}
+                                if (checked) {
+                                    input = '<input type="checkbox" class="editor-active" checked>';
+                                    $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
+                                } else {
+                                    input = '<input type="checkbox" class="editor-active">';
+                                }
                             }
                             return input;
                         },
@@ -124,7 +124,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {
                         var $row = $(row);
-												var checkbox = $row.find("input[type=checkbox]")[0];
+                        var checkbox = $row.find("input[type=checkbox]")[0];
                         if (checkbox !== undefined && checkbox.checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }

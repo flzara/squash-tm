@@ -101,10 +101,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return '<a href="' + squashtm.app.contextRoot + 'test-cases/' + data + '/info" class="table-button view-eye"></a>';
                         }
                     }, {
-												"mDataProp": "writableAutom",
-												"bVisible": false,
-												"aTargets": [14]
-                    },{
+                        "mDataProp": "writableAutom",
+                        "bVisible": false,
+                        "aTargets": [14]
+                    }, {
                         "bSortable": false,
                         "aTargets": [15],
                         "mDataProp": "checkbox",
@@ -118,12 +118,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             var input = "";
                             var $row = $(row);
                             if (row['writableAutom']) {
-															if (checked) {
-																	input = '<input type="checkbox" class="editor-active" checked>';
-																	$row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
-															} else {
-																	input = '<input type="checkbox" class="editor-active">';
-															}
+                                if (checked) {
+                                    input = '<input type="checkbox" class="editor-active" checked>';
+                                    $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
+                                } else {
+                                    input = '<input type="checkbox" class="editor-active">';
+                                }
                             }
                             return input;
                         },
@@ -140,7 +140,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
                         var edFnElements = $.editable.types.text.element;
-												var checkbox = $row.find("input[type=checkbox]")[0];
+                        var checkbox = $row.find("input[type=checkbox]")[0];
                         if (checkbox !== undefined && checkbox.checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
@@ -278,7 +278,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
             },
 
-            _initRemovePopup: function(settings) {
+            _initRemovePopup: function (settings) {
                 var dialog = $("#ta-remove-popup");
 
                 dialog.formDialog();
@@ -295,7 +295,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
             },
 
-            _initPickerPopup: function(settings) {
+            _initPickerPopup: function (settings) {
                 var dialog = $("#ta-picker-popup");
 
                 var testAutomationTree = dialog.find(".structure-tree");
@@ -514,7 +514,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var count = 0;
                 var selectedRows = table.getSelectedRows();
                 var datas = table.fnGetData();
-								var self = this;
+                var self = this;
                 $(selectedRows).each(function (index, data) {
                     var idx = data._DT_RowIndex;
                     var script = data.cells[10].lastChild.nodeValue;
@@ -529,13 +529,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return count;
             },
 
-            noScriptAutoForAllowedStatus: function(script, status, format) {
-            	var allowedStatusForAutomation = [translator.get('automation-request.request_status.TRANSMITTED'),
-																								translator.get('automation-request.request_status.AUTOMATION_IN_PROGRESS'),
-																								translator.get('automation-request.request_status.AUTOMATED')];
-            	return _.contains(allowedStatusForAutomation, status)
-            				 && (script === null || script === "-" || script === " ")
-            				 && "gherkin" !== format.toLowerCase();
+            noScriptAutoForAllowedStatus: function (script, status, format) {
+                var allowedStatusForAutomation = [translator.get('automation-request.request_status.TRANSMITTED'),
+                translator.get('automation-request.request_status.AUTOMATION_IN_PROGRESS'),
+                translator.get('automation-request.request_status.AUTOMATED')];
+                return _.contains(allowedStatusForAutomation, status)
+                    && (script === null || script === "-" || script === " ")
+                    && "gherkin" !== format.toLowerCase();
             },
 
             updateStatus: function (table, status) {
