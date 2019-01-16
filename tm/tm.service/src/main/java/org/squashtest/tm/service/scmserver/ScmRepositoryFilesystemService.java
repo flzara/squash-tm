@@ -42,4 +42,10 @@ public interface ScmRepositoryFilesystemService {
 	 */
 	void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases);
 
+	/**
+	 * Check if the ScmRepository working folder exists and create it with all absent parent folders if not.
+	 * @param scm The ScmRepository of which the working folder is to create.
+	 */
+	void createWorkingFolderIfAbsent(ScmRepository scm);
+
 }

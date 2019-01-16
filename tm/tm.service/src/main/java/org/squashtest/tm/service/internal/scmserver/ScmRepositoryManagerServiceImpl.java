@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
+import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 
@@ -64,6 +65,8 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	private ScmRepositoryDao scmRepositoryDao;
 	@Inject
 	private CredentialsProvider credentialsProvider;
+	@Inject
+	private ScmRepositoryFilesystemService scmRepositoryFileSystemService;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -103,7 +106,10 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		checkIfProtocolIsSupported(credentials, connector);
 
 		connector.createRepository(credentials);
+
 		connector.prepareRepository(credentials);
+		// Create working folder if absent
+		scmRepositoryFileSystemService.createWorkingFolderIfAbsent(scmRepository);
 	}
 
 	/**
@@ -168,6 +174,8 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		checkIfProtocolIsSupported(credentials, connector);
 
 		connector.prepareRepository(credentials);
+		// Create working folder if absent
+		scmRepositoryFileSystemService.createWorkingFolderIfAbsent(scmRepository);
 	}
 
 	@Override

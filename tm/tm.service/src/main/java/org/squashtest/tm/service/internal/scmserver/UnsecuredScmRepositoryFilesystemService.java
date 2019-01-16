@@ -53,6 +53,23 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	private EntityManager em;
 
 	@Override
+	public void createWorkingFolderIfAbsent(ScmRepository scm) {
+		File workingFolder = scm.getWorkingFolder();
+		if(workingFolder.exists()) {
+			LOGGER.trace("The working folder of repository '{}' already exists.", scm.getName());
+			return;
+		}
+		try {
+			scm.doWithLock(() -> {
+				tryCreateFolders(workingFolder);
+				return null;
+			});
+		} catch(IOException iOEx) {
+			LOGGER.error("error while creating the working folder in the repository", iOEx);
+			throw new RuntimeException(iOEx);
+		}
+	}
+	@Override
 	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
 
 		if (LOGGER.isTraceEnabled()) {
@@ -218,6 +235,23 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			FileUtils.write(dest, content);
 		}
 
+	}
+
+	/**
+	 * Try to create the folder and all the absent parent folders represented by the given abstract pathname.
+	 * @param wf The abstract folder to create
+	 * @throws IOException If the folder could not be created
+	 */
+	private void tryCreateFolders(File wf) throws IOException {
+		if(!wf.mkdirs()) {
+			if(wf.isDirectory()) {
+				LOGGER.trace("directory at path {} already exists.", wf.toString());
+			} else {
+				throw new IOException("directory could not be created at path " + wf.toString());
+			}
+		} else {
+			LOGGER.trace("directory at path {} has been created.", wf.toString());
+		}
 	}
 
 }
