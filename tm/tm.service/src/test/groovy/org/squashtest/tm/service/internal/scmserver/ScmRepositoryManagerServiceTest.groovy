@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
 import org.squashtest.tm.service.internal.repository.ScmServerDao
+import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService
 import org.squashtest.tm.service.servers.CredentialsProvider
 import spock.lang.Specification
 
@@ -42,12 +43,14 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	private ScmRepositoryDao scmRepositoryDao = Mock()
 	private ScmServerDao scmServerDao = Mock()
 	private CredentialsProvider credentialsProvider = Mock()
+	private ScmRepositoryFilesystemService scmRepositoryFileSystemService = Mock()
 
 	def setup() {
 		scmRepositoryManagerService.scmRepositoryDao = scmRepositoryDao
 		scmRepositoryManagerService.scmServerDao = scmServerDao
 		scmRepositoryManagerService.scmRegistry = scmRegistry
 		scmRepositoryManagerService.credentialsProvider = credentialsProvider
+		scmRepositoryManagerService.scmRepositoryFileSystemService = scmRepositoryFileSystemService
 	}
 
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
@@ -153,6 +156,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		then:
 			1 * connector.createRepository(credentials)
 			1 * connector.prepareRepository(credentials)
+			1 * scmRepositoryFileSystemService.createWorkingFolderIfAbsent(repo)
 	}
 
 	def "#createNewScmRepository(ScmRepository) - [Exception] Should try to create a new ScmRepository with a name already used and throw a NameAlreadyInUseException"() {
@@ -221,6 +225,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			repo.workingBranch == newBranch
 			1 * scmRepositoryDao.save(repo)
 			1 * connector.prepareRepository(credentials)
+			1 * scmRepositoryFileSystemService.createWorkingFolderIfAbsent(repo)
 			resultBranch == newBranch
 	}
 
