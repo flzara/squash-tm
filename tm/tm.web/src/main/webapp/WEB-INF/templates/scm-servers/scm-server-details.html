@@ -280,6 +280,18 @@
 
         </div>
 
+        <!---- ADD REPOSITORY CONFIRM POPUP ----->
+        <div id="add-scm-confirm-dialog" class="not-displayed popup-dialog" th:title="#{title.newScmRepository.confirmation}">
+          <br/>
+          <span th:text="#{message.addNewScmRepository.confirmation.part1}">
+            Confirmez-vous la création d'un répertoire de dépôt au chemin
+          </span>
+          <span id="confirm-repository-path" class="span-bold" th:remove="body">/opt/squash/scm-repositories/</span>
+          <span th:text="#{message.addNewScmRepository.confirmation.part2}"> avec le dossier de travail </span>
+          <span id="confirm-repository-folder" class="span-bold" th:remove="body">"resources/features/"</span>
+          <span>?</span>
+        </div>
+
         <!--   CHANGE ATTRIBUTE POPUP -->
         <div id="change-attribute-popup" class="not-displayed popup-dialog" data-def='nocleanup' th:title="#{title.Empty}">
 

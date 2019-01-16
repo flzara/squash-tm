@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- define(['jquery', 'backbone', 'underscore', 'app/util/StringUtil', 'squash.translator', 'workspace.routing', 'app/lnf/Forms', 'jquery.squash.formdialog'],
+ define(['jquery', 'backbone', 'underscore', 'app/util/StringUtil', 'squash.translator', 'workspace.routing',
+ 	'app/lnf/Forms', 'jquery.squash.formdialog', 'jquery.squash.confirmdialog'],
  	function($, Backbone, _, StringUtils, translator, routing, Forms) {
 	"use strict";
 
@@ -33,12 +34,15 @@
 			branch: $('#branch'),
 		},
 
+		confirmPopup: $("#add-scm-confirm-dialog"),
+
 		errorPopup: $('.error-frame'),
 
 		initialize: function(scmRepositoriesTable) {
 			var self = this;
 
 			self.errorPopup.popupError();
+			self.confirmPopup.confirmDialog();
 
 			var $el = self.$el;
 			$el.formDialog();
@@ -61,7 +65,15 @@
       	$el.formDialog('close');
       });
 		},
-
+		/**
+		* Open confirm dialog and execute the confirmHandler function when 'confirm' is pressed.
+		*/
+		openConfirmDialog: function(newPath, newFolder, confirmHandler) {
+			this.confirmPopup.confirmDialog({confirm: confirmHandler});
+			this.confirmPopup.find("#confirm-repository-path").html(newPath);
+			this.confirmPopup.find("#confirm-repository-folder").html(newFolder);
+			this.confirmPopup.confirmDialog('open');
+		},
 		/**
 		* Check the validity of the form. If any error, display the errors in the dialog.
 		* If everything is valid, create the new ScmRepository to the database and then execute the callback function.
@@ -75,13 +87,16 @@
 				// retrieve parameters
 				var newScmRepository = self.retrieveNewScmRepositoryParams();
 				// create the repository
-				self.doAddNewScmRepository(newScmRepository)
-					.success(callback)
-					.error(function(xhr) {
-						var scmExceptions = xhr.responseJSON.fieldValidationErrors;
-						if(!!scmExceptions && scmExceptions[0].fieldName === 'scm') {
-							self.displayErrorPopup(scmExceptions[0].errorMessage);
-						}
+				self.openConfirmDialog(newScmRepository.repositoryPath, newScmRepository.workingFolderPath,
+					function() {
+						self.doAddNewScmRepository(newScmRepository)
+							.success(callback)
+							.error(function(xhr) {
+								var scmExceptions = xhr.responseJSON.fieldValidationErrors;
+								if(!!scmExceptions && scmExceptions[0].fieldName === 'scm') {
+									self.displayErrorPopup(scmExceptions[0].errorMessage);
+								}
+							});
 					});
 			}
 		},
