@@ -20,10 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!-- 
+<!--
 
 	Common UI templates for third party servers administration
-	 
+
  -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
@@ -34,74 +34,74 @@
 
 	<div th:fragment="credentials-manager(authConf)">
 		<div th:remove="all">
-		Documentation : 
-			That fragment is a port of the jsp tag third-party-server/credentials-manager.tag. 
+		Documentation :
+			That fragment is a port of the jsp tag third-party-server/credentials-manager.tag.
 			It encapsulates the panes for configuring the modalities of authentication for a third party server.
-	
+
 			Usage:
-			- server side : requires an instance of ThirdPartyServerCredentialsManagementBean (named authConf, see above).	
+			- server side : requires an instance of ThirdPartyServerCredentialsManagementBean (named authConf, see above).
 			- client side : require third-party-server/credentials-manager.js
-		
+
 		</div>
-		
-	
+
+
 		<div id="server-authentication-masterpane" th:with="
 			policyUsr=(${authConf.authPolicy.toString()} == 'USER'),
 			policyApp=(${authConf.authPolicy.toString()} == 'APP_LEVEL')">
-		
-		
+
+
 			<!-- protocol configuration -->
 			<div th:replace="fragments-utils/components :: toggle-panel(
-									id='server-auth-protocol', 
+									id='server-auth-protocol',
 									titleKey='label.ServerAuthProtocol',
 									body=~{::.server-auth-proto-pane},
-									open=${false}
+									open=${true}
 									)">
-									
+
 
 				<div class="adm-srv-auth server-auth-proto-pane">
-		
+
 					<!-- protocol selection -->
 					<select id="srv-auth-proto-select" style="display:block;">
-							
+
 						<th:block th:each="proto : ${authConf.availableProtos}">
 							<option th:value="${proto}" th:selected="(${authConf.selectedProto} == ${proto})">
 								[[#{authentication.protocol.__${proto.toString().toLowerCase()}__}]]
 							</option>
 						</th:block>
-						
+
 					</select>
-		
+
 					<!-- protocol conf section -->
 					<div class="srv-form srv-auth-form-main side-panel std-border std-border-radius"  style="min-width:50%">
-		
+
 						<div id="srv-auth-conf-form" class="templated-form" >
 						<!-- templated by handlebars -->
 						</div>
-		
+
 						<div class="centered srv-auth-buttonpane" style="position:relative">
 							<span class="needs-save-msg" style="display:none;">[[#{thirdpartyserver.admin.messages.needs-save}]]</span>
 							<!-- note : there is no 'test' button, because testing auth-configuration is hard or impossible -->
 							<input type="button" class="sq-btn auth-save" th:value="#{label.save}"/>
 						</div>
-		
+
 					</div>
-		
-		
+
+
 					<div class="side-panel srv-auth-messagepane" >
 						<!--templated by handlebars -->
 					</div>
-		
+
 				</div>
-				
+
 			</div>
-		
+
 			<!-- policy configuration -->
 			<div th:replace="fragments-utils/components :: toggle-panel(
-						id='server-auth-policy', 
+						id='server-auth-policy',
 						titleKey='label.ServerAuthPolicy',
 						body=~{::.server-auth-policy-pane},
-						open=${false}
+						open=${true}
 						)">
 
 				<div class="adm-srv-auth server-auth-policy-pane">
@@ -116,52 +116,52 @@
 										<input type="radio" name="srv-auth-policy" value="USER" th:checked="${policyUsr}">
 										[[#{thirdpartyserver.admin.policy.users}]]
 									</label>
-			
+
 									<label style="vertical-align:middle; display:block;">
 										<input type="radio" name="srv-auth-policy" value="APP_LEVEL" th:checked="${policyApp}">
 										[[#{thirdpartyserver.admin.policy.app}]]
 									</label>
 								</div>
 							</div>
-			
+
 							<!-- app-level credentials section -->
 							<div class="srv-form" th:with="
-								squashtmCredentialsLabel = ${authConf.appLevelCredsAreOptional} ? 
-															'thirdpartyserver.admin.policy.squashtm-section.optional' : 
-															'thirdpartyserver.admin.policy.squashtm-section' 
+								squashtmCredentialsLabel = ${authConf.appLevelCredsAreOptional} ?
+															'thirdpartyserver.admin.policy.squashtm-section.optional' :
+															'thirdpartyserver.admin.policy.squashtm-section'
 							">
 								<label>[[#{__${squashtmCredentialsLabel}__}]]</label>
 								<div class="srv-auth-form-main std-border std-border-radius" >
-			
+
 									<div id="srv-auth-creds-form" class="templated-form">
 										<!-- templated by handlebars -->
 									</div>
-			
+
 									<div class="centered srv-auth-buttonpane" style="position:relative">
 										<span class="needs-save-msg" style="display:none;">[[#{thirdpartyserver.admin.messages.needs-save}]]</span>
 										<input type="button" class="sq-btn auth-test" th:value="#{label.test}" th:if="${authConf.featureTestCredentialsButton}"/>
 										<input type="button" class="sq-btn auth-save" th:value="#{label.save}"/>
 									</div>
-			
+
 								</div>
 							</div>
 						</div>
 					</div>
-			
+
 					<!-- message zone -->
 					<div class="side-panel srv-auth-messagepane">
 						<!--templated by handlebars -->
 					</div>
 				</div>
 			</div>
-		
+
 		</div>
-		
-		
-		
+
+
+
 		<!-- templates -->
 		<div class="not-displayed" id="auth-templates">
-		
+
 			<script id="oauth-conf-template" type="text/x-handlebars-template">
 				<div class="tbl" style="width:100%">
 				<div>
@@ -215,8 +215,8 @@
 				</div>
 				</div>
 				</script>
-		
-		
+
+
 			<script id="oauth-creds-template" type="text/x-handlebars-template">
 				<div class="tbl">
 					<div>
@@ -229,8 +229,8 @@
 					</div>
 				</div>
 				</script>
-		
-		
+
+
 			<script id="basic-creds-template" type="text/x-handlebars-template">
 				<div class="tbl">
 					<div>
@@ -243,7 +243,7 @@
 					</div>
 				</div>
 				</script>
-		
+
 			<script id="messagepane-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
 				    <div class="display-table-cell warning-cell">
@@ -253,12 +253,12 @@
 				    <div class="txt-message display-table-cell" style="padding-top:20px"></div>
 				</div>
 				</script>
-		
-		</div>	
-				
-		
-	
+
+		</div>
+
+
+
 	</div>
-	
-	
+
+
 </body>
