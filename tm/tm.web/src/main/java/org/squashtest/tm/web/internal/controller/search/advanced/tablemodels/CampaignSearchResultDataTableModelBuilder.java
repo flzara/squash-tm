@@ -82,7 +82,7 @@ public class CampaignSearchResultDataTableModelBuilder extends DataTableModelBui
 		res.put("empty-opentree-holder", " ");
 		res.put("empty-openinterface2-holder", " ");
 		if(item.getProject().isAllowAutomationWorkflow()) {
-			res.put("test-case-automation-request-status", item.getReferencedTestCase().getAutomationRequest() != null ? formatAutomationRequestStatus(item.getReferencedTestCase().getAutomationRequest().getRequestStatus(), locale) : "-");
+			res.put("test-case-automation-request-status", (item.getReferencedTestCase() != null && item.getReferencedTestCase().getAutomationRequest() != null) ? formatAutomationRequestStatus(item.getReferencedTestCase().getAutomationRequest().getRequestStatus(), locale) : "-");
 			res.put("test-case-automatable", item.getReferencedTestCase() != null ? formatTcAutomatable(item.getReferencedTestCase().getAutomatable(), locale): "");
 		} else {
 			res.put("test-case-automatable", "-");
