@@ -2120,8 +2120,8 @@ button.tf-sm {
 	color: black;
 	border-radius: 5px;
 	padding: 0.3em 1em;
-	background-color: #2e2e2e15;
-	border: 1px solid #2e2e2e2d;
+	background: #c7c9cc url("../styles/images/ui-bg_glass_45_c7c9cc_1x400.png") 50% 50% repeat-x;
+	border: 1px solid #c7c9cc;
 	cursor: pointer;
 }
 
@@ -2131,38 +2131,38 @@ button.tf-lg.blue {
 }
 
 button.tf-lg.green {
-	background-color: #10440d;
+	background: #10440d url("../styles/images/ui-bg_glass_45_10440d_1x400.png") 50% 50% repeat-x;
   	border: 1px solid #10440d;
 }
 
 button.tf.green {
 	border: 1px solid #acdd4a;
-	background-color: #6eac2c;
+	background: #6eac2c url("../styles/images/ui-bg_glass_45_6eac2c_1x400.png") 50% 50% repeat-x;
 }
 
 button.tf-lg.gray {
-	background-color: #808080;
+	background: #808080 url("../styles/images/ui-bg_glass_45_6eac2c_1x400.png") 50% 50% repeat-x;
 	border: 1px solid #999999;
 }
 
 button.tf.gray {
-	background-color: #808080;
+	background: #808080 url("../styles/images/ui-bg_glass_45_6eac2c_1x400.png") 50% 50% repeat-x;
 	border: 1px solid #999999;
 }
 
 button.tf-lg:hover {
-	background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
+	background: #2b2b2b url(../styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
 	border: 1px solid #2e2e2e;
 }
 
 button.tf-sm:hover {
-	background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
+	background: #2b2b2b url(../styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
 	border: 1px solid #2e2e2e;
 	color: white;
 }
 
 button.tf:hover {
-	background: #2b2b2b url(/squash/styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
+	background: #2b2b2b url(../styles/images/ui-bg_glass_75_2b2b2b_1x400.png) 50% 50% repeat-x;
 	border: 1px solid #2e2e2e;
 }
 
