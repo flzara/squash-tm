@@ -83,7 +83,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority"
+                        "mDataProp": "priority",
+                        "sClass": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -187,6 +188,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                             }
                         });
+
+                        var priority = $row.find('.priority');
+                        if (priority.text() === '') {
+														priority.text('-');
+												}
+
                         edObj.buttons = function (settings, original) {
                             //first apply the original function
                             edFnButtons.call(this, settings, original);

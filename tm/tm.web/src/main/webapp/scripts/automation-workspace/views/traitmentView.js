@@ -70,7 +70,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "bSortable": true,
                         "aTargets": [7],
-                        "mDataProp": "priority"
+                        "mDataProp": "priority",
+                        "sClass": "priority"
                     }, {
                         "bSortable": true,
                         "aTargets": [8],
@@ -159,6 +160,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
 
                         });
+
+												var priority = $row.find('.priority');
+                        if (priority.text() === '') {
+														priority.text('-');
+												}
+
                     },
 
                     fnDrawCallback: function () {
