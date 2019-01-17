@@ -100,7 +100,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             }
 
                             return render;
-                        }
+                        },
+                        "sWidth": "2.5em"
                     }, {
                         "bSortable": false,
                         "aTargets": [9],
@@ -123,7 +124,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                             }
                             return input;
-                        }
+                        },
+                        "sWidth": "2.5em"
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,

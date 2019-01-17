@@ -97,6 +97,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         "aTargets": [10],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
+                        "sWidth": "2.5em",
                         "mRender": function (data, type, row) {
                             var store = self.storage.get(self.key);
                             var checked = false;
