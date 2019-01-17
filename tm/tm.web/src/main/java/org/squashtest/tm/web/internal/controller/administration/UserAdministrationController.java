@@ -205,11 +205,17 @@ public class UserAdministrationController extends PartyControllerSupport {
 		List<PermissionGroupModel> pgm = getPermissionGroupModels();
 		List<ProjectModel> pm = getProjectModels(userId);
 
+		// if the local password manageable ?
+		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
+		
 		model.addAttribute("usersGroupList", usersGroupList);
 		model.addAttribute("user", user);
 		model.addAttribute("permissionList", pgm);
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
+		model.addAttribute("canManageLocalPassword", canManageLocalPassword);
+		
+		
 
 		return "user-modification.html";
 	}
@@ -366,13 +372,5 @@ public class UserAdministrationController extends PartyControllerSupport {
 		}
 	}
 
-	@ModelAttribute("authenticationProvider")
-	public AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
-		return currentProviderFeatures();
-	}
-
-	private AuthenticationProviderFeatures currentProviderFeatures() {
-		return authenticationProviderContext.getCurrentProviderFeatures();
-	}
 
 }

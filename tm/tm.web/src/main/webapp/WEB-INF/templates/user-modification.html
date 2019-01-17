@@ -171,7 +171,10 @@
                           th:attr="data-def='width=35, on_label='+#{label.active}+', off_label='+#{label.inactive}" />
                       </div>
                     </div>
-                    <div class="display-table-row">
+                    
+                    
+                    <!-- password management -->
+                    <div class="display-table-row" th:if="${canManageLocalPassword}">
                       <label for="reset-password-button" th:text="#{label.localPassword}">Password</label>
                       <div class="display-table-cell">
                         <a id="reset-password-button" th:text="#{user.button.reset.password}"
@@ -180,6 +183,11 @@
                           th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
                       </div>
                     </div>
+                    
+                    <div th:if="${not canManageLocalPassword}" style="display:inline">
+   						<span>[[#{message.managedPassword}]]</span>
+                    </div>
+                    <!-- /password management -->
                    
                     <div class="display-table-row">
                       <label for="user-first-name" th:text="#{label.FirstName}">First name</label>

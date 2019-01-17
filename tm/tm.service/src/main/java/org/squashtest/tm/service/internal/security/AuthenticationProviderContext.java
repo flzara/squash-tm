@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.security;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -88,6 +89,7 @@ public class AuthenticationProviderContext {
 	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<>();
 	
 	private AuthenticationProviderFeatures defaultProviderFeature = DefaultAuthenticationProviderFeatures.INSTANCE;
+	private boolean internalProviderEnabled = false;
 	
 	@Inject
 	@Named("squashtest.core.user.UserContextService")
@@ -157,6 +159,11 @@ public class AuthenticationProviderContext {
 	public AuthenticationProviderFeatures getPrimaryProviderFeatures() {
 		return defaultProviderFeature;
 	}
+	
+	
+	public boolean isInternalProviderEnabled(){
+		return internalProviderEnabled;
+	}
 
 	/**
 	 * initialization and checks.
@@ -168,13 +175,17 @@ public class AuthenticationProviderContext {
 
 	private void checkConfiguration() {
 
+		// check that there is at least one provider configured
 		if (currentProviderNames.length == 0) {
 			LOGGER.error("The number of defined authentication.provider is {}", currentProviderNames.length);
 			throw new IllegalStateException("currentPropertyName should not be empty");
-		} else {
-			Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
-		}
+		} 
+		
+		// check that there were no misspelling
+		Arrays.asList(currentProviderNames).forEach(name -> Assert.propertyNotBlank(name,"currentPropertyName should not be blank" ));
+		
 
+		// check that all providers are known 
 		Collection<String> knownProviders =  providersFeatures.stream().map(AuthenticationProviderFeatures::getProviderName).collect(Collectors.toList());
 
 		for (String providerName : currentProviderNames) {
@@ -194,8 +205,13 @@ public class AuthenticationProviderContext {
 			else {
 				LOGGER.trace("located the authentication provider features named '{}'", providerName);
 			}
+			
 		}
-
+		
+		// is the internal provider enabled ?
+		internalProviderEnabled = Arrays.asList(currentProviderNames).contains(InternalAuthenticationProviderFeatures.NAME);
+				
+		// TODO : why is getCurrentProviderFeatures invoked ? Removing this ought to be a quick win but two days from the release I have no time to investigate 
 		getCurrentProviderFeatures();
 	}
 

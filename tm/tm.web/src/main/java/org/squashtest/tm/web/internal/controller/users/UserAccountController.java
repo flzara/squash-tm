@@ -128,6 +128,11 @@ public class UserAccountController {
 							);
 			mav.addObject("activeMilestone", jsMilestone);
 		}
+		
+		// if the local password manageable ?
+		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
+		mav.addObject("canManageLocalPassword", canManageLocalPassword);
+		
 
 		return mav;
 
@@ -152,10 +157,6 @@ public class UserAccountController {
 	}
 
 
-	@ModelAttribute("authenticationProvider")
-	AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
-		return authenticationProviderContext.getCurrentProviderFeatures();
-	}
 
 	public class SortMilestoneList implements Comparator<Milestone> {
 		@Override

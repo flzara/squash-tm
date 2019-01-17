@@ -37,6 +37,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 import static org.squashtest.tm.api.security.acls.Roles.*;
@@ -52,6 +53,9 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Inject
 	@Lazy
 	private PasswordEncoder encoder;
+	
+	@Inject
+	private AuthenticationProviderContext authenticationProviderContext;
 
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
 		this.userManager = userManager;
@@ -64,8 +68,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	@Override
 	public boolean canModifyUser() {
-		// TODO : how am I supposed to know that ?
-		return true;
+		return authenticationProviderContext.isInternalProviderEnabled();
 	}
 
 	@Override
@@ -109,6 +112,10 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	
 	@Override
 	public void resetUserPassword(String login, String clearNewPassword) {
+		if (! canModifyUser()) {
+			throw new UnauthorizedPasswordChange(
+					"The authentication service do not allow users to change their passwords using Squash");
+		}
 		UserDetails user = userManager.loadUserByUsername(login);
 		String encodedPassword = encode(clearNewPassword);
 		UserDetails updateCommand = new User(login, encodedPassword, user.isEnabled(), true, true, true,

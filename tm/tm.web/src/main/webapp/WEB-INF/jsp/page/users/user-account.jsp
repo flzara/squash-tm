@@ -162,10 +162,21 @@
 						<label ><f:message key="label.Group"/></label>
 						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
 					</div>
- 
-        
-				<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />
-       
+					<div class="display-table-row">
+		 			
+		 			<c:choose>
+		 			<c:when test="${canManageLocalPassword}">
+		 				<input  type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="display-table-cell button" />
+		 			</c:when>
+		 			<c:otherwise>
+		 				<span><f:message key="message.managedPassword"/></span>
+		 			</c:otherwise>
+		 			</c:choose>					
+					
+					</div>
+	 
+
+	 			
 			</jsp:attribute>
 		</comp:toggle-panel>
 

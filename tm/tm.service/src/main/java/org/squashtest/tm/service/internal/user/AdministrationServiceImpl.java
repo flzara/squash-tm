@@ -50,6 +50,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.AdministrationStatistics;
+import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
@@ -489,6 +490,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
+		
+		if (! adminAuthentService.canModifyUser()) {
+			throw new UnauthorizedPasswordChange(
+					"The authentication service do not allow users to change their passwords using Squash");
+		}
+		
 		User user = userDao.getOne(userId);
 
 		if (!adminAuthentService.userExists(user.getLogin())) {

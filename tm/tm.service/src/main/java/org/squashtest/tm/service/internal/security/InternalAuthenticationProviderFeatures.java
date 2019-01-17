@@ -29,8 +29,12 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
  * @author Gregory Fouquet
  * 
  */
+
+// note : Spring will instantiate one singleton brean, and there is another one declared as static INSTANCE. Something is not square here... But I've no time to fix it yet. 
 @Component
 public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {
+	
+	public static final String NAME = "internal";  
 
 	// make class Singleton
 	public static final InternalAuthenticationProviderFeatures INSTANCE = new InternalAuthenticationProviderFeatures();
@@ -53,7 +57,7 @@ public class InternalAuthenticationProviderFeatures implements AuthenticationPro
 	 */
 	@Override
 	public String getProviderName() {
-		return "internal";
+		return InternalAuthenticationProviderFeatures.NAME;
 	}
 
 	/**
