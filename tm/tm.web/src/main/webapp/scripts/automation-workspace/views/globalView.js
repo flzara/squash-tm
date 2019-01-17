@@ -217,8 +217,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-
-                        if (data['script'] !== '-') {
+                        var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
+                        if (data['script'] !== '-' && !isGherkin) {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -246,6 +246,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 popup.formDialog('open');
                                 return false;// see comment above
                             });
+                        } else if (isGherkin) {
+                            cell.css({ 'color': 'gray' });
                         }
                     },
 
@@ -542,7 +544,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 translator.get('automation-request.request_status.AUTOMATED')];
                 return _.contains(allowedStatusForAutomation, status)
                     && (script === null || script === "-" || script === " ")
-                    && "gherkin" !== format.toLowerCase();
+                    && format.toLowerCase() !== translator.get('test-case.format.gherkin').toLowerCase();
             },
 
             updateStatus: function (table, status) {

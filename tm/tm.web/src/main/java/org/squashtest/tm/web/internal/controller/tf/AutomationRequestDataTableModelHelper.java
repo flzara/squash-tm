@@ -83,7 +83,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 
 	// Issue 7880
 	private String populateScriptAuto(AutomationRequest item) {
-		if (canChooseScriptAuto(item)) {
+		if (item.getProject().hasTestAutomationProjects()) {
 			if (hasScriptAuto(item)) {
 				return item.getTestCase().getAutomatedTest().getFullLabel();
 			} else {
@@ -112,10 +112,6 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 
 	private boolean hasScriptAuto(AutomationRequest item) {
 		return item.getTestCase() != null && item.getTestCase().getAutomatedTest() != null && item.getProject().isTestAutomationEnabled();
-	}
-
-	private boolean canChooseScriptAuto(AutomationRequest item) {
-		return STANDARD.equals(item.getTestCase().getKind()) && item.getProject().hasTestAutomationProjects();
 	}
 
 }
