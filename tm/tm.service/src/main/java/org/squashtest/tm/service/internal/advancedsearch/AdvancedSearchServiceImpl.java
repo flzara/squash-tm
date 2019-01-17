@@ -585,7 +585,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
 				break;
 			case MULTILIST:
-				query = buildQueryForMultiListCriterium(fieldKey, fieldModel, qb);
+				query = buildQueryForMultiListCriterium(fieldModel, qb);
 				break;
 			case TEXT:
 				query = buildQueryForTextCriterium(fieldKey, fieldModel, qb);
@@ -611,18 +611,18 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildQueryForMultiListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForMultiListCriterium(AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchMultiListFieldModel multiListModel = (AdvancedSearchMultiListFieldModel) fieldModel;
-		if (multiListModel.getMinValue() != null || multiListModel.getMaxValue() != null && multiListModel.getValues() != null) {
-			return buildLuceneMultiListQuery(qb, fieldKey, multiListModel.getMinValue(), multiListModel.getMaxValue(),multiListModel.getValues(),false);
+		if ((multiListModel.getMinValue() != null || multiListModel.getMaxValue() != null) && multiListModel.getValues() != null) {
+			return buildLuceneMultiListQuery(qb, multiListModel.getMinValue(), multiListModel.getMaxValue(),multiListModel.getValues());
 		}
 		return null;
 
 
 	}
 
-	private Query buildLuceneMultiListQuery(QueryBuilder qb, String fieldKey, Integer minValue, Integer maxValue, List<String> values, boolean isTag) {
+	private Query buildLuceneMultiListQuery(QueryBuilder qb, Integer minValue, Integer maxValue, List<String> values) {
 		Query mainQuery = null;
 		if (!values.isEmpty()) {
 			if (minValue == null) {

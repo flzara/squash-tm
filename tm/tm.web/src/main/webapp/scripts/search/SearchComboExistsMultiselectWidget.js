@@ -65,11 +65,22 @@ define([ "jquery", "jqueryui" ], function($) {
 					return null;
 				}
 			} else {
-				$("option", $(this.element.children()[0])).removeAttr("selected");
+				$("option", $("select", this.element.children())).removeAttr(
+					"selected");
 				if (!!value.values){
 					for (var i=0, len = value.values.length; i<len;i++){
-						$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
+						$("option[value='" + value.values[i] + "']",
+							$("select", this.element.children())).prop("selected",
+							true);
 					}
+				}
+				if(value.minValue == 1){
+					$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+					$("option[value=1]", $($(this.element.children()[0]).children()[1])).prop("selected", true);
+				}
+				if(value.maxValue === 0){
+					$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+					$("option[value=0]", $($(this.element.children()[0]).children()[1])).prop("selected", true);
 				}
 			}
 		},
