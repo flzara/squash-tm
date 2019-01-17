@@ -175,6 +175,7 @@ class AdministrationServiceImplTest extends Specification {
 		userDao.getOne(10L) >> user
 
 		and:
+		adminAuthentService.canModifyUser() >> true
 		adminAuthentService.userExists("chris.jericho") >> false
 
 		when:
@@ -197,6 +198,7 @@ class AdministrationServiceImplTest extends Specification {
 		userDao.getOne(10L) >> user
 
 		and:
+		adminAuthentService.canModifyUser() >> true
 		adminAuthentService.userExists("chris.jericho") >> true
 
 		when:
