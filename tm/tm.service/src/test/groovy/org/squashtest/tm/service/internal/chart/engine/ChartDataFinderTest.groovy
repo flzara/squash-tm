@@ -103,7 +103,8 @@ class ChartDataFinderTest extends Specification {
 
 	}
 
-	def "should convert infolist item code to infolist item label and get its colour"() {
+	def "post processing : should replace info list item codes by their labels"(){
+
 		given: "the definition"
 		DetailedChartQuery definition = new DetailedChartQuery(
 			measures: [
@@ -128,11 +129,12 @@ class ChartDataFinderTest extends Specification {
 		ChartDataFinder finder = new ChartDataFinder()
 		finder.infoListItemDao = infoListItemDao
 		finder.infoListItemDao.findByCodeIn(_) >> [item1, item2, item3]
+
 		when:
-		finder.postProcessAbsciss(abscissa, series, definition)
+		def modifiedAbscissa = finder.postProcessAbscissa(definition, abscissa)
 
 		then:
-		series.abscissa == [
+		modifiedAbscissa == [
 			["project1", "label1"] as Object[],
 			["project1", "label2"] as Object[],
 			["project1", "label3"] as Object[],
@@ -140,7 +142,41 @@ class ChartDataFinderTest extends Specification {
 			["project2", "label2"] as Object[],
 		]
 
-		series.colours == ["#000000", "#FFFFFF", "#000FFF"]
+
+	}
+
+	def "post processing : should extract the colours for the axes that have specific colours"() {
+		given: "the definition"
+		DetailedChartQuery definition = new DetailedChartQuery(
+			measures: [
+				measure("total testcase")
+			],
+			axis: [
+				axis("project label", DataType.STRING),
+				axis("test case category", DataType.INFO_LIST_ITEM)
+			]
+		)
+
+		and: "the abscissa"
+		def abscissa = [
+			["project1", "code1"] as Object[],
+			["project1", "code2"] as Object[],
+			["project1", "code3"] as Object[],
+			["project2", "code1"] as Object[],
+			["project2", "code2"] as Object[]]
+
+		and: "the rest"
+		ChartSeries series = new ChartSeries()
+		ChartDataFinder finder = new ChartDataFinder()
+		finder.infoListItemDao = infoListItemDao
+		finder.infoListItemDao.findByCodeIn(_) >> [item1, item2, item3]
+
+		when:
+		def colours = finder.extractColours(definition, abscissa)
+
+		then:
+
+		colours == ["#000000", "#FFFFFF", "#000FFF"]
 
 	}
 

@@ -126,7 +126,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			},
 
 			/**
-			 * Traduce the legends for a given axis in a chart
+			 * Translate the legends for a given axis in a chart
 			 * @param  {[Array]} legends [The gross legends from server]
 			 * @param  {[Axis object]} axis [The axis of legends to retrive the Column Prototype inside Axis object]
 			 * @return {[Array]}         [The legends localized]

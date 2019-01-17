@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
@@ -40,11 +41,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 import static org.squashtest.tm.domain.chart.DataType.INFO_LIST_ITEM;
 import static org.squashtest.tm.domain.chart.DataType.LIST;
@@ -355,6 +356,8 @@ public class ChartDataFinder {
 	private InfoListItemDao infoListItemDao;
 	@Inject
 	private CustomFieldDao customFieldDao;
+	@Inject
+	private Provider<TupleProcessor> tupleProcessorProvider;
 
 	@Transactional(readOnly = true)
 	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
@@ -391,7 +394,14 @@ public class ChartDataFinder {
 
 			// ****************** step 6 : convert the data *********************
 
-			return makeSeries(enhancedDefinition, tuples);
+			TupleProcessor processor = tupleProcessorProvider.get();
+
+			return processor
+					   .setDefinition(enhancedDefinition)
+					   .initialize()
+					   .process(tuples)
+					   .createChartSeries();
+
 		} catch (Exception ex) {
 			LOGGER.error("attempted to execute a chart query and failed : ");
 			LOGGER.error(finalQuery.toString());
@@ -401,129 +411,5 @@ public class ChartDataFinder {
 	}
 
 
-	private ChartSeries makeSeries(DetailedChartQuery definition, List<Tuple> tuples) {
 
-		List<Object[]> abscissa = new ArrayList<>();
-
-		// initialize temporary structures
-		int axsize = definition.getAxis().size();
-		int measize = definition.getMeasures().size();
-
-		List[] series = new List[measize];
-
-		for (int me = 0; me < measize; me++) {
-			series[me] = new ArrayList<>(tuples.size());
-		}
-
-		// now (double) loop, lets hope the volume of data is not too large
-		for (Tuple tuple : tuples) {
-			// create the entry for the abscissa
-			Object[] axis = new Object[axsize];
-			for (int ax = 0; ax < axsize; ax++) {
-				axis[ax] = tuple.get(ax, Object.class);
-			}
-			abscissa.add(axis);
-
-			// create the entries for the series
-			for (int m = 0; m < measize; m++) {
-				Object v = tuple.get(m + axsize, Object.class);
-				series[m].add(v);
-			}
-		}
-
-		// now build the serie
-		ChartSeries chartSeries = new ChartSeries();
-		postProcessAbsciss(abscissa, chartSeries, definition);
-
-
-		for (int m = 0; m < measize; m++) {
-			MeasureColumn measure = definition.getMeasures().get(m);
-			chartSeries.addSerie(measure.getLabel(), series[m]);
-		}
-
-		return chartSeries;
-	}
-
-	private void postProcessAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
-		List<AxisColumn> columns = definition.getAxis();
-		getColours(chartSeries, definition, abscissa);
-		for (int i = 0; i < columns.size(); i++) {
-			postProcessColumn(abscissa, columns, i);
-		}
-		chartSeries.setAbscissa(abscissa);
-	}
-
-	/**
-	 * As 1.13.3 we only need to postprocess infolist items. If another fancy business rule appears,
-	 * change the if to switch, and branch other absciss post process here
-	 */
-	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
-		AxisColumn axisColumn = columns.get(i);
-		if (axisColumn.getDataType() == INFO_LIST_ITEM) {
-			postProcessInfoListItem(abscissa, i);
-
-		}
-	}
-
-	/**
-	 * [Issue 6047] When one the axis is INFOLIST_ITEM.LABEL we must adapt the absciss. The sql generator engine make a request like
-	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
-	 * with i18n support if the INFOLIST_ITEM is in default system list
-	 */
-	private void postProcessInfoListItem(List<Object[]> abscissa, int i) {
-		for (Object[] obj : abscissa) {
-			String code = obj[i].toString();
-			InfoListItem infoListItem = infoListItemDao.findByCode(code);
-			obj[i] = infoListItem.getLabel();
-		}
-	}
-
-	private void getColours(ChartSeries chartSeries, DetailedChartQuery definition, List<Object[]> abscissa) {
-		// here we will only get colours in the case where we work with a CUF List or an InfoList
-		// colours associated to "fixed list" (some classes implement Level), the colours are on the client in colours-utils.js
-		// colours-utils.js also includes the part where we fill the empty colours
-		List<AxisColumn> axis = definition.getAxis();
-		List<String> colours = new ArrayList<>();
-
-		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
-		// if there are two (trend or cumulative chart) it's the second one
-		// hence the axis.size()-1
-
-		if (axis.get(axis.size() - 1).getDataType() == LIST) {
-
-			Long colorCufId = axis.get(axis.size() - 1).getCufId();
-			SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(colorCufId);
-
-			// in case of a trend or cumulative chart, we need to filter the abscissa and get them by order of arrival, that's
-			// how they're displayed in jqplot
-			Set<String> uniqueAbscissaLabel = abscissa.stream()
-				.map(objects -> (String) objects[axis.size() - 1])
-				.collect(Collectors.toCollection(LinkedHashSet::new));
-
-			for (String abs : uniqueAbscissaLabel) {
-				colours.add(cuf.findColourOfByCode(abs));
-
-			}
-
-			chartSeries.setColours(colours);
-
-		} else if (axis.get(axis.size() - 1).getDataType() == INFO_LIST_ITEM) {
-			Set<String> uniqueAbscissaCode = abscissa.stream()
-				.map(objects -> (String) objects[axis.size() - 1])
-				.collect(Collectors.toCollection(LinkedHashSet::new));
-
-			List<InfoListItem> items = infoListItemDao.findByCodeIn(uniqueAbscissaCode);
-
-			// we need to keep the colours in the same order as the uniqueAbscissaLabel, that's how jqplot works
-			for (String code : uniqueAbscissaCode) {
-				InfoListItem correspondingILI = items.stream()
-					.filter(infoListItem -> infoListItem.getCode().equals(code))
-					.findFirst()
-					.get();
-				colours.add(correspondingILI.getColour());
-			}
-
-			chartSeries.setColours(colours);
-		}
-	}
 }
