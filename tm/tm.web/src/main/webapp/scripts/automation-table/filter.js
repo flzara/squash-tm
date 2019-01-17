@@ -54,7 +54,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				}
 			};
 
-			function _createCombo(th, id, content) {
+			function _createCombo(th, id, content, sortable) {
 				var combo = $("<select id='" + id + "' class='th_input filter_input' />");
 
 				var nullOption = new Option("", "");
@@ -73,6 +73,11 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 					$(o).html(value);
 					combo.append(o);
 				});
+				if(sortable) {
+					var options = combo.find("option");
+					options.sort(function(a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+					combo.html("").append(options);
+				}
 				th.append(combo);
 			}
 
@@ -170,19 +175,19 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 
 			if(userCombo.length !== 0) {
 				var users = initConf.testers;
-				_createCombo(userCombo, "#filter-mode-combo", users);
+				_createCombo(userCombo, "#filter-mode-combo", users, true);
 			}
 
 			if(formatCombo.length !== 0) {
-				_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds);
+				_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds, false);
 			}
 
 			if(statusCombo.length !== 0) {
-				_createCombo(statusCombo, "#filter-mode-combo", initConf.statuses);
+				_createCombo(statusCombo, "#filter-mode-combo", initConf.statuses, false);
 			}
 
 			if(assignedToCombo.length !== 0) {
-				_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView);
+				_createCombo(assignedToCombo, "#filter-mode-combo", model.assignableUsersGlobalView, true);
 			}
 
 			_createTimePicker(transmittedTime);

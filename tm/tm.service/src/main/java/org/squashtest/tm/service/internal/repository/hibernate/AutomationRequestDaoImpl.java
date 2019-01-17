@@ -219,7 +219,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.where(PROJECT.ALLOW_AUTOMATION_WORKFLOW.isTrue())
 					.and(PROJECT.PROJECT_ID.in(projectIds))
 					.and(TEST_CASE.AUTOMATABLE.eq(TestCaseAutomatable.Y.name()))
-					.orderBy(CORE_USER.LOGIN)
+					.orderBy(CORE_USER.LOGIN.asc())
 					.fetch().intoMap(CORE_USER.PARTY_ID, CORE_USER.LOGIN);
 	}
 
