@@ -118,20 +118,23 @@ public class ScriptedTestCaseEventListener {
 			ScmRepository scm = entry.getKey();
 			Set<TestCase> testCases = entry.getValue();
 
+			// Test existence of Credentials and test them
+			Credentials credentials = testScmCredentials(scm);
 			// Write files
 			scmService.createOrUpdateScriptFile(scm, testCases);
 			// Synchronize repository
-			synchronizeRepository(scm);
+			synchronizeRepository(scm, credentials);
 		}
 	}
 
 	/**
-	 * Given a ScmRepository, check that credentials exist for its ScmServer and are valid.
-	 * Then try to synchronise the repository with the remote one.
-	 * @param scm The ScmRepository to synchronize
-	 * @throws ScmNoCredentialsException if no credentials were defined
+	 * Check first if the credentials for the given ScmRepository have been set, if the protocol is valid,
+	 * and then check the validity of the credentials.
+	 * @param scm The ScmRepository whose connection is to test
+	 * @return The credentials if everything is fine
+	 * @throws
 	 */
-	private void synchronizeRepository(ScmRepository scm) {
+	private Credentials testScmCredentials(ScmRepository scm) {
 		ScmServer server = scm.getScmServer();
 		ScmConnector connector = scmConnectorRegistry.createConnector(scm);
 
@@ -140,9 +143,9 @@ public class ScriptedTestCaseEventListener {
 		Supplier<ScmNoCredentialsException> throwIfNull = () -> {
 			throw new ScmNoCredentialsException(
 				"Cannot authenticate to the remote server containing the repository '" + scm.getName() + "' " +
-				"because no valid credentials were found for authentication. " +
-				"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
-				+ "Please contact your administrator in order to fix the situation.");
+					"because no valid credentials were found for authentication. " +
+					"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
+					+ "Please contact your administrator in order to fix the situation.");
 		};
 
 		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
@@ -152,6 +155,17 @@ public class ScriptedTestCaseEventListener {
 			throw new UnsupportedAuthenticationModeException(protocol.toString());
 		}
 
+		// fix the error here
+		
+		return credentials;
+	}
+	/**
+	 * Try to synchronise the local repository with the remote one using the given Credentials.
+	 * @param scm The ScmRepository to synchronize
+	 * @param credentials The Credentials to use
+	 */
+	private void synchronizeRepository(ScmRepository scm, Credentials credentials) {
+		ScmConnector connector = scmConnectorRegistry.createConnector(scm);
 		try {
 			connector.synchronize(credentials);
 		} catch(IOException ex) {
