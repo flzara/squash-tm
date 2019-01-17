@@ -177,10 +177,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                         });
 
-												var priority = $row.find('.priority');
+                        var priority = $row.find('.priority');
                         if (priority.text() === '') {
-														priority.text('-');
-												}
+                            priority.text('-');
+                        }
 
                         edObj.buttons = function (settings, original) {
                             //first apply the original function
@@ -582,6 +582,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         table.refresh();
                     });
                 }
+                this.storage.remove(this.key);
+                this.deselectAll(table);
             },
 
             bindButtons: function () {
