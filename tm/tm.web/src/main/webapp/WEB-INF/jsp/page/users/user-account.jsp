@@ -148,6 +148,7 @@
 	<div class="fragment-body">
 
 		<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true" >
+		
 			<jsp:attribute name="body">
 				<div class="display-table">
 					<div class="user-account-unmodifiable-field display-table-row">
@@ -162,22 +163,20 @@
 						<label ><f:message key="label.Group"/></label>
 						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
 					</div>
+					
 					<div class="display-table-row">
-		 			
 		 			<c:choose>
 		 			<c:when test="${canManageLocalPassword}">
-		 				<input  type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="display-table-cell button" />
+		 				<label><f:message key="message.changeLocalPassword"/></label>
+		 				<div class="display-table-cell"><input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" /></div>
 		 			</c:when>
 		 			<c:otherwise>
 		 				<span><f:message key="message.managedPassword"/></span>
 		 			</c:otherwise>
-		 			</c:choose>					
-					
-					</div>
-	 
-
-	 			
+		 			</c:choose>	
+					</div>	 					
 			</jsp:attribute>
+			
 		</comp:toggle-panel>
 
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" open="true">
@@ -191,7 +190,10 @@
 				</thead>
 				<tbody>
 					<c:forEach var="projectPermission" items="${ projectPermissions }">
-					<tr><td>${ projectPermission.project.name }</td><td><f:message key="user.project-rights.${projectPermission.permissionGroup.simpleName}.label" /></td></tr>
+					<tr>
+						<td>${ projectPermission.project.name }</td>
+						<td><f:message key="user.project-rights.${projectPermission.permissionGroup.simpleName}.label" /></td>
+					</tr>
 					</c:forEach>
 				</tbody>
 			</table>
