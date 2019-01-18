@@ -46,6 +46,7 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -117,6 +118,9 @@ public class TestSuiteTestPlanManagerController {
 	@Inject
 	private MilestoneModelService milestoneModelService;
 
+	@Inject
+	private PermissionEvaluationService permSerice;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
@@ -178,7 +182,7 @@ public class TestSuiteTestPlanManagerController {
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService
 			.findAssignedTestPlan(suiteId, paging, filter);
 
-		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
+		return new TestPlanTableModelHelper(messageSource, locale, permSerice).buildDataModel(holder, params.getsEcho());
 
 	}
 

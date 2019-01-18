@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
@@ -43,12 +44,14 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
+	private PermissionEvaluationService permService;
 
 	private static final String NONE = "";
 
-	TestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+	TestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale, PermissionEvaluationService permService) {
 		this.messageSource = messageSource;
 		this.locale = locale;
+		this.permService = permService;
 	}
 
 	@Override
@@ -164,6 +167,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("milestone-dates", milestoneDates);
 		res.put("dataset", dsIndos);
 		res.put("milestone-labels", HtmlUtils.htmlEscape(milestoneLabels));
+		res.put("readable", permService.canRead(item.getReferencedTestCase()));
 
 		return res;
 	}

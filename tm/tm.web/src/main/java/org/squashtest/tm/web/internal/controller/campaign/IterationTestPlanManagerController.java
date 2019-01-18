@@ -45,6 +45,7 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
@@ -115,6 +116,9 @@ public class IterationTestPlanManagerController {
 	@Inject
 	protected MilestoneModelService milestoneModelService;
 
+	@Inject
+	private PermissionEvaluationService permService;
+
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 		.map("entity-index", "index(IterationTestPlanItem)")
 		// index is a special case which means : no sorting.
@@ -164,7 +168,7 @@ public class IterationTestPlanManagerController {
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder =
 			iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging, filter);
 
-		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
+		return new TestPlanTableModelHelper(messageSource, locale, permService).buildDataModel(holder, params.getsEcho());
 
 	}
 
