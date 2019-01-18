@@ -84,7 +84,7 @@
 
   <jsp:attribute name="subPageButtons">
     <f:message var="backButtonLabel" key="label.Back" />
-    <input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>
+    <input id="back" type="button" class="button" value="${backButtonLabel}" onClick="document.location.href=squashtm.workspace.backurl"/>
   </jsp:attribute>
 
 
