@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -530,8 +531,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public boolean isAutomated() {
 		boolean isAutomated = false;
 		if(getProject().isAllowAutomationWorkflow()) {
-			if(this.automatable.equals(TestCaseAutomatable.Y)) {
-				isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+			if(automatable.equals(TestCaseAutomatable.Y) && AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus())) {
+				if(TestCaseKind.GHERKIN.equals(kind)) {
+					isAutomated = automatedTest != null && getProject().getScmRepository() != null;
+				} else {
+					isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+				}
+
 			}
 		} else {
 			isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
