@@ -122,14 +122,14 @@
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
           <th class="no-user-select tp-th-filter tp-th-project-name"
-          data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs=TEST_CASE-{tc-id}">
+          data-def="map=project-name, sortable, link-if-readable=${workspaceUrl}, link-cookie=workspace-prefs=TEST_CASE-{tc-id}">
             <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th>
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
-          data-def="map=reference, sortable, link=${testcaseUrl}">
+          data-def="map=reference, sortable, link-if-readable=${testcaseUrl}">
             <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
