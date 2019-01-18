@@ -241,10 +241,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 return false;//for some reason jeditable would trigger 'submit' if we let go
                             });
                             cell.on('click', '#ta-script-remove-button', function () {
-                                self._initRemovePopup(settings);
-                                var popup = $("#ta-remove-popup").formDialog();
-                                popup.formDialog('open');
-                                return false;// see comment above
+															self._initRemovePopup(settings);
+															var input = $(cell).find("input");
+															if (input.val() !== "") {
+																var popup = $("#ta-remove-popup").formDialog();
+																popup.formDialog('open');
+															} else {
+																input.val('');
+															}
+															return false;// see comment above
                             });
                         } else if (isGherkin) {
                             cell.css({ 'color': 'gray' });
