@@ -153,7 +153,7 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-		initSearchPageModel(pageModel, "",  associationType, associationId, CAMPAIGN);
+		initSearchPageModel(pageModel, searchModel,  associationType, associationId, CAMPAIGN);
 		
 		List<Long> projectIds = campaignAdvancedSearchService.findAllReadablesId();
 		UserDto user = userAccountService.findCurrentUserDto();
@@ -171,6 +171,7 @@ public class CampaignSearchController extends GlobalSearchController {
 		pageModel.addAttribute("rootModel", rootNodes);
 
 		pageModel.addAttribute("isCampaignAvailable", isCampaignAvailable);
+
 	}
 	
 	

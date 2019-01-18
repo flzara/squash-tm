@@ -58,15 +58,6 @@ define([ "jquery", "jqueryui" ], function($) {
 					}
 					$($(this.element.children()[0]).children()[0]).attr('checked', true);
 				}
-
-				if(value.minValue == 1){
-					$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
-					$("option[value=1]", $($(this.element.children()[0]).children()[1])).attr("selected", "selected");
-				}
-				if(value.maxValue === 0){
-					$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
-					$("option[value=0]", $($(this.element.children()[0]).children()[1])).attr("selected", "selected");
-				}
 			}
 		},
 
