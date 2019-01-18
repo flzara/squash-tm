@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 
@@ -87,7 +88,11 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 			if (hasScriptAuto(item)) {
 				return item.getTestCase().getAutomatedTest().getFullLabel();
 			} else {
-				return null;
+				if (GHERKIN.equals(item.getTestCase().getKind())) {
+					return NO_DATA;
+				} else {
+					return null;
+				}
 			}
 		} else {
 			return NO_DATA;
