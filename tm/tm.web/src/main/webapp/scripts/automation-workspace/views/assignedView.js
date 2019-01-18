@@ -260,8 +260,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 return false;// see comment above
                             });
-                        } else if (isGherkin) {
-                        		cell.css({ 'color': 'gray' });
+                        } else if (isGherkin && data['script'] !== '-') {
+                            cell.css({ 'color': 'gray', 'font-style': 'italic' });
                         }
                     },
 
