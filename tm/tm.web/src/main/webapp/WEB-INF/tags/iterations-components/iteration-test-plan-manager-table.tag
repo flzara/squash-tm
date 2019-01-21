@@ -168,7 +168,7 @@
           <th class="no-user-select tp-th-filter tp-th-reference"  title="${tooltipReference}" data-def="map=reference, sortable, link=${testcaseUrl}">
             <f:message key="label.Reference.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
+          <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link-if-readable=${testcaseUrl}">
             <f:message key="label.TestCase.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
