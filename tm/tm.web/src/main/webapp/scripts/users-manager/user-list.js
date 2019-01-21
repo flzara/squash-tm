@@ -19,12 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * settings : { data : { tableData : the json model of the data displayed by the
+ * settings : { 
+ * 	data : { tableData : the json model of the data displayed by the
  * datatable },
+ *  canManageLocalPassword : boolean, says whether the local password are manageable (ie 
+ *  is the internal authentication provider enabled) 
+ * 
+ * 	},
  *
  * urls : { rootContext : the base url of the application backUrl : the url
  * where to go where to go when clicking the #back button baseUrl : the base url
  * of all regaring user adminitration (listing, adding, removing etc) },
+ * 
  * language : { missingNewPassword : error message when the new password input
  * wasn't typed in missingConfirmPassword : same, for the confirmation input
  * differentConfirmation : error message when the new password and confirmation
@@ -55,8 +61,12 @@ define([ "jquery", "squash.translator",
 	}
 
 	function buildPasswordValidation(settings) {
-
-
+		
+		// if local password are not manageable, return a truthy function
+		if (! settings.data.canManageLocalPassword){
+			return function(){return true;};
+		}
+		
 		var language = settings.language;
 		return function() {
 			var lang = language;
@@ -104,8 +114,12 @@ define([ "jquery", "squash.translator",
 			groupId : $("#add-user-group").val()
 		};
 
-
-		form.password = $("#add-user-password").val();
+		if (settings.data.canManageLocalPassword){
+			form.password = $("#add-user-password").val();
+		}
+		else{
+			form.noPassword="";
+		}
 
 		return form;
 	}

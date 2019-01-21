@@ -165,13 +165,13 @@
 					</div>
 					
 					<div class="display-table-row">
+		 				<label><f:message key="message.changeLocalPassword"/></label>
 		 			<c:choose>
 		 			<c:when test="${canManageLocalPassword}">
-		 				<label><f:message key="message.changeLocalPassword"/></label>
 		 				<div class="display-table-cell"><input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" /></div>
 		 			</c:when>
 		 			<c:otherwise>
-		 				<span><f:message key="message.managedPassword"/></span>
+		 				<span class="display-table-cell"><f:message key="message.managedPassword"/></span>
 		 			</c:otherwise>
 		 			</c:choose>	
 					</div>	 					

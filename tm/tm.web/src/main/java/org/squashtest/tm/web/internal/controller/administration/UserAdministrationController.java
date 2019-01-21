@@ -135,6 +135,11 @@ public class UserAdministrationController extends PartyControllerSupport {
 		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, CONNECTION_COLUMN_DEFAULT_FILTERING);
 		mav.addObject("pagedConnectionLogs", connectionLogs);
 		mav.addObject("connectionsPageSize", CONNECTIONS_DEFAULT_PAGING.getPageSize());
+		
+		// if the local password manageable ?
+		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
+		mav.addObject("canManageLocalPassword", canManageLocalPassword);
+		
 		return mav;
 	}
 

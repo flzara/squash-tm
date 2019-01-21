@@ -68,7 +68,8 @@
         },
       settings : {
           data : {
-            tableData : ${tableModel}
+            tableData : ${tableModel},
+            canManageLocalPassword : ${canManageLocalPassword}
           },
           urls : {
             rootContext : "${rootContext}",
@@ -227,20 +228,40 @@
             </td>
           </tr>
 
-           <tr>
-             <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
-             <td><input type="password" id="add-user-password" size="30" /></td>
-           </tr>
-           <tr>
+
+		<%-- new user password --%>
+		
+		<c:choose>
+		<c:when test="${canManageLocalPassword}">
+		<tr>
+			<td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>             
+			<td> <input type="password" id="add-user-password" size="30" th:if="${canManageLocalPassword}"/> </td>		
+		</tr>
+		<tr>
+          	<td><!-- empty alignment td --></td>
              <td><comp:error-message forField="password" /></td>
-           </tr>
-           <tr>
-             <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
-             <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
-           </tr>
-           <tr>
-             <td><comp:error-message forField="confirmpass" /></td>
-           </tr>
+        </tr>
+        
+         <tr>
+           <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
+           <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
+         </tr>           
+          <tr>
+          	<td><!-- empty alignment td --></td>
+            <td><comp:error-message forField="confirmpass" /></td>
+          </tr>		
+		</c:when>
+		
+		<c:otherwise>
+		<tr>
+			<td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>     
+			<td> <span><f:message key="message.managedPassword"/> </span> </td>
+		</tr>
+		</c:otherwise>
+
+		</c:choose>
+		<%-- /new user password --%>
+
 
         </table>
 

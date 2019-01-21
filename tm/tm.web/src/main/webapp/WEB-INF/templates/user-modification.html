@@ -174,19 +174,20 @@
                     
                     
                     <!-- password management -->
-                    <div class="display-table-row" th:if="${canManageLocalPassword}">
-                      <label for="reset-password-button" th:text="#{label.localPassword}">Password</label>
-                      <div class="display-table-cell">
+                    <div class="display-table-row" >
+                      <label for="reset-password-button" th:text="#{label.localPassword}" class="display-table-cell">Password</label>
+                      
+                      <div class="display-table-cell" th:if="${canManageLocalPassword}">
                         <a id="reset-password-button" th:text="#{user.button.reset.password}"
-                          th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
+                          th:class="${ !user.hasAuthentication } ? 'not-displayed' : 'cursor-pointer' ">Reset</a>
                         <a id="create-auth-button" th:text="#{label.createPassword}"
-                          th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
+                          th:class="${ user.hasAuthentication } ? 'not-displayed' : 'cursor-pointer' ">Create authentication</a>
                       </div>
+                      
+                      <span th:if="${not canManageLocalPassword}" class="display-table-cell" >[[#{message.managedPassword}]]</span>
+                      
                     </div>
-                    
-                    <div th:if="${not canManageLocalPassword}" style="display:inline">
-   						<span>[[#{message.managedPassword}]]</span>
-                    </div>
+ 
                     <!-- /password management -->
                    
                     <div class="display-table-row">
