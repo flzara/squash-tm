@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.campaign.TestPlanTableModelHelper.DatasetInfos;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -42,10 +43,12 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 
 	private Locale locale;
 	private InternationalizationHelper messageSource;
+	private PermissionEvaluationService permService;
 
-	CampaignTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+	CampaignTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale, PermissionEvaluationService permService) {
 		this.messageSource = messageSource;
 		this.locale = locale;
+		this.permService = permService;
 	}
 
 
@@ -81,6 +84,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		result.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(testCase.getMilestones(), messageSource, locale));
 		result.put("tc-id", testCase.getId());
 		result.put("milestone-labels", MilestoneModelUtils.milestoneLabelsOrderByDate(testCase.getMilestones()));
+		result.put("readable", permService.canRead(testCase));
 
 		return result;
 

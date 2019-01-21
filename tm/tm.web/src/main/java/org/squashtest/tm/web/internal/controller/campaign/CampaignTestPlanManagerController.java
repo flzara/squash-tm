@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -95,6 +96,9 @@ public class CampaignTestPlanManagerController {
 	@Inject
 	protected MilestoneModelService milestoneModelService;
 
+	@Inject
+	private PermissionEvaluationService permService;
+
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 		.map("entity-index", "index(CampaignTestPlanItem)")
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
@@ -143,7 +147,7 @@ public class CampaignTestPlanManagerController {
 
 		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, sorter, filter);
 
-		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
+		return new CampaignTestPlanTableModelHelper(messageSource, locale, permService).buildDataModel(holder, params.getsEcho());
 	}
 
 
