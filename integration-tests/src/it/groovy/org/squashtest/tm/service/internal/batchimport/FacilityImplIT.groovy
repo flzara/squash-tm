@@ -659,7 +659,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 	def addDataSource() {
 		DataSourceProperties ds = Mock();
-		ds.getUrl() >> "jdbc:h2://127.0.0.1:3306/squash-tm";
+		ds.getUrl() >> "jdbc:postgresql://127.0.0.1:5432/squash-tm";
 		impl.testCaseFacility.navigationService.deletionHandler.deletionDao.dataSourceProperties = ds;
 	}
 
