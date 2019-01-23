@@ -53,8 +53,9 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Inject
 	@Lazy
 	private PasswordEncoder encoder;
-	
+
 	@Inject
+	@Lazy
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
@@ -76,7 +77,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		String encNewPasswd = encode(clearNewPassword);
 		userManager.changePassword(plainOldPassword, encNewPasswd);
 	}
-	
+
 
 	@Override
 	public boolean hasAuthenticatedUserLocalPassword() {
@@ -101,15 +102,15 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	}
 
-	
+
 
 	@Override
 	public void resetAuthenticatedUserPassword(String clearNewPassword) {
 		String login = UserContextHolder.getUsername();
 		resetUserPassword(login, clearNewPassword);
-		
+
 	}
-	
+
 	@Override
 	public void resetUserPassword(String login, String clearNewPassword) {
 		if (! canModifyUser()) {
@@ -124,7 +125,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		userManager.updateUser(updateCommand);
 
 	}
-	
+
 
 	@Override
 	public void changeUserlogin(String newLogin, String oldLogin) {

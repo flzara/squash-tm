@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.batchimport
 
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
@@ -118,6 +119,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		impl = implProvider.get()
 		impl.validator.milestonesEnabled = true;
 
+		addDataSource()
 		addMixins()
 
 		UserContextHelper.setUsername("Bob")
@@ -655,6 +657,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 	// ********************* private stuffs **********************
 
+	def addDataSource() {
+		DataSourceProperties ds = Mock();
+		ds.getUrl() >> "jdbc:h2://127.0.0.1:3306/squash-tm";
+		impl.testCaseFacility.navigationService.deletionHandler.deletionDao.dataSourceProperties = ds;
+	}
 
 	def addMixins(){
 		Collection.metaClass.mixin(CufsPredicates)

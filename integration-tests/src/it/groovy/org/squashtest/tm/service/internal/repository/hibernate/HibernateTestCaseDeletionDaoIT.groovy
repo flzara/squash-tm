@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.spockframework.util.NotThreadSafe
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.campaign.Campaign
@@ -50,6 +51,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
+		addDataSource();
 	}
 
 
@@ -298,8 +300,13 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	}
 
 
+	// ********************* private stuffs **********************
 
-
+	def addDataSource() {
+		DataSourceProperties ds = Mock();
+		ds.getUrl() >> "jdbc:h2://127.0.0.1:3306/squash-tm";
+		deletionDao.dataSourceProperties = ds;
+	}
 
 
 }
