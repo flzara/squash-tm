@@ -304,7 +304,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 	def addDataSource() {
 		DataSourceProperties ds = Mock();
-		ds.getUrl() >> "jdbc:postgresql://127.0.0.1:5432/squash-tm";
+		ds.getUrl() >> "jdbc:h2://127.0.0.1:5432/squash-tm";
 		deletionDao.dataSourceProperties = ds;
 	}
 
