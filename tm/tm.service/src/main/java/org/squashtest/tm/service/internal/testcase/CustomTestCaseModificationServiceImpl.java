@@ -1101,7 +1101,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				createRequestForTestCase(testCaseId, null);
 			}
 		}
-		List<IterationTestPlanItem> iterationTestPlanItems = iterationTestPlanFinder.findByReferencedTestCase(tc);
 		reindexItpisReferencingTestCase(tc);
 		indexationService.reindexTestCase(testCaseId);
 		return tc.getProject().isAllowAutomationWorkflow();

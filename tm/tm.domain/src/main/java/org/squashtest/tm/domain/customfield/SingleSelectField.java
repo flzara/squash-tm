@@ -189,6 +189,16 @@ public class SingleSelectField extends CustomField {
 		return null;
 	}
 
+	public String findColourOfByCode(String code) {
+
+		for (CustomFieldOption option : options) {
+			if (code.equals(option.getCode())) {
+				return option.getColour();
+			}
+		}
+		return null;
+	}
+
 	private boolean isLabelAvailable(String newlabel) {
 		return findIndexOfLabel(newlabel) == -1;
 	}

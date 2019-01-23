@@ -501,7 +501,7 @@ public class ChartDataFinder {
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 
 			for (String abs : uniqueAbscissaLabel) {
-				colours.add(cuf.findColourOf(abs));
+				colours.add(cuf.findColourOfByCode(abs));
 			}
 
 			chartSeries.setColours(colours);
