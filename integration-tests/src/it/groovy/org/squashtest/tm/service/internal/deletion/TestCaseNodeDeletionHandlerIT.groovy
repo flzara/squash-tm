@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.deletion
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
@@ -45,6 +47,9 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	private TestCaseDao tcDao;
 
 
+	def setup() {
+		addDataSource();
+	}
 
 	@DataSet("NodeDeletionHandlerTest.should not delete the test case because of a step call.xml")
 	def "should not delete the test case because of a step call"(){
@@ -175,6 +180,14 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		then :
 		tsMaxOrder == 0	//only one element, max index 0
 		itMaxOrder == 0 //only one element too because this test case was included twice
+	}
+
+	// ********************* private stuffs **********************
+
+	def addDataSource() {
+		DataSourceProperties ds = Mock();
+		ds.getUrl() >> "jdbc:h2://127.0.0.1:3306/squash-tm";
+		deletionHandler.deletionDao.dataSourceProperties = ds;
 	}
 
 }
