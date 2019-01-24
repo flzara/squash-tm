@@ -56,7 +56,7 @@ public abstract class ThirdPartyServer {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name="AUTH_POLICY")
-	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.APP_LEVEL;
+	private AuthenticationPolicy authenticationPolicy = AuthenticationPolicy.USER;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
