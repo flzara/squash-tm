@@ -40,6 +40,7 @@ import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.sql.DataSource
 
 @NotThreadSafe
 @UnitilsSupport
@@ -48,6 +49,9 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 	@Inject
 	private TestCaseDeletionDao deletionDao;
+
+	@Inject
+	DataSource dataSource;
 
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
@@ -303,8 +307,9 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	// ********************* private stuffs **********************
 
 	def addDataSource() {
+		String url = dataSource.getConnection().getMetaData().getURL();
 		DataSourceProperties ds = Mock();
-		ds.getUrl() >> "jdbc:h2://127.0.0.1:5432/squash-tm";
+		ds.getUrl() >> url;
 		deletionDao.dataSourceProperties = ds;
 	}
 

@@ -112,7 +112,7 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN = "update CAMPAIGN_TEST_PLAN_ITEM "
 			+ " set test_plan_order = test_plan_order - :offset"
-			+ " where ctpi_id in (select ctpi_id where ctpi_id in :reorderedItemIds order by test_plan_order)";
+			+ " where ctpi_id in :reorderedItemIds order by test_plan_order";
 
 	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLANFORPOSTGRESQL = "update CAMPAIGN_TEST_PLAN_ITEM "
 		+ " set test_plan_order = orderedTpi.newOrder "
@@ -151,7 +151,7 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER = " update ITEM_TEST_PLAN_LIST "
 			+ " set item_test_plan_order = item_test_plan_order - :offset "
-			+ " where item_test_plan_id in (select item_test_plan_id where item_test_plan_id in :reorderedItemIds order by item_test_plan_order)";
+			+ " where item_test_plan_id in :reorderedItemIds order by item_test_plan_order";
 
 	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDERFORPOSTGRESQL = " update ITEM_TEST_PLAN_LIST "
 		+ " set item_test_plan_order = itpl.newOrder "
@@ -170,7 +170,7 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM "
 		+ " set test_plan_order = test_plan_order - :offset "
-		+ " where tpi_id in (select tpi_id where tpi_id in :reorderedItemIds order by test_plan_order)";
+		+ " where tpi_id in :reorderedItemIds order by test_plan_order";
 
 	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDERFORPOSTGRESQL = " update TEST_SUITE_TEST_PLAN_ITEM "
 			+ " set test_plan_order = tstpi.newOrder "

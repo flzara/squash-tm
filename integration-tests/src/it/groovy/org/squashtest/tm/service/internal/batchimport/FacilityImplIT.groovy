@@ -38,6 +38,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+import javax.sql.DataSource
 
 import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
 import static org.squashtest.tm.service.importer.ImportStatus.WARNING
@@ -106,6 +107,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 	@Inject
 	Provider<FacilityImpl> implProvider
+
+	@Inject
+	private DataSource dataSource
 
 
 	SimulationFacility simulator
@@ -658,8 +662,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	// ********************* private stuffs **********************
 
 	def addDataSource() {
+		String url = dataSource.getConnection().getMetaData().getURL();
 		DataSourceProperties ds = Mock();
-		ds.getUrl() >> "jdbc:h2://127.0.0.1:5432/squash-tm";
+		ds.getUrl() >> url
 		impl.testCaseFacility.navigationService.deletionHandler.deletionDao.dataSourceProperties = ds;
 	}
 

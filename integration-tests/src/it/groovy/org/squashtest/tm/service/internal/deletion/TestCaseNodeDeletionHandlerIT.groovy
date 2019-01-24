@@ -32,6 +32,7 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.sql.DataSource
 
 @UnitilsSupport
 @Transactional
@@ -45,6 +46,9 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseDao tcDao;
+
+	@Inject
+	private DataSource dataSource
 
 
 	def setup() {
@@ -185,8 +189,9 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	// ********************* private stuffs **********************
 
 	def addDataSource() {
+		String url = dataSource.getConnection().getMetaData().getURL();
 		DataSourceProperties ds = Mock();
-		ds.getUrl() >> "jdbc:h2://127.0.0.1:5432/squash-tm";
+		ds.getUrl() >> url
 		deletionHandler.deletionDao.dataSourceProperties = ds;
 	}
 
