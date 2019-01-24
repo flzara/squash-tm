@@ -328,24 +328,25 @@ class TupleProcessor {
 		// hence the axis.size()-1
 		int lastIndex = axis.size() -1;
 
-
-		List<String> entryCodes = abscissa.stream().map(entry -> entry[lastIndex].toString()).distinct().collect(Collectors.toList());
+		// Note : here we enforce the stream ordering with .sequential to ensure the order is preserved
+		List<String> axisValues = abscissa.stream().sequential().map(entry -> entry[lastIndex].toString()).distinct().collect(Collectors.toList());
 
 		AxisColumn lastAxis = axis.get(lastIndex);
 		switch(lastAxis.getDataType()){
 
 			case LIST :
+				// Note : here the attributeValues are the labels of the selected CustomFieldOption
 				SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(lastAxis.getCufId());
-				colours = entryCodes.stream().map(cuf::findColourOf).collect(Collectors.toList());
+				colours = axisValues.stream().sequential().map(cuf::findColourOf).collect(Collectors.toList());
 				break;
 
 
 			case INFO_LIST_ITEM:
+				
+				// Note : here the attributeValues are the codes of the selected InfoListItem
+				List<InfoListItem> items = infoListItemDao.findByCodeIn(axisValues);
 
-				List<InfoListItem> items = infoListItemDao.findByCodeIn(entryCodes);
-
-				// we need to keep the colours in the same order as the uniqueAbscissaLabel, that's how jqplot works
-				for (String code : entryCodes) {
+				for (String code : axisValues) {
 					for (InfoListItem item : items){
 						if (item.getCode().equals(code)){
 							colours.add(item.getColour());
