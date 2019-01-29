@@ -32,6 +32,8 @@ import org.squashtest.tm.service.internal.dto.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVConstants.*;
+
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 /*
@@ -332,78 +334,78 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 		List<CellImpl> headerCells = new ArrayList<>(nbColumns);
 
 		// campaign fixed fields (4)
-		headerCells.add(new CellImpl("CPG_SCHEDULED_START_ON"));
-		headerCells.add(new CellImpl("CPG_SCHEDULED_END_ON"));
-		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
-		headerCells.add(new CellImpl("CPG_ACTUAL_END_ON"));
+		headerCells.add(new CellImpl(HEADER_CPG_SCHEDULED_START_ON));
+		headerCells.add(new CellImpl(HEADER_CPG_SCHEDULED_END_ON));
+		headerCells.add(new CellImpl(HEADER_CPG_ACTUAL_START_ON));
+		headerCells.add(new CellImpl(HEADER_CPG_ACTUAL_END_ON));
 
 		// iteration fixed fields (7)
-		headerCells.add(new CellImpl("IT_ID"));
-		headerCells.add(new CellImpl("IT_NUM"));
-		headerCells.add(new CellImpl("IT_NAME"));
+		headerCells.add(new CellImpl(HEADER_IT_ID));
+		headerCells.add(new CellImpl(HEADER_IT_NUM));
+		headerCells.add(new CellImpl(HEADER_IT_NAME));
 		if (milestonesEnabled) {
-			headerCells.add(new CellImpl("IT_MILESTONE"));
+			headerCells.add(new CellImpl(HEADER_IT_MILESTONE));
 		}
-		headerCells.add(new CellImpl("IT_SCHEDULED_START_ON"));
-		headerCells.add(new CellImpl("IT_SCHEDULED_END_ON"));
-		headerCells.add(new CellImpl("IT_ACTUAL_START_ON"));
-		headerCells.add(new CellImpl("IT_ACTUAL_END_ON"));
+		headerCells.add(new CellImpl(HEADER_IT_SCHEDULED_START_ON));
+		headerCells.add(new CellImpl(HEADER_IT_SCHEDULED_END_ON));
+		headerCells.add(new CellImpl(HEADER_IT_ACTUAL_START_ON));
+		headerCells.add(new CellImpl(HEADER_IT_ACTUAL_END_ON));
 
 		// test case fixed fields (17)
-		headerCells.add(new CellImpl("TC_ID"));
-		headerCells.add(new CellImpl("TC_NAME"));
-		headerCells.add(new CellImpl("TC_PROJECT_ID"));
-		headerCells.add(new CellImpl("TC_PROJECT"));
+		headerCells.add(new CellImpl(HEADER_TC_ID));
+		headerCells.add(new CellImpl(HEADER_TC_NAME));
+		headerCells.add(new CellImpl(HEADER_TC_PROJECT_ID));
+		headerCells.add(new CellImpl(HEADER_TC_PROJECT));
 		if (milestonesEnabled) {
-			headerCells.add(new CellImpl("TC_MILESTONE"));
+			headerCells.add(new CellImpl(HEADER_TC_MILESTONE));
 		}
-		headerCells.add(new CellImpl("TC_WEIGHT"));
-		headerCells.add(new CellImpl("TEST_SUITE"));
-		headerCells.add(new CellImpl("#_EXECUTIONS"));
-		headerCells.add(new CellImpl("#_REQUIREMENTS"));
-		headerCells.add(new CellImpl("#_ISSUES"));
-		headerCells.add(new CellImpl("DATASET"));
-		headerCells.add(new CellImpl("EXEC_STATUS"));
-		headerCells.add(new CellImpl("EXEC_USER"));
-		headerCells.add(new CellImpl("EXECUTION_DATE"));
-		headerCells.add(new CellImpl("TC_REF"));
-		headerCells.add(new CellImpl("TC_NATURE"));
-		headerCells.add(new CellImpl("TC_TYPE"));
-		headerCells.add(new CellImpl("TC_STATUS"));
+		headerCells.add(new CellImpl(HEADER_TC_WEIGHT));
+		headerCells.add(new CellImpl(HEADER_TEST_SUITE));
+		headerCells.add(new CellImpl(HEADER_HASH_EXECUTIONS));
+		headerCells.add(new CellImpl(HEADER_HASH_REQUIREMENTS));
+		headerCells.add(new CellImpl(HEADER_HASH_ISSUES));
+		headerCells.add(new CellImpl(HEADER_DATASET));
+		headerCells.add(new CellImpl(HEADER_EXEC_STATUS));
+		headerCells.add(new CellImpl(HEADER_EXEC_USER));
+		headerCells.add(new CellImpl(HEADER_EXECUTION_DATE));
+		headerCells.add(new CellImpl(HEADER_TC_REF));
+		headerCells.add(new CellImpl(HEADER_TC_NATURE));
+		headerCells.add(new CellImpl(HEADER_TC_TYPE));
+		headerCells.add(new CellImpl(HEADER_TC_STATUS));
 
 		// test step fixed fields (8)
-		headerCells.add(new CellImpl("STEP_ID"));
-		headerCells.add(new CellImpl("STEP_NUM"));
-		headerCells.add(new CellImpl("STEP_#_REQ"));
-		headerCells.add(new CellImpl("EXEC_STEP_STATUS"));
-		headerCells.add(new CellImpl("EXEC_STEP_DATE"));
-		headerCells.add(new CellImpl("EXEC_STEP_USER"));
-		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
-		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));
+		headerCells.add(new CellImpl(HEADER_STEP_ID));
+		headerCells.add(new CellImpl(HEADER_STEP_NUM));
+		headerCells.add(new CellImpl(HEADER_STEP_REQ));
+		headerCells.add(new CellImpl(HEADER_EXEC_STEP_STATUS));
+		headerCells.add(new CellImpl(HEADER_EXEC_STEP_DATE));
+		headerCells.add(new CellImpl(HEADER_EXEC_STEP_USER));
+		headerCells.add(new CellImpl(HEADER_EXEC_STEP_ISSUES));
+		headerCells.add(new CellImpl(HEADER_EXEC_STEP_COMMENT));
 
 		// campaign custom fields
 		for (CustomFieldDto cufModel : campCUFModel) {
-			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
+			headerCells.add(new CellImpl(HEADER_CPG_CUF_ + cufModel.getCode()));
 		}
 
 		// iteration custom fields
 		for (CustomFieldDto cufModel : iterCUFModel) {
-			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
+			headerCells.add(new CellImpl(HEADER_IT_CUF_ + cufModel.getCode()));
 		}
 
 		// test case custom fields
 		for (CustomFieldDto cufModel : tcCUFModel) {
-			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
+			headerCells.add(new CellImpl(HEADER_TC_CUF_ + cufModel.getCode()));
 		}
 
 		// execution custom fields
 		for (CustomFieldDto cufModel : execCUFModel) {
-			headerCells.add(new CellImpl("EXEC_CUF_" + cufModel.getCode()));
+			headerCells.add(new CellImpl(HEADER_EXEC_CUF_ + cufModel.getCode()));
 		}
 
 		// execution steps custom fields
 		for (CustomFieldDto cufModel : esCUFModel) {
-			headerCells.add(new CellImpl("STEP_CUF_" + cufModel.getCode()));
+			headerCells.add(new CellImpl(HEADER_STEP_CUF + cufModel.getCode()));
 		}
 
 		return new RowImpl(headerCells, separator);
