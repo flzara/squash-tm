@@ -241,6 +241,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_AUTOMATABLE, ReflectionFieldSetter.forOptionalField("automatable"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_DESCRIPTION,
 			ReflectionFieldSetter.forOptionalField(DESCRIPTION));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE,

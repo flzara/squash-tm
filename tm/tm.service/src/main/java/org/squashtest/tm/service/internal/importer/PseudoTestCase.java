@@ -28,11 +28,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 
 /**
  * Factored out from {@link ExcelTestCaseParserImpl}
@@ -45,6 +41,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	private String createdBy = null;
 	private String createdOn = null;
 
+	private String automatable = "";
 	private String importance = "";
 	private String nature = "";
 	private String type = "";
@@ -163,6 +160,10 @@ import org.squashtest.tm.domain.testcase.TestStep;
 		return TestCaseStatus.valueOf(status);
 	}
 
+	public TestCaseAutomatable formatAutomatable() {
+		return TestCaseAutomatable.valueOf(automatable);
+	}
+
 	public String formatPreRequisites() {
 		StringBuilder builder = new StringBuilder();
 
@@ -230,10 +231,17 @@ import org.squashtest.tm.domain.testcase.TestStep;
 		this.importance = importance;
 	}
 
+	public String getAutomatable() {
+		return automatable;
+	}
+
+	public void setAutomatable(String automatable) {
+		this.automatable = automatable;
+	}
+
 	public String getNature() {
 		return nature;
 	}
-
 
 	public void setNature(String nature) {
 		this.nature = nature;

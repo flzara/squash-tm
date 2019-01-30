@@ -137,7 +137,8 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
 		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
-		TestCaseSheetColumn.TC_SCRIPT
+		TestCaseSheetColumn.TC_SCRIPT,
+		TestCaseSheetColumn.TC_AUTOMATABLE
 	};
 
 	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
@@ -263,6 +264,8 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
 				cIdx = appendScriptedTestCaseExtender(r, cIdx, tcm);
+
+				r.createCell(cIdx++).setCellValue(tcm.getAutomatable().name());
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
 				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);

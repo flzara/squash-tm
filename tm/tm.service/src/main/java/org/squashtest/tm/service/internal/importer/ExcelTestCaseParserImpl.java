@@ -37,10 +37,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.SheetCorruptedException;
 
 /*
@@ -156,12 +153,20 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			}
 		});
 
-		// type populator
+		// status populator
 		fieldPopulators.add(new FieldPopulator(STATUS_TAG) {
 			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setStatus(value);
+			}
+		});
+		// automatable populator
+		fieldPopulators.add(new FieldPopulator(AUTOMATABLE_TAG) {
+			@Override
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.setAutomatable(value);
 			}
 		});
 
@@ -178,7 +183,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				Cell cell = valueCell(row);
-				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType() || 
+				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType() ||
 						Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
 					// When a cell is numeric or formula, we read it as a Date (which is legal for excel)
 					Date value = valueCell(row).getDateCellValue();
@@ -197,6 +202,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.getPrerequisites().add(value);
 			}
 		});
+
 		// action step populator
 		fieldPopulators.add(new FieldPopulator(ACTION_STEP_TAG) {
 			@Override
@@ -296,6 +302,8 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		setTestCaseStatus(pseudoTestCase, summary, testCase);
 
+		setTestCaseAutomatable(pseudoTestCase, summary, testCase);
+
 		setTestCaseSteps(pseudoTestCase, testCase);
 
 		return testCase;
@@ -338,6 +346,19 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			LOGGER.warn(ex.getMessage());
 			summary.incrModified();
 			testCase.setStatus(TestCaseStatus.defaultValue());
+		}
+	}
+
+	private void setTestCaseAutomatable(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
+		try {
+			TestCaseAutomatable automatable = pseudoTestCase.formatAutomatable();
+			testCase.setAutomatable(automatable);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setAutomatable(TestCaseAutomatable.defaultValue());
 		}
 	}
 
