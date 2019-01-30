@@ -24,10 +24,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.batchimport.excel.*;
 import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.ListRole;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
@@ -164,6 +161,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_NATURE));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_TYPE));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_AUTOMATABLE, OptionalEnumCellCoercer.forEnum(TestCaseAutomatable.class));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_MILESTONE, OptionalStringArrayCellCoercer.INSTANCE);
 

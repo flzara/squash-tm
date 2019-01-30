@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.SheetCorruptedException;
 
 interface ExcelTestCaseParser {
-	
+
 
 	String DESCRIPTION_TAG = "Description";
 	String IMPORTANCE_TAG = "Importance";
@@ -38,10 +38,11 @@ interface ExcelTestCaseParser {
 	String CREATED_BY_TAG = "Created_by";
 	String PREREQUISITE_TAG = "Prerequisite";
 	String ACTION_STEP_TAG = "Action_step";
+	String AUTOMATABLE_TAG = "Automatable";
 
 	TestCase parseFile(Workbook workbook, ImportSummaryImpl summary) throws SheetCorruptedException;
-	
+
 	TestCase parseFile(InputStream stream, ImportSummaryImpl summary) throws SheetCorruptedException;
-	
+
 	String stripFileExtension(String fullName);
 }
