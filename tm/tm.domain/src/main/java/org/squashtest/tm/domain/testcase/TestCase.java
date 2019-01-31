@@ -195,6 +195,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private AutomationRequest automationRequest;
 
+	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	@SortableField
@@ -950,7 +951,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return automatable;
 	}
 
-	public void setAutomatable(TestCaseAutomatable automatable) {
+	public void setAutomatable(@NotNull TestCaseAutomatable automatable) {
 		this.automatable = automatable;
 	}
 }
