@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -321,6 +322,12 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		if (newStatus != null && orig.getStatus() != newStatus) {
 			testcaseModificationService.changeStatus(origId, newStatus);
 		}
+
+		// WARNING : automation request is not created in import yet, so don't need to update for now
+/*		TestCaseAutomatable newAutomatable = testCase.getAutomatable();
+		if (newAutomatable != null && orig.getAutomatable() != newAutomatable) {
+			testcaseModificationService.changeAutomatable(newAutomatable, origId);
+		}*/
 
 		Boolean newImportanceAuto = testCase.isImportanceAuto();
 		if (orig.isImportanceAuto().equals(newImportanceAuto)) {

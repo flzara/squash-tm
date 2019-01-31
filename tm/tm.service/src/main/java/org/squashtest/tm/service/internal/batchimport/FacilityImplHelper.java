@@ -29,12 +29,7 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.*;
 
 final class FacilityImplHelper {
 
@@ -78,12 +73,17 @@ final class FacilityImplHelper {
 		}
 
 		if (testCase.getImportance() == null) {
-			testCase.setImportance(TestCaseImportance.LOW);
+			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
 
 		if (testCase.getStatus() == null) {
-			testCase.setStatus(TestCaseStatus.WORK_IN_PROGRESS);
+			testCase.setStatus(TestCaseStatus.defaultValue());
 		}
+
+		// WARNING : automation request is not created in import yet, so always set Default Value
+		//if (testCase.getAutomatable() == null) {
+		testCase.setAutomatable(TestCaseAutomatable.defaultValue());
+		//}
 
 		if (testCase.isImportanceAuto() == null) {
 			testCase.setImportanceAuto(Boolean.FALSE);

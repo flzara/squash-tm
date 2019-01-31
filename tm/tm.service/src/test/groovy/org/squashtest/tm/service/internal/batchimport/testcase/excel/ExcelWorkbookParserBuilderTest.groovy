@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 
-import org.apache.commons.io.IOCase;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

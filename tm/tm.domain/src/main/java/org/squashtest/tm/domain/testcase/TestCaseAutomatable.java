@@ -43,7 +43,7 @@ public enum TestCaseAutomatable implements Internationalizable, Level {
 	}
 
 	public static TestCaseAutomatable defaultValue() {
-		return N;
+		return M;
 	}
 
 	@Override
