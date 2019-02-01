@@ -65,9 +65,6 @@ public class AutomationWorkspaceController {
 	private AutomationRequestFinderService automationRequestFinderService;
 
 	@Inject
-	private UserManagerService userManagerService;
-
-	@Inject
 	private InternationalizationHelper messageSource;
 
 	@Inject

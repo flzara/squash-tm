@@ -86,9 +86,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
-	private MessageSource messageSource;
-
-	@Inject
 	private ApplicationEventPublisher eventPublisher;
 
 	@Inject
