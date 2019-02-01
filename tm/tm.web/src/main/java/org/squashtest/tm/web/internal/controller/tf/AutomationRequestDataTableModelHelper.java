@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
-import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 
 @Component
