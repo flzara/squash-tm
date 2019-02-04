@@ -470,6 +470,7 @@
 	+ "where tc.id in (:testCaseIds)"),
 	@NamedQuery(name = "dataset.findTestCasesThatInheritParameters", query="select distinct caller.id from TestCase caller inner join caller.steps steps inner join steps.calledTestCase src " +
 	"where steps.class = CallTestStep and steps.delegateParameterValues=true and src.id in (:srcIds)"),
+	@NamedQuery(name = "Dataset.findByTestCaseIdAndNameWithDatasetParamValues", query="select dataset from Dataset as dataset join dataset.testCase testCase inner join fetch dataset.parameterValues as paramvalue inner join fetch paramvalue.parameter where testCase.id = :testCaseId and dataset.name = :name"),
 
 	//CampaignTestPlanItem
 	@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query = "select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),

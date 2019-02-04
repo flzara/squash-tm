@@ -91,4 +91,13 @@ public class DatasetDaoImpl implements CustomDatasetDao {
 		query2.setParameter("datasetId", datasetId);
 		query2.executeUpdate();
 	}
+
+	@Override
+	public Dataset findByTestCaseIdAndNameWithDatasetParamValues(Long testCaseId, String name) {
+		Query query = em.createNamedQuery("Dataset.findByTestCaseIdAndNameWithDatasetParamValues");
+		query.setParameter("testCaseId", testCaseId);
+		query.setParameter("name", name);
+		return (Dataset) query.getSingleResult();
+
+	}
 }

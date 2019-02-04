@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -55,6 +56,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
@@ -112,6 +114,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private ExecutionDao executionDao;
+
+	@Inject
+	private DatasetDao datasetDao;
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinder;
@@ -419,11 +424,18 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		Collection<CustomFieldValue> testSuiteFields = customFieldValueFinder.findAllCustomFieldValues(execution
 			.getTestPlan().getTestSuites());
 
+		Dataset dataset = null;
+
+		if(execution.getDatasetLabel() != null && !execution.getDatasetLabel().isEmpty()){
+			 dataset = datasetDao.findByTestCaseIdAndNameWithDatasetParamValues(execution.getReferencedTestCase().getId(), execution.getDatasetLabel());
+		}
+
 		Map<String, Object> params = paramBuilder.get().testCase().addEntity(
 			execution.getReferencedTestCase()).addCustomFields(tcFields).
 			iteration().addCustomFields(iterFields).
 			campaign().addCustomFields(campFields).
-			testSuite().addCustomFields(testSuiteFields)
+			testSuite().addCustomFields(testSuiteFields).
+			dataset().addEntity(dataset)
 			.build();
 
 		return new Couple<>(extender, params);

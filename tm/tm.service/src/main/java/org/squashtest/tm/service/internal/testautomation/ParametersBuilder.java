@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.testautomation;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Map;
@@ -73,6 +74,13 @@ public interface ParametersBuilder {
 	 * @return
 	 */
 	ScopedParametersBuilder<TestSuite> testSuite();
+
+	/**
+	 * opens the dataset scope
+	 *
+	 * @return
+	 */
+	ScopedParametersBuilder<Dataset> dataset();
 
 	/**
 	 * builds the parameter map

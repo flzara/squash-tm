@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;
@@ -77,7 +78,13 @@ public class TaParametersBuilder implements ParametersBuilder {
 			return TaParametersBuilder.this.testSuite();
 		}
 
-
+		/**
+		 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#dataset()
+		 */
+		@Override
+		public ScopedParametersBuilder<Dataset> dataset() {
+			return TaParametersBuilder.this.dataset();
+		}
 
 
 		/**
@@ -166,6 +173,21 @@ public class TaParametersBuilder implements ParametersBuilder {
 		}
 	};
 
+	private ScopedParametersBuilder<Dataset> datasetScopeBuilder = new ChildScopedParametersBuilder<Dataset>() {
+
+		@Override
+		protected void doAddEntity(Dataset entity) {
+			if(entity != null){
+				addDataset(entity);
+			}
+		}
+
+		@Override
+		protected String getCustomFieldPrefix() {
+			return null;
+		}
+	};
+
 
 	private Map<String, Object> params = new HashMap<>();
 
@@ -202,6 +224,14 @@ public class TaParametersBuilder implements ParametersBuilder {
 	}
 
 	/**
+	 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#dataset()
+	 */
+	@Override
+	public ScopedParametersBuilder<Dataset> dataset() {
+		return datasetScopeBuilder;
+	}
+
+	/**
 	 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#build()
 	 */
 	@Override
@@ -209,6 +239,25 @@ public class TaParametersBuilder implements ParametersBuilder {
 		Map<String, Object> res = params;
 		params = Collections.unmodifiableMap(res);
 		return res;
+	}
+
+	/**
+	 * Given a {@link Dataset}, add dataset name and dataset's parameters to build params. If a dataset's parameter value is empty, the parameter is not added.
+	 * @param dataset : the dataset to add
+	 */
+	private void addDataset(Dataset dataset){
+		if(dataset != null){
+			String datasetName = dataset.getName();
+			params.put("DSNAME", datasetName);
+
+			dataset.getParameterValues().forEach(paramValue ->{
+				String parameterName = paramValue.getParameter().getName();
+				String value = paramValue.getParamValue();
+				if (!value.isEmpty()){
+					params.put(String.format("DS_%s", parameterName), value);
+				}
+			});
+		}
 	}
 
 	private void addTestCase(TestCase testCase) {

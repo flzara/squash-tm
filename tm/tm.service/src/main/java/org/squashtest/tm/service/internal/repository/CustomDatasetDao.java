@@ -54,4 +54,14 @@ public interface CustomDatasetDao {
 	 * @param datasetId
 	 */
 	void removeDatasetFromTestPlanItems(Long datasetId);
+
+	/**
+	 * Will return the {@link Dataset} with the given name and linked to the {@link org.squashtest.tm.domain.testcase.TestCase}
+	 * with the given {@link org.squashtest.tm.domain.testcase.TestCase} id.
+	 *
+	 * @param testCaseId :  id of a {@link org.squashtest.tm.domain.testcase.TestCase}
+	 * @param name : name of the {@link Dataset} looked for.
+	 * @return the {@link Dataset} with the given name linked to the given {@link org.squashtest.tm.domain.testcase.TestCase}
+	 */
+	Dataset findByTestCaseIdAndNameWithDatasetParamValues(Long testCaseId, String name);
 }
