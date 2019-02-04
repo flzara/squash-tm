@@ -268,7 +268,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                         });
                         self.changeNumberSelectedRows(self.selected);
-                    },
+                    }
                 };
 
                 var $table = $("#automation-table");
