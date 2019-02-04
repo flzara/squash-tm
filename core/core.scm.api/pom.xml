@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-core</artifactId>
-    <version>1.20.0.IT1-SNAPSHOT</version>
+    <version>1.20.0.IT1</version>
   </parent>
 
   <artifactId>core.scm.api</artifactId>
