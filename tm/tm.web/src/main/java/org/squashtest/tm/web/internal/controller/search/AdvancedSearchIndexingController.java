@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+
+import javax.inject.Inject;
 //XSS ok blfessel
 @Controller
 @RequestMapping("advanced-search")

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Cell;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
+
+import java.util.List;
 
 /**
  * Factored out of WhateverCampaignCSVModelImplImpl

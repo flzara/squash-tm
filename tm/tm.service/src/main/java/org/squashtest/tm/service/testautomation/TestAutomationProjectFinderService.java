@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Map;
-
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.spi.AccessDenied;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
 
 public interface TestAutomationProjectFinderService {
 

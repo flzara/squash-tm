@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.exception.requirement.link;
 
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-
 /**
  * Exception for Requirement Versions that are already linked together.
  * @author jlor

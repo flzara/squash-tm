@@ -27,7 +27,11 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 // XSS OK
 public class RequirementVerifierView {

@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.library.Folder;
@@ -33,6 +28,11 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.FolderDao;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *

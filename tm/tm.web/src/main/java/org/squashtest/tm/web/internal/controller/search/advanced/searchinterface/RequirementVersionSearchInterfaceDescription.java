@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -43,6 +32,16 @@ import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerServ
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
 public class RequirementVersionSearchInterfaceDescription extends SearchInterfaceDescription {

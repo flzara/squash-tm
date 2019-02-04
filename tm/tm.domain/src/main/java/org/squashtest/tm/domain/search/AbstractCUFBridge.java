@@ -27,13 +27,14 @@ import org.apache.lucene.document.Field;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.hibernate.search.bridge.ParameterizedBridge;
 import org.hibernate.search.bridge.builtin.NumericEncodingDateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

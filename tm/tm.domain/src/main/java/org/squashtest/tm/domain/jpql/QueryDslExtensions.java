@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.domain.jpql;
 
-import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
-
 import com.querydsl.core.annotations.QueryDelegate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
 
 
 /**

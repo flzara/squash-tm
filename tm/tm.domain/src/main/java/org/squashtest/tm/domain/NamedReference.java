@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.domain;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * This can b used as a reference or summary of any entity which has a name.

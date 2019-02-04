@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import com.querydsl.core.types.dsl.EntityPathBase;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.QIssue;
@@ -30,8 +31,6 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -54,8 +53,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.User;
-
-import com.querydsl.core.types.dsl.EntityPathBase;
 
 
 /**

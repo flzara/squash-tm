@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +27,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.exception.DomainException;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 @ControllerAdvice

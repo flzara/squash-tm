@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.project;
 
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
 public interface ProjectsPermissionManagementService extends ProjectsPermissionFinder {

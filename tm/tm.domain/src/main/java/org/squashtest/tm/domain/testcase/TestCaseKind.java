@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestCaseKind implements Internationalizable {

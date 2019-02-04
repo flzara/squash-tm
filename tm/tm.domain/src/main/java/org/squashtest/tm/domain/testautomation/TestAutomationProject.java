@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.domain.testautomation;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,11 +36,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @NamedQueries({
 	@NamedQuery(name = "testAutomationProject.findHostedProjectIds", query = "select project.id from TestAutomationProject project where project.server.id = :serverId"),

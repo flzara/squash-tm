@@ -20,31 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.hibernate.Session;
-import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -77,6 +55,25 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @Component
 @Scope("prototype")

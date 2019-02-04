@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public interface RequirementDao extends EntityDao<Requirement> {
 

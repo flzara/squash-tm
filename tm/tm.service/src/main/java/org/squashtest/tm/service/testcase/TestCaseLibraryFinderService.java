@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet

@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
@@ -32,6 +28,10 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolder> implements CampaignFolderDao {

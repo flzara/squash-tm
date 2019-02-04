@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.milestone;
 
+import org.squashtest.tm.domain.milestone.Milestone;
+
 import java.util.Collection;
 import java.util.List;
-
-import org.squashtest.tm.domain.milestone.Milestone;
 
 
 public interface MilestoneMembershipFinder {

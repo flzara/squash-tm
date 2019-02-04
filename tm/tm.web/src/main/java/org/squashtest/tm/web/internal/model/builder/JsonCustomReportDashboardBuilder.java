@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.report.Report;
@@ -48,10 +40,17 @@ import org.squashtest.tm.web.internal.helper.ReportHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.i18n.MessageObject;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
-import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportReportBinding;
 import org.squashtest.tm.web.internal.report.IdentifiedReportDecorator;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
+
+import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Component("customReport.dashboardBuilder")
 @Scope("prototype")

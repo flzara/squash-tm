@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import javax.validation.constraints.NotNull;
-
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.validation.constraints.NotNull;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * Requirement Version mangement related services.

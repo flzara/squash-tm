@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+
+import java.util.List;
 
 /**
  * Defines a DAO for {@link Library} entities.

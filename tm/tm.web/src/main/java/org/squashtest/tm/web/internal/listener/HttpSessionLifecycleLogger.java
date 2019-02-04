@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HttpSessionLifecycleLogger implements HttpSessionListener, ServletRequestListener {
 

@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.attachment;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 public interface AttachmentManagerService extends AttachmentFinderService {
 	/**

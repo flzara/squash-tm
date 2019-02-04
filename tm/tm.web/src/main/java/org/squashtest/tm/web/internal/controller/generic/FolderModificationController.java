@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +37,12 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 

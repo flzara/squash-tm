@@ -32,7 +32,10 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;

@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 public class ChartDefinitionDaoImpl implements CustomChartDefinitionDao{
 

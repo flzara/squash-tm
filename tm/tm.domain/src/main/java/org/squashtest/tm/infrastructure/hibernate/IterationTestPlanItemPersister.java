@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.infrastructure.hibernate;
 
-import java.util.Iterator;
-
 import org.hibernate.HibernateException;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
@@ -32,6 +30,8 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Table;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.persister.spi.PersisterCreationContext;
+
+import java.util.Iterator;
 
 /*
     ABOUT SONAR : it says this class has been copypasted from TestStepPersister,

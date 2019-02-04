@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 import java.util.function.Function;

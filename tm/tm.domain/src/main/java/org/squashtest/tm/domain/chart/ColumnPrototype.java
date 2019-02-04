@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.EnumSet;
-import java.util.Set;
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -37,12 +38,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import javax.validation.constraints.Size;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * <p>Represents the concept of "attribute of an entity" :

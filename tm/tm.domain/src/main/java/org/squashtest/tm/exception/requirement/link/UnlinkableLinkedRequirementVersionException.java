@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.exception.requirement.link;
 
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
-
-import javax.persistence.Transient;
-
 /**
  * General Exception for Requirement Versions that can't be linked.
  * @author jlor

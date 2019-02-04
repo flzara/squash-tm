@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
+
+import java.util.List;
 
 public interface IssueDetector {
 

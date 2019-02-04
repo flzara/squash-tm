@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.domain.search;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
 import org.apache.lucene.document.Document;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,13 +27,15 @@ import org.hibernate.Transaction;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.squashtest.tm.domain.Identified;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 @Configurable
 public abstract class SessionFieldBridge implements FieldBridge {

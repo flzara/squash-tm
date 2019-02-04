@@ -23,7 +23,11 @@ package org.squashtest.tm.domain.event;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.project.ProjectTemplate;
+
+import java.util.List;
 
 /**
  * @author mpagnon

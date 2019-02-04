@@ -22,7 +22,6 @@ package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 

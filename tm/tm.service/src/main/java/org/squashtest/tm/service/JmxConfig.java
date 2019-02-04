@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jmx.export.MBeanExporter;
 import org.squashtest.tm.service.internal.logging.Log4jLoggerLevelModifier;
+
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

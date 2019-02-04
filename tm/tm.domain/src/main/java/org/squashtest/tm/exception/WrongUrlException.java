@@ -27,10 +27,7 @@ package org.squashtest.tm.exception;
  */
 public class WrongUrlException extends DomainException {
 
-	/**
-	 * TODO my eclipse coudn't thanks - mpagnon
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -849494043679995924L;
 
 	private static final String KEY = "squashtm.domain.exception.wong.url";
 	private Object[] i18nParams = new Object[2];

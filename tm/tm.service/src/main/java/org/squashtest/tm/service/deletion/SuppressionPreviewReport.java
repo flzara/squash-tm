@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.deletion;
 
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 
 /**

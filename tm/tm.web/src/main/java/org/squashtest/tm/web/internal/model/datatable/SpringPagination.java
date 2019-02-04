@@ -25,14 +25,15 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

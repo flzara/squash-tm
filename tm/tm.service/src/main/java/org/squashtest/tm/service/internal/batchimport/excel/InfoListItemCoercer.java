@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class InfoListItemCoercer<T extends InfoListItem>
 extends TypeBasedCellValueCoercer<T >

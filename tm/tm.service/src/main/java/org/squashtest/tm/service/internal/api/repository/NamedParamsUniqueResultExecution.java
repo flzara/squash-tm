@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.api.repository;
 
-import java.util.Map;
-
 import org.hibernate.Query;
+
+import java.util.Map;
 
 /**
  * Execution of a query which uses named parameters and returns a singler row.

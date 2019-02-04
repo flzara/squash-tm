@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class CustomReportLibraryMixin {

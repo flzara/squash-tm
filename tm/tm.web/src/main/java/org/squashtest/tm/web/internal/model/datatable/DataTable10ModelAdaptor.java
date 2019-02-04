@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet

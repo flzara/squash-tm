@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.poi.ss.usermodel.Cell;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Interface for an object which coerces a {@link Cell} into a value of VAL type

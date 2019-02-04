@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.domain.jpql;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.DoubleType;
@@ -30,6 +27,10 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 // TODO : move in there the group concat functions, and maybe share them with QueryDSL ?

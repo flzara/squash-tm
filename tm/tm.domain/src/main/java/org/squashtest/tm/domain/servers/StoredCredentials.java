@@ -21,17 +21,20 @@
 package org.squashtest.tm.domain.servers;
 
 import org.hibernate.annotations.Type;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.users.User;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import static javax.persistence.EnumType.STRING;
-
-import java.util.Set;
 
 
 /**

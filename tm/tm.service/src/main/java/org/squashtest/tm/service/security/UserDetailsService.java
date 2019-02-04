@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.security;
 
-import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.NotNull;
-
-import org.springframework.security.core.GrantedAuthority;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet

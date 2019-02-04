@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -37,6 +33,10 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 @Scope("prototype")

@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -32,6 +28,9 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 /**

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+
+import java.util.List;
 
 /**
  *

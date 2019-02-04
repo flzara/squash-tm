@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.infolist;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.infolist.InfoListBindingManagerService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
+
+import javax.inject.Inject;
 
 //XSS OK
 @Controller

@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.spring;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.PrioritizedParameterNameDiscoverer;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This {@link ParameterNameDiscoverer} holds an ordererd collection of {@link ParameterNameDiscoverer}. It delegates to

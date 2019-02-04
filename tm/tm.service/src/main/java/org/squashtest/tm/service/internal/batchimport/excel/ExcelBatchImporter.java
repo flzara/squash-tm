@@ -21,13 +21,15 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.service.internal.batchimport.*;
+import org.squashtest.tm.service.internal.batchimport.Facility;
+import org.squashtest.tm.service.internal.batchimport.FacilityImpl;
+import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.LogTrain;
+import org.squashtest.tm.service.internal.batchimport.SimulationFacility;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 import javax.inject.Inject;

@@ -20,20 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.jooq.DSLContext;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 
 
 public class ProjectDaoImpl extends HibernateEntityDao<Project> implements CustomProjectDao {

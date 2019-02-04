@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 public class RequirementVersionInstruction extends Instruction<RequirementVersionTarget> implements CustomFieldHolder, Milestoned {
 

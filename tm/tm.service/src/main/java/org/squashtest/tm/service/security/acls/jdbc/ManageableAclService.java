@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.ObjectIdentity;
+
+import javax.validation.constraints.NotNull;
 
 public interface ManageableAclService {
 

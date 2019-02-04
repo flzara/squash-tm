@@ -23,7 +23,12 @@ package org.squashtest.tm.domain.customfield;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

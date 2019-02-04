@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ParameterNamesFinder implements TestStepVisitor{
 	

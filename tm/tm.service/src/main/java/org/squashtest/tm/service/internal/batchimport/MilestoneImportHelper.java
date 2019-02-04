@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Helper which can be used by importers to process milestones

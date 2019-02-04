@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**

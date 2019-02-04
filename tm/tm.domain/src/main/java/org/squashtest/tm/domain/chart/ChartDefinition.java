@@ -20,11 +20,16 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -46,20 +51,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "CHART_DEFINITION")

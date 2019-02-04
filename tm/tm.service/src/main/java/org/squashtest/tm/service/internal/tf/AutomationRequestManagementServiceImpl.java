@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.tf;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,7 +53,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.READY_TO_TRANSMIT;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.REJECTED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.SUSPENDED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.WORK_IN_PROGRESS;
 
 @Service
 @Transactional

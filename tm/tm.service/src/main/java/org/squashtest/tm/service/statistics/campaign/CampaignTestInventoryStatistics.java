@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class CampaignTestInventoryStatistics {
 

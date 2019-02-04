@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -32,6 +27,11 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RequirementExportModel {
 

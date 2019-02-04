@@ -31,12 +31,18 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.concat;
 import static org.jooq.impl.DSL.groupConcat;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
 public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements

@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-
-import org.hibernate.annotations.Type;
 
 @Entity
 @DiscriminatorValue("RTF")

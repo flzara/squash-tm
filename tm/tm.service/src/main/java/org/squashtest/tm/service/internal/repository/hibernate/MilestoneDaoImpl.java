@@ -21,7 +21,11 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.hibernate.*;
+import org.hibernate.CacheMode;
+import org.hibernate.HibernateException;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.jooq.DSLContext;
@@ -41,14 +45,19 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
-
-import java.util.*;
 
 public class MilestoneDaoImpl implements CustomMilestoneDao {
 

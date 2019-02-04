@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.internal.repository.hibernate.TestCaseDaoImpl;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * DAO for computing nodes paths. Factored out of {@link TestCaseDaoImpl}

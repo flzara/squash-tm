@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
+
+import java.util.LinkedList;
+import java.util.List;
 
  public class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceTree.Node> {
 

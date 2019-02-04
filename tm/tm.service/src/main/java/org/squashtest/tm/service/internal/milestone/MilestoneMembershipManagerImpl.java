@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -37,7 +32,18 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_TS_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_CAMPAIGN_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_TC_OR_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.MilestoneMembershipManager")
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {

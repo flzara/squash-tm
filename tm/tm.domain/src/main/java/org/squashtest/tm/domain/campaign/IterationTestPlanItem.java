@@ -20,14 +20,36 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Persister;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.NumericField;
+import org.hibernate.search.annotations.SortableField;
+import org.hibernate.search.annotations.Store;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.library.HasExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.search.NotGMTDateBridge;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.NotAutomatedException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.infrastructure.hibernate.IterationTestPlanItemPersister;
+import org.squashtest.tm.security.annotation.InheritsAcls;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -50,28 +72,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.Persister;
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.library.HasExecutionStatus;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
-import org.squashtest.tm.domain.search.NotGMTDateBridge;
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.NotAutomatedException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.infrastructure.hibernate.IterationTestPlanItemPersister;
-import org.squashtest.tm.security.annotation.InheritsAcls;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 @NamedQueries({
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query="select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")

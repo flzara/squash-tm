@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
 

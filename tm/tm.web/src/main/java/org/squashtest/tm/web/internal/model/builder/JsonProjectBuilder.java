@@ -20,6 +20,20 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.dto.json.JsonProject;
+import org.squashtest.tm.service.project.ProjectFinder;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,21 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
-import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import org.squashtest.tm.service.internal.dto.json.JsonProject;
 
 @Component
 public class JsonProjectBuilder {

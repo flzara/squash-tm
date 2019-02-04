@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.squashtest.tm.domain.Level;
+
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.squashtest.tm.domain.Level;
 
 public enum RequirementStatus implements Level {
 

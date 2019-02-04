@@ -35,7 +35,6 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 import org.squashtest.tm.service.internal.importer.ExcelRowReaderUtils;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

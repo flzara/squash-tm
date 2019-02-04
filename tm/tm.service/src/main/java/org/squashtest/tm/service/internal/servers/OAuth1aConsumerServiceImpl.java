@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.service.internal.servers;
 
-import com.google.api.client.auth.oauth.*;
+import com.google.api.client.auth.oauth.AbstractOAuthGetToken;
+import com.google.api.client.auth.oauth.OAuthAuthorizeTemporaryTokenUrl;
+import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
+import com.google.api.client.auth.oauth.OAuthGetAccessToken;
+import com.google.api.client.auth.oauth.OAuthGetTemporaryToken;
+import com.google.api.client.auth.oauth.OAuthSigner;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import org.apache.commons.lang3.NotImplementedException;
@@ -33,7 +38,11 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.net.OAuthUtils;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.service.servers.*;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.OAuth1aConsumerService;
+import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.inject.Inject;
 import java.io.IOException;

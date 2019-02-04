@@ -26,13 +26,22 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Builds a DataTable model for TestSteps table.

@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

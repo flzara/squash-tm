@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

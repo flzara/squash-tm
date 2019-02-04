@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.domain.project;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -39,6 +35,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 @Entity

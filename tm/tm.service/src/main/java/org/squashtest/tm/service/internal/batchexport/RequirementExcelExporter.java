@@ -20,21 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -59,6 +46,19 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageShe
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 /**
  * @author jthebault

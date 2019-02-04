@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.web.internal.api.testautomation;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
 
 /**
  * This controller receives callbacks from Squash TA which modify automated executions statuses.

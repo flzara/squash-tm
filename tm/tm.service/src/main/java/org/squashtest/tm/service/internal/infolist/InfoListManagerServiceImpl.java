@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -46,6 +34,17 @@ import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 

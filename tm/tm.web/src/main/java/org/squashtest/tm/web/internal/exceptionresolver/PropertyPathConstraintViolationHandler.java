@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.List;
-
 import javax.validation.ConstraintViolation;
+import java.util.List;
 
 /**
  * Creates a {@link FieldValidationErrorModel} using the property path property. Handles any {@link ConstraintViolation}

@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Where;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.project.GenericLibrary;
+import org.squashtest.tm.domain.project.GenericProject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,11 +37,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
-
-import org.hibernate.annotations.Where;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.project.GenericLibrary;
-import org.squashtest.tm.domain.project.GenericProject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.planning;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class StandardWorkloadCalendar implements WorkloadCalendar {
 

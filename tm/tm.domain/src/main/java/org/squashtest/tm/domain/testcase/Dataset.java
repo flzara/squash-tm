@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,12 +35,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.Sizes;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})

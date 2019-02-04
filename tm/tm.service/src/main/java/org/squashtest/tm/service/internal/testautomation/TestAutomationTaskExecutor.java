@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import java.util.concurrent.Future;
-
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+
+import java.util.concurrent.Future;
 
 
 public class TestAutomationTaskExecutor {

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.milestone;
 
-import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
@@ -34,6 +28,12 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.users.User;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.MilestoneManagerService", entity = Milestone.class)

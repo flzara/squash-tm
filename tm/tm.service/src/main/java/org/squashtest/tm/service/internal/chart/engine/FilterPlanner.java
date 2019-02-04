@@ -20,12 +20,8 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
@@ -33,8 +29,11 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.hibernate.Session;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface TestAutomationProjectDao {
 

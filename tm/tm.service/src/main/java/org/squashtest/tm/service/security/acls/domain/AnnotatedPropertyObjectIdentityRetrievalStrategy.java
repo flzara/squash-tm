@@ -20,6 +20,15 @@
  */
 package org.squashtest.tm.service.security.acls.domain;
 
+import org.hibernate.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -28,16 +37,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.hibernate.ObjectNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl;
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
  * <p>

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Map;
-
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+
+import java.util.Map;
 
 public enum CustomFieldError {
 	MAX_SIZE {

@@ -20,12 +20,17 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import org.hibernate.*;
+import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.SearchFactory;
-import org.hibernate.search.backend.impl.PostTransactionWorkQueueSynchronization;
 import org.hibernate.search.backend.impl.PerTransactionWorker;
+import org.hibernate.search.backend.impl.PostTransactionWorkQueueSynchronization;
 import org.hibernate.search.backend.impl.WorkQueue;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.hibernate.search.jpa.FullTextEntityManager;
@@ -45,7 +50,6 @@ import org.squashtest.tm.service.internal.library.AdvancedSearchIndexingMonitor;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.Field;

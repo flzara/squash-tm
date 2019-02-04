@@ -41,15 +41,37 @@ import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
-import static org.squashtest.tm.api.security.acls.Permission.*;
+import static org.squashtest.tm.api.security.acls.Permission.CREATE;
+import static org.squashtest.tm.api.security.acls.Permission.DELETE;
+import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
+import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.CRLN_RELATIONSHIP;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_REPORT_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT_FILTER;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT_FILTER_ENTRY;
 import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMask;
 
 @Service("customReportWorkspaceDisplayService")

@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.io.IOException;
 

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -37,16 +31,16 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForArray;
-import org.squashtest.tm.service.internal.requirement.coercers.RequirementLibraryIdsCoercerForArray;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends

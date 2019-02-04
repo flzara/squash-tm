@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.helper.LabelFormatter;
+
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,11 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.web.internal.helper.JsonHelper;
-import org.squashtest.tm.web.internal.helper.LabelFormatter;
 
 /**
  * Builds a serialized json data model which can be used by a Jeditable combobox. Usage : <code>

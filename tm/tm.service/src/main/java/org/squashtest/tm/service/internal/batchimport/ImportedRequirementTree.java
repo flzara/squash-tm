@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.library.structures.GraphNode;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,10 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.domain.library.structures.GraphNode;
-import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
 
 /**

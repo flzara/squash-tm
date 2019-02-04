@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;

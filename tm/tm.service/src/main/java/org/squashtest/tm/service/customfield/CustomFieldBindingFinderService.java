@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -29,6 +27,8 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.project.GenericProject;
+
+import java.util.List;
 
 /**
  * An interface for services around {@link CustomField}. This is a 'finder' service : those methods are meant to find

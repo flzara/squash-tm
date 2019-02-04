@@ -25,7 +25,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementLinkModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
@@ -35,7 +40,14 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class ExportDao {

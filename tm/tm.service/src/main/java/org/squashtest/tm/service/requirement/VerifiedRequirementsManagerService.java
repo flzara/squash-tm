@@ -20,18 +20,16 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
-import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}

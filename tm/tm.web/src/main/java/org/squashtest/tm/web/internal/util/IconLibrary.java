@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.web.internal.util;
 
- import java.util.Arrays;
- import java.util.List;
+import java.util.Arrays;
+import java.util.List;
 
 public final class IconLibrary {
 

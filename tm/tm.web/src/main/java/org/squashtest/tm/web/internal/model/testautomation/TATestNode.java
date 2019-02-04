@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.testautomation;
 
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 
 
 

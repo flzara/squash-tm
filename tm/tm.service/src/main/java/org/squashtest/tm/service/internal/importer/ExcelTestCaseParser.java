@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.io.InputStream;
-
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.SheetCorruptedException;
+
+import java.io.InputStream;
 
 interface ExcelTestCaseParser {
 

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+
+import java.util.List;
 
 /**
  * @deprecated not used anumore

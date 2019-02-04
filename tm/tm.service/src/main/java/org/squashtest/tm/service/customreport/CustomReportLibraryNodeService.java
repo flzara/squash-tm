@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
@@ -34,6 +32,8 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+
+import java.util.List;
 
 public interface CustomReportLibraryNodeService {
 

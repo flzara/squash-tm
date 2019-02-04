@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-
-import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +32,13 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseSizeStatistics;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatusesStatistics;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.List;
 
 @Service("TestCaseStatisticsService")
 @Transactional(readOnly = true)

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.infolist.InfoList;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Adapts an InfoList into a consolidated view of list + does it have any bound projects.

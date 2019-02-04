@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +35,16 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderServi
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationProjectManagementService")

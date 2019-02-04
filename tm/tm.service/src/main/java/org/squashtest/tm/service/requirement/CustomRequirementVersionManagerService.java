@@ -20,18 +20,16 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
-
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * RequirementVersion management services which cannot be dyanmically generated.

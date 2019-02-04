@@ -20,18 +20,18 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
-
-import javax.inject.Inject;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
 
 /**
  * This listener exposes various application-wide configuration properties in the ServletContext (aka Application scope)

@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -36,6 +28,13 @@ import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.i18n.MessageObject;
+
+import javax.inject.Inject;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
 public class I18nLevelEnumInfolistHelper {

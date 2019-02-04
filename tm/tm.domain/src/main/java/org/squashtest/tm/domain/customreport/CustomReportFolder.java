@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,16 +38,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import javax.validation.constraints.Size;
 
 @Entity
 public class CustomReportFolder implements TreeEntity, BoundEntity {

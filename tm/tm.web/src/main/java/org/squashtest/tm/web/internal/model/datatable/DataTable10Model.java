@@ -22,8 +22,6 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Interface for a DataTable 1.10+ model
  * 

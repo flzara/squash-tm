@@ -20,18 +20,22 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc;
 
-import java.math.BigInteger;
-import java.util.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.security.acls.CustomPermission;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional

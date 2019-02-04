@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class TestCaseDto {
 	private Long id = -1L;

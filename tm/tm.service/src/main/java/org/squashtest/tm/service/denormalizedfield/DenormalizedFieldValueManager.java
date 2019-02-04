@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.denormalizedfield;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 

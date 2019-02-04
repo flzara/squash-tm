@@ -24,7 +24,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.jooq.DSLContext;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -43,8 +47,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_ADMIN;
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
-import static org.squashtest.tm.api.security.acls.Roles.*;
 
 public class UserDaoImpl implements CustomUserDao {
 

@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -47,7 +45,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>

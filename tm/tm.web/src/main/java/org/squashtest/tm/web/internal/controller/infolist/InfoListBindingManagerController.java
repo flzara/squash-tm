@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.infolist;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +34,12 @@ import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 //XSS OK
 @Controller

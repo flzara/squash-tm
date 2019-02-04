@@ -37,14 +37,12 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.User;
@@ -57,11 +55,27 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
-import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.READY_TO_TRANSMIT;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.REJECTED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.SUSPENDED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED;
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.WORK_IN_PROGRESS;
+import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter;
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.filterConverter;
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.sortConverter;
 
 
 public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {

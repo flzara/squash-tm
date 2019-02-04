@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.MultiMap;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -77,9 +72,29 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION;
+import static org.squashtest.tm.service.security.Authorizations.LINK_TESTSTEP;
+import static org.squashtest.tm.service.security.Authorizations.LINK_TESTSTEP_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional

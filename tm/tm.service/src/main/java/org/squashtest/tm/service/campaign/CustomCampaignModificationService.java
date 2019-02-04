@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -31,6 +27,9 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface CustomCampaignModificationService {
 

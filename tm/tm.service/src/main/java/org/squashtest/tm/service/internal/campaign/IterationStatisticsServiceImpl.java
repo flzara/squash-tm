@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
@@ -47,6 +38,14 @@ import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional(readOnly = true)
 @Service("IterationStatisticsService")

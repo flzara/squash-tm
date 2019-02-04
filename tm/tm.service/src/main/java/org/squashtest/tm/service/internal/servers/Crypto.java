@@ -21,13 +21,17 @@
 package org.squashtest.tm.service.internal.servers;
 
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.security.*;
+import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 

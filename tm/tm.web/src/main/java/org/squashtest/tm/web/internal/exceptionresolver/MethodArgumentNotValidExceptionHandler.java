@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -33,6 +27,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class handle MethodArgumentNotValidException and produce a more

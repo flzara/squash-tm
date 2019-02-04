@@ -27,15 +27,14 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPQLTemplates;
-import com.querydsl.jpa.hibernate.DefaultSessionHolder;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import com.querydsl.jpa.hibernate.SessionHolder;
-import com.querydsl.jpa.hibernate.StatelessSessionHolder;
-
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
 
-import static org.squashtest.tm.domain.jpql.FixedSessionHolders.*;
+import static org.squashtest.tm.domain.jpql.FixedSessionHolders.defaultSessionHolder;
+import static org.squashtest.tm.domain.jpql.FixedSessionHolders.noSessionHolder;
+import static org.squashtest.tm.domain.jpql.FixedSessionHolders.statelessSessionHolder;
 
 /**
  * Extension of {@link HibernateQuery} that make use of our ExtHQLTemplate, ie they make the extra functions available

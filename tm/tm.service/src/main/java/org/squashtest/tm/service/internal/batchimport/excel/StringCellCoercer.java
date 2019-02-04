@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 
 /**
  * Coerces a plain string cell to a string

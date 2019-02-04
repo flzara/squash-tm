@@ -20,9 +20,15 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.domain.library.FolderSupport;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.project.Project;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -32,18 +38,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
-
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.FolderSupport;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")

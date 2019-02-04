@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 @Component("squashtest.tm.service.RequirementLibrarySelectionStrategy")

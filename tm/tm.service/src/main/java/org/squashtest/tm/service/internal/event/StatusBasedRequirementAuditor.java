@@ -24,7 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.event.*;
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.event.RequirementAuditEventVisitor;
+import org.squashtest.tm.domain.event.RequirementCreation;
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.tm.domain.event.RequirementPropertyChange;
+import org.squashtest.tm.domain.event.RequirementVersionModification;
+import org.squashtest.tm.domain.event.SyncRequirementCreation;
+import org.squashtest.tm.domain.event.SyncRequirementUpdate;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.event.RequirementAuditor;
 

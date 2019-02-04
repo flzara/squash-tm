@@ -25,11 +25,11 @@
  */
 package org.squashtest.tm.infrastructure.hibernate;
 
-import java.util.Locale;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
+
+import java.util.Locale;
 
 /**
  * Shamelessly ripped from org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy

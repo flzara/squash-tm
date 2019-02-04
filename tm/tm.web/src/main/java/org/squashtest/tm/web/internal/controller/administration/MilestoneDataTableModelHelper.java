@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -34,6 +30,10 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
 

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+
+import java.util.List;
+import java.util.Set;
 
 
 public interface BugTrackerFinderService {

@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Facade service for custom fields read only access methods

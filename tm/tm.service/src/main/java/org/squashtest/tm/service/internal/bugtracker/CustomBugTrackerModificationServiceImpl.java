@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +36,8 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
+
+import javax.inject.Inject;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 

@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +46,16 @@ import org.squashtest.tm.service.security.OAuth2ClientService;
 import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("administration/config")

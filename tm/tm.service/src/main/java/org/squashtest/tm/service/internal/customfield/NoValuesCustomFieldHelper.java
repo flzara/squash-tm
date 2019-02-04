@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.Project;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Custom field helper to be used when there are no entities in the given custom field binding context.

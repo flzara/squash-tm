@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
@@ -30,6 +28,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+
+import java.util.List;
 
 @Repository("squashtest.tm.repository.CampaignLibraryNodeDao")
 public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<CampaignLibraryNode> implements LibraryNodeDao<CampaignLibraryNode>, EntityDao<CampaignLibraryNode> {

@@ -20,8 +20,23 @@
  */
 package org.squashtest.tm.domain.customreport;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.Any;
+import org.hibernate.annotations.AnyMetaDef;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.MetaValue;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.tree.GenericTreeLibrary;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.tree.TreeEntityDefinition;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.domain.tree.TreeNodeVisitor;
+import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,26 +52,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Any;
-import org.hibernate.annotations.AnyMetaDef;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.MetaValue;
 import javax.persistence.Table;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.report.ReportDefinition;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.tree.GenericTreeLibrary;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeEntityDefinition;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeNodeVisitor;
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="CUSTOM_REPORT_LIBRARY_NODE")

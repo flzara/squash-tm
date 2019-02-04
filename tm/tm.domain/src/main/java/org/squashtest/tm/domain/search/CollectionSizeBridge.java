@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.search;
 
-import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.collection.internal.AbstractPersistentCollection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -35,6 +35,10 @@ import org.hibernate.search.bridge.StringBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
+
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // TODO: extract the logic regarding finding and eventually managing a session(roughly the same than SessionFieldBridge)
 // here, we try to extract it from a hibernate object, but it wont work on non-proxied hibernate entities

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Map;
-
 import org.squashtest.tm.domain.customfield.RawValue;
+
+import java.util.Map;
 
 /**
  * Methods non automatically generated for TestStep Modification

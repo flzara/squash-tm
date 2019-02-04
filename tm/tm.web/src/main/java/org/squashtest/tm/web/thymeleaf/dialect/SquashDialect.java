@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.thymeleaf.dialect;
 
-import java.util.HashSet;
-import java.util.Set;
-
-
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
@@ -37,6 +33,8 @@ import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
 
 import javax.servlet.ServletContext;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Squash dialect for Thmymeleaf

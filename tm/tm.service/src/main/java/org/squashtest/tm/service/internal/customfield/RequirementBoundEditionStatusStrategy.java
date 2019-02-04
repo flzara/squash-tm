@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Determines edition status for CF values bound to requirements.

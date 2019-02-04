@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import javax.inject.Inject;
-
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import javax.inject.Inject;
 
 /**
  * 

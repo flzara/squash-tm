@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -47,6 +38,14 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.CustomTestStepModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
+
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Implementations for (non dynamically generated) testStep modification services.

@@ -22,17 +22,25 @@ package org.squashtest.tm.service.internal.requirement;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record7;
+import org.jooq.TableLike;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.domain.requirement.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.jooq.domain.tables.*;
+import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.jooq.domain.tables.InfoListItem;
+import org.squashtest.tm.jooq.domain.tables.MilestoneReqVersion;
 import org.squashtest.tm.jooq.domain.tables.Requirement;
 import org.squashtest.tm.jooq.domain.tables.RequirementFolder;
 import org.squashtest.tm.jooq.domain.tables.RequirementLibraryNode;
 import org.squashtest.tm.jooq.domain.tables.RequirementVersion;
+import org.squashtest.tm.jooq.domain.tables.Resource;
+import org.squashtest.tm.jooq.domain.tables.RlnRelationship;
+import org.squashtest.tm.jooq.domain.tables.RlnRelationshipClosure;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
@@ -41,14 +49,33 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirem
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.domain.requirement.ManagementMode.SYNCHRONIZED;
-
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.REMOTE_SYNCHRONISATION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_FOLDER_SYNC_EXTENDER;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY_CONTENT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.RESOURCE;
+import static org.squashtest.tm.jooq.domain.Tables.RLN_RELATIONSHIP;
+import static org.squashtest.tm.jooq.domain.Tables.RLN_RELATIONSHIP_CLOSURE;
 
 @Service("requirementWorkspaceDisplayService")
 @Transactional(readOnly = true)

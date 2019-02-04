@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.security.acls.model;
 
-import java.util.List;
-
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.security.acls.PermissionGroup;
+
+import java.util.List;
 
 public interface ObjectAclService {
 	

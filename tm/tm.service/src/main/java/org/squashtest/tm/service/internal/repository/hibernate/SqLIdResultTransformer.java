@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.hibernate.transform.ResultTransformer;
+
 import java.math.BigInteger;
 import java.util.List;
-
-import org.hibernate.transform.ResultTransformer;
 
 public class SqLIdResultTransformer implements ResultTransformer {
 		

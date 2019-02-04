@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.hibernate;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.security.UserContextHolder;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * This interceptor transparently logs creation / last modification data of any {@link Auditable} entity.

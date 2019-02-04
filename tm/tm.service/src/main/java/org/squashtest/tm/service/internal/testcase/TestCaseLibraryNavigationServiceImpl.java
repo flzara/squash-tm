@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -57,7 +44,14 @@ import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
@@ -80,7 +74,14 @@ import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.library.PathService;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.FolderDao;
+import org.squashtest.tm.service.internal.repository.LibraryDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForArray;
 import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForArray;
@@ -93,6 +94,27 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional

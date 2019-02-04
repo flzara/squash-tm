@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.web.user;
 
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.squashtest.tm.domain.users.User;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * Data holder for a request of user creation.

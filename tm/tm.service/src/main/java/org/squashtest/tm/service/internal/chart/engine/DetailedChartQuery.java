@@ -20,16 +20,26 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.IChartQuery;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.QueryStrategy;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.*;
 
 
 /**

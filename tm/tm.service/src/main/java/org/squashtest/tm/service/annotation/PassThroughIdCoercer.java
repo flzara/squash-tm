@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.annotation;
 
-import java.io.Serializable;
-
 import javax.inject.Named;
+import java.io.Serializable;
 
 /**
  * Retrieve directly the id of the object to lock.

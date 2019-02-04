@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.Date;
-
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.users.User;
+
+import java.util.Date;
 
 
 public class JsonIterationTestPlanItem{

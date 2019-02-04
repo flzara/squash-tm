@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}

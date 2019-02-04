@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.io.Serializable;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
 
 /**
  * Maps an edge of a test case node path. This entity shoud be used to query CLN_RELATIONSHIP_CLOSURE using hql instead

@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
-import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
+import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
 
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.NAME, property="type")
 @JsonSubTypes({

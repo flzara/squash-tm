@@ -20,15 +20,20 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;

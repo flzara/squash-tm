@@ -24,7 +24,11 @@ import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Builds a serialized json data model which can be used by a Jeditable combobox. Usage : <code>

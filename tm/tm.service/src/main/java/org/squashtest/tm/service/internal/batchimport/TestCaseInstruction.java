@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.domain.testcase.TestCase;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.squashtest.tm.domain.testcase.TestCase;
 
 public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder, Milestoned {
 	private final TestCase testCase;

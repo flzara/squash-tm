@@ -22,7 +22,17 @@ package org.squashtest.tm.service.internal.chart.engine.proxy;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.Workspace;
-import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.IChartQuery;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.NaturalJoinStyle;
+import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.QueryStrategy;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 
 import javax.inject.Inject;

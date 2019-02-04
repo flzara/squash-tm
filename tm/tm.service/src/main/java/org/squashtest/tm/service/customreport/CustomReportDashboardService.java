@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
+
+import java.util.List;
 
 public interface CustomReportDashboardService {
 

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.milestone;
 
-import java.util.Optional;
-
 import org.squashtest.tm.domain.milestone.Milestone;
+
+import java.util.Optional;
 
 
 

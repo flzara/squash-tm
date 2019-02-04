@@ -20,26 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.COVERAGE_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASET_PARAM_VALUES_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_LINKS_SHEET;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -71,6 +51,25 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinkInstructionBuilder;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.COVERAGE_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASET_PARAM_VALUES_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_LINKS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
 
 /**
  * <p>

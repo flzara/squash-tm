@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.event;
 
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
  * That class simply extends RequirementAuditEvent. Indeed, the additional information here is the type itself.  

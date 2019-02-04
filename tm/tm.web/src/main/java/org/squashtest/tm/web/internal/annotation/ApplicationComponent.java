@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.annotation;
 
+import org.springframework.stereotype.Component;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.springframework.stereotype.Component;
 
 /**
  * This interface is equivalent to @Component but it's meant to identify beans which should be instanciated by

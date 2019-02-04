@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +38,15 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
 @Service("CustomCampaignModificationService")

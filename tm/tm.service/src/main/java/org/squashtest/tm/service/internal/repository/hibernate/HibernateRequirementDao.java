@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.*;
-
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -40,8 +40,16 @@ import org.squashtest.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 
-import com.querydsl.core.group.GroupBy;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {

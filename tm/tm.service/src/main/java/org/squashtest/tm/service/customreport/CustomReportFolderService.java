@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 
 public interface CustomReportFolderService {

@@ -20,15 +20,25 @@
  */
 package org.squashtest.tm.domain.users;
 
-import java.util.*;
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.audit.Auditable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.audit.Auditable;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Entity
 @Auditable

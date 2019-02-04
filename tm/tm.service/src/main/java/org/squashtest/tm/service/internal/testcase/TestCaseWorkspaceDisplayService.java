@@ -31,7 +31,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
-import org.squashtest.tm.jooq.domain.tables.*;
+import org.squashtest.tm.jooq.domain.tables.Milestone;
+import org.squashtest.tm.jooq.domain.tables.MilestoneTestCase;
+import org.squashtest.tm.jooq.domain.tables.Project;
+import org.squashtest.tm.jooq.domain.tables.RequirementVersionCoverage;
+import org.squashtest.tm.jooq.domain.tables.TclnRelationship;
+import org.squashtest.tm.jooq.domain.tables.TestCase;
+import org.squashtest.tm.jooq.domain.tables.TestCaseFolder;
+import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.TestCaseSteps;
 import org.squashtest.tm.jooq.domain.tables.records.ProjectRecord;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -42,12 +50,30 @@ import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayServ
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.count;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_FOLDER;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_CONTENT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 
 @Service("testCaseWorkspaceDisplayService")
 @Transactional(readOnly = true)

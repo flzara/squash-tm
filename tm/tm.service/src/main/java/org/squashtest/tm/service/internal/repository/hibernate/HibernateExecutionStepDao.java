@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Hibernate;
@@ -35,6 +31,10 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Repository

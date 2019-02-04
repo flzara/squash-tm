@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.exception.testautomation;
 
-import java.net.URL;
-
 import org.squashtest.tm.exception.DomainException;
+
+import java.net.URL;
 
 
 /**

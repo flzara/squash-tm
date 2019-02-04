@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DataTableColumnFiltering implements ColumnFiltering {
 

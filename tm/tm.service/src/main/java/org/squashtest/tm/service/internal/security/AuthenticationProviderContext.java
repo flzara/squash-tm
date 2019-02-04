@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +28,16 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.core.foundation.lang.Assert;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Registers all {@link AuthenticationProviderFeatures} available in the context, and provides with the main instance (that corresponds to 

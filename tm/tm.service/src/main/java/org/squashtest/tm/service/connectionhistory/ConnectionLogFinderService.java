@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.connectionhistory;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.ConnectionLog;
 
 import java.util.List;

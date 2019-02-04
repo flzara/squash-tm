@@ -20,6 +20,13 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.execution.Execution;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,13 +39,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.execution.Execution;
 
 @Entity
 @NamedQueries(value = {

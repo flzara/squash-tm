@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Locale;
 
 /**
  * Formats {@link Internationalizable} items so that they are displayed in a combobox as

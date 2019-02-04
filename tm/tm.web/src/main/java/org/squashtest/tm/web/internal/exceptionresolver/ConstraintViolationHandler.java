@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.List;
-
 import javax.validation.ConstraintViolation;
+import java.util.List;
 
 /**
  * Interface of objects able to populate a list of {@link FieldValidationErrorModel} from a {@link ConstraintViolation}.

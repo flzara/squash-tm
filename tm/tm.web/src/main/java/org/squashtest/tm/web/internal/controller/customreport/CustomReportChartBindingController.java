@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +38,12 @@ import org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBinding
 import org.squashtest.tm.web.internal.model.json.FormCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller

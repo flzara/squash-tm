@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * This SquashUserDetailsManagerProxy either delegates method calls to a

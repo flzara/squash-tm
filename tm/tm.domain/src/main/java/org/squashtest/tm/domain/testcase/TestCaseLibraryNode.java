@@ -20,7 +20,13 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.Set;
+import org.hibernate.search.annotations.SortableField;
+import org.squashtest.tm.domain.SelfClassAware;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.library.GenericLibraryNode;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,14 +36,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
-
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.domain.SelfClassAware;
-import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.library.GenericLibraryNode;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import java.util.Set;
 
 /**
  * An organizational element ot the {@link TestCaseLibrary}

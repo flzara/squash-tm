@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Service("squashtest.core.security.ObjectIdentityService")
 @Transactional

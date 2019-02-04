@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.domain;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * This class compares {@link Identified} objects. It uses an ordered collection (ie a list) of ids. The order of 2

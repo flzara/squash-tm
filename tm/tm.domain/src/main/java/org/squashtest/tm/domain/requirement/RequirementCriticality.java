@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.squashtest.tm.domain.Level;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
-
-import org.squashtest.tm.domain.Level;
 
 public enum RequirementCriticality implements Level, Serializable {
 	MINOR(2), MAJOR(1), CRITICAL(0), UNDEFINED(3);

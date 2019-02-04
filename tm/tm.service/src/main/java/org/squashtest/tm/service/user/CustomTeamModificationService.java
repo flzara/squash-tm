@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+
+import java.util.List;
 
 /**
  * Non dynamically generated methods for {@link Team} Modification

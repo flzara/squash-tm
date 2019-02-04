@@ -36,7 +36,12 @@ import org.squashtest.tm.service.connectionhistory.ConnectionLogExportService;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.*;
+import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 

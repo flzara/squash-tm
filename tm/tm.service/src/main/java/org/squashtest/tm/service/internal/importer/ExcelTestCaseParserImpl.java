@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,8 +29,20 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.SheetCorruptedException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /*
  * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)

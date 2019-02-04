@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
-
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.milestone.Milestone;
+
+import java.util.Collection;
 
 public interface TestSuiteFinder {
 	/**

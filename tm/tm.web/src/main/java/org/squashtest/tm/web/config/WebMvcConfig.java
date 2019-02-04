@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.web.config;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
@@ -42,6 +41,9 @@ import org.squashtest.tm.web.internal.interceptor.openedentity.RequirementViewIn
 import org.squashtest.tm.web.internal.interceptor.openedentity.TestCaseViewInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInterceptor;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import java.time.Duration;
 
 /**

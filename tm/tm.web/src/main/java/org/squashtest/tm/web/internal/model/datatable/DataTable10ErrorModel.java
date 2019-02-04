@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Decorator for a {@link DataTable10Model} which can be used to send back a server error message.

@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.infolist;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +39,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
+import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -55,8 +47,15 @@ import org.squashtest.tm.web.internal.http.JsonEmptyResponseEntity;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // XSS OK
 @Controller

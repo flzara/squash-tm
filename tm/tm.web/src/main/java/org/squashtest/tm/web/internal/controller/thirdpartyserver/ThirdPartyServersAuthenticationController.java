@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.thirdpartyserver;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +39,10 @@ import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.servers.OAuth1aConsumerService;
 import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
 import org.squashtest.tm.web.internal.util.UriUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 // XSS OK - bflessel
 @Controller

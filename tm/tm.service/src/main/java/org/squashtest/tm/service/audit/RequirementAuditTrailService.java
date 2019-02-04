@@ -22,8 +22,6 @@ package org.squashtest.tm.service.audit;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 

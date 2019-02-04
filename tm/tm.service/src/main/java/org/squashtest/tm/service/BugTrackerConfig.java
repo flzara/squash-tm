@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Spring configuration for bugtracker connectors subsystem

@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.user;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
-
-import java.util.*;
-import java.util.function.Supplier;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -40,9 +32,9 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -53,6 +45,16 @@ import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 @Service("squashtest.tm.service.UserAccountService")
 @Transactional

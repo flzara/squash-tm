@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.domain.search;
 
-import java.lang.reflect.Field;
-import java.util.Date;
-
 import org.apache.lucene.document.Document;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.joda.time.LocalDateTime;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.Date;
 
 /**
  * Sets the time component of a date to 00h00 accounting for the timezone of the server and the daylight saving

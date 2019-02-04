@@ -20,16 +20,13 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Record2;
+import org.jooq.Record3;
+import org.jooq.Table;
+import org.jooq.TableOnConditionStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,12 +36,36 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
-import org.squashtest.tm.service.statistics.requirement.*;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementVersionBundleStat;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.max;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.RLN_RELATIONSHIP_CLOSURE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.service.statistics.requirement.RequirementVersionBundleStat.SimpleRequirementStats.REDACTION_RATE_KEY;
 import static org.squashtest.tm.service.statistics.requirement.RequirementVersionBundleStat.SimpleRequirementStats.VALIDATION_RATE_KEY;
 import static org.squashtest.tm.service.statistics.requirement.RequirementVersionBundleStat.SimpleRequirementStats.VERIFICATION_RATE_KEY;

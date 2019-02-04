@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.LevelComparator;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-
-import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.LevelComparator;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class LevelEnumSerializer extends JsonSerializer<EnumSet<? extends Level>> {
 

@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.springframework.data.domain.Page;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

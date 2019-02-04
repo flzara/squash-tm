@@ -38,7 +38,14 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 // XSS OK
 @Controller

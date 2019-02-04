@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service;
 
-import java.util.concurrent.Executor;
-
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +30,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+
+import java.util.concurrent.Executor;
 
 /**
  * Spring config for Squash TM's thread pool / scheduler

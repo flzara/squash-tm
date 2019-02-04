@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.Date;
-
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+
+import java.util.Date;
 
 // XSS OK
 public class MetaMilestone{

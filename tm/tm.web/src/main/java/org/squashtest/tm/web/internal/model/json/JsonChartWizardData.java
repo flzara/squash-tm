@@ -20,23 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.EntityType.EXECUTION;
-import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
-import static org.squashtest.tm.domain.EntityType.ITERATION;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE;
-
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.EntityType;
@@ -60,7 +44,22 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.EXECUTION;
+import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
+import static org.squashtest.tm.domain.EntityType.ITERATION;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 
 public class JsonChartWizardData {
 

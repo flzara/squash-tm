@@ -30,7 +30,11 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
@@ -46,11 +50,20 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements

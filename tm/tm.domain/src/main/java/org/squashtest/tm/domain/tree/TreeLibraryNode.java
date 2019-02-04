@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.tree;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+
+import java.util.List;
 
 /**
  * Interface for a tree node without data. The main goal of this API is to separate concern between

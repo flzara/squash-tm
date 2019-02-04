@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
@@ -40,6 +32,14 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author bsiri, Gregory Fouquet

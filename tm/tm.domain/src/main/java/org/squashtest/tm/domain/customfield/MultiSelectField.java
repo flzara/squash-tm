@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

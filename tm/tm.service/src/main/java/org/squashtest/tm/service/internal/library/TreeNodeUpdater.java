@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -35,7 +31,11 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementFolderSyncExtender;
+import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -53,6 +53,9 @@ import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtend
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Will update a node regarding it's project settings. The updated attributes will be :

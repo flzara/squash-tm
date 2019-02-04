@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -32,6 +28,9 @@ import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.project.CustomProjectTemplateManagerService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * 

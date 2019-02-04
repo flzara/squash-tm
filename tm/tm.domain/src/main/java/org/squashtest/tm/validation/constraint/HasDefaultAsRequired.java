@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.validation.constraint;
 
+import org.squashtest.tm.validation.validator.CustomFieldHasDefaultAsRequiredValidator;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import javax.validation.Constraint;
-import javax.validation.Payload;
-
-import org.squashtest.tm.validation.validator.CustomFieldHasDefaultAsRequiredValidator;
 
 /**
  * This constraint ensures that an object has a non blank default when its state requires a default value.

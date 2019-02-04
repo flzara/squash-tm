@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -30,10 +29,20 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.Workspace;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -59,7 +68,11 @@ import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.Ite
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.*;
+import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
@@ -71,7 +84,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.

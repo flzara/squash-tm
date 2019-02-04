@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.List;
+import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 import javax.validation.ConstraintViolation;
-
-import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
+import java.util.List;
 
 /**
  * Handles {@link ConstraintViolation} from {@link HasDefaultAsRequired} constraints.

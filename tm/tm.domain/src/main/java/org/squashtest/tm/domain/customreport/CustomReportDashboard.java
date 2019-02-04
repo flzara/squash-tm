@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.domain.customreport;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,15 +37,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Auditable

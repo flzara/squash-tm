@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
@@ -34,6 +29,10 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Partial view of a {@link RequirementVersionCoverage} verified by some test case.

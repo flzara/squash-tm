@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.springframework.util.ReflectionUtils;
+
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
-import org.springframework.util.ReflectionUtils;
 
 /**
  * Utilities methods for {@link TemplateColumn} enums

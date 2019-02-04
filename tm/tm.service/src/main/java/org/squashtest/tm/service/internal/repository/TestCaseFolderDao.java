@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+
+import java.util.List;
 
 public interface TestCaseFolderDao extends EntityDao<TestCaseFolder>, FolderDao<TestCaseFolder, TestCaseLibraryNode> {
 

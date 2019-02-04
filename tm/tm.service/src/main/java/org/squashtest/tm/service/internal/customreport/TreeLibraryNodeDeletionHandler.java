@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+
+import java.util.List;
 
 
 /**

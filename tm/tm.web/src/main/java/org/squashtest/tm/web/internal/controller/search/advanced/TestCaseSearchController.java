@@ -20,15 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +49,13 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by jsimon on 04/05/2016.

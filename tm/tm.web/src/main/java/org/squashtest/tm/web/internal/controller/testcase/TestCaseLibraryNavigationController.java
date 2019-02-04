@@ -29,12 +29,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.ExportTestStepData;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -57,7 +67,12 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 //XSS OK
 @Controller

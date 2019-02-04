@@ -20,16 +20,22 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
 
-import static org.squashtest.tm.api.report.form.InputType.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.squashtest.tm.api.report.form.InputType.CHECKBOX;
+import static org.squashtest.tm.api.report.form.InputType.DATE;
+import static org.squashtest.tm.api.report.form.InputType.MILESTONE_PICKER;
+import static org.squashtest.tm.api.report.form.InputType.PASSWORD;
+import static org.squashtest.tm.api.report.form.InputType.TAG_PICKER;
+import static org.squashtest.tm.api.report.form.InputType.TEXT;
+import static org.squashtest.tm.api.report.form.InputType.TREE_PICKER;
 
 /**
  * This class builds a map of {@link Criteria} from the map of objects which was submitted by a report form.

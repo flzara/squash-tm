@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.Date;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignStatus;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+import java.util.Date;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.CampaignModificationService" , entity=Campaign.class)

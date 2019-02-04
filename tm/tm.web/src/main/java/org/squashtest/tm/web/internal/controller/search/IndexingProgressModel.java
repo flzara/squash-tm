@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
-import java.math.BigInteger;
-import java.util.Map;
-
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.IndexMonitor;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.math.BigInteger;
+import java.util.Map;
 
 //XSS bflessel ok
 public class IndexingProgressModel {

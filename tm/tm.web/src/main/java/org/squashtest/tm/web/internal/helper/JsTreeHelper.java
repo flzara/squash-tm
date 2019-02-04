@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Helper class to manipulate jsTree related data.

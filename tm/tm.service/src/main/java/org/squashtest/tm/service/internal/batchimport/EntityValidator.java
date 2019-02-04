@@ -28,8 +28,11 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.importer.*;
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
@@ -38,7 +41,9 @@ import java.util.regex.Pattern;
 
 import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_DELETED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.*;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_PATH;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 

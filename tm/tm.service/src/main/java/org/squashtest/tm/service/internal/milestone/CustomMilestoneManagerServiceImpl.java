@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +41,16 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;

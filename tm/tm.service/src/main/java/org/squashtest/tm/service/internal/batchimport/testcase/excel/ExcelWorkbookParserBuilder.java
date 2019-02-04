@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -46,6 +34,17 @@ import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 import org.squashtest.tm.service.batchimport.excel.WorksheetMismatch;
+
+import javax.validation.constraints.NotNull;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Builds an excel parser. It checks the structure of the excel file and

@@ -30,7 +30,11 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
@@ -48,7 +52,14 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")

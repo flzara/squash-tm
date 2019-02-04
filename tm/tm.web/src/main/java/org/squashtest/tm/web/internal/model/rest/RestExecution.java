@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import java.util.Date;
-
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.Execution;
+
+import java.util.Date;
 
 public class RestExecution {
 

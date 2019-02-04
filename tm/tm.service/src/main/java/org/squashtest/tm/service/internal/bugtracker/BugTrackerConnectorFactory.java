@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -46,6 +36,15 @@ import org.squashtest.tm.service.internal.bugtracker.adapter.AdvancedBugtrackerC
 import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.internal.bugtracker.adapter.OslcBugtrackerConnectorAdapter;
 import org.squashtest.tm.service.internal.bugtracker.adapter.SimpleBugtrackerConnectorAdapter;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Factory of BugTrackerConnector objects. It delegates to {@link BugTrackerConnectorProvider} which should register to

@@ -24,7 +24,11 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestStep;
 
 import java.util.Collection;
 import java.util.List;

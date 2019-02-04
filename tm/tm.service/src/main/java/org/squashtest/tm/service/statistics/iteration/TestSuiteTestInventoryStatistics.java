@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.statistics.iteration;
 
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
+import org.squashtest.tm.domain.planning.WorkloadCalendar;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
-import org.squashtest.tm.domain.planning.WorkloadCalendar;
 
 public class TestSuiteTestInventoryStatistics {
 

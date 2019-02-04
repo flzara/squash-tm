@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
@@ -34,8 +30,10 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
 import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_FOLDER;
 

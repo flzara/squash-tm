@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.attachment.AttachmentList;
+
+import java.util.List;
 
 public interface DeletionDao {
 

@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +45,13 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneStatusComboD
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 

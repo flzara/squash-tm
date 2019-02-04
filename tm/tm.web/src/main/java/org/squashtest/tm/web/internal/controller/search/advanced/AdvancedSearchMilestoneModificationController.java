@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +33,11 @@ import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTab
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.search.MilestoneMassModifData;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("advanced-search")

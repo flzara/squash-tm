@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -35,6 +28,12 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class HibernateTestAutomationProjectDao implements TestAutomationProjectDao {

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.library;
 
-import java.util.Date;
-
 import org.squashtest.tm.domain.audit.AuditableMixin;
+
+import java.util.Date;
 
 /**
  * Common DataSource for jasper Node Export

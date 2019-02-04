@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.infolist;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
 

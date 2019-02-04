@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import java.util.*;
-import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,8 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
-import org.squashtest.tm.service.internal.dto.*;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
+import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+
+import javax.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/custom-fields/values")

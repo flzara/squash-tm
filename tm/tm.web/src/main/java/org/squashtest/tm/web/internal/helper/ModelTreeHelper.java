@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.List;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+
+import javax.inject.Provider;
+import java.util.List;
 
 /**
  * Helper class to manipulate jsTree related data.

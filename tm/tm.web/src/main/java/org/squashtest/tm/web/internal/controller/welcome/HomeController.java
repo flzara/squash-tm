@@ -37,7 +37,6 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
-import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;

@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
@@ -36,6 +28,13 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Gregory Fouquet

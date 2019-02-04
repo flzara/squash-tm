@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -30,7 +27,8 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.annotation.Id;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
+
+import java.util.List;
 
 /**
  * Service that aims at managing the test cases of a test suite (i.e. its test plan)

@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.attachment;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,9 +33,21 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
-import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 /*
  * FIXME !

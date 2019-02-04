@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface CustomFieldValueFinderService {
 

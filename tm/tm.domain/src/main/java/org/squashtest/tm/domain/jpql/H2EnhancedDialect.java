@@ -25,10 +25,11 @@
  */
 package org.squashtest.tm.domain.jpql;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *

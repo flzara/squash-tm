@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
+
+import java.util.Collection;
+import java.util.List;
 
 
 public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanItem, Long>{

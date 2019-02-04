@@ -33,21 +33,34 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
-
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
-import static java.util.Comparator.nullsFirst;
 import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.ERROR;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.NOT_FOUND;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.NOT_RUN;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SETTLED;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.UNTESTABLE;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.WARNING;
 
 
 

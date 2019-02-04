@@ -26,7 +26,9 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

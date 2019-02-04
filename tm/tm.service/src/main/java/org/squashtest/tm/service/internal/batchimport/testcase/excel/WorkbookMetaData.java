@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
-import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Metadata of a test case import workbook. It collects data about the worksheets and the columns we have to process.

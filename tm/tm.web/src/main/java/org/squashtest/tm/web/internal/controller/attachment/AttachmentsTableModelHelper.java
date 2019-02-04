@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 // XSS OK
 public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachment> {

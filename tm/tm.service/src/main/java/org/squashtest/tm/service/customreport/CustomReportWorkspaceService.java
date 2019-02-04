@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
+
+import java.util.List;
 
 public interface CustomReportWorkspaceService {
 	/**

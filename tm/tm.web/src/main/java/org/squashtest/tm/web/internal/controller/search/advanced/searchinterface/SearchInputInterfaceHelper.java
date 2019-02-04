@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
@@ -36,6 +33,12 @@ import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class SearchInputInterfaceHelper {

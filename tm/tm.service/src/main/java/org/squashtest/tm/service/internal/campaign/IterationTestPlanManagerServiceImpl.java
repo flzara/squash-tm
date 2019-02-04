@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +30,17 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -53,7 +62,13 @@ import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
@@ -64,7 +79,15 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.io.InputStream;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -32,6 +28,9 @@ import org.squashtest.tm.service.internal.archive.ArchiveReader;
 import org.squashtest.tm.service.internal.archive.ArchiveReaderFactory;
 import org.squashtest.tm.service.internal.archive.ArchiveReaderFactoryImpl;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import javax.inject.Inject;
+import java.io.InputStream;
 
 
 @Component

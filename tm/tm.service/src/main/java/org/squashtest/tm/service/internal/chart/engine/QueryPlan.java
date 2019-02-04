@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import org.squashtest.tm.domain.library.structures.LibraryTree;
+import org.squashtest.tm.domain.library.structures.TreeNode;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,9 +30,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-
-import org.squashtest.tm.domain.library.structures.LibraryTree;
-import org.squashtest.tm.domain.library.structures.TreeNode;
 
 /**
  * <p>

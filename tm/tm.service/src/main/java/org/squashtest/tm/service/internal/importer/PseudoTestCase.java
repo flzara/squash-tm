@@ -20,15 +20,20 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestStep;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.testcase.*;
 
 /**
  * Factored out from {@link ExcelTestCaseParserImpl}

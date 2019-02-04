@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 @Entity
 @DiscriminatorValue("RTF")

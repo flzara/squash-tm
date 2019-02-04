@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +27,17 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
 @Service("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")

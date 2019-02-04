@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testcase.coercers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.annotation.ListIdsCoercerAdapter;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * As {@link TCLNAndParentIdsCoercerForArray}, for list type parameter

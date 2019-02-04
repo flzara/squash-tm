@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
@@ -30,6 +28,8 @@ import org.squashtest.tm.service.internal.batchimport.CallStepParamsInfo;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

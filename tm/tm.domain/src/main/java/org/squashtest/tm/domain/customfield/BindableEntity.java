@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
@@ -36,6 +34,8 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Enumerates the entities which can be bounded to custom fields.

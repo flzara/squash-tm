@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
+
+import java.util.List;
 
 
 public interface LibrarySelectionStrategy <LIBRARY extends Library<NODE>, NODE extends LibraryNode> {

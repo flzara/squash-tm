@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.security.acls.domain;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +27,12 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.squashtest.tm.security.annotation.InheritsAcls;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This {@link ObjectIdentityRetrievalStrategy} checks if an entity should inherit ACLs from another entity. If so, the

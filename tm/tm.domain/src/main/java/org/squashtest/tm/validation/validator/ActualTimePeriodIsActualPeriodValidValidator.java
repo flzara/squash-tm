@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.validation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.squashtest.tm.domain.campaign.ActualTimePeriod;
 import org.squashtest.tm.validation.constraint.IsActualPeriodValid;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
  * @author Alix Pierre

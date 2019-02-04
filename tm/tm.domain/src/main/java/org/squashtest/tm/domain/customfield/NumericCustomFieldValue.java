@@ -27,7 +27,6 @@ import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
-import java.util.Locale;
 
 /**
  * Created by jthebault on 20/07/2016.

@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Jeditable combo data builder which model is {@link ExecutionStatus}

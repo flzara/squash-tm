@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.execution.Execution;
+
+import java.util.List;
 
 public interface CampaignFolderDao extends FolderDao<CampaignFolder, CampaignLibraryNode> {
 

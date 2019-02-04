@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class CampaignTestCaseSuccessRateStatistics {
 

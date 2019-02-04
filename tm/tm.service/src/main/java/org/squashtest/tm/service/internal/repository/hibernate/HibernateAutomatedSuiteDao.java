@@ -20,24 +20,22 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.READY;
-import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
 
 @Repository
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {

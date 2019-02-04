@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDetails> {
 

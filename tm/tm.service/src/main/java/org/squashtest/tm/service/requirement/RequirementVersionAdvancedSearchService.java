@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.List;
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+
+import java.util.List;
+import java.util.Locale;
 
 
 

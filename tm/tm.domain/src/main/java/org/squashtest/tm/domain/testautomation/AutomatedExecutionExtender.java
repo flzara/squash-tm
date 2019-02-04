@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.domain.testautomation;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,14 +39,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * this was meant to be a subclass of Execution; that's what the business says. But Hibernate says that doing so would

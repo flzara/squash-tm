@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+import org.hibernate.search.annotations.DocumentId;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,16 +41,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
-import org.hibernate.search.annotations.DocumentId;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
-import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Entity representing a The coverage of a {@link RequirementVersion} by a {@link TestCase}. The {@link ActionTestStep}

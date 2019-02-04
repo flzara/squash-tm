@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -33,6 +27,12 @@ import org.squashtest.tm.domain.search.IndexMonitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.advancedsearch.IndexationServiceImpl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {

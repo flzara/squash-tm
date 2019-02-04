@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+
+import java.util.List;
 
 class SetProjectIdsParameterCallback implements SetQueryParametersCallback {
 	private List<Long> projectIds;

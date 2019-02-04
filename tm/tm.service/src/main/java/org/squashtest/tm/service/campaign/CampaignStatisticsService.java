@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
@@ -31,6 +28,9 @@ import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRate
 import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+
+import java.util.Collection;
+import java.util.List;
 
 /*
  * TODO : Some statistics here are computed on a set of campaigns (namely TestCaseStatusStatistics, TestCaseSuccessRateStatistics, NonExecutedTestCaseImportanceStatistics)

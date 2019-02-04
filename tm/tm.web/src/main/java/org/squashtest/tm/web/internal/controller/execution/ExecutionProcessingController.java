@@ -20,16 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -38,6 +39,10 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 //XSS ok bflessel
 @Controller
 @RequestMapping("/execute/{executionId}")

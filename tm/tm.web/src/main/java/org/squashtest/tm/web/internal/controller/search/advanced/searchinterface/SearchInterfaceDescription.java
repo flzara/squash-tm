@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
@@ -39,6 +32,18 @@ import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Common code factored out of subclasses

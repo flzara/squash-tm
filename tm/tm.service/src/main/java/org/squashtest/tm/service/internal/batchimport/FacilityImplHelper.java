@@ -20,16 +20,22 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 final class FacilityImplHelper {
 

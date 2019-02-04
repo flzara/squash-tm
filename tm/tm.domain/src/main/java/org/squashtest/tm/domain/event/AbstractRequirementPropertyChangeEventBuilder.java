@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.event;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.validation.constraints.NotNull;
 
 abstract class AbstractRequirementPropertyChangeEventBuilder<EVENT extends RequirementAuditEvent> implements
 		RequirementPropertyChangeEventBuilder<EVENT> {

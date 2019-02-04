@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.ForeignKey;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.project.GenericProject;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -35,10 +36,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.ForeignKey;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.project.GenericProject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The purpose of this entity is to store informations about A Project's connection to a BugTracker. <br>

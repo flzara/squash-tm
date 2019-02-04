@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import java.util.Map;
-
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
+
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

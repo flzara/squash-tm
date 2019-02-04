@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +29,9 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+
+import javax.inject.Inject;
+import java.util.Set;
 
 // XSS OK
 @Controller

@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-
-import org.squashtest.tm.domain.execution.ExecutionStep;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")

@@ -20,10 +20,16 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -43,21 +49,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
-import javax.validation.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @NamedQueries(value = {
 		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),

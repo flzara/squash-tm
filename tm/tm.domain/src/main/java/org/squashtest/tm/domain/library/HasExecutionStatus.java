@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.library;
 
-import java.util.Set;
-
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+import java.util.Set;
 
 public interface HasExecutionStatus {
 	

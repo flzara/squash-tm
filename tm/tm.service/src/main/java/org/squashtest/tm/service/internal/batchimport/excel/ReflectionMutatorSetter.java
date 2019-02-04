@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.lang.reflect.Method;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ReflectionUtils;
+
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 
 /**
  * Sets a property using a mutator (ie a "setter").

@@ -33,11 +33,14 @@ import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.service.attachment.RawAttachment;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;

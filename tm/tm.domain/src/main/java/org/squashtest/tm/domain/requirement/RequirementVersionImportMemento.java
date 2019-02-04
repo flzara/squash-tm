@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import java.util.Date;
-import java.util.Set;
-
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.milestone.Milestone;
+
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.

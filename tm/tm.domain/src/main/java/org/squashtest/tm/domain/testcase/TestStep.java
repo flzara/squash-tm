@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
+import org.hibernate.annotations.Persister;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import org.squashtest.tm.security.annotation.InheritsAcls;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,13 +40,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Persister;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
-import org.squashtest.tm.security.annotation.InheritsAcls;
+import java.util.List;
 
 
 

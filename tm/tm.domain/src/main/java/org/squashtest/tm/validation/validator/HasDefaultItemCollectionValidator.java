@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.validation.validator;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.core.foundation.lang.Assert;
 import org.squashtest.tm.validation.constraint.HasDefaultItem;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.lang.reflect.Field;
+import java.util.Collection;
 
 /**
  * @author Gregory Fouquet

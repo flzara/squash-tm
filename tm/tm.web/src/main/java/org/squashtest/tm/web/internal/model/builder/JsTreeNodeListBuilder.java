@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Decorates an instance of {@link GenericJsTreeNodeBuilder} to build a list of {@link JsTreeNode} from a list of items.

@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,10 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
-import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+
+import javax.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
 
 //XSS ok bflessel
 @Controller

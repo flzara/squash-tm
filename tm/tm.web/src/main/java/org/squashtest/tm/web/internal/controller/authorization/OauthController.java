@@ -19,12 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.authorization;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import javax.inject.Inject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -33,6 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.service.security.OAuth2ClientService;
+
+import javax.inject.Inject;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 // XSS OK - bflessel
 @Controller

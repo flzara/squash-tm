@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.validation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
  * @author Gregory Fouquet

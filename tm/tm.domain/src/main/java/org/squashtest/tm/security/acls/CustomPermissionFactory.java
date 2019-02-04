@@ -21,7 +21,6 @@
 package org.squashtest.tm.security.acls;
 
 import org.springframework.security.acls.domain.DefaultPermissionFactory;
-import org.springframework.stereotype.Component;
 
 /**
  *

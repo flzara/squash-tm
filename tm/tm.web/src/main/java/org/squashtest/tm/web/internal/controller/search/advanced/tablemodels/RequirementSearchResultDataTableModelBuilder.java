@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.tablemodels;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -35,6 +30,11 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class RequirementSearchResultDataTableModelBuilder extends DataTableModelBuilder<RequirementVersion> {
 

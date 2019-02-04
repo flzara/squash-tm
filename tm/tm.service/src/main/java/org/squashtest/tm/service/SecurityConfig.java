@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.sql.DataSource;
-
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +41,16 @@ import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.acls.domain.*;
+import org.springframework.security.acls.domain.AclAuthorizationStrategy;
+import org.springframework.security.acls.domain.AclAuthorizationStrategyImpl;
+import org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy;
+import org.springframework.security.acls.domain.PermissionFactory;
+import org.springframework.security.acls.domain.SpringCacheBasedAclCache;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
-import org.springframework.security.acls.model.*;
+import org.springframework.security.acls.model.AclCache;
+import org.springframework.security.acls.model.AclService;
+import org.springframework.security.acls.model.ObjectIdentityGenerator;
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -70,12 +68,25 @@ import org.squashtest.tm.api.security.authentication.ConditionalOnAuthProviderPr
 import org.squashtest.tm.security.acls.CustomPermissionFactory;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
 import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.security.*;
+import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
+import org.squashtest.tm.service.internal.security.InternalAuthenticationProviderFeatures;
+import org.squashtest.tm.service.internal.security.SquashDaoAuthenticationProvider;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
 import org.squashtest.tm.service.security.acls.domain.DatabaseBackedObjectIdentityGeneratorStrategy;
 import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Partial Spring Sec config. Should be with the rest of spring sec's config now that we dont have osgi bundles segregation

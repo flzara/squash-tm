@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.library.Folder;
@@ -34,6 +32,8 @@ import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * Generic management service for library nodes. It is responsible for common operations such as rename / move / copy

@@ -30,14 +30,18 @@ import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_BINDING;
 
 /**
  *  As for Squash 1.17, all our DAO are JPA or Hibernate DAO.

@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
+import org.apache.commons.collections.Closure;
+import org.squashtest.tm.domain.library.structures.LibraryTree;
+import org.squashtest.tm.domain.library.structures.TreeNode;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.collections.Closure;
-import org.squashtest.tm.domain.library.structures.LibraryTree;
-import org.squashtest.tm.domain.library.structures.TreeNode;
 
 public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirementRewiringTree.Node> {
 

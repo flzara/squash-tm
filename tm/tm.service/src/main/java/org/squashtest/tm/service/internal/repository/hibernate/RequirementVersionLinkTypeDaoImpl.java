@@ -28,7 +28,6 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionLinkTypeDao;
 
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

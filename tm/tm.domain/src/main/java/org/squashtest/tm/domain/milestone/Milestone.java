@@ -25,8 +25,6 @@ import org.apache.commons.collections.Predicate;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
-import javax.validation.constraints.NotBlank;
-
 import org.hibernate.search.annotations.SortableField;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.Identified;
@@ -41,11 +39,33 @@ import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Auditable
 @Entity

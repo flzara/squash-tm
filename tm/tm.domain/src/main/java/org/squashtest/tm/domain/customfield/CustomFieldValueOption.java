@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import org.squashtest.tm.domain.Sizes;
+
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Sizes;
 
 @Embeddable
 public class CustomFieldValueOption {

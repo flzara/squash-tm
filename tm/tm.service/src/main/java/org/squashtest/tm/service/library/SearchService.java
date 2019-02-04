@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+
+import java.util.List;
 
 public interface SearchService {
 

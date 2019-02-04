@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.Comparator;
-import java.util.Locale;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import java.util.Comparator;
+import java.util.Locale;
 
 
 public class InternationalizableComparator implements

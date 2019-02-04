@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -41,6 +34,12 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.service.internal.repository.CustomGenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet

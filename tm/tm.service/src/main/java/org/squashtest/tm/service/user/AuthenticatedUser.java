@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
-
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Decorator which adds authentication data to a user. Should be used to push more information to controllers.

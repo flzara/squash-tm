@@ -20,23 +20,16 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
-import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
-import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+
+import java.util.List;
 
 /**
  * Iteration modification services which cannot be dynamically generated.

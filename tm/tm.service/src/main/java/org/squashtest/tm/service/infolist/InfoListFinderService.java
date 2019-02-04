@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.infolist.InfoList;
+
+import java.util.List;
 
 public interface InfoListFinderService {
 

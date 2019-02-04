@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.users;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+import org.squashtest.tm.domain.audit.Auditable;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -30,12 +30,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.audit.Auditable;
+import javax.validation.constraints.Size;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Auditable

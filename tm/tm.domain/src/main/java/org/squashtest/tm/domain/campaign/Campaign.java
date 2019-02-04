@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -42,8 +29,6 @@ import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
@@ -52,6 +37,29 @@ import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.security;
 
-import java.util.Optional;
-
 import org.springframework.security.core.Authentication;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+
+import java.util.Optional;
 
 /**
  * Provides information about the current user

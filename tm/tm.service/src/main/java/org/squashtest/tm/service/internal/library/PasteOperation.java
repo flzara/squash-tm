@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
+
+import java.util.List;
 
 public interface PasteOperation {
 

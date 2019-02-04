@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.service.security.OAuth2ClientService;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @Service("squashtest.tm.service.OAuth2ClientService")
 public class OAuth2ClientServiceImpl implements OAuth2ClientService{

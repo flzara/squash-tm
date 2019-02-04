@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+
+import javax.validation.constraints.NotNull;
 
 public class DataTableSorting extends DataTablePaging implements PagingAndSorting {
 	

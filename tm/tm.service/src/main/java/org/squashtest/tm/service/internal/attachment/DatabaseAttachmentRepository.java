@@ -23,8 +23,6 @@ package org.squashtest.tm.service.internal.attachment;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;

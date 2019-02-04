@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.service.internal.repository.CustomFieldDeletionDao;
+
+import java.util.List;
 
 @Repository
 public class HibernateCustomFieldDeletionDao extends HibernateDeletionDao implements CustomFieldDeletionDao {

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import org.squashtest.tm.domain.users.User;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-
-import org.squashtest.tm.domain.users.User;
 
 /**
  * Form bean for user definition.

@@ -24,17 +24,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  * @author bflessel

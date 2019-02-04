@@ -25,9 +25,10 @@
  */
 package org.squashtest.tm.domain.jpql;
 
-import java.util.Map;
 import org.hibernate.dialect.PostgreSQL9Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+
+import java.util.Map;
 
 /**
  *

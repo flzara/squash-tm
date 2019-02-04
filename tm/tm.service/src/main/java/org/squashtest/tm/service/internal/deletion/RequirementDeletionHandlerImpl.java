@@ -20,24 +20,12 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -61,6 +49,16 @@ import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.annotation;
 
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 /**
  * See {@link PreventConcurrent} for base doc.

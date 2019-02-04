@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.net.URL;
-import java.util.List;
-
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
+
+import java.net.URL;
+import java.util.List;
 
 public interface TestAutomationServerManagerService {
 

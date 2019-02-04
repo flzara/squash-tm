@@ -34,7 +34,12 @@ import org.squashtest.tm.service.security.UserContextService;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * TODO this service can be queried many times by a controller outside of a tx, which means lots of shord lived tx and

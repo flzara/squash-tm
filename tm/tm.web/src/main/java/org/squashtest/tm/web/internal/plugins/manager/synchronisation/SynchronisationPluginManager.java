@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.plugins.manager.synchronisation;
 
 import org.squashtest.tm.api.wizard.SynchronisationPlugin;
-import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 
 import java.util.Collection;
 

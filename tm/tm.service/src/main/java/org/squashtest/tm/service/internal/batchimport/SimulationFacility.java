@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,6 +27,9 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 /**
  *

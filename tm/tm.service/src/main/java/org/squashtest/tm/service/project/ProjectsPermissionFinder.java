@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.List;
-
 import org.springframework.data.domain.Sort;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -31,6 +29,8 @@ import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
+
+import java.util.List;
 
 /**
  * @author mpagnon

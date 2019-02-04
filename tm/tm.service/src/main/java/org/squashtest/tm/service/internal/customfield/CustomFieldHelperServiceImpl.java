@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -38,6 +34,9 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Read the definition of Helper instead

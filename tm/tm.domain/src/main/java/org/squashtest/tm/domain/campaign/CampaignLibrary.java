@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Where;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.project.GenericLibrary;
+import org.squashtest.tm.domain.project.GenericProject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -41,13 +42,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
-
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.hibernate.annotations.Where;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.project.GenericLibrary;
-import org.squashtest.tm.domain.project.GenericProject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {

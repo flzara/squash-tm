@@ -23,7 +23,9 @@ package org.squashtest.tm.web.internal.controller.report;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.report.ReportDefinition;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class JsonReportInstance {
 

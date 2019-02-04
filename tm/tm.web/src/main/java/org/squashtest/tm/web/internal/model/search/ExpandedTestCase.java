@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.search;
 
-import java.util.Collection;
-
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.util.Collection;
 
 /***
  *

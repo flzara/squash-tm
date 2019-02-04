@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+
+import java.util.List;
 
 
 

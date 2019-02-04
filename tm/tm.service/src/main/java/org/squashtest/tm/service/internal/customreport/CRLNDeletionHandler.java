@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.Closure;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -34,6 +29,10 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree;
 import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree.Node;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CRLNDeletionHandler implements

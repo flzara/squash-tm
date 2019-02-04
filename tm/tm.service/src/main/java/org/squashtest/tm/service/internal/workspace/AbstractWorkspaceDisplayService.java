@@ -46,14 +46,34 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirem
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.jooq.impl.DSL.count;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.LIBRARY_PLUGIN_BINDING;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT_FILTER;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT_FILTER_ENTRY;
 import static org.squashtest.tm.service.internal.dto.PermissionWithMask.findByMask;
 
 public abstract class AbstractWorkspaceDisplayService implements WorkspaceDisplayService {

@@ -21,13 +21,12 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 
+import org.squashtest.tm.service.internal.repository.CustomTestAutomationServerDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.hibernate.Session;
-import org.squashtest.tm.service.internal.repository.CustomTestAutomationServerDao;
-import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 public class TestAutomationServerDaoImpl implements CustomTestAutomationServerDao{
 

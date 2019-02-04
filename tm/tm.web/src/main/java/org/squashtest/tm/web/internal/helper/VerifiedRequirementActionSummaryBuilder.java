@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper class which builds a summary for a verified requirements related action. This summary is to be sent to the

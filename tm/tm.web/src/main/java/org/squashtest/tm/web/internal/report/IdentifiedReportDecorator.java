@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.report;
 
-import java.util.Map;
-
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.DocxTemplaterReport;
 import org.squashtest.tm.api.report.Report;
@@ -30,6 +28,8 @@ import org.squashtest.tm.api.report.StandardReportCategory;
 import org.squashtest.tm.api.report.StandardReportType;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
+
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

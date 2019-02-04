@@ -43,7 +43,13 @@ import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by jsimon on 04/05/2016.

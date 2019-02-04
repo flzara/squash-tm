@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
-import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanAndUnescapeHTML;
-import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
-import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
-import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
-import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.IEngineConfiguration;
@@ -40,6 +34,12 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanAndUnescapeHTML;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
+import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REQUIRE_BOTH_DIALECT_PREFIX_AND_ATTRIBUTE;
 
 
 

@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.Level;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.Level;
 
 /**
  *

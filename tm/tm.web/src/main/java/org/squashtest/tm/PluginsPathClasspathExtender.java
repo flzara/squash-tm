@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -34,6 +28,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * This SpringApplicationRunListener lists all the jars found in the plugins folder (as defined by

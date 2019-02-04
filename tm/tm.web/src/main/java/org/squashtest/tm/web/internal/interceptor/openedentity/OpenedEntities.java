@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.interceptor.openedentity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
@@ -35,6 +29,12 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Opened Entities represent a list of object of one type among the "MANAGED_ENTITIES_LIST". It is used to notify a user

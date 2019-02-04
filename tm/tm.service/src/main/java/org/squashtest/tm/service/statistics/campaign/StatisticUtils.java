@@ -22,7 +22,11 @@ package org.squashtest.tm.service.statistics.campaign;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public final class StatisticUtils {
 

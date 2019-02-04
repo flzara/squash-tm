@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.lang.reflect.Field;
+import org.springframework.util.ReflectionUtils;
 
 import javax.validation.constraints.NotNull;
-
-import org.springframework.util.ReflectionUtils;
+import java.lang.reflect.Field;
 
 /**
  * Sets an object's field through reflection. When value is declared optional, <code>null</code> values are not set.

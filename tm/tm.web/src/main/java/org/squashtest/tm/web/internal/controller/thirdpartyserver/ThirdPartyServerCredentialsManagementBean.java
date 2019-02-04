@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.thirdpartyserver;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
+
+import java.util.List;
 
 
 /**

@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.internal.bugtracker.adapter;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
-import org.squashtest.csp.core.bugtracker.core.*;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -34,6 +33,10 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This interface declares how to wrap the various bugtracker connector types (simple, advanced and oslc) in a unified

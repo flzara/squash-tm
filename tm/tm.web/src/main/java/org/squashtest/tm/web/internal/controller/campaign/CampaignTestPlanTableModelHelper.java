@@ -36,7 +36,11 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 //XSS OK
 final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<IndexedCampaignTestPlanItem> {

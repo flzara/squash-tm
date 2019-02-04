@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.validation.constraints.NotNull;
-
-import javax.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Builds {@link User} objects without having to use the ugly, 10-parameters constructor

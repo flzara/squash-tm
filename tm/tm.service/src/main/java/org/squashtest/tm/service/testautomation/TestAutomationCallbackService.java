@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.net.URL;
-
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+import java.net.URL;
 
 public interface TestAutomationCallbackService {
 

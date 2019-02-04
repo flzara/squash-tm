@@ -21,9 +21,10 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+
 import java.util.Collection;
 import java.util.List;
 

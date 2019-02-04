@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 
 public interface CustomReportDashboardDao extends JpaRepository<CustomReportDashboard,Long> {

@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.campaign.coercers.extenders;
 
-import java.io.Serializable;
-import java.util.Collection;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.hibernate.Query;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author Julien Thebault

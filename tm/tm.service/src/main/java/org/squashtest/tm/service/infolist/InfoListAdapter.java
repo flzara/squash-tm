@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import java.util.Date;
-
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.domain.infolist.InfoList;
+
+import java.util.Date;
 
 /**
  * @author Gregory

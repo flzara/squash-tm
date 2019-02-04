@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
+
+import java.util.List;
 
 public interface IterationStatisticsService {
 

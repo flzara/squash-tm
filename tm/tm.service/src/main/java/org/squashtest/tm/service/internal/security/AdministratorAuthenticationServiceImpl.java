@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +33,14 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
-import static org.squashtest.tm.api.security.acls.Roles.*;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
 
 @Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {

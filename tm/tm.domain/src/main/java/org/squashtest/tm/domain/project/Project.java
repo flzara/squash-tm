@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.domain.project;
 
-import javax.persistence.*;
-
 import org.hibernate.search.annotations.Indexed;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.library.Folder;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 

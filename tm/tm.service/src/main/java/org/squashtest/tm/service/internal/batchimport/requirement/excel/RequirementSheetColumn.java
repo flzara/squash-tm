@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.batchimport.requirement.excel;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.IGNORED;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
-
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.IGNORED;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
 
 /**
  * Enum of the columns which can be found in the requirement sheet of an import / export workbook.

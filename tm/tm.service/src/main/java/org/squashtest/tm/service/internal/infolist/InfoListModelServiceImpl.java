@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -35,12 +34,19 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.workspace.StreamUtils;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.squashtest.tm.domain.infolist.SystemListItem.SYSTEM_INFO_LIST_IDENTIFIER;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 
 @Service
 @Transactional(readOnly = true)

@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
+
+import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component("squashtest.testautomation.connector-registry")
 public class TestAutomationConnectorRegistry {

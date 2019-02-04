@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 @JsonAutoDetect
 public interface ColumnPrototypeMixin {

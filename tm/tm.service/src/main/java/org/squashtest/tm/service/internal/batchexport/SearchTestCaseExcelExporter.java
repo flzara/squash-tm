@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import javax.inject.Inject;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.context.MessageSource;
@@ -35,6 +33,8 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCol
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+
+import javax.inject.Inject;
 
 @Component
 @Scope("prototype")

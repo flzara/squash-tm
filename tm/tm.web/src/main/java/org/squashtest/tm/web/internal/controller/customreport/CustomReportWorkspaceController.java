@@ -58,7 +58,14 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * This controller is dedicated to the initial page of Custom Reports

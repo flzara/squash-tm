@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.chart;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +42,6 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
-import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
@@ -56,6 +49,11 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("charts")

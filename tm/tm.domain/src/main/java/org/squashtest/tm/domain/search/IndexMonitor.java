@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.domain.search;
 
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
+
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 public class IndexMonitor {
 

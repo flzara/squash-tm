@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -35,6 +31,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+
+import javax.inject.Inject;
+import java.util.List;
 //XSS ok Bflessel
 @Controller
 @RequestMapping("/search")

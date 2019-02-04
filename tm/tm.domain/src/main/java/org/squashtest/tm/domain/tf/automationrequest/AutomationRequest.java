@@ -20,8 +20,12 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.bridge.builtin.EnumBridge;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
@@ -29,7 +33,21 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 

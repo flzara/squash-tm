@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +42,6 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -66,6 +55,15 @@ import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerServ
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Gregory Fouquet

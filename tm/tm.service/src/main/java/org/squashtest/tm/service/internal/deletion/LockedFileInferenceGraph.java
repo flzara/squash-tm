@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class LockedFileInferenceGraph extends

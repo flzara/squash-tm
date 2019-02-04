@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.beans.PropertyEditorSupport;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.springframework.web.multipart.MultipartFile;
 
 // XSS OK
 public class UploadedDataPropertyEditorSupport extends PropertyEditorSupport {

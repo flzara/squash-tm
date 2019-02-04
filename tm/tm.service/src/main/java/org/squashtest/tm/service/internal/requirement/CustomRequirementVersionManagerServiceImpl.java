@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.Transformer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +35,6 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -65,10 +62,18 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_REQUIREMENT_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQUIREMENT_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_REQVERSION_OR_ROLE_ADMIN;
 
 /**
  * @author Gregory Fouquet

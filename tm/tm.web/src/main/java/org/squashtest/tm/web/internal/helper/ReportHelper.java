@@ -26,7 +26,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.form.*;
+import org.squashtest.tm.api.report.form.CheckboxInput;
+import org.squashtest.tm.api.report.form.CheckboxesGroup;
+import org.squashtest.tm.api.report.form.ContainerOption;
+import org.squashtest.tm.api.report.form.DateInput;
+import org.squashtest.tm.api.report.form.DropdownList;
+import org.squashtest.tm.api.report.form.Input;
+import org.squashtest.tm.api.report.form.InputsGroup;
+import org.squashtest.tm.api.report.form.OptionInput;
+import org.squashtest.tm.api.report.form.RadioButtonsGroup;
+import org.squashtest.tm.api.report.form.TreePicker;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -49,7 +58,14 @@ import org.squashtest.tm.web.internal.report.criteria.SimpleCriteria;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author zyang

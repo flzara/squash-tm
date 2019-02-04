@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import org.squashtest.tm.domain.testcase.Dataset;
+
 import java.util.Collection;
 import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.Dataset;
 
 public interface DatasetModificationService {
 

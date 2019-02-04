@@ -36,7 +36,11 @@ import org.squashtest.tm.exception.bugtracker.CannotDeleteBugtrackerLinkedToSync
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackerSystemManager;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
+import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
+import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 
 import javax.inject.Inject;

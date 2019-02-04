@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.project;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -39,8 +38,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.squashtest.tm.service.project.GenericProjectManagerService.ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * @author Gregory Fouquet

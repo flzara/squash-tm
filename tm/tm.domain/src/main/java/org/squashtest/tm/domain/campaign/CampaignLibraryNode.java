@@ -25,7 +25,14 @@ import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

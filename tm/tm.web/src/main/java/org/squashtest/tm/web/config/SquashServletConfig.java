@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.web.config;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
-import static org.springframework.util.StringUtils.trimAllWhitespace;
-import java.util.Collection;
-import java.util.HashMap;
-
-import javax.inject.Inject;
-import javax.servlet.DispatcherType;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -49,9 +43,9 @@ import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
-import org.squashtest.tm.web.internal.filter.UserCredentialsCachePersistenceFilter;
 import org.squashtest.tm.web.internal.filter.MultipartFilterExceptionAware;
 import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
+import org.squashtest.tm.web.internal.filter.UserCredentialsCachePersistenceFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
 import org.thymeleaf.dialect.IDialect;
@@ -60,8 +54,13 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import javax.inject.Inject;
+import javax.servlet.DispatcherType;
+import java.util.Collection;
+import java.util.HashMap;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 /**
  * Servlet context config (mostly). Not in SquashServletInitializer because it delays the servlet context initialization for

@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface CustomRequirementVersionCoverageDao extends EntityDao<RequirementVersionCoverage>{
 

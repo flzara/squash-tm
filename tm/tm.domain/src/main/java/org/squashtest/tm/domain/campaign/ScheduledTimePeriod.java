@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.Date;
+import org.squashtest.tm.validation.constraint.IsScheduledPeriodValid;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.squashtest.tm.validation.constraint.IsScheduledPeriodValid;
+import java.util.Date;
 
 /**
  * Embeddable value for a scheduled (i.e. user defined) date period.

@@ -33,13 +33,27 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.statistics.campaign.*;
+import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

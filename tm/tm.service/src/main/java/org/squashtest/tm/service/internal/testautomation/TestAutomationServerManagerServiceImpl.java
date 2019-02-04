@@ -30,7 +30,6 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
 import javax.inject.Inject;

@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.api.repository;
 
+import org.hibernate.Query;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.hibernate.Query;
 
 /**
  * @author Gregory Fouquet

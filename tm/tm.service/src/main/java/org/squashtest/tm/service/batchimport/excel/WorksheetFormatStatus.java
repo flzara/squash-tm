@@ -20,11 +20,17 @@
  */
 package org.squashtest.tm.service.batchimport.excel;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Indicates if the {@link #worksheet} is conform to the expected format ({@link #isFormatOk()}. <br/>

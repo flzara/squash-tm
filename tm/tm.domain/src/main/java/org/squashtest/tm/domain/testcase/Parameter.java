@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,17 +40,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
-import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TEST_CASE_ID"})})

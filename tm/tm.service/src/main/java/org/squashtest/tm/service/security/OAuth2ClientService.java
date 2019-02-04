@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.security;
 
-import java.util.List;
-
 import org.springframework.security.oauth2.provider.ClientDetails;
+
+import java.util.List;
 
 public interface OAuth2ClientService {
 

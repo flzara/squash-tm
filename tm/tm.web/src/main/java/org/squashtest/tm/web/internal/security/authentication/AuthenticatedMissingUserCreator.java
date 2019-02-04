@@ -20,30 +20,25 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.api.security.authentication.ExtraAccountInformationAuthentication;
-import org.squashtest.tm.api.security.authentication.FeaturesAwareAuthentication;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
-import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 

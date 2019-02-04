@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+
+import java.util.Collection;
 
 public interface LibraryContentRepository {
 

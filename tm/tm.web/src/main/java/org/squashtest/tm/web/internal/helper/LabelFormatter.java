@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.Locale;
-
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 
 /**
  * @author Gregory

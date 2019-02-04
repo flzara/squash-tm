@@ -20,6 +20,20 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Table;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.resource.Resource;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,18 +47,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Table;
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.domain.attachment.AttachmentList;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

@@ -20,13 +20,20 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.*;
-
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.PathBuilder;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.NaturalJoinStyle;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
@@ -37,8 +44,12 @@ import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Predicate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>

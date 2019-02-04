@@ -20,25 +20,42 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import static java.util.stream.Collectors.toList;
-import static org.squashtest.tm.domain.customfield.BindableEntity.*;
-
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.BoundEntityImpl;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
-import org.squashtest.tm.domain.project.GenericProject;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
+import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN;
+import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.domain.customfield.BindableEntity.CUSTOM_REPORT_FOLDER;
+import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION_STEP;
+import static org.squashtest.tm.domain.customfield.BindableEntity.ITERATION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.PROJECT;
+import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_VERSION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TESTCASE_FOLDER;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_CASE;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_STEP;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_SUITE;
 
 @Repository
 public class HibernateBoundEntityDao implements BoundEntityDao {

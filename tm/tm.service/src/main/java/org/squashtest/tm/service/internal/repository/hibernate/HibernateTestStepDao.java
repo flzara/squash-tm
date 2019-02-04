@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-import java.util.ListIterator;
-
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -33,6 +30,9 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
+
+import java.util.List;
+import java.util.ListIterator;
 
 @Repository
 public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implements TestStepDao {

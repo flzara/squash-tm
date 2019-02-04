@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -31,6 +29,8 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.User;
+
+import java.util.List;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)

@@ -20,17 +20,21 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
+
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ExportModel {
 	private List<TestCaseModel> testCases = new LinkedList<>();

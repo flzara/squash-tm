@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.model.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 

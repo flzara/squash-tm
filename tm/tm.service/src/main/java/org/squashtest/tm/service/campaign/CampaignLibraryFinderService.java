@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface CampaignLibraryFinderService {
 

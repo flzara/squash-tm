@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.DenormalizedCustomFieldOption;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.RawValue;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.DiscriminatorValue;
@@ -33,9 +33,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
-
-import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.customfield.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue("MFV")

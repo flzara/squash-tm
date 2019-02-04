@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.campaign.scripted;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ScriptedExecutionExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;

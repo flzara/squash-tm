@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import org.hibernate.search.annotations.DocumentId;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,11 +35,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.search.annotations.DocumentId;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 public class CustomReportChartBinding implements Identified {

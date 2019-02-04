@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
+
+import java.util.List;
 
 public class SetLibraryIdsCallback implements SetQueryParametersCallback{
 	private List<Long> libraryIds;

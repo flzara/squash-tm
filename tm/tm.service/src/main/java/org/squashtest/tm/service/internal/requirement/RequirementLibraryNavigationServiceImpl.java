@@ -20,21 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -48,7 +33,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
@@ -79,14 +66,22 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
-import org.squashtest.tm.service.internal.batchexport.*;
+import org.squashtest.tm.service.internal.batchexport.ExportDao;
+import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
+import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
+import org.squashtest.tm.service.internal.batchexport.SearchSimpleRequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
+import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
 import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForArray;
 import org.squashtest.tm.service.internal.requirement.coercers.RLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.requirement.coercers.RequirementLibraryIdsCoercerForArray;
@@ -101,9 +96,27 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_REQFOLDER_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_REQLIBRARY_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_REQUIREMENT_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQUIREMENT_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQ_LIBRARY_NODE_OR_ROLE_ADMIN;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")

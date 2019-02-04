@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -30,6 +27,9 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Data access methods for {@link RequirementVersionCoverage}s. Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.

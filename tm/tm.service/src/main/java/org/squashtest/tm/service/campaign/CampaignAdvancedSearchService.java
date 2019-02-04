@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-import java.util.Locale;
-
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+
+import java.util.List;
+import java.util.Locale;
 
 public interface CampaignAdvancedSearchService extends AdvancedSearchService {
 

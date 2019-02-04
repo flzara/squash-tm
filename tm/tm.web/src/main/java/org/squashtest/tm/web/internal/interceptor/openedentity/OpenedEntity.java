@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.interceptor.openedentity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 /**
  * Represents a list of users viewing the same object at the same time and how many views have each user opened.
  * see it's use at {@linkplain OpenedEntities}

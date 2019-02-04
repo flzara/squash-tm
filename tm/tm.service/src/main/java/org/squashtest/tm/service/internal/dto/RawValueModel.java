@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.customfield.RawValue;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.customfield.RawValue;
+
+import java.util.HashMap;
+import java.util.List;
 
 /*
  * Only one of the two properties are expected for each deserialized instance

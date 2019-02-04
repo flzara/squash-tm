@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * That interface is called so because it should remain private to this bundle. The reason is that the methods will not

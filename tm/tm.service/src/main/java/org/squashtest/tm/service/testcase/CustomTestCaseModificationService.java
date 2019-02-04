@@ -20,20 +20,23 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.annotation.Id;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

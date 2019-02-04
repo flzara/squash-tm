@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.web.internal.interceptor;
 
-import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 import org.squashtest.tm.annotation.WebComponent;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+
+import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebComponent
 public class ActiveMilestoneInterceptor implements HandlerInterceptor {

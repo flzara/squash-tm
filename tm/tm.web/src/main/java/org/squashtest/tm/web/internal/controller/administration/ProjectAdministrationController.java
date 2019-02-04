@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -71,6 +60,16 @@ import org.squashtest.tm.web.internal.controller.project.ProjectPluginModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/administration/projects")

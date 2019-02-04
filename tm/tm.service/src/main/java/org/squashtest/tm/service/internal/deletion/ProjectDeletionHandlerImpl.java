@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +54,12 @@ import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component("squashtest.tm.service.deletion.ProjectDeletionHandler")
 public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {

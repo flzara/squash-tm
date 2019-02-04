@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.tree;
 
+import org.squashtest.tm.domain.attachment.AttachmentList;
+
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
-
-import org.squashtest.tm.domain.attachment.AttachmentList;
 
 @MappedSuperclass
 public abstract class GenericTreeLibrary implements TreeLibrary, TreeEntity {

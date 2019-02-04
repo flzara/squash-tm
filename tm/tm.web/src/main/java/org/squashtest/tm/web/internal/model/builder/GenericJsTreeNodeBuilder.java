@@ -20,23 +20,23 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.CREATE;
-import static org.squashtest.tm.api.security.acls.Permission.DELETE;
-import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
-import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
-import java.util.Collection;
-import java.util.Map;
-
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import java.util.Collection;
+import java.util.Map;
+
+import static org.squashtest.tm.api.security.acls.Permission.CREATE;
+import static org.squashtest.tm.api.security.acls.Permission.DELETE;
+import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
+import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
 /**
  * Generic superclass for builders of {@link JsTreeNode}

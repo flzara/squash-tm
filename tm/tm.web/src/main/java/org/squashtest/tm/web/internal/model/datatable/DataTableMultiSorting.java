@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataTableMultiSorting extends DataTablePaging implements PagingAndMultiSorting {
 	

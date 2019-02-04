@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
-import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Definition of a worksheet that is to be processd by the importer.

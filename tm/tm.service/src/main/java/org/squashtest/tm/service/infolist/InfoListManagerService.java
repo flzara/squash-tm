@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+import org.squashtest.tm.domain.infolist.InfoList;
 
 import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.tm.domain.infolist.InfoList;
 
 public interface InfoListManagerService extends InfoListFinderService {
 

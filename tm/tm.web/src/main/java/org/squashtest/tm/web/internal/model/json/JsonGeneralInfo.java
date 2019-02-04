@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.Date;
-
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+
+import java.util.Date;
 
 public class JsonGeneralInfo {
 

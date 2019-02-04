@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker.adapter;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -33,6 +29,10 @@ import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.core.foundation.lang.CollectionUtils;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 public class AdvancedBugtrackerConnectorAdapter extends AbstractInternalConnectorAdapter {
 

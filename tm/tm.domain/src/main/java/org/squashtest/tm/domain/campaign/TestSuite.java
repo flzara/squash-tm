@@ -20,16 +20,9 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Indexed;
-import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -50,6 +43,31 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.security.annotation.InheritsAcls;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Auditable
 @Entity

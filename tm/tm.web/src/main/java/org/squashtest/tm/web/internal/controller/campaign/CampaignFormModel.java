@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -34,7 +31,9 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 //XSS OK
 public class CampaignFormModel {

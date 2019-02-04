@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.AdministrableProject;
@@ -30,6 +28,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.exception.library.CannotDeleteProjectException;
+
+import javax.inject.Inject;
 @Component
 @Scope("prototype")
 public class GenericToAdministrableProject implements ProjectVisitor {

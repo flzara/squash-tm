@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import java.util.Collection;
-
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+
+import java.util.Collection;
 
 /**
  * Defines a subset of the {@link ParametersBuilder}

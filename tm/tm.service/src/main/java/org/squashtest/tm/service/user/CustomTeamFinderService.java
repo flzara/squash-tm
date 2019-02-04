@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+
+import java.util.List;
 
 /**
  * Holder for non dynamically generated find methods for {@link Team}

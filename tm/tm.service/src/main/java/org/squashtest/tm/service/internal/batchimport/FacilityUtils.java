@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Collection;
-
 import org.squashtest.tm.service.importer.LogEntry;
+
+import java.util.Collection;
 
 public final class FacilityUtils {
 	private FacilityUtils() {

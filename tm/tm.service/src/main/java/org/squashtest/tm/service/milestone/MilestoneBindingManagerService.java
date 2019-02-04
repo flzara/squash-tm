@@ -20,14 +20,10 @@
  */
 package org.squashtest.tm.service.milestone;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import java.util.List;
 
 
 public interface MilestoneBindingManagerService {

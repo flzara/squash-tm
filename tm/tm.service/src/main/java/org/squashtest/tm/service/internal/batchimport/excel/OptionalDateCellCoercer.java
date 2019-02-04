@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.internal.batchimport.Messages;
+
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Coerces an optional date cell into a {@link Date}. Handles both excel-style date cells and string cells containing an

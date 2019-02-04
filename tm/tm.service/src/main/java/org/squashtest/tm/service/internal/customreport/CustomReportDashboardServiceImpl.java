@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -51,6 +42,14 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.CustomReportReportBindingDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Optional;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")

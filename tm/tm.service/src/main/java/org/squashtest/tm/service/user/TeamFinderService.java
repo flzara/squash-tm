@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.users.Team;
+
+import java.util.List;
 
 /**
  * {@link Team} retrieval methods.

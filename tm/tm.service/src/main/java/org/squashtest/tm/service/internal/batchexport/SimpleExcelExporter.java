@@ -35,8 +35,10 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 
@@ -45,7 +47,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author bflessel
@@ -58,11 +61,11 @@ class SimpleExcelExporter {
 
 	private static final String DATA_EXCEED_MAX_CELL_SIZE_MESSAGE = "' : some data exceed the maximum size of an excel cell";
 
-	protected static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
-	protected static final String STATUS = "test-case.status.";
-	protected static final String IMPORTANCE = "test-case.importance.";
-	protected static final String AUTOMATABLE = "test-case.automatable.";
-	protected static final String TYPE = "test-case.type.";
+	private static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
+	private static final String STATUS = "test-case.status.";
+	private static final String IMPORTANCE = "test-case.importance.";
+	private static final String AUTOMATABLE = "test-case.automatable.";
+	private static final String TYPE = "test-case.type.";
 
 
 	protected Workbook workbook;

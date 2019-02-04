@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.annotation;
 
+import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.inject.Named;
 
 /**
  * @author Julien Thebault

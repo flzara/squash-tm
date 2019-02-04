@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.Messages;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

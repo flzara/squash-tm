@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -31,6 +29,8 @@ import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+
+import java.util.List;
 
 /**
  * Defines common methods for a library navigation service, mainly library access and folder manipulation.

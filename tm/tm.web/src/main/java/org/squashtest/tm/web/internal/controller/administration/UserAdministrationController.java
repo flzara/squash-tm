@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -43,16 +32,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
+import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
@@ -67,6 +61,16 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/administration/users")

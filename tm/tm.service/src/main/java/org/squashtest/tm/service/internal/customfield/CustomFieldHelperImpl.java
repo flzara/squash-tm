@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -34,6 +27,13 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustomFieldHelper<X> implements
 		CustomFieldHelper<X> {

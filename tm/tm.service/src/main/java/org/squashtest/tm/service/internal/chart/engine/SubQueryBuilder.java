@@ -20,20 +20,19 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class creates a subquery, it is used for ChartQueries having a QueryStrategy = SUBQUERY.

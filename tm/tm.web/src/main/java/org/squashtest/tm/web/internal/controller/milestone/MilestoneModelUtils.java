@@ -25,7 +25,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Set;
 
 // XSS OK
 public final class MilestoneModelUtils {

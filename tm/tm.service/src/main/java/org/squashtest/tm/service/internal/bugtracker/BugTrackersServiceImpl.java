@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.function.Supplier;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContext;
@@ -39,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
@@ -49,10 +40,18 @@ import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.UserCredentialsCache;
 
 import javax.inject.Inject;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 /**
  * Basic implementation of {@link BugTrackersService}. See doc on the interface.

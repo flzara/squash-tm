@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.service.user.AdministrationService;
+
+import javax.inject.Inject;
 
 //XSS ok 2018-01-19 JTH
 @Controller

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.exception.requirement;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * A Requirement was bound to be verified by a new TestCase while it is not linkable.

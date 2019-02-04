@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.util.Set;
-
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.structures.StringPathMap;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -32,6 +30,8 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.internal.archive.ArchiveReader;
 import org.squashtest.tm.service.internal.archive.Entry;
+
+import java.util.Set;
 
 /**
  * Must read an archive and make test cases from the files it includes.

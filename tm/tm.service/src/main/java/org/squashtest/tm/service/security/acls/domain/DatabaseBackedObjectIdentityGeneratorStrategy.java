@@ -20,17 +20,13 @@
  */
 package org.squashtest.tm.service.security.acls.domain;
 
-import java.io.Serializable;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-import org.springframework.stereotype.Component;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
 
 /**
  * This {@link ObjectIdentityGenerator} fetches the entity using hibernate and

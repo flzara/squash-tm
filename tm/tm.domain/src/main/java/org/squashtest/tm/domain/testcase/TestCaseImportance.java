@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.i18n.Abbreviated;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 

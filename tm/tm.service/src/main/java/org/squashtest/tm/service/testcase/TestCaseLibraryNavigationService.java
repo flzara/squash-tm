@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -50,6 +45,11 @@ import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCo
 import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForList;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service for navigation in a TestCase library use case.

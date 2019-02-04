@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CustomReportListTreeNodeBuilder {

@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -32,6 +29,9 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
+
+import java.util.Collection;
+import java.util.List;
 /**
  * Holder for non dynamically generated find methods for both Project and ProjectTemplate
  * @author mpagnon

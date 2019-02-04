@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 
 public interface CustomFieldBindingDao extends JpaRepository<CustomFieldBinding, Long>, CustomCustomFieldBindingDao {

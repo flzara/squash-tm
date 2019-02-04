@@ -21,35 +21,6 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 
-import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.jpql.ExtOps;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-
 import com.querydsl.core.JoinExpression;
 import com.querydsl.core.types.Constant;
 import com.querydsl.core.types.Expression;
@@ -71,6 +42,34 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.QueryStrategy;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.jpql.ExtOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
 
 class QuerydslToolbox {
 

@@ -21,9 +21,6 @@
 package org.squashtest.tm.service;
 
 
-import javax.inject.Inject;
-import javax.validation.ValidatorFactory;
-
 import org.jooq.ConnectionProvider;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionProvider;
@@ -33,9 +30,7 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.PlatformTransactionManagerCustomizer;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +47,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import javax.inject.Inject;
+import javax.validation.ValidatorFactory;
 
 /**
  * Configuration for repository layer.

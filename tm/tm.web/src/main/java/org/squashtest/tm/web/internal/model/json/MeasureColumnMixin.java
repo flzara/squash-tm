@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
 public interface MeasureColumnMixin {

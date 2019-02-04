@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

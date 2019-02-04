@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -52,6 +43,14 @@ import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements

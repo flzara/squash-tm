@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Future;
-
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContext;
@@ -38,6 +32,12 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.servers.UserCredentialsCache;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 
 /**

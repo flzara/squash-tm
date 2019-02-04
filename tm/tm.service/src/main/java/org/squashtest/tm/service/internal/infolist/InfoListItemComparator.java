@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.FieldComparator;
-import org.apache.lucene.search.LeafFieldComparator;
 import org.apache.lucene.search.SimpleFieldComparator;
 import org.springframework.context.MessageSource;
+
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * FIXME NdGRF I added required methods when upgrading dependencies. As there is no documentation (comments or tests),

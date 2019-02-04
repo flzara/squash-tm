@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -29,6 +27,8 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
+
+import java.util.List;
 
 /**
  * The following specialization for NodeDeletionHandler, meant for the campaigns, will also handle the deletion of

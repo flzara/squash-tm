@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.domain.attachment;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import org.squashtest.tm.domain.Identified;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,11 +28,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
-
-import org.squashtest.tm.domain.Identified;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Entity
 public class AttachmentList implements Identified{

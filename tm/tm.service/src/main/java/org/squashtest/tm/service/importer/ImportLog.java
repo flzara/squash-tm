@@ -20,16 +20,10 @@
  */
 package org.squashtest.tm.service.importer;
 
-import static org.squashtest.tm.service.importer.EntityType.COVERAGE;
-import static org.squashtest.tm.service.importer.EntityType.DATASET;
-import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
-import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_LINK;
-import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
-import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
-import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
-import static org.squashtest.tm.service.importer.ImportStatus.OK;
-import static org.squashtest.tm.service.importer.ImportStatus.WARNING;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,10 +33,16 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.TreeSet;
 
-import org.apache.commons.collections.map.MultiValueMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
+import static org.squashtest.tm.service.importer.EntityType.COVERAGE;
+import static org.squashtest.tm.service.importer.EntityType.DATASET;
+import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_LINK;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
+import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
+import static org.squashtest.tm.service.importer.ImportStatus.OK;
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING;
 
 public class ImportLog{
 

@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.web.internal.model.testautomation;
 
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Attr;
+import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Data;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
-import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
-import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Attr;
-import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Data;
 
 public class TATestNodeListBuilder {
 

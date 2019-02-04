@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+
+import java.util.Collection;
 
 public interface AutomatedTestFinderService {
 

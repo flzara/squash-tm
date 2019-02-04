@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.domain.testautomation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,9 +32,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @NamedQueries({
 	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 import org.springframework.context.MessageSource;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class InfoListItemComparatorSource extends FieldComparatorSource {
 

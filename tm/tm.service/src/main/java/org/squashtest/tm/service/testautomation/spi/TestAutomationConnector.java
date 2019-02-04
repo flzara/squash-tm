@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.testautomation.spi;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Map;
-
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
 
 public interface TestAutomationConnector {
 

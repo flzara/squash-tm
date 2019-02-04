@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
+
+import java.util.List;
 
 public interface FolderDao<FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> extends EntityDao<FOLDER> {
 

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.milestone;
 
+import org.squashtest.tm.domain.Level;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
 	// @formatter::off

@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.internal.configuration;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.hibernate.HibernateException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Service("squashtest.core.configuration.ConfigurationService")
 @Transactional

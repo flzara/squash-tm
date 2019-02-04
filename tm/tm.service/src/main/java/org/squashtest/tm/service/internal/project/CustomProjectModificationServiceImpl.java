@@ -36,7 +36,9 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
@@ -45,7 +47,12 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

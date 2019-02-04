@@ -35,7 +35,9 @@ import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component

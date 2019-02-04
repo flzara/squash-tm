@@ -20,6 +20,20 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.DenormalizedCustomFieldOption;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,16 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.*;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 
 @Component

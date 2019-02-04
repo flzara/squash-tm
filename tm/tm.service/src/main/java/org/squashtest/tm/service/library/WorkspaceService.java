@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+
+import java.util.List;
 
 public interface WorkspaceService<LIBRARY extends Library<? extends LibraryNode>> {
 	/**

@@ -34,7 +34,19 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding;
 import org.squashtest.tm.jooq.domain.Tables;
-import org.squashtest.tm.jooq.domain.tables.*;
+import org.squashtest.tm.jooq.domain.tables.Campaign;
+import org.squashtest.tm.jooq.domain.tables.CampaignFolder;
+import org.squashtest.tm.jooq.domain.tables.CampaignIteration;
+import org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.ClnRelationship;
+import org.squashtest.tm.jooq.domain.tables.Iteration;
+import org.squashtest.tm.jooq.domain.tables.IterationTestPlanItem;
+import org.squashtest.tm.jooq.domain.tables.IterationTestSuite;
+import org.squashtest.tm.jooq.domain.tables.Milestone;
+import org.squashtest.tm.jooq.domain.tables.MilestoneCampaign;
+import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.TestSuite;
+import org.squashtest.tm.jooq.domain.tables.TestSuiteTestPlanItem;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
@@ -45,12 +57,32 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateIteratio
 import org.squashtest.tm.service.internal.workspace.AbstractWorkspaceDisplayService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.count;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY_CONTENT;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.CLN_RELATIONSHIP;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_SUITE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_CAMPAIGN;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
 
 @Service("campaignWorkspaceDisplayService")
 @Transactional(readOnly = true)

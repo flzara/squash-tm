@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +30,11 @@ import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.UserContextService;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.ProjectFilterModificationService")
 @Transactional

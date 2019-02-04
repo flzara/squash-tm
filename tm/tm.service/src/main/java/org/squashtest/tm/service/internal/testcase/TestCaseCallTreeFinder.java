@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.Bag;
 import org.apache.commons.collections.bag.HashBag;
 import org.slf4j.Logger;
@@ -38,6 +30,13 @@ import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *

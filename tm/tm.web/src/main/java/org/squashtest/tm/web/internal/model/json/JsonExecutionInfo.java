@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.net.URL;
-import java.util.Date;
-
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+import java.net.URL;
+import java.util.Date;
 
 public class JsonExecutionInfo {
 

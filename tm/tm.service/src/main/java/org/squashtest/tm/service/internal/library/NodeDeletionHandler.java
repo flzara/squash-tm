@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+
+import java.util.List;
 
 
 /**

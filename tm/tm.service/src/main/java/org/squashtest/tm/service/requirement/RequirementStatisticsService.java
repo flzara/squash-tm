@@ -20,11 +20,17 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.service.statistics.requirement.*;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
+import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics;
+import org.squashtest.tm.service.statistics.requirement.RequirementVersionBundleStat;
+
+import java.util.Collection;
 
 public interface RequirementStatisticsService {
 

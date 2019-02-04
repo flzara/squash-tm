@@ -20,13 +20,39 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
+import org.hibernate.search.annotations.Store;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.resource.Resource;
+import org.squashtest.tm.domain.search.AnalyzableCUFBridge;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.search.InfoListItemBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.search.NotAnalyzableCUFBridge;
+import org.squashtest.tm.domain.search.RequirementLinkListBridge;
+import org.squashtest.tm.domain.search.StringFieldBridge;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.security.annotation.InheritsAcls;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,26 +69,13 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneHolder;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.domain.search.*;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
-import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
-import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
-import org.squashtest.tm.security.annotation.InheritsAcls;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a version of a requirement.

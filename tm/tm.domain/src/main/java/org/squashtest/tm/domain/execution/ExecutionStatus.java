@@ -24,7 +24,12 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *

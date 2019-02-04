@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
-import java.util.Collection;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.DuplicateNameException;
+
+import java.util.Collection;
 
 public interface BugTrackerManagerService extends BugTrackerFinderService {
 

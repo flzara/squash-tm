@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.archive;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.squashtest.tm.exception.ZipCorruptedException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /*
  * TODO : make an interface for it.

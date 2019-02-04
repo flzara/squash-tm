@@ -20,15 +20,13 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 
+import javax.inject.Inject;
+import java.util.List;
 import java.util.Optional;
 
 

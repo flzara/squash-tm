@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -27,10 +29,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.EntityType;
+import javax.validation.constraints.Size;
 
 @Embeddable
 @Table(name = "CHART_MEASURE_COLUMN")

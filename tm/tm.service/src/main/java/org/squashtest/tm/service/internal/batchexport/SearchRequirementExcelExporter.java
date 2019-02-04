@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +32,9 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 @Scope("prototype")

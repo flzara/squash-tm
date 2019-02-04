@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.UserListItem;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
 
 /**
  * Jackson mixin to deserialize InfoList. It deserializes InfoListItems into UserListItems.

@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import org.apache.lucene.document.*;
-import org.apache.lucene.search.SortField;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.MetadataProvidingFieldBridge;

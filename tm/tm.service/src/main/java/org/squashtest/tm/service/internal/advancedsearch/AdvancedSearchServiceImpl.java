@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +41,21 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.*;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchNumericRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
+import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
@@ -62,7 +66,21 @@ import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 

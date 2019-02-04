@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
 import org.squashtest.tm.service.requirement.RequirementLibrariesCrudService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service("squashtest.tm.service.RequirementLibrariesCrudService")
 @Transactional

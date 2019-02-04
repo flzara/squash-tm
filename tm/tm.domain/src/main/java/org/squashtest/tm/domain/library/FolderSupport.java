@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.library;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.DuplicateNameException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is meant to be used as a delegate when one implements a {@link Folder}.

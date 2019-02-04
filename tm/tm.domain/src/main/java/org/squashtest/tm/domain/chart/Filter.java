@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,8 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.squashtest.tm.domain.EntityType;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "CHART_FILTER")

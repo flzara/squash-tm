@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by jthebault on 29/02/2016.

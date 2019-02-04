@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +40,13 @@ import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional

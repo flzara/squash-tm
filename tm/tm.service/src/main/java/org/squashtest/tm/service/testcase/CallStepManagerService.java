@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
+
+import java.util.List;
 
 public interface CallStepManagerService {
 

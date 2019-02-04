@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.service.annotation;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+
+import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.inject.Named;
-
-import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
  * Make a copy of the argument list. Decision was taken to copy the list, as passing directly {@link ProceedingJoinPoint} args can lead to

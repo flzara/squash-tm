@@ -21,7 +21,8 @@
 package org.squashtest.tm.service.security;
 
 import org.squashtest.tm.api.security.acls.Roles;
-import static org.squashtest.tm.api.security.acls.Roles.*;
+
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
 /**
  * Defines constants for authorization rules.
  *

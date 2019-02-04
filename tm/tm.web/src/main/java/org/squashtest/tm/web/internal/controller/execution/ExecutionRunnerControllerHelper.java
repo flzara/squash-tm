@@ -48,7 +48,12 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 //XSS ok bflessel
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.

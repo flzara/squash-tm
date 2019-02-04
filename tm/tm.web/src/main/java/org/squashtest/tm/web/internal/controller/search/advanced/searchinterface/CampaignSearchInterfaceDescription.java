@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -31,6 +27,10 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {

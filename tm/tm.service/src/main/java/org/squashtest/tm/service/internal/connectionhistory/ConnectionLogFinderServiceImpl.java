@@ -22,10 +22,13 @@ package org.squashtest.tm.service.internal.connectionhistory;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.users.ConnectionLog;
-import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
+import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

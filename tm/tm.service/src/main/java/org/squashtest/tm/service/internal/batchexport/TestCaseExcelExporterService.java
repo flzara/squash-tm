@@ -20,6 +20,18 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.library.PathService;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,21 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
-import org.squashtest.tm.service.internal.library.PathService;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
-
 @Service
 public class TestCaseExcelExporterService {
 	private static final int BATCH_SIZE = 50;
@@ -53,10 +50,6 @@ public class TestCaseExcelExporterService {
 	private ExportDao exportDao;
 
 	@Inject private PathService pathService;
-
-	@Inject
-	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
-	private TestCaseLibraryNodeDao nodeDao;
 
 	@Inject
 	@Named("excelExporter")

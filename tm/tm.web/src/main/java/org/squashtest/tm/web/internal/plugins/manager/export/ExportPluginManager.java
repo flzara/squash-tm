@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.export;
 
-import java.util.Collection;
-
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+
+import java.util.Collection;
 
 public interface ExportPluginManager {
 

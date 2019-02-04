@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.ConnectionLog;
 

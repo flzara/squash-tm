@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.milestone;
 
-import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 public interface MilestoneFinderService {

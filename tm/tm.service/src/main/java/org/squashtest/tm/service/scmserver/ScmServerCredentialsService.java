@@ -25,7 +25,6 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;

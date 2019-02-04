@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.event;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.validation.constraints.NotNull;
 
 public interface RequirementPropertyChangeEventBuilder<EVENT extends RequirementAuditEvent> {
 	RequirementPropertyChangeEventBuilder<EVENT> setOldValue(Object value);

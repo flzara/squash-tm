@@ -20,7 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.NumericField;
+import org.squashtest.tm.domain.customfield.RichTextField;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 /**
  * @author Gregory Fouquet

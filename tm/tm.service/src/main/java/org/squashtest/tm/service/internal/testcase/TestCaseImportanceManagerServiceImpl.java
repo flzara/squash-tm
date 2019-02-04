@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -37,6 +30,12 @@ import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional

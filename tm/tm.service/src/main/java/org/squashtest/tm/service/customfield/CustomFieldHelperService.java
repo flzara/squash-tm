@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
+
+import java.util.List;
 
 public interface CustomFieldHelperService {
 

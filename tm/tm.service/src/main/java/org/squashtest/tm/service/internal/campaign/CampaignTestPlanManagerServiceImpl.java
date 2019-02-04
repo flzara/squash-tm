@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,7 +64,15 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional

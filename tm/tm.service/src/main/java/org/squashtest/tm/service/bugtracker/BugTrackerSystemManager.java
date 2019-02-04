@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * BT management services available for System operations.

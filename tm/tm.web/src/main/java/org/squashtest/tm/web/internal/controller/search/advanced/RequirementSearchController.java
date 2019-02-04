@@ -48,7 +48,10 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by jsimon on 04/05/2016.

@@ -40,10 +40,9 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
@@ -51,9 +50,9 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.Project;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @JsonAutoDetect
 public abstract class ChartDefinitionMixin {

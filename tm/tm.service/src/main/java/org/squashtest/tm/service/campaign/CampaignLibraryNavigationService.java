@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-import java.util.Map;
-
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
@@ -35,19 +32,14 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoercerForArray;
-import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoercerForList;
-import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForArray;
-import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForList;
-import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+
+import java.util.List;
+import java.util.Map;
 
 public interface CampaignLibraryNavigationService extends
 LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, CampaignLibraryFinderService {

@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 @JsonAutoDetect
 public interface BugTrackerMixin {

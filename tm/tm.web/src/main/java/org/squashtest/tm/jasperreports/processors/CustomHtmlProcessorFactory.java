@@ -23,20 +23,34 @@ package org.squashtest.tm.jasperreports.processors;
 import net.sf.jasperreports.engine.JRPrintHyperlink;
 import net.sf.jasperreports.engine.base.JRBasePrintHyperlink;
 import net.sf.jasperreports.engine.type.HyperlinkTypeEnum;
-import net.sf.jasperreports.engine.util.*;
+import net.sf.jasperreports.engine.util.JEditorPaneHtmlMarkupProcessor;
+import net.sf.jasperreports.engine.util.JRStyledText;
 import net.sf.jasperreports.engine.util.JRStyledText.Run;
+import net.sf.jasperreports.engine.util.JRStyledTextParser;
+import net.sf.jasperreports.engine.util.JRTextAttribute;
+import net.sf.jasperreports.engine.util.MarkupProcessor;
+import net.sf.jasperreports.engine.util.MarkupProcessorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.LeafElement;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument.RunElement;
 import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator.Attribute;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**

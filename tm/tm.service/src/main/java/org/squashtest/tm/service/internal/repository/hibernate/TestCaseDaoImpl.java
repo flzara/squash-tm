@@ -20,7 +20,35 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
+import org.apache.commons.collections.ListUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReferencePair;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
+import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,33 +61,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.commons.collections.ListUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.LongType;
-import org.jooq.DSLContext;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.domain.NamedReferencePair;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.testcase.*;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
-import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
-
-import javax.inject.Inject;
-
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase

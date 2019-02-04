@@ -21,7 +21,12 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
@@ -32,9 +37,15 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static org.squashtest.tm.web.internal.controller.RequestParams.*;
+import static org.squashtest.tm.web.internal.controller.RequestParams.ITERATION_ID;
+import static org.squashtest.tm.web.internal.controller.RequestParams.TEST_PLAN_ITEMS_IDS;
+import static org.squashtest.tm.web.internal.controller.RequestParams.TEST_SUITE_ID;
 import static org.squashtest.tm.web.internal.http.ContentTypes.APPLICATION_JSON;
 
 // XSS OK

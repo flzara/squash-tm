@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.thymeleaf.dialect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
@@ -31,10 +30,10 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.web.internal.plugins.manager.export.ExportPluginManager;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.FilterModel;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.plugins.manager.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import javax.servlet.ServletContext;

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.exception.requirement;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

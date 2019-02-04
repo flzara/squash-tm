@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.REQUIREMENT_VERSION_CUSTOM_FIELD;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.STEP_CUSTOM_FIELD;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.TEST_CASE_CUSTOM_FIELD;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementLinksSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.REQUIREMENT_VERSION_CUSTOM_FIELD;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.STEP_CUSTOM_FIELD;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.TEST_CASE_CUSTOM_FIELD;
 
 /**
  * Enum of worksheet which are expected in the import file.

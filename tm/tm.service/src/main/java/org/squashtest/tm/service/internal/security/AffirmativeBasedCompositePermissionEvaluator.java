@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.PermissionEvaluator;
@@ -33,6 +28,11 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 
 /**

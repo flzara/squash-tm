@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,15 +27,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 

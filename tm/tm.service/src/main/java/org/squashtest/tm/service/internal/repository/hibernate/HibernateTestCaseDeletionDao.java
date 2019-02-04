@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.IntegerType;
@@ -43,6 +34,14 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
 import javax.inject.Inject;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /*

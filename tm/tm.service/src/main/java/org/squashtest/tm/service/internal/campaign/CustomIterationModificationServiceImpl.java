@@ -28,7 +28,12 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -39,7 +44,11 @@ import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-import org.squashtest.tm.service.annotation.*;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
@@ -74,7 +83,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_CAMPAIGN_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.CREATE_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.DELETE_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITPI_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.LINK_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_CAMPAIGN_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_ITERATION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_ITERATION_OR_ROLE_ADMIN;
 
 @Service("CustomIterationModificationService")
 @Transactional

@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
@@ -45,7 +38,12 @@ import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+
+import java.util.List;
 
 public interface ParameterModificationService extends ParameterFinder{
 

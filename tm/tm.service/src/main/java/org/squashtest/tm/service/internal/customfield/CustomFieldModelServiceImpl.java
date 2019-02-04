@@ -29,19 +29,34 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldModelService;
-import org.squashtest.tm.service.internal.dto.*;
+import org.squashtest.tm.service.internal.dto.BindableEntityModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
+import org.squashtest.tm.service.internal.dto.InputTypeModel;
+import org.squashtest.tm.service.internal.dto.RenderingLocationModel;
 import org.squashtest.tm.service.internal.workspace.StreamUtils;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_BINDING;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_RENDERING_LOCATION;
 
 @Service

@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.service.testautomation.model;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TestAutomationProjectContent {
 

@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.deletion;
 
+import org.springframework.context.MessageSource;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
-
-import org.springframework.context.MessageSource;
 
 public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewReport {
 

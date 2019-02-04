@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.CREATE;
-import static org.squashtest.tm.api.security.acls.Permission.DELETE;
-import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
-import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
-import java.util.Map;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
@@ -35,11 +27,18 @@ import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
+import java.util.Map;
+
+import static org.squashtest.tm.api.security.acls.Permission.CREATE;
+import static org.squashtest.tm.api.security.acls.Permission.DELETE;
+import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
+import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
 /**
  * No param/generic for v1, also no milestone in tree.

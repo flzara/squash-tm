@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.report;
 
-import java.util.Collection;
-import java.util.Collections;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +28,11 @@ import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportPlugin;
 import org.squashtest.tm.api.report.ReportView;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class registers / unregisters Jasper Reports view definitinos from report plugin under a view name.

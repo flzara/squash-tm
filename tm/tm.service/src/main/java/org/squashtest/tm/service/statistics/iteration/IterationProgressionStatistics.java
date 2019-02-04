@@ -20,16 +20,13 @@
  */
 package org.squashtest.tm.service.statistics.iteration;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.time.DateUtils;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.campaign.StatisticUtils;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class IterationProgressionStatistics {
 private Collection<String> i18nErrors;

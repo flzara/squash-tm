@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.service.internal.foundation.collection;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.Order;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /**
  * Utility class to apply sorting to a Hibernate query.

@@ -21,7 +21,11 @@
 package org.squashtest.tm.domain.execution;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Bean to hold the occurrence of execution steps status from a list of execution steps.

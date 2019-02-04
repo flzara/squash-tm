@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.requirement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 import org.hibernate.Session;

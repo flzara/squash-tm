@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
 import static org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding.RL_TYPE;
 

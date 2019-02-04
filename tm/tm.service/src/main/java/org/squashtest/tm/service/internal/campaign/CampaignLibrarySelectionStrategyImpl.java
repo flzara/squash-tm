@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component("squashtest.tm.service.CampaignLibrarySelectionStrategy")
 public class CampaignLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> {

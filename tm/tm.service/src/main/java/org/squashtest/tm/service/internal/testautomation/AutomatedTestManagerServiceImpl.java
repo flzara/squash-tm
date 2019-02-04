@@ -20,40 +20,35 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-
-import javax.inject.Inject;
-
-import org.apache.commons.io.FilenameUtils;
-import org.omg.CORBA.TCKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
 
 /**
  *

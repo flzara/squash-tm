@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.attachment;
 
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
+
+import java.util.Set;
 
 public interface AttachmentFinderService {
         

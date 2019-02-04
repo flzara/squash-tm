@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.service.internal.batchimport.Messages;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of {@link CellValueCoercer} which tests the cell's type then invokes a specific method. Default

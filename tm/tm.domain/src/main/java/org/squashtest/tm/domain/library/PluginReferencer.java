@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.library;
 
-import java.util.Set;
-
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
+
+import java.util.Set;
 
 public interface PluginReferencer<BIND extends LibraryPluginBinding> {
 	

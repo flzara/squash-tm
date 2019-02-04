@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,6 +32,11 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Transactional
 @Service("squashtest.tm.service.ParameterModificationService")

@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.execution;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
+
+import java.util.List;
 
 
 public interface ExecutionProcessingService {

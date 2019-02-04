@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.campaign.coercers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.annotation.ArrayIdsCoercerAdapter;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * {@link IdsCoercerExtender} used for {@link CampaignLibraryNode} move operations. This class is used with {@link PreventConcurrents} and {@link BatchPreventConcurrent} annotations.

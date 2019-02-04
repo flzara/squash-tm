@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.users;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,15 +33,23 @@ import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
+import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
-import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 //XSS ok bflessel
 @Controller

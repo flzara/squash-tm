@@ -22,25 +22,33 @@ package org.squashtest.tm.web.internal.controller.customfield;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.tm.web.internal.controller.AcceptHeaders;
-import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/custom-fields-binding")

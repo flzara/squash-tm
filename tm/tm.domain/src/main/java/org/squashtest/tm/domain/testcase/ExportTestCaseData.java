@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.library.ExportData;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.library.ExportData;
 /**
  * Data support for jasper Test Case Export
  * @author mpagnon

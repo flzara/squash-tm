@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
@@ -36,6 +30,11 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Service for management of Requirement Versions linked to other Requirement Versions.

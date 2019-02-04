@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import org.squashtest.tm.domain.EntityType;
 
 @Embeddable
 public class SpecializedEntityType {

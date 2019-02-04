@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.validation.validator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.squashtest.tm.validation.constraint.UniqueItems;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.squashtest.tm.validation.constraint.UniqueItems;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Gregory Fouquet

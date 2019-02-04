@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.domain.attachment;
 
-import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.SQLException;
+import org.hibernate.JDBCException;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -33,8 +31,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
-
-import org.hibernate.JDBCException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 /**
  * the BLOB part of the attachment was kept apart from the Attachment class itself to enforce the lazy loading of

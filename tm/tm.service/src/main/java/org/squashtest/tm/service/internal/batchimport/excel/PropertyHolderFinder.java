@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Target finder implementations are responsible for finding the target of an operation from this operation's context,

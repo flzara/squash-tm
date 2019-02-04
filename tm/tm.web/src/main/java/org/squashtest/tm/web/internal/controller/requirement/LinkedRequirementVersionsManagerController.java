@@ -23,12 +23,20 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -62,7 +70,13 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller for the management of Requirement Versions linked to other Requirement Versions.

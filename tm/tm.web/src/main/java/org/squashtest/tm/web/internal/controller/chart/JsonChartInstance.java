@@ -23,10 +23,26 @@ package org.squashtest.tm.web.internal.controller.chart;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartInstance;
+import org.squashtest.tm.domain.chart.ChartSeries;
+import org.squashtest.tm.domain.chart.ChartType;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.ScopeType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class JsonChartInstance {

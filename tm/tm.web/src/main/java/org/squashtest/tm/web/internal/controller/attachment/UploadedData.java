@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.io.InputStream;
-
 import org.squashtest.tm.service.attachment.RawAttachment;
+
+import java.io.InputStream;
 
 /**
  * @author Gregory Fouquet

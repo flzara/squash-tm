@@ -20,21 +20,20 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
-
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
 
 /**
  * <p>

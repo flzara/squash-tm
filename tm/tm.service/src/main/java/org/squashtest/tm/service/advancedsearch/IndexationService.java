@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.advancedsearch;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface IndexationService {
 

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.dto.json;
 
-import java.util.Date;
-
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+
+import java.util.Date;
 
 public class JsonMilestone {
 

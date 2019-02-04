@@ -20,14 +20,26 @@
  */
 package org.squashtest.tm.domain.attachment;
 
-import java.util.Date;
-import java.util.Locale;
-
-import javax.persistence.*;
-
-import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.squashtest.tm.domain.Identified;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import java.util.Date;
+import java.util.Locale;
 
 @Entity
 public class Attachment implements Identified {

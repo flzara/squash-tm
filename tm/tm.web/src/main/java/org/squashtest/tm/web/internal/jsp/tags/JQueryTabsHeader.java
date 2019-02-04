@@ -20,6 +20,15 @@
  */
 package org.squashtest.tm.web.internal.jsp.tags;
 
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.OutputDocument;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTag;
+
+import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -27,16 +36,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.jsp.JspContext;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.OutputDocument;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTag;
 
 /**
  *

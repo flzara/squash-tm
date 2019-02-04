@@ -27,7 +27,6 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;

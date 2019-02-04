@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.exception;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Indicates no version of a requirement which matche the rules to be verified by a test case could be found.

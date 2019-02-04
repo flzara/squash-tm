@@ -20,18 +20,18 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.squashtest.tm.web.internal.interceptor.openedentity.OpenedEntities;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.squashtest.tm.web.internal.interceptor.openedentity.OpenedEntities;
 
 /**
  * This lisner acts when the ServletContext is created or when a user's session is ending.

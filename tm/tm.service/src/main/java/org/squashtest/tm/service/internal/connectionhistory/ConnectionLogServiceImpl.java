@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.ConnectionLog;
-import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogService;
+import org.squashtest.tm.service.internal.repository.ConnectionLogDao;
 
 import javax.inject.Inject;
 import java.util.Date;

@@ -21,10 +21,9 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 
+import org.squashtest.tm.domain.testcase.Parameter;
 
 import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.domain.testcase.Parameter;
 
 public class ParameterInstruction extends Instruction<ParameterTarget> {
 

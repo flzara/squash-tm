@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -29,6 +27,8 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+
+import java.util.Collection;
 
 public class FetchTestListTask implements TestAutomationConnectorTask<TestAutomationProjectContent> {
 

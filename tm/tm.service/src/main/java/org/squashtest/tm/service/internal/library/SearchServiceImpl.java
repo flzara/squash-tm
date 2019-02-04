@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +32,12 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.SearchService")
 @Transactional(readOnly = true)

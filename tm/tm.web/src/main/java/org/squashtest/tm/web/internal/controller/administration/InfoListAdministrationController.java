@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,6 +41,10 @@ import org.squashtest.tm.web.internal.model.datatable.DataTable10ModelAdaptor;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.util.IconLibrary;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Controller for rendering info list management pages

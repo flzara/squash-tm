@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -57,6 +44,18 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Specialization of {@link JdbcAclService} with management methods. Rem : as we tweaked Spring's ACL database model,

@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
+
 import static org.squashtest.tm.domain.chart.Operation.AVG;
 import static org.squashtest.tm.domain.chart.Operation.BETWEEN;
 import static org.squashtest.tm.domain.chart.Operation.BY_DAY;
-import static org.squashtest.tm.domain.chart.Operation.BY_WEEK;
 import static org.squashtest.tm.domain.chart.Operation.BY_MONTH;
+import static org.squashtest.tm.domain.chart.Operation.BY_WEEK;
 import static org.squashtest.tm.domain.chart.Operation.BY_YEAR;
 import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
@@ -39,10 +43,6 @@ import static org.squashtest.tm.domain.chart.Operation.MIN;
 import static org.squashtest.tm.domain.chart.Operation.NONE;
 import static org.squashtest.tm.domain.chart.Operation.NOT_EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
-
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Set;
 
 public enum ColumnRole {
 

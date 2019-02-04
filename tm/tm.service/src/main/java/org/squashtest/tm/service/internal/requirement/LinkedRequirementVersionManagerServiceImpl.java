@@ -31,7 +31,12 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionLink;
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException;
@@ -49,9 +54,19 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_REQVERSION_OR_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.LinkedRequirementVersionManagerService")
 @Transactional

@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.*;
-import javax.inject.Inject;
-import javax.inject.Provider;
-
-/*
- * TODO : activate execution suppression once the service is ready
- *
- *
- */
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -65,6 +53,9 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
+import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -79,14 +70,27 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
-import org.squashtest.tm.service.internal.dto.CustomFieldModel;
-import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+/*
+ * TODO : activate execution suppression once the service is ready
+ *
+ *
+ */
 //XSS ok bflessel
 @Controller
 @RequestMapping("/executions/{executionId}")

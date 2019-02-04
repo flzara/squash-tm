@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.Query;
+
+import javax.validation.constraints.NotNull;
 
 class SetIdParameter implements SetQueryParametersCallback {
 	private final String parameterName;

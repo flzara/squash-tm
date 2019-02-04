@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.GenericTreeLibrary;
+import org.squashtest.tm.domain.tree.TreeEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,11 +32,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.GenericTreeLibrary;
-import org.squashtest.tm.domain.tree.TreeEntity;
 
 @Entity
 public class CustomReportLibrary extends GenericTreeLibrary {

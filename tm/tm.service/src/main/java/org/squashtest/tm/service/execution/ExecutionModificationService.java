@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.execution;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+
+import java.util.List;
 
 public interface ExecutionModificationService extends ExecutionFinder {
 

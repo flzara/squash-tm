@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.interceptor;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.NotNullPredicate;
@@ -36,6 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.lang.Assert;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This interceptor wrapper filters out requests based on their pattern. When we use spring 3.2, this class may become

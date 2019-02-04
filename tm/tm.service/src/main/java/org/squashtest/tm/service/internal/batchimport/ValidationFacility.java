@@ -20,20 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
-import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,17 +46,33 @@ import org.squashtest.tm.service.importer.LogEntry.Builder;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
 
 /**
  * This implementation solely focuses on validating data. It doesn't perform any

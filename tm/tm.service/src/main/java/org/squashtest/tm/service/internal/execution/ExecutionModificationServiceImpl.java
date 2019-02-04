@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
-import org.springframework.data.domain.Example;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,6 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import org.squashtest.tm.service.security.Authorizations;
 
 import javax.inject.Inject;
 import java.util.List;

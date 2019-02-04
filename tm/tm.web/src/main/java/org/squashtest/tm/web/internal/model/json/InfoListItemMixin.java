@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.infolist.InfoList;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.squashtest.tm.domain.infolist.InfoList;
 
 /**
  * @author Gregory Fouquet

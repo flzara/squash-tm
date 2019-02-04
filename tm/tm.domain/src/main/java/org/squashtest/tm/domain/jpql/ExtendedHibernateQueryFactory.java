@@ -32,9 +32,10 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import com.querydsl.jpa.hibernate.HibernateUpdateClause;
 import org.hibernate.Session;
-import static org.squashtest.tm.domain.jpql.FixedSessionHolders.*;
 
 import javax.inject.Provider;
+
+import static org.squashtest.tm.domain.jpql.FixedSessionHolders.defaultSessionHolder;
 
 /**
  * Adaptation of {@link HibernateQueryFactory} that works around https://github.com/querydsl/querydsl/issues/1917.

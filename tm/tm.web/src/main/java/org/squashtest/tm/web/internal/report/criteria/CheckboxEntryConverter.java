@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_SELECTED;
-
-import java.util.Map;
-
 import org.springframework.util.Assert;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
+
+import java.util.Map;
+
+import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_SELECTED;
 
 /**
  * @author Gregory

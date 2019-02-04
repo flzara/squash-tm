@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.READ_REQUIREMENT_OR_ROLE_ADMIN;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
+
+import javax.inject.Inject;
+
+import static org.squashtest.tm.service.security.Authorizations.READ_REQUIREMENT_OR_ROLE_ADMIN;
 
 @Transactional
 @Service("squashtest.tm.service.RequirementVersionResolverService")

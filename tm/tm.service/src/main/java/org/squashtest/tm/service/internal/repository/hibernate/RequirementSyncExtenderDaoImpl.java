@@ -26,7 +26,13 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementSyncExtend
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.jooq.domain.Tables.BUGTRACKER;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_SYNC_EXTENDER;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.THIRD_PARTY_SERVER;
 
 /**
  * Implementation of {@link CustomRequirementSyncExtenderDao}

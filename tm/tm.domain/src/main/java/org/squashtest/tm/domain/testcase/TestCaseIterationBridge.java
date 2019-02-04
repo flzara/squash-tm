@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.math.BigInteger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,8 +32,8 @@ import org.hibernate.search.bridge.spi.FieldMetadataBuilder;
 import org.hibernate.search.bridge.spi.FieldType;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
 
 public class TestCaseIterationBridge extends SessionFieldBridge implements MetadataProvidingFieldBridge {

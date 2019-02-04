@@ -20,20 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,9 +46,21 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.VerifyingTestCaseManagerService")
 @Transactional

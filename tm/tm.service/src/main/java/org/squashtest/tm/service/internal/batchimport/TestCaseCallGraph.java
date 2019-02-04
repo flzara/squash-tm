@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.exception.CyclicStepCallException;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 
 /**

@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
-import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Gregory Fouquet

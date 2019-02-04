@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.batchimport.requirement.excel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.excel.ExcelBatchImporter;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class RequirementExcelBatchImporter extends ExcelBatchImporter {

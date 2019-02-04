@@ -20,33 +20,10 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN_LIBRARY;
-import static org.squashtest.tm.domain.EntityType.ITERATION;
-import static org.squashtest.tm.domain.EntityType.PROJECT;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT_LIBRARY;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
-import static org.squashtest.tm.service.security.Authorizations.READ;
-import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.Expressions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
@@ -69,10 +46,31 @@ import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestCasePathEdge;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.Expressions;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_LIBRARY;
+import static org.squashtest.tm.domain.EntityType.ITERATION;
+import static org.squashtest.tm.domain.EntityType.PROJECT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_LIBRARY;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
+import static org.squashtest.tm.service.security.Authorizations.READ;
+import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 /**
  * <p>

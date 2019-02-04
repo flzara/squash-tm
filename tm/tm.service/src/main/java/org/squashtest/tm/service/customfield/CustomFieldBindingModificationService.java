@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.web.bind.annotation.RequestBody;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -31,6 +28,9 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * An interface for services around {@link CustomField}. The user calling the following methods must have a role 'admin'

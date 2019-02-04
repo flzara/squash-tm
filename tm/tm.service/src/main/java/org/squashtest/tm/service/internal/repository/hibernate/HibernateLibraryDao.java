@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Query;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
+
+import java.util.List;
 
 /**
  * Superclass for DAOs of {@link Library} objects.

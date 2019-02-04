@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.web.config;
 
-import java.io.IOException;
-import java.io.Writer;
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.standard.serializer.IStandardJavaScriptSerializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Replacement for the regular Jackson-based Thymeleaf serializer, that will use our own configured ObjectMapper instead.

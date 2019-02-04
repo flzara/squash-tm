@@ -20,14 +20,10 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang3.time.DateUtils;
 
 
 public final class CampaignProgressionStatistics {

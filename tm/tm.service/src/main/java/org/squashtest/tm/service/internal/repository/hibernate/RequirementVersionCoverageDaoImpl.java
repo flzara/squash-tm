@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
@@ -40,6 +33,13 @@ import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class RequirementVersionCoverageDaoImpl extends HibernateEntityDao<RequirementVersionCoverage> implements
 CustomRequirementVersionCoverageDao {

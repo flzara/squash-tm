@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.testcase.Parameter;
+
+import java.util.List;
 
 public interface CustomParameterDao {
 

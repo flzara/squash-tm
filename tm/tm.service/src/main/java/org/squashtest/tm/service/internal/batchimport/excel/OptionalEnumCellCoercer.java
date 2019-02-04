@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.service.internal.batchimport.Messages;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Coerces a cell into an enum. Non coercible values throw a {@link CannotCoerceException}. Empty cells return

@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.domain.infolist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.validation.constraint.HasDefaultItem;
+import org.squashtest.tm.validation.constraint.UniqueItems;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,14 +38,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.validation.constraint.HasDefaultItem;
-import org.squashtest.tm.validation.constraint.UniqueItems;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Entity
 @Auditable

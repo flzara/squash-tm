@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.security.acls;
 
-import java.io.Serializable;
-
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
+
+import java.io.Serializable;
 
 /**
  * For any other provider of permission evaluation. Some components freak out when more than one {@link PermissionEvaluator} exists in

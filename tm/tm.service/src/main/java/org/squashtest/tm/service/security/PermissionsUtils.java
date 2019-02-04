@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.security;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import java.util.Collection;
 import java.util.List;
-
-import org.springframework.security.access.AccessDeniedException;
 
 public final class PermissionsUtils {
 

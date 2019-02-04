@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.config;
 
-import java.util.Map;
-
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+
+import java.util.Map;
 
 
 /**

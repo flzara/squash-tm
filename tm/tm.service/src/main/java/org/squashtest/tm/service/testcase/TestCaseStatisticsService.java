@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-
 import org.squashtest.tm.service.statistics.testcase.TestCaseBoundRequirementsStatistics;
 import org.squashtest.tm.service.statistics.testcase.TestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.testcase.TestCaseSizeStatistics;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatusesStatistics;
+
+import java.util.Collection;
 
 public interface TestCaseStatisticsService {
 

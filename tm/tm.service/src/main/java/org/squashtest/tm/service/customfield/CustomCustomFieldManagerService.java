@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
 import org.squashtest.tm.exception.customfield.DefaultValueRequiredException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.

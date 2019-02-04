@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -39,6 +31,14 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoListItem;
 import org.squashtest.tm.service.internal.dto.json.JsonProject;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;

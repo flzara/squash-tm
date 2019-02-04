@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.spring;
 
+import org.springframework.core.ParameterNameDiscoverer;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-
-import org.springframework.core.ParameterNameDiscoverer;
 
 /**
  * ParameterNameDiscoverer which parameter names according to their position in the method's signature. In other words,

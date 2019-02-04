@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.EMPTY_DATE_ENTRY;
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
+import org.springframework.util.Assert;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-import org.springframework.util.Assert;
-import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.form.InputType;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
+import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.EMPTY_DATE_ENTRY;
+import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
 
 /**
  * @author Gregory

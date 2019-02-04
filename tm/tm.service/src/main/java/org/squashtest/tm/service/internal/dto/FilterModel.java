@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.dto;
 
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 /*
  * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.

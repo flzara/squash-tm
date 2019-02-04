@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign.coercers.extenders;
 
-import java.io.Serializable;
-import java.util.Collection;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.hibernate.Query;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
@@ -34,6 +28,11 @@ import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * {@link IdsCoercerExtender} used for move operations. This class is used with {@link PreventConcurrents} and {@link BatchPreventConcurrent} annotations.

@@ -20,20 +20,19 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

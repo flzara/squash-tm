@@ -21,8 +21,13 @@
 package org.squashtest.tm.web.internal.controller.testcase;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.domain.testcase.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -33,8 +38,15 @@ import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 
 /**

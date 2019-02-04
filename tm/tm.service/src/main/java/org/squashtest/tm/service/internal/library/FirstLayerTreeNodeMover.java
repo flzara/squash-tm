@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
-import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE;
-import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
-
-import java.util.*;
-
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -63,6 +52,20 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 /**
  * This class is called when moving nodes to another one, it is called only for the first nodes of moved hierarchies.
  * If the move changes project, next layer nodes will be updated (not need to move them)

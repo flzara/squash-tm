@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.testcase.scripted.gherkin;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
-import gherkin.ast.*;
+import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;

@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +36,10 @@ import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundl
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 // XSS OK
 @Controller

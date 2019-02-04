@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -39,6 +32,12 @@ import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Transactional
 @Service("squashtest.tm.service.DatasetModificationService")

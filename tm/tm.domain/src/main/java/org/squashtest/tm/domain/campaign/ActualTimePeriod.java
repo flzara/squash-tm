@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.Date;
+import org.squashtest.tm.validation.constraint.IsActualPeriodValid;
 
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.squashtest.tm.validation.constraint.IsActualPeriodValid;
+import java.util.Date;
 
 /**
  * Embeddable value for an actual date period. Actual date periods have a manual / computed flag. This class only holds

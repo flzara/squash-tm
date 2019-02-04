@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.domain.projectfilter;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,9 +33,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
-
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Entity
 public class ProjectFilter {

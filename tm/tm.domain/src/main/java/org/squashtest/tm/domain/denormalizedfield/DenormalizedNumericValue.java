@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.denormalizedfield;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

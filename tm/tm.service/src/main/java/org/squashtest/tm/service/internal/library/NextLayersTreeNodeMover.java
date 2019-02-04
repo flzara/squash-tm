@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -41,6 +35,11 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * This class is used after the {@link FirstLayerTreeNodeMover}.
  * It will make sure all nodes know their project are consistent with their project's parameters.

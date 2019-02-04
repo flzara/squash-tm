@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.authentication;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -37,6 +33,10 @@ import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Configurable {@link RequestCache}, that allow to provide with additional excluded path. Paths are 

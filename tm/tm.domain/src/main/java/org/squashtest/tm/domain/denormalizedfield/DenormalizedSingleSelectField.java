@@ -20,13 +20,22 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.DenormalizedCustomFieldOption;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;

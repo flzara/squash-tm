@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.customfield;
 
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 

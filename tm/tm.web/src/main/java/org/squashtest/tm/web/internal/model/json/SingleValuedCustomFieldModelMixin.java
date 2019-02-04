@@ -22,14 +22,9 @@ package org.squashtest.tm.web.internal.model.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.web.internal.model.serializer.CleanCustomFieldValueSerializer;
 import org.squashtest.tm.web.internal.model.serializer.CleanedUnescapedStringSerializer;
-import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeCustomFielOptionSerializer;
 import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeSerializer;
-
-import java.util.List;
-import java.util.Set;
 
 @JsonAutoDetect
 public class SingleValuedCustomFieldModelMixin {

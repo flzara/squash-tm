@@ -20,15 +20,27 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
-import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
+import org.hibernate.search.annotations.Store;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
+import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreationException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,22 +55,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
-import org.squashtest.tm.domain.search.StringFieldBridge;
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
-import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
-import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreationException;
+import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
+import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 
 /**
  * Entity requirement

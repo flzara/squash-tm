@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
+
+import java.util.List;
 
 @Repository
 public class HibernateCampaignTestPlanItemDao extends HibernateEntityDao<CampaignTestPlanItem>

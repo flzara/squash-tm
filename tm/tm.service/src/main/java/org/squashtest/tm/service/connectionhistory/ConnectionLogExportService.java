@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.connectionhistory;
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 import java.io.File;
 

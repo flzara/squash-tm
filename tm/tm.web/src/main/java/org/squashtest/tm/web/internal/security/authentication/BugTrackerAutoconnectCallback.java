@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -46,13 +42,16 @@ import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.service.servers.CredentialsProvider;
-import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.web.internal.filter.UserCredentialsCachePersistenceFilter;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 

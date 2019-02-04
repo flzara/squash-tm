@@ -24,11 +24,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ProjectTemplateDao extends JpaRepository<ProjectTemplate, Long> {

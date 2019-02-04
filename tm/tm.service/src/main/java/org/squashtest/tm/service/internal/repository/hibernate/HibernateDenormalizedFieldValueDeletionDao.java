@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
+
+import java.util.List;
 
 @Repository
 public class HibernateDenormalizedFieldValueDeletionDao extends HibernateDeletionDao implements DenormalizedFieldValueDeletionDao {

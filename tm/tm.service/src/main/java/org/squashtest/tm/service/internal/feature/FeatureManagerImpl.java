@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.feature;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -31,7 +29,11 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.*;
+import javax.inject.Inject;
+
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.STACK_TRACE_FEATURE_ENABLED;
 
 /**
  * @author Gregory Fouquet

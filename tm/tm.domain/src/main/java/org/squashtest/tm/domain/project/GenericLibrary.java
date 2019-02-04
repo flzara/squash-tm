@@ -20,8 +20,12 @@
  */
 package org.squashtest.tm.domain.project;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.library.LibraryNodeUtils;
+import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -29,13 +33,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.domain.attachment.AttachmentList;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.library.LibraryNodeUtils;
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.

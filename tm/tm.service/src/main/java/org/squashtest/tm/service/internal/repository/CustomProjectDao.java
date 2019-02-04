@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.service.internal.dto.UserDto;
-
 import java.util.List;
 
 

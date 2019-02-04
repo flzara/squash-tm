@@ -22,13 +22,12 @@ package org.squashtest.tm.web.internal.filter;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * This patches empty responses by setting them an "app/json" type + "null" content, otherwise js clients interpreting

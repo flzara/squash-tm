@@ -31,8 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
@@ -45,7 +49,11 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;

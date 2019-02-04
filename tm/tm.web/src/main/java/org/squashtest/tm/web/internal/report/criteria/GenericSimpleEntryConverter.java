@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
+import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.api.report.form.InputType;
 
 import java.util.Map;
 
-import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.form.InputType;
+import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
 
 /**
  * @author Gregory Fouquet

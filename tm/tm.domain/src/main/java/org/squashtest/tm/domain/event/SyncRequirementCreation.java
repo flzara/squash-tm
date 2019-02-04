@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.event;
 
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
  * A SyncRequirementCreation says that a requirement has been created through synchronization. As a developper it is important to note 

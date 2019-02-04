@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import javax.validation.constraints.NotBlank;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author Julien Thébault This class is used to deserialize the request body of "/project-templates/new"

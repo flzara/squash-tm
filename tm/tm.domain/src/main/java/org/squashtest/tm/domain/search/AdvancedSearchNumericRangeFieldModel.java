@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.search;
 
-import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
-
 public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.NUMERIC_RANGE;

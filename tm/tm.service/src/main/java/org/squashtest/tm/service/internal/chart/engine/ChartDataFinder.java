@@ -28,10 +28,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
-import org.squashtest.tm.domain.chart.*;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ChartSeries;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.IChartQuery;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
@@ -41,14 +48,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
-
-import static org.squashtest.tm.domain.chart.DataType.INFO_LIST_ITEM;
-import static org.squashtest.tm.domain.chart.DataType.LIST;
+import java.util.List;
 
 
 /**

@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;

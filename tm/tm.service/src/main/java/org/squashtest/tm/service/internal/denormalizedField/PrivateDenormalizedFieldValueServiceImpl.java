@@ -20,26 +20,35 @@
  */
 package org.squashtest.tm.service.internal.denormalizedField;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.customfield.*;
-import org.squashtest.tm.domain.denormalizedfield.*;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *

@@ -25,7 +25,11 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.requirement.*;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 

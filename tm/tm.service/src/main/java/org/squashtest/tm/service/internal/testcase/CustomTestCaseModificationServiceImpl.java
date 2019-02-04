@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.Optional;
-
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -53,7 +51,17 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
@@ -69,7 +77,13 @@ import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
+import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
@@ -86,10 +100,24 @@ import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_PARENT_TC_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_TC_OR_ROLE_ADMIN;
 
 /**
  * @author Gregory Fouquet

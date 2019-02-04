@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.user;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.HibernateException;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -33,6 +28,10 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
 
 /**
  *

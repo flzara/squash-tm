@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
@@ -49,7 +43,12 @@ import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
+import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.FolderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
@@ -57,6 +56,10 @@ import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")

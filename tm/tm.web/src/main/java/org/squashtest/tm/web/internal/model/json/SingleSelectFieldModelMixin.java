@@ -28,7 +28,6 @@ import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeCustomFielOptio
 import org.squashtest.tm.web.internal.model.serializer.HtmlEscapeSerializer;
 
 import java.util.List;
-import java.util.Set;
 
 @JsonAutoDetect
 public class SingleSelectFieldModelMixin {

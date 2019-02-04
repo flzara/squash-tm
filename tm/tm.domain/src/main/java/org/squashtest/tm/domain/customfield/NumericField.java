@@ -21,12 +21,10 @@
 package org.squashtest.tm.domain.customfield;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
 import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import java.math.BigDecimal;
 
 @Entity

@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
@@ -45,6 +41,10 @@ import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.servers.WrongAuthenticationPolicyException;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
 
 /**

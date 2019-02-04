@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -35,6 +33,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 
+import javax.inject.Inject;
 import java.util.Collection;
 
 @Transactional

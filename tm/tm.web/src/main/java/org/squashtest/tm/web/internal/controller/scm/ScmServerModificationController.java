@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.scm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
@@ -50,7 +53,12 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static org.squashtest.tm.web.internal.controller.RequestParams.S_ECHO_PARAM;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;

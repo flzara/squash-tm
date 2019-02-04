@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.user;
 
-import java.util.Map;
-
-import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Party;
@@ -32,6 +29,9 @@ import org.squashtest.tm.domain.users.preferences.WorkspaceDashboardContentValue
 import org.squashtest.tm.service.internal.repository.PartyPreferenceDao;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 /**
  * Created by jthebault on 29/03/2016.

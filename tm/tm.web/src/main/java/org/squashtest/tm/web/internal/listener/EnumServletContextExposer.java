@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.squashtest.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
  * This Listener exposes enums into the ServletContext on application startup.
