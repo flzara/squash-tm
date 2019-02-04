@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail;
 
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.event.ChangedProperty;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;

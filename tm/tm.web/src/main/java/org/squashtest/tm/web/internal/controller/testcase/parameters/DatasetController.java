@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 

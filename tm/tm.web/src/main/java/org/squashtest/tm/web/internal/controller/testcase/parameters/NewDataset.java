@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 
 import java.util.Arrays;

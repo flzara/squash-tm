@@ -61,9 +61,6 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider;
 
-	@Inject
-	private CustomReportDashboardService customReportDashboardService;
-
 	@Override
 	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {
 		return workspaceService;

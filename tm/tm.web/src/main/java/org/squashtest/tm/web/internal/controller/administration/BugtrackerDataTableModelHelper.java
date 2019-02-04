@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.web.util.HtmlUtils;
-import org.springframework.web.util.UriUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;

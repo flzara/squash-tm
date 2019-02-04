@@ -21,19 +21,16 @@
 package org.squashtest.tm.web.internal.fileupload;
 
 import java.util.Map;
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
-import org.squashtest.tm.web.internal.exceptionresolver.HandlerMaxUploadSizeExceptionResolver;
 
 
 /**

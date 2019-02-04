@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;

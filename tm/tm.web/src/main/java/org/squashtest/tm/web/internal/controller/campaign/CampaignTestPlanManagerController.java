@@ -94,9 +94,6 @@ public class CampaignTestPlanManagerController {
 	protected UserAccountService userAccountService;
 
 	@Inject
-	protected MilestoneModelService milestoneModelService;
-
-	@Inject
 	private PermissionEvaluationService permService;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()

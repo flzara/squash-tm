@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,17 +32,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
-import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 //XSS ok bflessel
 @Controller
@@ -59,10 +54,6 @@ public class DenormalizedFieldValuesController {
 
 	@Inject
 	private CustomFieldJsonConverter converter;
-
-	@Inject
-	private CustomFieldValuesController cufController;
-
 
 	@RequestMapping(method = RequestMethod.GET, params = { DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody

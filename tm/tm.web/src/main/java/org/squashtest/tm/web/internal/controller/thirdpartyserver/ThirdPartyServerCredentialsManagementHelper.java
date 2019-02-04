@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.thirdpartyserver;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -28,7 +27,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;

@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
@@ -49,9 +48,6 @@ public class CustomFieldBindingManagerController {
 	private CustomFieldBindingFinderService service;
 	@Inject
 	private GenericProjectFinder projectService;
-
-	private static final int DEFAULT_PAGE_SIZE = 10;
-
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId){

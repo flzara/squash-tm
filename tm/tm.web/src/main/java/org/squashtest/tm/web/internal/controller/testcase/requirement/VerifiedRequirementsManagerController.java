@@ -32,14 +32,12 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.milestone.MilestoneModelService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -116,13 +114,6 @@ public class VerifiedRequirementsManagerController {
 
 	@Inject
 	protected UserAccountService userAccountService;
-
-	@Inject
-	protected MilestoneModelService milestoneModelService;
-	
-	@Inject
-	protected PermissionEvaluationService permService;
-	
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(8)
 		.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)

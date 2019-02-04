@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.search.advanced.tablemodels;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

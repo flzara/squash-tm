@@ -70,9 +70,6 @@ public class HomeController {
 	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
 
 	@Inject
-	private CustomReportLibraryNodeService customReportLibraryNodeService;
-
-	@Inject
 	private CustomReportDashboardService customReportDashboardService;
 
 

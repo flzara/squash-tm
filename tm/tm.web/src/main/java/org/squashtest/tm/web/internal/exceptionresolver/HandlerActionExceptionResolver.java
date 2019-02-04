@@ -26,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.exception.testcase.ScriptParsingException;
 
 import javax.inject.Inject;

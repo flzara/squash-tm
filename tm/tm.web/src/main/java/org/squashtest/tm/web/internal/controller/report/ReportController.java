@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.report;
 
 import com.lowagie.text.pdf.codec.Base64;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -43,7 +42,6 @@ import org.squashtest.tm.api.report.form.composite.TagPickerOption;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
-import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.report.ReportDefinition;

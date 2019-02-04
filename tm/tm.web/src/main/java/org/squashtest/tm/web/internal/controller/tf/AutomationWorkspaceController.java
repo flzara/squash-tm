@@ -37,7 +37,6 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
-import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.*;

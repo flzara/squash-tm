@@ -22,25 +22,20 @@ package org.squashtest.tm.web.internal.controller.scm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 import org.squashtest.tm.service.scmserver.ScmServerCredentialsService;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
-import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementHelper;
@@ -64,9 +59,6 @@ import static org.squashtest.tm.web.internal.model.datatable.DataTableModelConst
 @Controller
 @RequestMapping("/administration/scm-server/{scmServerId}")
 public class ScmServerModificationController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ScmServerModificationController.class);
-
 
 	private static final String SERVER_ID = "scmServerId";
 

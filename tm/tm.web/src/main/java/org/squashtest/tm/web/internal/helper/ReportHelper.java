@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.testcase.TestCase;
