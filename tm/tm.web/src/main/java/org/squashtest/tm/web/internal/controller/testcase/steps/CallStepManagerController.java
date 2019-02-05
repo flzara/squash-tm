@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,16 +31,24 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
+import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 // XSS OK
 @Controller
@@ -48,6 +57,16 @@ public class CallStepManagerController {
 	@Inject
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	@Named("testCaseWorkspaceDisplayService")
+	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
+
+	@Inject
+	protected UserAccountService userAccountService;
 
 	private CallStepManagerService callStepManagerService;
 	private TestCaseLibraryFinderService testCaseLibraryFinder;
@@ -58,11 +77,17 @@ public class CallStepManagerController {
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/called-test-cases/manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long testCaseId) {
+	public ModelAndView showManager(@PathVariable long testCaseId, @CookieValue(value = "jstree_verif_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = callStepManagerService.findTestCase(testCaseId);
-		List<TestCaseLibrary> linkableLibraries = testCaseLibraryFinder.findLinkableTestCaseLibraries();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableTestCaseLibraryIds = testCaseLibraryFinder.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableTestCaseLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-call-step-manager");
 		mav.addObject("testCase", testCase);
