@@ -229,10 +229,6 @@ class SimpleExcelExporter {
 
 	}
 
-	private String automatableValue(TestCase tc) {
-
-	}
-
 	private void createTcSimpleSheetHeaders(String sheetName) {
 		Sheet dsSheet = workbook.getSheet(sheetName);
 		Row h = dsSheet.createRow(0);

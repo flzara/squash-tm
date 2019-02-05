@@ -74,9 +74,9 @@ public class CallStepManagerController {
 	@RequestMapping(value = "/test-cases/{callingTestCaseId}/called-test-cases", method = RequestMethod.POST, params = "called-test-case[]")
 	@ResponseBody
 	public void addCallTestStep(@PathVariable("callingTestCaseId") long callingTestCaseId,
-								@RequestParam("called-test-case[]") List<Long> calledTestCaseIds) {
+								@RequestParam("called-test-case[]") List<Long> calledTestCaseIds, @RequestParam("index") Integer index) {
 
-		callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds);
+		callStepManagerService.addCallTestSteps(callingTestCaseId, calledTestCaseIds, index);
 
 	}
 

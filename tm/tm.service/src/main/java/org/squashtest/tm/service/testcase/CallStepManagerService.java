@@ -54,7 +54,7 @@ public interface CallStepManagerService {
 	 * @param parentTestCaseId
 	 * @param calledTestCaseIds
 	 */
-	void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds);
+	void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds, Integer index);
 
 
 	/**

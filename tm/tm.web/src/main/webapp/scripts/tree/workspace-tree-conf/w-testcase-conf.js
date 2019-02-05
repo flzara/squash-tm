@@ -49,9 +49,17 @@ define(["workspace.event-bus"], function(eventBus) {
 						var node = data.o.treeNode();
 						var calledid = [node.getResId()];
 						var callerid = this.get_selected().treeNode().getResId();
-
+						var index = null;
+						var table =	$("#test-steps-table-" + callerid).squashTable();
+						var selectedIds = table.getSelectedIds();
+						if(selectedIds.length > 0) {
+							var targetId = selectedIds[selectedIds.length - 1];
+							index = table.getDataById(targetId)["step-index"];
+						}
+						console.log(index);
 						var param = {
-							'called-test-case' : calledid
+							'called-test-case' : calledid,
+							'index' : index
 						};
 
 						var url = squashtm.app.contextRoot + "test-cases/" + callerid

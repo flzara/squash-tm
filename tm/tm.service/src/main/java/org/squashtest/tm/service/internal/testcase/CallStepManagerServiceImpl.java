@@ -102,7 +102,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds) {
+	public void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds, Integer index) {
 
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
@@ -133,8 +133,12 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 			CallTestStep newStep = new CallTestStep();
 			newStep.setCalledTestCase(calledTestCase);
 			testStepDao.persist(newStep);
+			if(index != null) {
+				parentTestCase. addStep(index, newStep);
+			} else {
+				parentTestCase. addStep(newStep);
+			}
 
-			parentTestCase. addStep(newStep);
 
 			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 		}
