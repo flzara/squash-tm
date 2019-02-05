@@ -56,7 +56,6 @@ define(["workspace.event-bus"], function(eventBus) {
 							var targetId = selectedIds[selectedIds.length - 1];
 							index = table.getDataById(targetId)["step-index"];
 						}
-						console.log(index);
 						var param = {
 							'called-test-case' : calledid,
 							'index' : index
