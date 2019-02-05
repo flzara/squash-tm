@@ -246,7 +246,8 @@ public class IterationModificationController {
 
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
-			jsonUsers.put(user.getId().toString(), HtmlUtils.htmlEscape(user.getLogin()));
+			String identity = user.getFirstName() + " " + user.getLastName() + " (" + user.getLogin() + ")";
+			jsonUsers.put(user.getId().toString(), HtmlUtils.htmlEscape(identity));
 		}
 
 		return jsonUsers;

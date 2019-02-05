@@ -78,7 +78,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		User assignee = item.getUser();
 		if (assignee != null) {
 			assigneeId = assignee.getId();
-			assigneeLogin = assignee.getLogin();
+			assigneeLogin = assignee.getFirstName() + " " + assignee.getLastName() + " (" + assignee.getLogin() + ")";
 		}
 
 		//if test case deleted

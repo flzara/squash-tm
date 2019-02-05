@@ -69,7 +69,8 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		Map<String, Object> result = new HashMap<>();
 
 		TestCase testCase = item.getReferencedTestCase();
-		String user = item.getUser() != null ? item.getUser().getLogin() : formatNoData(locale);
+		String user = item.getUser() != null ? item.getUser().getFirstName() + " " +
+			item.getUser().getLastName() + " (" + item.getUser().getLogin() + ")" : formatNoData(locale);
 		Long assigneeId = item.getUser() != null ? item.getUser().getId() : User.NO_USER_ID;
 		String reference = testCase.getReference().isEmpty() ? formatNoData(locale) : HtmlUtils.htmlEscape(testCase.getReference());
 		DatasetInfos dsInfos = makeDatasetInfo(item);
