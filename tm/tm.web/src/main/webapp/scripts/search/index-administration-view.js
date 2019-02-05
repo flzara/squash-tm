@@ -128,7 +128,6 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 						$("#requirement-monitor-percentage").html(
 							addCommas(json.writtenEntitiesForRequirementVersions) + " / " +
 							addCommas(json.totalEntitiesForRequirementVersions) + " (" +
-							addCommas(json.totalEntitiesForRequirementVersions) + " (" +
 							json.progressPercentageForRequirementVersions + "%) ");
 						$("#testcase-monitor-percentage").html(
 							addCommas(json.writtenEntitiesForTestcases) + " / " + addCommas(json.totalEntitiesForTestcases) + " (" +
