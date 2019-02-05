@@ -156,6 +156,9 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		and:
 		def model = new ExtendedModelMap()
 
+		and:
+		requirementWorkspaceDisplayService.findAllLibraries(_, _, _, _) >> []
+
 		when:
 		def res = controller.showTestStepManager(20L, model, [] as String[])
 
