@@ -36,8 +36,6 @@ import javax.persistence.Table;
 @Table(name = "PARTY_PREFERENCE")
 public class PartyPreference implements Identified{
 
-	private static final String TYPE = "PARTY_PREFERENCE";
-
 	@Id
 	@Column(name = "PREFERENCE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "party_preference_preference_id_seq")

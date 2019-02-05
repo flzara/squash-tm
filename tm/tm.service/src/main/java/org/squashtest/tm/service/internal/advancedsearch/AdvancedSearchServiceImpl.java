@@ -566,22 +566,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		switch (operation) {
 			case AND:
-				Query query;
-				for (String tag : lowerTags) {
-					query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
-						.sentence(tag).createQuery()).createQuery();
-
-					if (query == null) {
-						break;
-					}
-					if (main == null) {
-						main = query;
-					} else {
-						main = qb.bool().must(main).must(query).createQuery();
-					}
-				}
-
-				return qb.bool().must(main).createQuery();
+				return buildLuceneValueInQuery(qb, fieldKey, lowerTags);
 
 			case OR:
 				return buildLuceneValueInListQuery(qb, fieldKey, lowerTags, true);
@@ -590,6 +575,26 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				throw new IllegalArgumentException("search on tag '" + fieldKey + "' : operation unknown");
 
 		}
+	}
+
+	private Query buildLuceneValueInQuery(QueryBuilder qb, String fieldKey, List<String> lowerTags) {
+		Query query;
+		Query main = null;
+		for (String tag : lowerTags) {
+			query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
+				.sentence(tag).createQuery()).createQuery();
+
+			if (query == null) {
+				break;
+			}
+			if (main == null) {
+				main = query;
+			} else {
+				main = qb.bool().must(main).must(query).createQuery();
+			}
+		}
+
+		return qb.bool().must(main).createQuery();
 	}
 
 	private Query buildQueryDependingOnType(QueryBuilder qb, String fieldKey,

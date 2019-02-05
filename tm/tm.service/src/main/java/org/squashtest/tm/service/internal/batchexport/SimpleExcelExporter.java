@@ -62,11 +62,8 @@ class SimpleExcelExporter {
 	private static final String DATA_EXCEED_MAX_CELL_SIZE_MESSAGE = "' : some data exceed the maximum size of an excel cell";
 
 	private static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
-
 	private static final String STATUS = "test-case.status.";
-
 	private static final String IMPORTANCE = "test-case.importance.";
-
 	private static final String AUTOMATABLE = "test-case.automatable.";
 
 	protected Workbook workbook;
@@ -84,34 +81,6 @@ class SimpleExcelExporter {
 
 	@Inject
 	private ProjectFinder projectFinder;
-
-	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = {TestCaseSheetColumn.PROJECT_ID,
-		TestCaseSheetColumn.PROJECT_NAME,
-		TestCaseSheetColumn.TC_PATH,
-		TestCaseSheetColumn.TC_NUM,
-		TestCaseSheetColumn.TC_ID,
-		TestCaseSheetColumn.TC_REFERENCE,
-		TestCaseSheetColumn.TC_NAME,
-		TestCaseSheetColumn.TC_WEIGHT_AUTO,
-		TestCaseSheetColumn.TC_WEIGHT,
-		TestCaseSheetColumn.TC_NATURE,
-		TestCaseSheetColumn.TC_TYPE,
-		TestCaseSheetColumn.TC_STATUS,
-		TestCaseSheetColumn.TC_DESCRIPTION,
-		TestCaseSheetColumn.TC_PRE_REQUISITE,
-		TestCaseSheetColumn.TC_NB_REQ,
-		TestCaseSheetColumn.TC_NB_CALLED_BY,
-		TestCaseSheetColumn.TC_NB_ATTACHMENT,
-		TestCaseSheetColumn.TC_CREATED_ON,
-		TestCaseSheetColumn.TC_CREATED_BY,
-		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
-		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
-		TestCaseSheetColumn.TC_KIND,
-		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
-		TestCaseSheetColumn.TC_SCRIPT
-	};
-
-
 
 	@Inject
 	public SimpleExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
@@ -257,6 +226,10 @@ class SimpleExcelExporter {
 
 		createTcSimpleSheetHeaders(TC_SHEET);
 
+
+	}
+
+	private String automatableValue(TestCase tc) {
 
 	}
 

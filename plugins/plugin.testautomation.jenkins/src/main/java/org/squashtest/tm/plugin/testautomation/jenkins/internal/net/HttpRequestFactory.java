@@ -52,15 +52,12 @@ import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenk
  */
 public class HttpRequestFactory {
 
-	private static final String JOB_PATH = "/job/";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
 
 	private static final String API_URI = "/api/json";
 
 	private static final String TREE = "tree";
 
-	public static final String SYMBOLIC_BUILDFILENAME = "testsuite.json";
 	public static final String MULTIPART_BUILDFILENAME = "file0";
 	public static final String MULTIPART_JENKINSARGS = "json";
 
