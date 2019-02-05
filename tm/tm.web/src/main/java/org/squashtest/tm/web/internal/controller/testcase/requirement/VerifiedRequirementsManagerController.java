@@ -174,8 +174,14 @@ public class VerifiedRequirementsManagerController {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testStep.getTestCase());
 
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
+		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
+			.map(RequirementLibrary::getId).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
 
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
