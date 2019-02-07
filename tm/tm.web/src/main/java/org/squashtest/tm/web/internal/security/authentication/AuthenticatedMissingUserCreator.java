@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -124,6 +125,8 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 	
 	private void createUserAccount(Authentication principal){
 		String username = principal.getName().trim();			
+		
+		LOGGER.debug("creating user : ", username);
 
 		// create the user account (CORE_USER)
 		User user = User.createFromLogin(username);
@@ -132,11 +135,18 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 		// populate it if the Authentication implements ExtraAccountInformationAuthentication
 		if (ExtraAccountInformationAuthentication.class.isAssignableFrom(principal.getClass())){
 
+			LOGGER.debug("Extra account information were found in the principal : the user account will be populated with them");
+			
 			ExtraAccountInformationAuthentication extra = (ExtraAccountInformationAuthentication) principal;
 		
 			user.setFirstName(extra.getFirstName());
-			user.setLastName(extra.getLastName());
 			user.setEmail(extra.getEmail());
+			
+			//  [Issue #8102] : guard against empty lastnames
+			String lastName = extra.getLastName();
+			if (! StringUtils.isBlank(lastName)){
+				user.setLastName(extra.getLastName());
+			}
 			
 		}
 		
