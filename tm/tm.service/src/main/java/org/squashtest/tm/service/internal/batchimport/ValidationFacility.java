@@ -1114,7 +1114,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 											RequirementVersion reqVersion) {
 		String reqName = PathUtils.extractName(target.getPath());
 		String reqVersionName = reqVersion.getName();
-
+		// TM-107 : if reqName have any "/" this will be escaped by "\/", so we need to unescape it before name comparison
+		reqName = PathUtils.unescapePathPartSlashes(reqName);
 		if (!reqName.equals(reqVersionName)) {
 			target.setUnconsistentName(reqVersionName);
 			reqVersion.setName(reqName);
