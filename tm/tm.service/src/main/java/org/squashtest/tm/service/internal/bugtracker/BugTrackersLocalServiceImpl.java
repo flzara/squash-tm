@@ -348,30 +348,18 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		IssueList issueList = bugged.getIssueList();
 
-		// check that the issue exists
-		RemoteIssue test = getIssue(remoteIssueKey, bugged.getBugTracker());
-
-		// at that point the service was supposed to fail if not found so we can move on
-		// but, in case of a wrong implementation of a connector here is a safety belt:
-		if (test == null) {
-			throw new BugTrackerNotFoundException("issue " + remoteIssueKey + " could not be found", null);
-		}
-
 		if (issueList.hasRemoteIssue(remoteIssueKey)) {
 			throw new IssueAlreadyBoundException();
 		} else {
-
 			Issue issue = new Issue();
 			issue.setBugtracker(bugged.getBugTracker());
-			issue.setRemoteIssueId(test.getId());
+			issue.setRemoteIssueId(remoteIssueKey);
 			issueList.addIssue(issue);
 			issueDao.save(issue);
 
 			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 			this.indexationService.reindexTestCase(testCase.getId());
-
 		}
-
 
 	}
 

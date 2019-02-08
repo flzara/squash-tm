@@ -211,16 +211,10 @@ public class MantisConnector implements BugTrackerConnector {
 		}
 		IssueData mantisIssue = client.getIssue(credentialsHolder.get(), remoteId);
 		BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
-		BTProject project = findProject(issue.getProject().getName());
 
+		// TM-66 : we don't need real ids (which require to recuperate all Mantis projects), just need field name
+		issue = manageIssueFields(issue);
 
-		//let's fill the holes left by mantis2squashIssue
-		issue.setVersion(findInListByName(project.getVersions(), issue.getVersion().getName()));
-		issue.setCategory(findInListByName(project.getCategories(), issue.getCategory().getName()));
-		issue.setAssignee(findInListByName(project.getUsers(), issue.getAssignee().getName()));
-
-
-		issue.setProject(project);
 		return issue;
 	}
 
@@ -244,6 +238,29 @@ public class MantisConnector implements BugTrackerConnector {
 
 	/* ****************************private methods ****************** */
 
+	private BTIssue manageIssueFields(BTIssue issue) {
+		String versionName = issue.getVersion() != null ? getIssueFieldName(issue.getVersion().getName()) : "";
+		String assigneeName = issue.getAssignee() != null ? getIssueFieldName(issue.getAssignee().getName()) : "";
+		String categoryName = issue.getCategory() != null ? getIssueFieldName(issue.getCategory().getName()) : "";
+
+		issue.setVersion((Version) createField("version", versionName));
+		issue.setAssignee((User) createField("assignee", assigneeName));
+		issue.setCategory((Category) createField("category", categoryName));
+
+		return issue;
+
+	}
+	private String getIssueFieldName(String fieldName) {
+		return fieldName != null ? fieldName : "";
+	}
+
+	private Object createField(String field, String fieldName) {
+		switch(field) {
+			case "category" : return new Category("fake-id", fieldName);
+			case "assignee" : return new User("fake-id", fieldName);
+			default : return new Version("fake-id", fieldName);
+		}
+	}
 
 	private BTProject populateProject(BTProject project){
 		project.addAllVersions(findVersions(project));

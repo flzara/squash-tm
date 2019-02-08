@@ -690,22 +690,8 @@ public class BugTrackerController {
 
 	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
 	@ResponseBody
-	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey,
-			@RequestParam(BUGTRACKER_ID) long bugTrackerId, @RequestParam("projectNames[]") List<String> projectNames,
-			Locale locale) {
+	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
-		RemoteIssue issue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
-
-		String projectName = issue.getProject().getName();
-
-		// Dirty fix to Issue 5767. As the bugtracker "trac" do not provide project name, we have to ignore the case of
-		// projectName is null
-		// yeah it's sucks because we can let some invalid issues from other bugtracker pass trough the control
-		// we should modify API to do that correctly but no time for this in 1.13
-		if (!projectNames.contains(projectName) && StringUtils.isNotEmpty(projectName)) {
-			throw new BugTrackerRemoteException(
-					messageSource.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
-		}
 
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}

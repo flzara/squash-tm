@@ -377,6 +377,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			var resetModel = $.proxy(function () {
 				getIssueModelTemplate()
 					.done(function () {
+						removeAddedOptionForKnownIssue();
 						var copy = $.extend(true, {}, self.mdlTemplate);
 						setModel(copy);
 					})
@@ -436,9 +437,10 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 						url: self.searchUrl + id,
 						type: 'GET',
 						dataType: 'json',
-						data: {"bugTrackerId": self.bugTrackerId, projectNames: self.projectNames}
+						data: {"bugTrackerId": self.bugTrackerId}
 					})
 					.done(function (response) {
+						manageOptionsForKnownIssue(response);
 						setModel(response);
 						enablePost();
 					})
@@ -446,6 +448,25 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 					.then(flipToMain);
 
 			}, self);
+
+			// TM-65 : to populate category / assignee / version / priority fields when searching for known issue
+			var manageOptionsForKnownIssue = function(response) {
+				if ($('.category-select').length !== 0) {
+					removeAddedOptionForKnownIssue();
+					addOptionsForKnownIssue(response);
+				}
+			};
+
+			var addOptionsForKnownIssue = function(response) {
+				$('.category-select').append('<option value="'+response.category.id+'" class="added-option-for-known-issue">'+response.category.name+'</option>');
+				$('.assignee-select').append('<option value="'+response.assignee.id+'" class="added-option-for-known-issue">'+response.assignee.name+'</option>');
+				$('.version-select').append('<option value="'+response.version.id+'" class="added-option-for-known-issue">'+response.version.name+'</option>');
+				$('.priority-select').append('<option value="'+response.priority.id+'" class="added-option-for-known-issue">'+response.priority.name+'</option>');
+			};
+
+			var removeAddedOptionForKnownIssue = function() {
+				$('.added-option-for-known-issue').remove();
+			};
 
 
 			/* ************* public ************************ */
