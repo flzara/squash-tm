@@ -66,7 +66,7 @@
 				<div id="attachment-container" class="div-attachments" th:with="listId = ${attachableEntity.attachmentList.id}">
 					<div class="div-attachments-item" style="text-align:center;" th:each="attachment : ${attachmentSet}">
 						<div th:class="'attachment-file file-'+${#strings.toLowerCase(attachment.type)}"></div>
-						<span><a th:href="@{/attach-list/__${listId}__/attachments/download/}+'/'+${attachment.id}"
+						<span><a th:href="@{/attach-list/__${listId}__/attachments/download/__${attachment.id}__}"
 								 th:text="${#strings.abbreviate(attachment.name, 45)}"
 								target="_blank" class="breakwords"></a>
 						</span>
