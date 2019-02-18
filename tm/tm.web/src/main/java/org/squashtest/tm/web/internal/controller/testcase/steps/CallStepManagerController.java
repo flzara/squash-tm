@@ -73,7 +73,7 @@ public class CallStepManagerController {
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/called-test-cases/manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long testCaseId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+	public ModelAndView showManager(@PathVariable long testCaseId, @RequestParam(value = "step-index") Long stepIndex, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = callStepManagerService.findTestCase(testCaseId);
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
@@ -88,6 +88,7 @@ public class CallStepManagerController {
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-call-step-manager");
 		mav.addObject("testCase", testCase);
 		mav.addObject("rootModel", linkableLibrariesModel);
+		mav.addObject("stepIndex", stepIndex);
 
 		return mav;
 	}

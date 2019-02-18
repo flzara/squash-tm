@@ -68,7 +68,7 @@
 					return;
 				}
 
-				var param = {'called-test-case' : calledId, 'index' : null};
+				var param = {'called-test-case' : calledId, 'index' : ${stepIndex}};
 
 				<%--
 					we need that post to be a json just to trigger business exception handlers server side (if an exception occurs).

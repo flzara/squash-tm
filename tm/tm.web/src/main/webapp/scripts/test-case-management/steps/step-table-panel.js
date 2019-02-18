@@ -598,8 +598,17 @@ define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "wo
 
 	function callTestCase(settings) {
 		//redirect to level 2 interface Calling Test Case with proper url formatting
+		var $table = $(".test-steps-table");
+		var selectedIds = $table.squashTable().getSelectedIds();
+		if(selectedIds.length > 0 ){
+			var idTargetStep = selectedIds[selectedIds.length - 1];
+			targetTestStepIndex = $table.squashTable().getDataById(idTargetStep)["step-index"];
+		} else {
+			//get the number of results in datatable ie total line number on all pages
+			targetTestStepIndex = $table.squashTable().fnSettings().fnRecordsTotal();
+		}
 		var ctxUrl = settings.basic.testCaseUrl;
-		document.location.href = ctxUrl + "/called-test-cases/manager";
+		document.location.href = ctxUrl + "/called-test-cases/manager?step-index=" + targetTestStepIndex;
 	}
 
 	function initCallTestCaseLink(settings) {
