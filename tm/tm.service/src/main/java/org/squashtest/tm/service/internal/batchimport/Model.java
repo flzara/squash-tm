@@ -860,7 +860,7 @@ public class Model {
 				reqId = reqFinderService.findNodeIdByRemoteKeyAndSynchronisationId(target.getRemoteKey(), target.getRemoteSynchronisationId());
 			}
 		} else {
-			LOGGER.debug("ReqImport - looking for native requirement by path : '{}", target.getPath());
+			LOGGER.debug("ReqImport - looking for native requirement by path : '{}'", target.getPath());
 			reqId = reqFinderService.findNodeIdByPath(target.getPath());
 		}
 		LOGGER.debug("ReqImport - result find by node : {}" + reqId);
