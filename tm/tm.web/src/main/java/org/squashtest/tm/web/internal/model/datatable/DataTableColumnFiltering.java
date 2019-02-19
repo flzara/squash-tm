@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
+import java.util.stream.Collectors;
 public class DataTableColumnFiltering implements ColumnFiltering {
 
 	private final DataTableDrawParameters params;
@@ -67,18 +68,23 @@ public class DataTableColumnFiltering implements ColumnFiltering {
 	@Override
 	public List<String> getFilteredAttributes() {
 
-
-		List<String> attr = new ArrayList<>();
-		Set<Entry<Integer, String>> entries = params.getsSearches().entrySet();
-		Object mDataIndex;
-		for(int x=0; x<entries.size(); x++) {
-			if(!StringUtils.isBlank(params.getsSearches(x))) {
-				mDataIndex = params.getmDataProp(x);
-				attr.add(mapper.getMapping(mDataIndex));
+		List<String> attributes = new ArrayList<>();
+		if(mapper != null) {
+			Set<Entry<Integer, String>> entries = params.getsSearches().entrySet();
+			Object mDataIndex;
+			for(int x=0; x<entries.size(); x++) {
+				if(!StringUtils.isBlank(params.getsSearches(x))) {
+					mDataIndex = params.getmDataProp(x);
+					attributes.add(mapper.getMapping(mDataIndex));
+				}
 			}
-		}
+		} else {
+			attributes = params.getsSearches().values().stream()
+				.filter(s -> !StringUtils.isBlank(s))
+				.collect(Collectors.toList());
 
-		return attr;
+		}
+		return attributes;
 	}
 
 
