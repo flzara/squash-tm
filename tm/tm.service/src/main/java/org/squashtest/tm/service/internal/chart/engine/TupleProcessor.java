@@ -341,25 +341,30 @@ class TupleProcessor {
 		// hence the axis.size()-1
 		int lastIndex = axis.size() -1;
 
-		// Note : here we enforce the stream ordering with .sequential to ensure the order is preserved
-		List<String> axisValues = abscissa.stream().sequential().map(entry -> entry[lastIndex].toString()).distinct().collect(Collectors.toList());
-
 		AxisColumn lastAxis = axis.get(lastIndex);
 		switch(lastAxis.getDataType()){
 
 			case LIST :
 				// Note : here the attributeValues are the labels of the selected CustomFieldOption
 				SingleSelectField cuf = customFieldDao.findSingleSelectFieldById(lastAxis.getCufId());
+
+				// Note : here we enforce the stream ordering with .sequential to ensure the order is preserved
+				//[TM-114] When in Default case, an axis value can be null (for example, when doing a pie chart about the executions number by last Executioner).
+				//Therefore, if axis values are initialized before switch block, the toString method call can result in a nullPointerException.
+				//As axisValues variable is only needed in case of list or info list item type axis (which I think can't have null value), I choose to duplicate
+				//code of axisValues initialization in each switch case instead of factoring initialization before switch block with a null value check on entry[lastIndex].
+				List<String> axisValues = abscissa.stream().sequential().map(entry -> entry[lastIndex].toString()).distinct().collect(Collectors.toList());
 				colours = axisValues.stream().sequential().map(cuf::findColourOf).collect(Collectors.toList());
 				break;
 
 
 			case INFO_LIST_ITEM:
-				
+				// Note : here we enforce the stream ordering with .sequential to ensure the order is preserved
+				List<String> axisValues2 = abscissa.stream().sequential().map(entry -> entry[lastIndex].toString()).distinct().collect(Collectors.toList());
 				// Note : here the attributeValues are the codes of the selected InfoListItem
-				List<InfoListItem> items = infoListItemDao.findByCodeIn(axisValues);
+				List<InfoListItem> items = infoListItemDao.findByCodeIn(axisValues2);
 
-				for (String code : axisValues) {
+				for (String code : axisValues2) {
 					for (InfoListItem item : items){
 						if (item.getCode().equals(code)){
 							colours.add(item.getColour());
