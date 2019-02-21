@@ -359,7 +359,7 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 				}).success(function (requirementIdsFromValidation) {
 					search.fields["requirement.id"].values = requirementIdsFromValidation.toString().split(",");
 					var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-					document.location.href = squashtm.app.contextRoot + "advanced-search/results?requirement&" + queryString;
+					document.location.href = squashtm.app.contextRoot + "advanced-search/results?searchDomain=requirement&" + queryString;
 				});
 
 			});
