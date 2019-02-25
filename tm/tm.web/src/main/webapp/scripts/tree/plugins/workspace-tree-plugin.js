@@ -194,7 +194,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 
 		var isTypeSelectionRequirement = function(data) {
 			return $(data.rslt.o).treeNode().getResType().includes('requirement');
-		}
+		};
 
 		var warnIfisCrossProjectOperation = function (moveObject) {
 
