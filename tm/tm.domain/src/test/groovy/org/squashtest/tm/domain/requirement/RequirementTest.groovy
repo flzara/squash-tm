@@ -414,9 +414,11 @@ class RequirementTest extends Specification {
 		! root.isContentNameAvailable("bob")
 	}
 
+	def newRequirement(String name){
+		return new Requirement(new RequirementVersion(name:name))
+	}
 
-
-	def "should not accept to append a requirement if another requirement having the same name is present"(){
+	def "should now accept to append a requirement if another requirement having the same name is present"(){
 		given :
 		Requirement root = newRequirement("root")
 		root.notifyAssociatedWithProject(mockFactory.mockProject())
@@ -426,13 +428,7 @@ class RequirementTest extends Specification {
 		root.addContent newRequirement("bob")
 
 		then :
-		thrown(DuplicateNameException)
+		root.content.size() == 4
+		root.content[0].name == root.content[3].name
 	}
-
-
-	def newRequirement(String name){
-		return new Requirement(new RequirementVersion(name:name))
-	}
-
-
 }

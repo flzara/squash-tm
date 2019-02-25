@@ -34,8 +34,8 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 
 
 		/*
-       * *************************** post new nodes operations **********************************************
-       */
+		 * *************************** post new nodes operations **********************************************
+		 */
 		/**
 		 * Post new contents to the url determined by the selected node of a tree and creates a new node with returned JSON
 		 * data.
@@ -118,18 +118,18 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 
 
 		/*
-       * **************************** dnd check section ****************************************
-       */
+		 * **************************** dnd check section ****************************************
+		 */
 
 
 		/*
-       * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized which
-       * needs to post-check.
-       * This method check only for the move in the tree.
-       *
-       * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
-       *
-       */
+		 * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized which
+		 * needs to post-check.
+		 * This method check only for the move in the tree.
+		 *
+		 * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
+		 *
+		 */
 		function check_move() {
 
 			// apply the basic rules
@@ -162,13 +162,13 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		}
 
 		/*
-       * This method checks if we can move the object is the dest folder returns true if it's ok to move the object. Note
-       * that contrary to checkDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is
-       * not part of the aforementioned function.
-       *
-       * A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user
-       * will know why the operation could not be performed instead of wondering why he cannot move the  nodes.
-       */
+		 * This method checks if we can move the object is the dest folder returns true if it's ok to move the object. Note
+		 * that contrary to checkDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is
+		 * not part of the aforementioned function.
+		 *
+		 * A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user
+		 * will know why the operation could not be performed instead of wondering why he cannot move the  nodes.
+		 */
 		function check_name_available(data) {
 			var dest = data.rslt.np;
 			var object = data.rslt.o;
@@ -192,6 +192,9 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			return okay;
 		}
 
+		var isTypeSelectionRequirement = function(data) {
+			return $(data.rslt.o).treeNode().getResType().includes('requirement');
+		}
 
 		var warnIfisCrossProjectOperation = function (moveObject) {
 
@@ -296,12 +299,12 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 				url = rawurl.replace('{nodeIds}', nodeIds).replace('/{position}', "");
 			} else {
 				/*
-               * There is a quirk with the position computed by jstree : it doesn't
-               * exclude the moved nodes from the computation.
-               *
-               * So we need to ensure a correct calculus by removing the moved nodes
-               * from the list of children to that we can safely compute the real index.
-               */
+				 * There is a quirk with the position computed by jstree : it doesn't
+				 * exclude the moved nodes from the computation.
+				 *
+				 * So we need to ensure a correct calculus by removing the moved nodes
+				 * from the list of children to that we can safely compute the real index.
+				 */
 				var childrenUpToPosition = targetTreeNode.getChildren().slice(0, nodeData.cp);
 				var position = childrenUpToPosition.not(nodes).length;
 
@@ -342,14 +345,14 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		}
 
 		/*
-       * will batch-insert nodes incoming from the server.
-       *
-       * @param jsonResponse : the node formatted in json coming from the server.
-       *
-       * @param currentNode : the node where we want them to be inserted.
-       *
-       * @param tree : the tree instance.
-       */
+		 * will batch-insert nodes incoming from the server.
+		 *
+		 * @param jsonResponse : the node formatted in json coming from the server.
+		 *
+		 * @param currentNode : the node where we want them to be inserted.
+		 *
+		 * @param tree : the tree instance.
+		 */
 		function insertCopiedNodes(jsonResponse, currentNode, tree) {
 			for (var i = 0; i < jsonResponse.length; i++) {
 				tree.create_node(currentNode, 'last', jsonResponse[i], false, true);
@@ -358,16 +361,16 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 
 
 		/*
-       * will erase fake copies in the tree, send the copied node data to the server, and insert the returned nodes.
-       * Note that this method is invoked by the tree-node-copier.
-       *
-       * @param data : nodesIds
-       *
-       * @param url : the url where to send the data.
-       *
-       * @returns : a promise
-       *
-       */
+		 * will erase fake copies in the tree, send the copied node data to the server, and insert the returned nodes.
+		 * Note that this method is invoked by the tree-node-copier.
+		 *
+		 * @param data : nodesIds
+		 *
+		 * @param url : the url where to send the data.
+		 *
+		 * @returns : a promise
+		 *
+		 */
 		function copyNodes(nodes, target) {
 
 			var deferred = $.Deferred();
@@ -451,7 +454,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 
 		/* *******************************************************************************
                               // Library part
-       ******************************************************************************** */
+			 ******************************************************************************** */
 
 		/* *******************************************************************************
                               Plugin definition
@@ -475,12 +478,12 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 					})
 
 					/*
-                   * This event is triggered after the movement was performed. Some checks regarding the validity of this operation
-                   * were not performed, we will perform them now. If the drop operation is invalid we will cancel it now and notify the
-                   * user of the specific reasons.
-                   *
-                   * Note : the event 'before.jstree' was too buggy to use so we won't use it.
-                   */
+					 * This event is triggered after the movement was performed. Some checks regarding the validity of this operation
+					 * were not performed, we will perform them now. If the drop operation is invalid we will cancel it now and notify the
+					 * user of the specific reasons.
+					 *
+					 * Note : the event 'before.jstree' was too buggy to use so we won't use it.
+					 */
 						.bind("move_node.jstree", function (event, data) {
 
 							var moveObject = data.args[0];
@@ -499,7 +502,8 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 							}
 
 							//case dnd-move
-							if (check_name_available(data)) {
+							// we exclude check on name for requirements (folders too)
+							if (isTypeSelectionRequirement(data) || check_name_available(data)) {
 
 								warnIfisCrossProjectOperation(moveObject)
 									.done(function () {
@@ -548,30 +552,30 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 					},
 
 					/*
-                  * A example command object is of the form :
-                  *
-                  * {
-                  *	removed : [ Node, ...],
-                  *	renamed : [ NodeRenaming, ... ],
-                  *	moved : [ NodeMovement, ... ]
-                  * }
-                  *
-                  * With the following definitions :
-                  *
-                  * Node : {
-                  *	//any properties that might help identify your node, eg { resid : 13, rel : 'test-case' }
-                  * }
-                  *
-                  * NodeRenaming : {
-                  *	node : Node,
-                  *	name : String
-                  * }
-                  *
-                  * NodeMovement : {
-                  *	dest : Node,
-                  *	moved : [ Node, ... ]
-                  * }
-                  */
+					 * A example command object is of the form :
+					 *
+					 * {
+					 *	removed : [ Node, ...],
+					 *	renamed : [ NodeRenaming, ... ],
+					 *	moved : [ NodeMovement, ... ]
+					 * }
+					 *
+					 * With the following definitions :
+					 *
+					 * Node : {
+					 *	//any properties that might help identify your node, eg { resid : 13, rel : 'test-case' }
+					 * }
+					 *
+					 * NodeRenaming : {
+					 *	node : Node,
+					 *	name : String
+					 * }
+					 *
+					 * NodeMovement : {
+					 *	dest : Node,
+					 *	moved : [ Node, ... ]
+					 * }
+					 */
 					apply_commands: function (commandObject) {
 
 						if (commandObject === null || commandObject === undefined) {

@@ -413,7 +413,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@Override
 	public void addContent(@NotNull Requirement child) throws DuplicateNameException,
 		NullArgumentException {
-		checkContentNameAvailable(child);
+
 		children.add(child);
 		children = new ArrayList<>(children);
 		child.notifyAssociatedWithProject(this.getProject());
@@ -422,7 +422,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@Override
 	public void addContent(@NotNull Requirement child, int position) throws DuplicateNameException,
 		NullArgumentException {
-		checkContentNameAvailable(child);
+
 		if (position >= children.size()) {
 			children.add(child);
 		} else {
@@ -430,12 +430,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		}
 		children = new ArrayList<>(children);
 		child.notifyAssociatedWithProject(this.getProject());
-	}
-
-	private void checkContentNameAvailable(Requirement child) throws DuplicateNameException {
-		if (!isContentNameAvailable(child.getName())) {
-			throw new DuplicateNameException(child.getName(), child.getName());
-		}
 	}
 
 	@Override
