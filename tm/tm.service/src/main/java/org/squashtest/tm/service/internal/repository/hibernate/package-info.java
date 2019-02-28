@@ -203,6 +203,7 @@
 	@NamedQuery(name = "iteration.countTestPlans", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId"),
 	@NamedQuery(name = "iteration.countTestPlansFiltered", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId and tps.user.login = :userLogin"),
 	@NamedQuery(name = "iteration.countStatuses", query = "select tp.executionStatus, count(tp) from Iteration it join it.testPlans tp where it.id = :iterationId group by tp.executionStatus"),
+	@NamedQuery(name = "iteration.countStatusesForUser", query = "select tp.executionStatus, count(tp) from Iteration it join it.testPlans tp join tp.user user where it.id = :iterationId and user.login = :login group by tp.executionStatus"),
 	@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),
 	@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts fetch all properties join ts.iteration i where i.id = :iterationId order by ts.name asc "),
 	@NamedQuery(name = "iteration.findAllExecutions", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId"),

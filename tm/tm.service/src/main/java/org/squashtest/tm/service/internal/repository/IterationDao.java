@@ -82,6 +82,19 @@ public interface IterationDao extends EntityDao<Iteration> {
 	 */
 	TestPlanStatistics getIterationStatistics(long iterationId);
 
+	/**
+	 * Will fill a {@link TestPlanStatistics} bean with the infos taken from the test plan of the {@link Iteration}
+	 * matching the given id. But the infos will be taken only from the {@link IterationTestPlanItem} that are assigned
+	 * to the user matching the given login.
+	 *
+	 * @param iterationId
+	 *            : the id of the concerned {@link Iteration}
+	 * @param userLogin
+	 *            : the login of the user we want the {@link IterationTestPlanItem} to be assigned to
+	 * @return the fielded {@link TestPlanStatistics} bean
+	 */
+	TestPlanStatistics getIterationStatistics(long iterationId, String userLogin);
+
 	long countRunningOrDoneExecutions(long iterationId);
 
 	/**

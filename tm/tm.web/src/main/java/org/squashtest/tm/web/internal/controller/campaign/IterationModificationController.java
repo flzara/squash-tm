@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationStatus;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -168,7 +169,10 @@ public class IterationModificationController {
 		Map<String, String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(iteration);
 
+		TestPlanStatistics testSuiteStats = iterationModService.findIterationStatistics(iterationId);
+
 		model.addAttribute(ITERATION_KEY, iteration);
+		model.addAttribute("statistics", testSuiteStats);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("assignableUsers", assignableUsers);
@@ -333,6 +337,19 @@ public class IterationModificationController {
 		Iteration iteration = iterationModService.findById(iterationId);
 		return new JsonGeneralInfo((AuditableMixin) iteration);
 
+	}
+
+	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
+	public ModelAndView refreshExecButton(@PathVariable(ITERATION_ID_KEY) long iterationId) {
+
+		TestPlanStatistics iterationStats = iterationModService.findIterationStatistics(iterationId);
+
+		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-execution-button");
+
+		mav.addObject("iterationId", iterationId);
+		mav.addObject("statisticsEntity", iterationStats);
+
+		return mav;
 	}
 
 	/* *************************************** planning ********************************* */

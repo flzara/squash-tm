@@ -33,6 +33,7 @@ require(["common"], function () {
 			var refreshTestPlan = _.bind(function () {
 				console.log("squashtm.execution.refresh");
 				$("#iteration-test-plans-table").squashTable().refresh();
+				eventBus.trigger('context.content-modified');
 			}, window);
 
 			squashtm.execution = squashtm.execution || {};
@@ -109,6 +110,14 @@ require(["common"], function () {
 				} else {
 					$('div.fragment-tabs').css('top', '110px');
 				}
+
+				function refreshExecButtons() {
+					console.log("refreshExecButtons");
+					var $panel = $("#iteration-exec-btn-group");
+					$panel.load($panel.data("content-url"));
+				}
+
+				eventBus.onContextual("context.content-modified", refreshExecButtons);
 
 				// ****** tabs configuration *******
 

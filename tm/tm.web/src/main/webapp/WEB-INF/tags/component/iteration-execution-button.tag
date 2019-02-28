@@ -31,7 +31,6 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-//TODO: change URL
 <c:url var='runnerUrl' value='/iterations/${ iterationId }/test-plan/execution/runner' />
 <c:url var='deleteOnRestartUrl' value='/iterations/${ iterationId }/test-plan/executions' />
 

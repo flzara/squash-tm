@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.campaign;
 
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.annotation.Id;
@@ -117,4 +118,11 @@ public interface CustomIterationModificationService extends IterationFinder {
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
 	Execution updateExecutionFromTc(long executionId);
+
+	/**
+	 * <p>That method will retrieve the data and fill the iterationStatistics DTO.</p>
+	 *
+	 * @param iterationId id of an {@link Iteration}
+	 */
+	TestPlanStatistics findIterationStatistics(long iterationId);
 }

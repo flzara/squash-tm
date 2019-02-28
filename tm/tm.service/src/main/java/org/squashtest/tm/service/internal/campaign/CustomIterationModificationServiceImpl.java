@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +35,7 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -75,6 +77,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
+import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -159,6 +162,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private AttachmentManagerService attachmentManagerService;
+
+	@Inject
+	private UserAccountService userService;
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
@@ -482,6 +488,21 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		itpi.addExecutionAtPos(execution, order);
 		operationsAfterAddingExec(itpi, execution);
 		return execution;
+	}
+
+	@Override
+	@PreAuthorize(READ_ITERATION_OR_ROLE_ADMIN)
+	public TestPlanStatistics findIterationStatistics(long iterationId) {
+		try {
+			PermissionsUtils.checkPermission(permissionService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getName());
+			return iterationDao.getIterationStatistics(iterationId);
+
+		} catch (AccessDeniedException ade) {
+			LOGGER.error(ade.getMessage(), ade);
+			String userLogin = userService.findCurrentUser().getLogin();
+			return iterationDao.getIterationStatistics(iterationId, userLogin);
+
+		}
 	}
 
 }

@@ -261,6 +261,17 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return new TestPlanStatistics(result);
 	}
 
+	@Override
+	public TestPlanStatistics getIterationStatistics(long iterationId, String userLogin) {
+
+		Query q = entityManager.createNamedQuery("iteration.countStatusesForUser");
+		q.setParameter("iterationId", iterationId);
+		q.setParameter("login", userLogin);
+		List<Object[]> result = q.getResultList();
+
+		return new TestPlanStatistics(result);
+	}
+
 
 	@Override
 	public long countRunningOrDoneExecutions(long iterationId) {
