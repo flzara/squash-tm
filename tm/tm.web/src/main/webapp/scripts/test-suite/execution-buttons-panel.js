@@ -27,7 +27,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu", "jquery.squash.co
 	"use strict";
 
 	function runnerUrl() {
-		return $("#test-suite-execution-button").data("runner-url");
+		return $("#test-list-execution-button").data("runner-url");
 	}
 
 	function checkTestSuiteExecutionDoable() {

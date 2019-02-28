@@ -147,7 +147,7 @@
 			name: "iteration-page",
 			include: ["app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
 				"bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace",
-				"test-automation/auto-execution-buttons-panel"],
+				"test-automation/auto-execution-buttons-panel", "test-suite/execution-buttons-panel"],
 			exclude: ["common"]
 		},
 		{

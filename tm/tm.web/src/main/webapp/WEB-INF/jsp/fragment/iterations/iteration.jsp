@@ -55,6 +55,10 @@
   <s:param name="id" value="${iteration.id}"/>
 </s:url>
 
+<s:url var="iterationExecButtonsUrl" value="/iterations/{iterationId}/exec-button">
+  <s:param name="iterationId" value="${iteration.id}"/>
+</s:url>
+
 <s:url var="customFieldsValuesURL" value="/custom-fields/values">
   <s:param name="boundEntityId" value="${iteration.boundEntityId}"/>
   <s:param name="boundEntityType" value="${iteration.boundEntityType}"/>
@@ -172,10 +176,15 @@
     </div>
   </div>
   <div class="toolbar-button-panel btn-toolbar right">
-    <c:if test="${ executable && iteration.project.testAutomationEnabled }">
-      <comp:execute-auto-button url="${ iterationUrl }"/>
-
+    <c:if test="${ executable }">
+      <div id="iteration-exec-btn-group" class="btn-group" data-content-url="${ iterationExecButtonsUrl }">
+        <comp:iteration-execution-button iterationId="${ iteration.id }" statisticsEntity="${ statistics }"/>
+      </div>
+      <c:if test="${ iteration.project.testAutomationEnabled }">
+        <comp:execute-auto-button url="${ iterationUrl }"/>
+      </c:if>
     </c:if>
+
     <c:if test="${ writable }">
       <input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>'
              title=' <f:message key="iteration.button.testsuite.tooltip"/>'

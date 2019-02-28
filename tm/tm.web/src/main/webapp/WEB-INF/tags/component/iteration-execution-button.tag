@@ -26,23 +26,22 @@
 <%@ attribute name="statisticsEntity" required="true"
 	type="java.lang.Object"
 	description="The entity which general information we want to show"%>
-<%@ attribute name="testSuiteId" required="true"
-	description="The id of the test-suite"%>
+<%@ attribute name="iterationId" required="true"
+	description="The id of the iteration"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-
-<c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
-<c:url var='deleteOnRestartUrl' value='/test-suites/${ testSuiteId }/test-plan/executions' />
-
+//TODO: change URL
+<c:url var='runnerUrl' value='/iterations/${ iterationId }/test-plan/execution/runner' />
+<c:url var='deleteOnRestartUrl' value='/iterations/${ iterationId }/test-plan/executions' />
 
 <c:if test="${ statisticsEntity.status == 'READY' }">
-	<f:message var='startResumeLabel' key='test-suite.execution.start.label' />
-	<f:message var='startResumeTooltip' key='test-suite.execution.start.tooltip' />
+	<f:message var='startResumeLabel' key='iteration.execution.start.label' />
+	<f:message var='startResumeTooltip' key='iteration.execution.start.tooltip' />
 </c:if>
 <c:if test="${ statisticsEntity.status == 'RUNNING' }">
-	<f:message var='startResumeLabel' key='test-suite.execution.resume.label' />
-	<f:message var='startResumeTooltip' key='test-suite.execution.resume.tooltip' />
+	<f:message var='startResumeLabel' key='iteration.execution.resume.label' />
+	<f:message var='startResumeTooltip' key='iteration.execution.resume.tooltip' />
 </c:if>
 
 
@@ -52,10 +51,10 @@
 		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}" title="${startResumeTooltip}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
-				<a id="start-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
+				<a id="start-suite-classic-button" ><f:message key='iteration.execution.classic.label' /> </a>
 			</li>		
 			<li class="cursor-pointer">
-				<a id="start-suite-optimized-button" ><f:message key="test-suite.execution.optimized.label" /> </a>
+				<a id="start-suite-optimized-button" ><f:message key="iteration.execution.optimized.label" /> </a>
 			</li>
 		</ul>
 	
@@ -64,21 +63,21 @@
 	
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 	
-		<f:message var="restartSuiteButton" key="test-suite.execution.restart.label"/>
-		<f:message var="restartSuiteTooltip" key="test-suite.execution.restart.tooltip"/>
+		<f:message var="restartSuiteButton" key="iteration.execution.restart.label"/>
+		<f:message var="restartSuiteTooltip" key="iteration.execution.restart.tooltip"/>
 		<input type="button" id="restart-button" class="sq-btn run-menu" value="${restartSuiteButton}" title="${restartSuiteTooltip}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
-				<a id="restart-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
+				<a id="restart-suite-classic-button" ><f:message key='iteration.execution.classic.label' /> </a>
 			</li>	
 			<li class="cursor-pointer">
-				<a id="restart-suite-optimized-button" class="exec" ><f:message key="test-suite.execution.optimized.label" /> </a>
+				<a id="restart-suite-optimized-button" class="exec" ><f:message key="iteration.execution.optimized.label" /> </a>
 			</li>
 		</ul>
 		
-		<f:message var="confirmRestartTitle" key='test-suite.execution.restart.title' />
+		<f:message var="confirmRestartTitle" key='iteration.execution.restart.title' />
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog"	title="${confirmRestartTitle}">
-			<span><f:message key="test-suite.execution.restart.warning-message" /> </span>
+			<span><f:message key="iteration.execution.restart.warning-message" /> </span>
 			<div class="popup-dialog-buttonpane">
 				<input type="button" value="<f:message key='label.Confirm' />" />
 				<input type="button" value="<f:message key='label.Cancel' />" />
