@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
@@ -65,83 +66,15 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 //XSS ok bflessel
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
-public class TestSuiteExecutionRunnerController {
+public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutionRunner<TestSuite> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionRunnerController.class);
 
-	private static class RequestMappingPattern {
-		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
-		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
-		public static final String DELETE_ALL_EXECUTIONS = "/executions";
-		public static final String STEP = "/{testPlanItemId}/executions/{executionId}/steps/{stepId}";
-		public static final String INDEXED_STEP = "/{testPlanItemId}/executions/{executionId}/steps/index/{stepIndex}";
-	}
-
-	private static class ResourceUrlPattern {
-		public static final String TEST_PLAN_ITEM = "/test-suites/{0,number,######}/test-plan/{1,number,######}";
-		public static final String EXECUTION = TEST_PLAN_ITEM + "/executions/{2,number,######}";
-		public static final String STEPS = EXECUTION + "/steps";
-		public static final String STEP_INDEX = STEPS + "/index/{3,number,######}";
-		public static final String PROLOGUE_STEP = STEPS + "/prologue";
-		public static final String STEP = STEPS + "/{3,number,######}";
-	}
-
-	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
-	private static final String REDIRECT ="redirect:";
-
-	@Inject
-	private BugTrackerConnectorFactory btFactory;
-
-	@Inject
-	private TestSuiteExecutionProcessingService testSuiteExecutionRunner;
-
-	@Inject
-	private ExecutionProcessingService executionRunner;
-
-	@Inject
-	private TestSuiteFinder suiteFinder;
-
-	@Inject
-	private ExecutionRunnerControllerHelper helper;
-
-	@Inject
-	private ExecutionProcessingController executionProcessingController;
-
-	@Inject
-	private ServletContext servletContext;
-
-	@Inject
-	private BugTrackersLocalService bugTrackersLocalService;
+	private static final String TEST_SUITE = "/test-suites";
 
 
 	public TestSuiteExecutionRunnerController() {
 		super();
-	}
-
-	private String getExecutionUrl(long testSuiteId, Execution execution, boolean optimized) {
-		return MessageFormat.format(ResourceUrlPattern.EXECUTION, testSuiteId, execution.getTestPlan().getId(),
-				execution.getId()) + "?optimized=" + optimized;
-	}
-
-	/**
-	 * TODO remplacer le test de l'url par un param "dry-run"
-	 *
-	 * @param testSuiteId
-	 */
-	@ResponseBody
-	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"mode=start-resume", "dry-run"})
-	public
-	void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		boolean hasDeletedTestCaseInTestPlan = hasDeletedTestCaseInTestPlan(testSuiteId);
-		if (! hasDeletedTestCaseInTestPlan) {
-			try {
-				testSuiteExecutionRunner.startResume(testSuiteId);
-			} catch (TestPlanItemNotExecutableException e) {
-				throw new TestPlanTerminatedOrNoStepsException(e);
-			}
-		} else {
-			throw new TestSuiteTestPlanHasDeletedTestCaseException();
-		}
 	}
 
 	/**
@@ -151,7 +84,8 @@ public class TestSuiteExecutionRunnerController {
 	 * @param testSuiteId testSuiteId
 	 * @return true if test suite has at least one deleted test case in its test plan
 	 */
-	private boolean hasDeletedTestCaseInTestPlan(long testSuiteId) {
+	@Override
+	boolean hasDeletedTestCaseInTestPlan(long testSuiteId) {
 		return suiteFinder.findById(testSuiteId).getTestPlan().stream().anyMatch(c -> c.getReferencedTestCase() == null);
 	}
 
@@ -206,7 +140,7 @@ public class TestSuiteExecutionRunnerController {
 	 */
 	private String stepsAbsoluteUrl(long testSuiteId, Execution execution) {
 		return contextPath()
-				+ MessageFormat.format(ResourceUrlPattern.STEPS, testSuiteId, execution.getTestPlan().getId(),
+				+ MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.STEPS), testSuiteId, execution.getTestPlan().getId(),
 						execution.getId());
 	}
 
@@ -296,10 +230,10 @@ public class TestSuiteExecutionRunnerController {
 		String viewName;
 
 		if (executionRunner.wasNeverRun(executionId)) {
-			viewName = MessageFormat.format(ResourceUrlPattern.PROLOGUE_STEP, testSuiteId, testPlanItemId, executionId);
+			viewName = MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.PROLOGUE_STEP), testSuiteId, testPlanItemId, executionId);
 		} else {
 			int stepIndex = executionRunner.findRunnableExecutionStep(executionId).getExecutionStepOrder();
-			viewName = MessageFormat.format(ResourceUrlPattern.STEP_INDEX, testSuiteId, testPlanItemId, executionId,
+			viewName = MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.STEP_INDEX), testSuiteId, testPlanItemId, executionId,
 					stepIndex);
 
 		}
@@ -368,7 +302,7 @@ public class TestSuiteExecutionRunnerController {
 		helper.populateStepAtIndexModel(executionId, stepIndex, model);
 
 		model.addAttribute("testPlanItemUrl",
-				MessageFormat.format(ResourceUrlPattern.TEST_PLAN_ITEM, testSuiteId, testPlanItemId));
+				MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.TEST_PLAN_ITEM), testSuiteId, testPlanItemId));
 
 		boolean hasNextTestCase = testSuiteExecutionRunner.hasMoreExecutableItems(testSuiteId, testPlanItemId);
 		model.addAttribute("hasNextTestCase", hasNextTestCase);
@@ -378,7 +312,7 @@ public class TestSuiteExecutionRunnerController {
 
 	private void addStepsUrl(long testSuiteId, long testPlanItemId, long executionId, Model model) {
 		model.addAttribute("currentStepsUrl",
-				MessageFormat.format(ResourceUrlPattern.STEPS, testSuiteId, testPlanItemId, executionId));
+				MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.STEPS), testSuiteId, testPlanItemId, executionId));
 	}
 
 	/**
@@ -440,5 +374,10 @@ public class TestSuiteExecutionRunnerController {
 	public StepState getStepState(@PathVariable long executionId, @PathVariable int stepIndex) {
 		return executionProcessingController.getStepState(executionId, stepIndex);
 
+	}
+
+	@Override
+	String completeRessourceUrlPattern(String urlPattern) {
+		return TEST_SUITE + urlPattern;
 	}
 }

@@ -20,13 +20,19 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.service.internal.campaign.TestPlanExecutionProcessingService;
+import org.squashtest.tm.domain.milestone.Milestone;
 
+import java.util.Collection;
 
-public interface TestSuiteExecutionProcessingService extends TestPlanExecutionProcessingService<TestSuite> {
+public interface Finder<E> {
+	/**
+	 * That method will find the entity by its ID
+	 *
+	 * @param suiteId
+	 */
+	E findById(long suiteId);
 
+	/* ********************** milestones section ******************* */
+
+	Collection<Milestone> findAllMilestones(long suiteId);
 }

@@ -22,17 +22,13 @@ package org.squashtest.tm.service.campaign;
 
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface IterationFinder {
+public interface IterationFinder extends Finder<Iteration> {
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
-
-	Iteration findById(long iterationId);
 
 	List<Iteration> findAllByIds(List<Long> iterationIds);
 
@@ -48,8 +44,4 @@ public interface IterationFinder {
 
 	List<Iteration> findIterationContainingTestCase(long testCaseId);
 
-
-	/* ********************** milestones section ******************* */
-
-	Collection<Milestone> findAllMilestones(long iterationId);
 }

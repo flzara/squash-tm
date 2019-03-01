@@ -21,21 +21,7 @@
 package org.squashtest.tm.service.campaign;
 
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.milestone.Milestone;
 
-import java.util.Collection;
+public interface TestSuiteFinder extends Finder<TestSuite> {
 
-public interface TestSuiteFinder {
-	/**
-	 * That method will find the test Suite by its ID
-	 * 
-	 * @param suiteId
-	 */
-	TestSuite findById(long suiteId);
-
-
-
-	/* ********************** milestones section ******************* */
-
-	Collection<Milestone> findAllMilestones(long suiteId);
 }
