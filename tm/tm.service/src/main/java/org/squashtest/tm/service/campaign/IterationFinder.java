@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.List;
 
-public interface IterationFinder extends Finder<Iteration> {
+public interface IterationFinder extends EntityFinder<Iteration> {
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 

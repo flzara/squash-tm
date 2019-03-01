@@ -28,7 +28,7 @@ import java.util.Collection;
  * Generic interface for entity finder
  * @param <E> class of the entity to find
  */
-public interface Finder<E> {
+public interface EntityFinder<E> {
 	/**
 	 * That method will find the entity by its ID
 	 *

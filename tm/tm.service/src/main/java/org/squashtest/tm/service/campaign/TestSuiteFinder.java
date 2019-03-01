@@ -22,6 +22,6 @@ package org.squashtest.tm.service.campaign;
 
 import org.squashtest.tm.domain.campaign.TestSuite;
 
-public interface TestSuiteFinder extends Finder<TestSuite> {
+public interface TestSuiteFinder extends EntityFinder<TestSuite> {
 
 }

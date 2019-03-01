@@ -29,7 +29,7 @@ import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
 import org.squashtest.tm.exception.execution.TestSuiteTestPlanHasDeletedTestCaseException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.campaign.Finder;
+import org.squashtest.tm.service.campaign.EntityFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.tm.service.internal.campaign.TestPlanExecutionProcessingService;
@@ -73,7 +73,7 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	ExecutionProcessingService executionRunner;
 
 	@Inject
-	Finder<E> suiteFinder;
+	EntityFinder<E> suiteFinder;
 
 	@Inject
 	ExecutionRunnerControllerHelper helper;
