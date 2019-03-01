@@ -135,7 +135,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 *
 	 *
 	 * @param source
-	 * @param dest
+	 * @param recipient
 	 */
 	void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient);
 

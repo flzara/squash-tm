@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.NodeContainer;
@@ -73,12 +74,8 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
 
 @Component
 @Scope("prototype")
@@ -216,12 +213,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copyCustomFields(source, copyIteration);
 		copyAttachments(copyIteration);
 		this.okToGoDeeper = false;
-		if (projectChanged) {
-			for (TestSuite suite : source.getTestSuites()) {
-				suite.accept(treeNodeUpdater);
-			}
-		}
-
 	}
 
 	@Override
@@ -343,7 +334,27 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		// now copy the cufs for the test suites
 		for (TestSuite originaTestSuite : original.getTestSuites()) {
 			TestSuite copyTestSuite = copy.getTestSuiteByName(originaTestSuite.getName());
-			customFieldValueManagerService.copyCustomFieldValuesContent(originaTestSuite, copyTestSuite);
+			// TM-183
+			if (projectChanged) {
+				updateCustomFieldValues(originaTestSuite, copyTestSuite);
+			} else {
+				customFieldValueManagerService.copyCustomFieldValuesContent(originaTestSuite, copyTestSuite);
+			}
+		}
+	}
+
+	// Will update values from orginial cfvs to the copy ones if cuf id is the same
+	private void updateCustomFieldValues(BoundEntity original, BoundEntity copy) {
+		List<CustomFieldValue> originalCfvs = customFieldValueManagerService.findAllCustomFieldValues(original);
+		if (originalCfvs.size() != 0) {
+			for (CustomFieldValue cfv : customFieldValueManagerService.findAllCustomFieldValues(copy)) {
+				for (CustomFieldValue origCfv : customFieldValueManagerService.findAllCustomFieldValues(original)) {
+					if (cfv.getCufId().equals(origCfv.getCufId())) {
+						cfv.setValue(origCfv.getValue());
+						break;
+					}
+				}
+			}
 		}
 	}
 
