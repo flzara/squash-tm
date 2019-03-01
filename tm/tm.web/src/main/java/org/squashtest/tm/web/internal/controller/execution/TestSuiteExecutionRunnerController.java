@@ -37,21 +37,11 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
-import org.squashtest.tm.exception.execution.TestSuiteTestPlanHasDeletedTestCaseException;
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
-import org.squashtest.tm.service.campaign.TestSuiteFinder;
-import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -66,7 +56,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 //XSS ok bflessel
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
-public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutionRunner<TestSuite> {
+public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutionRunnerController<TestSuite> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionRunnerController.class);
 

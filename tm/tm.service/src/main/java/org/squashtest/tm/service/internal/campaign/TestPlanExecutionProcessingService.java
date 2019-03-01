@@ -24,6 +24,11 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
+/**
+ * Interface for service responsible to process execution of a list of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}
+ * @param <E> class of the entity owning the test plan. Use for injection differenciation.
+ * @author aguilhem
+ */
 public interface TestPlanExecutionProcessingService<E> {
 	/**
 	 * <p>

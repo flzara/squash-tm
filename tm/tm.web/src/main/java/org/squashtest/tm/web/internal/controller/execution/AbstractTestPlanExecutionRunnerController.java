@@ -38,7 +38,11 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import java.text.MessageFormat;
 
-public abstract class AbstractTestPlanExecutionRunner<E> {
+/**
+ * Abstract class for controller responsible of running an entire test plan
+ * @param <E> class of the entity owning the test plan
+ */
+public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	 static class RequestMappingPattern {
 		static final String INIT_EXECUTION_RUNNER = "/execution/runner";
 		static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
