@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.UserListItem
@@ -39,7 +40,9 @@ import org.squashtest.tm.service.internal.campaign.scripted.ScriptedTestCaseExec
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
+import org.squashtest.tm.service.user.UserAccountService
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -66,6 +69,10 @@ class CustomIterationModificationServiceImplTest extends Specification {
 
 	AttachmentManagerService attachmentManagerService = Mock();
 
+	UserAccountService userService = Mock()
+
+	PermissionEvaluationService permissionService = Mock()
+
 	def setup() {
 		service.executionDao = execDao
 		service.campaignDao = campaignDao
@@ -78,6 +85,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.executionModificationService = executionModificationService
 		service.scriptedTestCaseExecutionHelper = scriptedTestCaseExecutionHelper
 		service.attachmentManagerService = attachmentManagerService
+		service.userService = userService
+		service.permissionService = permissionService
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {
@@ -246,6 +255,46 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		4L || [1, 2, 3, null]
 	}
 
+	def "should return test plan statistics with role admin"() {
+		given:
+		long iterationId = 10L
+
+		and:
+		permissionService.hasRole("ROLE_ADMIN") >> true
+		TestPlanStatistics statistics = new TestPlanStatistics()
+		statistics.nbTestCases = 2
+		iterationDao.getIterationStatistics(iterationId) >> statistics
+
+		when:
+		TestPlanStatistics result = service.findIterationStatistics(iterationId)
+
+		then:
+		result != null
+		result.getNbTestCases() == 2
+	}
+
+	def "should return test plan statistics with partial read right"() {
+		given:
+		long iterationId = 10L
+		String userLogin = "toto"
+		User user = Mock()
+		user.getLogin() >> userLogin
+		TestPlanStatistics statistics = new TestPlanStatistics()
+		statistics.nbTestCases = 2
+
+		and:
+		permissionService.hasRole("ROLE_ADMIN") >> false
+		permissionService.hasPermissionOnObject("READ_UNASSIGNED", iterationId, Iteration.class.getName()) >> false
+		userService.findCurrentUser() >> user
+		iterationDao.getIterationStatistics(iterationId, userLogin) >> statistics
+
+		when:
+		TestPlanStatistics result = service.findIterationStatistics(iterationId)
+
+		then:
+		result != null
+		result.getNbTestCases() == 2
+	}
 
 	class MockIteration extends Iteration {
 
