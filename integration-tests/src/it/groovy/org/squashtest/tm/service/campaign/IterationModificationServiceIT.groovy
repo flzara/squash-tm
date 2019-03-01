@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
@@ -308,5 +309,28 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		testSuites.size() == 3
 		
 		testSuites[2].id == -1L
+	}
+
+	@DataSet("IterationModificationServiceIT.should find Iteration statistics.xml")
+	def "should find Iteration statistics"() {
+
+		given:
+		def iterationId = -1L
+
+		when:
+		def result = iterService.findIterationStatistics(iterationId)
+
+		then:
+		result.nbTestCases == 7
+		result.nbRunning == 1
+		result.nbSuccess == 1
+		result.nbBlocked == 1
+		result.nbFailure == 1
+		result.nbSettled == 1
+		result.nbUntestable == 1
+		result.nbReady == 1
+		result.nbDone == 5
+		result.status == TestPlanStatus.RUNNING
+		result.progression == 71
 	}
 }
