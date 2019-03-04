@@ -98,7 +98,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu", "jquery.squash.co
 					console.log("confirmDialog");
 					$.ajax({
 						type : 'delete',
-						url : $("#test-suite-execution-button").data("execs-url")
+						url : $("#test-list-execution-button").data("execs-url")
 					})
 					.then(function(){
 						return checkTestSuiteExecutionDoable();
