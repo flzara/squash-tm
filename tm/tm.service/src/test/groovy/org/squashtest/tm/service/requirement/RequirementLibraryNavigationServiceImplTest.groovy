@@ -215,20 +215,30 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		req.sameAs res
 	}
 
-	def "should raise a duplicate name"(){
+	def "should not raise a duplicate name"(){
 		given :
 		RequirementLibrary lib = Mock(RequirementLibrary)
+		def proj =  mockFactory.mockProject()
 		requirementLibraryDao.findById(1) >> lib
 
 		and:
-		def req = new NewRequirementVersionDto(name:"name")
+		def req = new NewRequirementVersionDto(name:"name", category : "CAT_BUSINESS")
 		lib.isContentNameAvailable(req.name) >> false
 
 		when :
-		service.addRequirementToRequirementLibrary(1, req, [])
+		def added = service.addRequirementToRequirementLibrary(1, req, [])
 
 		then :
-		thrown(DuplicateNameException)
+		1 * lib.addContent({
+			this.version = it.currentVersion
+			use (ReflectionCategory) {
+				Resource.set(field : 'id', of : version, to : 1l)
+			}
+			it.notifyAssociatedWithProject(proj);
+			req.sameAs it.currentVersion
+		})
+		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
+		req.sameAs added
 
 	}
 

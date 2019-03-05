@@ -316,10 +316,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull NewRequirementVersionDto newVersion, List<Long> milestoneIds) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
-		if (!library.isContentNameAvailable(newVersion.getName())) {
-			throw new DuplicateNameException(newVersion.getName(), newVersion.getName());
-		}
-
 		Requirement newReq = createRequirement(newVersion);
 
 		library.addContent(newReq);
@@ -364,10 +360,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	public Requirement addRequirementToRequirementFolder(@Id long folderId, @NotNull NewRequirementVersionDto firstVersion, List<Long> milestoneIds) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
-
-		if (!folder.isContentNameAvailable(firstVersion.getName())) {
-			throw new DuplicateNameException(firstVersion.getName(), firstVersion.getName());
-		}
 
 		Requirement newReq = createRequirement(firstVersion);
 
