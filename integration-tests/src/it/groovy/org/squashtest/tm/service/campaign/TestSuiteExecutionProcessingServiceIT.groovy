@@ -40,7 +40,7 @@ import javax.inject.Inject
 class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	private TestSuiteExecutionProcessingService service
+	private TestPlanExecutionProcessingService<TestSuite> service
 
 	@Inject
 	private StubPermissionEvaluationService stubPermissionEvaluationService

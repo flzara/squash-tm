@@ -25,7 +25,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -33,10 +35,10 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
@@ -68,18 +70,23 @@ import java.util.Set;
 public class ExecutionRunnerControllerHelper {
 
 	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
-	public static final String NEXT_EXECUTION_URL = "/test-suites/{0,number,####}/test-plan/{1,number,####}/next-execution/runner";
+	public static final String TEST_SUITE_NEXT_EXECUTION_URL = "/test-suites/{0,number,####}/test-plan/{1,number,####}/next-execution/runner";
+	public static final String ITERATION_NEXT_EXECUTION_URL = "/iterations/{0,number,####}/test-plan/{1,number,####}/next-execution/runner";
 	public static final String CURRENT_STEP_URL_PATTERN = "/execute/{0,number,####}/step";
 
 	public static final String COMPLETION_POPUP_TITLE = "popup.title.info";
 	public static final String COMPLETED_SUITE_MESSAGE = "squashtm.action.exception.testsuite.end";
+	public static final String COMPLETED_ITERATION_MESSAGE = "squashtm.action.exception.iteration.end";
 	public static final String COMPLETED_STEP_MESSAGE = "execute.alert.test.complete";
 
 	@Inject
 	private ExecutionProcessingService executionProcessingService;
 
 	@Inject
-	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
+	private TestPlanExecutionProcessingService<TestSuite> testSuiteExecutionProcessingService;
+
+	@Inject
+	private TestPlanExecutionProcessingService<Iteration> iterationExecutionProcessingService;
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
@@ -189,31 +196,45 @@ public class ExecutionRunnerControllerHelper {
 
 		RunnerState state = createRunnerState(true);
 
-		populatePopupMessages(state, locale);
+		populatePopupMessages(state, locale, COMPLETED_SUITE_MESSAGE);
 		populatePrologueStatus(executionId, state);
 		populateEntitiesInfos(executionId, state, contextPath);
 
 		return state;
 	}
 
-	public RunnerState createOptimizedRunnerState(long testSuiteId, Execution execution, String contextPath,
+	public RunnerState createOptimizedRunnerStateForTestSuite(long testSuiteId, Execution execution, String contextPath,
 												  Locale locale) {
 		RunnerState state = createRunnerState(false);
-		state.setTestSuiteId(testSuiteId);
-		state.setTestPlanItemId(execution.getTestPlan().getId());
 
-		populatePopupMessages(state, locale);
-		populatePrologueStatus(execution.getId(), state);
-		populateEntitiesInfos(execution.getId(), state, contextPath);
+		populateUndifferentiatedRunnerState(state, testSuiteId, execution, contextPath);
+		populatePopupMessages(state, locale, COMPLETED_SUITE_MESSAGE);
 
 		IterationTestPlanItem item = execution.getTestPlan();
 
 		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, item.getId());
 
-		String nextExecutionUrl = contextPath  + MessageFormat.format(NEXT_EXECUTION_URL, testSuiteId, item.getId());
+		populateNextExecutionUrl(state, contextPath, TEST_SUITE_NEXT_EXECUTION_URL, testSuiteId, item.getId());
 
 		state.setLastTestCase(!hasNextTestCase);
-		state.setNextTestCaseUrl(nextExecutionUrl);
+
+		return state;
+	}
+
+	public RunnerState createOptimizedRunnerStateForIteration(long iterationId, Execution execution, String contextPath,
+												  Locale locale) {
+		RunnerState state = createRunnerState(false);
+
+		populateUndifferentiatedRunnerState(state, iterationId, execution, contextPath);
+		populatePopupMessages(state, locale, COMPLETED_ITERATION_MESSAGE);
+
+		IterationTestPlanItem item = execution.getTestPlan();
+
+		populateNextExecutionUrl(state, contextPath, ITERATION_NEXT_EXECUTION_URL, iterationId, item.getId());
+
+		boolean hasNextTestCase = iterationExecutionProcessingService.hasMoreExecutableItems(iterationId, item.getId());
+
+		state.setLastTestCase(!hasNextTestCase);
 
 		return state;
 	}
@@ -226,6 +247,19 @@ public class ExecutionRunnerControllerHelper {
 
 		return state;
 
+	}
+
+	private void populateUndifferentiatedRunnerState(RunnerState state, long testPlanOwnerId, Execution execution, String contextPath){
+		state.setTestSuiteId(testPlanOwnerId);
+		state.setTestPlanItemId(execution.getTestPlan().getId());
+
+		populatePrologueStatus(execution.getId(), state);
+		populateEntitiesInfos(execution.getId(), state, contextPath);
+	}
+
+	private void populateNextExecutionUrl(RunnerState state, String contextPath, String nextExecutionUrlPattern, long testPlanOwnerId, long itemId){
+		String nextExecutionUrl = contextPath  + MessageFormat.format(nextExecutionUrlPattern, testPlanOwnerId, itemId);
+		state.setNextTestCaseUrl(nextExecutionUrl);
 	}
 
 	private void populatePrologueStatus(long executionId, RunnerState state) {
@@ -267,10 +301,10 @@ public class ExecutionRunnerControllerHelper {
 
 	}
 
-	private void populatePopupMessages(RunnerState state, Locale locale) {
+	private void populatePopupMessages(RunnerState state, Locale locale, String completeTestPlanMessage) {
 		String popupTitle = messageSource.getMessage(COMPLETION_POPUP_TITLE, null, locale);
 		String completeTestMessage = messageSource.getMessage(COMPLETED_STEP_MESSAGE, null, locale);
-		String completeSuiteMessage = messageSource.getMessage(COMPLETED_SUITE_MESSAGE, null, locale);
+		String completeSuiteMessage = messageSource.getMessage(completeTestPlanMessage, null, locale);
 
 		state.setCompleteTitle(HTMLCleanupUtils.cleanHtml(popupTitle));
 		state.setCompleteTestMessage(HTMLCleanupUtils.cleanHtml(completeTestMessage));

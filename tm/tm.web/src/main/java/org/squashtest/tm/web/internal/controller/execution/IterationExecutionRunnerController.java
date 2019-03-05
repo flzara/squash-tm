@@ -23,17 +23,12 @@ package org.squashtest.tm.web.internal.controller.execution;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.core.foundation.exception.ActionException;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.exception.execution.TestSuiteTestPlanHasDeletedTestCaseException;
+import org.squashtest.tm.exception.execution.IterationTestPlanHasDeletedTestCaseException;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
@@ -42,48 +37,44 @@ import java.util.Locale;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
- *
- * @author Gregory Fouquet
  * @author aguilhem
- *
  */
-//XSS ok bflessel
 @Controller
-@RequestMapping("/test-suites/{testSuiteId}/test-plan")
-public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutionRunnerController<TestSuite> {
+@RequestMapping("/iterations/{iterationId}/test-plan")
+public class IterationExecutionRunnerController extends AbstractTestPlanExecutionRunnerController<Iteration> {
 
-	private static final String TEST_SUITE = "/test-suites";
+	private static final String ITERATION = "/iterations";
 
 
-	public TestSuiteExecutionRunnerController() {
+	public IterationExecutionRunnerController() {
 		super();
 	}
 
 	/**
 	 * TODO remplacer le test de l'url par un param "dry-run"
 	 *
-	 * @param testSuiteId
+	 * @param iterationId id of the {@link Iteration} to execute.
 	 */
 	@ResponseBody
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"mode=start-resume", "dry-run"})
-	public void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		super.testStartResumeExecutionInClassicRunner(testSuiteId);
+	public void testStartResumeExecutionInClassicRunner(@PathVariable long iterationId) {
+		super.testStartResumeExecutionInClassicRunner(iterationId);
 	}
 
 	@Override
 	ActionException getTestPlanHasDeletedTestCaseException() {
-		return new TestSuiteTestPlanHasDeletedTestCaseException();
+		return new IterationTestPlanHasDeletedTestCaseException();
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false", "!dry-run" })
 	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
-	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		return super.startResumeExecutionInClassicRunner(testSuiteId);
+	public String startResumeExecutionInClassicRunner(@PathVariable long iterationId) {
+		return super.startResumeExecutionInClassicRunner(iterationId);
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=true", "!dry-run" })
-	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId, Model model, Locale locale) {
-		return super.startResumeExecutionInOptimizedRunner(testSuiteId, model, locale);
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long iterationId, Model model, Locale locale) {
+		return super.startResumeExecutionInOptimizedRunner(iterationId, model, locale);
 	}
 
 	/**
@@ -96,8 +87,8 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER)
 	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
 	public String moveToNextTestCase(@PathVariable("testPlanItemId") long testPlanItemId,
-			@PathVariable("testSuiteId") long testSuiteId, @RequestParam("optimized") boolean optimized) {
-		return super.moveToNextTestCase(testPlanItemId, testSuiteId, optimized);
+									 @PathVariable("iterationId") long iterationId, @RequestParam("optimized") boolean optimized) {
+		return super.moveToNextTestCase(testPlanItemId, iterationId, optimized);
 	}
 
 	/**
@@ -105,21 +96,19 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 *
 	 * headers parameter is required otherwise there is an ambiguity with
 	 * {@link #moveToNextTestCase(long, long, boolean)}
+	 *
 	 */
 	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public RunnerState getNextTestCaseRunnerState(@PathVariable("testPlanItemId") long testPlanItemId,
-			@PathVariable("testSuiteId") long testSuiteId, Locale locale) {
-		return super.getNextTestCaseRunnerState(testPlanItemId, testSuiteId, locale);
+												  @PathVariable("iterationId") long iterationId, Locale locale) {
+		return super.getNextTestCaseRunnerState(testPlanItemId, iterationId, locale);
 	}
 
-	/**
-	 * @see AbstractTestPlanExecutionRunnerController#deleteAllExecutions(long)
-	 */
 	@ResponseBody
 	@RequestMapping(value = RequestMappingPattern.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE)
-	public void deleteAllExecutions(@PathVariable long testSuiteId) {
-		super.deleteAllExecutions(testSuiteId);
+	public void deleteAllExecutions(@PathVariable long iterationId) {
+		super.deleteAllExecutions(iterationId);
 	}
 
 	/**
@@ -127,10 +116,10 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 */
 	@RequestMapping(value = "{testPlanItemId}/executions/{executionId}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.MOVED_PERMANENTLY)
-	public String runFirstRunnableStep(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-			@PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized) {
+	public String runFirstRunnableStep(@PathVariable long iterationId, @PathVariable long testPlanItemId,
+									   @PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized) {
 
-		return super.runFirstRunnableStep(testSuiteId, testPlanItemId, executionId, optimized);
+		return super.runFirstRunnableStep(iterationId, testPlanItemId, executionId, optimized);
 
 	}
 
@@ -138,10 +127,10 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 * @see AbstractTestPlanExecutionRunnerController#runPrologue(long, long, long, boolean, Model)
 	 */
 	@RequestMapping(value = "{testPlanItemId}/executions/{executionId}/steps/prologue", method = RequestMethod.GET)
-	public String runPrologue(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
-			@PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized, Model model) {
+	public String runPrologue(@PathVariable long iterationId, @PathVariable long testPlanItemId,
+							  @PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized, Model model) {
 
-		return super.runPrologue(testSuiteId, testPlanItemId, executionId, optimized, model);
+		return super.runPrologue(iterationId, testPlanItemId, executionId, optimized, model);
 
 	}
 
@@ -150,10 +139,10 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 */
 	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
 	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=false" })
-	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long testSuiteId,
-			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
+	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long iterationId,
+														   @PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 
-		return super.getClassicTestSuiteExecutionStepFragment(testSuiteId, testPlanItemId, executionId, stepIndex, model);
+		return super.getClassicTestSuiteExecutionStepFragment(iterationId, testPlanItemId, executionId, stepIndex, model);
 
 	}
 
@@ -162,10 +151,10 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 */
 	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
 	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=true" })
-	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long testSuiteId,
-			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
+	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long iterationId,
+															 @PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 
-		return super.getOptimizedTestSuiteExecutionStepFragment(testSuiteId, testPlanItemId, executionId, stepIndex, model);
+		return super.getOptimizedTestSuiteExecutionStepFragment(iterationId, testPlanItemId, executionId, stepIndex, model);
 
 	}
 
@@ -173,7 +162,7 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	 * @see AbstractTestPlanExecutionRunnerController#changeComment(String, long)
 	 */
 	@RequestMapping(value = RequestMappingPattern.STEP, method = RequestMethod.POST, params = { "id=execution-comment",
-			VALUE })
+		VALUE })
 	@ResponseBody
 	public String changeComment(@RequestParam(VALUE) String newComment, @PathVariable long stepId) {
 		return super.changeComment(newComment, stepId);
@@ -202,22 +191,22 @@ public class TestSuiteExecutionRunnerController extends AbstractTestPlanExecutio
 	}
 
 	@Override
-	Project getEntityProject(TestSuite entity) {
+	String completeRessourceUrlPattern(String urlPattern) {
+		return ITERATION + urlPattern;
+	}
+
+	@Override
+	Project getEntityProject(Iteration entity) {
 		return entity.getProject();
 	}
 
 	@Override
-	RunnerState createOptimizedRunnerState(long testSuiteId, Execution execution, String contextPath, Locale locale) {
-		return helper.createOptimizedRunnerStateForTestSuite(testSuiteId, execution, contextPath, locale);
+	RunnerState createOptimizedRunnerState(long iterationId, Execution execution, String contextPath, Locale locale) {
+		return helper.createOptimizedRunnerStateForIteration(iterationId, execution, contextPath, locale);
 	}
 
 	@Override
-	String completeRessourceUrlPattern(String urlPattern) {
-		return TEST_SUITE + urlPattern;
-	}
-
-	@Override
-	boolean hasDeletedTestCaseInTestPlan(long testSuiteId) {
-		return entityFinder.findById(testSuiteId).getTestPlan().stream().anyMatch(c -> c.getReferencedTestCase() == null);
+	boolean hasDeletedTestCaseInTestPlan(long iterationId) {
+		return entityFinder.findById(iterationId).getTestPlans().stream().anyMatch(c -> c.getReferencedTestCase() == null);
 	}
 }

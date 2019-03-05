@@ -18,11 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.exception.execution;
 
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.core.foundation.exception.ActionException;
+import org.squashtest.tm.domain.campaign.Iteration;
 
+public class EmptyIterationTestPlanException extends ActionException {
 
-public interface TestSuiteExecutionProcessingService extends TestPlanExecutionProcessingService<TestSuite> {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 169854723628965478L;
+	private static final String EMPTY_TEST_PLAN_MESSAGE_KEY = "squashtm.action.exception.iteration.testplan.empty";
 
+	public EmptyIterationTestPlanException(Iteration iteration) {
+		super("The iteration is empty for Test Suite[" + iteration.getId() + ']');
+	}
+
+	@Override
+	public String getI18nKey() {
+		return EMPTY_TEST_PLAN_MESSAGE_KEY;
+	}
 }

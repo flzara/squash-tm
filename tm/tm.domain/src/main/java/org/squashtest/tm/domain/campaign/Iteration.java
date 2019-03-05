@@ -50,6 +50,9 @@ import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.execution.EmptyIterationTestPlanException;
+import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
@@ -89,7 +92,7 @@ import java.util.Set;
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
-	BoundEntity, MilestoneMember {
+	BoundEntity, MilestoneMember, TestPlanOwner {
 	private static final String ITERATION_ID = "ITERATION_ID";
 	public static final int MAX_REF_SIZE = 50;
 
@@ -498,6 +501,96 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 
 		return -1;
+	}
+
+	public boolean isLastExecutableTestPlanItem(long itemId, String userLogin) {
+		for (int i = testPlans.size() - 1; i >= 0; i--) {
+			IterationTestPlanItem item = testPlans.get(i);
+
+			// We have to check if the referenced test case has execution steps
+			TestCase testCase = null;
+			if (!item.isTestCaseDeleted()) {
+				testCase = item.getReferencedTestCase();
+			}
+
+			if (item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase) && (userLogin == null || item.isAssignedToUser(userLogin))) {
+				return itemId == item.getId();
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @see TestPlanOwner#isFirstExecutableTestPlanItem(long, String)
+	 */
+	public boolean isFirstExecutableTestPlanItem(long itemId, String testerLogin) {
+
+		for (IterationTestPlanItem iterationTestPlanItem : this.testPlans) {
+			if ((testerLogin == null || iterationTestPlanItem.isAssignedToUser(testerLogin)) && !iterationTestPlanItem.isTestCaseDeleted()) {
+				return itemId == iterationTestPlanItem.getId();
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @see TestPlanOwner#findNextExecutableTestPlanItem(long)
+	 */
+	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
+		return findNextExecutableTestPlanItem(testPlanItemId, null);
+
+	}
+
+	/**
+	 * @see TestPlanOwner#findNextExecutableTestPlanItem(long, String)
+	 */
+	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
+		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
+		for (IterationTestPlanItem item : remaining) {
+			if ((testerLogin == null || item.isAssignedToUser(testerLogin)) && item.isExecutableThroughTestSuite()) {
+				return item;
+			}
+		}
+
+		throw new TestPlanItemNotExecutableException("No more executable item in this iteration's test plan");
+
+	}
+
+	public IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin) {
+		IterationTestPlanItem firstTestPlanItem = getFirstTestPlanItem(testerLogin);
+		if (firstTestPlanItem.isExecutableThroughTestSuite()) {
+			return firstTestPlanItem;
+		} else {
+			return findNextExecutableTestPlanItem(firstTestPlanItem.getId(), testerLogin);
+		}
+
+	}
+
+	private boolean testCaseHasSteps(TestCase testCase) {
+		return testCase != null && testCase.getSteps() != null && !testCase.getSteps().isEmpty();
+	}
+
+	private IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
+		for (IterationTestPlanItem item : this.getTestPlans()) {
+			if (testerLogin == null || item.isAssignedToUser(testerLogin)) {
+				return item;
+			}
+		}
+
+		throw new EmptyIterationTestPlanException(this);
+	}
+
+	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
+		for (int i = 0; i < testPlans.size(); i++) {
+			if (testPlanItemId == testPlans.get(i).getId()) {
+				return testPlans.subList(i + 1, testPlans.size());
+			}
+		}
+
+		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of Iteration["
+			+ id + ']');
 	}
 
 	/*

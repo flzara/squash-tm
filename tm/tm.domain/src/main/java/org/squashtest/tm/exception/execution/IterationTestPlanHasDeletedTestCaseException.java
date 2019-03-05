@@ -18,11 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.exception.execution;
 
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class IterationTestPlanHasDeletedTestCaseException extends ActionException {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 6958745836952125478L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.iteration.testplanhasdeletedtestcase.label";
 
 
-public interface TestSuiteExecutionProcessingService extends TestPlanExecutionProcessingService<TestSuite> {
+	public IterationTestPlanHasDeletedTestCaseException(Exception ex) {
+		super(ex);
+	}
 
+	public IterationTestPlanHasDeletedTestCaseException(String message) {
+		super(message);
+	}
+
+	public IterationTestPlanHasDeletedTestCaseException(){
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
+	}
 }

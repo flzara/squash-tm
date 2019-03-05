@@ -20,20 +20,14 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.security.PermissionsUtils;
-import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
@@ -43,141 +37,95 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 @Service("squashtest.tm.service.TestSuiteExecutionProcessingService")
 @Transactional
-public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecutionProcessingService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionProcessingServiceImpl.class);
+public class TestSuiteExecutionProcessingServiceImpl extends AbstractTestPlanExecutionProcessingService<TestSuite> {
 
 	private static final String CAN_EXECUTE_BY_TESTSUITE_ID = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestSuiteDao suiteDao;
-	@Inject
-	private CampaignNodeDeletionHandler campaignDeletionHandler;
-	@Inject
-	private IterationTestPlanManager testPlanManager;
-	@Inject
-	private UserAccountService userService;
-	@Inject
-	private PermissionEvaluationService permissionEvaluationService;
+
+	TestSuiteExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService) {
+		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService);
+	}
 
 	/**
-	 * @see org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService#startResume(long, long)
+	 * @see org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService#startResume(long)
 	 */
 	@Override
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResume(long testSuiteId) {
-		Execution execution;
-		TestSuite suite = suiteDao.getOne(testSuiteId);
-		String testerLogin = findUserLoginIfTester(suite);
-		IterationTestPlanItem item = suite.findFirstExecutableTestPlanItem(testerLogin);
-		execution = findUnexecutedOrCreateExecution(item);
-		if (execution == null || execution.getSteps().isEmpty()) {
-			startResumeNextExecution(testSuiteId, item.getId());
-		}
-		return execution;
+		return super.startResume(testSuiteId);
 	}
 
 	/**
-	 * if has executions: will return last execution if not terminated,<br>
-	 * if has no execution and is not test-case deleted : will return new execution<br>
-	 * else will return null
-	 *
-	 * @param executions
-	 * @param testPlanItem
-	 * @return
-	 *
-	 */
-	private Execution findUnexecutedOrCreateExecution(IterationTestPlanItem testPlanItem) {
-		Execution executionToReturn = null;
-		if (testPlanItem.isExecutableThroughTestSuite()) {
-			executionToReturn = testPlanItem.getLatestExecution();
-			if (executionToReturn == null) {
-				executionToReturn = testPlanManager.addExecution(testPlanItem);
-			}
-		}
-		return executionToReturn;
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService#restart(long, long)
-	 */
-	@Override
-	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
-	public void deleteAllExecutions(long testSuiteId) {
-		// getTest plan
-		TestSuite testSuite = suiteDao.getOne(testSuiteId);
-		List<IterationTestPlanItem> suiteTestPlan = testSuite.getTestPlan();
-		if (!suiteTestPlan.isEmpty()) {
-			// delete all executions
-			deleteAllExecutionsOfTestPlan(suiteTestPlan, testSuite);
-		}
-
-	}
-
-	private void deleteAllExecutionsOfTestPlan(List<IterationTestPlanItem> suiteTestPlan, TestSuite testSuite) {
-		String testerLogin = findUserLoginIfTester(testSuite);
-		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
-			if (testerLogin == null
-					|| iterationTestPlanItem.getUser() != null && iterationTestPlanItem.getUser().getLogin()
-					.equals(testerLogin)) {
-				List<Execution> executions = iterationTestPlanItem.getExecutions();
-				if (!executions.isEmpty()) {
-					campaignDeletionHandler.deleteExecutions(executions);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService#hasMoreExecutableItems(long, long)
-	 */
-	@Override
-	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = suiteDao.getOne(testSuiteId);
-		String testerLogin = findUserLoginIfTester(testSuite);
-		return !testSuite.isLastExecutableTestPlanItem(testPlanItemId, testerLogin);
-
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService#hasPreviousExecutableItems(long,
-	 *      long)
-	 */
-	@Override
-	public boolean hasPreviousExecutableItems(long testSuiteId, long testPlanItemId) {
-		TestSuite testSuite = suiteDao.getOne(testSuiteId);
-		String testerLogin = findUserLoginIfTester(testSuite);
-		return !testSuite.isFirstExecutableTestPlanItem(testPlanItemId, testerLogin);
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService#startNextExecution(long, long)
+	 * @see org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService#startResumeNextExecution(long, long)
 	 */
 	@Override
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResumeNextExecution(long testSuiteId, long testPlanItemId) {
-		Execution execution;
-		TestSuite testSuite = suiteDao.getOne(testSuiteId);
-		String testerLogin = findUserLoginIfTester(testSuite);
-		IterationTestPlanItem item = testSuite.findNextExecutableTestPlanItem(testPlanItemId, testerLogin);
-		execution = findUnexecutedOrCreateExecution(item);
-		while (execution == null || execution.getSteps().isEmpty()) {
-			item = testSuite.findNextExecutableTestPlanItem(testPlanItemId);
-			execution = findUnexecutedOrCreateExecution(item);
-		}
-		return execution;
+		return super.startResumeNextExecution(testSuiteId, testPlanItemId);
 	}
 
-	private String findUserLoginIfTester(Object domainObject) {
-		String testerLogin = null;
-		try {
-			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(domainObject,
-					"READ_UNASSIGNED"));
-		} catch (AccessDeniedException ade) {
-			LOGGER.error(ade.getMessage(), ade);
-			testerLogin = userService.findCurrentUser().getLogin();
-		}
-		return testerLogin;
+	/**
+	 * @see org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService#deleteAllExecutions(long)
+	 */
+	@Override
+	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
+	public void deleteAllExecutions(long testSuiteId) {
+		super.deleteAllExecutions(testSuiteId);
+	}
+
+
+	/**
+	 * @see org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService#hasMoreExecutableItems(long, long)
+	 */
+	@Override
+	public boolean hasMoreExecutableItems(long testSuiteId, long testPlanItemId) {
+		return super.hasMoreExecutableItems(testSuiteId, testPlanItemId);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService#hasPreviousExecutableItems(long,
+	 *      long)
+	 */
+	@Override
+	public boolean hasPreviousExecutableItems(long testSuiteId, long testPlanItemId) {
+		return super.hasPreviousExecutableItems(testSuiteId, testPlanItemId);
+	}
+
+	@Override
+	TestSuite getTestPlanOwner(long testSuiteId) {
+		return suiteDao.getOne(testSuiteId);
+	}
+
+	@Override
+	List<IterationTestPlanItem> getTestPlan(TestSuite suite) {
+		return suite.getTestPlan();
+	}
+
+	@Override
+	IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin, TestSuite suite) {
+		return suite.findFirstExecutableTestPlanItem(testerLogin);
+	}
+
+	@Override
+	boolean isLastExecutableTestPlanItem(TestSuite suite, long testPlanItemId, String testerLogin) {
+		return suite.isLastExecutableTestPlanItem(testPlanItemId, testerLogin);
+	}
+
+	@Override
+	boolean isFirstExecutableTestPlanItem(TestSuite suite, long testPlanItemId, String testerLogin) {
+		return suite.isFirstExecutableTestPlanItem(testPlanItemId, testerLogin);
+	}
+
+	@Override
+	IterationTestPlanItem findNextExecutableTestPlanItem(TestSuite suite, long testPlanItemId, String testerLogin) {
+		return suite.findNextExecutableTestPlanItem(testPlanItemId, testerLogin);
+	}
+
+	@Override
+	IterationTestPlanItem findNextExecutableTestPlanItem(TestSuite suite, long testPlanItemId) {
+		return suite.findNextExecutableTestPlanItem(testPlanItemId);
 	}
 
 }

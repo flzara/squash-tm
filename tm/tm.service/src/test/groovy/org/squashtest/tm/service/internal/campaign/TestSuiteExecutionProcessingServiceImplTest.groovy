@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import static org.junit.Assert.*
-
-import javax.inject.Inject;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
@@ -30,10 +27,7 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
-import org.squashtest.tm.service.internal.campaign.TestSuiteExecutionProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
-import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -41,17 +35,16 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
-	TestSuiteExecutionProcessingServiceImpl manager = new TestSuiteExecutionProcessingServiceImpl()
+	TestSuiteExecutionProcessingServiceImpl manager
 	TestSuiteDao testSuiteDao = Mock()
 	IterationTestPlanManager testPlanManager = Mock()
 	UserAccountService userService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
+	CampaignNodeDeletionHandler campaignNodeDeletionHandler = Mock()
 
 	def setup() {
+		manager = new TestSuiteExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService)
 		manager.suiteDao = testSuiteDao
-		manager.testPlanManager = testPlanManager
-		manager.userService = userService
-		manager.permissionEvaluationService = permissionEvaluationService
 		User user = Mock()
 		user.getLogin() >> "admin"
 		userService.findCurrentUser() >> user

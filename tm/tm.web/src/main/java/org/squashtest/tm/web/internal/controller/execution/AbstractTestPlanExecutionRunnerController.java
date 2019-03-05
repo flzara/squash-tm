@@ -22,23 +22,22 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.core.foundation.exception.ActionException;
+import org.squashtest.tm.domain.campaign.TestPlanOwner;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
-import org.squashtest.tm.exception.execution.TestSuiteTestPlanHasDeletedTestCaseException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.EntityFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.bugtracker.BugTrackerConnectorFactory;
-import org.squashtest.tm.service.internal.campaign.TestPlanExecutionProcessingService;
-import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
@@ -49,14 +48,13 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 /**
- * Abstract class for controller responsible of running an entire test plan
+ * Abstract class for controller classes responsible of running an entire test plan
  * @param <E> class of the entity owning the test plan (for now, a {@link org.squashtest.tm.domain.campaign.TestSuite} or an {@link org.squashtest.tm.domain.campaign.Iteration}
  * @author aguilhem
  */
-public abstract class AbstractTestPlanExecutionRunnerController<E> {
+public abstract class AbstractTestPlanExecutionRunnerController<E extends TestPlanOwner> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestPlanExecutionRunnerController.class);
 
@@ -77,17 +75,17 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 		static final String STEP = STEPS + "/{3,number,######}";
 	}
 
-	static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
-	static final String REDIRECT ="redirect:";
+	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
+	private static final String REDIRECT ="redirect:";
 
 	@Inject
-	TestPlanExecutionProcessingService<E> testPlanExecutionRunner;
+	private TestPlanExecutionProcessingService<E> testPlanExecutionRunner;
 
 	@Inject
-	BugTrackerConnectorFactory btFactory;
+	private BugTrackerConnectorFactory btFactory;
 
 	@Inject
-	ExecutionProcessingService executionRunner;
+	private ExecutionProcessingService executionRunner;
 
 	@Inject
 	EntityFinder<E> entityFinder;
@@ -96,17 +94,37 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	ExecutionRunnerControllerHelper helper;
 
 	@Inject
-	ExecutionProcessingController executionProcessingController;
+	private ExecutionProcessingController executionProcessingController;
 
 	@Inject
-	ServletContext servletContext;
+	private ServletContext servletContext;
 
 	@Inject
-	BugTrackersLocalService bugTrackersLocalService;
+	private BugTrackersLocalService bugTrackersLocalService;
 
+	/**
+	 * Concatenate prefix specific to the {@link TestPlanOwner} to an url pattern
+	 * @param urlPattern URL pattern to complete
+	 * @return the completed url pattern
+	 */
 	abstract String completeRessourceUrlPattern(String urlPattern);
 
+	/**
+	 * Getter for the project link to the {@link TestPlanOwner}
+	 * @param entity the {@link TestPlanOwner}
+	 * @return the test plan owner's project
+	 */
 	abstract Project getEntityProject(E entity);
+
+	/**
+	 * Create a {@link RunnerState} for an {@link Execution}.
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
+	 * @param execution the {@link Execution} to execute
+	 * @param contextPath the web app's context path
+	 * @param locale the {@link Locale} to use
+	 * @return a {@link RunnerState} optimized for the {@link Execution} and the {@link TestPlanOwner}.
+	 */
+	abstract RunnerState createOptimizedRunnerState(long testPlanOwnerId, Execution execution, String contextPath, Locale locale);
 
 	String getExecutionUrl(long testPlanOwnerId, Execution execution, boolean optimized) {
 		return MessageFormat.format(completeRessourceUrlPattern(ResourceUrlPattern.EXECUTION), testPlanOwnerId, execution.getTestPlan().getId(),
@@ -116,7 +134,7 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * TODO remplacer le test de l'url par un param "dry-run"
 	 *
-	 * @param testPlanOwnerId
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
 	 */
 	public void testStartResumeExecutionInClassicRunner(long testPlanOwnerId) {
 		boolean hasDeletedTestCaseInTestPlan = hasDeletedTestCaseInTestPlan(testPlanOwnerId);
@@ -127,16 +145,22 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 				throw new TestPlanTerminatedOrNoStepsException(e);
 			}
 		} else {
-			//TODO Different exception depending on test plan owner class.
-			throw new TestSuiteTestPlanHasDeletedTestCaseException();
+			throw getTestPlanHasDeletedTestCaseException();
 		}
 	}
 
 	/**
+	 * Getter for the {@link TestPlanOwner} specific "HasDeletedTestCaseException"
+	 * @return {@link TestPlanOwner} specific "HasDeletedTestCaseException".
+	 * For example, {@link org.squashtest.tm.exception.execution.IterationTestPlanHasDeletedTestCaseException}
+	 */
+	abstract ActionException getTestPlanHasDeletedTestCaseException();
+
+	/**
 	 * Issue 7366
-	 * Method which tests if a test plan owner has at least one deleted test case in its test plan
+	 * Method which tests if a {@link TestPlanOwner} has at least one deleted test case in its test plan
 	 *
-	 * @param testPlanOwnerId id of the test plan owner
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
 	 * @return true if test suite has at least one deleted test case in its test plan
 	 */
 	abstract boolean hasDeletedTestCaseInTestPlan(long testPlanOwnerId);
@@ -154,7 +178,7 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 		LOGGER.trace("startResumeExecutionInOptimizedRunner({})", testPlanOwnerId);
 
 		Execution execution = testPlanExecutionRunner.startResume(testPlanOwnerId);
-		RunnerState state = helper.createOptimizedRunnerState(testPlanOwnerId, execution, contextPath(), locale);
+		RunnerState state = createOptimizedRunnerState(testPlanOwnerId, execution, contextPath(), locale);
 		state.setBaseStepUrl(stepsAbsoluteUrl(testPlanOwnerId, execution));
 		model.addAttribute("config", state);
 
@@ -184,14 +208,10 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	 * That method will create if necessary the next execution then redirect a view to its runner. It matches the
 	 * "next test case" button in classic mode
 	 *
-	 * \o/ There should be a params = "optimized" in this method's {@link RequestMapping}. We omitted it because
-	 * "params" has more precedence than "headers", which leads to requests meant to be processed by
-	 * {@link #getNextTestCaseRunnerState(long, long, Locale)} being routed to this method instead.
-	 *
-	 * @param testPlanItemId
-	 * @param testPlanOwnerId
-	 * @param optimized
-	 * @return
+	 * @param testPlanItemId {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} id to move to.
+	 * @param testPlanOwnerId {@link TestPlanOwner} id
+	 * @param optimized whether the execution runner will be optimized or not
+	 * @return a redirection url to the next test case execution
 	 */
 	String moveToNextTestCase(long testPlanItemId, long testPlanOwnerId, boolean optimized) {
 		LOGGER.trace("moveToNextTestCase({}, {})", testPlanItemId, testPlanOwnerId);
@@ -209,37 +229,38 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	 *
 	 * It is called by the optimized runner only
 	 *
-	 * headers parameter is required otherwise there is an ambiguity with
-	 * {@link #moveToNextTestCase(long, long, boolean)}
-	 *
-	 * @param testPlanItemId
-	 * @param testPlanOwnerId
-	 * @param locale
-	 * @return
+	 * @param testPlanItemId id of the {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} to execute
+	 * @param testPlanOwnerId {@link TestPlanOwner} id
+	 * @param locale the {@link Locale} to use
+	 * @return the {@link RunnerState} for the newly created {@link Execution}
 	 */
 	RunnerState getNextTestCaseRunnerState(long testPlanItemId, long testPlanOwnerId, Locale locale) {
 		LOGGER.trace("getNextTestCaseRunnerState({}, {})", testPlanItemId, testPlanOwnerId);
 
 		Execution nextExecution = testPlanExecutionRunner.startResumeNextExecution(testPlanOwnerId, testPlanItemId);
-		RunnerState state = helper.createOptimizedRunnerState(testPlanOwnerId, nextExecution, contextPath(), locale);
+		RunnerState state = createOptimizedRunnerState(testPlanOwnerId, nextExecution, contextPath(), locale);
 		state.setBaseStepUrl(stepsAbsoluteUrl(testPlanOwnerId, nextExecution));
 
 		return state;
 
 	}
 
-	void deleteAllExecutions(@PathVariable long testPlanOwnerId) {
+	/**
+	 * Delete all {@link Execution} of the {@link TestPlanOwner}'s {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
+	 */
+	void deleteAllExecutions(long testPlanOwnerId) {
 		testPlanExecutionRunner.deleteAllExecutions(testPlanOwnerId);
 	}
 
 	/**
 	 * requests a view for the first executable step of the given execution.
 	 *
-	 * @param testPlanOwnerId
-	 * @param testPlanItemId
-	 * @param executionId
-	 * @param optimized
-	 * @return
+	 * @param testPlanOwnerId {@link TestPlanOwner} id
+	 * @param testPlanItemId id of the {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} to execute
+	 * @param executionId id of the {@link Execution} to execute
+	 * @param optimized optimized parameter
+	 * @return a redirection url to the view
 	 */
 	String runFirstRunnableStep(long testPlanOwnerId, long testPlanItemId, long executionId, boolean optimized) {
 
@@ -261,28 +282,29 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * returns the execution prologue
 	 *
-	 * @param testPlanOwnerId
-	 * @param testPlanItemId
-	 * @param executionId
-	 * @param optimized
-	 * @param model
-	 * @return
+	 * @param testPlanOwnerId {@link TestPlanOwner} id
+	 * @param testPlanItemId {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} id to run
+	 * @param executionId {@link Execution} to run
+	 * @param optimized optimized parameter
+	 * @param model {@link Model} to populate
+	 * @return the {@link ExecutionRunnerViewName}
 	 */
 	String runPrologue(long testPlanOwnerId, long testPlanItemId, long executionId, boolean optimized, Model model) {
 
 		addStepsUrl(testPlanOwnerId, testPlanItemId, executionId, model);
-		helper.populateExecutionPreview(executionId, optimized, suiteRunnerState(testPlanOwnerId, testPlanItemId), model);
+		helper.populateExecutionPreview(executionId, optimized, testPlanRunnerState(testPlanOwnerId, testPlanItemId), model);
 
 		return ExecutionRunnerViewName.PROLOGUE_STEP;
 
 	}
 
 	/**
-	 * @param testPlanOwnerId
-	 * @param testPlanItemId
-	 * @return
+	 * Initialize the test plan runner state
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
+	 * @param testPlanItemId {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} id to run
+	 * @return the {@link RunnerState}
 	 */
-	private RunnerState suiteRunnerState(long testPlanOwnerId, long testPlanItemId) {
+	private RunnerState testPlanRunnerState(long testPlanOwnerId, long testPlanItemId) {
 		RunnerState state = new RunnerState();
 		state.setTestSuiteId(testPlanOwnerId);
 		state.setTestPlanItemId(testPlanItemId);
@@ -292,12 +314,12 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * Returns classic runner fragment for the given step.
 	 *
-	 * @param testPlanOwnerId
-	 * @param testPlanItemId
-	 * @param executionId
-	 * @param stepIndex
-	 * @param model
-	 * @return
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
+	 * @param testPlanItemId id of the {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}
+	 * @param executionId id of the {@link Execution}
+	 * @param stepIndex index of the {@link org.squashtest.tm.domain.execution.ExecutionStep}
+	 * @param model {@link Model} to populate
+	 * @return the {@link ExecutionRunnerViewName}
 	 */
 	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
 	String getClassicTestSuiteExecutionStepFragment(@PathVariable long testPlanOwnerId,
@@ -331,12 +353,12 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * Returns Optimized runner fragment for given step.
 	 *
-	 * @param testPlanOwnerId
-	 * @param testPlanItemId
-	 * @param executionId
-	 * @param stepIndex
-	 * @param model
-	 * @return
+	 * @param testPlanOwnerId id of the {@link TestPlanOwner}
+	 * @param testPlanItemId id of the {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}
+	 * @param executionId id of the {@link Execution}
+	 * @param stepIndex index of the {@link org.squashtest.tm.domain.execution.ExecutionStep}
+	 * @param model {@link Model} to populate
+	 * @return the {@link ExecutionRunnerViewName}
 	 */
 	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
 	String getOptimizedTestSuiteExecutionStepFragment(long testPlanOwnerId, long testPlanItemId, long executionId, int stepIndex, Model model) {
@@ -351,9 +373,9 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * changes execution comment
 	 *
-	 * @param newComment
-	 * @param stepId
-	 * @return
+	 * @param newComment the new comment
+	 * @param stepId id of the {@link org.squashtest.tm.domain.execution.ExecutionStep} to comment
+	 * @return the HTML cleaned new comment
 	 */
 	String changeComment(String newComment, long stepId) {
 		return HTMLCleanupUtils.cleanHtml(executionProcessingController.updateComment(newComment, stepId));
@@ -362,8 +384,8 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * changes execution step status
 	 *
-	 * @param executionStatus
-	 * @param stepId
+	 * @param executionStatus the new execution status
+	 * @param stepId id of the {@link org.squashtest.tm.domain.execution.ExecutionStep} to change execution status
 	 */
 	void changeExecutionStatus(String executionStatus, long stepId) {
 		executionProcessingController.updateExecutionStatus(executionStatus, stepId);
@@ -388,9 +410,9 @@ public abstract class AbstractTestPlanExecutionRunnerController<E> {
 	/**
 	 * Returns absolute url for the steps collection of an execution, ie including this webapp's context path.
 	 *
-	 * @param testPlanOwnerId
-	 * @param execution
-	 * @return
+	 * @param testPlanOwnerId {@link TestPlanOwner} id
+	 * @param execution {@link Execution} we want steps collection absolute url from
+	 * @return absolute url for the steps collection of the given execution
 	 */
 	private String stepsAbsoluteUrl(long testPlanOwnerId, Execution execution) {
 		return contextPath()

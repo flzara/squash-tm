@@ -73,7 +73,7 @@ import java.util.Set;
 @Entity
 @Indexed
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember, HasExecutionStatus {
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember, HasExecutionStatus, TestPlanOwner {
 	public static final int MAX_NAME_SIZE = 100;
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -393,10 +393,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	/**
-	 * Determines if the item is the first of the test plan of the test suite
-	 *
-	 * @param itemId      : the id of the item to determine if it is the first executable test plan item
-	 * @param testerLogin : the id of the current user if he is a Test runner
+	 * @see TestPlanOwner#isFirstExecutableTestPlanItem(long, String)
 	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId, String testerLogin) {
 
@@ -411,11 +408,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	/**
-	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
-	 * <em>can return item linked to test-case with no step</em>
-	 *
-	 * @throws TestPlanItemNotExecutableException if no item is found
-	 * @throws IllegalArgumentException           if id does not correspond to an item of the test suite
+	 * @see TestPlanOwner#findNextExecutableTestPlanItem(long)
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
 		return findNextExecutableTestPlanItem(testPlanItemId, null);
@@ -423,12 +416,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	/**
-	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
-	 * <em>NB: can return item linked to test-case with no step</em>
-	 *
-	 * @param testerLogin : the login of the connected user if he is a Test Runner
-	 * @throws TestPlanItemNotExecutableException if no item is found
-	 * @throws IllegalArgumentException           if id does not correspond to an item of the test suite
+	 * @see TestPlanOwner#findNextExecutableTestPlanItem(long, String)
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
 		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
