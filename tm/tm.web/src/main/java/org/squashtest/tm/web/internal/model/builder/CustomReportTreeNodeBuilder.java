@@ -94,6 +94,9 @@ public class CustomReportTreeNodeBuilder {
 		case DASHBOARD:
 			doDashboardBuild(builtNode,crln);
 			break;
+		case CUSTOM_EXPORT:
+			doCustomExportBuild(builtNode, crln);
+			break;
 		default:
 			throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
 		}
@@ -133,6 +136,13 @@ public class CustomReportTreeNodeBuilder {
 		setNodeHTMLId(builtNode, "CustomReportDashboard-"+crln.getId());
 		setNodeRel(builtNode, "dashboard");
 		setNodeResType(builtNode, "custom-report-dashboard");
+		setStateForNodeContainer(builtNode, crln);
+	}
+
+	private void doCustomExportBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomExport-" + crln.getId());
+		setNodeRel(builtNode, "custom-export");
+		setNodeResType(builtNode, "custom-report-custom-export");
 		setStateForNodeContainer(builtNode, crln);
 	}
 

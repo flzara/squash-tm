@@ -43,11 +43,14 @@ define(function () {
 						"dashboard": {
 							"valid_children": 'none'
 						},
+						"custom-export": {
+							"valid_children": "none"
+						},
 						"folder": {
 							"valid_children": ["report", "chart", "dashboard", "folder"]
 						},
 						"drive": {
-							"valid_children": ["report", "chart", "dashboard", "folder"]
+							"valid_children": ["report", "chart", "dashboard", "folder", "custom-export"]
 						}
 					}
 				}

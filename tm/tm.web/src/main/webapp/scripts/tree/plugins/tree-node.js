@@ -133,6 +133,7 @@ define(['jquery', 'app/util/StringUtil'], function ($, StringUtil) {
 			case "dashboard" :
 			case "report":
 			case "chart":
+			case "custom-export":
 			case "campaign"    :
 				specific = "/content";
 				break;
