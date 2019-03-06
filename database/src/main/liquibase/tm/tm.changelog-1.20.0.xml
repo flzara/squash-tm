@@ -34,5 +34,39 @@
     </update>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-176-custom-report-custom-export" author="jlor">
+    <comment>Create new object CustomExport in Custom Report Workspace</comment>
+
+    <createTable tableName="CUSTOM_REPORT_CUSTOM_EXPORT">
+
+      <column name="CRCE_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name ="NAME" type="VARCHAR(255)" remarks="The name of the Custom Export"/>
+
+      <column name="PROJECT_ID" type="BIGINT" remarks="Foreign key to the Project">
+        <constraints nullable="false" foreignKeyName="fk_custom_export_project_id" references="PROJECT (PROJECT_ID)" />
+      </column>
+
+      <column name="CREATED_BY" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
+
+    </createTable>
+
+    <createIndex tableName="CUSTOM_REPORT_CUSTOM_EXPORT" indexName="idx_fk_custom_export_project_id">
+      <column name="PROJECT_ID"/>
+    </createIndex>
+
+  </changeSet>
 
 </databaseChangeLog>

@@ -33,7 +33,9 @@ public enum CustomReportTreeDefinition implements TreeEntityDefinition{
 	DASHBOARD(false,CustomReportNodeType.DASHBOARD_NAME),
 	CHART(false, CustomReportNodeType.CHART_NAME),
 	FOLDER(true, CustomReportNodeType.FOLDER_NAME),
-	REPORT(false, CustomReportNodeType.REPORT_NAME);
+	REPORT(false, CustomReportNodeType.REPORT_NAME),
+	CUSTOM_EXPORT(false, CustomReportNodeType.CUSTOM_EXPORT_NAME);
+
 
 	private boolean container;
 

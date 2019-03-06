@@ -124,7 +124,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	        @MetaValue( value = CustomReportNodeType.CHART_NAME, targetEntity = ChartDefinition.class ),
 	        @MetaValue( value = CustomReportNodeType.FOLDER_NAME, targetEntity = CustomReportFolder.class ),
 	        @MetaValue( value = CustomReportNodeType.LIBRARY_NAME, targetEntity = CustomReportLibrary.class ),
-	        @MetaValue( value = CustomReportNodeType.DASHBOARD_NAME, targetEntity = CustomReportDashboard.class )
+	        @MetaValue( value = CustomReportNodeType.DASHBOARD_NAME, targetEntity = CustomReportDashboard.class ),
+	        @MetaValue( value = CustomReportNodeType.CUSTOM_EXPORT_NAME, targetEntity = CustomReportCustomExport.class )
 	    })
 	@JoinColumn( name = "ENTITY_ID" )
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)

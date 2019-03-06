@@ -37,4 +37,5 @@ public interface CustomReportNodeType {
 	String REPORT_NAME = "REPORT";
 	String FOLDER_NAME = "FOLDER";
 	String LIBRARY_NAME = "LIBRARY";
+	String CUSTOM_EXPORT_NAME = "CUSTOM_EXPORT";
 }
