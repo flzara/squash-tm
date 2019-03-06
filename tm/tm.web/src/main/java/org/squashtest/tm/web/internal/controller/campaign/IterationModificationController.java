@@ -344,7 +344,7 @@ public class IterationModificationController {
 
 		TestPlanStatistics iterationStats = iterationModService.findIterationStatistics(iterationId);
 
-		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-execution-button");
+		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-execution-button");
 
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("statisticsEntity", iterationStats);
