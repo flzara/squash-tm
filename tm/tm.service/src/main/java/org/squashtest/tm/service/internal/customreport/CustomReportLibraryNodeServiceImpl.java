@@ -25,11 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -118,6 +114,12 @@ public class CustomReportLibraryNodeServiceImpl implements
 	public ReportDefinition findReportDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.REPORT);
 		return (ReportDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
+	}
+
+	@Override
+	public CustomReportCustomExport findCustomExportByNodeId(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CUSTOM_EXPORT);
+		return (CustomReportCustomExport) entity;
 	}
 
 	@Override

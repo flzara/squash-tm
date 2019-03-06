@@ -305,6 +305,9 @@ public class CustomReportWorkspaceDisplayService {
 			case DASHBOARD:
 				doDashboardBuild(builtNode, nodeId);
 				break;
+			case CUSTOM_EXPORT:
+				doCustomExportBuild(builtNode, nodeId);
+				break;
 			default:
 				throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
 		}
@@ -344,6 +347,13 @@ public class CustomReportWorkspaceDisplayService {
 		setNodeHTMLId(builtNode, "CustomReportDashboard-" + nodeId);
 		setNodeRel(builtNode, "dashboard");
 		setNodeResType(builtNode, "custom-report-dashboard");
+		setNodeLeaf(builtNode);
+	}
+
+	private void doCustomExportBuild(JsTreeNode builtNode, Long nodeId) {
+		setNodeHTMLId(builtNode, "CustomExport-" + nodeId);
+		setNodeRel(builtNode, "custom-export");
+		setNodeResType(builtNode, "custom-report-custom-export");
 		setNodeLeaf(builtNode);
 	}
 

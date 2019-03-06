@@ -21,10 +21,7 @@
 package org.squashtest.tm.service.customreport;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -81,6 +78,14 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	ReportDefinition findReportDefinitionByNodeId(Long treeNodeId);
+
+	/**
+	 * Return a {@link CustomReportCustomExport}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity.
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportCustomExport findCustomExportByNodeId(Long treeNodeId);
 
 	/**
 	 * Return a {@link CustomReportDashboard}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}

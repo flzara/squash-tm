@@ -21,11 +21,7 @@
 package org.squashtest.tm.service.internal.customreport;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.deletion.OperationReport;
 
@@ -66,6 +62,11 @@ public class CRLNDeletionVisitor implements TreeEntityVisitor{
 
 	public void visit(ReportDefinition reportDefinition) {
 		addRemoved("report");
+	}
+
+	@Override
+	public void visit(CustomReportCustomExport crce) {
+		addRemoved("custom-export");
 	}
 
 	private void addRemoved(String relType){

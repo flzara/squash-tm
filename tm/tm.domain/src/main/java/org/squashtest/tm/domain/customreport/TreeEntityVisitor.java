@@ -29,4 +29,5 @@ public interface TreeEntityVisitor {
 	void visit(CustomReportDashboard crf);
 	void visit(ChartDefinition chartDefinition);
 	void visit(ReportDefinition reportDefinition);
+	void visit(CustomReportCustomExport crce);
 }

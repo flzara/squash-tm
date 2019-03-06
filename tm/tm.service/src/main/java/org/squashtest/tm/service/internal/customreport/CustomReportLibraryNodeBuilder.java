@@ -21,11 +21,7 @@
 package org.squashtest.tm.service.internal.customreport;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
@@ -82,6 +78,11 @@ public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
 	public void visit(ReportDefinition reportDefinition) {
 		linkToProject();
 
+	}
+
+	@Override
+	public void visit(CustomReportCustomExport crce) {
+		linkToProject();
 	}
 
 	//******************* PRIVATE STUFF *******************************//
