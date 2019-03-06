@@ -96,6 +96,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				url = urlBuilder.buildURL("custom-report-report",nodeId);
 				backboneRouter.navigate(url, {trigger: true});
 				break;
+			case "custom-export":
+      	url = urlBuilder.buildURL("custom-report-custom-export",nodeId);
+      	backboneRouter.navigate(url, {trigger: true});
+     	 	break;
       default:
 
     }
@@ -158,6 +162,18 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         url = urlBuilder.buildURL("chart.wizard",nodeId);
         document.location.href = url;
       });
+
+      $("#new-custom-export-tree-button").on("click", function() {
+      	var selectedNode = tree.jstree("get_selected");
+      	if(!selectedNode.canContainNodes()) {
+      		selectedNode = selectedNode.getParent();
+      	}
+      	var nodeId = selectedNode.getResId();
+      	url = urlBuilder.buildURL('custom-report.custom-export.wizard', nodeId);
+      	document.location.href = url;
+      });
+
+
 
       // *************** copy paste ****************
 

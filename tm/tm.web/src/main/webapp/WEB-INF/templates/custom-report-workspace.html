@@ -131,6 +131,9 @@
                 <li id="new-dashboard-tree-button" class="ui-state-disabled cursor-pointer">
                   <a th:text="#{tree.button.new-dashboard.label}+'...'">New dashboard...</a>
                 </li>
+                <li id="new-custom-export-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-custom-export.label}+'...'">New export template...</a>
+                </li>
               </ul>
             </div>
 
@@ -298,6 +301,13 @@
 </script>
 <div th:include="charts/rendering/chart-templates :: templates"></div>
 <!-- /SHOW CHART  -->
+
+<!-- SHOW CUSTOM EXPORT -->
+<script id="tpl-show-custom-export" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/workspace/showCustomExport :: custom-export-view"/>
+<!-- /SHOW CUSTOM EXPORT-->
+
 <!-- /BACKBONE VIEWS TEMPLATES -->
 
 

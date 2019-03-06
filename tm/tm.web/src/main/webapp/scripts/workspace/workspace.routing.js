@@ -231,6 +231,11 @@ define([], function(){
 		'chart.update' :					root + '/charts/update/{\\d+}',
 		'chart.wizard' :					root + '/charts/wizard/{\\d+}',
 		'chart.instance' :					root + '/charts/{\\d+}/instance',
+		'custom-report.custom-export.wizard': root + '/custom-exports/wizard/{\\d+}',
+		'custom-report.custom-export.new': root + '/custom-exports/new/{\\d+}',
+		'custom-report.custom-export.redirect': root + '/custom-report-workspace/#custom-report-custom-export/{\\d+}',
+		'custom-report-custom-export': '/custom-report-custom-export/{\\d+}',
+		'custom-report-custom-export-server': root + '/custom-report-custom-export/{\\d+}',
 
 		//custom report workspace
 		// note : I understand that the next 4 urls below don't need a root

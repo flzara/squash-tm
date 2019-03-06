@@ -86,6 +86,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			return nodes && nodes.filter(':creatable').length===1;
 		};
 
+		this.canCreateCustomExport = function(nodes){
+    	return nodes && nodes.filter(':creatable').length===1;
+    };
+
 		this.canCreateDashboard = function(nodes){
 			return nodes && nodes.filter(':creatable').length===1;
 		};
@@ -244,6 +248,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'new-report-tree-button' : this.canCreateReport,
 			'new-chart-tree-button' : this.canCreateChart,
 			'new-dashboard-tree-button' : this.canCreateDashboard,
+			'new-custom-export-tree-button' : this.canCreateCustomExport,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,

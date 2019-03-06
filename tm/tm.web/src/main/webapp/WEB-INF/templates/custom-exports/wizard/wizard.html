@@ -1,0 +1,177 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- ... -->
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+        sq:css="squash.core.css" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+        th:href="@{/images/favicon.ico}" />
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css"
+        sq:css="squash.wine.css" />
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+        sq:css="squash.core.override.css" />
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+        sq:css="squash.subpage.override.css" />
+
+
+  <script src="../../../../scripts/pubsub-boot.js"
+          th:src="@{/scripts/pubsub-boot.js}"></script>
+
+  <script th:remove="all" type="text/javascript" src="../../../../js/thymol.js"></script>
+
+  <script type="text/javascript" th:inline="javascript">
+  /* <![CDATA[ */
+  var squashtm = {};
+  squashtm.app = {
+    locale : /*[[#{squashtm.locale}]]*/ 'fr',
+    contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
+  },
+  squashtm.customExport = {};
+  squashtm.customExport.parentId = /*[[${parentId}]]*/
+  /* ]]> */
+</script>
+
+  <script th:remove="all" type="text/javascript"
+          src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+
+  <script data-main="../../../../scripts/custom-export-wizard.js" th:attr="data-main=@{/scripts/custom-export-wizard.js}"
+          src="../../../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+
+</head>
+
+<body>
+
+<script id="name-step-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/nameStep :: custom-export-wizard-name" />
+
+<div id="navigation" th:include="navbar.frag :: navbar('custom-report')">NAVBAR</div>
+
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="#{workspace.custom-report.title}"></h2>
+    </div>
+    <div class="snap-right">
+      <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+    </div>
+  </div>
+  <div th:remove="all">
+    <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+    <!-- 		above the stacking context of the contextual content. -->
+    <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+  </div>
+
+  <div id="sub-page" class="sub-page">
+    <div id="sub-page-header" class="sub-page-header">
+
+      <div id="sub-page-title" class="sub-page-title">
+        <h2 th:text="#{custom-export.wizard.title}"></h2>
+      </div>
+
+      <div id="sub-page-buttons" class="sub-page-buttons">
+
+        <input type="button" class="sq-btn" id="back" value="Back" th:value="#{label.Back}" />
+      </div>
+
+      <div class="unsnap"></div>
+    </div>
+
+    <div id="sub-page-content" class="sub-page-content">
+
+      <div id="information-content" style="overflow: hidden;">
+
+        <!-- ========================================================
+                              main wizard panel
+                  ======================================================== -->
+
+        <div id="wizard" class="fragment-body ui-tabs" style="top: 0; background: 0; border: 0 none; height: 100%; ">
+
+          <!-- ========================= the side view ========================= -->
+
+          <div id="current-side-view-container" style="margin: 0; padding-left: 10px; width: 155px; height: 100%; overflow: hidden; background-color: white;">
+            <span style="display: table; height: 100%;" id="side-view" ></span>
+          </div>
+
+
+          <!-- ========================= the main step view ========================= -->
+
+          <div id="main-step-view" style="position: absolute;	top: 0; right: 0; left: 180px; bottom: 45px; border-bottom:1px solid black; overflow:hidden;">
+
+            <!--  the position : relative resets the positioning context -->
+            <div style="position:relative; height:100%; margin-top:5px;">
+
+              <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="width: 99%;">
+                <h2 id="step-title" />
+              </div>
+
+              <div style="position:absolute; top: 40px; bottom: 0; left:0; right:0; padding-right: 10px;  overflow:auto;">
+
+                <div id="current-step-container" >
+                  <div id="current-step" >
+                    <!--  populated via javascript -->
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= the button view ========================= -->
+
+          <div id="wizard-toolbar" style="position: fixed; bottom: 65px; right: 60px; ">
+
+            <input type="button" class="sq-btn" id="save" value="save" th:value="#{label.save}" />
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="back-popup" class="popup-dialog not-displayed" th:title="#{wizard.back.popup.title}">
+  <span th:text="#{wizard.back.popup.message}"></span>
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{wizard.back.popup.confirm}" data-def="mainbtn, evt=confirm" />
+    <input type="button" th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel" />
+  </div>
+</div>
+
+</body>
+</html>
