@@ -33,10 +33,7 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
@@ -115,6 +112,13 @@ public class CustomReportController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "custom-report-custom-export/{id}", method = RequestMethod.GET)
+	public CustomReportCustomExport getCustomExportDetails(@PathVariable Long id, Locale locale) {
+		CustomReportCustomExport customExport = customReportLibraryNodeService.findCustomExportByNodeId(id);
+		return customExport;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "custom-report-dashboard/{id}", method = RequestMethod.POST )
 	public JsonCustomReportDashboard getDashboardDetailsWithDynamicScope(@PathVariable Long id, Locale locale, @RequestBody JsonDynamicScope dynamicScope){
 		List<EntityReference> entityReferences = dynamicScope.convertToEntityReferences();
@@ -147,6 +151,12 @@ public class CustomReportController {
 	@RequestMapping(method = RequestMethod.POST, value="custom-report-report/{nodeId}",params = {NEW_NAME})
 	@ResponseBody
 	public RenameModel renameReportDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-custom-export/{nodeId}",params = {NEW_NAME})
+	@ResponseBody
+	public RenameModel renameCustomExport(@PathVariable long nodeId, @RequestParam String newName) {
 		return renameNode(nodeId, newName);
 	}
 
