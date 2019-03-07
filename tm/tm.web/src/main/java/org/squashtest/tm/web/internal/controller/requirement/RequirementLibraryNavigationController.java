@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -28,13 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -46,6 +41,7 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
@@ -53,6 +49,7 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
@@ -67,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Controller which processes requests related to navigation in a {@link RequirementLibrary}.
@@ -102,6 +100,10 @@ public class RequirementLibraryNavigationController extends
 
 	@Inject
 	private WorkspaceDisplayService requirementWorkspaceDisplayService;
+
+	@Inject
+	private RequirementLibraryFinderService requirementLibraryFinder;
+
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
@@ -282,9 +284,16 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
-		List<RequirementLibrary> linkableLibraries = requirementLibraryNavigationService
-			.findLinkableRequirementLibraries();
-		return createLinkableLibrariesModel(linkableLibraries);
+
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(new String[0]);
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
+			.map(RequirementLibrary::getId).collect(Collectors.toList());
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
+		return new ArrayList<>(linkableLibrariesModel);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
