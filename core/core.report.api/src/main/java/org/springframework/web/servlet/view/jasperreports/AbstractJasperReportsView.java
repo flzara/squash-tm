@@ -45,7 +45,9 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.springframework.context.ApplicationContextException;
@@ -565,14 +567,16 @@ public abstract class AbstractJasperReportsView extends AbstractUrlBasedView {
 
 		// Expose Spring-managed Locale and MessageSource.
 		exposeLocalizationContext(model, request);
-
+		JRSwapFile jrSwapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 1024,100);
+		JRSwapFileVirtualizer jrSwapFileVirtualizer = new JRSwapFileVirtualizer(20, jrSwapFile, true);
+		model.put(JRParameter.REPORT_VIRTUALIZER, jrSwapFileVirtualizer);
 		// Fill the report.
 		JasperPrint filledReport = fillReport(model);
 		postProcessReport(filledReport, model);
-
 		// Prepare response and render report.
 		populateHeaders(response);
 		renderReport(filledReport, model, response);
+		jrSwapFileVirtualizer.cleanup();
 	}
 
 	/**
