@@ -127,17 +127,68 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		def tc = Mock(TestCase){
 			getId() >> 456L
 			getKind() >> TestCaseKind.GHERKIN
+			getName() >> "lame_pun"
 		}
 
 		and:
 		def manifest = new ScmRepositoryManifest(scm)
 
 		when :
-		def file = service.locateOrCreateTestFile(manifest, tc)
+		def file = service.locateOrRenameOrCreateTestFile(manifest, tc)
 
 		then :
 		file.name == "456_lame_pun.feature"
 
+	}
+
+	def "#locateOrRenameOrCreateTestFile - should locate the file and rename it"() {
+		given:
+			def tc = Mock(TestCase) {
+				getId() >> 456L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "new_lame_pun"
+			}
+		and:
+			def manifest = new ScmRepositoryManifest(scm)
+		when:
+			def file = service.locateOrRenameOrCreateTestFile(manifest, tc)
+		then:
+			file.name == "456_new_lame_pun.feature"
+	}
+
+	def "#renameFileIfNeeded - should not need to rename the file"() {
+		given:
+			def file = new File("499_press_button.feature")
+			file.createNewFile()
+			def testCase = Mock(TestCase) {
+				getId() >> 499L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "press_button"
+			}
+		when:
+			def resultFile = service.renameFileIfNeeded(testCase, file)
+		then:
+			resultFile == file
+		cleanup:
+			clean(file)
+	}
+
+	def "#renameFileIfNeeded - should rename the file"() {
+		given:
+			File file = new File(scm.getWorkingFolder(), "499_press_button.feature")
+			file.createNewFile()
+			def testCase = Mock(TestCase) {
+				getId() >> 499L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "click_button"
+			}
+		when:
+			def resultFile = service.renameFileIfNeeded(testCase, file)
+		then:
+			resultFile.getName().equals("499_click_button.feature")
+		cleanup:
+			clean(file)
+			clean(resultFile)
 	}
 
 
@@ -153,7 +204,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		def manifest = new ScmRepositoryManifest(scm)
 
 		when :
-		def file = service.locateOrCreateTestFile(manifest, tc)
+		def file = service.locateOrRenameOrCreateTestFile(manifest, tc)
 
 		then :
 		file.name == "123_yes_test_case.feature"
@@ -162,7 +213,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		clean file
 
 	}
-
 
 	@Ignore
 	def "should create the file with backup name if not exists and IOException occured"(){

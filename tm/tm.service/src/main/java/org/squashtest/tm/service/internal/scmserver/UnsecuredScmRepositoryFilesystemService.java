@@ -71,31 +71,22 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 	@Override
 	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
-
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("committing {} files to repository '{}'", testCases.size(), scm.getName());
 		}
 		// exportToScm
 		try {
 			scm.doWithLock(() -> {
-
 				LOGGER.trace("committing tests to scm : '{}'", scm.getName());
-
 				try {
 					ScmRepositoryManifest manifest = new ScmRepositoryManifest(scm);
-
 					for (TestCase testCase : testCases) {
-
-						File testFile = locateOrCreateTestFile(manifest, testCase);
-
+						File testFile = locateOrRenameOrCreateTestFile(manifest, testCase);
 						// at this point the file is created without error
 						// lets fill the file with the script content
 						printToFile(testFile, testCase);
-
 					}
-
 					return null;
-
 				}
 				catch (IOException ex) {
 					LOGGER.error("error while creating/updating files in the repository", ex);
@@ -122,31 +113,23 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
 	 ********************************************************************************************************/
 
-	public File locateOrCreateTestFile(ScmRepositoryManifest manifest, TestCase testCase) throws IOException{
-
+	public File locateOrRenameOrCreateTestFile(ScmRepositoryManifest manifest, TestCase testCase) throws IOException{
 		if (LOGGER.isTraceEnabled()){
 			LOGGER.trace("attempting to locate physical script file for test '{}' in the scm", testCase.getId());
 		}
-
 		File testfile = null;
-
 		Optional<File> maybeTestFile = manifest.locateTest(testCase);
-
 		if (maybeTestFile.isPresent()){
-
 			testfile = maybeTestFile.get();
-
 			LOGGER.trace("found file : '{}'", testfile.getAbsolutePath());
-
+			testfile = renameFileIfNeeded(testCase, testfile);
 		}
 		else{
 			LOGGER.trace("file not found, attempting to create a new one");
-
 			// roundtrip 1 : attempt the creation with the normal filename
 			try{
 
 				testfile = createTestNominal(manifest.getScm(), testCase);
-
 			}
 			catch(IOException ex){
 				if (SystemUtils.IS_OS_WINDOWS) {
@@ -157,10 +140,46 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 					testfile = createTestBackup(manifest.getScm(), testCase);
 				}
 			}
-
 		}
-
 		return testfile;
+	}
+
+	/**
+	 * Check if the given TestCase has been renamed since it was last transmitted and written into the File.
+	 * If so, try to rename the File with the current name of the TestCase. First attempting to write the standard name,
+	 * then with the backup name if it failed.
+	 * Note that the File keeps the same location.
+	 * @param testCase The {@link TestCase} which is being transmitted.
+	 * @param originalFile The {@link File} which is receiving the TestCase script.
+	 * @return The file with the new name if renaming was a success. The original file if renaming failed.
+	 */
+	private File renameFileIfNeeded(TestCase testCase, File originalFile) {
+
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		String correctStandardName = strategy.createFilenameFor(testCase);
+		String correctBackupName = strategy.backupFilenameFor(testCase);
+		String currentName = originalFile.getName();
+		// Check if renaming is needed
+		if(!currentName.equals(correctStandardName) && !currentName.equals(correctBackupName)) {
+			// Renaming
+			File containingFolder = originalFile.getParentFile();
+			File fileWithNewName = new File(containingFolder, correctStandardName);
+			// Try to rename the File with the standard name
+			if(originalFile.renameTo(fileWithNewName)) {
+				LOGGER.debug("Renamed file {} to {}.", originalFile, fileWithNewName);
+				return fileWithNewName;
+			} else {
+				File fileWithNewBackupName = new File(containingFolder, correctStandardName);
+				// Try with the backup name
+				if(originalFile.renameTo(fileWithNewBackupName)) {
+					LOGGER.debug("Renamed file {} to {}.", originalFile, correctBackupName);
+					return fileWithNewBackupName;
+				} else {
+					LOGGER.warn("Failed to rename file {} to {} or {}.", originalFile, fileWithNewName, fileWithNewBackupName);
+				}
+			}
+		}
+		return originalFile;
 	}
 
 	/**
@@ -210,7 +229,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 		if (newFile.exists()){
 			LOGGER.warn("retrieved physical file '{}' while in the file creation routine... it should have been detected earlier. This is an abnormal situation. " +
-							"Anyway, this file ",
+					"Anyway, this file ",
 				newFile.getAbsolutePath());
 		}
 		else{
