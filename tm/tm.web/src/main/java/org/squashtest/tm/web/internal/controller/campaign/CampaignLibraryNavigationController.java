@@ -48,8 +48,10 @@ import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -71,7 +73,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
@@ -94,6 +95,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
@@ -207,6 +209,9 @@ public class CampaignLibraryNavigationController extends
 
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+
+	@Inject
+	private CampaignLibraryFinderService campaignLibraryFinderService;
 
 	@Inject
 	private CampaignFinder campaignFinder;
@@ -427,16 +432,11 @@ public class CampaignLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
-		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
-		return createLinkableLibrariesModel(linkableLibraries);
+		List<Long> linkableCampaigntLibraryIds = campaignLibraryFinderService.findLinkableCampaignLibraries().stream()
+			.map(CampaignLibrary::getId).collect(Collectors.toList());
+		return createLinkableLibrariesModel(linkableCampaigntLibraryIds);
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<CampaignLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<CampaignLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-			driveNodeBuilder.get());
-
-		return listBuilder.setModel(linkableLibraries).build();
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)

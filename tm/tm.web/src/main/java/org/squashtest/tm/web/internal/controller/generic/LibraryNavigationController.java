@@ -24,6 +24,7 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -66,12 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -367,6 +363,14 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 	}
 
+	protected List<JsTreeNode> createLinkableLibrariesModel(List<Long> linkableLibraries) {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+
+		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
+		Collection<JsTreeNode> linkableLibrariesModel = workspaceDisplayService().findAllLibraries(linkableLibraries, currentUser, new MultiValueMap(), activeMilestoneId.get());
+
+		return new ArrayList<>(linkableLibrariesModel);
+	}
 
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
 

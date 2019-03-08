@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -49,10 +49,8 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
-import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
 
 import javax.inject.Inject;
@@ -285,23 +283,12 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
 
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(new String[0]);
-		UserDto currentUser = userAccountService.findCurrentUserDto();
-
 		List<Long> linkableRequirementLibraryIds = requirementLibraryFinder.findLinkableRequirementLibraries().stream()
 			.map(RequirementLibrary::getId).collect(Collectors.toList());
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = requirementWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
-		return new ArrayList<>(linkableLibrariesModel);
+		return createLinkableLibrariesModel(linkableRequirementLibraryIds);
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<RequirementLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-			driveNodeBuilder.get());
-
-		return listBuilder.setModel(linkableLibraries).build();
-	}
 
 	// ****************************** statistics section *******************************
 

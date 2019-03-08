@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -40,7 +40,6 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -59,7 +58,6 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
-import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
@@ -239,23 +237,13 @@ public class TestCaseLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
-		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(new String[0]);
-		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		List<Long> linkableTestCaseLibraryIds = testCaseLibraryFinderService.findLinkableTestCaseLibraries().stream()
 			.map(TestCaseLibrary::getId).collect(Collectors.toList());
-		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableTestCaseLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
-		return new ArrayList<>(linkableLibrariesModel);
+		return createLinkableLibrariesModel(linkableTestCaseLibraryIds);
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
-			driveNodeBuilder.get());
-
-		return listBuilder.setModel(linkableLibraries).build();
-	}
 
 	@RequestMapping(value = "/content/csv", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, LIBRARIES, NODES, CALLS, RequestParams.RTEFORMAT})
