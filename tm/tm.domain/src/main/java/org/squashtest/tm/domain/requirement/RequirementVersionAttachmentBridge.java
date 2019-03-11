@@ -46,8 +46,7 @@ public class RequirementVersionAttachmentBridge  extends  SessionFieldBridge imp
 				.setParameter("id", reqVer.getId())
 				.uniqueResult();
 
-		Integer result = new Integer(count.toString());
-		if ( result == null ) {
+		if ( count == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
 				luceneOptions.addSortedDocValuesFieldToDocument( name, luceneOptions.indexNullAs(), document );
 			}

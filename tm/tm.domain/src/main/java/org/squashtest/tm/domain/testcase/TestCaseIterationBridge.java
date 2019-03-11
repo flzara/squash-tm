@@ -39,46 +39,46 @@ import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
 public class TestCaseIterationBridge extends SessionFieldBridge implements MetadataProvidingFieldBridge {
 
 	private static final Integer EXPECTED_LENGTH = 7;
-	
-	private static final String COUNT_ITER = 
+
+	private static final String COUNT_ITER =
 			"select count(distinct iter.ITERATION_ID) from ITERATION iter " +
 			"inner join ITEM_TEST_PLAN_LIST ilist on iter.ITERATION_ID = ilist.ITERATION_ID " +
 			"inner join ITERATION_TEST_PLAN_ITEM item on ilist.ITEM_TEST_PLAN_ID = item.ITEM_TEST_PLAN_ID " +
 			"where item.TCLN_ID = :tcId";
-	
+
 	private String padRawValue(Long rawValue){
 		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
-	
-	
+
+
 	private Long findNumberOfIterations(Session session, Long id){
-		
+
 		return DSL.select(ITERATION.ITERATION_ID.countDistinct())
 				.from(ITERATION)
 				.innerJoin(ITEM_TEST_PLAN_LIST).on(ITERATION.ITERATION_ID.eq(ITEM_TEST_PLAN_LIST.ITERATION_ID))
 				.innerJoin(ITERATION_TEST_PLAN_ITEM).on(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 				.where(ITERATION_TEST_PLAN_ITEM.TCLN_ID.eq(id))
 				.fetchOne(0, Long.class);
-		
+
 				/*
 		BigInteger count = (BigInteger) session.createNativeQuery(COUNT_ITER)
 				.setParameter("tcId", id)
 				.getSingleResult();
-		
+
 		return count.longValue();
 		*/
 
 	}
-	
-	
+
+
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
-		
+
 		Long count = findNumberOfIterations(session, testcase.getId());
-		Integer result = new Integer(count.toString());
-		if ( result == null ) {
+
+		if ( count == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
 				luceneOptions.addSortedDocValuesFieldToDocument( name, new Long(0).toString(), document );
 			}
