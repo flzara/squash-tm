@@ -62,7 +62,7 @@ public class TestCaseAutomationRequestBridge implements FieldBridge, MetadataPro
 
 		applyToLuceneStringOptions(luceneOptions, FIELD_AUTOMATION_REQUEST_STATUS, requestStatus, document);
 
-		Integer result = new Integer(automationRequest.getId().toString());
+		Long result = automationRequest.getId();
 		if ( result == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
 				luceneOptions.addFieldToDocument( FIELD_AUTOMATION_REQUEST_ID, luceneOptions.indexNullAs(), document );

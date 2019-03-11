@@ -48,8 +48,7 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge implements Meta
 				.setReadOnly(true)
 				.uniqueResult();
 
-		Integer result = new Integer(attCount.toString());
-		if ( result == null ) {
+		if ( attCount == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
 				luceneOptions.addSortedDocValuesFieldToDocument( name, luceneOptions.indexNullAs(), document );
 			}

@@ -92,7 +92,7 @@ public class IterationItemBundleClassBridge implements FieldBridge, MetadataProv
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_IMPORTANCE, importance, document);
 		applyToLuceneStringOptions(luceneOptions, FIELD_TC_AUTOMATABLE, automatable, document);
 
-		Integer result = new Integer(tc.getId().toString());
+		Long result = tc.getId();
 		if ( result == null ) {
 			if ( luceneOptions.indexNullAs() != null ) {
 				luceneOptions.addFieldToDocument( FIELD_TC_ID, luceneOptions.indexNullAs(), document );
