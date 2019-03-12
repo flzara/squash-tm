@@ -28,18 +28,7 @@ import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -98,7 +87,7 @@ public class ScriptedTestCaseExtender {
 			}
 			this.language = scriptedTestCaseLanguage;
 			this.populateInitialScript(testCase, scriptLanguage, locale);
-		} else {
+	} else {
 			throw new IllegalArgumentException("Scripted test case MUST have a not null scriptLanguage");
 		}
 	}
@@ -120,6 +109,21 @@ public class ScriptedTestCaseExtender {
 			.append(testCase.getName());
 
 		this.setScript(sb.toString());
+	}
+
+	/**
+	 * Return this TestCase script appended with some needed metadata.
+	 * <br/>
+	 * Note: The metadata are not translated.
+	 * If it is needed, this operation and the translation have to be done in the service layer.
+	 * @return This TestCase script appended with metadata.
+	 */
+	public String getScriptWithAppendedMetadata() {
+		StringBuilder sb = new StringBuilder(this.script);
+		sb.insert(0, "# Test case importance: " + this.testCase.getImportance() + "\n");
+		sb.insert(0, "# Automation status: " + this.testCase.getAutomationRequest().getRequestStatus() + "\n");
+		sb.insert(0, "# Automation priority: " + this.testCase.getAutomationRequest().getAutomationPriority() + "\n");
+		return sb.toString();
 	}
 
 	public Long getId() {

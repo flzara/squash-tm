@@ -51,8 +51,7 @@ public enum ScriptToFileStrategy {
 
 			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
 
-			// For now, no metadata are defined so we just return the script as is
-			return extender.getScript();
+			return extender.getScriptWithAppendedMetadata();
 		}
 	};
 

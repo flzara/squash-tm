@@ -24,7 +24,10 @@ import org.apache.commons.io.FileUtils
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
@@ -225,32 +228,44 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	def "def should print a TestCase to an existing file"(){
 
 		given: "the directory"
-		def dir = Files.createTempDirectory("USRFSTest_").toFile()
-		def testfile = new File(dir, "test")
-		testfile.createNewFile()
+			def dir = Files.createTempDirectory("USRFSTest_").toFile()
+			def testfile = new File(dir, "test")
+			testfile.createNewFile()
 
 		and: "the script content"
-		def script =
+			def script =
 """pull
 merge
 commit
 push
 go home quickly before someone notices that the ITs are broken"""
 
+		def metadata =
+"""# Automation priority: 2
+# Automation status: SUSPENDED
+# Test case importance: MEDIUM
+"""
+
 		and: "the test case"
-		def tc = new TestCase(
-			kind: TestCaseKind.GHERKIN,
-			scriptedTestCaseExtender: new ScriptedTestCaseExtender(script:script)
-		)
+			def tcExtender = new ScriptedTestCaseExtender(script:script)
+
+			def tc = new TestCase(
+				kind: TestCaseKind.GHERKIN,
+				importance: TestCaseImportance.MEDIUM,
+				automationRequest: new AutomationRequest(automationPriority: 2, requestStatus: AutomationRequestStatus.SUSPENDED),
+				scriptedTestCaseExtender: tcExtender
+			)
+
+			tcExtender.setTestCase(tc)
 
 		when:
-		service.printToFile(testfile, tc)
+			service.printToFile(testfile, tc)
 
 		then:
-		testfile.text == script
+			testfile.text == metadata + script
 
 		cleanup:
-		clean dir
+			clean dir
 
 	}
 
@@ -262,23 +277,44 @@ go home quickly before someone notices that the ITs are broken"""
 		def script1 = "drunken Cicero says"
 		def script2 = "Lorem *hips*um"
 
+		def metadata1 =
+"""# Automation priority: 1
+# Automation status: AUTOMATED
+# Test case importance: HIGH
+"""
+
+		def metadata2 =
+"""# Automation priority: 3
+# Automation status: AUTOMATION_IN_PROGRESS
+# Test case importance: LOW
+"""
 
 		and: "the test cases"
-		def newTc = Mock(TestCase){
-			getId() >> 123L
-			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> new ScriptedTestCaseExtender(script:script1)
-		}
+			def newTcExtender = new ScriptedTestCaseExtender(script:script1)
+			def newTc = Mock(TestCase){
+				getId() >> 123L
+				getName() >> "yes test case"
+				getKind() >> TestCaseKind.GHERKIN
+				getImportance() >> TestCaseImportance.HIGH
+				isScripted() >> true
+				getScriptedTestCaseExtender() >> newTcExtender
+				getAutomationRequest() >>
+					new AutomationRequest(automationPriority: 1, requestStatus: AutomationRequestStatus.AUTOMATED)
+			}
+			newTcExtender.setTestCase(newTc)
 
-		def updateTc = Mock(TestCase){
-			getId() >> 456L
-			getName() >> "lame pun"
-			getKind() >> TestCaseKind.GHERKIN
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> new ScriptedTestCaseExtender(script:script2)
-		}
+			def updateTcExtender = new ScriptedTestCaseExtender(script:script2)
+			def updateTc = Mock(TestCase){
+				getId() >> 456L
+				getName() >> "lame pun"
+				getImportance() >> TestCaseImportance.LOW
+				getKind() >> TestCaseKind.GHERKIN
+				isScripted() >> true
+				getScriptedTestCaseExtender() >> updateTcExtender
+				getAutomationRequest() >>
+					new AutomationRequest(automationPriority: 3, requestStatus: AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
+			}
+			updateTcExtender.setTestCase(updateTc)
 
 		when:
 		service.createOrUpdateScriptFile(scm, [updateTc, newTc])
@@ -290,8 +326,8 @@ go home quickly before someone notices that the ITs are broken"""
 		newScript.exists()
 		updateScript.exists()
 
-		newScript.text == script1
-		updateScript.text == script2
+		newScript.text == metadata1 + script1
+		updateScript.text == metadata2 + script2
 
 		cleanup:
 		clean newScript
