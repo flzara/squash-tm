@@ -268,7 +268,7 @@ public class ScriptedTestCaseEventListener {
 
 				Optional<File> maybeFile = manifest.locateTest(tc);
 
-				if (maybeGherkin.isPresent()) {
+				if (maybeFile.isPresent()) {
 
 					File testFile = maybeFile.get();
 
