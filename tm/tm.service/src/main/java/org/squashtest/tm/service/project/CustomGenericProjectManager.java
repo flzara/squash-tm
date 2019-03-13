@@ -275,4 +275,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void changeAutomationWorkflow(long projectId, boolean active);
 
 	boolean checkIfTcGherkinHaveTaScript(Long projectId);
+
+	void changeUseTreeStructureInScmRepo(long projectId, boolean activated);
 }

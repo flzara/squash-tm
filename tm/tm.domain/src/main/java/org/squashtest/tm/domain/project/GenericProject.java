@@ -176,6 +176,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@FieldBridge(impl = BooleanBridge.class)
 	private boolean allowAutomationWorkflow = false;
 
+	private boolean useTreeStructureInScmRepo = true;
+
 	public GenericProject() {
 		super();
 	}
@@ -517,4 +519,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		this.scmRepository = scmRepository;
 	}
 
+	public boolean isUseTreeStructureInScmRepo() {
+		return useTreeStructureInScmRepo;
+	}
+
+	public void setUseTreeStructureInScmRepo(boolean useTreeStructureInScmRepo) {
+		this.useTreeStructureInScmRepo = useTreeStructureInScmRepo;
+	}
 }

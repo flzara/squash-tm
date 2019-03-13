@@ -565,6 +565,12 @@ public class GenericProjectController {
 		projectManager.changeAutomationWorkflow(projectId, active);
 	}
 
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=tree-structure-in-scm-repo", VALUE})
+	@ResponseBody
+	public void changeUseTreeStructureInScmRepo(@PathVariable long projectId, @RequestParam(VALUE) boolean activated) {
+		projectManager.changeUseTreeStructureInScmRepo(projectId, activated);
+	}
+
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.GET, params = {"id=project-automation-workflow"})
 	@ResponseBody
 	public boolean checkIfTcGherkinHaveTaScript(@PathVariable long projectId) {

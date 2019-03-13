@@ -96,4 +96,8 @@ public class AdministrableProject {
 	public boolean allowAutomationWorkflow() {
 		return project.isAllowAutomationWorkflow();
 	}
+
+	public boolean useTreeStructureInScmRepo() {
+		return project.isUseTreeStructureInScmRepo();
+	}
 }

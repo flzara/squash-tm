@@ -702,4 +702,17 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 			1 * genericProjectDao.unbindScmRepository(projectId)
 	}
+
+	def "#changeUseTreeStructureInScmRepo(long, boolean) - Should change useTreeStructureInScmRepo parameter in a Project"() {
+
+		given:
+			Project project = new Project()
+			project.setUseTreeStructureInScmRepo(true)
+		and:
+			genericProjectDao.getOne(87L) >> project
+		when:
+			manager.changeUseTreeStructureInScmRepo(87L, false)
+		then:
+			!project.isUseTreeStructureInScmRepo()
+	}
 }

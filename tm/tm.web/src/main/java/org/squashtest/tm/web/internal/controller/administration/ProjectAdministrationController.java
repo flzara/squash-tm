@@ -176,7 +176,7 @@ public class ProjectAdministrationController {
 		mav.addObject("allowedStatuses", allowedStatuses);
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
-
+		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
 
 		return mav;
 	}

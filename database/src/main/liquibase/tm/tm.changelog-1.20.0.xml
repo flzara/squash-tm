@@ -69,4 +69,14 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-125-use-tm-tree-structure-in-scm-repository" author="jlor">
+    <comment>Add an option in Project automation settings to use the tm tree structure when transmitting test cases to a scm repository</comment>
+
+    <addColumn tableName="PROJECT">
+      <column name="USE_TREE_STRUCTURE_IN_SCM_REPO" type="BOOLEAN" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

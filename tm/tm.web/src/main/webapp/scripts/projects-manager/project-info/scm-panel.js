@@ -39,6 +39,8 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 				if(boundServerId !== 0) {
 					self.repositoryCombo = self.initRepositoryComboBox(boundServerId);
 				}
+
+				// The switch to toggle 'mirrorTreeInScmRepo' is entirely managed in 'project-info.jsp' to avoid duplicated lines.
 			},
 			/*
 			* Initialize the ComboBox of the Servers with the given collection.

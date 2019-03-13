@@ -1111,6 +1111,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	@Override
+	public void changeUseTreeStructureInScmRepo(long projectId, boolean activated) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setUseTreeStructureInScmRepo(activated);
+	}
+
 	private void createAutomationRequestForTc(List<Long> tcIds) {
 
 		for(int x = 0; x < tcIds.size(); x++) {

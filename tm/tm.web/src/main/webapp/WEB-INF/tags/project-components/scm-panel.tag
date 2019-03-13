@@ -35,7 +35,26 @@
 <f:message var="noServerLabel" key="label.NoServer" />
 <f:message var="noRepositoryLabel" key="label.None" />
 
+<f:message var="activeLabel" key="label.active" />
+<f:message var="inactiveLabel" key="label.inactive" />
+
 <div id="scm-panel">
+
+    <div id="use-tree-structure-option-table" class="display-table">
+    	<div class="display-table-row">
+    		<div class="display-table-cell">
+    			<label class="display-table-cell" style="vertical-align:bottom">
+    				<f:message key="label.useTreeStructureInScmRepo" />
+    			</label>
+    		</div>
+    		<div class="display-table-cell">
+    			<input id="toggle-STRUCTURE-IN-SCM-REPO-checkbox" type="checkbox" data-def="width=35, on_label=${activeLabel},
+    				off_label=${inactiveLabel}, checked=${useTreeStructureInScmRepo}" style="display: none;" />
+    		</div>
+    	</div>
+    </div>
+
+    <br/>
 
 		<fieldset id="scm-fieldset">
 			<legend>
@@ -50,9 +69,10 @@
 				<div id="selected-scm-server" style="display: inline">
 					<c:out value="${noServerlabel}" escapeXml="true" />
 				</div>
-
 			</div>
+
 			<br/>
+
 			<%---- ComboBox with Repositories contained in the selected Server ----%>
 			<c:if test="${ empty project.scmRepository}">
 				<c:set var="repositoriesDisplay" value="display: none"/>
@@ -78,10 +98,11 @@
 
 require(["common"], function() {
 	require(["jquery", "projects-manager/project-info/scm-panel"], function($, ScmPanel) {
-		let scmServersJson = ${json:serialize(availableScmServers)};
-		let projectId = ${project.id};
-		let boundServerId = ${scmServerId};
-		let boundRepositoryId = ${scmRepositoryId};
+		var scmServersJson = ${json:serialize(availableScmServers)};
+		var projectId = ${project.id};
+		var useTreeStructureInScmRepo = ${useTreeStructureInScmRepo};
+		var boundServerId = ${scmServerId};
+		var boundRepositoryId = ${scmRepositoryId};
 		new ScmPanel(projectId, boundServerId, boundRepositoryId, scmServersJson);
 	});
 });

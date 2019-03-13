@@ -717,6 +717,7 @@ require(["common"], function() {
 		 		configureActivation("SETTLED");
 		 		configureActivation("EXECUTION");
 		 		configureActivation("WORKFLOW");
+		 		configureActivation("STRUCTURE-IN-SCM-REPO");
 
 		 		$("#toggle-EXECUTION-checkbox").change(function() {
 		 		  toggleIfParameterIsEnabled(toggleExec);
@@ -724,6 +725,10 @@ require(["common"], function() {
 
 		 		$("#toggle-WORKFLOW-checkbox").change(function() {
           toggleIfParameterIsEnabled(toggleWorkflow);
+        });
+
+        $("#toggle-STRUCTURE-IN-SCM-REPO-checkbox").change(function() {
+          toggleStructureInScmRepo();
         });
 
 		 		$("#toggle-UNTESTABLE-checkbox").change(function() {
@@ -760,7 +765,18 @@ require(["common"], function() {
   		} else {
 				changeAllowAutomationWorkflow(shouldActivate);
   		}
+  }
 
+  function toggleStructureInScmRepo() {
+    var activated = $("#toggle-STRUCTURE-IN-SCM-REPO-checkbox").prop('checked');
+    $.ajax({
+    	type: 'POST',
+    	url: "${projectUrl}",
+    	data : {
+    	  id: 'tree-structure-in-scm-repo',
+    		value : activated
+    	}
+    });
   }
 
   var changeWorkflowDialogAfter = $("#change-workflow-popup-after");
