@@ -26,12 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -44,8 +47,8 @@ public class TestSuiteExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Inject
 	private TestSuiteDao suiteDao;
 
-	TestSuiteExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService) {
-		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService);
+	TestSuiteExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory) {
+		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory);
 	}
 
 	/**
@@ -106,11 +109,6 @@ public class TestSuiteExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Override
 	IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin, TestSuite suite) {
 		return suite.findFirstExecutableTestPlanItem(testerLogin);
-	}
-
-	@Override
-	boolean isLastExecutableTestPlanItem(TestSuite suite, long testPlanItemId, String testerLogin) {
-		return suite.isLastExecutableTestPlanItem(testPlanItemId, testerLogin);
 	}
 
 	@Override

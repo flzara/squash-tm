@@ -152,6 +152,32 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 		execution.findFirstUnexecutedStep().getId() == -5
 	}
 
+	@DataSet("TestSuiteExecutionProcessingServiceIT.should find no more executable item.xml")
+	def "should find no more executable item"(){
+		given :
+		long testSuiteId = -1L
+		long itemId = -1L
+
+		when :
+		boolean more = service.hasMoreExecutableItems(testSuiteId, itemId)
+
+		then :
+		!more
+	}
+
+	@DataSet("TestSuiteExecutionProcessingServiceIT.should find more executable item.xml")
+	def "should find more executable item"(){
+		given :
+		long testSuiteId = -1L
+		long itemId = -1L
+
+		when :
+		boolean more = service.hasMoreExecutableItems(testSuiteId, itemId)
+
+		then :
+		more
+	}
+
 
 
 }

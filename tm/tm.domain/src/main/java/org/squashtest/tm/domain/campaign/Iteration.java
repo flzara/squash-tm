@@ -503,24 +503,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return -1;
 	}
 
-	public boolean isLastExecutableTestPlanItem(long itemId, String userLogin) {
-		for (int i = testPlans.size() - 1; i >= 0; i--) {
-			IterationTestPlanItem item = testPlans.get(i);
-
-			// We have to check if the referenced test case has execution steps
-			TestCase testCase = null;
-			if (!item.isTestCaseDeleted()) {
-				testCase = item.getReferencedTestCase();
-			}
-
-			if (item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase) && (userLogin == null || item.isAssignedToUser(userLogin))) {
-				return itemId == item.getId();
-			}
-		}
-
-		return false;
-	}
-
 	/**
 	 * @see TestPlanOwner#isFirstExecutableTestPlanItem(long, String)
 	 */
@@ -566,10 +548,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 			return findNextExecutableTestPlanItem(firstTestPlanItem.getId(), testerLogin);
 		}
 
-	}
-
-	private boolean testCaseHasSteps(TestCase testCase) {
-		return testCase != null && testCase.getSteps() != null && !testCase.getSteps().isEmpty();
 	}
 
 	private IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {

@@ -20,20 +20,29 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import gherkin.ast.Background;
+import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanOwner;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Abstract class for services whose purposes is to process executions of a test plan
@@ -52,14 +61,18 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 
 	private PermissionEvaluationService permissionEvaluationService;
 
+	@Named("scriptedTestCaseParserFactory")
+	Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory;
+
 	// Injection is made through constructor to allow simple mock injection in unit test.
 	@Inject
 	AbstractTestPlanExecutionProcessingService(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager,
-											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService){
+											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory){
 		this.campaignDeletionHandler = campaignDeletionHandler;
 		this.testPlanManager = testPlanManager;
 		this.userService = userService;
 		this.permissionEvaluationService = permissionEvaluationService;
+		this.parserFactory = parserFactory;
 	}
 
 	@Override
@@ -95,7 +108,7 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 		IterationTestPlanItem item = findNextExecutableTestPlanItem(testPlanOwner, testPlanItemId, testerLogin);
 		execution = findUnexecutedOrCreateExecution(item);
 		while (execution == null || execution.getSteps().isEmpty()) {
-			item = findNextExecutableTestPlanItem(testPlanOwner, testPlanItemId);
+			item = findNextExecutableTestPlanItem(testPlanOwner, item.getId());
 			execution = findUnexecutedOrCreateExecution(item);
 		}
 		return execution;
@@ -158,7 +171,41 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 	 * @param testerLogin a {@link org.squashtest.tm.domain.users.User} login
 	 * @return true if the {@link IterationTestPlanItem} is the last executable in the {@link TestPlanOwner}'s test plan
 	 */
-	abstract boolean isLastExecutableTestPlanItem(E testPlanOwner, long testPlanItemId, String testerLogin);
+	private boolean isLastExecutableTestPlanItem(E testPlanOwner, long testPlanItemId, String testerLogin){
+		List<IterationTestPlanItem> testPlans = getTestPlan(testPlanOwner);
+		for (int i = testPlans.size() - 1; i >= 0; i--) {
+			IterationTestPlanItem item = testPlans.get(i);
+			// We have to check if the referenced test case has execution steps
+			TestCase testCase = null;
+			if (!item.isTestCaseDeleted()) {
+				testCase = item.getReferencedTestCase();
+				if (item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase) && (testerLogin == null || item.isAssignedToUser(testerLogin))) {
+					return testPlanItemId == item.getId();
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean testCaseHasSteps(TestCase testCase) {
+		switch (testCase.getKind()){
+			case STANDARD:
+				return testCase.getSteps() != null && !testCase.getSteps().isEmpty();
+			case GHERKIN:
+				ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+				return extender != null && extender.getScript() != null && !extender.getScript().isEmpty() && hasScenarios(extender);
+			default:
+				return false;
+		}
+	}
+
+	private boolean hasScenarios(ScriptedTestCaseExtender extender){
+		GherkinTestCaseParser gherkinParser = (GherkinTestCaseParser) parserFactory.apply(extender);
+		GherkinDocument gherkinScript = gherkinParser.parseToGherkinDocument(extender);
+		return gherkinScript != null && gherkinScript.getFeature() != null && !gherkinScript.getFeature().getChildren().isEmpty()
+			&& gherkinScript.getFeature().getChildren().stream().anyMatch( definition -> !(definition instanceof Background));
+	}
 
 	/**
 	 * Determine if the {@link IterationTestPlanItem} with the given testPlanItemId is the first executable {@link IterationTestPlanItem}

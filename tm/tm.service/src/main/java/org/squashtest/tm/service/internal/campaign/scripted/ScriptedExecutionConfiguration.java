@@ -49,7 +49,7 @@ public class ScriptedExecutionConfiguration {
 		if(language.equals(ScriptedTestCaseLanguage.GHERKIN)) {
 			return new GherkinTestCaseParser(gherkinStepGenerator());
 		}else {
-				throw new IllegalArgumentException("No pasrser defined for script of language : " + language.name());
+				throw new IllegalArgumentException("No parser defined for script of language : " + language.name());
 		}
 	}
 

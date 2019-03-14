@@ -352,32 +352,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		return testSuiteCopy;
 	}
 
-	public boolean isLastExecutableTestPlanItem(long itemId) {
-		return isLastExecutableTestPlanItem(itemId, null);
-	}
-
-	public boolean isLastExecutableTestPlanItem(long itemId, String userLogin) {
-		for (int i = testPlan.size() - 1; i >= 0; i--) {
-			IterationTestPlanItem item = testPlan.get(i);
-
-			// We have to check if the referenced test case has execution steps
-			TestCase testCase = null;
-			if (!item.isTestCaseDeleted()) {
-				testCase = item.getReferencedTestCase();
-			}
-
-			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase) && (userLogin == null || item.isAssignedToUser(userLogin))) {
-				return itemId == item.getId();
-			}
-		}
-
-		return false;
-	}
-
-	private boolean testCaseHasSteps(TestCase testCase) {
-		return testCase != null && testCase.getSteps() != null && !testCase.getSteps().isEmpty();
-	}
-
 	/**
 	 * Determines if the item is the first of the test plan of the test suite
 	 */

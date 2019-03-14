@@ -26,13 +26,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.execution.EmptyIterationTestPlanException;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -45,8 +50,8 @@ public class IterationExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Inject
 	private IterationDao iterationDao;
 
-	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService) {
-		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService);
+	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory) {
+		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory);
 	}
 
 	/**
@@ -107,11 +112,6 @@ public class IterationExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Override
 	IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin, Iteration iteration) {
 		return iteration.findFirstExecutableTestPlanItem(testerLogin);
-	}
-
-	@Override
-	boolean isLastExecutableTestPlanItem(Iteration iteration, long testPlanItemId, String testerLogin) {
-		return iteration.isLastExecutableTestPlanItem(testPlanItemId, testerLogin);
 	}
 
 	@Override

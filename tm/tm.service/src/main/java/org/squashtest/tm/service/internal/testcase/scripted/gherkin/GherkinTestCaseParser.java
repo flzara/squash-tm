@@ -58,7 +58,7 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 		parseToGherkinDocument(extender);
 	}
 
-	private GherkinDocument parseToGherkinDocument(ScriptedTestCaseExtender scriptExtender) {
+	public GherkinDocument parseToGherkinDocument(ScriptedTestCaseExtender scriptExtender) {
 		Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
 		GherkinDocument gherkinDocument = null;
 		try {

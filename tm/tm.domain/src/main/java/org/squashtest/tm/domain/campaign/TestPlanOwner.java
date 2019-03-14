@@ -24,8 +24,6 @@ import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
 public interface TestPlanOwner {
 
-	boolean isLastExecutableTestPlanItem(long itemId, String userLogin);
-
 	/**
 	 * Determines if the item is the first of the test plan of the test plan owner
 	 *
