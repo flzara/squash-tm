@@ -425,42 +425,70 @@
       $("label#includePassword").css("padding-left", "48px").css("font-style", "normal");
       $("#includeBugtrackerConnection").css("font-style", "italic").css("padding-left", "20px").css("font-size", "11px");
 
-      function cacher() {
-        $("input#includeLogin").hide();
-        $("input#includePassword").hide();
-        $("label#includeLogin").hide();
-        $("label#includePassword").hide();
-        $("#includeBugtrackerConnection").hide();
+
+      function showAnomaliesDetails() {
+        if ($("#includeAnomaliesDetails").is(":checked") == true) {
+          $("input#includeLogin").show();
+          $("input#includePassword").show();
+          $("label#includeLogin").show();
+          $("label#includePassword").show();
+          $("#includeBugtrackerConnection").show();
+        } else {
+          $("input#includeLogin").hide();
+          $("input#includePassword").hide();
+          $("label#includeLogin").hide();
+          $("label#includePassword").hide();
+          $("#includeBugtrackerConnection").hide();
+        }
       }
 
-      function afficher() {
-        $("input#includeLogin").show();
-        $("input#includePassword").show();
-        $("label#includeLogin").show();
-        $("label#includePassword").show();
-        $("#includeBugtrackerConnection").show();
+      function showCalledSteps() {
+        if ($("input[value='printSteps']").is(":checked") == true) {
+          $("input[value='printCallSteps']").parent().show();
+          $("input[value='printStepCufs']").parent().show();
+          $("input[value='printStepLinkedRequirements']").parent().show();
+          $("input[value='printStepAttachments']").parent().show();
+        } else {
+          $("input[value='printCallSteps']").parent().hide();
+          $("input[value='printStepCufs']").parent().hide();
+          $("input[value='printStepLinkedRequirements']").parent().hide();
+          $("input[value='printStepAttachments']").parent().hide();
+        }
       }
-
+      function addMarginToCheckBox(checkbox) {
+        if (checkbox.length > 0) {
+          checkbox.parent().css("margin-left", "20px");
+        }
+      }
       /* If a report has already been generated, then when the page is reloading, there is a time lapse between the "anomalies details"
       checkbox generation (always false) and the value from the previous report (may be true)  */
       $(document).ready(function () {
-        cacher();
-        setTimeout(function () {
-          if ($("#includeAnomaliesDetails").is(":checked") == true) {
-            afficher();
-          } else {
-            cacher();
-          }
-        }, 200);
+        addMarginToCheckBox($("input[value='printCallSteps']"));
+        addMarginToCheckBox($("input[value='printStepCufs']"));
+        addMarginToCheckBox($("input[value='printStepLinkedRequirements']"));
+        addMarginToCheckBox($("input[value='printStepAttachments']"));
+        $("input[value='printCallSteps']").parent().hide();
+        if ($("#includeAnomaliesDetails").length !== 0) {
+          setTimeout(function () {
+            showAnomaliesDetails();
+          }, 200);
+        }
+
+        if ($("input[value='printSteps']").length !== 0) {
+          setTimeout(function () {
+            showCalledSteps();
+          }, 200);
+        }
+
       });
 
       $("#includeAnomaliesDetails").click(function () {
-        if ($("#includeAnomaliesDetails").is(":checked") == true) {
-          afficher();
-        } else {
-          cacher();
-        }
+        showAnomaliesDetails();
       });
+      $("input[value='printSteps']").click(function () {
+        showCalledSteps();
+      });
+
 
 
     </script>
