@@ -51,7 +51,7 @@ public enum ScriptToFileStrategy {
 
 			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
 
-			return extender.getScriptWithAppendedMetadata();
+			return extender.computeScriptWithAppendedMetadata();
 		}
 	};
 

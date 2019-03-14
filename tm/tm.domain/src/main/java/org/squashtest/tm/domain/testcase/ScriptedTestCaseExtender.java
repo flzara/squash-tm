@@ -118,7 +118,7 @@ public class ScriptedTestCaseExtender {
 	 * If it is needed, this operation and the translation have to be done in the service layer.
 	 * @return This TestCase script appended with metadata.
 	 */
-	public String getScriptWithAppendedMetadata() {
+	public String computeScriptWithAppendedMetadata() {
 		StringBuilder sb = new StringBuilder(this.script);
 		sb.insert(0, "# Test case importance: " + this.testCase.getImportance() + "\n");
 		sb.insert(0, "# Automation status: " + this.testCase.getAutomationRequest().getRequestStatus() + "\n");
