@@ -81,6 +81,10 @@ public class HibernatePathService implements PathService {
 		return buildAllPaths("TestCasePathEdge.findPathsByIds", ids);
 	}
 
+	@Override
+	public String buildTestCaseFoldersPath(long id) {
+		return buildPath("TestCasePathEdge.findFoldersPathById", id);
+	}
 
 	@Override
 	public String buildRequirementPath(long id) {

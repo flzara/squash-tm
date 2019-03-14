@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.scmserver;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -49,8 +50,12 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UnsecuredScmRepositoryFilesystemService.class);
 
-	@PersistenceContext
-	private EntityManager em;
+	private static final String TEST_CASE_PATH_ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-\\/]";
+
+	private static final boolean USE_HIERARCHY = true;
+
+	@Inject
+	private PathService pathService;
 
 	@Override
 	public void createWorkingFolderIfAbsent(ScmRepository scm) {
@@ -69,6 +74,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			throw new RuntimeException(iOEx);
 		}
 	}
+
 	@Override
 	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
 		if (LOGGER.isTraceEnabled()) {
@@ -81,7 +87,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 				try {
 					ScmRepositoryManifest manifest = new ScmRepositoryManifest(scm);
 					for (TestCase testCase : testCases) {
-						File testFile = locateOrRenameOrCreateTestFile(manifest, testCase);
+						File testFile = locateOrMoveOrCreateTestFile(manifest, testCase);
 						// at this point the file is created without error
 						// lets fill the file with the script content
 						printToFile(testFile, testCase);
@@ -100,7 +106,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		}
 	}
 
-
 	// **************** internal routines ********************************
 
 
@@ -113,7 +118,17 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\ /!\
 	 ********************************************************************************************************/
 
-	public File locateOrRenameOrCreateTestFile(ScmRepositoryManifest manifest, TestCase testCase) throws IOException{
+	/**
+	 * Attempt to locate the physical file corresponding to the given Test Case.
+	 * If the file was located, check if it needs to be move and/or renamed according to the Test Case state.
+	 * If the file does not exist yet, try to create it according to the Test Case, first attempting to write it with
+	 * a standard name, then with a backup name if it failed.
+	 * @param manifest
+	 * @param testCase
+	 * @return
+	 * @throws IOException
+	 */
+	public File locateOrMoveOrCreateTestFile(ScmRepositoryManifest manifest, TestCase testCase) throws IOException{
 		if (LOGGER.isTraceEnabled()){
 			LOGGER.trace("attempting to locate physical script file for test '{}' in the scm", testCase.getId());
 		}
@@ -122,20 +137,17 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		if (maybeTestFile.isPresent()){
 			testfile = maybeTestFile.get();
 			LOGGER.trace("found file : '{}'", testfile.getAbsolutePath());
-			testfile = renameFileIfNeeded(testCase, testfile);
-		}
-		else{
+			testfile = moveAndRenameFileIfNeeded(testCase, testfile, manifest.getScm().getWorkingFolder());
+		} else {
 			LOGGER.trace("file not found, attempting to create a new one");
 			// roundtrip 1 : attempt the creation with the normal filename
 			try{
-
 				testfile = createTestNominal(manifest.getScm(), testCase);
 			}
 			catch(IOException ex){
 				if (SystemUtils.IS_OS_WINDOWS) {
 					// maybe the failure is due to long absolute filename
 					LOGGER.trace("failed to create file due to IOException, attempting with the backup filename");
-
 					// try again with the backup name
 					testfile = createTestBackup(manifest.getScm(), testCase);
 				}
@@ -145,41 +157,102 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	/**
-	 * Check if the given TestCase has been renamed since it was last transmitted and written into the File.
-	 * If so, try to rename the File with the current name of the TestCase. First attempting to write the standard name,
-	 * then with the backup name if it failed.
-	 * Note that the File keeps the same location.
-	 * @param testCase The {@link TestCase} which is being transmitted.
-	 * @param originalFile The {@link File} which is receiving the TestCase script.
-	 * @return The file with the new name if renaming was a success. The original file if renaming failed.
+	 * Check if the given TestCase has been renamed and/or moved since it was last transmitted and written into the File.
+	 * If so, try to move the File to the correct destination. First attempting to write the standard name, then with
+	 * the backup name if it failed.
+	 * @param testCase The Test Case being transmitted
+	 * @param originalFile The File corresponding to the given Test Case that was found (but potentially at the wrong place)
+	 * @param workingDirectory The Scm Repository working directory in which operations are occurring
+	 * @return The moved/renamed File if such operations were needed. The original File it was not moved/renamed
 	 */
-	private File renameFileIfNeeded(TestCase testCase, File originalFile) {
+	private File moveAndRenameFileIfNeeded(TestCase testCase, File originalFile, File workingDirectory) {
 
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
-		String correctStandardName = strategy.createFilenameFor(testCase);
-		String correctBackupName = strategy.backupFilenameFor(testCase);
-		String currentName = originalFile.getName();
-		// Check if renaming is needed
-		if(!currentName.equals(correctStandardName) && !currentName.equals(correctBackupName)) {
-			// Renaming
-			File containingFolder = originalFile.getParentFile();
-			File fileWithNewName = new File(containingFolder, correctStandardName);
-			// Try to rename the File with the standard name
-			if(originalFile.renameTo(fileWithNewName)) {
-				LOGGER.debug("Renamed file {} to {}.", originalFile, fileWithNewName);
-				return fileWithNewName;
-			} else {
-				File fileWithNewBackupName = new File(containingFolder, correctStandardName);
-				// Try with the backup name
-				if(originalFile.renameTo(fileWithNewBackupName)) {
-					LOGGER.debug("Renamed file {} to {}.", originalFile, correctBackupName);
-					return fileWithNewBackupName;
-				} else {
-					LOGGER.warn("Failed to rename file {} to {} or {}.", originalFile, fileWithNewName, fileWithNewBackupName);
+		// Determine CORRECT folders path
+		String foldersPath = getFoldersPath(testCase);
+		// Determine CORRECT relative path of the given TestCase with the STANDARD name
+		String correctStandardRelativePath = buildTestCaseStandardRelativePath(foldersPath, testCase);
+		// Determine CORRECT relative path of the given TestCase with the BACKUP name
+		String correctBackupRelativePath = buildTestCaseBackUpRelativePath(foldersPath, testCase);
+		// Get the CURRENT relative path
+		String currentPath = workingDirectory.toURI().relativize(originalFile.toURI()).toString();
+
+		// Compare them
+		if(!correctStandardRelativePath.equals(currentPath) && !correctBackupRelativePath.equals(currentPath)) {
+			// Try to move/rename with the standard name
+			File targetStandardFile = new File(workingDirectory, correctStandardRelativePath);
+			try {
+				tryMoveFile(originalFile, targetStandardFile);
+				return targetStandardFile;
+			} catch (IOException ex) {
+				// Operation failed, try with the backup name
+				File targetBackUpFile = new File(workingDirectory, correctBackupRelativePath);
+				try {
+					tryMoveFile(originalFile, targetBackUpFile);
+					return targetBackUpFile;
+				} catch (IOException ioEx) {
+					throw new RuntimeException(ex);
 				}
 			}
 		}
+		// If the test case was not moved/rename, file remains the same
 		return originalFile;
+	}
+
+	/**
+	 * Given a TestCase and its corresponding file's foldersPath, build the file's relative path with the STANDARD name.
+	 * @param foldersPath The folders path of the Test Case's corresponding File
+	 * @param testCase The Test Case which path is to build
+	 * @return The relative path with the Standard name
+	 */
+	private String buildTestCaseStandardRelativePath(String foldersPath, TestCase testCase) {
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		String standardName = strategy.createFilenameFor(testCase);
+		foldersPath = foldersPath.isEmpty() ? "" : foldersPath + "/";
+		return foldersPath + standardName;
+	}
+
+	/**
+	 * Same method as {@link #buildTestCaseStandardRelativePath(String, TestCase)} but with the BackUp name.
+	 * @param foldersPath The folders path of the Test Case's corresponding File
+	 * @param testCase The Test Case which path is to build
+	 * @return The relative path with the Standard name
+	 */
+	private String buildTestCaseBackUpRelativePath(String foldersPath, TestCase testCase) {
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		String standardName = strategy.backupFilenameFor(testCase);
+		foldersPath = foldersPath.isEmpty() ? "" : foldersPath + "/";
+		return foldersPath + standardName;
+	}
+
+	/**
+	 * Given a Test Case, compute its corresponding file's folders path.
+	 * The folders path is the relative path from the working directory but not containing the name of the file,
+	 * so it only contains the folders.
+	 * Ex: A test case in 'Project_2/main_folder/sub_folder/test_case_7' will compute the path 'main_folder/sub_folder'
+	 * Ex: A test case in the root of a library will compute an empty string
+	 * @param testCase The Test Case which path is to compute
+	 * @return The folders path of the given Test Case
+	 */
+	private String getFoldersPath(TestCase testCase) {
+		if(!testCase.getProject().isUseTreeStructureInScmRepo()) {
+			// If flat structure is used, no need of folders path
+			return "";
+		} else {
+			// If the tree structure of TM is used
+			String testCaseFoldersPath = pathService.buildTestCaseFoldersPath(testCase.getId());
+			if (testCaseFoldersPath != null) {
+				return normalizeFilePath(testCaseFoldersPath) + "/";
+			} else {
+				return "";
+			}
+		}
+	}
+
+	/**
+	 * Remove accents and replace illegal characters by '_'.
+	 */
+	private String normalizeFilePath(String path) {
+		return StringUtils.stripAccents(path).replaceAll(TEST_CASE_PATH_ILLEGAL_PATTERN, "_");
 	}
 
 	/**
@@ -258,18 +331,37 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	/**
 	 * Try to create the folder and all the absent parent folders represented by the given abstract pathname.
-	 * @param wf The abstract folder to create
+	 * @param folder The abstract folder to create
 	 * @throws IOException If the folder could not be created
 	 */
-	private void tryCreateFolders(File wf) throws IOException {
-		if(!wf.mkdirs()) {
-			if(wf.isDirectory()) {
-				LOGGER.trace("directory at path {} already exists.", wf.toString());
+	private void tryCreateFolders(File folder) throws IOException {
+		if(!folder.mkdirs()) {
+			if(folder.isDirectory()) {
+				LOGGER.trace("directory at path {} already exists.", folder.toString());
 			} else {
-				throw new IOException("directory could not be created at path " + wf.toString());
+				throw new IOException("directory could not be created at path " + folder.toString());
 			}
 		} else {
-			LOGGER.trace("directory at path {} has been created.", wf.toString());
+			LOGGER.trace("directory at path {} has been created.", folder.toString());
+		}
+	}
+
+	/**
+	 * Try to move a File from a location to another, taking charge of renaming the file if needed.
+	 * If the target File path contains non-existent folders, try to create them.
+	 * @param sourceFile The source file to move and/or rename
+	 * @param targetFile The target file
+	 * @return The moved File.
+	 * @throws IOException If an error occurrend during the operation
+	 */
+	private File tryMoveFile(File sourceFile, File targetFile) throws IOException {
+		File targetFileParent = targetFile.getParentFile();
+		tryCreateFolders(targetFileParent);
+		if(sourceFile.renameTo(targetFile)) {
+			LOGGER.trace("file with path {} has been renamed to {}", sourceFile, targetFile);
+			return targetFile;
+		} else {
+			throw new IOException("file with path " + sourceFile + " could not be move/renamed to file with path " + targetFile);
 		}
 	}
 

@@ -866,6 +866,11 @@
 	+ "')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
 	+ "where n.id = edge.ancestorId " + "and edge.descendantId in (:nodeIds) "
 	+ "group by edge.descendantId, p.id"),
+	@NamedQuery(name="TestCasePathEdge.findFoldersPathById",
+	query="select group_concat(n.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR + "') "
+	+ "from TestCasePathEdge edge, TestCaseLibraryNode n "
+	+ "where n.id = edge.ancestorId and edge.descendantId = :nodeId and edge.ancestorId != :nodeId "
+	+ "group by edge.descendantId"),
 	@NamedQuery(name = "TestCasePathEdge.findSortedParentIds", query = "select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
 	@NamedQuery(name = "TestCasePathEdge.findSortedParentNames", query = "select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
 	//Milestones

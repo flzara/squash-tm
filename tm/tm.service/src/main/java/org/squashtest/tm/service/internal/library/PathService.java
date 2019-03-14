@@ -36,7 +36,7 @@ public interface PathService {
 	 * The path is slash-separated '/'. If one of the elements in the path uses a '/', it will be escaped as '\/'.
 	 * </p>
 	 *
-	 * @param ids
+	 * @param id
 	 * @return
 	 */
 	String buildTestCasePath(long id);
@@ -56,6 +56,16 @@ public interface PathService {
 	 * @return
 	 */
 	List<String> buildTestCasesPaths(List<Long> ids);
+
+	/**
+	 * Given an id of library NODE, returns its folders path (i.e. the path containing only the folders).
+	 * For a test case in Project_1/main_folder/sub_folder_1/sub_folder_2/test_case, this method will return
+	 * 'main_folder/sub_folder1/sub_folder_2'.
+	 * If the given NODE is at the root of the library, the result will be null.
+	 * @param id The id of the test case library node
+	 * @return The folders path to the given node. Null if the node is at the root of the library.
+	 */
+	String buildTestCaseFoldersPath(long id);
 
 	/**
 	 * same thing than {@link #buildTestCasePath(long)}, but for requirement library nodes
