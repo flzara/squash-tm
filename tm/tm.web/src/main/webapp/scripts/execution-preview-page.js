@@ -105,8 +105,8 @@ require(["common"], function () {
 			$(function () {
 				basic.init();
 
-				var selector = "#test-case-attribute-panel > div.display-table";
-
+				var selectorDeno = "#test-case-attribute-panel > div.display-table";
+				var selector = "#execution-attribute-panel > div.display-table";
 				if (squashtm.page.hasFields) {
 					$.getJSON(page.fieldsUrl)
 						.success(function (jsonCufs) {
@@ -116,7 +116,7 @@ require(["common"], function () {
 
 				if (squashtm.page.hasDenormFields) {
 					$.getJSON(page.denormsUrl).success(function (jsonDenorm) {
-						cfieldVal.infoSupport.init(selector, jsonDenorm, "jeditable");
+						cfieldVal.infoSupport.init(selectorDeno, jsonDenorm, "static");
 					});
 				}
 

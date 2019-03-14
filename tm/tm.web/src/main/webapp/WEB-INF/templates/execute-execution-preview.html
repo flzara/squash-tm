@@ -234,7 +234,6 @@ documentation :
   			</div>
   			</div>
 
-
     <div class="sq-tg expand">
         <div class="tg-head">
           <h3 th:text="${titlePrerequisite}"></h3>
@@ -288,12 +287,21 @@ documentation :
         </table>
       </div>
     </div>
-
   <div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}"
        id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">
     ATTACHMENT-BLOC
 	</div>
-</div>
+  <div class="sq-tg expand">
+    <div class="tg-head">
+      <h3 th:text="#{label.Execution}"></h3>
+    </div>
+    <div id="execution-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Exécution">
+      <div class="display-table">
+      </div>
+    </div>
+  </div>
+
+  </div>
 </body>
 
 </html>

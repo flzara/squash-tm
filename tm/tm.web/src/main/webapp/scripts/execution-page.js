@@ -117,8 +117,8 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 			// cufs
 
 			var displayMode = (config.permissions.editable) ? 'jeditable' : 'static';
-			cufValuesManager.infoSupport.init("#test-case-attribut-table", config.basic.cufs.denoCufs, displayMode);
-			cufValuesManager.infoSupport.init("#test-case-attribut-table", config.basic.cufs.normal, displayMode);
+			cufValuesManager.infoSupport.init("#test-case-attribut-table", config.basic.cufs.denoCufs, 'static');
+			cufValuesManager.infoSupport.init("#execution-cufs-table", config.basic.cufs.normal, displayMode);
 
 		}
 

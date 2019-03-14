@@ -290,6 +290,16 @@
       </table>
   	</jsp:attribute>
     </comp:toggle-panel>
+
+  <%----------------------------------- Execution -----------------------------------------------%>
+   <comp:toggle-panel id="execution-cufs-panel"
+                        titleKey="label.Execution"
+                        open="${not empty executionCufValues}">
+     <jsp:attribute name="body">
+     <div id="execution-cufs-table" class="display-table">
+     </div>
+     </jsp:attribute>
+     </comp:toggle-panel>
   <%----------------------------------- result summary -----------------------------------------------%>
 
   <c:if test="${execution.automated}">
