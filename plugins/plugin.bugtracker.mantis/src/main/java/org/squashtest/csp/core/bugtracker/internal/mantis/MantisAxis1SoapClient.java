@@ -43,10 +43,10 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 
 /**
  * Provides a soap client to a mantis bugtracker
- * 
+ *
  * @author Gregory Fouquet
  * @reviewed-on 2011/11/23
- * 
+ *
  */
 public class MantisAxis1SoapClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MantisAxis1SoapClient.class);
@@ -63,6 +63,7 @@ public class MantisAxis1SoapClient {
 	private final MantisConnectPortType service;
 
 	private MantisExceptionConverter exceptionConverter;
+
 
 	public MantisAxis1SoapClient(BugTracker bugTracker) {
 		super();
@@ -90,7 +91,7 @@ public class MantisAxis1SoapClient {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the list of severities as {@link ObjectRef}s
 	 */
 	public ObjectRef[] getSeverities(AuthenticationCredentials credentials) {
@@ -170,7 +171,7 @@ public class MantisAxis1SoapClient {
 
 	/***
 	 * This method returns Mantis issue data corresponding to a given issue id
-	 * 
+	 *
 	 * @param credentials
 	 *            the connection data
 	 * @param issueId
@@ -185,9 +186,26 @@ public class MantisAxis1SoapClient {
 		}
 	}
 
+	/***
+	 * This method returns Mantis issue data corresponding to a given issue id or creates a mantis stub issue if deleted
+	 *
+	 * @param credentials
+	 *            the connection data
+	 * @param issueId
+	 *            the given issue ID
+	 */
+	public IssueData getIssueOrDeleted(AuthenticationCredentials credentials, BigInteger issueId) {
+		try {
+			return service.mc_issue_get(credentials.getUsername(), credentials.getPassword(), issueId);
+		} catch (RemoteException rme) {
+			// TM-119 - error when issue has been deleted
+			return new MantisStubIssue(issueId, exceptionConverter.getIssueNotFoundMsg());
+		}
+	}
+
 	/**
 	 * This method return as a String the ID of the default issue severity
-	 * 
+	 *
 	 * @param credentials
 	 *            the connection data
 	 * @return the ID of the default priority

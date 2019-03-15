@@ -46,6 +46,7 @@ public final class MantisEntityConverter {
 	private MantisEntityConverter() {
 		super();
 	}
+	private static final BigInteger DELETED_ID = BigInteger.valueOf(-1L);
 
 	public static List<Severity> convertSeverities(ObjectRef[] mantisSeverities) {
 		ArrayList<Severity> severities = new ArrayList<>(mantisSeverities.length);
@@ -163,7 +164,7 @@ public final class MantisEntityConverter {
 	 * Squash entity is purely artificial and practicaly never used. It exists only for
 	 * the coherence of the code so do not rely on it for more than temporary use.
 	 *
-	 * @param mantisCcategories
+	 * @param mantisCategories
 	 * @return a list of Squahs Category corresponding to the input, or a list containing Category.NO_CATEGORY
 	 * only if the input is null or empty.
 	 */
@@ -306,19 +307,20 @@ public final class MantisEntityConverter {
 
 		issue.setSummary(mantisIssue.getSummary());
 		issue.setProject(mantis2SquashSingleProject(mantisIssue.getProject()));
-		issue.setPriority(mantis2SquashPriority(mantisIssue.getSeverity()));
-		issue.setVersion(mantisIssue.getVersion() != null ? new Version(null, mantisIssue.getVersion())
+		if (! mantisIssue.getProject().getId().equals(DELETED_ID)) {
+			issue.setPriority(mantis2SquashPriority(mantisIssue.getSeverity()));
+			issue.setVersion(mantisIssue.getVersion() != null ? new Version(null, mantisIssue.getVersion())
 				: Version.NO_VERSION);
-		issue.setReporter(mantis2SquashSingleUser(mantisIssue.getReporter()));
-		issue.setCategory(mantisIssue.getCategory() != null ? new Category(null, mantisIssue.getCategory())
+			issue.setReporter(mantis2SquashSingleUser(mantisIssue.getReporter()));
+			issue.setCategory(mantisIssue.getCategory() != null ? new Category(null, mantisIssue.getCategory())
 				: Category.NO_CATEGORY);
-		issue.setAssignee(mantisIssue.getHandler() != null ? mantis2SquashSingleUser(mantisIssue.getHandler())
+			issue.setAssignee(mantisIssue.getHandler() != null ? mantis2SquashSingleUser(mantisIssue.getHandler())
 				: User.NO_USER);
-		issue.setDescription(mantisIssue.getDescription());
-		issue.setComment(mantisIssue.getAdditional_information() != null ? mantisIssue.getAdditional_information() : "");
-		issue.setCreatedOn(mantisIssue.getDate_submitted().getTime());
-		issue.setStatus(mantis2SquashStatus(mantisIssue.getStatus()));
-
+			issue.setDescription(mantisIssue.getDescription());
+			issue.setComment(mantisIssue.getAdditional_information() != null ? mantisIssue.getAdditional_information() : "");
+			issue.setCreatedOn(mantisIssue.getDate_submitted().getTime());
+			issue.setStatus(mantis2SquashStatus(mantisIssue.getStatus()));
+		}
 		return issue;
 	}
 

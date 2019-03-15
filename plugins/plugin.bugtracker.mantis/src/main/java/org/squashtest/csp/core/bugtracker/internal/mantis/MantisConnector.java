@@ -224,11 +224,11 @@ public class MantisConnector implements BugTrackerConnector {
 		for (String issueKey : issueKeyList) {
 			// Get the mantis issue data....
 
-			try{
-			IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(issueKey));
-			// ... and convert it
-			BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
-			toReturn.add(issue);
+			try {
+				IssueData mantisIssue = client.getIssueOrDeleted(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(issueKey));
+				// ... and convert it
+				BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
+				toReturn.add(issue);
 			} catch (BugTrackerNotFoundException ex){ // NOSONAR : this exception is part of the nominal use case
 				toReturn.add(MantisEntityConverter.issueNotFound(issueKey, exConverter));
 			}
