@@ -187,6 +187,7 @@ public class MantisAxis1SoapClient {
 	}
 
 	/***
+	 * // TM-119 - error when issue has been deleted
 	 * This method returns Mantis issue data corresponding to a given issue id or creates a mantis stub issue if deleted
 	 *
 	 * @param credentials
@@ -198,7 +199,9 @@ public class MantisAxis1SoapClient {
 		try {
 			return service.mc_issue_get(credentials.getUsername(), credentials.getPassword(), issueId);
 		} catch (RemoteException rme) {
-			// TM-119 - error when issue has been deleted
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(rme.getMessage(), rme);
+			}
 			return new MantisStubIssue(issueId, exceptionConverter.getIssueNotFoundMsg());
 		}
 	}
