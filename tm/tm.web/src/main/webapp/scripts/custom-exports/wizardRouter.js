@@ -29,7 +29,18 @@ define(["jquery", "backbone"],
 		},
 
 		routes : {
-			"" : "nameStep"
+			"" : "perimeterStep",
+			"perimeter" : "perimeterStep",
+			"attributes" : "attributesStep",
+			"name" : "nameStep"
+		},
+
+		perimeterStep: function() {
+			this.wizardView.showPerimeterStep(this);
+		},
+
+		attributesStep : function() {
+			this.wizardView.showAttributesStep(this);
 		},
 
 		nameStep : function() {

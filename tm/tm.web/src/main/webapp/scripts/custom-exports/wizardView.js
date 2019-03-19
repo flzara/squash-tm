@@ -18,91 +18,129 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "squash.translator", "./nameStepView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog"],
-				function($, Backbone, translator, NameStepView) {
+define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./attributesStepView", "./nameStepView", "./sideView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog"],
+	function($, Backbone, translator, PerimeterStepView, AttributesStepView, NameStepView, SideView) {
 
-	"use strict";
+		"use strict";
 
-	var validation = [{
-			name : "name",
-			validationParam : "name"
-		}];
-
-	var steps = [{
-		name : "name",
-		prevStep : "",
-		nextStep : "",
-		viewTitle : "custom-export.wizard.step.name.title",
-		stepNumber : 1,
-		buttons : ["save"]
-	}];
-
-	var wizardView = Backbone.View.extend({
-
-		el : "#wizard",
-
-		initialize : function(options) {
-			this.model = options.model;
-			this.model.set({
-				steps: steps,
-				validation : validation
-			});
-			// - load i18n keys
+		var steps = [{
+			name: "perimeter",
+			prevStep: "",
+			nextStep: "attributes",
+			viewTitle: "custom-export.wizard.step.perimeter.title",
+			stepNumber: 1,
+			buttons: ["next"]
 		},
+			{
+				name: "attributes",
+				prevStep: "perimeter",
+				nextStep: "name",
+				viewTitle: "custom-export.wizard.step.attributes.title",
+				stepNumber: 2,
+				buttons: ["previous", "next"]
+			},{
+				name : "name",
+				prevStep : "attributes",
+				nextStep : "",
+				viewTitle : "custom-export.wizard.step.name.title",
+				stepNumber : 3,
+				buttons : ["previous", "save"]
+			}];
 
-		events : {
-			"click #next" : "navigateNext",
-			"click #previous" : "navigatePrevious",
-		  "click #generate" : "generate",
-			"click #save" : "save"
+		var validation = [{
+			name : "perimeter",
+			validationParam : "perimeter"
 		},
+			{
+				name: "attributes",
+				validationParam: "attributes"
+			},
+			{
+				name: "name",
+				validationParam: "name"
+			}];
 
-		navigateNext : function (){
-			this.currentView.navigateNext();
-		},
+		var wizardView = Backbone.View.extend({
 
-		navigatePrevious : function (){
-			this.currentView.navigatePrevious();
-		},
+			el : "#wizard",
 
-		generate : function (){
-			this.currentView.generate();
-		},
+			initialize : function(options) {
+				this.model = options.model;
+				this.model.set({
+					steps: steps,
+					validation : validation
+				});
+				// - load i18n keys
+			},
 
-		save : function() {
-			this.currentView.save();
-		},
+			events : {
+				"click #next" 		: "navigateNext",
+				"click #previous" : "navigatePrevious",
+				"click #generate" : "generate",
+				"click #save" 		: "save"
+			},
 
-		// - flatten()
+			navigateNext : function (){
+				this.currentView.navigateNext();
+			},
 
-		// - addPrefix()
+			navigatePrevious : function (){
+				this.currentView.navigatePrevious();
+			},
 
-		// - showSideView()
+			generate : function (){
+				this.currentView.generate();
+			},
 
-		showNewStepView : function (View, wizrouter) {
-			if (this.currentView !== undefined) {
-				this.currentView.updateModel();
+			save : function() {
+				this.currentView.save();
+			},
+
+			// - flatten()
+
+			// - addPrefix()
+
+			showSideView : function(){
+				this.resetSideView();
+				this.currentSideView = new SideView(this.model);
+			},
+
+			showNewStepView : function (View, wizrouter) {
+				if (this.currentView !== undefined) {
+					this.currentView.updateModel();
+				}
+				this.resetView();
+				this.currentView = new View(this.model, wizrouter);
+				this.showSideView();
+			},
+
+			showPerimeterStep: function(wizrouter) {
+				this.showNewStepView(PerimeterStepView, wizrouter);
+			},
+			showAttributesStep: function(wizrouter) {
+				this.showNewStepView(AttributesStepView, wizrouter);
+			},
+			showNameStep : function(wizrouter) {
+				this.showNewStepView(NameStepView, wizrouter);
+			},
+
+			resetView : function() {
+				if (this.currentView !== undefined) {
+					this.currentView.destroy_view();
+					$("#current-step-container").html('<span id="current-step" />');
+				}
+			},
+
+			resetSideView : function() {
+
+				if (this.currentSideView !== undefined) {
+					this.currentSideView.destroy_view();
+					$("#current-side-view-container").html('<span style="display : table; height:100%" id="side-view" />');
+				}
 			}
-			this.resetView();
-			this.currentView = new View(this.model, wizrouter);
-			// - show side view
-		},
 
-		showNameStep : function(wizrouter) {
-			this.showNewStepView(NameStepView, wizrouter);
-		},
+		});
 
-		resetView : function() {
-			if (this.currentView !== undefined) {
-				this.currentView.destroy_view();
-				$("#current-step-container").html('<span id="current-step" />');
-			}
-		},
-
-		// - resetSideView()
+		return wizardView;
 
 	});
-
-	return wizardView;
-
-});

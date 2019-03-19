@@ -47,8 +47,7 @@
         sq:css="squash.subpage.override.css" />
 
 
-  <script src="../../../../scripts/pubsub-boot.js"
-          th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script src="../../../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
   <script th:remove="all" type="text/javascript" src="../../../../js/thymol.js"></script>
 
@@ -60,12 +59,11 @@
     contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash"
   },
   squashtm.customExport = {};
-  squashtm.customExport.parentId = /*[[${parentId}]]*/
+  squashtm.customExport.parentId = /*[[${parentId}]]*/ '456';
   /* ]]> */
 </script>
 
-  <script th:remove="all" type="text/javascript"
-          src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
 
   <script data-main="../../../../scripts/custom-export-wizard.js" th:attr="data-main=@{/scripts/custom-export-wizard.js}"
           src="../../../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
@@ -74,9 +72,21 @@
 
 <body>
 
+<script id="perimeter-step-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/perimeterStep :: custom-export-wizard-perimeter" />
+
+<script id="attributes-step-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/attributesStep :: custom-export-wizard-attributes" />
+
 <script id="name-step-tpl" type="text/x-handlebars-template"
         th:inline="text"
         th:include="custom-exports/wizard/nameStep :: custom-export-wizard-name" />
+
+<script id="side-view-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/sideView :: custom-export-wizard-side-view" />
 
 <div id="navigation" th:include="navbar.frag :: navbar('custom-report')">NAVBAR</div>
 
@@ -155,6 +165,8 @@
 
           <div id="wizard-toolbar" style="position: fixed; bottom: 65px; right: 60px; ">
 
+            <input type="button" class="sq-btn" id="previous" value="previous" th:value="#{label.previous}" />
+            <input type="button" class="sq-btn" id="next" value="next" th:value="#{label.next}" />
             <input type="button" class="sq-btn" id="save" value="save" th:value="#{label.save}" />
 
           </div>

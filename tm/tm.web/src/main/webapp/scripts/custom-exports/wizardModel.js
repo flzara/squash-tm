@@ -31,15 +31,14 @@ return Backbone.Model.extend({
 		if (customExportDef) {
 			// Reload customExportDef into this model
 		} else {
+			// Else, initialize the model
 			this.set({ parentId: squashtm.customExport.parentId });
-			// Else, initialize the model with the name
-			this.set({ name : "" });
 		}
 	},
 
 	toJson: function(name) {
 		return JSON.stringify({
-			name: this.get("name") || param
+			name: this.get("name") || name
 		});
 	}
 

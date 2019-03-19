@@ -51,8 +51,11 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 				var model = {steps : missingSteps, totalStep : this.steps.length};
 				this.render(model, $("#missing-step-tpl"));
 			}
+		},
 
-
+		showViewTitle : function(title, stepNumber) {
+			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + this.steps.length + "] " + translator.get(title);
+			$("#step-title").text(text);
 		},
 
 		/**
@@ -79,17 +82,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 
 		},
 
-		// - Navigate Next
-
-		// - Update Model
-
-		showViewTitle : function(title, stepNumber) {
-			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + this.steps.length + "] " + translator.get(title);
-			$("#step-title").text(text);
-		},
-
-		// - Navigate Previous
-
 		render : function(data, tmpl) {
 			var src = tmpl.html();
 			this.template = Handlebars.compile(src);
@@ -104,21 +96,30 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			Backbone.View.prototype.remove.call(this);
 		},
 
-		/**
-		 * Check if we are modidying an existing chartDef
-		 * @return {Boolean} [description]
-		 */
-		isModify : function () {
-		return this.model.get("chartDef") !== null;
+
+		navigateNext : function() {
+			this.updateModel();
+			this.router.navigate(this.next, {
+				trigger : true
+			});
+
 		},
 
-		previousStepAreValid : function() {
-			return _.isEmpty(this.missingStepNames);
+		updateModel : function() {
+			// do in superclass
 		},
 
-		i18nFormatDate : function(date) {
-			return dateutils.format(date, translator.get('squashtm.dateformatShort'));
-		}
+		navigatePrevious : function() {
+			this.router.navigate(this.previous, {
+				trigger : true
+			});
+		},
+
+		// - Check if it is a modified model or a new one
+
+		// - Check if previous steps are valid
+
+		// - Format date
 
 	});
 

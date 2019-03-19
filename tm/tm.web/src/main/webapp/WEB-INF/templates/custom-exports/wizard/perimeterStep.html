@@ -1,0 +1,45 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:fragment="custom-export-wizard-perimeter">
+
+  <div id="header-messages">
+    <p>
+      <span style="font-weight: bold;" th:text="#{custom-export.wizard.step.perimeter.message}"></span>
+    </p>
+  </div>
+
+  <div id="perimeter-button" style="margin-top: 4em;">
+    <span th:text="#{custom-export.wizard.step.perimeter.label.button}">Campaign selection</span>
+    <input type="button" class="sq-btn" id="change-perimeter-campaign-button" th:value="#{label.Choose}" />
+  </div>
+
+  <div id="footer-message" style="margin-top: 4em;">
+    <span id="selected-perimeter-message" style="font-weight: bold;"
+          th:text="#{custom-export.wizard.step.perimeter.selected-perimeter.message}">
+      The custom export will be generated from
+    </span>
+    <span id="selected-perimeter" style="font-weight: bold;color: #750021;">Campaign_003Y</span>
+  </div>
+
+</div>
+
