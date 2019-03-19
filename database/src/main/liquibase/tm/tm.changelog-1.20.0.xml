@@ -79,4 +79,16 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-220-add-missing-role-automation" author="agu">
+    <comment>Add missing automation role following changeset tm-1.19.0-SQTM-510-add-roles-automation</comment>
+    <sql>
+      INSERT INTO CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)
+      SELECT cpa.PARTY_ID, 'ROLE_TF_FUNCTIONAL_TESTER' from CORE_PARTY_AUTHORITY cpa
+      INNER JOIN CORE_PARTY_AUTHORITY cpa2 on cpa.PARTY_ID = cpa2.PARTY_ID
+      WHERE cpa.AUTHORITY = 'ROLE_TM_USER'
+      GROUP BY cpa.PARTY_ID
+      HAVING COUNT(cpa.PARTY_ID) = 1;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>
