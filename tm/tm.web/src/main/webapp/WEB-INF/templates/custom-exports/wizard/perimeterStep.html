@@ -30,7 +30,7 @@
 
   <div id="perimeter-button" style="margin-top: 4em;">
     <span th:text="#{custom-export.wizard.step.perimeter.label.button}">Campaign selection</span>
-    <input type="button" class="sq-btn" id="change-perimeter-campaign-button" th:value="#{label.Choose}" />
+    <input type="button" class="sq-btn" id="select-perimeter-button" th:value="#{label.Choose}" />
   </div>
 
   <div id="footer-message" style="margin-top: 4em;">
@@ -41,5 +41,25 @@
     <span id="selected-perimeter" style="font-weight: bold;color: #750021;">Campaign_003Y</span>
   </div>
 
+<div id="tree-dialog-container">
+  <div id="tree-dialog" style="height: 200px!important"
+       class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />
 </div>
 
+</div>
+
+<div th:fragment="custom-export-wizard-tree-popup">
+
+  <span id="warning-info-list"  class="red-warning-message" />
+
+  <div class="main">
+    <div id="tree-pane">
+      <div id="tree" class="tree jstree" />
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" />
+        <input type="button" th:value="#{label.Cancel}" />
+      </div>
+    </div>
+  </div>
+
+</div>

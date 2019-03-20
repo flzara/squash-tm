@@ -49,7 +49,7 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 
 		var validation = [{
 			name : "perimeter",
-			validationParam : "perimeter"
+			validationParam : "scope"
 		},
 			{
 				name: "attributes",

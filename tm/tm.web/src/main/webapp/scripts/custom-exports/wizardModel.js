@@ -38,7 +38,8 @@ return Backbone.Model.extend({
 
 	toJson: function(name) {
 		return JSON.stringify({
-			name: this.get("name") || name
+			name: this.get("name") || name,
+			scope: this.get("scope")
 		});
 	}
 

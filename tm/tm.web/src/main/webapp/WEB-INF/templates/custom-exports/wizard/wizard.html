@@ -24,6 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
+
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
@@ -45,7 +46,6 @@
   <link rel="stylesheet" type="text/css" media="all"
         href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
         sq:css="squash.subpage.override.css" />
-
 
   <script src="../../../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
@@ -75,6 +75,10 @@
 <script id="perimeter-step-tpl" type="text/x-handlebars-template"
         th:inline="text"
         th:include="custom-exports/wizard/perimeterStep :: custom-export-wizard-perimeter" />
+
+<script id="tree-popup-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/perimeterStep :: custom-export-wizard-tree-popup" />
 
 <script id="attributes-step-tpl" type="text/x-handlebars-template"
         th:inline="text"

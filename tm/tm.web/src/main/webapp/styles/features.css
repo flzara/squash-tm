@@ -594,8 +594,8 @@ p {
 }
 
 .illustration-grid {
-	background-image: url(../images/Illustration_Grid.png); /** sprite-ref: sprites-icons; */
-	background-repeat: no-repeat;
+	/*background-image: url(../images/messagebox_warning.png); !** sprite-ref: sprites-icons; *!*/
+	/*background-repeat: no-repeat;*/
 }
 
 .wizard-step-active {

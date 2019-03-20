@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "../app/util/StringUtil", "is", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function ($, backbone, _, router, Handlebars, projects, AbstractStepView, tree, translator, StringUtil, is) {
+define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "../app/util/StringUtil", "is", "./treePopup", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function ($, backbone, _, router, Handlebars, projects, AbstractStepView, tree, translator, StringUtil, is, TreePopup) {
 
 		"use strict";
 
@@ -30,13 +30,70 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				this.model = data;
 				data.name = "perimeter";
 				this._initialize(data, wizrouter);
+
+				this.updateDisplayWithPerimeter();
 			},
 
 			events: {
+				"click #select-perimeter-button" : "openPerimeterPopup"
 			},
 
 			updateModel: function () {
-				this.model.set("perimeter", "fakePerimeter");
+				// update was done when the scope was selected
+			},
+
+			openPerimeterPopup: function() {
+				var self = this;
+				var type = 'CAMPAIGN';
+				var treePopup = new TreePopup({
+					model: self.model,
+					name: type,
+					nodes: self.model.get('selectedTreeNodes') || []
+				});
+				self.addTreePopupConfirmEvent(treePopup, self, type);
+			},
+
+			addTreePopupConfirmEvent: function (popup, self, name) {
+
+				popup.on('treePopup.confirm', function () {
+
+					var scope = _.map($("#tree").jstree('get_selected'), function (selected) {
+						return {
+							id: $(selected).attr("resid"),
+							type: $(selected).attr("restype").split("-").join("_").slice(0, -1).toUpperCase(),
+							name: $(selected).attr("name")
+						};
+					});
+
+					// Check if it is a campaign
+					if(scope[0].type === 'CAMPAIGN') {
+						// Store the perimeter
+						self.model.set({scope: scope});
+
+						// Store the selected node to reselect it if the tree is opened later
+						var selecteTreedNodes = _.map($('#tree').jstree('get_selected'), function(selected) {
+							return {
+								id: $(selected).attr("id")
+							};
+						});
+						self.model.set({ selectedTreeNodes: selecteTreedNodes });
+
+						self.updateDisplayWithPerimeter();
+					}
+				});
+
+			},
+
+			updateDisplayWithPerimeter: function () {
+
+				var scope = this.model.get('scope');
+				var selectedPerimeterSpan = $('#selected-perimeter');
+
+				if(scope) {
+					selectedPerimeterSpan.text(scope[0].name);
+				} else {
+					selectedPerimeterSpan.text(translator.get('wizard.perimeter.msg.perimeter.choose'));
+				}
 			},
 
 			/**
