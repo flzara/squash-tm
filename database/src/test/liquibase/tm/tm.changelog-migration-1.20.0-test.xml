@@ -47,14 +47,14 @@
     <preConditions>
       <sqlCheck expectedResult="0">
         select count(*) from CORE_PARTY_AUTHORITY
-        where AUTHORITY not in ('ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TM_PROJECT_MANAGER', 'ROLE_ADMIN');
+        where AUTHORITY not in ('ROLE_TF_AUTOMATION_PROGRAMMER', 'ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TM_PROJECT_MANAGER', 'ROLE_ADMIN');
       </sqlCheck>
     </preConditions>
   </changeSet>
 
   <changeSet id="tm-1.20.0-TM-224-test-2" author="agu" dbms="mysql, postgresql, h2">
     <preConditions>
-      <sqlCheck expectedResult="6">
+      <sqlCheck expectedResult="7">
         select count(*) from CORE_PARTY_AUTHORITY;
       </sqlCheck>
     </preConditions>
