@@ -35,8 +35,6 @@ import java.util.Optional;
  *     <li>same for resume and stop</li>
  * </ul>
  *
- * when using without arguments, suspend, resume and stop will do so for all tasks. However you can imagine that due
- * to the internal collection traversal, they will be acted on at different times. You're warned, don't complain.
  *</p>
  *
  * <p>
@@ -79,27 +77,13 @@ public class StopWatch {
 		watchmap.get(taskName).stop();
 	}
 
-	public void start(){
-		for (org.apache.commons.lang3.time.StopWatch sw : watchmap.values()){
-			sw.start();
-		}
-	}
 
-	public void suspend(){
-		for (org.apache.commons.lang3.time.StopWatch sw : watchmap.values()){
-			sw.suspend();
-		}
-	}
 
-	public void resume(){
+	public void stopAll(){
 		for (org.apache.commons.lang3.time.StopWatch sw : watchmap.values()){
-			sw.resume();
-		}
-	}
-
-	public void stop(){
-		for (org.apache.commons.lang3.time.StopWatch sw : watchmap.values()){
-			sw.stop();
+			if (sw.isStarted() || sw.isSuspended()) {
+				sw.stop();
+			}
 		}
 	}
 
@@ -110,7 +94,7 @@ public class StopWatch {
 	 * @return
 	 */
 	public String toString(){
-		stop();
+		stopAll();
 
 		long allTime = computeAllTimes();
 
