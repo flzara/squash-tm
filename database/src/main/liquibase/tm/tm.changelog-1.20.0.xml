@@ -95,7 +95,7 @@
     <comment>Remove lines from core_party_authority table with obsolete authority</comment>
     <sql>
       delete from CORE_PARTY_AUTHORITY
-      where AUTHORITY not in ('ROLE_TF_AUTOMATION_PROGRAMMER', 'ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TM_PROJECT_MANAGER', 'ROLE_ADMIN');
+      where AUTHORITY not in ('ROLE_TF_FUNCTIONAL_TESTER', 'ROLE_TM_PROJECT_MANAGER', 'ROLE_ADMIN');
     </sql>
   </changeSet>
 
