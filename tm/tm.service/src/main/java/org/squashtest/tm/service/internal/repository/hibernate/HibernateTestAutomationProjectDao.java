@@ -36,6 +36,9 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 
+import java.util.ArrayList;
+
+
 @Repository
 public class HibernateTestAutomationProjectDao implements TestAutomationProjectDao {
 
@@ -149,6 +152,31 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		return q.getResultList();
 	}
 
+	@Override
+	public List<TestAutomationProject> findAllCalledByIterationId(long iterationId) {
+		Query q = em.createNamedQuery("testAutomationProject.findAllCalledByIterationId");
+		q.setParameter("iterationId", iterationId);
+		return q.getResultList();
+	}
+
+	@Override
+	public List<TestAutomationProject> findAllCalledByTestSuiteId(long suiteId) {
+		Query q = em.createNamedQuery("testAutomationProject.findAllCalledByTestSuiteId");
+		q.setParameter("testSuiteId", suiteId);
+		return q.getResultList();
+	}
+
+	@Override
+	public List<TestAutomationProject> findAllCalledByItemIds(Collection<Long> itemIds) {
+		if (itemIds == null || itemIds.isEmpty()){
+			return new ArrayList<>();
+		}
+		Query q = em.createNamedQuery("testAutomationProject.findAllCalledByItemIds");
+		q.setParameter("itemIds", itemIds);
+		return q.getResultList();
+	}
+
+
 	// ************************ private stuffs **********************************
 
 	private void dereferenceAutomatedExecutionExtender(Collection<Long> projectIds) {
@@ -171,7 +199,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 
 	private void deleteTestAutomationProjects(Collection<Long> projectIds) {
-		Query q = em.createNamedQuery("testAutmationProject.delete");
+		Query q = em.createNamedQuery("testAutomationProject.delete");
 		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}

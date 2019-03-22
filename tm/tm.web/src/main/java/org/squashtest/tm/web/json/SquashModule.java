@@ -45,6 +45,8 @@ import org.squashtest.tm.web.internal.model.json.*;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
 
 /**
  * Jackson Module which configures the default object mapper. Mixins definitions go here.
@@ -84,6 +86,8 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleValuedCustomFieldModel.class, SingleValuedCustomFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.MultiSelectFieldModel.class, MultiSelectFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.DatePickerFieldModel.class, DatePickerFieldModelMixin.class);
+		context.setMixInAnnotations(AutomatedSuiteCreationSpecification.class, AutomatedSuiteCreationSpecificationMixin.class);
+		context.setMixInAnnotations(AutomatedSuitePreview.class, AutomatedSuitePreviewMixin.class);
 
 	}
 }
