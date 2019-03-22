@@ -22,7 +22,51 @@
 -->
 <div th:fragment="custom-export-wizard-attributes">
 
-  <span>Insert some attributes here.</span>
+  <div style="margin: 2em 2em;">
+    {{#each attributes.entityMap}}
+    <div id="{{@key}}-box" style="display:inline-block; width: 8%; margin: 0px 2.5em; vertical-align: top;">
+      <div style="display: table; height: 50px; width: 100%;">
+        <div style="display: table-row; height: 50px;">
+          <div style="display: table-cell; vertical-align:middle; width: 40%;">
+            <input id="{{@key}}" type="checkbox" name="entity" value="{{@key}}"
+                   {{#if (contains ../attributes.selectedEntity @key)}} checked="checked" {{/if}}
+            />
+          </div>
+          <div style="display: table-cell; vertical-align: middle;">
+            <label for="{{@key}}" class="{{this.iconClass}} ui-helper-reset icon-chart"
+                   style="height: 40px; width: 40px;"></label>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <label
+          for="{{@key}}" class="ui-helper-reset">
+          {{i18n @key prefix='chart.entityType.'}}
+        </label>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  {{#each attributes.entityMap as |entityValue entityKey|}}
+  <div id="{{entityKey}}-panel" class="sq-tg expand not-displayed">
+    <div class="tg-head">
+      <h3>{{i18n entityKey prefix='chart.entityType.'}}</h3>
+    </div>
+    <div class="tg-body">
+      <div class="criterion-block">
+        <div id="{{entityKey}}-inputs">
+          {{#each this.attributes as |attrValue attrKey|}}
+          <div style="float: left; min-width:240px;">
+            <input id="{{entityKey}}-{{attrKey}}" name="{{entityKey}}-{{attrKey}}" type="checkbox" />
+            <label for="{{entityKey}}-{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
 
 </div>
 

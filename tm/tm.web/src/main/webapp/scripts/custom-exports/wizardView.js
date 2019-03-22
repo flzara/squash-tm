@@ -53,12 +53,104 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 		},
 			{
 				name: "attributes",
-				validationParam: "attributes"
+				validationParam: "selectedAttributes"
 			},
 			{
 				name: "name",
 				validationParam: "name"
 			}];
+
+		var entityMap = {
+			CAMPAIGN: {
+				iconClass: "icon-chart-campaign",
+				attributes: {
+					label: 'label.Label',
+					id: 'label.id',
+					reference: 'label.Reference',
+					description: 'label.Description',
+					state: 'label.State',
+					progressStatus: 'campaign.progress_status.label',
+					milestone: 'label.Milestone',
+					scheduledStart: 'chart.column.CAMPAIGN_SCHED_START',
+					scheduledEnd: 'chart.column.CAMPAIGN_SCHED_END',
+					actualStart: 'chart.column.CAMPAIGN_ACTUAL_START',
+					actualEnd: 'chart.column.CAMPAIGN_ACTUAL_END'
+				}
+			},
+			ITERATION: {
+				iconClass: "icon-chart-iteration",
+				attributes: {
+					label: 'label.Label',
+					id: 'label.id',
+					reference: 'label.Reference',
+					description: 'label.Description',
+					state: 'label.State',
+					scheduledStart: 'chart.column.CAMPAIGN_SCHED_START',
+					scheduledEnd: 'chart.column.CAMPAIGN_SCHED_END',
+					actualStart: 'chart.column.CAMPAIGN_ACTUAL_START',
+					actualEnd: 'chart.column.CAMPAIGN_ACTUAL_END'
+				}
+			},
+			TEST_SUITE: {
+				iconClass: "icon-chart-test-suite",
+				attributes: {
+					label: 'label.Label',
+					id: 'label.id',
+					description: 'label.Description',
+					executionStatus: 'chart.column.EXECUTION_STATUS',
+					progressStatus: 'test-suite.progress_status.label'
+				}
+			},
+			TEST_CASE: {
+				iconClass: "icon-chart-test-case",
+				attributes: {
+					project: 'label.project',
+					milestone: 'label.Milestone',
+					label: 'label.Label',
+					id: 'label.id',
+					reference: 'label.Reference',
+					description: 'label.Description',
+					status: 'label.Status',
+					importance: 'label.Importance',
+					nature: 'chart.column.TEST_CASE_NATURE',
+					type: 'label.Type',
+					dataset: 'label.Dataset',
+					prerequisite: 'generics.prerequisite.title',
+					linkedRequirementsIds: 'custom-export.column.TEST_CASE.LINKED_REQUIREMENTS_IDS'
+				}
+			},
+			EXECUTION: {
+				iconClass: "icon-chart-execution",
+				attributes: {
+					executionMode: 'label.ExecutionMode',
+					status: 'label.Status',
+					successRate: 'shortLabel.SuccessRate',
+					user: 'label.User',
+					executionDate: 'iteration.executions.table.column-header.execution-date.label',
+					comments: 'executions.steps.table.column-header.comment.label'
+				}
+			},
+			EXECUTION_STEP: {
+				iconClass: "icon-chart-execution-step",
+				attributes: {
+					stepNumber: 'custom-export.column.EXECUTION_STEP.EXECUTION_STEP_NUMBER',
+					action: 'label.action',
+					result: 'custom-export.column.EXECUTION_STEP.RESULT',
+					status: 'label.Status',
+					user: 'label.User',
+					executionDate: 'iteration.executions.table.column-header.execution-date.label',
+					comments: 'executions.steps.table.column-header.comment.label',
+					linkedRequirementsIds: 'custom-export.column.EXECUTION_STEP.STEP_LINKED_REQUIREMENTS_IDS'
+				}
+			},
+			ISSUE: {
+				iconClass: "icon-chart-issue",
+				attributes: {
+					executionAndExecutionStepIssues: 'custom-export.column.ISSUE.ALL_LINKED_ISSUES',
+					executionIssues: 'custom-export.column.ISSUE.STEP_LINKED_ISSUES'
+				}
+			}
+		};
 
 		var wizardView = Backbone.View.extend({
 
@@ -68,7 +160,8 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 				this.model = options.model;
 				this.model.set({
 					steps: steps,
-					validation : validation
+					validation : validation,
+					entityMap: entityMap,
 				});
 				// - load i18n keys
 			},

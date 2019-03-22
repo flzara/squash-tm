@@ -38,8 +38,12 @@ return Backbone.Model.extend({
 
 	toJson: function(name) {
 		return JSON.stringify({
-			name: this.get("name") || name,
-			scope: this.get("scope")
+			scope: _.map(this.get("scope"), function(entity) {
+				return { id: entity.id, type: entity.type };
+			}),
+			attributes: this.get("selectedAttributes"),
+			name: this.get("name") || name
+
 		});
 	}
 

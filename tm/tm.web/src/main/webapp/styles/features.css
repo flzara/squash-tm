@@ -556,12 +556,10 @@ p {
 	background-image : url(../images/Icone_Requirement3.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
 .icon-chart-test-case {
 	background-image : url(../images/Icone_TestCase2.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
 .icon-chart-iteration {
 	background-image : url(../images/Icone_iteration.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
@@ -570,24 +568,33 @@ p {
 	background-image : url(../images/Icone_TestPlanItem.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
-
 .icon-chart-campaign {
 	background-image : url(../images/Icone_Campagne.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
-
 .icon-chart-requirement-version {
 	background-image : url(../images/Icone_RequirementVersion.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
 .icon-chart-execution {
 	background-image : url(../images/Icone_Execution.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
+.icon-chart-test-suite {
+	background-image: url(../images/Icone_Test_Suite.png);
+	/** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+}
+.icon-chart-execution-step {
+	background-image: url(../images/Icone_RequirementVersion.png);
+	/** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+}
+.icon-chart-issue {
+	background-image: url(../images/Icone_Anomalies.png);
+	/** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+}
 .illustration-graph {
 	background-image : url(../images/Illustration_Graph.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;

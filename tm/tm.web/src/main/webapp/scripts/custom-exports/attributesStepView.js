@@ -30,27 +30,51 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				this.model = data;
 				data.name = "attributes";
 				this._initialize(data, wizrouter);
+				this.reloadModelInView();
 			},
 
 			events: {
+				"click input[name='entity']" : 'toggleEntityPanelVisibility'
+			},
+
+			reloadModelInView: function() {
+				var selectedEntites = this.model.get('selectedEntities') || [];
+				var selectedAttributes = this.model.get('selectedAttributes') || [];
+				// Entities
+				_.each(selectedEntites, function(entity) {
+					$("#" + entity).prop('checked', true);
+					$("#" + entity + "-panel").removeClass("not-displayed");
+				});
+
+				// Attributes
+				_.mapObject(selectedAttributes, function(attrList, entity) {
+					_.each(attrList, function(attr) {
+						$('#' + entity + "-" + attr).prop('checked', true);
+					})
+				})
 			},
 
 			updateModel: function () {
-				this.model.set("attributes", "fakeAttributes");
+				// Store selected entities (only saved for the current wizard)
+				var selectedEntities = _.pluck($("[name='entity']:checked"), 'id');
+				// Store attributes
+				var selectedCheckboxesByEntity = _.groupBy($("input[type=checkbox][name!='entity']:checked"), function(checkbox) {
+					return $(checkbox).attr('id').split('-')[0];
+				});
+				var selectedAttributesByEntity = _.mapObject(selectedCheckboxesByEntity, function(entity) {
+					return _.map(entity, function(attribute) {
+						return $(attribute).attr('id').split('-')[1];
+					});
+				});
+				this.model.set("selectedEntities", selectedEntities);
+				this.model.set("selectedAttributes", selectedAttributesByEntity);
 			},
 
-			/**
-			 * IE and FF add a trailing / to cookies...
-			 * Chrome don't...
-			 * So we need to put the good path to avoid two jstree_select cookies with differents path.
-			 */
-			getCookiePath : function () {
-				var path = "/squash/custom-report-workspace";
-				if (is.ie() || is.firefox()) {
-					path = path + "/";
-				}
-				return path;
-			}
+			toggleEntityPanelVisibility: function(event) {
+				var entityClicked = event.target.id;
+				var entityPanelToToggle = $("#" + entityClicked + "-panel");
+				entityPanelToToggle.toggleClass("not-displayed");
+		}
 
 		});
 
