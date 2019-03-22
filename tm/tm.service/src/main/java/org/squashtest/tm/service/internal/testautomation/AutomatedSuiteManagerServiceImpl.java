@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -51,17 +52,14 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
@@ -81,6 +79,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
@@ -102,6 +101,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
+
+	@Inject
+	private TestAutomationProjectDao autoProjectDao;
 
 	@Inject
 	private IterationDao iterationDao;
@@ -160,6 +162,45 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	public AutomatedSuite findById(String id) {
 		return autoSuiteDao.findById(id);
+	}
+
+	@Override
+	public AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification) {
+
+		specification.validate();
+
+		List<TestAutomationProject> projects = null;
+		switch(specification.getSourceType()){
+			case ITERATION:
+				EntityReference iterRef = specification.getIterationReference();
+				projects = autoProjectDao.findAllCalledByIterationId(iterRef.getId());
+				break;
+
+			case TEST_SUITE:
+				EntityReference suiteRef = specification.getTestSuiteReference();
+				projects = autoProjectDao.findAllCalledByTestSuiteId(suiteRef.getId());
+				break;
+
+			case ITEM_TEST_PLAN:
+				Collection<EntityReference> itemRefs = specification.getItemReferences();
+				Collection<Long> itemIds = itemRefs.stream().map(EntityReference::getId).collect(Collectors.toList());
+				projects = autoProjectDao.findAllCalledByItemIds(itemIds);
+				break;
+
+			default:
+				// the validation method called above should ensure this case never happen but to keep SONAR happy I have to.
+				throw new IllegalArgumentException("invalid source type : "+specification.getSourceType());
+
+		}
+
+		// create the response
+		AutomatedSuitePreview summary = new AutomatedSuitePreview();
+		summary.setSpecification(specification);
+
+		projects.forEach(taProject -> summary.addProject(new TestAutomationProjectContent(taProject)));
+
+		return summary;
+
 	}
 
 	/**

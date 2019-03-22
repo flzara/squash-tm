@@ -25,6 +25,8 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
@@ -41,6 +43,14 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite findById(String id);
 
+	/**
+	 * Given a specification about a desired automated suite, returns a summary of what it would
+	 * look like.
+	 *
+	 * @param specification
+	 * @return
+	 */
+	AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification);
 
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the

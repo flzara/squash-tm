@@ -39,9 +39,7 @@ public interface TestAutomationProjectDao {
 	void persist(TestAutomationProject newProject);
 
 	/**
-	 * 
-	 * 
-	 * @param id
+	 *
 	 * @return
 	 */
 	TestAutomationProject findById(Long projectId);
@@ -96,6 +94,34 @@ public interface TestAutomationProjectDao {
 	 * @return
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
+
+	/**
+	 * Given an iteration ID, returns all distinct instances of TestAutomationProject
+	 * that can run at least one of the tests planned in that iteration.
+	 *
+	 * @param iterationId
+	 * @return
+	 */
+	List<TestAutomationProject> findAllCalledByIterationId(long iterationId);
+
+	/**
+	 * Given a TestSuite ID, returns all distinct instances of TestAutomationProject
+	 * that can run at least one of the tests planned in that TestSuite.
+	 *
+	 * @param suiteId
+	 * @return
+	 */
+	List<TestAutomationProject> findAllCalledByTestSuiteId(long suiteId);
+
+	/**
+	 * Given list of item ids, returns all distinct instances of TestAutomationProject
+	 * that can run the tests planned by those items.
+	 *
+	 * @param itemIds
+	 * @return
+	 */
+	List<TestAutomationProject> findAllCalledByItemIds(Collection<Long> itemIds);
+
 
 	/**
 	 * return all the ids of the projects that the given server hosts.

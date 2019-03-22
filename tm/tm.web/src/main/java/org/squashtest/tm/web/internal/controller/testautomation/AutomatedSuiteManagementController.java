@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -60,6 +62,13 @@ public class AutomatedSuiteManagementController {
 
 	@Inject
 	private AutomatedSuiteManagerService service;
+
+
+	@RequestMapping(value = "/preview", produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+	@ResponseBody
+	public AutomatedSuitePreview generateSuitePreview(@RequestBody AutomatedSuiteCreationSpecification specification){
+		return service.preview(specification);
+	}
 
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {ITERATION_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody

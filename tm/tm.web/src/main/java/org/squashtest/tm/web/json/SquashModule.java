@@ -43,29 +43,9 @@ import org.squashtest.tm.service.internal.dto.CustomFieldModelFactory;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
-import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
-import org.squashtest.tm.web.internal.model.json.BugTrackerMixin;
-import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
-import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
-import org.squashtest.tm.web.internal.model.json.ColumnPrototypeMixin;
-import org.squashtest.tm.web.internal.model.json.CustomFieldValueModelMixin;
-import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
-import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
-import org.squashtest.tm.web.internal.model.json.DatePickerFieldModelMixin;
-import org.squashtest.tm.web.internal.model.json.FilterMixin;
-import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
-import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
-import org.squashtest.tm.web.internal.model.json.InfoListMixin;
-import org.squashtest.tm.web.internal.model.json.ManageableCredentialsMixin;
-import org.squashtest.tm.web.internal.model.json.MeasureColumnMixin;
-import org.squashtest.tm.web.internal.model.json.MultiSelectFieldModelMixin;
-import org.squashtest.tm.web.internal.model.json.ScmServerMixin;
-import org.squashtest.tm.web.internal.model.json.ScriptedTestCaseExtenderMixin;
-import org.squashtest.tm.web.internal.model.json.ServerAuthConfigurationMixin;
-import org.squashtest.tm.web.internal.model.json.SingleSelectFieldModelMixin;
-import org.squashtest.tm.web.internal.model.json.SingleValuedCustomFieldModelMixin;
-import org.squashtest.tm.web.internal.model.json.UserGroupMixin;
-import org.squashtest.tm.web.internal.model.json.UserMixin;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
+import org.squashtest.tm.web.internal.model.json.*;
 
 /**
  * Jackson Module which configures the default object mapper. Mixins definitions go here.
@@ -105,6 +85,8 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(CustomFieldModelFactory.SingleValuedCustomFieldModel.class, SingleValuedCustomFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.MultiSelectFieldModel.class, MultiSelectFieldModelMixin.class);
 		context.setMixInAnnotations(CustomFieldModelFactory.DatePickerFieldModel.class, DatePickerFieldModelMixin.class);
+		context.setMixInAnnotations(AutomatedSuiteCreationSpecification.class, AutomatedSuiteCreationSpecificationMixin.class);
+		context.setMixInAnnotations(AutomatedSuitePreview.class, AutomatedSuitePreviewMixin.class);
 
 	}
 }

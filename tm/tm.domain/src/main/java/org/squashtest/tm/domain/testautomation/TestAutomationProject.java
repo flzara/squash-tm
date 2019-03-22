@@ -45,10 +45,23 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name = "testAutomationProject.dereferenceAutomatedExecutionExtender", query = "update AutomatedExecutionExtender set resultURL = null, automatedTest = null "
 			+ "where automatedTest in (select tests from AutomatedTest tests join tests.project p where p.id in (:projectIds))"),
 
-			@NamedQuery(name = "testAutomationProject.dereferenceTestCases", query = "update TestCase set automatedTest = null "
-					+ "where automatedTest in (select tests from AutomatedTest tests join tests.project p where p.id in (:projectIds))"),
-					@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project.id in (:projectIds)"),
-					@NamedQuery(name = "testAutmationProject.delete", query = "delete TestAutomationProject p where p.id in (:projectIds)")
+	@NamedQuery(name = "testAutomationProject.dereferenceTestCases", query = "update TestCase set automatedTest = null "
+			+ "where automatedTest in (select tests from AutomatedTest tests join tests.project p where p.id in (:projectIds))"),
+	@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project.id in (:projectIds)"),
+	@NamedQuery(name = "testAutomationProject.delete", query = "delete TestAutomationProject p where p.id in (:projectIds)"),
+
+	@NamedQuery(name = "testAutomationProject.findAllCalledByIterationId",
+		query = "select distinct tap from Iteration it inner join it.testPlans items inner join items.referencedTestCase tc " +
+			    "inner join tc.automatedTest autoTest inner join autoTest.project tap order by tap.label " +
+				"where it.id = :iterationId"),
+	@NamedQuery(name = "testAutomationProject.findAllCalledByTestSuiteId",
+		query = "select distinct tap from TestSuite ts inner join ts.testPlan items inner join items.referencedTestCase tc " +
+				"inner join tc.automatedTest autoTest inner join autoTest.project tap order by tap.label " +
+				"where ts.id = :testSuiteId"),
+	@NamedQuery(name = "testAutomationProject.findAllCalledByItemIds",
+		query = "select distinct tap from IterationTestPlanItem items inner join items.referencedTestCase tc " +
+				"inner join tc.automatedTest autoTest inner join autoTest.project tap order by tap.label " +
+				"where items.id in (:itemIds)"),
 })
 @Entity
 public class TestAutomationProject implements Identified {
