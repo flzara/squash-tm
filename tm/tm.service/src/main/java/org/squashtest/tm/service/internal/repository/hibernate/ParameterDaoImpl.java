@@ -27,10 +27,7 @@ import org.squashtest.tm.service.internal.repository.CustomParameterDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class ParameterDaoImpl implements CustomParameterDao {
@@ -42,7 +39,7 @@ public class ParameterDaoImpl implements CustomParameterDao {
 	@Override
 	public List<Parameter> findAllParametersByTestCase(Long testcaseId) {
 
-		List<Parameter> allParameters = new LinkedList<>();
+		List<Parameter> allParameters = new ArrayList<>();
 
 		Set<Long> exploredTc = new HashSet<>();
 		List<Long> srcTc = new LinkedList<>();
