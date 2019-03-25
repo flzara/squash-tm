@@ -96,19 +96,6 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				}
 			},
 
-			/**
-			 * IE and FF add a trailing / to cookies...
-			 * Chrome don't...
-			 * So we need to put the good path to avoid two jstree_select cookies with differents path.
-			 */
-			getCookiePath : function () {
-				var path = "/squash/custom-report-workspace";
-				if (is.ie() || is.firefox()) {
-					path = path + "/";
-				}
-				return path;
-			}
-
 		});
 
 		return perimeterStepView;
