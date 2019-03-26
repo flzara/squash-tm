@@ -73,6 +73,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
+			
 			close: function () {
 
 				// check : if the suite wasn't finished, we must let the user confirm
@@ -96,6 +97,16 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				this.setState("main");
 			},
 
+			
+			start: function (preview) {
+				if (preview.isManualSlaveSelection) {
+					this._showManualSelectNodes(preview);
+				} else {
+					this._startAutoSelectNodes(preview);
+				}
+			},
+
+			
 
 			_cleancontent: function () {
 				var opts = this.options;
@@ -116,6 +127,9 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				// bus
 				// refreshStatistics();
 			},
+			
+			
+			
 
 			watch: function (suite) {
 				this.options.suite = suite;
@@ -131,15 +145,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 					}, 5000);
 				}
 			},
-
-			start: function (suite) {
-				if (suite.manualNodeSelection) {
-					this._startManualSelectNodes(suite);
-				} else {
-					this._startAutoSelectNodes(suite);
-				}
-			},
-
+			
 			_startAutoSelectNodes: function (suite) {
 				this._execAndWatch(suite.id, function () {
 					return [];
@@ -165,16 +171,19 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
-			_startManualSelectNodes: function (suite) {
-				this.suiteId = suite.id;
+			_showManualSelectNodes: function (preview) {
+				this.options.preview = preview;
 				this.setState("node-selector");
+				var template = Handlebars.compile($("#node-selector-pnl-tpl").html());
+				
+				var manualSelect = _.filter(preview.projects, function (project) {
+					return project.nodes.length > 0;
+				}) || [];
+				
+				$("#node-selector-pnl").html(template({projects : manualSelect}));
+
 				this.open();
 
-				var template = Handlebars.compile($("#node-selector-pnl-tpl").html());
-				var manuals = _.filter(suite.contexts, function (context) {
-					return context.project.server.manualSlaveSelection;
-				}) || {};
-				$("#node-selector-pnl").html(template({contexts: manuals}));
 			},
 
 			_submitNodes: function () {

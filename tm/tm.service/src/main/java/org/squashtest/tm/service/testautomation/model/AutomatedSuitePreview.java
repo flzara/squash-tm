@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.testautomation.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -36,10 +37,19 @@ import java.util.Collection;
  */
 public class AutomatedSuitePreview {
 
+	private boolean isManualSlaveSelection = false;	
+	
 	private AutomatedSuiteCreationSpecification specification = null;
 
-	private Collection<TestAutomationProjectContent> projects = new ArrayList<>();
+	private Collection<TestAutomationProjectPreview> projects = new ArrayList<>();
 
+	public boolean isManualSlaveSelection() {
+		return isManualSlaveSelection;
+	}
+
+	public void setManualSlaveSelection(boolean manualSlaveSelection) {
+		isManualSlaveSelection = manualSlaveSelection;
+	}
 
 	public AutomatedSuiteCreationSpecification getSpecification() {
 		return specification;
@@ -49,15 +59,123 @@ public class AutomatedSuitePreview {
 		this.specification = specification;
 	}
 
-	public Collection<TestAutomationProjectContent> getProjects() {
+	public Collection<TestAutomationProjectPreview> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(Collection<TestAutomationProjectContent> projects) {
+	public void setProjects(Collection<TestAutomationProjectPreview> projects) {
 		this.projects = projects;
 	}
+	
+	
 
-	public void addProject(TestAutomationProjectContent project){
-		this.projects.add(project);
+	public static final class TestAutomationProjectPreview{
+		private long projectId;
+		private String label;
+		private String server;
+		private Collection<String> nodes;
+		private long testCount = 0;
+		
+		/*
+		 * TODO : maybe do the orderGuaranteed check. It involves something along the line of 
+		 * AutomatedSuiteManagerServiceImpl#sortByProject().
+		 * 
+		 * However computing this is a performance killer (one among many) which only purpose is to notify the user of the 
+		 * possibility that his hundreds of automated tests may not run sequentially as specified by the test plan, which 
+		 * entails that the test statuses may not quite turn from gray to blue and then green orderly from top to bottom, 
+		 * which would  make him sad because he really really wanted to sit and watch through the execution of the whole 
+		 * things for hours and see his bullets change color in the order he wants. 
+		 * 
+		 * That flag is an epitomic example of the insane wish of turning an essentially long-running, asynchronous task
+		 * into some pseudo-interactive gizmo that only makes sense in a show case (remotely even so).
+		 * 
+		 * Here is what happens in the real world : the user clicks 'run all those tests' and then closes the dialog and forget 
+		 * about it. No one cares of the test plan order. I'm not computing that flag. If someone ever notices the change in
+		 * the behavior and raises an issue about it I will reconsider, but I firmly believe that this day will never come.
+		 * 
+		 * /rant
+		 */
+		private boolean orderGuaranteed = true;
+
+		public TestAutomationProjectPreview(){
+
+		}
+
+		public TestAutomationProjectPreview(long projectId, String label, String server, Collection<String> nodes, long testCount) {
+			super();
+			this.projectId = projectId;
+			this.label = label;
+			this.server = server;
+			this.nodes = nodes;
+			this.testCount = testCount;
+		}
+		
+		public TestAutomationProjectPreview(long projectId, String label, String server, String nodesAsCsv, long testCount) {
+			super();
+			this.projectId = projectId;
+			this.label = label;
+			this.server = server;
+			setNodes(nodesAsCsv);
+			this.testCount = testCount;
+		}
+
+
+
+		public long getProjectId() {
+			return projectId;
+		}
+
+		public void setProjectId(long projectId) {
+			this.projectId = projectId;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+
+		public Collection<String> getNodes() {
+			return nodes;
+		}
+
+		public void setNodes(Collection<String> nodes) {
+			this.nodes = nodes;
+		}
+		
+		public String getServer() {
+			return server;
+		}
+
+		public void setServer(String server) {
+			this.server = server;
+		}
+
+		public boolean isOrderGuaranteed() {
+			return orderGuaranteed;
+		}
+
+		public void setOrderGuaranteed(boolean orderGuaranteed) {
+			this.orderGuaranteed = orderGuaranteed;
+		}
+
+		public long getTestCount() {
+			return testCount;
+		}
+
+		public void setTestCount(long testCount) {
+			this.testCount = testCount;
+		}
+
+		private void setNodes(String asCsv){
+			String[] nodes = asCsv
+								 .trim()
+								 .replaceAll("\\s*;\\s*", ";")
+								 .split(";");
+
+			this.nodes = Arrays.asList(nodes);
+		}
 	}
 }

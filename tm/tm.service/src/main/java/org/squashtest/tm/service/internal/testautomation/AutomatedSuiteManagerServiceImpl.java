@@ -69,16 +69,8 @@ import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
@@ -169,7 +161,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		specification.validate();
 
-		List<TestAutomationProject> projects = null;
+		List<Couple<TestAutomationProject, Long>> projects = null;
 		switch(specification.getSourceType()){
 			case ITERATION:
 				EntityReference iterRef = specification.getIterationReference();
@@ -194,12 +186,30 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		}
 
 		// create the response
-		AutomatedSuitePreview summary = new AutomatedSuitePreview();
-		summary.setSpecification(specification);
+		AutomatedSuitePreview preview = new AutomatedSuitePreview();
+		preview.setSpecification(specification);
 
-		projects.forEach(taProject -> summary.addProject(new TestAutomationProjectContent(taProject)));
+		boolean hasSlaves = projects.stream().anyMatch(couple -> couple.getA1().getServer().isManualSlaveSelection());
 
-		return summary;
+		Collection<AutomatedSuitePreview.TestAutomationProjectPreview> projectPreview =
+					projects.stream().map(
+						couple -> {
+							TestAutomationProject taProject = couple.getA1();
+							Long testCount = couple.getA2();
+							return new AutomatedSuitePreview.TestAutomationProjectPreview(
+								taProject.getId(),
+								taProject.getLabel(),
+								taProject.getServer().getName(),
+								taProject.getSlaves(),
+								testCount
+							);
+						}).collect(Collectors.toList());
+
+
+		preview.setManualSlaveSelection(hasSlaves);
+		preview.setProjects(projectPreview);
+
+		return preview;
 
 	}
 

@@ -46,38 +46,40 @@
 </script>
 
 <script id="node-selector-pnl-tpl" type="text/x-handlebars-template">
-{{#each contexts}}
+{{#each projects}}
 <p>
-  <fieldset data-proj-id="{{project.id}}">
+  <fieldset data-proj-id="{{projectId}}">
     <legend>
-      <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{project.label}}</strong>&nbsp;
-      <f:message key="message.fromMasterNode" />&nbsp;<em>{{project.server.name}}</em>
+      <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{label}}</strong>&nbsp;
+      <f:message key="message.fromMasterNode" />&nbsp;<em>{{server}}</em>
     </legend>
-  
+
     <div>
-      <label for="nodes-list-{{project.id}}"><f:message key="message.automatedTests.executedOn" /></label>
-      <select id="nodes-list-{{project.id}}">
+      <label for="nodes-list-{{projectId}}"><f:message key="message.automatedTests.executedOn" /></label>
+      <select id="nodes-list-{{projectId}}">
         <option selected="selected" value=""><f:message key="label.irrelevant" /></option>
-        <option value="master">{{project.server.name}}</option>
-        {{#each project.nodes}}
+        <option value="master">{{server}}</option>
+        {{#each nodes}}
         <option value="{{this}}">{{this}}</option>
         {{/each}}
       </select>
     </div>
-  
-    <div id="tests-tl-{{project.server.id}}" class="collapse sq-tl">
+
+	<div class="collapse sq-tl">
       <h5 class="tl-head">
-        <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
+        <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{testCount}} <f:message key="label.testCases.lower" />)
       </h5>
-      <ul class="tl-body">
-        {{#each tests}}
-        <li>{{name}}</li>
-        {{/each}}
-      </ul>
+
+		<div data-loaded="false" class="tl-body">
+			<!-- populated by ajax --> 
+			<div class="please-wait-message waiting-loading minimal-height"></div>
+		</div>
+      
     </div>
     {{#unless orderGuaranteed}}
       <p class="error-message" ><label class="error-message"><f:message key="label.warning"/></label><f:message key="message.orderNonGuaranteed"/></p>
     {{/unless}}
+
   </fieldset>
 </p>
 {{/each}}

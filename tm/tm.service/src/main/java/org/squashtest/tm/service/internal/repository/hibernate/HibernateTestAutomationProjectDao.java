@@ -25,6 +25,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -152,21 +153,21 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 
 	@Override
-	public List<TestAutomationProject> findAllCalledByIterationId(long iterationId) {
+	public List<Couple<TestAutomationProject, Long>> findAllCalledByIterationId(long iterationId) {
 		Query q = em.createNamedQuery("testAutomationProject.findAllCalledByIterationId");
 		q.setParameter("iterationId", iterationId);
 		return q.getResultList();
 	}
 
 	@Override
-	public List<TestAutomationProject> findAllCalledByTestSuiteId(long suiteId) {
+	public List<Couple<TestAutomationProject, Long>> findAllCalledByTestSuiteId(long suiteId) {
 		Query q = em.createNamedQuery("testAutomationProject.findAllCalledByTestSuiteId");
 		q.setParameter("testSuiteId", suiteId);
 		return q.getResultList();
 	}
 
 	@Override
-	public List<TestAutomationProject> findAllCalledByItemIds(Collection<Long> itemIds) {
+	public List<Couple<TestAutomationProject, Long>> findAllCalledByItemIds(Collection<Long> itemIds) {
 		if (itemIds == null || itemIds.isEmpty()){
 			return new ArrayList<>();
 		}
