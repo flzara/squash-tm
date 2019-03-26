@@ -19,28 +19,25 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.model.json;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.web.internal.model.builder.TestAutomationProjectContentConverter;
-
-import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public abstract class AutomatedSuitePreviewMixin {
 
 	@JsonProperty
-	private AutomatedSuiteCreationSpecification specification;
+	AutomatedSuiteCreationSpecification specification;
 
+	@JsonProperty
+	boolean isManualSlaveSelection;
 
-	// no setter accepted at deserialization, only getters
-	@JsonSerialize(contentConverter = TestAutomationProjectContentConverter.class)
-	abstract Collection<TestAutomationProjectContent> getProjects();
+	@JsonProperty
+	Collection<AutomatedSuitePreview.TestAutomationProjectPreview> projects;
 
 }

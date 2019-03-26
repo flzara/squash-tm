@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
@@ -97,30 +98,33 @@ public interface TestAutomationProjectDao {
 
 	/**
 	 * Given an iteration ID, returns all distinct instances of TestAutomationProject
-	 * that can run at least one of the tests planned in that iteration.
+	 * that can run at least one of the tests planned in that iteration. Each project
+	 * in the result set is also paired with how many items it will run.
 	 *
 	 * @param iterationId
 	 * @return
 	 */
-	List<TestAutomationProject> findAllCalledByIterationId(long iterationId);
+	List<Couple<TestAutomationProject, Long>> findAllCalledByIterationId(long iterationId);
 
 	/**
 	 * Given a TestSuite ID, returns all distinct instances of TestAutomationProject
-	 * that can run at least one of the tests planned in that TestSuite.
+	 * that can run at least one of the tests planned in that TestSuite. Each project
+	 * 	 * in the result set is also paired with how many items it will run.
 	 *
 	 * @param suiteId
 	 * @return
 	 */
-	List<TestAutomationProject> findAllCalledByTestSuiteId(long suiteId);
+	List<Couple<TestAutomationProject, Long>> findAllCalledByTestSuiteId(long suiteId);
 
 	/**
 	 * Given list of item ids, returns all distinct instances of TestAutomationProject
-	 * that can run the tests planned by those items.
+	 * that can run the tests planned by those items. Each project
+	 * 	 * in the result set is also paired with how many items it will run.
 	 *
 	 * @param itemIds
 	 * @return
 	 */
-	List<TestAutomationProject> findAllCalledByItemIds(Collection<Long> itemIds);
+	List<Couple<TestAutomationProject, Long>> findAllCalledByItemIds(Collection<Long> itemIds);
 
 
 	/**

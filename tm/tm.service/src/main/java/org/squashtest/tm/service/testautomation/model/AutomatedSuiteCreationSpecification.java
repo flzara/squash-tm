@@ -23,7 +23,6 @@ package org.squashtest.tm.service.testautomation.model;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,23 +32,35 @@ import java.util.List;
  */
 
 /*
- Note : Jackson should not serialize this as is because of the various methods getXReference. Along with validation,
- those methods have a meaning in Java World only. Choose carefully what you want to serialize.
+ Note : Jackson should not serialize this as is because of some getters sucha as the methods getXReference only make sense
+ in the Java world (the client doesn't need to know them). Along with validation, those methods have a meaning in Java World only.
+ Choose carefully what you want to serialize.
  */
 public class AutomatedSuiteCreationSpecification {
 
 	/**
-	 * The source from which the automated suite should be created (ie define the set of items
+	 * The test plan of the future automated suite (ie define the set of items
 	 * in the test plan of an iteration, or the list of items directly).
 	 * It accepts either of the following  :
 	 * <ul>
-	 *     <li>One entity reference to an iteration,</li>
-	 *     <li>One entity reference to a test suite,</li>
-	 *     <li>One or several references to iteration test plan items</li>
+	 *     <li>Exactly one entity reference to an iteration : the whole test plan of the iteration is used.</li>
+	 *     <li>Exactly one entity reference to a test suite : the whole test plan of the suite is used.</li>
+	 *     <li>One or several references to iteration test plan items : only these items will be ran. The ordering is defined by the property 'context', see below.</li>
 	 * </ul>
+	 *
 	 * Other situations are considered erroneous and will be rejected.
 	 */
-	private List<EntityReference> source = new ArrayList<>();
+	private List<EntityReference> testPlan = new ArrayList<>();
+
+	/**
+	 * The context of the test plan execution. When the property 'testPlan' is set to a collection of items, the context
+	 * says in which order they should run, and if left to null the default context is the iteration than contains the
+	 * first item of the list.
+	 *
+	 * When the 'testPlan' is set to other values, the context has no meaning.
+	 *
+	 */
+	private EntityReference context = null;
 
 	/**
 	 * Additional information related to execution. Currently it merely specifies on which slave node a test automation
@@ -58,12 +69,22 @@ public class AutomatedSuiteCreationSpecification {
 	private Collection<SuiteExecutionConfiguration>  executionConfigurations = new ArrayList<>();
 
 
-	public List<EntityReference> getSource() {
-		return source;
+
+
+	public List<EntityReference> getTestPlan() {
+		return testPlan;
 	}
 
-	public void setSource(List<EntityReference> source) {
-		this.source = source;
+	public void setTestPlan(List<EntityReference> testPlan) {
+		this.testPlan = testPlan;
+	}
+
+	public EntityReference getContext() {
+		return context;
+	}
+
+	public void setContext(EntityReference context) {
+		this.context = context;
 	}
 
 	public Collection<SuiteExecutionConfiguration> getExecutionConfigurations() {
@@ -75,35 +96,35 @@ public class AutomatedSuiteCreationSpecification {
 	}
 
 	/**
-	 * Returns quietly if the source matches the definition of the javadoc above, or throws if not.
+	 * Returns quietly if the testPlan matches the definition of the javadoc above, or throws if not.
 	 *
 	 * @return
-	 * @throws IllegalArgumentException if the source is invalid.
+	 * @throws IllegalArgumentException if the testPlan is invalid.
 	 *
 	 */
 	public void validate(){
 		boolean isValid = false;
 
-		if (source.isEmpty()){
+		if (testPlan.isEmpty()){
 			isValid = false;
 		}
-		else if (source.size() == 1){
+		else if (testPlan.size() == 1){
 			// if a null value has been inserted the thread deserves to abort outright with a NPE.
-			EntityType type = source.get(0).getType();
+			EntityType type = testPlan.get(0).getType();
 			isValid = (type == EntityType.ITERATION || type == EntityType.TEST_SUITE);
 		}
 		else{
-			isValid = source.stream().allMatch( ref -> ref.getType() == EntityType.ITEM_TEST_PLAN);
+			isValid = testPlan.stream().allMatch(ref -> ref.getType() == EntityType.ITEM_TEST_PLAN);
 		}
 
 		if (! isValid){
-			throw new IllegalArgumentException("source is invalid : the reference(s) point neither to an iteration, nor a test suite, nor test plan items");
+			throw new IllegalArgumentException("testPlan is invalid : the reference(s) point neither to an iteration, nor a test suite, nor test plan items");
 		}
 	}
 
 	public EntityType getSourceType(){
 		validate();
-		return source.get(0).getType();
+		return testPlan.get(0).getType();
 	}
 
 	/**
@@ -113,7 +134,7 @@ public class AutomatedSuiteCreationSpecification {
 	 * @throws IllegalStateException
 	 */
 	public EntityReference getIterationReference(){
-		EntityReference reference = source.get(0);
+		EntityReference reference = testPlan.get(0);
 		if (reference.getType() != EntityType.ITERATION){
 			throw new IllegalStateException("entity reference expected to be an Iteration, but was pointing instead to "+reference.getType());
 		}
@@ -127,7 +148,7 @@ public class AutomatedSuiteCreationSpecification {
 	 * @throws IllegalStateException
 	 */
 	public EntityReference getTestSuiteReference(){
-		EntityReference reference = source.get(0);
+		EntityReference reference = testPlan.get(0);
 		if (reference.getType() != EntityType.TEST_SUITE){
 			throw new IllegalStateException("entity reference expected to be a TestSuite, but was pointing instead to "+reference.getType());
 		}
@@ -141,10 +162,11 @@ public class AutomatedSuiteCreationSpecification {
 	 * @throws IllegalStateException
 	 */
 	public List<EntityReference> getItemReferences(){
-		if (source.stream().anyMatch(ref -> ref.getType() != EntityType.ITEM_TEST_PLAN)){
+		if (testPlan.stream().anyMatch(ref -> ref.getType() != EntityType.ITEM_TEST_PLAN)){
 			throw new IllegalStateException("entity references expected to all be Items, but not all of them were");
 		}
-		return source;
+		return testPlan;
 	}
+
 
 }

@@ -37,10 +37,13 @@ public abstract class AutomatedSuiteCreationSpecificationMixin {
 
 	@JsonProperty
 	@JsonDeserialize(contentAs = EntityReference.class)
-	List<EntityReference> source;
+	List<EntityReference> testPlan;
 
 	@JsonProperty
 	@JsonDeserialize(contentAs = SuiteExecutionConfiguration.class)
 	Collection<SuiteExecutionConfiguration> executionConfigurations;
+
+	@JsonProperty
+	EntityReference context;
 
 }

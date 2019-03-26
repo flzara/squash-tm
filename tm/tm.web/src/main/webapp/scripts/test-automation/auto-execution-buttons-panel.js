@@ -41,42 +41,56 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
-		createSuite([]).done(startSuite);
+		sendPreview([]).done(openAutosuiteOverview);
 	}
 
+	
 	function executeSelection() {
 		var ids = $(".test-plan-table").squashTable().getSelectedIds();
 		if (ids.length === 0) {
 			$.squash.openMessage(messages.get("popup.title.error"), messages.get("message.EmptyTableSelection"));
 		} else {
-			createSuite(ids).done(startSuite);
+			sendPreview(ids).done(openAutosuiteOverview);
 		}
 	}
 
-	function startSuite(suite) {
-		squashtm.context.autosuiteOverview.start(suite);
+	
+	function openAutosuiteOverview(preview) {
+		squashtm.context.autosuiteOverview.start(preview);
 	}
 
 	/**
 	 * issues create suite ajax request and returns request promise
 	 */
-	function createSuite(itemIds) {
-		var createUrl = $("#auto-exec-btns-panel").data("suites-url") + "/new";
+	function sendPreview(itemIds) {
+		var previewUrl = $("#auto-exec-btns-panel").data("suites-url") + "/preview";
+		
+		var context = {
+			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
+			id : squashtm.page.identity.resid
+		} 		
 
-		var data = {};
-		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-		data[ent] = squashtm.page.identity.resid;
-
+		var testPlan = undefined;
+		// if an item list is specified -> make a test plan out of it
 		if (!!itemIds && itemIds.length > 0) {
-			data.testPlanItemsIds = itemIds;
+			testPlan = itemIds.map(function(id){ return { type : 'ITEM_TEST_PLAN' };});
 		}
+		// else the context is the test plan
+		else{
+			testPlan = [context];
+		}
+		
+		var payload = {
+			context : context,
+			testPlan : testPlan
+		};
 
 		return $.ajax({
 			type : "POST",
-			url : createUrl,
+			url : previewUrl,
 			dataType : "json",
-			data : data,
-			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+			data : JSON.stringify(payload),
+			contentType : "application/json"
 		});
 	}
 

@@ -53,7 +53,7 @@ public class AutomatedSuiteManagementController {
 	private AutomatedSuiteManagerService service;
 
 
-	@RequestMapping(value = "/preview", produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+	@RequestMapping(value = "/preview", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuitePreview generateSuitePreview(@RequestBody AutomatedSuiteCreationSpecification specification){
 		return service.preview(specification);
