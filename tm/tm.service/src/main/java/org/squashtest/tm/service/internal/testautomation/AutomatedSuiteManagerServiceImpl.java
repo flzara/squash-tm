@@ -156,31 +156,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	public AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification) {
 
+		// first, validate
 		specification.validate();
 
-		List<Couple<TestAutomationProject, Long>> projects = null;
-		switch(specification.getSourceType()){
-			case ITERATION:
-				EntityReference iterRef = specification.getIterationReference();
-				projects = autoProjectDao.findAllCalledByIterationId(iterRef.getId());
-				break;
-
-			case TEST_SUITE:
-				EntityReference suiteRef = specification.getTestSuiteReference();
-				projects = autoProjectDao.findAllCalledByTestSuiteId(suiteRef.getId());
-				break;
-
-			case ITEM_TEST_PLAN:
-				Collection<EntityReference> itemRefs = specification.getItemReferences();
-				Collection<Long> itemIds = itemRefs.stream().map(EntityReference::getId).collect(Collectors.toList());
-				projects = autoProjectDao.findAllCalledByItemIds(itemIds);
-				break;
-
-			default:
-				// the validation method called above should ensure this case never happen but to keep SONAR happy I have to.
-				throw new IllegalArgumentException("invalid source type : "+specification.getSourceType());
-
-		}
+		//fetch
+		List<Couple<TestAutomationProject, Long>> projects = autoProjectDao.findAllCalledByTestPlan(specification.getContext(), specification.getTestPlanSubsetIds());
 
 		// create the response
 		AutomatedSuitePreview preview = new AutomatedSuitePreview();
@@ -208,6 +188,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		return preview;
 
+	}
+
+	@Override
+	public AutomatedSuite createFromSpecification(AutomatedSuiteCreationSpecification specification) {
+		// TODO
+		return null;
 	}
 
 	/**

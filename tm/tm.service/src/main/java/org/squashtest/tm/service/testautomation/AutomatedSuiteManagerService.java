@@ -53,6 +53,14 @@ public interface AutomatedSuiteManagerService {
 	AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification);
 
 	/**
+	 * Creates an AutomatedTestSuite according to the content of the specification.
+	 *
+	 * @param specification
+	 * @return
+	 */
+	AutomatedSuite createFromSpecification(AutomatedSuiteCreationSpecification specification);
+
+	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
 	 * 

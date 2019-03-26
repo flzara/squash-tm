@@ -50,26 +50,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 	@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project.id in (:projectIds)"),
 	@NamedQuery(name = "testAutomationProject.delete", query = "delete TestAutomationProject p where p.id in (:projectIds)"),
 
-	@NamedQuery(name = "testAutomationProject.findAllCalledByIterationId",
-		query = "select new org.squashtest.tm.core.foundation.lang.Couple(tap, count(items)) " +
-				"from Iteration it inner join it.testPlans items inner join items.referencedTestCase tc " +
-			    "inner join tc.automatedTest autoTest inner join autoTest.project tap " +
-				"where it.id = :iterationId " +
-				"group by tap order by tap.label"),
-
-	@NamedQuery(name = "testAutomationProject.findAllCalledByTestSuiteId",
-		query = "select new org.squashtest.tm.core.foundation.lang.Couple(tap, count(items)) " +
-				"from TestSuite ts inner join ts.testPlan items inner join items.referencedTestCase tc " +
-				"inner join tc.automatedTest autoTest inner join autoTest.project tap " +
-				"where ts.id = :testSuiteId " +
-				"group by tap order by tap.label"),
-
-	@NamedQuery(name = "testAutomationProject.findAllCalledByItemIds",
-		query = "select new org.squashtest.tm.core.foundation.lang.Couple(tap, count(items)) " +
-				"from IterationTestPlanItem items inner join items.referencedTestCase tc " +
-				"inner join tc.automatedTest autoTest inner join autoTest.project tap "  +
-				"where items.id in (:itemIds) "+
-				"group by tap order by tap.label"),
 })
 @Entity
 public class TestAutomationProject implements Identified {

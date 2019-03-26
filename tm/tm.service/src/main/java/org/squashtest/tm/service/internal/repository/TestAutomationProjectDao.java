@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
@@ -78,6 +79,15 @@ public interface TestAutomationProjectDao {
 	 */
 	void deleteProjectsByIds(Collection<Long> projectIds);
 
+
+	/**
+	 * return all the ids of the projects that the given server hosts.
+	 *
+	 * @param serverId
+	 * @return
+	 */
+	List<Long> findHostedProjectIds(long serverId);
+
 	/**
 	 * <p>
 	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
@@ -96,43 +106,22 @@ public interface TestAutomationProjectDao {
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
 
+
 	/**
-	 * Given an iteration ID, returns all distinct instances of TestAutomationProject
-	 * that can run at least one of the tests planned in that iteration. Each project
-	 * in the result set is also paired with how many items it will run.
+	 * <p>
+	 * Returns the list of TestAutomationProject that would run the automated tests of a given test plan, paired with
+	 * the number of such tests. The test plan undef consideration is defined by a context (an entity that owns the test
+	 * plan), which we can further restrict to a given list of item ids (this is optional).
+	 * </p>
 	 *
-	 * @param iterationId
-	 * @return
+	 * @param context : a reference to a TestSuite or an Iteration. A reference to any other entity  will be considered as an error.
+	 * @param testPlanSubset : optional list of item ids if you need to restrict the test plan. If null or empty, the parameter is ignored.
+	 * @throws IllegalArgumentException : if the context is invalid.
+	 * @return what is described above.
 	 */
-	List<Couple<TestAutomationProject, Long>> findAllCalledByIterationId(long iterationId);
-
-	/**
-	 * Given a TestSuite ID, returns all distinct instances of TestAutomationProject
-	 * that can run at least one of the tests planned in that TestSuite. Each project
-	 * 	 * in the result set is also paired with how many items it will run.
-	 *
-	 * @param suiteId
-	 * @return
-	 */
-	List<Couple<TestAutomationProject, Long>> findAllCalledByTestSuiteId(long suiteId);
-
-	/**
-	 * Given list of item ids, returns all distinct instances of TestAutomationProject
-	 * that can run the tests planned by those items. Each project
-	 * 	 * in the result set is also paired with how many items it will run.
-	 *
-	 * @param itemIds
-	 * @return
-	 */
-	List<Couple<TestAutomationProject, Long>> findAllCalledByItemIds(Collection<Long> itemIds);
+	List<Couple<TestAutomationProject, Long>> findAllCalledByTestPlan(EntityReference context, Collection<Long> testPlanSubset);
 
 
-	/**
-	 * return all the ids of the projects that the given server hosts.
-	 * 
-	 * @param serverId
-	 * @return
-	 */
-	List<Long> findHostedProjectIds(long serverId);
+
 
 }
