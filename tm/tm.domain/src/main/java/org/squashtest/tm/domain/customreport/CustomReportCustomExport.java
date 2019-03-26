@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
@@ -28,6 +29,8 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Auditable
 @Entity
@@ -45,28 +48,26 @@ public class CustomReportCustomExport implements TreeEntity {
 	@Size(max = Sizes.NAME_MAX)
 	private String name;
 
+	@ElementCollection
+	@CollectionTable(name = "CUSTOM_EXPORT_SCOPE", joinColumns = @JoinColumn(name = "CUSTOM_EXPORT_ID") )
+	@AttributeOverrides({
+		@AttributeOverride(name = "type", column = @Column(name = "ENTITY_REFERENCE_TYPE") ),
+		@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") )
+	})
+	private List<EntityReference> scope = new ArrayList<>();
+
+	@ElementCollection
+	@CollectionTable(name = "CUSTOM_EXPORT_COLUMN", joinColumns = @JoinColumn(name = "CUSTOM_EXPORT_ID") )
+//	@OrderColumn(name = "")
+	private List<CustomReportCustomExportColumn> columns = new ArrayList<>();
+
 	@JoinColumn(name = "PROJECT_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Project project;
 
 	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
-	}
-
-	@Override
-	public Project getProject() {
-		return project;
-	}
-
-	@Override
-	public void setProject(Project project) {
-		this.project = project;
 	}
 
 	@Override
@@ -78,10 +79,38 @@ public class CustomReportCustomExport implements TreeEntity {
 	}
 
 	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public Project getProject() {
+		return project;
+	}
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<EntityReference> getScope() {
+		return scope;
+	}
+	public void setScope(List<EntityReference> scope) {
+		this.scope = scope;
+	}
+
+	public List<CustomReportCustomExportColumn> getColumns() {
+		return columns;
+	}
+	public void setColumns(List<CustomReportCustomExportColumn> columns) {
+		this.columns = columns;
 	}
 }

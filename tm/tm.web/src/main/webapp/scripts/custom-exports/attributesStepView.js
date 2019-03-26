@@ -45,12 +45,9 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 					$("#" + entity).prop('checked', true);
 					$("#" + entity + "-panel").removeClass("not-displayed");
 				});
-
 				// Attributes
-				_.mapObject(selectedAttributes, function(attrList, entity) {
-					_.each(attrList, function(attr) {
-						$('#' + entity + "-" + attr).prop('checked', true);
-					})
+				_.each(selectedAttributes, function(attr) {
+						$('#' + attr).prop('checked', true);
 				})
 			},
 
@@ -58,16 +55,10 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				// Store selected entities (only saved for the current wizard)
 				var selectedEntities = _.pluck($("[name='entity']:checked"), 'id');
 				// Store attributes
-				var selectedCheckboxesByEntity = _.groupBy($("input[type=checkbox][name!='entity']:checked"), function(checkbox) {
-					return $(checkbox).attr('id').split('-')[0];
-				});
-				var selectedAttributesByEntity = _.mapObject(selectedCheckboxesByEntity, function(entity) {
-					return _.map(entity, function(attribute) {
-						return $(attribute).attr('id').split('-')[1];
-					});
-				});
+				var selectedAttributes = _.pluck($("input[type=checkbox][name!='entity']:checked"), 'id');
+
 				this.model.set("selectedEntities", selectedEntities);
-				this.model.set("selectedAttributes", selectedAttributesByEntity);
+				this.model.set("selectedAttributes", selectedAttributes);
 			},
 
 			toggleEntityPanelVisibility: function(event) {

@@ -58,8 +58,8 @@
         <div id="{{entityKey}}-inputs">
           {{#each this.attributes as |attrValue attrKey|}}
           <div style="float: left; min-width:240px;">
-            <input id="{{entityKey}}-{{attrKey}}" name="{{entityKey}}-{{attrKey}}" type="checkbox" />
-            <label for="{{entityKey}}-{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
+            <input id="{{attrKey}}" name="{{attrKey}}" type="checkbox" />
+            <label for="{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
           </div>
           {{/each}}
         </div>

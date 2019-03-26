@@ -91,4 +91,24 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-91-custom-export-column" author="jlor">
+    <comment>Create new tables to store the scope and the columns of a custom export</comment>
+
+    <createTable tableName="CUSTOM_EXPORT_SCOPE">
+      <column name="CUSTOM_EXPORT_ID" type="BIGINT" remarks="Foreign key to the Custom Export">
+        <constraints nullable="false" foreignKeyName="fk_custom_export_scope_custom_export_id" references="CUSTOM_REPORT_CUSTOM_EXPORT (CRCE_ID)" />
+      </column>
+      <column name="ENTITY_REFERENCE_TYPE"  type="VARCHAR(50)" />
+      <column name="ENTITY_REFERENCE_ID" type="BIGINT" />
+    </createTable>
+
+    <createTable tableName="CUSTOM_EXPORT_COLUMN">
+      <column name="CUSTOM_EXPORT_ID" type="BIGINT" remarks="Foreign key to the Custom Export">
+        <constraints nullable="false" foreignKeyName="fk_custom_export_column_custom_export_id" references="CUSTOM_REPORT_CUSTOM_EXPORT (CRCE_ID)" />
+      </column>
+      <column name="LABEL" type="VARCHAR(255)"/>
+      <column name="CUF_ID" type="BIGINT" />
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

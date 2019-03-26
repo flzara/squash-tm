@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,37 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($, Backbone, _,stringUtil) {
-	"use strict";
+package org.squashtest.tm.domain.customreport;
 
-	return Backbone.Model.extend({
+import javax.persistence.Embeddable;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
-		initialize : function(data) {
+@Embeddable
+@Table(name = "CUSTOM_EXPORT_COLUMN")
+public class CustomReportCustomExportColumn {
 
-			var self = this;
-			var customExportDef = data.customExportDef;
+	private CustomExportColumnLabel label;
 
-			if (customExportDef) {
-				// Reload customExportDef into this model
-			} else {
-				// Else, initialize the model
-				this.set({ parentId: squashtm.customExport.parentId });
-			}
-		},
+	private Long cufId;
 
-		toJson: function(name) {
-			return JSON.stringify({
-				scope: _.map(this.get("scope"), function(entity) {
-					return { id: entity.id, type: entity.type };
-				}),
-				columns: _.map(this.get("selectedAttributes"), function(attr) {
-					return { label: attr };
-				}),
-				name: this.get("name") || name
+	public CustomExportColumnLabel getLabel() {
+		return label;
+	}
+	public void setLabel(CustomExportColumnLabel label) {
+		this.label = label;
+	}
 
-			});
-		}
-
-	});
-
-});
+	public Long getCufId() {
+		return cufId;
+	}
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
+}
