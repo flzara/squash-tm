@@ -70,19 +70,12 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 			id : squashtm.page.identity.resid
 		} 		
 
-		var testPlan = undefined;
-		// if an item list is specified -> make a test plan out of it
-		if (!!itemIds && itemIds.length > 0) {
-			testPlan = itemIds.map(function(id){ return { type : 'ITEM_TEST_PLAN' };});
-		}
-		// else the context is the test plan
-		else{
-			testPlan = [context];
-		}
+		// set the test plan subset if defined
+		var testPlanSubsetIds = (!!itemIds && itemIds.length > 0) ? itemIds : [];
 		
 		var payload = {
 			context : context,
-			testPlan : testPlan
+			testPlanSubsetIds : testPlanSubsetIds
 		};
 
 		return $.ajax({

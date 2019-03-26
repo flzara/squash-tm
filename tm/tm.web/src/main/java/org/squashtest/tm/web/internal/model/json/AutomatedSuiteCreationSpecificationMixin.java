@@ -35,15 +35,17 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public abstract class AutomatedSuiteCreationSpecificationMixin {
 
+
+	@JsonProperty
+	EntityReference context;
+
 	@JsonProperty
 	@JsonDeserialize(contentAs = EntityReference.class)
-	List<EntityReference> testPlan;
+	List<EntityReference> testPlanSubsetIds;
 
 	@JsonProperty
 	@JsonDeserialize(contentAs = SuiteExecutionConfiguration.class)
 	Collection<SuiteExecutionConfiguration> executionConfigurations;
 
-	@JsonProperty
-	EntityReference context;
 
 }
