@@ -25,6 +25,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 <s:url var="automatedSuitesUrl" value="/automated-suites" />
 
@@ -34,6 +35,8 @@
 <f:message var="okLabel" 	key='label.Ok' />
 <f:message var="cancelLabel" 	key='label.Cancel' />
 <div>
+
+
 <script id="exec-info-tpl" type="text/x-handlebars-template">
 {{#each execs}}
 	<tr id="execution-info-{{id}}" class="display-table-row {{oddity @index}}">
@@ -65,12 +68,12 @@
       </select>
     </div>
 
-	<div class="collapse sq-tl">
+	<div class="collapse sq-tl" data-loaded="false">
       <h5 class="tl-head">
         <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{testCount}} <f:message key="label.testCases.lower" />)
       </h5>
 
-		<div data-loaded="false" class="tl-body">
+		<div class="tl-body">
 			<!-- populated by ajax --> 
 			<div class="please-wait-message waiting-loading minimal-height"></div>
 		</div>
@@ -89,7 +92,17 @@
 <div id="execute-auto-dialog" class="popup-dialog not-displayed" title="${popupTitle}" 
 	data-def="url=${automatedSuitesUrl}, height=490">
 
-	<div data-def="state=main">
+	
+   <div data-def="state=preview">
+      <div id="node-selector-pnl">
+      </div>
+    </div>
+    
+    <div data-def="state=preparation">
+    	<comp:waiting-pane/>
+    </div>
+	
+	<div data-def="state=processing">
 		<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
       <table class="display-table dataTable" style="width:100%">
         <thead>
@@ -117,21 +130,25 @@
 		</div>
 	</div>
 	
-	<div data-def="state=warning">
+	<div data-def="state=quit">
 		<span><f:message key='message.CloseAutomatedSuiteOverview'/></span>
 	</div>
 
-    <div data-def="state=node-selector">
-      <div id="node-selector-pnl">
-      </div>
-    </div>
     
 	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${closeLabel}" data-def="evt=mainclose, state=main, mainbtn=main"/>
-		<input type="button" value="${confirmLabel}" data-def="evt=warningok, state=warning"/>
-		<input type="button" value="${cancelLabel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
-    <input type="button" value="<f:message key="label.Confirm" />" data-def="evt=submitNodes, state=node-selector"/>
-    <input type="button" value="<f:message key="label.Cancel" />" data-def="evt=discardNodes, state=node-selector"/>
+		<!--  preview buttons -->
+	    <input type="button" value="${confirmLabel}" data-def="evt=previewConfirm, state=preview"/>
+	    <input type="button" value="${cancelLabel}" data-def="evt=previewCancel, state=preview"/>
+	    
+	    <!--  preparation button -->
+	    <input type="button" value="${closeLabel}" data-def="evt=preparationClose, state=preparation, mainbtn=preparation"/>
+	    	    
+	    <!--  processing button -->
+		<input type="button" value="${closeLabel}" data-def="evt=processingClose, state=processing, mainbtn=processing"/>
+		
+		<!-- quit overview buttons -->
+		<input type="button" value="${confirmLabel}" data-def="evt=quitConfirm, state=quit"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=quitCancel, state=quit, mainbtn=quit"/>	
 	</div>
 </div>
 

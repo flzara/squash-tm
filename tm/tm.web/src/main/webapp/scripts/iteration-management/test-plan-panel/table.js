@@ -309,24 +309,26 @@ define(
 					var table = $("#iteration-test-plans-table").squashTable();
 					var data = table.fnGetData(row);
 
-					var tpiIds = [];
-					var tpiId = data['entity-id'];
-					tpiIds.push(tpiId);
+					
+					var specification = {
+						context: {
+							type : 'ITERATION',
+							id : squashtm.page.identity.resid
+						},
+						testPlanSubsetIds : [data['entity-id']]
+					};
+					
+					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
-					var url = window.squashtm.app.contextRoot + "automated-suites/new";
-
-					var formParams = {};
-					var ent = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-					formParams[ent] = window.squashtm.page.identity.resid;
-					formParams.testPlanItemsIds = tpiIds;
 
 					$.ajax({
 						url: url,
 						dataType: 'json',
+						contentType : 'application/json',
 						type: 'post',
-						data: formParams,
-						contentType: "application/x-www-form-urlencoded;charset=UTF-8"
-					}).done(function (suite) {
+						data: JSON.stringify(specification),
+					})
+					.done(function (suite) {
 						window.squashtm.context.autosuiteOverview.start(suite);
 					});
 					return false;
@@ -471,21 +473,25 @@ define(
 								jqnew.find('.new-auto-exec').squashButton()
 									.on('click', function () {
 										var tpiId = $(this).data('tpi-id');
+										
+										var specification = {
+											context : {
+												type : 'ITERATION',
+												id : window.squashtm.page.identity.resid
+											},
+											testPlanSubsetIds : [tpiId]
+										};
 
-										var formParams = {};
-										var idPrmName = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-										formParams[idPrmName] = window.squashtm.page.identity.resid;
-										formParams.testPlanItemsIds = [tpiId];
-
-
-										var url = window.squashtm.app.contextRoot + "automated-suites/new";
+										var url = window.squashtm.app.contextRoot + "automated-suites/preview";
+										
 										$.ajax({
 											url: url,
 											dataType: 'json',
 											type: 'post',
-											data: formParams,
-											contentType: "application/x-www-form-urlencoded;charset=UTF-8"
-										}).done(function (suite) {
+											data: JSON.stringify(specification),
+											contentType: "application/json"
+										})
+										.done(function (suite) {
 											window.squashtm.context.autosuiteOverview.start(suite);
 										});
 

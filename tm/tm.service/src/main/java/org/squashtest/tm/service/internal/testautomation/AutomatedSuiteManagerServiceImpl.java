@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -95,9 +96,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private AutomatedSuiteDao autoSuiteDao;
 
 	@Inject
-	private TestAutomationProjectDao autoProjectDao;
-
-	@Inject
 	private IterationDao iterationDao;
 
 	@Inject
@@ -154,13 +152,17 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	@Override
+	// security delegated to permission utils
 	public AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification) {
 
 		// first, validate
 		specification.validate();
 
+		// check permission
+		checkPermission(specification);
+
 		//fetch
-		List<Couple<TestAutomationProject, Long>> projects = autoProjectDao.findAllCalledByTestPlan(specification.getContext(), specification.getTestPlanSubsetIds());
+		List<Couple<TestAutomationProject, Long>> projects = autoSuiteDao.findAllCalledByTestPlan(specification.getContext(), specification.getTestPlanSubsetIds());
 
 		// create the response
 		AutomatedSuitePreview preview = new AutomatedSuitePreview();
@@ -191,9 +193,62 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	@Override
+	// security delegated to permission utils
+	public List<String> findTestListPreview(AutomatedSuiteCreationSpecification specification, long automatedProjectId) {
+		specification.validate();
+		checkPermission(specification);
+		return autoSuiteDao.findTestPathForAutomatedSuiteAndProject(specification.getContext(), specification.getTestPlanSubsetIds(), automatedProjectId);
+	}
+
+	@Override
+	// security delegated to permission utils
 	public AutomatedSuite createFromSpecification(AutomatedSuiteCreationSpecification specification) {
-		// TODO
-		return null;
+		specification.validate();
+		checkPermission(specification);
+
+		// TODO : something better
+		// for now we plug on the existing methods
+		AutomatedSuite suite = null;
+
+		Long contextId = specification.getContext().getId();
+		List<Long> subset = specification.getTestPlanSubsetIds();
+		boolean hasTestPlanSubset = (subset != null && !subset.isEmpty());
+
+		if (specification.getContext().getType() == EntityType.ITERATION){
+			if (hasTestPlanSubset){
+				suite = createFromItemsAndIteration(subset, contextId);
+			}
+			else{
+				suite = createFromIterationTestPlan(contextId);
+			}
+		}
+		else{
+			if (hasTestPlanSubset){
+				suite = createFromItemsAndTestSuite(subset, contextId);
+			}
+			else{
+				suite = createFromTestSuiteTestPlan(contextId);
+			}
+		}
+
+		return suite;
+
+	}
+
+	@Override
+	public AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification) {
+		AutomatedSuite suite = createFromSpecification(specification);
+		start(suite, specification.getExecutionConfigurations());
+		return suite;
+	}
+
+	// assumes that the specification was validated first
+	private void checkPermission(AutomatedSuiteCreationSpecification specification){
+		List<Long> singleId = new ArrayList<>();
+		singleId.add(specification.getContext().getId());
+
+		Class<?> clazz = (specification.getContext().getType() == EntityType.ITERATION) ? Iteration.class : TestSuite.class;
+		PermissionsUtils.checkPermission(permissionService, singleId, EXECUTE, clazz.getName());
 	}
 
 	/**
@@ -220,6 +275,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		return createFromItems(items);
 	}
 
+
+
+
 	/**
 	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(java.lang.String)
@@ -230,6 +288,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		AutomatedSuite suite = findById(autoSuiteId);
 		return sortByProject(suite);
 	}
+
 
 	/**
 	 *
