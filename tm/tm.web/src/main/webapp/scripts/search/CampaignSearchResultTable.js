@@ -83,30 +83,34 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			});
 		},
 
+		
 		automatedHandler : function() {
 
 			var row =$("#campaign-search-result-table").squashTable().fnGetData($(this).parent().parent());
 
-
-
-			var	tpid = row['tpid'];
+			var	tpid = row['itpi-id'];
 			var itId = row['iteration-id'];
-
-			var url = squashtm.app.contextRoot + "automated-suites/new";
-
-
+			
+			var payload = {
+				context : {
+					type: 'ITERATION',
+					id : itId
+				},
+				testPlanSubsetIds : [tpid]
+			};
+			
+			var url = squashtm.app.contextRoot + "automated-suites/preview";
 
 			$.ajax({
 				url : url,
-				dataType:'json',
+				dataType :'json',
+				contentType : 'application/json', 
 				type : 'post',
-				data : {	testPlanItemsIds :[tpid],
-					iterationId : itId}
-			}).done(function(suite) {
-
+				data : JSON.stringify(payload)
+			})
+			.done(function(suite) {
 				squashtm.context.autosuiteOverview.start(suite);
 			});
-
 
 		},
 

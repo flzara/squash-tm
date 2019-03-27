@@ -64,11 +64,88 @@ public class AutomatedSuiteManagementController {
 	private AutomatedSuiteManagerService service;
 
 
+	// ****************** the new, quicker suite initialization services **************************
+
 	@RequestMapping(value = "/preview", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuitePreview generateSuitePreview(@RequestBody AutomatedSuiteCreationSpecification specification){
 		return service.preview(specification);
 	}
+
+	@RequestMapping(value = "/preview/test-list", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON, params = "auto-project-id")
+	@ResponseBody
+	public List<String> findTestListPreview(@RequestBody AutomatedSuiteCreationSpecification specification, @RequestParam("auto-project-id") Long automatedProjectId){
+		return service.findTestListPreview(specification, automatedProjectId);
+	}
+
+
+	@RequestMapping(value = "/create-and-execute", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+	@ResponseBody
+	public AutomatedSuiteOverview createAndExecute(@RequestBody AutomatedSuiteCreationSpecification specification, Locale locale){
+		AutomatedSuite suite = service.createAndExecute(specification);
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+	}
+
+	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+	@ResponseBody
+	public AutomatedSuiteDetails createFromSpecification(@RequestBody AutomatedSuiteCreationSpecification specification){
+		AutomatedSuite suite = service.createFromSpecification(specification);
+		return toProjectContentModel(suite);
+	}
+
+	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces = APPLICATION_JSON)
+	@ResponseBody
+	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable String suiteId,
+													@RequestBody Collection<Map<String, ?>> rawConf,
+													Locale locale) {
+
+		/*
+		 * ROUGH CODE ALERT
+		 *
+		 * As you noticed the type of 'rawConf' in the signature is 'Collection<Map>'
+		 * instead of 'Collection<SuiteExecutionConfiguration>'.
+		 *
+		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
+		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
+		 */
+		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<>(
+			rawConf.size());
+		for (Map<String, ?> rawC : rawConf) {
+			long projectId = ((Integer) rawC.get(RequestParams.PROJECT_ID)).longValue();
+			String node = (String) rawC.get("node");
+			configuration.add(new SuiteExecutionConfiguration(projectId, node));
+		}
+
+		// now let's start the thing
+		service.start(suiteId, configuration);
+		return updateExecutionInfo(suiteId, locale);
+	}
+
+	// *************** other suite management and execution overview services ************
+
+	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	@ResponseBody
+	public AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
+		AutomatedSuite suite = service.findById(suiteId);
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+	}
+
+	@RequestMapping(value = "/{suiteId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteAutomatedSuite(@PathVariable("suiteId") String suiteId) {
+		service.delete(suiteId);
+	}
+
+	@RequestMapping(value = "/{suiteId}/details", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public AutomatedSuiteDetails getSuiteDetails(@PathVariable("suiteId") String suiteId) {
+		AutomatedSuite suite = service.findById(suiteId);
+		return toProjectContentModel(suite);
+	}
+
+
+
+
+	// ******************* the older suite initialization services *************************
 
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {ITERATION_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
@@ -108,52 +185,8 @@ public class AutomatedSuiteManagementController {
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces = APPLICATION_JSON)
-	@ResponseBody
-	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable String suiteId,
-													@RequestBody Collection<Map<String, ?>> rawConf,
-													Locale locale) {
 
-		/*
-		 * ROUGH CODE ALERT
-		 *
-		 * As you noticed the type of 'rawConf' in the signature is 'Collection<Map>'
-		 * instead of 'Collection<SuiteExecutionConfiguration>'.
-		 *
-		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
-		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
-		 */
-		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<>(
-			rawConf.size());
-		for (Map<String, ?> rawC : rawConf) {
-			long projectId = ((Integer) rawC.get(RequestParams.PROJECT_ID)).longValue();
-			String node = (String) rawC.get("node");
-			configuration.add(new SuiteExecutionConfiguration(projectId, node));
-		}
-
-		// now let's start the thing
-		service.start(suiteId, configuration);
-		return updateExecutionInfo(suiteId, locale);
-	}
-
-	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	@ResponseBody
-	public AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
-		AutomatedSuite suite = service.findById(suiteId);
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-	}
-
-	@RequestMapping(value = "/{suiteId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public void deleteAutomatedSuite(@PathVariable("suiteId") String suiteId) {
-		service.delete(suiteId);
-	}
-
-	@RequestMapping(value = "/{suiteId}/details", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public AutomatedSuiteDetails getSuiteDetails(@PathVariable("suiteId") String suiteId) {
-		AutomatedSuite suite = service.findById(suiteId);
-		return toProjectContentModel(suite);
-	}
+	// ******************** other private code ***************************
 
 	private AutomatedSuiteDetails toProjectContentModel(AutomatedSuite suite) {
 		Collection<TestAutomationProjectContent> projectContents = service.sortByProject(suite);

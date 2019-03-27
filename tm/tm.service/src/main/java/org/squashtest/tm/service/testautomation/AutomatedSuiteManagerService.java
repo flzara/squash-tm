@@ -36,7 +36,7 @@ import java.util.List;
 public interface AutomatedSuiteManagerService {
 
 	/**
-	 * Finds a suite given its id
+	 * Finds a suite given its id.
 	 * 
 	 * @param id
 	 * @return
@@ -52,13 +52,34 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuitePreview preview(AutomatedSuiteCreationSpecification specification);
 
+
 	/**
-	 * Creates an AutomatedTestSuite according to the content of the specification.
+	 * Returns the list of the test paths that would be run by a given automated suite specification, and for a
+	 * given test automation project.
 	 *
 	 * @param specification
 	 * @return
 	 */
+	List<String> findTestListPreview(AutomatedSuiteCreationSpecification specification, long automatedProjectId);
+
+	/**
+	 * Creates an AutomatedTestSuite according to the content of the specification.
+	 *
+	 * @param specification
+	 * @return the created automated suite.
+	 */
 	AutomatedSuite createFromSpecification(AutomatedSuiteCreationSpecification specification);
+
+
+	/**
+	 * Creates then run the suite. The specification contains both creation instruction
+	 * and the execution instruction (the execution configuration).
+	 *
+	 * @param specification
+	 * @return the created automated suite
+	 */
+	AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification);
+
 
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the

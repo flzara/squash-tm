@@ -107,21 +107,6 @@ public interface TestAutomationProjectDao {
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
 
 
-	/**
-	 * <p>
-	 * Returns the list of TestAutomationProject that would run the automated tests of a given test plan, paired with
-	 * the number of such tests. The test plan undef consideration is defined by a context (an entity that owns the test
-	 * plan), which we can further restrict to a given list of item ids (this is optional).
-	 * </p>
-	 *
-	 * @param context : a reference to a TestSuite or an Iteration. A reference to any other entity  will be considered as an error.
-	 * @param testPlanSubset : optional list of item ids if you need to restrict the test plan. If null or empty, the parameter is ignored.
-	 * @throws IllegalArgumentException : if the context is invalid.
-	 * @return what is described above.
-	 */
-	List<Couple<TestAutomationProject, Long>> findAllCalledByTestPlan(EntityReference context, Collection<Long> testPlanSubset);
-
-
 
 
 }

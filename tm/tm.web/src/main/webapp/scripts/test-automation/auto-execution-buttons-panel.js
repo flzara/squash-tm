@@ -68,7 +68,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		var context = {
 			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
 			id : squashtm.page.identity.resid
-		} 		
+		}; 		
 
 		// set the test plan subset if defined
 		var testPlanSubsetIds = (!!itemIds && itemIds.length > 0) ? itemIds : [];

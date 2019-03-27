@@ -260,38 +260,37 @@
 </script>
 
 <script id="node-selector-pnl-tpl" type="text/x-handlebars-template">
-{{#each project}}
+{{#each projects}}
 <p>
-  <fieldset data-proj-id="{{id}}">
-    <legend>
-      <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{label}}</strong>&nbsp;
-      <f:message key="message.fromMasterNode" />&nbsp;<em>{{server}}</em>
+  <fieldset data-proj-id="{{projectId}}">
+    <legend>[[#{message.automatedTests.ofProject}]] <strong>{{label}}</strong> [[#{message.fromMasterNode}]] <em>{{server}}</em>
     </legend>
 
     <div>
-      <label for="nodes-list-{{id}}"><f:message key="message.automatedTests.executedOn" /></label>
-      <select id="nodes-list-{{id}}">
-        <option selected="selected" value=""><f:message key="label.irrelevant" /></option>
-        <option value="master">{{project.server}}</option>
-        {{#each project.nodes}}
+      <label for="nodes-list-{{projectId}}" th:text="#{message.automatedTests.executedOn}"></label>
+      <select id="nodes-list-{{projectId}}">
+        <option selected="selected" value="" th:text="label.irrelevant"></option>
+        <option value="master">{{server}}</option>
+        {{#each nodes}}
         <option value="{{this}}">{{this}}</option>
         {{/each}}
       </select>
     </div>
 
-	<div class="collapse sq-tl">
+	<div class="collapse sq-tl" data-loaded="false">
       <h5 class="tl-head">
-        <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{testCount}} <f:message key="label.testCases.lower" />)
+        <span class="tl-state-icon"></span>
+		[[#{message.automatedTestsList}]] ({{testCount}} [[#{label.testCases.lower}]]) 
       </h5>
 
-		<div data-loaded="false" class="tl-body">
+		<div class="tl-body">
 			<!-- populated by ajax --> 
 			<div class="please-wait-message waiting-loading minimal-height"></div>
 		</div>
       
     </div>
     {{#unless orderGuaranteed}}
-      <p class="error-message" ><label class="error-message"><f:message key="label.warning"/></label><f:message key="message.orderNonGuaranteed"/></p>
+      <p class="error-message" ><label class="error-message">[[#{label.warning}]]</label>[[#{message.orderNonGuaranteed}]]</p>
     {{/unless}}
 
   </fieldset>
@@ -301,10 +300,20 @@
 
 
 	<!-- *************************POPUP*********************** -->
-	<div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}" th:with="suiteUrl=@{/automated-suites}"
-	 th:attr="data-def='url=' + ${suiteUrl}+ ', height=490'">
-
-		<div data-def="state=main">
+	<div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}" 
+		th:attr="data-def='url=' + @{/automated-suites}+ ', height=490'">
+	
+		
+	   <div data-def="state=preview">
+	      <div id="node-selector-pnl">
+	      </div>
+	    </div>
+	    
+	    <div data-def="state=preparation">
+	    	<div th:replace="fragments-utils/static-panels :: large-please-wait"/>
+	    </div>
+		
+		<div data-def="state=processing">
 			<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
 				<table class="display-table dataTable" style="width:100%">
 					<thead>
@@ -331,24 +340,29 @@
 
 			</div>
 		</div>
-
-		<div data-def="state=warning">
-			<span th:text="#{message.CloseAutomatedSuiteOverview}"></span>
+		
+		<div data-def="state=quit">
+			<span th:utext="#{message.CloseAutomatedSuiteOverview}"></span>
 		</div>
-
-		<div data-def="state=node-selector">
-			<div id="node-selector-pnl">
-			</div>
-		</div>
-
+	
+	    
 		<div class="popup-dialog-buttonpane">
-			<input type="button" th:value="#{label.Close}" data-def="evt=mainclose, state=main, mainbtn=main" />
-			<input type="button" th:value="#{label.Confirm}" data-def="evt=warningok, state=warning" />
-			<input type="button" th:value="#{label.Cancel}" data-def="evt=warningcancel, state=warning, mainbtn=warning" />
-			<input type="button" th:value="#{label.Confirm}" data-def="evt=submitNodes, state=node-selector" />
-			<input type="button" th:value="#{label.Cancel}" data-def="evt=discardNodes, state=node-selector" />
+			<!--  preview buttons -->
+		    <input type="button" th:value="#{label.Confirm}" data-def="evt=previewConfirm, state=preview"/>
+		    <input type="button" th:value="#{label.Cancel}" data-def="evt=previewCancel, state=preview"/>
+		    
+		    <!--  preparation button -->
+		    <input type="button" th:value="#{label.Close}" data-def="evt=preparationClose, state=preparation, mainbtn=preparation"/>
+		    	    
+		    <!--  processing button -->
+			<input type="button" th:value="#{label.Close}" data-def="evt=processingClose, state=processing, mainbtn=processing"/>
+			
+			<!-- quit overview buttons -->
+			<input type="button" th:value="#{label.Confirm}" data-def="evt=quitConfirm, state=quit"/>
+			<input type="button" th:value="#{label.Cancel}" data-def="evt=quitCancel, state=quit, mainbtn=quit"/>	
 		</div>
 	</div>
+	
 
 
 </body>

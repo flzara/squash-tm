@@ -20,10 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 
 import javax.persistence.EntityManager;
@@ -34,8 +41,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.squashtest.tm.domain.campaign.QIteration.iteration;
+import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem;
+import static org.squashtest.tm.domain.campaign.QTestSuite.testSuite;
 import static org.squashtest.tm.domain.execution.ExecutionStatus.READY;
 import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
+import static org.squashtest.tm.domain.testautomation.QAutomatedTest.automatedTest;
+import static org.squashtest.tm.domain.testautomation.QTestAutomationProject.testAutomationProject;
+import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
 
 @Repository
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
@@ -126,10 +139,97 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return query.getResultList();
 	}
 
+	// TODO : either make it private (core Squash at least doesn't call it anywhere but here), either declare it in the interface
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId,
 			ExecutionStatus... statusArray) {
 		Collection<ExecutionStatus> statusList = Arrays.asList(statusArray);
 		return findAllExtendersByStatus(suiteId, statusList);
+
+	}
+
+
+
+
+	@Override
+	public List<Couple<TestAutomationProject, Long>> findAllCalledByTestPlan(EntityReference context, Collection<Long> testPlanSubset) {
+
+		// init the query
+		JPAQuery<Couple<TestAutomationProject, Long>> query = createBaseTestplanQueryFromSpec(context, testPlanSubset);
+
+		// now set the select clause
+		query = query.select(Projections.constructor(Couple.class, testAutomationProject, iterationTestPlanItem.count().as("itemCount")));
+
+		// and the group by, order etc
+		query = query.groupBy(testAutomationProject)
+					.orderBy(testAutomationProject.label.asc());
+
+		// return
+		return query.fetch();
+
+	}
+
+	@Override
+	public List<String> findTestPathForAutomatedSuiteAndProject(EntityReference context, Collection<Long> testPlanSubset, long automationProjectId) {
+		// init the query
+		JPAQuery<String> query = createBaseTestplanQueryFromSpec(context, testPlanSubset);
+
+		// select clause
+		query = query.select(testAutomationProject.label.concat("/").concat(automatedTest.name).as("path"));
+
+		// another where clause
+		query = query.where(testAutomationProject.id.eq(automationProjectId));
+
+		// order by
+		query.orderBy(automatedTest.name.asc());
+
+		return query.fetch();
+
+	}
+
+
+	/*
+		Private function used by findAllCalledByTestPlan and findTestPathForAutomatedSuiteAndProject.
+		This function will create a headless base query that will care neither of the select clause nor group by etc.
+		The caller will do whatever it needs with the result.
+	 */
+	private <T> JPAQuery<T> createBaseTestplanQueryFromSpec(EntityReference context, Collection<Long> testPlanSubset){
+		// context must be not null and reference either an iteration or a test suite.
+		if (context == null || ! (context.getType() != EntityType.ITERATION || context.getType() != EntityType.TEST_SUITE)){
+			throw new IllegalArgumentException("invalid context : expected a reference to an Iteration or a TestSuite, but got "+context);
+		}
+
+		EntityType type = context.getType();
+		Long id = context.getId();
+
+		// init the querydsl context
+		JPAQueryFactory factory = new JPAQueryFactory(em);
+		JPAQuery<T> query = null;
+
+		// initialize the initial selected entity
+		if (type == EntityType.ITERATION){
+			query = (JPAQuery<T>) factory.from(iteration)
+									  .innerJoin(iteration.testPlans, iterationTestPlanItem)
+									  .where(iteration.id.eq(id));
+		}
+		else{
+			query = (JPAQuery<T>) factory.from(testSuite)
+									  .innerJoin(testSuite.testPlan, iterationTestPlanItem)
+									  .where(testSuite.id.eq(id));
+		}
+
+		// if a test plan subset is defined, apply it
+		// note : this is the second time we invoke where(...), hopefully it is treated as a AND condition regarding
+		// the first clause, and that is what we need. Otherwise we would need to build the where clause apart.
+		if (testPlanSubset != null && ! testPlanSubset.isEmpty()){
+			query = query.where(iterationTestPlanItem.id.in(testPlanSubset));
+		}
+
+		// the rest of the query
+		query = query.innerJoin(iterationTestPlanItem.referencedTestCase, testCase)
+					.innerJoin(testCase.automatedTest, automatedTest)
+					.innerJoin(automatedTest.project, testAutomationProject);
+
+		return query;
 
 	}
 

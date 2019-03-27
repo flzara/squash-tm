@@ -36,6 +36,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.jpql.ExtendedJPQLQuery;
 import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -172,61 +173,6 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 
 
-
-	@Override
-	public List<Couple<TestAutomationProject, Long>> findAllCalledByTestPlan(EntityReference context, Collection<Long> testPlanSubset) {
-
-		// context must be not null and reference either an iteration or a test suite.
-		if (context == null || ! (context.getType() != EntityType.ITERATION || context.getType() != EntityType.TEST_SUITE)){
-			throw new IllegalArgumentException("invalid context : expected a reference to an Iteration or a TestSuite, but got "+context);
-		}
-
-		EntityType type = context.getType();
-		Long id = context.getId();
-
-		// init the querydsl context
-		JPAQueryFactory factory = new JPAQueryFactory(em);
-		JPAQuery<Couple<TestAutomationProject, Long>> query = null;
-
-		// a few aliases
-		QIterationTestPlanItem item = iterationTestPlanItem;
-		QAutomatedTest autoTest = automatedTest;
-		QTestAutomationProject autoProject = testAutomationProject;
-
-		// initialize the select clause
-		query = factory.select(Projections.constructor(Couple.class, autoProject, item.count().as("itemCount")));
-
-		// initialize the initial selected entity
-		if (type == EntityType.ITERATION){
-			query = query.from(iteration)
-						.innerJoin(iteration.testPlans, item)
-						.where(iteration.id.eq(id));
-		}
-		else{
-			query = query.from(testSuite)
-						.innerJoin(testSuite.testPlan, item)
-						.where(testSuite.id.eq(id));
-		}
-
-		// if a test plan subset is defined, apply it
-		// note : this is the second time we invoke where(...), hopefully it is treated as a AND condition regarding
-		// the first clause, and that is what we need. Otherwise we would need to build the where clause apart.
-		if (testPlanSubset != null && ! testPlanSubset.isEmpty()){
-			query = query.where(item.id.in(testPlanSubset));
-		}
-
-		// the rest of the query
-		query = query.innerJoin(item.referencedTestCase, testCase)
-					.innerJoin(testCase.automatedTest, autoTest)
-					.innerJoin(autoTest.project, autoProject)
-					.groupBy(autoProject)
-					.orderBy(autoProject.label.asc());
-
-		// return
-		return query.fetch();
-
-
-	}
 
 	// ************************ private stuffs **********************************
 

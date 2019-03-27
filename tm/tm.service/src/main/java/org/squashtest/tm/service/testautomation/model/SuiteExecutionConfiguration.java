@@ -25,6 +25,9 @@ public class SuiteExecutionConfiguration {
 	private Long projectId;
 	private String node;
 
+	public SuiteExecutionConfiguration() {
+		super();
+	}
 
 	public SuiteExecutionConfiguration(Long projectId, String node) {
 		super();
@@ -40,6 +43,11 @@ public class SuiteExecutionConfiguration {
 		return node;
 	}
 
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
 
-
+	public void setNode(String node) {
+		this.node = node;
+	}
 }
