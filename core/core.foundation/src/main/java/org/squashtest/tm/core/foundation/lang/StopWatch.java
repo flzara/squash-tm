@@ -34,7 +34,7 @@ import java.util.Optional;
  *     <li>suspend("task"): suspends the stopwatch of task "task"</li>
  *     <li>same for resume and stop</li>
  * </ul>
- *
+ *	Note that when you resume a task that hadn't started, it will start it (instead of crashing)
  *</p>
  *
  * <p>
@@ -70,7 +70,12 @@ public class StopWatch {
 	}
 
 	public void resume(String taskName){
-		watchmap.get(taskName).resume();
+		org.apache.commons.lang3.time.StopWatch sw = watchmap.get(taskName);
+		if (sw.isSuspended()){
+			sw.resume();
+		} else {
+			sw.start();
+		}
 	}
 
 	public void stop(String taskName){

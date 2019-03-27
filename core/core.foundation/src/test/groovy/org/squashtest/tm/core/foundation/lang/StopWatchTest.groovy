@@ -94,6 +94,25 @@ ms     %     Task name
 		sw.watchmap["task1"].time > 270
 	}
 
+	def "resume a task that hasn't started should start it instead of crashing"(){
+
+		given :
+		def sw = new StopWatch("Test")
+
+		when :
+		sw.addTask("task1")
+
+		sw.resume("task1")
+		Thread.sleep(100)
+		sw.stop("task1")
+
+		then:
+
+		notThrown Throwable
+		sw.watchmap["task1"].time > 0
+
+	}
+
 
 	private mockWatch(time){
 		Mock(org.apache.commons.lang3.time.StopWatch){
