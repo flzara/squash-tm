@@ -82,7 +82,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
 	private final List<Iteration> iterations = new ArrayList<>();
 
-	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinColumn(name = "CAMPAIGN_ID")
 	private final List<CampaignTestPlanItem> testPlan = new ArrayList<>();
