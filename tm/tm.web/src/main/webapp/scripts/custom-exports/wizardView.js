@@ -77,7 +77,7 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 					CAMPAIGN_DESCRIPTION: 'label.Description',
 					CAMPAIGN_STATE: 'label.State',
 					CAMPAIGN_PROGRESS_STATUS: 'campaign.progress_status.label',
-					CAMPAIGN_MILESTONE: 'label.Milestone',
+					CAMPAIGN_MILESTONE: 'campaign.progress_status.label',
 					CAMPAIGN_SCHEDULED_START: 'chart.column.CAMPAIGN_SCHED_START',
 					CAMPAIGN_SCHEDULED_END: 'chart.column.CAMPAIGN_SCHED_END',
 					CAMPAIGN_ACTUAL_START: 'chart.column.CAMPAIGN_ACTUAL_START',

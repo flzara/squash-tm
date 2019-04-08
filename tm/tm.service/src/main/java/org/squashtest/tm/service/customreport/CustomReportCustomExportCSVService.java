@@ -18,35 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customreport;
+package org.squashtest.tm.service.customreport;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 
-@Embeddable
-@Table(name = "CUSTOM_EXPORT_COLUMN")
-public class CustomReportCustomExportColumn {
+public interface CustomReportCustomExportCSVService {
 
-	@Enumerated(EnumType.STRING)
-	private CustomExportColumnLabel label;
+	String getRowsData(CustomReportCustomExport customExport);
 
-	private Long cufId;
-
-	public CustomExportColumnLabel getLabel() {
-		return label;
-	}
-	public void setLabel(CustomExportColumnLabel label) {
-		this.label = label;
-	}
-
-	public Long getCufId() {
-		return cufId;
-	}
-	public void setCufId(Long cufId) {
-		this.cufId = cufId;
-	}
 }

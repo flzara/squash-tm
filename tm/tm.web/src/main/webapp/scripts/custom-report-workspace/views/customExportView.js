@@ -41,7 +41,8 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 			},
 
 			events: {
-				'click #rename-custom-export-button': 'rename'
+				'click #rename-custom-export-button': 'rename',
+				'click #generate-custom-export-button': 'generate'
 			},
 
 			render: function () {
@@ -97,6 +98,10 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 			rename: function () {
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("renameNode");
+			},
+
+			generate: function() {
+				document.location.href = urlBuilder.buildURL('custom-report.custom-export.generate', this.model.get('id'));
 			}
 
 		});

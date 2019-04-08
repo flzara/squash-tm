@@ -18,17 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.table;
+package org.squashtest.tm.web.internal.controller.customexport;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 @Controller
@@ -36,7 +45,11 @@ import java.util.Locale;
 public class CustomExportController {
 
 	@Inject
+	InternationalizationHelper i18nHelper;
+	@Inject
 	private CustomReportLibraryNodeService reportLibraryNodeService;
+	@Inject
+	private CustomReportCustomExportCSVService csvExportService;
 
 	@RequestMapping("/wizard/{parentId}")
 	public ModelAndView getWizard(@PathVariable Long parentId, Locale locale) {
@@ -50,5 +63,46 @@ public class CustomExportController {
 	public String createNewCustomExport(@RequestBody CustomReportCustomExport customExport, @PathVariable("parentNodeId") long parentNodeId) {
 		CustomReportLibraryNode newNode = reportLibraryNodeService.createNewNode(parentNodeId, customExport);
 		return String.valueOf(newNode.getId());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/generate/{customExportId}", method = RequestMethod.GET)
+	public FileSystemResource generateCustomExport(@PathVariable long customExportId, HttpServletResponse response, Locale locale) {
+		CustomReportCustomExport customExport = reportLibraryNodeService.findCustomExportByNodeId(customExportId);
+
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+		response.setHeader(
+			"Content-Disposition",
+			"attachment; filename=" + "EXPORT_" + customExport.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
+
+		File exported = createCustomExportFile(customExport, locale);
+		return new FileSystemResource(exported);
+	}
+
+	private File createCustomExportFile(CustomReportCustomExport customExport, Locale locale) {
+		File file;
+		PrintWriter writer = null;
+		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService, i18nHelper, locale);
+
+		try {
+			file = File.createTempFile("custom-export", "tmp");
+			file.deleteOnExit();
+			writer = new PrintWriter(file);
+			// print headers
+			writer.write(csvHelper.getInternationalizedHeaders(customExport));
+			// print the data
+			writer.write(csvHelper.getRowsData(customExport));
+			writer.close();
+			return file;
+		} catch (IOException ioEx) {
+			throw new RuntimeException(ioEx);
+		} finally {
+			if(writer != null) {
+				writer.close();
+			}
+		}
 	}
 }

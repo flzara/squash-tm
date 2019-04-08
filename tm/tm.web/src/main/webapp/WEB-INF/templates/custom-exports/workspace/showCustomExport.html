@@ -48,6 +48,10 @@
     {{#if (contains acls.perms 'WRITE')}}
     <div class="toolbar-button-panel">
       <input type="button"
+             th:attr="value=#{report.criteria.panel.button.generate.label},
+             title=#{report.criteria.panel.button.generate.label}"
+             id="generate-custom-export-button" class="sq-btn" />
+      <input type="button"
              th:attr="value=#{label.Rename},title=#{label.Rename}"
              id="rename-custom-export-button" class="sq-btn" />
     </div>
