@@ -77,18 +77,6 @@
 
 </div>
 
-<div id="change-list-popup-after" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index-after" th:text="#{dialog.info-list.warning.reindex.after}"></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-    <input th:if="${sec.hasRole('ROLE_ADMIN')}" type="button" th:value="#{label.GotoIndex}" data-def="evt=confirm" />
-    <input type="button" th:value="#{label.Close}" data-def="mainbtn, evt=cancel"/>
-  </div>
-
-</div>
-
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/
 

@@ -779,17 +779,6 @@ require(["common"], function() {
     });
   }
 
-  var changeWorkflowDialogAfter = $("#change-workflow-popup-after");
-  changeWorkflowDialogAfter.formDialog();
-
-  changeWorkflowDialogAfter.on("formdialogconfirm", function() {
-    document.location.href=  squashtm.app.contextRoot + "administration/indexes";
-  });
-
-  changeWorkflowDialogAfter.on("formdialogcancel", function() {
-    changeWorkflowDialogAfter.formDialog("close");
-  });
-
   var automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
   automationWorkflowPopup.on("formdialogconfirm", function() {
     changeAllowAutomationWorkflow($("#toggle-WORKFLOW-checkbox").prop('checked'));

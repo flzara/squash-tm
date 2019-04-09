@@ -267,19 +267,6 @@
 
 </div>
 
-<div id="change-workflow-popup-after" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index-after"><f:message key="dialog.info-list.warning.reindex.after"/></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-  <c:if test="${isAdmin}">
-    <input type="button" value="${goToIndexLabel}" data-def="evt=confirm" />
-    </c:if>
-    <input type="button"  value="${closeLabel}" data-def="mainbtn, evt=cancel"/>
-  </div>
-
-</div>
 <%-- ================================================
 	Add Project Popup.
 ================================================= --%>

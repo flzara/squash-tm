@@ -35,7 +35,6 @@
 <c:url var="customFieldsUrl"          value="/administration/custom-fields" />
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
 <c:url var="scmServerUrl"             value="/administration/scm-servers" />
-<c:url var="indexUrl"                 value="/administration/indexes" />
 <c:url var="milestoneUrl"             value="/administration/milestones" />
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
@@ -109,11 +108,6 @@
           <span class="admin-section-label"><f:message key="label.scmServersManagement"/></span>
         </a>
 
-        <a href="${ indexUrl }" class="unstyledLink">
-          <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
-          <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
-        </a>
-
         <a id="fake-link" class="unstyledLink"></a>
 
         </sec:authorize>
@@ -160,23 +154,6 @@
               </div>
             </div>
           </c:if>
-        </div>
-        <div class="admin-stats-table">
-          <label><f:message key="label.lastIndexing" /></label>
-          <div>
-            <div>
-              <label><f:message key="label.requirements" /></label>
-              <span id="req-last-index">
-                <comp:date value="${ adminStats.requirementIndexingDate }" noValueKey="label.lower.Never" />
-              </span>
-            </div>
-            <div>
-              <label><f:message key="label.testCases" /></label>
-              <span id="tc-last-index">
-                <comp:date value="${ adminStats.testcaseIndexingDate }" noValueKey="label.lower.Never" />
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
