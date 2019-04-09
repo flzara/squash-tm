@@ -35,8 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_MILESTONE;
+import static org.jooq.impl.DSL.*;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
 @Service
@@ -69,11 +69,17 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	 * @return The depth of the Query
 	 */
 	private int getQueryDepth(List<EntityType> entityTypeList) {
-		if(entityTypeList.contains(EntityType.ISSUE)) return 6;
-		if(entityTypeList.contains(EntityType.EXECUTION_STEP)) return 5;
-		if(entityTypeList.contains(EntityType.EXECUTION)) return 4;
-		if(entityTypeList.contains(EntityType.TEST_CASE)) return 3;
-		if(entityTypeList.contains(EntityType.ITERATION)) return 2;
+		if(entityTypeList.contains(EntityType.ISSUE))
+			return 6;
+		if(entityTypeList.contains(EntityType.EXECUTION_STEP))
+			return 5;
+		if(entityTypeList.contains(EntityType.EXECUTION))
+			return 4;
+		if(entityTypeList.contains(EntityType.TEST_CASE) || entityTypeList.contains(EntityType.TEST_SUITE))
+			return 3;
+		if(entityTypeList.contains(EntityType.ITERATION))
+			return 2;
+		// default
 		return 1;
 	}
 	private boolean isFetchTestSuite(List<EntityType> entityList) {
@@ -106,15 +112,11 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	@SuppressWarnings("unchecked")
 	private Iterator<Record> fetchData(long campaignId, Collection<Field<?>> fieldList, List<EntityType> entityList) {
 		int queryDepth = getQueryDepth(entityList);
-		/*
-		SelectSelectStep query = DSL.select(groupConcat(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID, ",").as("tc_rvc"));
-		query.select(groupConcat(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID, ","));
-		query.select(groupConcat(ISSUE.as("exec_issue").ISSUE_ID, ","));
-		query.select(groupConcat(ISSUE.as("es_issue").ISSUE_ID, ","));
-		*/
-		SelectSelectStep select = DSL.select(fieldList);
+		SelectSelectStep selectQuery = DSL.select();
 
-		SelectJoinStep from = select.from(CAMPAIGN);
+		selectQuery.select(fieldList);
+
+		SelectJoinStep from = selectQuery.from(CAMPAIGN);
 		SelectOnConditionStep join = from.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_LIBRARY_NODE.CLN_ID.eq(CAMPAIGN.CLN_ID));
 
 		if (fieldList.contains(CAMPAIGN_MILESTONE.getJooqTableField())) {
@@ -148,15 +150,14 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				join.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
 					.leftJoin(MILESTONE.as("tc_milestone")).on(MILESTONE.as("tc_milestone").MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID));
 			}
-
 			join.leftJoin(INFO_LIST_ITEM.as("type_list")).on(INFO_LIST_ITEM.as("type_list").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("type_nature")).on(INFO_LIST_ITEM.as("type_nature").ITEM_ID.eq(TEST_CASE.TC_NATURE))
-				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
-				.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
 			// These four lines are actually not used because TEST_STEPS coverage is included in TEST_CASE coverage...
 
+//			.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 //			.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
 //			.leftJoin(ACTION_TEST_STEP).on(ACTION_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
 //			.leftJoin(VERIFYING_STEPS.as("ts_vs")).on(VERIFYING_STEPS.as("ts_vs").TEST_STEP_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID))
@@ -167,12 +168,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 					.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID));
 			}
 		}
-
 		if (queryDepth > 3) {
 			join.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 				.leftJoin(EXECUTION).on(EXECUTION.EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID));
 		}
-
 		if (queryDepth > 4) {
 			join.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
@@ -223,7 +222,6 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			groupByFieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
 			groupByFieldList.add(CORE_USER.LOGIN);
 			groupByFieldList.add(DATASET.NAME);
-			groupByFieldList.add(DATASET.NAME);
 			if (simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
 				groupByFieldList.add(TEST_SUITE.ID);
 			}
@@ -237,11 +235,18 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			groupByFieldList.add(EXECUTION.EXECUTION_ID);
 		}
 		if(queryDepth > 4) {
-			groupByFieldList.add(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER);
 			groupByFieldList.add(EXECUTION_STEP.EXECUTION_STEP_ID);
+			groupByFieldList.add(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER);
 		}
 
-		groupByFieldList.addAll(simpleFieldList);
+		groupByFieldList.addAll(
+			simpleFieldList.stream().filter(field ->
+				!field.equals(TEST_CASE_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
+					!field.equals(EXECUTION_STEP_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
+					!field.equals(ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES.getJooqTableField()) &&
+					!field.equals(ISSUE_EXECUTION_ISSUES.getJooqTableField())
+			).collect(Collectors.toList())
+		);
 
 		return groupByFieldList;
 	}

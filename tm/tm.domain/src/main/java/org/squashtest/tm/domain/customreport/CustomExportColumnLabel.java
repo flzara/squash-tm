@@ -24,7 +24,7 @@ import org.jooq.Field;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.EntityType;
 
-import static org.jooq.impl.DSL.groupConcat;
+import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.tables.Iteration.ITERATION;
@@ -223,8 +223,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	TEST_CASE_LINKED_REQUIREMENTS_IDS(
 		"custom-export.column.TEST_CASE.LINKED_REQUIREMENTS_IDS",
-//		groupConcat(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID.as("tc_rvs")),
-		null,
+		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("tc_rvc_ids"),
 		EntityType.TEST_CASE),
 
 	// --- EXECUTION ---
@@ -296,18 +295,18 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	EXECUTION_STEP_LINKED_REQUIREMENTS_IDS(
 		"custom-export.column.EXECUTION_STEP.STEP_LINKED_REQUIREMENTS_IDS",
-		null,
+		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("es_rvc_ids"),
 		EntityType.EXECUTION_STEP),
 
 	// --- ISSUE ---
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES(
 		"custom-export.column.ISSUE.ALL_LINKED_ISSUES",
-		null,
+		groupConcatDistinct(ISSUE.as("exec_issue").ISSUE_ID).separator(", ").as("exec_and_es_issue_ids"),
 		EntityType.ISSUE),
 
 	ISSUE_EXECUTION_ISSUES(
 		"custom-export.column.ISSUE.STEP_LINKED_ISSUES",
-		null,
+		groupConcatDistinct(ISSUE.as("es_issue").ISSUE_ID).separator(", ").as("es_issue_ids"),
 		EntityType.ISSUE);
 
 	private String i18nKey;
