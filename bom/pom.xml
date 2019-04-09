@@ -37,8 +37,6 @@
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
 
-    <hibernate.search.version>5.9.2.Final</hibernate.search.version>
-
     <!-- Spring Boot version 2.0.3 implies Jackson 2.9.6 -->
     <jackson.version>2.9.6</jackson.version>
     <javax.cache-api.version>1.1.0</javax.cache-api.version>
@@ -187,19 +185,6 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
         <!-- here our transaction api will be javax.transaction-api instead -->
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-search-orm</artifactId>
-        <version>${hibernate.search.version}</version>
-        <!-- same here : our transaction api will be javax.transaction-api instead. Not sure why I have to exclude it here too. -->
         <exclusions>
           <exclusion>
             <groupId>org.jboss.spec.javax.transaction</groupId>

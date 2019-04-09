@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -39,13 +39,11 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 	MilestoneDao milestoneDao = Mock()
 	GenericProjectDao projectDao = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
-	IndexationService indexService = Mock()
 
 	def setup(){
 		manager.milestoneDao = milestoneDao
 		manager.projectDao = projectDao
 		manager.permissionEvaluationService = permissionEvaluationService
-		manager.indexService = indexService
 	}
 	@Unroll("for milestones ids : #ids and binded ids : #bindedIds, returns bindable ids #bindableIds")
 	def "should get bindable milestone for project"(){

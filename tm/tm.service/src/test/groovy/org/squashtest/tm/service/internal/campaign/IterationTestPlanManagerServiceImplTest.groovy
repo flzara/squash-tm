@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
@@ -38,8 +38,6 @@ import org.squashtest.tm.service.testutils.MockFactory
 
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.util.Optional
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 
@@ -52,7 +50,6 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IterationDao iterDao = Mock()
 	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
-	IndexationService indexationService = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
@@ -61,7 +58,6 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.iterationDao = iterDao
 		service.iterationTestPlanDao = itemDao
 		service.datasetDao = datasetDao
-		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
 		service.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()

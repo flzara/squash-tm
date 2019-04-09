@@ -21,12 +21,6 @@
 package org.squashtest.tm.domain.project;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.bridge.builtin.BooleanBridge;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
@@ -105,8 +99,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private String name;
 
 	private boolean active = true;
@@ -171,9 +163,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	private boolean allowTcModifDuringExec = false;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
-	@FieldBridge(impl = BooleanBridge.class)
 	private boolean allowAutomationWorkflow = false;
 
 	private boolean useTreeStructureInScmRepo = true;

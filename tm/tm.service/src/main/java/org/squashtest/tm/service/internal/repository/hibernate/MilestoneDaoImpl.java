@@ -26,8 +26,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -333,24 +331,21 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 
 	private void unbindFromMilestone(Long milestoneId, Session session, ScrollableResults holders) {
 		int count = 0;
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
 		while (holders.next()) {
 			MilestoneHolder holder = (MilestoneHolder) holders.get(0);
 			holder.unbindMilestone(milestoneId);
 			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
-				flushAndClearSession(session, fullTextEntityManager);
+				flushAndClearSession(session);
 			}
 		}
 		// flush remaining items
-		flushAndClearSession(session, fullTextEntityManager);
+		flushAndClearSession(session);
 	}
 
-	private void flushAndClearSession(Session session, FullTextEntityManager fullTextEntityManager) {
+	private void flushAndClearSession(Session session) {
 		session.flush();
-		fullTextEntityManager.flushToIndexes();
-		fullTextEntityManager.clear();
 
 	}
 

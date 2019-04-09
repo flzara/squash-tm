@@ -33,9 +33,8 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
-import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
@@ -48,7 +47,6 @@ public class ExecutionModificationServiceTest extends Specification {
 	ExecutionModificationServiceImpl service = new ExecutionModificationServiceImpl()
 	ExecutionProcessingServiceImpl procservice = new ExecutionProcessingServiceImpl()
 	CustomIterationModificationServiceImpl iterService = new CustomIterationModificationServiceImpl()
-	IndexationService indexationService = Mock()
 	ExecutionStepModificationHelper executionStepModifHelper = new ExecutionStepModificationHelper()
 
 	ExecutionDao execDao = Mock()
@@ -88,7 +86,6 @@ public class ExecutionModificationServiceTest extends Specification {
 		iterService.testPlanDao = testPlanDao
 		iterService.iterationDao = iterationDao
 		iterService.executionDao = execDao
-		iterService.indexationService = indexationService
 
 		iterService.testCaseCyclicCallChecker = checker
 		iterService.denormalizedFieldValueService = denormalizedFieldValueService

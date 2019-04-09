@@ -22,19 +22,6 @@ package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Boost;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -48,12 +35,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AnalyzableCUFBridge;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
-import org.squashtest.tm.domain.search.InfoListItemBridge;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
-import org.squashtest.tm.domain.search.NotAnalyzableCUFBridge;
-import org.squashtest.tm.domain.search.StringFieldBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -99,16 +80,6 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
  * @author Gregory Fouquet
  */
 @Entity
-@Indexed
-@ClassBridges({
-	@ClassBridge(name = "attachments", store = Store.YES, impl = TestCaseAttachmentBridge.class),
-	@ClassBridge(name = "callsteps", store = Store.YES, impl = TestCaseCallStepBridge.class),
-	@ClassBridge(name = "iterations", store = Store.YES, impl = TestCaseIterationBridge.class),
-	@ClassBridge(name = "executions", store = Store.YES, impl = TestCaseExecutionBridge.class),
-	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
-	@ClassBridge(name = "analyzed_cufs", store = Store.YES, impl = AnalyzableCUFBridge.class),
-	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class)
-})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -119,78 +90,52 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES, boost=@Boost(2f), bridge = @FieldBridge(impl = StringFieldBridge.class))
 	@Size(min = 0, max = MAX_REF_SIZE)
-	@SortableField(forField = "reference")
 	private String reference = "";
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Field(index = Index.YES, analyzer = @Analyzer(definition = "htmlStrip"), store = Store.YES, boost=@Boost(2f))
 	private String prerequisite = "";
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private List<TestStep> steps = new ArrayList<>();
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES,bridge = @FieldBridge(impl = CollectionSizeBridge.class))
-	@SortableField(forField ="requirements")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@SortableField
 	private Set<Parameter> parameters = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@SortableField
 	private Set<Dataset> datasets = new HashSet<>(0);
 
 	@NotNull
 	@Enumerated(STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_NATURE")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = InfoListItemBridge.class)
-	@SortableField
 	private InfoListItem nature = null;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_TYPE")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = InfoListItemBridge.class)
-	@SortableField
 	private InfoListItem type = null;
 
 
 	@NotNull
 	@Enumerated(STRING)
 	@Column(name = "TC_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull
@@ -207,11 +152,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
 
-
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
-	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
-	@SortableField
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<>();
 
@@ -221,20 +162,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@Column(name = "TC_KIND")
 	@Enumerated(value = STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = EnumBridge.class)
-	@SortableField
 	@NotNull
 	private TestCaseKind kind = STANDARD;
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
 	private AutomationRequest automationRequest;
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	@Enumerated(EnumType.STRING)
 	private TestCaseAutomatable automatable = M;
 

@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
@@ -73,9 +72,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-
-	@Inject
-	private IndexationService indexService;
 
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId) {
@@ -186,10 +182,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 			// that thing will probably clear the session, be careful
 			milestoneDao.unbindAllObjectsForProject(milestone.getId(), project.getId());
 		}
-
-		// reindex
-		indexService.batchReindexTc(tcIds);
-		indexService.batchReindexReqVersion(reqIds);
 	}
 
 	@Override

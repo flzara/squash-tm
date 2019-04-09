@@ -54,7 +54,6 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -125,10 +124,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	@Inject
-	private IndexationService indexationService;
-
-
-	@Inject
 	private RequirementDao requirementDao;
 
 	@Inject
@@ -197,11 +192,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 				requirementVersionCoverageDao.delete(coverage);
 			}
-
-			indexationService.reindexTestCase(testCaseId);
-			indexationService
-				.reindexRequirementVersionsByIds(requirementVersionsIds);
-
 			testCaseImportanceManagerService
 				.changeImportanceIfRelationsRemovedFromTestCase(
 					requirementVersionsIds, testCaseId);
@@ -217,9 +207,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				testCaseId);
 
 		requirementVersionCoverageDao.delete(coverage);
-
-		indexationService.reindexTestCase(testCaseId);
-		indexationService.reindexRequirementVersion(requirementVersionId);
 		testCaseImportanceManagerService
 			.changeImportanceIfRelationsRemovedFromTestCase(
 				Arrays.asList(requirementVersionId), testCaseId);
@@ -236,11 +223,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			.byRequirementVersionAndTestCase(
 				oldVerifiedRequirementVersionId, testCaseId);
 		coverage.setVerifiedRequirementVersion(newReq);
-		indexationService.reindexTestCase(testCaseId);
-		indexationService
-			.reindexRequirementVersion(oldVerifiedRequirementVersionId);
-		indexationService
-			.reindexRequirementVersion(oldVerifiedRequirementVersionId);
 		testCaseImportanceManagerService
 			.changeImportanceIfRelationsRemovedFromTestCase(
 				Arrays.asList(newVerifiedRequirementVersionId),
@@ -320,9 +302,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(
 					requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
-				indexationService.reindexTestCase(testCase.getId());
-				indexationService.reindexRequirementVersion(requirementVersion
-					.getId());
 			} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
 				LOGGER.warn(ex.getMessage());
 				rejections.add(ex);
@@ -343,9 +322,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(
 					requirementVersion, testCase, false);
 				requirementVersionCoverageDao.persist(coverage);
-				indexationService.reindexTestCase(testCase.getId());
-				indexationService.reindexRequirementVersion(requirementVersion
-					.getId());
 
 	}
 
@@ -417,9 +393,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				requirementVersion, testCase);
 			newCoverage.addAllVerifyingSteps(Arrays.asList(step));
 			requirementVersionCoverageDao.persist(newCoverage);
-			indexationService.reindexTestCase(testCase.getId());
-			indexationService.reindexRequirementVersion(requirementVersion
-				.getId());
 			return true;
 		} else {
 			coverage.addAllVerifyingSteps(Arrays.asList(step));

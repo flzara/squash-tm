@@ -25,15 +25,10 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrMatcher;
 import org.apache.commons.lang3.text.StrTokenizer;
-import org.apache.lucene.document.DateTools;
-import org.apache.lucene.search.NumericRangeQuery;
-import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.hibernate.search.query.dsl.RangeMatchingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -166,7 +161,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
 	}
 
-	private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue) {
+	/*private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue) {
 
 		Query query;
 
@@ -296,7 +291,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		AdvancedSearchTextFieldModel model = (AdvancedSearchTextFieldModel) fieldModel;
 		List<String> tokens = getTokens(model.getValue());
 		return tokens.isEmpty() ? null : buildLuceneTextQuery(qb, fieldKey, tokens);
-	}
+	}*/
 
 	private List<String> getTokens(String value) {
 
@@ -307,7 +302,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return Collections.emptyList();
 	}
 
-	private Query buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	/*private Query buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 		if (listModel.getValues() != null) {
@@ -315,22 +310,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 
 		return null;
-	}
+	}*/
 
 	private List<String> parseInput(String textInput) {
 		return new StrTokenizer(textInput, StrMatcher.trimMatcher(), StrMatcher.doubleQuoteMatcher()).getTokenList();
 	}
 
-	private Query buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	/*private Query buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
 		if (rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null) {
 			return buildLuceneRangeQuery(qb, fieldKey, rangeModel.getMinValue(), rangeModel.getMaxValue());
 		}
 
 		return null;
-	}
+	}*/
 
-	private Query buildQueryForNumericRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	/*private Query buildQueryForNumericRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchNumericRangeFieldModel rangeModel = (AdvancedSearchNumericRangeFieldModel) fieldModel;
 		if (rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null) {
 			return buildLuceneNumericRangeQuery(qb, fieldKey, rangeModel.getMinValueAsDouble(), rangeModel.getMaxValueAsDouble());
@@ -413,7 +408,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 
 		return mainQuery;
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	protected void addMilestoneFilter(AdvancedSearchModel searchModel) {
@@ -552,7 +547,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return status;
 	}
 
-	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation) {
+	/*protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation) {
 
 		Query main = null;
 
@@ -738,15 +733,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return qb.bool().must(sub).createQuery();
 	}
 
-	/**
+	*//**
 	 * Coerces a Date into a long to be used as a hibernate search query param.
 	 * This is necessary to work around a bug in NumericFieldUtils.requiresNumericRangeQuery which does not correctly
 	 * detect Calendars
-	 */
+	 *//*
 	private long dateToLongParam(Date startDate) {
 		return DateTools.round(startDate.getTime(), DateTools.Resolution.DAY);
 	}
-
+*/
 	// Issue #5079 : ensure that criteria project.id contains only
 	// projects the user can read
 	private void secureProjectCriteria(AdvancedSearchModel model) {
@@ -843,7 +838,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return milestoneIds;
 	}
 
-	public Query fakeIdToFindNoResultViaLuceneForCreatingQuery(List<Long> lReqVerIds, QueryBuilder qb, Query mainQuery, String fakeId) {
+	/*public Query fakeIdToFindNoResultViaLuceneForCreatingQuery(List<Long> lReqVerIds, QueryBuilder qb, Query mainQuery, String fakeId) {
 		List<String> itpiIds = new ArrayList<>(lReqVerIds.size());
 		for(Long l : lReqVerIds) {
 			itpiIds.add(l.toString());
@@ -853,11 +848,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			itpiIds.add(fakeId);
 		}
 
-		/* Add Criteria to restrict Requirement Versions ids */
+		*//* Add Criteria to restrict Requirement Versions ids *//*
 		Query idQuery = buildLuceneValueInListQuery(qb, "id", itpiIds, false);
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
-	}
+	}*/
 
 }
 

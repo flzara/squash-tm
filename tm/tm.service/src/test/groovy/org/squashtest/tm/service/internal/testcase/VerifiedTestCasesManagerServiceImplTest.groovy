@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
@@ -56,7 +56,6 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceServiceImpl = Mock()
 	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
-	IndexationService indexationService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -69,7 +68,6 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceServiceImpl
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
-		service.indexationService = indexationService
 	}
 
 	def "should find libraries of linkable test Case"() {

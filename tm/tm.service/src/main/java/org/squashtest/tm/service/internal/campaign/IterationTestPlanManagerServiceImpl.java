@@ -55,7 +55,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
@@ -114,9 +113,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private UserDao userDao;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@Inject
 	private UserAccountService userService;
@@ -264,8 +260,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			// TODO somewhat useless, above "if" branch could handle both cases
 			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
-
-		indexationService.reindexTestCase(testCase.getId());
 	}
 
 	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
@@ -382,11 +376,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		iteration.removeItemFromTestPlan(item);
 
 		deletionHandler.deleteIterationTestPlanItem(item);
-
-		// unless the test case was deleted, we need to re-index its statistics
-		if (testCase != null) {
-			indexationService.reindexTestCase(testCase.getId());
-		}
 	}
 
 	@Override

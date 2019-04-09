@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
-import java.util.Optional
+
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
@@ -66,7 +66,6 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	IndexationService indexationService = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
@@ -80,7 +79,6 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 		service.callTreeFinder = callTreeFinder
 		service.permissionService = permissionService
-		service.indexationService = indexationService
 		service.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true

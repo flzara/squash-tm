@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -87,21 +79,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
 
-	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{
-		new SortField("project.name", SortField.Type.STRING, false),
-		new SortField("campaign-name", SortField.Type.STRING, false),
-		new SortField("iteration-name", SortField.Type.STRING, false),
-		new SortField("itpi-id", SortField.Type.STRING, false),
-		new SortField("itpi-label", SortField.Type.STRING, false),
-		new SortField("itpi-mode", SortField.Type.STRING, false),
-		new SortField("itpi-status", SortField.Type.STRING, false),
-		new SortField("itpi-executed-by", SortField.Type.STRING, false),
-		new SortField("itpi-executed-on", SortField.Type.LONG, false),
-		new SortField("itpi-datasets", SortField.Type.STRING, false),
-		new SortField("referencedTestCase.importance", SortField.Type.STRING, false),
-		new SortField("referencedTestCase.automatable", SortField.Type.STRING, false)};
-
-
 	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";
 	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
 
@@ -123,17 +100,17 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return  findUserLoginsByPartyIds(partyIds);
 	}
 
-	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
+	/*protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
 		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
-		/* Creating a copy of the model to keep a model with milestones criteria */
+		*//* Creating a copy of the model to keep a model with milestones criteria *//*
 		AdvancedSearchModel modelCopy = model.shallowCopy();
-		/* Removing these criteria from the main model */
+		*//* Removing these criteria from the main model *//*
 		removeMilestoneSearchFields(model);
 
 
-		/* Building main Lucene Query with this main model */
+		*//* Building main Lucene Query with this main model *//*
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-		/* If requested, add milestones criteria with the copied model */
+		*//* If requested, add milestones criteria with the copied model *//*
 		if (shouldSearchByMilestones(modelCopy)) {
 			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
 		}
@@ -146,13 +123,13 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
 
-		/* Find the milestones ids. */
+		*//* Find the milestones ids. *//*
 		List<Long> milestoneIds = findMilestonesIds(modelCopy);
 
-		/* Find the ItereationTestPlanItems ids. */
+		*//* Find the ItereationTestPlanItems ids. *//*
 		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
 
-		/* Create the query. */
+		*//* Create the query. *//*
 		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
 	}
 
@@ -160,30 +137,16 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		addWorkflowAutomationFilter(modelCopy);
 		Query query = buildLuceneQuery(qb,modelCopy);
 		return qb.bool().must(mainQuery).must(query).createQuery();
-	}
+	}*/
 
 	@Override
 	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
 																							 PagingAndMultiSorting paging, Locale locale) {
 
 
-		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
-
-		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession);
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
-
-		if (!checkSearchModelPerimeterIsEmpty(searchModel) && luceneQuery != null) {
-			Sort sort = getExecutionSort(paging);
-
-			FullTextQuery fullTextQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class).setSort(sort);
-
-			countAll = fullTextQuery.getResultSize();
-			
-			result = fullTextQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).getResultList();
-		}
-
 		// Please, don't return null there, it will explode everything. It did.
 		return new PagingBackedPagedCollectionHolder<>(paging, countAll, result);
 
@@ -208,35 +171,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return listField.getValues().isEmpty();
 	}
 
-	private Sort getExecutionSort(PagingAndMultiSorting multisorting) {
-
-
-		List<Sorting> sortings = multisorting.getSortings();
-
-		if (sortings == null || sortings.isEmpty()) {
-			return new Sort(DEFAULT_SORT_EXECUTION);
-		}
-
-		boolean isReverse = true;
-		SortField[] sortFieldArray = new SortField[sortings.size()];
-
-		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
-				isReverse = false;
-			}
-
-			String fieldName = sortings.get(i).getSortedAttribute();
-			fieldName = formatSortFieldName(fieldName);
-
-			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
-			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
-			}
-		}
-
-		return new Sort(sortFieldArray);
-	}
 
 	private String formatSortFieldName(String fieldName) {
 		String result = fieldName;

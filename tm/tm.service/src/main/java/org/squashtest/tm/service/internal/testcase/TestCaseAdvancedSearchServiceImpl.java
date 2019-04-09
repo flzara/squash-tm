@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,7 +34,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -90,19 +82,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
-		new SortField("project.name", SortField.Type.STRING, false),
-		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
-		new SortField("label", SortField.Type.STRING, false),new SortField("createdBy", SortField.Type.STRING,false),
-		new SortField("lastModifiedBy",  SortField.Type.STRING, false),new SortField("id",  SortField.Type.STRING, false),
-		new SortField("requirements",  SortField.Type.STRING, false),new SortField("steps",  SortField.Type.STRING, false),
-		new SortField("attachments",  SortField.Type.STRING, false),
-		new SortField("iterations",  SortField.Type.STRING, false),
-		new SortField("automatable", SortField.Type.STRING, false),
-		new SortField("automationRequest.requestStatus", SortField.Type.STRING, false)
-
-	};
-
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList();
 
 	private static final String FAKE_TC_ID = "-9000";
@@ -118,64 +97,10 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 
-	/*
-	 * That implementation is special because we cannot process the milestones as usual. Indeed, we need the test cases that belongs both directly and indirectly to the
-	 * milestone. That's why we use the method noMilestoneLuceneQuery.
-	 *
-	 * (non-Javadoc)
-	 * @see org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService#searchForTestCases(org.squashtest.tm.domain.search.AdvancedSearchModel, java.util.Locale)
-	 */
-	/*
-	 * TODO :
-	 *
-	 * This method is basically an override of "buildLuceneQuery" defined in the superclass -> thus we could rename it accordingly.
-	 * However in method "searchForTestCasesThroughRequirementModel" we must use the super implementation of "buildLuceneQuery" -> thus renaming
-	 * "searchTestCaseQuery" to "buildLuceneQuery" could lead to ambiguity.
-	 *
-	 * I don't know what to do about it.
-	 */
-	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
-
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
-
-		/*
-		 * we must not include the milestone criteria yet because
-		 * it'll be the subject of a separate query.
-		 *
-		 * Let's save the search model and create a milestone-stripped
-		 * version of it
-		 */
-
-		AdvancedSearchModel modelCopy = model.shallowCopy();
-		removeMilestoneSearchFields(model);
-
-		// create the main query (search test cases, no milestones)
-		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-		// now add the test-cases specific milestones criteria
-		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
-		}
-
-		if(shouldSearchByAutomationWorkflow(modelCopy)) {
-			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb,modelCopy);
-		}
-
-		return luceneQuery;
-
-	}
-
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale) {
-
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-
-		Query luceneQuery = searchTestCasesQuery(model, ftem);
-
-		FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class);
-
-		return hibQuery.getResultList();
+		return new ArrayList<>();
 
 	}
 
@@ -208,40 +133,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return result;
 	}
 
-	private Sort getTestCaseSort(PagingAndMultiSorting multisorting) {
-
-		Locale locale = LocaleContextHolder.getLocale();
-
-		List<Sorting> sortings = multisorting.getSortings();
-
-		if (sortings == null || sortings.isEmpty()) {
-			return new Sort(DEFAULT_SORT_TESTCASES);
-		}
-
-		boolean isReverse = true;
-		SortField[] sortFieldArray = new SortField[sortings.size()];
-
-		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
-				isReverse = false;
-			}
-
-			String fieldName = sortings.get(i).getSortedAttribute();
-			fieldName = formatSortFieldName(fieldName);
-
-			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
-			} else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
-					locale), isReverse);
-			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
-			}
-		}
-
-		return new Sort(sortFieldArray);
-	}
-
 	private String formatSortFieldName(String fieldName) {
 		String result = fieldName;
 		if (fieldName.startsWith("TestCase.")) {
@@ -260,81 +151,20 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
-
-		Query luceneQuery = super.buildLuceneQuery(qb, testcases);
-
-		return fetchPagedResults(ftem, luceneQuery, sorting);
+		int countAll=0;
+		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, testcases);
 	}
 
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model,
 		PagingAndMultiSorting sorting, Locale locale) {
 
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
+		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftem);
+		int countAll=0;
 
-		return fetchPagedResults(ftem, luceneQuery, sorting);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, testcases);
 	}
 
-	private PagedCollectionHolder<List<TestCase>> fetchPagedResults(FullTextEntityManager ftem, Query luceneQuery, PagingAndMultiSorting sorting) {
-		List<TestCase> result = Collections.emptyList();
-		int countAll = 0;
-		if (luceneQuery != null) {
-			Sort sort = getTestCaseSort(sorting);
-			FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
-
-			countAll = hibQuery.getResultSize();
-
-			if (!sorting.shouldDisplayAll()){
-				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
-			}
-
-			result = hibQuery.getResultList();
-		}
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
-	}
-
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-
-		// find the milestones
-		addMilestoneFilter(modelCopy);
-
-		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
-
-		// now find the test cases
-		Collection<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
-
-
-		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
-		List<String> testcaseIds = new ArrayList<>(lTestcaseIds.size());
-		for (Long l : lTestcaseIds) {
-			testcaseIds.add(l.toString());
-		}
-
-		//if no tc are found then use fake id so the lucene query will not find anything
-
-		if (testcaseIds.isEmpty()) {
-			testcaseIds.add(FAKE_TC_ID);
-		}
-
-		// finally, add a criteria that restrict the test case ids
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", testcaseIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
-
-	}
-
-	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-		addWorkflowAutomationFilter(modelCopy);
-		Query query = buildLuceneQuery(qb,modelCopy);
-		return qb.bool().must(mainQuery).must(query).createQuery();
-	}
 
 }

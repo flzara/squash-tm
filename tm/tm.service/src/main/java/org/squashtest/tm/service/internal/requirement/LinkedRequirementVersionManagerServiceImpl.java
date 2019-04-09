@@ -43,7 +43,6 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
@@ -90,8 +89,6 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-	@Inject
-	private IndexationService indexationService;
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
@@ -245,8 +242,6 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
-		indexationService.reindexRequirementVersion(requirementVersionId);
-		indexationService.reindexRequirementVersion(relatedReqNodeId);
 	}
 
 	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
@@ -407,9 +402,6 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 				}
 			}
 		}
-
-		indexationService.batchReindexReqVersion(reqVersionsIds);
-		indexationService.reindexRequirementVersion(mainReqVersionId);
 		return rejections;
 	}
 

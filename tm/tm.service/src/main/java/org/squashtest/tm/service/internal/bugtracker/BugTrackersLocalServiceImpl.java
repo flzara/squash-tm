@@ -32,7 +32,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -59,7 +58,6 @@ import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
@@ -138,9 +136,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private ProjectDao projectDao;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -244,10 +239,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		list.addIssue(sqIssue);
 
 		issueDao.save(sqIssue);
-
-		TestCase testCase = this.findTestCaseRelatedToIssue(sqIssue.getId());
-		this.indexationService.reindexTestCase(testCase.getId());
-
 		return createdIssue;
 	}
 
@@ -356,9 +347,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issue.setRemoteIssueId(remoteIssueKey);
 			issueList.addIssue(issue);
 			issueDao.save(issue);
-
-			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
-			this.indexationService.reindexTestCase(testCase.getId());
 		}
 
 	}
@@ -371,7 +359,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Issue issue = issueDao.getOne(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 		issueDao.delete(issue);
-		this.indexationService.reindexTestCase(testCase.getId());
 	}
 
 	/* ------------------------ExecutionStep--------------------------------------- */

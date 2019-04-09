@@ -23,9 +23,6 @@ package org.squashtest.tm.domain.requirement;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Table;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.Library;
@@ -51,7 +48,6 @@ import javax.persistence.SequenceGenerator;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-@Indexed
 
 /*
  *  the following tells hibernate additional informations about the join table RLN_RESOURCE, that we want to be readonly. Hence we give
@@ -66,12 +62,10 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	@Column(name = "RLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_node_rln_id_seq")
 	@SequenceGenerator(name = "requirement_library_node_rln_id_seq", sequenceName = "requirement_library_node_rln_id_seq", allocationSize = 1)
-	@SortableField
 	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "PROJECT_ID")
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Project project;
 
 

@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -32,7 +31,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.InconsistentInfoListItemException
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
@@ -64,7 +63,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	UnsecuredAutomatedTestManagerService taService = Mock()
 	AttachmentManagerService attachmentManagerService = Mock()
 	IterationTestPlanFinder iterationTestPlanFinder = Mock()
-	IndexationService indexationService = Mock()
 	ActionTestStepDao actionStepDao = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
 
@@ -83,7 +81,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.taService = taService
 		service.attachmentManagerService = attachmentManagerService
 		service.iterationTestPlanFinder = iterationTestPlanFinder
-		service.indexationService = indexationService
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
 	}
@@ -297,16 +294,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * testCaseManagementService.renameNode(10L, "Bob")
 
 		1 * testCaseDao.findById(10L) >> tc
-		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
-			Mock(IterationTestPlanItem){
-				getId() >> 1L
-			},
-			Mock(IterationTestPlanItem){
-				getId() >> 2L
-			}
-		]
-		1 *indexationService.batchReindexItpi([1L, 2L])
-		1 * indexationService.batchReindexTc([10L])
 
 	}
 
@@ -325,17 +312,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setReference("reref")
 
 		1 * testCaseDao.findById(10L) >> tc
-		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
-			Mock(IterationTestPlanItem){
-				getId() >> 1L
-			},
-			Mock(IterationTestPlanItem){
-				getId() >> 2L
-			}
-		]
-		1 *indexationService.batchReindexItpi([1L, 2L])
-		1 * indexationService.batchReindexTc([10L])
-
 	}
 
 	def "should change the importance of a test case"(){
@@ -352,16 +328,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setImportance(TestCaseImportance.HIGH)
 
 		1 * testCaseDao.findById(10L) >> tc
-		1 * iterationTestPlanFinder.findByReferencedTestCase(tc) >> [
-			Mock(IterationTestPlanItem){
-				getId() >> 1L
-			},
-			Mock(IterationTestPlanItem){
-				getId() >> 2L
-			}
-		]
-		1 *indexationService.batchReindexItpi([1L, 2L])
-		1 * indexationService.batchReindexTc([10L])
 
 	}
 

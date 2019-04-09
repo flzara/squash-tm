@@ -20,15 +20,8 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -53,7 +46,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "AUTOMATION_REQUEST")
-@Indexed
 public class AutomationRequest implements Identified {
 
 	@Id
@@ -65,9 +57,6 @@ public class AutomationRequest implements Identified {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUEST_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private AutomationRequestStatus requestStatus = AutomationRequestStatus.WORK_IN_PROGRESS;
 
 	@Column(name = "TRANSMITTED_ON")

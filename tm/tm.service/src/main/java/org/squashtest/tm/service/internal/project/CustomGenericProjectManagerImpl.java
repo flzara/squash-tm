@@ -24,8 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -1126,8 +1124,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			customTestCaseModificationService.createRequestForTestCase(tcId, AutomationRequestStatus.AUTOMATED);
 			if (x % 20 == 0) {
 				em.flush();
-				FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-				ftem.flushToIndexes();
 				em.clear();
 			}
 		}
