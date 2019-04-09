@@ -27,15 +27,12 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.exception.execution.EmptyIterationTestPlanException;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.function.Function;
 

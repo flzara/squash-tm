@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.campaign.TestPlanOwner;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
