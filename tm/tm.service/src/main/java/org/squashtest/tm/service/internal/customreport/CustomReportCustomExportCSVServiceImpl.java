@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
@@ -35,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.jooq.impl.DSL.*;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 
@@ -63,29 +61,6 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		return buildResultString(resultSet, selectedColumns);
 	}
 
-	/**
-	 * Return the depth of the Query.
-	 * @param entityTypeList The list of the EntityTypes involved in the Query
-	 * @return The depth of the Query
-	 */
-	private int getQueryDepth(List<EntityType> entityTypeList) {
-		if(entityTypeList.contains(EntityType.ISSUE))
-			return 6;
-		if(entityTypeList.contains(EntityType.EXECUTION_STEP))
-			return 5;
-		if(entityTypeList.contains(EntityType.EXECUTION))
-			return 4;
-		if(entityTypeList.contains(EntityType.TEST_CASE) || entityTypeList.contains(EntityType.TEST_SUITE))
-			return 3;
-		if(entityTypeList.contains(EntityType.ITERATION))
-			return 2;
-		// default
-		return 1;
-	}
-	private boolean isFetchTestSuite(List<EntityType> entityList) {
-		return entityList.contains(EntityType.TEST_SUITE);
-	}
-
 	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns) {
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
@@ -109,24 +84,50 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		return dataBuilder.toString();
 	}
 
+	/**
+	 * Return the depth of the Query.
+	 * @param entityTypeList The list of the EntityTypes involved in the Query
+	 * @return The depth of the Query
+	 */
+	private int getQueryDepth(List<EntityType> entityTypeList) {
+		if(entityTypeList.contains(EntityType.ISSUE))
+			return 6;
+		if(entityTypeList.contains(EntityType.EXECUTION_STEP))
+			return 5;
+		if(entityTypeList.contains(EntityType.EXECUTION))
+			return 4;
+		if(entityTypeList.contains(EntityType.TEST_CASE) || entityTypeList.contains(EntityType.TEST_SUITE))
+			return 3;
+		if(entityTypeList.contains(EntityType.ITERATION))
+			return 2;
+		// default
+		return 1;
+	}
+
+	private boolean isFetchTestSuite(List<EntityType> entityList) {
+		return entityList.contains(EntityType.TEST_SUITE);
+	}
+
 	@SuppressWarnings("unchecked")
 	private Iterator<Record> fetchData(long campaignId, Collection<Field<?>> fieldList, List<EntityType> entityList) {
+
 		int queryDepth = getQueryDepth(entityList);
+
 		SelectSelectStep selectQuery = DSL.select();
 
 		selectQuery.select(fieldList);
 
-		SelectJoinStep from = selectQuery.from(CAMPAIGN);
-		SelectOnConditionStep join = from.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_LIBRARY_NODE.CLN_ID.eq(CAMPAIGN.CLN_ID));
+		SelectJoinStep fromQuery = selectQuery.from(CAMPAIGN);
+		SelectOnConditionStep joinQuery = fromQuery.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_LIBRARY_NODE.CLN_ID.eq(CAMPAIGN.CLN_ID));
 
 		if (fieldList.contains(CAMPAIGN_MILESTONE.getJooqTableField())) {
 			// only if CAMPAIGN_MILESTONE was selected
-			join.leftJoin(MILESTONE_CAMPAIGN).on(MILESTONE_CAMPAIGN.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
+			joinQuery.leftJoin(MILESTONE_CAMPAIGN).on(MILESTONE_CAMPAIGN.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
 				.leftJoin(MILESTONE.as("camp_milestone")).on(MILESTONE.as("camp_milestone").MILESTONE_ID.eq(MILESTONE_CAMPAIGN.MILESTONE_ID));
 		}
 
 		if (queryDepth > 1) {
-			join.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
+			joinQuery.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
 				.leftJoin(ITERATION).on(ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID));
 		}
 		// These 2 lines are redundant compared to the Test_Suite table joined with the ITPIs
@@ -135,7 +136,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 //			.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(ITERATION_TEST_SUITE.TEST_SUITE_ID))
 
 		if (queryDepth > 2) {
-			join.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION.ITERATION_ID))
+			joinQuery.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION.ITERATION_ID))
 				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
 
 				.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
@@ -147,10 +148,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 			if (fieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
 				// only if TEST_CASE_MILESTONE was selected
-				join.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+				joinQuery.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
 					.leftJoin(MILESTONE.as("tc_milestone")).on(MILESTONE.as("tc_milestone").MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID));
 			}
-			join.leftJoin(INFO_LIST_ITEM.as("type_list")).on(INFO_LIST_ITEM.as("type_list").ITEM_ID.eq(TEST_CASE.TC_TYPE))
+			joinQuery.leftJoin(INFO_LIST_ITEM.as("type_list")).on(INFO_LIST_ITEM.as("type_list").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("type_nature")).on(INFO_LIST_ITEM.as("type_nature").ITEM_ID.eq(TEST_CASE.TC_NATURE))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
@@ -164,29 +165,29 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 //			.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc").REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.as("ts_vs").REQUIREMENT_VERSION_COVERAGE_ID))
 
 			if (isFetchTestSuite(entityList)) {
-				join.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
+				joinQuery.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 					.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID));
 			}
 		}
 		if (queryDepth > 3) {
-			join.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
+			joinQuery.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 				.leftJoin(EXECUTION).on(EXECUTION.EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID));
 		}
 		if (queryDepth > 4) {
-			join.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+			joinQuery.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
 
 				.leftJoin(VERIFYING_STEPS.as("es_vs")).on(VERIFYING_STEPS.as("es_vs").TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("es_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.as("es_vs").REQUIREMENT_VERSION_COVERAGE_ID));
 		}
-		if(queryDepth > 5) {
-			join.leftJoin(ISSUE_LIST.as("es_issue_list")).on(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))
+		if (queryDepth > 5) {
+			joinQuery.leftJoin(ISSUE_LIST.as("es_issue_list")).on(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))
 				.leftJoin(ISSUE.as("es_issue")).on(ISSUE.as("es_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID))
 
 				.leftJoin(ISSUE_LIST.as("exec_issue_list")).on(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
 				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID).or(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID)));
 		}
-		join.where(CAMPAIGN.CLN_ID.eq(campaignId))
+		joinQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
 
 			.groupBy(getGroupByFieldList(queryDepth, fieldList))
 
@@ -195,7 +196,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			.fetch()
 			.iterator();
 
-		return join.fetch().iterator();
+		return joinQuery.fetch().iterator();
 	}
 
 	private List<Field<?>> getOrderByFieldList(int queryDepth) {
@@ -207,6 +208,9 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			orderByFieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
 		}
 		if(queryDepth > 3) {
+			orderByFieldList.add(EXECUTION.EXECUTION_ID);
+		}
+		if(queryDepth > 4) {
 			orderByFieldList.add(EXECUTION_STEP.EXECUTION_STEP_ID);
 		}
 		return orderByFieldList;

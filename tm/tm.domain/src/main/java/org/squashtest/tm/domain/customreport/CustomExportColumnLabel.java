@@ -21,16 +21,19 @@
 package org.squashtest.tm.domain.customreport;
 
 import org.jooq.Field;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.EntityType;
 
-import static org.jooq.impl.DSL.groupConcatDistinct;
+import static org.jooq.impl.DSL.*;
 import static org.squashtest.tm.jooq.domain.Tables.*;
 import static org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.tables.Iteration.ITERATION;
 import static org.squashtest.tm.jooq.domain.tables.TestSuite.TEST_SUITE;
 
 public enum CustomExportColumnLabel implements Internationalizable {
+
 
 	// --- CAMPAIGN ---
 	CAMPAIGN_LABEL(
@@ -58,9 +61,10 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		CAMPAIGN.CAMPAIGN_STATUS,
 		EntityType.CAMPAIGN),
 
+
 	CAMPAIGN_PROGRESS_STATUS(
 		I18nKeys.I18N_KEY_PROGRESS_STATUS,
-		null,
+		Fields.CAMPAIGN_PROGRESS_STATUS,
 		EntityType.CAMPAIGN),
 
 	CAMPAIGN_MILESTONE(
@@ -157,7 +161,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	TEST_SUITE_PROGRESS_STATUS(
 		"test-suite.progress_status.label",
-		null,
+		Fields.TEST_SUITE_PROGRESS_STATUS,
 		EntityType.TEST_SUITE),
 
 	// --- TEST CASE ---
@@ -172,7 +176,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_LABEL(
-		I18nKeys.I18N_KEY_ID,
+		I18nKeys.I18N_KEY_LABEL,
 		TEST_CASE_LIBRARY_NODE.NAME,
 		EntityType.TEST_CASE),
 
@@ -239,7 +243,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	EXECUTION_SUCCESS_RATE(
 		"shortLabel.SuccessRate",
-		null,
+		Fields.EXECUTION_SUCCESS_RATE,
 		EntityType.EXECUTION),
 
 	EXECUTION_USER(
@@ -311,6 +315,10 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	private String i18nKey;
 	private Field jooqTableField;
+	/**
+	 * The deepest entity to join so the column can be fetched/computed.
+	 * It is used to find the query depth.
+	 */
 	private EntityType entityType;
 
 	CustomExportColumnLabel(String i18nKey, Field jooqTableField, EntityType entityType) {
@@ -346,6 +354,82 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		public static final String I18N_KEY_ACTUAL_END = "chart.column.CAMPAIGN_ACTUAL_END";
 		public static final String I18N_KEY_USER = "label.User";
 		public static final String LABEL_STATUS = "label.Status";
+	}
+
+	private static class Fields {
+
+		private final static Field FIELD_ITPI_DONE_COUNT =
+			DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+				.from(CAMPAIGN.as("campaign_itpi_done"))
+				.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.as("campaign_itpi_done").CLN_ID))
+				.leftJoin(ITERATION).on(ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+				.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION.ITERATION_ID))
+				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+				.where(CAMPAIGN.as("campaign_itpi_done").CLN_ID.eq(CAMPAIGN.CLN_ID))
+				.and(ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS.in("SETTLED", "UNTESTABLE", "BLOCKED", "FAILURE", "SUCCESS"))
+				.asField();
+
+		private final static Field FIELD_ITPI_TOTAL_COUNT =
+			DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+				.from(CAMPAIGN.as("campaign_itpi_total"))
+				.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.as("campaign_itpi_total").CLN_ID))
+				.leftJoin(ITERATION).on(ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+				.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(ITERATION.ITERATION_ID))
+				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+				.where(CAMPAIGN.as("campaign_itpi_total").CLN_ID.eq(CAMPAIGN.CLN_ID))
+				.asField();
+
+		private final static Field CAMPAIGN_PROGRESS_STATUS = concat(
+			DSL.round(FIELD_ITPI_DONE_COUNT.div(nullif(FIELD_ITPI_TOTAL_COUNT, 0)).mul(100L), 2)
+				.cast(SQLDataType.VARCHAR(5)),
+			val(" "),
+			val("%"));
+
+		private final static Field FIELD_TEST_SUITE_ITPI_DONE_COUNT =
+			DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+				.from(TEST_SUITE.as("suite_itpi_done"))
+				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID.eq(TEST_SUITE.as("suite_itpi_done").ID))
+				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID))
+				.where(TEST_SUITE.as("suite_itpi_done").ID.eq(TEST_SUITE.ID))
+				.and(ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS.in("SETTLED", "UNTESTABLE", "BLOCKED", "FAILURE", "SUCCESS"))
+				.asField();
+
+		private final static Field FIELD_TEST_SUITE_ITPI_TOTAL_COUNT =
+			DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+				.from(TEST_SUITE.as("suite_itpi_total"))
+				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID.eq(TEST_SUITE.as("suite_itpi_total").ID))
+				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID))
+				.where(TEST_SUITE.as("suite_itpi_total").ID.eq(TEST_SUITE.ID))
+				.asField();
+
+		private final static Field TEST_SUITE_PROGRESS_STATUS = concat(
+			DSL.round(FIELD_TEST_SUITE_ITPI_DONE_COUNT.div(nullif(FIELD_TEST_SUITE_ITPI_TOTAL_COUNT, 0)).mul(100L), 2)
+				.cast(SQLDataType.VARCHAR(5)),
+			val(" "),
+			val("%"));
+
+		private final static Field FIELD_EXECUTION_STEP_SUCCESS_COUNT =
+			DSL.select(count(EXECUTION_STEP.EXECUTION_STEP_ID).cast(SQLDataType.DOUBLE))
+				.from(EXECUTION.as("exec_step_done"))
+				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.as("exec_step_done").EXECUTION_ID))
+				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
+				.where(EXECUTION.as("exec_step_done").EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+				.and(EXECUTION_STEP.EXECUTION_STATUS.eq("SUCCESS"))
+				.asField();
+
+		private final static Field FIELD_EXECUTION_STEP_TOTAL_COUNT =
+			DSL.select(count(EXECUTION_STEP.EXECUTION_STEP_ID).cast(SQLDataType.DOUBLE))
+				.from(EXECUTION.as("exec_step_total"))
+				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.as("exec_step_total").EXECUTION_ID))
+				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
+				.where(EXECUTION.as("exec_step_total").EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+				.asField();
+
+		private final static Field EXECUTION_SUCCESS_RATE = concat(
+			DSL.round(FIELD_EXECUTION_STEP_SUCCESS_COUNT.div(nullif(FIELD_EXECUTION_STEP_TOTAL_COUNT, 0)).mul(100L), 2)
+			.cast(SQLDataType.VARCHAR(5)),
+			val(" "),
+			val("%"));
 	}
 }
 
