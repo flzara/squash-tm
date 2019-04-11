@@ -39,6 +39,12 @@ define(["jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", 
 		workspace.init();
 
 		var data = {};
+
+		data.customExportDef = JSON.parse(squashtm.customExport.definition);
+		if(data.customExportDef !== null) {
+			data.customExportDef.scopeCampaignName = squashtm.customExport.scopeCampaignName;
+		}
+
 		var model = new WizardModel(data);
 
 		var wizardView = new WizardView ({

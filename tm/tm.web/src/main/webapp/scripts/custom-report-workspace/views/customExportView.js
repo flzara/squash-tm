@@ -42,7 +42,8 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 
 			events: {
 				'click #rename-custom-export-button': 'rename',
-				'click #generate-custom-export-button': 'generate'
+				'click #generate-custom-export-button': 'generate',
+				'click #modify-custom-export-button': 'modify'
 			},
 
 			render: function () {
@@ -102,6 +103,10 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 
 			generate: function() {
 				document.location.href = urlBuilder.buildURL('custom-report.custom-export.generate', this.model.get('id'));
+			},
+
+			modify: function() {
+				document.location.href = urlBuilder.buildURL('custom-report.custom-export.wizard', this.model.get('id'));
 			}
 
 		});

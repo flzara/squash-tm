@@ -24,10 +24,16 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportNodeType;
+import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
+import org.squashtest.tm.service.customreport.CustomReportCustomExportModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
@@ -49,13 +55,30 @@ public class CustomExportController {
 	@Inject
 	private CustomReportLibraryNodeService reportLibraryNodeService;
 	@Inject
+	private CustomReportCustomExportModificationService customExportModificationService;
+	@Inject
 	private CustomReportCustomExportCSVService csvExportService;
+	@Inject
+	private CampaignFinder campaignFinder;
 
 	@RequestMapping("/wizard/{parentId}")
 	public ModelAndView getWizard(@PathVariable Long parentId, Locale locale) {
 		ModelAndView mav = new ModelAndView("custom-exports/wizard/wizard.html");
+
+		CustomReportLibraryNode crln = reportLibraryNodeService.findCustomReportLibraryNodeById(parentId);
+
+		if(crln.getEntityType().getTypeName().equals(CustomReportNodeType.CUSTOM_EXPORT_NAME)) {
+			CustomReportCustomExport customExportDefinition = (CustomReportCustomExport) crln.getEntity();
+			mav.addObject("customExportDefinition", JsonHelper.serialize(customExportDefinition));
+			mav.addObject("scopeCampaignName", getScopeCampaignName(customExportDefinition.getScope().get(0)));
+		}
+
 		mav.addObject("parentId", parentId);
 		return mav;
+	}
+
+	private String getScopeCampaignName(EntityReference entity) {
+		return campaignFinder.findById(entity.getId()).getName();
 	}
 
 	@ResponseBody
@@ -63,6 +86,14 @@ public class CustomExportController {
 	public String createNewCustomExport(@RequestBody CustomReportCustomExport customExport, @PathVariable("parentNodeId") long parentNodeId) {
 		CustomReportLibraryNode newNode = reportLibraryNodeService.createNewNode(parentNodeId, customExport);
 		return String.valueOf(newNode.getId());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/update/{nodeId}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
+	public String updateCustomExport(@RequestBody CustomReportCustomExport modifiedCustomExport, @PathVariable("nodeId") long nodeId) {
+		CustomReportCustomExport formerCustomExport = reportLibraryNodeService.findCustomExportByNodeId(nodeId);
+		customExportModificationService.updateCustomExport(nodeId, modifiedCustomExport);
+		return String.valueOf(nodeId);
 	}
 
 	@ResponseBody

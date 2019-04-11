@@ -30,6 +30,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				this.model = data;
 				data.name = "name";
 				this._initialize(data, wizrouter);
+				this.reloadModelInView();
 			},
 
 			events: {
@@ -40,24 +41,33 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 			},
 
 			save: function() {
-				/* Here we save the new Table ! */
+				/* Here we save the new Custom Export ! */
 				this.updateModel();
 
 				var parentId = this.model.get("parentId");
-				var targetUrl = router.buildURL('custom-report.custom-export.new', parentId);
 				var cookiePath = this.getCookiePath();
 
-				// Ajax POST request to save the Custom Export =)
-				$.ajax({
-					method: "POST",
-					contentType: "application/json",
-					url: targetUrl,
-					data: this.model.toJson()
-				}).done(function(newCustomExportId) {
-					var nodeToSelect = "CustomExport-" + newCustomExportId;
-					$.cookie("jstree_select", nodeToSelect, {path: cookiePath});
-					window.location.href = router.buildURL("custom-report.custom-export.redirect", newCustomExportId)
-				});
+				var targetUrl;
+				if(this.isUpdatingAnExistingExport()) {
+					targetUrl = router.buildURL('custom-report.custom-export.update', parentId);
+				} else {
+					targetUrl = router.buildURL('custom-report.custom-export.new', parentId);
+				}
+					// Ajax POST request to save the Custom Export =)
+					$.ajax({
+						method: "POST",
+						contentType: "application/json",
+						url: targetUrl,
+						data: this.model.toJson()
+					}).done(function (newCustomExportId) {
+						var nodeToSelect = "CustomExport-" + newCustomExportId;
+						$.cookie("jstree_select", nodeToSelect, {path: cookiePath});
+						window.location.href = router.buildURL("custom-report.custom-export.redirect", newCustomExportId)
+					});
+			},
+
+			reloadModelInView: function() {
+				$("input#custom-export-name").val(this.model.get("name"));
 			},
 
 			/**
