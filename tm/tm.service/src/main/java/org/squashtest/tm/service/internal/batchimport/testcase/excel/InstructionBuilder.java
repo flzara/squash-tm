@@ -142,7 +142,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
 		PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
 		// Issue TM-293 we don't to escape html for callStep because we can't map the callstep with the test case.
-		if (!(target instanceof CallStepInstruction)) {
+		if (value != null && !(target instanceof CallStepInstruction)) {
 			// Issue 7485 - there are problems with accents in reports from import, we have to escape html inside tags into database
 			List<String> targetedColumnsToEscape = new ArrayList<>(Arrays.asList(TestCaseSheetColumn.TC_DESCRIPTION.getHeader(),
 				TestCaseSheetColumn.TC_PRE_REQUISITE.getHeader(), StepSheetColumn.TC_STEP_ACTION.getHeader(),
