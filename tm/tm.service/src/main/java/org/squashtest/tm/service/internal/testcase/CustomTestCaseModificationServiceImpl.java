@@ -1297,6 +1297,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		User currentUser = userAccountService.findCurrentUser();
 		request.setCreatedBy(currentUser);
 
+		/*TM-13: verifier si  TC a un mapping manuel en verifiant ta_test!=null*/
+		if(!testCase.getAutomatedTest().equals(null))
+		{
+			request.setManual(true);
+		}
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
 

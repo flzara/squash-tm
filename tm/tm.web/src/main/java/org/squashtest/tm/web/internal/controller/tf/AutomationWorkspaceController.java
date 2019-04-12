@@ -92,7 +92,8 @@ public class AutomationWorkspaceController {
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo.login");
+		.map("assigned-to", "assignedTo.login")
+	    .map("uuid", "testCase.uuid");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {

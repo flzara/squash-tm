@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
-                    "aaSorting": [[7, 'desc'], [8, 'asc'], [11, 'desc']],
+                    "aaSorting": [[7, 'desc'], [8, 'asc'], [12, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -85,16 +85,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mDataProp": "script",
                         "sClass": "assigned-script"
                     }, {
+												 "bSortable": false,
+												 "aTargets": [11],
+												 "mDataProp": "uuid"
+										 },{
                         "bSortable": true,
-                        "aTargets": [11],
+                        "aTargets": [12],
                         "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [12],
+                        "aTargets": [13],
                         "mDataProp": "assigned-on"
                     }, {
                         "bSortable": false,
-                        "aTargets": [13],
+                        "aTargets": [14],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -104,10 +108,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "writableAutom",
                         "bVisible": false,
-                        "aTargets": [14]
+                        "aTargets": [15]
                     }, {
                         "bSortable": false,
-                        "aTargets": [15],
+                        "aTargets": [16],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -132,7 +136,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [16]
+                        "aTargets": [17]
                     }],
                     "bFilter": true,
 
@@ -216,6 +220,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
+
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
                         if (data['script'] !== '-' && !isGherkin) {
@@ -618,9 +623,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var scripts = self.checkScriptAutoIsAbsent(domtable);
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts !== 0) {
+                    } /*else if (scripts !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
-                    } else {
+                    } */else {
                         self.updateStatus(domtable, "AUTOMATED");
                     }
                 });

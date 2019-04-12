@@ -44,6 +44,7 @@ define(["jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", 
 				this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 				this.addAssociationCheckboxes = $.proxy(this._addAssociationCheckboxes, this);
 				this.addSelectEditableToAutomatable = $.proxy(this._addSelectEditableToAutomatable, this);
+				//this.addSimpleEditableToUuid = $.proxy(this._addSimpleEditableToUuid, this);
 
 				var tableConf;
 				var squashConf;

@@ -37,6 +37,7 @@
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
 <c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
+<c:set var="uuid" 	value="${testCase.uuid}" />
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
@@ -90,6 +91,14 @@
 				<span id="automation-request-status">${ automReqStatusLabel }</span>
 			</div>
 		</div>
+
+		<div class="display-table-row">
+        <label for="test-case-uuid" class="display-table-cell"><f:message key="test-case.automation-uuid.label" /></label>
+        <div class="display-table-cell">
+          <span id="test-case-uuid">${uuid}</span>
+        </div>
+    </div>
+
 	</div>
 	</jsp:attribute>
 </comp:toggle-panel>

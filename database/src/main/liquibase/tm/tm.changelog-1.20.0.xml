@@ -79,4 +79,65 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-13-add-conflict-association-ismanuel" author="amk">
+    <addColumn tableName="AUTOMATION_REQUEST">
+      <column name="CONFLICT_ASSOCIATION" type="BOOLEAN" defaultValueBoolean="false">
+        <constraints nullable="false" />
+      </column>
+      <column name="IS_MANUAL" type="BOOLEAN" defaultValueBoolean="false">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="postgresql">
+   <sql>
+     UPDATE automation_request SET is_manual = true
+     WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc, automation_request ar WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+   </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="mysql">
+    <sql>
+      UPDATE automation_request ar SET ar.is_manual = true
+      WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="h2">
+    <sql>
+      UPDATE automation_request ar SET ar.is_manual = true
+      WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-association-auto-cdt-script-auto" author="amk">
+    <addColumn tableName="TEST_CASE">
+      <column name="UUID" type="java.sql.Types.VARCHAR(36)" >
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-postgresql" author="amk" dbms="postgresql">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE test_case SET uuid =  uuid_generate_v4() WHERE uuid is NULL;
+      ALTER TABLE test_case ALTER COLUMN uuid SET NOT NULL;
+    </sql>
+  </changeSet>
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-mysql" author="amk" dbms="mysql">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE test_case SET uuid =  uuid() WHERE uuid is NULL;
+      ALTER TABLE test_case MODIFY uuid VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-h2" author="amk" dbms="h2">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE test_case SET uuid =  random_uuid() WHERE uuid is NULL;
+      ALTER TABLE test_case MODIFY uuid VARCHAR2(36) NOT NULL;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
@@ -62,32 +63,10 @@ import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -238,6 +217,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	private TestCaseAutomatable automatable = M;
 
+	/*TM-13*/
+	@NotNull
+	@Column(name = "UUID")
+	private String uuid;
+
+	public String getUuid() {	return uuid;}
+
+	public void setUuid(String uuid) {this.uuid = uuid;	}
 
 	// *************************** CODE *************************************
 
@@ -250,6 +237,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public TestCase() {
 		super();
+		UUID uuid = UUID.randomUUID();
+		setUuid(uuid.toString());
 	}
 
 	public int getVersion() {
@@ -891,6 +880,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.importance = null;
 		res.status = null;
 		res.automatable = null;
+		res.uuid=null;
 
 		return res;
 	}

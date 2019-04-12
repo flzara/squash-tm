@@ -40,4 +40,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void assignedToRequest(List<Long> tcIds);
 
+	void updateScriptTa(Long tcId);
+
 }

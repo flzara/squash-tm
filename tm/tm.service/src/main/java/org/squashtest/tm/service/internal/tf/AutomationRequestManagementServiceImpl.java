@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
+import com.querydsl.core.types.CollectionExpression;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
@@ -48,10 +50,9 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
@@ -225,6 +226,45 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		PermissionsUtils.checkPermission(permissionEvaluationService, requestIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 		requestDao.assignedToRequestIds(requestIds, user);
 	}
+
+	@Override
+	public void updateScriptTa(Long tcId) {
+
+		/*//demande list script qui correspond au projet et job
+		List<Couple<String, String>> listScriptTa = new ArrayList<>();
+		listScriptTa.add(new Couple("308add11-ab10-46f6-9c67-5fb8a63698d2", "first-test.ta"));
+		listScriptTa.add(new Couple("36a2eae2-7c64-4fd9-a97a-ab4c0608271c", "first-test.ta"));
+		listScriptTa.add(new Couple("04e1bc3a-b1b1-4ce4-ab88-3cf93a95226e", "script2.ta"));
+		listScriptTa.add(new Couple("e46b65ca-91b9-458b-aeba-0f6ba8caf894", "script3.ta"));
+		listScriptTa.add(new Couple("e46b65ca-91b9-458b-aeba-0f6ba8caf894", "script_custom_field_params_CP.ta"));
+		listScriptTa.add(new Couple("984e2952-fb65-455c-810f-6f42fe620f3d", "script_custom_field_params_TS.ta"));
+		listScriptTa.add(new Couple("984e2952-fb65-455c-810f-6f42fe620f3d", "script_custom_field_params_CP.ta"));
+
+		Map<String, List<String>> mapTcScript =
+			listScriptTa.stream().collect(Collectors.groupingBy(Couple::getA1,
+				Collectors.mapping(Couple::getA2,
+					Collectors.toList())));
+
+		TestCase tc = testCaseDao.findById(tcId);
+
+		if (mapTcScript.containsKey(tc.getUuid())) {
+			for (Map.Entry<String, List<String>> entry : mapTcScript.entrySet()) {
+				if (entry.getKey().equals(tc.getUuid())) {
+
+					//conflit d'association
+					if (entry.getValue().size() > 1) {
+						tc.getAutomationRequest().setConflictAssociation(true);
+					} else {
+						tc.getAutomatedTest().setName(entry.getValue().get(0));
+						tc.getAutomationRequest().setConflictAssociation(false);
+					}
+
+				}
+
+			}
+		}*/
+	}
+
 
 	@Override
 	public void changeStatus(List<Long> tcIds, AutomationRequestStatus automationRequestStatus) {

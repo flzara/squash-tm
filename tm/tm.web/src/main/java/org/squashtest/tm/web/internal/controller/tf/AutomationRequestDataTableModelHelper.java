@@ -70,6 +70,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 		data.put("entity-index", getCurrentIndex());
 		data.put("script", populateScriptAuto(item));
+		data.put("uuid", item.getTestCase().getUuid());
 		data.put("checkbox", "");
 		data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 		data.put("requestId", item.getId());

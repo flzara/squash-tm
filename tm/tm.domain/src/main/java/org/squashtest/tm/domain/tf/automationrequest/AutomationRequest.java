@@ -102,6 +102,30 @@ public class AutomationRequest implements Identified {
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
+	/*TM-13*/
+	@Column(name="CONFLICT_ASSOCIATION")
+	private boolean conflictAssociation;
+
+	/*Tm-13: si mapping manuel ==> manuel = true*/
+	@Column(name= "IS_MANUAL")
+	private boolean isManual;
+
+	public boolean isConflictAssociation() {
+		return conflictAssociation;
+	}
+
+	public boolean isManual() {
+		return isManual;
+	}
+
+	public void setManual(boolean manual) {
+		isManual = manual;
+	}
+
+	public void setConflictAssociation(boolean conflictAssociation) {
+		this.conflictAssociation = conflictAssociation;
+	}
+
 	public Long getId() {
 		return id;
 	}

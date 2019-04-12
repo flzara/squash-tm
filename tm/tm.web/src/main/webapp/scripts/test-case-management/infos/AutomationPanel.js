@@ -58,12 +58,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							$.ajax({
 								url: self.settings.urls.testCaseUrl,
 								method: 'POST',
-								data: {
+								/*data: {
 									'id': 'automation-request-status',
 									'value': 'TRANSMITTED'
-								}
+								}*/
 							}).success(function() {
-								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+								self.refresh();
+								/*$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));*/
 							});
 						});
 
