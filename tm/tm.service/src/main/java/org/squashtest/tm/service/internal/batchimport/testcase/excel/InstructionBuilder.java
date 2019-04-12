@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.Messages;
@@ -130,16 +131,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		Object value = null;
 
 		try {
-			Object getValue = getValue(row, colDef);
-			if (getValue != null) {
-				// Issue 7485 - there are problems with accents in reports from import, we have to escape html inside tags into database
-				List<String> targetedColumnsToEscape = new ArrayList<>(Arrays.asList(TestCaseSheetColumn.TC_DESCRIPTION.getHeader(),
-					TestCaseSheetColumn.TC_PRE_REQUISITE.getHeader(), StepSheetColumn.TC_STEP_ACTION.getHeader(),
-					StepSheetColumn.TC_STEP_EXPECTED_RESULT.getHeader(), RequirementSheetColumn.REQ_VERSION_DESCRIPTION.getHeader(),
-					ParameterSheetColumn.TC_PARAM_DESCRIPTION.getHeader(), DatasetSheetColumn.TC_DATASET_PARAM_VALUE.getHeader()));
-				boolean mustEscapeColValue = mustEscapeColValue(colDef, targetedColumnsToEscape);
-				value = mustEscapeColValue ? ExcelRowReaderUtils.escapeHTMLInsideTags("" + getValue) : getValue;
-			}
+			value = getValue(row, colDef);
+
 		} catch (CannotCoerceException cce) {
 			log(colDef, cce, instruction);
 
@@ -147,7 +140,16 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 		Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
 		PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
-
+		// Issue TM-293 we don't to escape html for callStep because we can't map the callstep with the test case.
+		if (!(target instanceof CallStepInstruction)) {
+			// Issue 7485 - there are problems with accents in reports from import, we have to escape html inside tags into database
+			List<String> targetedColumnsToEscape = new ArrayList<>(Arrays.asList(TestCaseSheetColumn.TC_DESCRIPTION.getHeader(),
+				TestCaseSheetColumn.TC_PRE_REQUISITE.getHeader(), StepSheetColumn.TC_STEP_ACTION.getHeader(),
+				StepSheetColumn.TC_STEP_EXPECTED_RESULT.getHeader(), RequirementSheetColumn.REQ_VERSION_DESCRIPTION.getHeader(),
+				ParameterSheetColumn.TC_PARAM_DESCRIPTION.getHeader(), DatasetSheetColumn.TC_DATASET_PARAM_VALUE.getHeader()));
+			boolean mustEscapeColValue = mustEscapeColValue(colDef, targetedColumnsToEscape);
+			value = mustEscapeColValue ? ExcelRowReaderUtils.escapeHTMLInsideTags("" + value) : value;
+		}
 		try {
 			propSetter.set(value, target);
 
@@ -157,6 +159,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 			instruction.addLogEntry(e.getStatus(), e.getErrori18nMessage(), e.getImpacti18nMessage());
 		}
 	}
+
 
 	/**
 	 * @param colDef the column definition
