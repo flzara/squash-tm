@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel
 
-import org.apache.poi.ss.usermodel.Cell;
-
+import org.apache.poi.ss.usermodel.Cell
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

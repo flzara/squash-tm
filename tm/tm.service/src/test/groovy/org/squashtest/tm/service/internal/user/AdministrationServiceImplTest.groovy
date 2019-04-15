@@ -26,7 +26,6 @@ import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.internal.repository.UsersGroupDao
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
-import org.squashtest.tm.service.security.acls.jdbc.DerivedPermissionsManager
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.squashtest.tm.service.user.AdministrationService
 import spock.lang.Specification

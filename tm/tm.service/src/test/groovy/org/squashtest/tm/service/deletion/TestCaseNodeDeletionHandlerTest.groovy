@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.deletion
 
-import java.util.Optional
-import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
-import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
-import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import spock.lang.Specification
 

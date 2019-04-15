@@ -21,9 +21,8 @@
 package org.squashtest.tm.service.campaign
 
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerInterfaceSpecification
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.service.campaign.IterationModificationService;
-
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.service.campaign.IterationModificationService
 import spock.lang.Shared
 
 /**

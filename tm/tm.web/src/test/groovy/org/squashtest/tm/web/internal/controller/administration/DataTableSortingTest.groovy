@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.administration
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
-
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper
 import spock.lang.Specification
 
 /**

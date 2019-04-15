@@ -20,13 +20,9 @@
  */
 package org.squashtest.tm.service.deletion
 
-import java.util.List;
-
-import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree;
-import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree.Movement;
-
+import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree
+import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree.Movement
 import spock.lang.Specification
-
 
 /*
  * 1 +- 11 +- 21

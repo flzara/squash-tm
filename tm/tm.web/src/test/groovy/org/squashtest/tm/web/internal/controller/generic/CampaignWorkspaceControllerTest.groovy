@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.api.security.acls.AccessRule;
-import org.squashtest.tm.api.widget.MenuItem;
-import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.security.acls.AccessRule
+import org.squashtest.tm.api.widget.MenuItem
+import org.squashtest.tm.api.wizard.WorkspaceWizard
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController
-import org.squashtest.tm.web.internal.controller.requirement.RequirementWorkspaceController;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseWorkspaceController;
-import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import org.squashtest.tm.web.internal.controller.requirement.RequirementWorkspaceController
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseWorkspaceController
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

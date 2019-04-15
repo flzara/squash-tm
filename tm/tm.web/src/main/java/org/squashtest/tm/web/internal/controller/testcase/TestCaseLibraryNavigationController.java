@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -47,7 +46,6 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
-import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
@@ -60,7 +58,6 @@ import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationContro
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 

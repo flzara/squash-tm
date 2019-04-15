@@ -31,7 +31,6 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao
 import org.squashtest.tm.service.project.GenericProjectManagerService
-
 import spock.lang.Specification
 
 class BugTrackerManagerServiceImplTest extends Specification  {

@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static org.squashtest.tm.service.importer.ImportStatus.*
-import static Existence.*
-
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
@@ -30,6 +27,11 @@ import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportMode
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS
+import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS
 
 class EntityValidatorTest extends Specification {
 

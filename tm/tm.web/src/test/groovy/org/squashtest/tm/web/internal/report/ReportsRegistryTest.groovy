@@ -20,17 +20,14 @@
  */
 package org.squashtest.tm.web.internal.report
 
-
-
-import org.squashtest.tm.api.report.BasicReport;
-import org.squashtest.tm.api.report.ReportPlugin;
-import org.squashtest.tm.api.report.StandardReportCategory;
+import org.squashtest.tm.api.report.BasicReport
+import org.squashtest.tm.api.report.ReportPlugin
+import org.squashtest.tm.api.report.StandardReportCategory
 import org.squashtest.tm.web.internal.report.ReportsRegistry
+import spock.lang.Ignore
+import spock.lang.Specification
 
-import spock.lang.Ignore;
-import spock.lang.Specification;
-
-import static org.squashtest.tm.api.report.StandardReportCategory.*
+import static org.squashtest.tm.api.report.StandardReportCategory.PREPARATION_PHASE
 
 /**
  * @author Gregory Fouquet

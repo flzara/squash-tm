@@ -18,19 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.model.builder
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
-import org.squashtest.tm.web.testutils.MockFactory;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.testutils.MockFactory
 
 class RequirementLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 	RequirementLibraryTreeNodeBuilder builder = new RequirementLibraryTreeNodeBuilder(permissionEvaluator())

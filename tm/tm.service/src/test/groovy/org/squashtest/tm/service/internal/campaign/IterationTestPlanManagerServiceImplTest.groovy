@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.testcase.Dataset
@@ -35,11 +34,9 @@ import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.testutils.MockFactory
-
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.util.Optional
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 

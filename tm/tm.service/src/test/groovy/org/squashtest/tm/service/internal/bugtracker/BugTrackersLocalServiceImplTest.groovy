@@ -24,15 +24,15 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
-import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueList
 import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.servers.AuthenticationStatus
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.service.advancedsearch.IndexationService
+import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.servers.CredentialsProvider
 import org.squashtest.tm.service.servers.StoredCredentialsManager

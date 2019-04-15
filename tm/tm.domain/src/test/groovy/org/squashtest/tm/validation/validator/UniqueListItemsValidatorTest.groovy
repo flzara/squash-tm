@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.validation.validator
 
-import org.squashtest.tm.validation.validator.UniqueListItemsValidator;
-
+import org.squashtest.tm.validation.validator.UniqueListItemsValidator
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

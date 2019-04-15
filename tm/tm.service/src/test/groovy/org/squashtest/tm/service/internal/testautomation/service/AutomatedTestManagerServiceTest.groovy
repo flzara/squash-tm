@@ -23,28 +23,14 @@ package org.squashtest.tm.service.internal.testautomation.service
 import org.apache.commons.io.FileUtils
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
-import org.squashtest.tm.domain.testcase.TestCaseKind
-import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
-import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
-import org.squashtest.tm.service.testutils.MockFactory
-import spock.lang.Shared
-
-import javax.inject.Provider
-
-
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
-import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
-import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
-import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
-import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
+import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.service.internal.testautomation.*
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
-
+import org.squashtest.tm.service.testutils.MockFactory
+import spock.lang.Shared
 import spock.lang.Specification
-
-import java.nio.file.Files
-import java.util.stream.Collectors
 
 class AutomatedTestManagerServiceTest extends Specification {
 

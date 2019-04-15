@@ -18,22 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.report;
+package org.squashtest.tm.web.internal.report
 
-import static org.junit.Assert.*;
+import org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView
+import org.squashtest.tm.api.report.BasicReport
+import org.squashtest.tm.api.report.Report
+import org.squashtest.tm.api.report.ReportPlugin
+import org.squashtest.tm.api.report.ReportView
+import org.squashtest.tm.api.report.jasperreports.JasperReportsView
+import org.squashtest.tm.web.internal.report.ReportViewServletContextInitializer
+import spock.lang.Specification
 
-import javax.servlet.ServletContext;
-
-import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView;
-import org.squashtest.tm.api.report.BasicReport;
-import org.squashtest.tm.api.report.Report;
-import org.squashtest.tm.api.report.ReportPlugin;
-import org.squashtest.tm.api.report.ReportView;
-import org.squashtest.tm.api.report.jasperreports.JasperReportsView;
-import org.squashtest.tm.web.internal.report.ReportViewServletContextInitializer;
-
-import spock.lang.Specification;
+import javax.servlet.ServletContext
 
 /**
  * @author Gregory Fouquet

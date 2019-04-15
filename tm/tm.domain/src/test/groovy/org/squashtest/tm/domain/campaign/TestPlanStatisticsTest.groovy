@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.campaign
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.domain.execution.ExecutionStatus
-
 import spock.lang.Specification
 
 class TestPlanStatisticsTest extends Specification {

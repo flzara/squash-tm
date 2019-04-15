@@ -18,22 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.wizard;
+package org.squashtest.tm.web.internal.wizard
 
-import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.MenuItem;
-import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.plugin.EntityReference
+import org.squashtest.tm.api.widget.MenuItem
+import org.squashtest.tm.api.wizard.WorkspaceWizard
 import org.squashtest.tm.api.workspace.WorkspaceType
-import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManagerImpl;
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.service.project.GenericProjectFinder
+import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManagerImpl
+import spock.lang.Specification
 
-import static org.squashtest.tm.api.workspace.WorkspaceType.*;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.service.project.GenericProjectFinder;
-
-import spock.lang.Specification;
+import static org.squashtest.tm.api.workspace.WorkspaceType.*
 
 /**
  * @author Gregory Fouquet

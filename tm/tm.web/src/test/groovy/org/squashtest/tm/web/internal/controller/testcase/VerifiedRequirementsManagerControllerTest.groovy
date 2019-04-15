@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import java.util.Optional
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder

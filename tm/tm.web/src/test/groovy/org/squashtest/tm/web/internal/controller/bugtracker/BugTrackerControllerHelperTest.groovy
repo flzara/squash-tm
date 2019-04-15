@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker
 
-import javax.servlet.http.HttpServletRequest
-
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.TestCase
 
+import javax.servlet.http.HttpServletRequest
 
 class BugTrackerControllerHelperTest extends spock.lang.Specification {
 

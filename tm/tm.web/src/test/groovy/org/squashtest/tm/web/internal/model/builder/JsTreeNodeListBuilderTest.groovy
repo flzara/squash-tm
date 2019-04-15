@@ -21,8 +21,8 @@
 package org.squashtest.tm.web.internal.model.builder
 
 import org.squashtest.tm.domain.Identified
-import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
 class JsTreeNodeListBuilderTest extends NodeBuildingSpecification {

@@ -33,7 +33,10 @@ import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
 
 import java.io.IOException;
 
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_FORBIDDEN;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 
 public class RequestExecutor {
 

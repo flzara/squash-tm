@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.jquery
 
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 import spock.lang.Specification
 
 class DataTableModelTest extends Specification {

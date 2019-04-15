@@ -18,17 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
-
-import java.lang.reflect.Modifier;
+package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.audit.AuditableSupport;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import spock.lang.Specification
 
+import java.lang.reflect.Modifier
 
 class TestStepTest extends Specification {
 	def "new step should not have attachments"() {

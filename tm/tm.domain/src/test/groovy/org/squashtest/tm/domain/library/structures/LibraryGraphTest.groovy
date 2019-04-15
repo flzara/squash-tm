@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.domain.library.structures
 
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.NodeTransformer;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
-
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.domain.library.structures.LibraryGraph.NodeTransformer
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import spock.lang.Specification
-
 
 class LibraryGraphTest extends Specification {
 

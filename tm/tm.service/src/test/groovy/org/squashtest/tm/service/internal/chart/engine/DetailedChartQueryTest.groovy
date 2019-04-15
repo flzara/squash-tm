@@ -20,19 +20,12 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.QueryStrategy.*;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.chart.*
+import spock.lang.Specification
 
-import spock.lang.Specification;
+import static org.squashtest.tm.domain.chart.ColumnType.*
+import static org.squashtest.tm.domain.chart.QueryStrategy.*
 
 class DetailedChartQueryTest extends Specification{
 

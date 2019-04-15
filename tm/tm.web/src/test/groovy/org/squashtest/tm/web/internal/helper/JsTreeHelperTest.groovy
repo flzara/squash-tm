@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.web.internal.helper
 
-import org.apache.commons.collections.MultiMap;
-
+import org.apache.commons.collections.MultiMap
 import spock.lang.Specification
 
 /**

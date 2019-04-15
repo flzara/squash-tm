@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.security.acls.domain
 
-import org.squashtest.tm.service.security.acls.domain.AnnotatedPropertyObjectIdentityRetrievalStrategy
 import org.squashtest.tm.security.annotation.AclConstrainedObject
-
+import org.squashtest.tm.service.security.acls.domain.AnnotatedPropertyObjectIdentityRetrievalStrategy
 import spock.lang.Specification
 
 class AnnotatedPropertyObjectIdentityRetrievalStrategyTest extends Specification {

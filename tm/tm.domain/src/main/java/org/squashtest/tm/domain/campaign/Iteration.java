@@ -51,7 +51,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.execution.EmptyIterationTestPlanException;
-import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 

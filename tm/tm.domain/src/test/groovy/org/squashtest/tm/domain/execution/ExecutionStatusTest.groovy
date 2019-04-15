@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.domain.execution
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
-
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.execution.ExecutionStatusReport
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
 /**
  * @author Gregory Fouquet

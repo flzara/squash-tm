@@ -21,11 +21,7 @@
 package org.squashtest.tm.service.internal.campaign
 
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.campaign.TestPlanStatistics
+import org.squashtest.tm.domain.campaign.*
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.UserListItem

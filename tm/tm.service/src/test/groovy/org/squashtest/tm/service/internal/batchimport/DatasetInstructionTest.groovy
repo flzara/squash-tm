@@ -20,24 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test
-import org.squashtest.tm.domain.testcase.Parameter
-import org.squashtest.tm.domain.testcase.TestCase
+
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
-import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget
-import org.squashtest.tm.service.internal.batchimport.DatasetValue
 import org.squashtest.tm.service.internal.batchimport.Facility
 import org.squashtest.tm.service.internal.batchimport.LogTrain
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction
-import org.squashtest.tm.service.internal.batchimport.ParameterTarget
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
-import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer
-
 import spock.lang.Specification
-import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

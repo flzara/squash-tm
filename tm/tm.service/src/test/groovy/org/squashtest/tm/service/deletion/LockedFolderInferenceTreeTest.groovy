@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.service.deletion
 
-import java.util.List;
-
-import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree;
-
-import spock.lang.Specification;
+import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree
+import spock.lang.Specification
 
 class LockedFolderInferenceTreeTest extends Specification {
 

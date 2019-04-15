@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.projectfilter
 
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
-
 import spock.lang.Specification
 
 class ProjectFilterTest extends Specification {

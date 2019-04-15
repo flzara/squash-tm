@@ -18,13 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.domain.testcase.Parameter
-import org.squashtest.tm.service.internal.repository.DatasetDao
-import org.squashtest.tm.service.internal.repository.ParameterDao;
-
-import spock.lang.Specification;
+import org.squashtest.tm.service.internal.repository.ParameterDao
+import spock.lang.Specification
 
 public class ParameterModificationServiceImplTest extends Specification {
 

@@ -22,15 +22,15 @@ package org.squashtest.tm.service.internal.bugtracker
 
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.service.internal.bugtracker.adapter.InternalBugtrackerConnector
 import org.squashtest.tm.service.servers.CredentialsProvider
 import org.squashtest.tm.service.servers.UserCredentialsCache
-
-import static org.squashtest.tm.domain.servers.AuthenticationPolicy.*
-
 import spock.lang.Specification
+
+import static org.squashtest.tm.domain.servers.AuthenticationPolicy.APP_LEVEL
+import static org.squashtest.tm.domain.servers.AuthenticationPolicy.USER
 
 //@Ignore
 class BugTrackersServiceImplTest extends Specification {

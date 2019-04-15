@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.testutils.MockFactory;
-
-import spock.lang.Specification
-
+import org.squashtest.tm.service.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import spock.lang.Specification
 
 class TestCaseNodeWalkerTest extends Specification {
 

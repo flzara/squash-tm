@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.connectionhistory
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-
 import org.squashtest.tm.domain.users.ConnectionLog
 import org.squashtest.tm.service.internal.repository.ConnectionLogDao
 import spock.lang.Specification

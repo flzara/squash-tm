@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.testcase
 
-import org.hibernate.dialect.function.TrimFunctionTemplate.Specification;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.hibernate.dialect.function.TrimFunctionTemplate.Specification
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
 
 public class DatasetParamValueTest extends Specification {
 	

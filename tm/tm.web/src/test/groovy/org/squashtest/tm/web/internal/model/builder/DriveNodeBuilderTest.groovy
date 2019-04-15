@@ -20,29 +20,24 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
-
-import javax.inject.Provider
-
 import org.apache.commons.collections.MultiMap
 import org.apache.commons.collections.map.MultiValueMap
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.library.Library
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
-import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import spock.lang.Unroll
+
+import javax.inject.Provider
 
 class DriveNodeBuilderTest extends NodeBuildingSpecification {
 	PermissionEvaluationService permissionEvaluationService = Mock()

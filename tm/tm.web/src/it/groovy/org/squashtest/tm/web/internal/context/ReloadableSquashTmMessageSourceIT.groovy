@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.web.internal.context
 
+import org.springframework.context.MessageSource
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.Specification
+import spock.lang.Unroll
 
 import javax.inject.Inject
 
-import org.springframework.context.MessageSource
-import org.springframework.test.context.ContextConfiguration
-
-import spock.lang.Specification
-import spock.lang.Unroll
 /**
  * @author Gregory Fouquet
  *

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-
-import javax.inject.Provider
-import javax.servlet.http.HttpServletRequest
-
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
@@ -34,21 +28,25 @@ import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
-import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 import org.squashtest.tm.web.testutils.MockFactory
-
 import spock.lang.Specification
+
+import javax.inject.Provider
+import javax.servlet.http.HttpServletRequest
 
 class TestCaseModificationControllerTest extends Specification {
 	TestCaseModificationController controller = new TestCaseModificationController()

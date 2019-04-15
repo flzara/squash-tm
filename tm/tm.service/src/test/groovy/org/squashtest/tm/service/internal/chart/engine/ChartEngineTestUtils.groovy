@@ -20,34 +20,18 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import java.util.List;
-
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.bugtracker.QIssue;
-import org.squashtest.tm.domain.campaign.QCampaign;
-import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.QExecution;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
-import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExecutionCollector;
-
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-
-import spock.lang.Specification;
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.bugtracker.QIssue
+import org.squashtest.tm.domain.campaign.QCampaign
+import org.squashtest.tm.domain.campaign.QIteration
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
+import org.squashtest.tm.domain.chart.*
+import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.requirement.QRequirementVersion
+import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
+import org.squashtest.tm.domain.testcase.QTestCase
+import spock.lang.Specification
 
 public class ChartEngineTestUtils extends Specification{
 

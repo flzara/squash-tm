@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.model.builder
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.Copiable
 import org.squashtest.tm.domain.library.Library
@@ -29,9 +29,8 @@ import org.squashtest.tm.domain.library.LibraryNode
 import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
-
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import spock.lang.Specification
 
 class LibraryTreeNodeBuilderTest extends Specification{

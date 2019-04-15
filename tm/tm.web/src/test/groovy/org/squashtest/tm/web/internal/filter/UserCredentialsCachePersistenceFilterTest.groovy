@@ -22,15 +22,12 @@ package org.squashtest.tm.web.internal.filter
 
 import org.squashtest.tm.service.servers.CredentialsProvider
 import org.squashtest.tm.service.servers.UserCredentialsCache
+import spock.lang.Specification
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-
-import spock.lang.Specification;
-
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
 
 class UserCredentialsCachePersistenceFilterTest extends Specification {
 	UserCredentialsCachePersistenceFilter filter = new UserCredentialsCachePersistenceFilter()

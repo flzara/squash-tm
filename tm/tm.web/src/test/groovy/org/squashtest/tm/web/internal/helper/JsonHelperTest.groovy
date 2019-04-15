@@ -18,15 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.helper;
+package org.squashtest.tm.web.internal.helper
 
-import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.commons.lang3.StringUtils
 import org.squashtest.tm.web.internal.helper.JsonHelper
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import spock.lang.Specification;
-
+import spock.lang.Specification
 
 class JsonHelperTest extends Specification {
 	def setup() {

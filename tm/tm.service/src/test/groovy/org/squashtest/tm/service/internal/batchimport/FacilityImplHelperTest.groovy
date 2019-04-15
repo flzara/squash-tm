@@ -18,15 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.InputType
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.service.internal.batchimport.FacilityImplHelperTest.MockFacilitySupport
-
-import spock.lang.Specification;
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.exception.CyclicStepCallException
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.NodeLifecycle
-
 import spock.lang.Specification
 
 class TestCaseCallGraphTest extends Specification {

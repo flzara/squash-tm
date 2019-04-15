@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
-
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import spock.lang.Specification
 
 /**

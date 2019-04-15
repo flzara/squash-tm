@@ -27,7 +27,6 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
-
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification

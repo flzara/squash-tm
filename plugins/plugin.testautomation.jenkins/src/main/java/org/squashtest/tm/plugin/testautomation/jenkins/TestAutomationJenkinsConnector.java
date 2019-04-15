@@ -35,7 +35,11 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.*;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.OptimisticTestList;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
@@ -48,7 +52,11 @@ import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 @Service("plugin.testautomation.jenkins.connector")

@@ -20,15 +20,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-
-
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
-
-import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
 
 /**
  * @author Gregory Fouquet

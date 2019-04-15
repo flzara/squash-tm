@@ -24,9 +24,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationProjectManagerServiceImpl
-import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
-
 import spock.lang.Specification
 
 class TestAutomationProjectManagerServiceTest extends Specification {

@@ -20,15 +20,9 @@
  */
 package org.squashtest.tm.service.requirement
 
-import java.util.Optional
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.requirement.*
-import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVersionException
-import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException
-import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException
-import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException
-import org.squashtest.tm.service.internal.milestone.ActiveMilestoneHolderImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao

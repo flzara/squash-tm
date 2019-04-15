@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.campaign
 
-import java.text.SimpleDateFormat
-import javax.validation.ConstraintValidatorContext
 import org.squashtest.tm.domain.campaign.ScheduledTimePeriod
 import org.squashtest.tm.validation.validator.ScheduledTimePeriodIsScheduledPeriodValidValidator
-
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import javax.validation.ConstraintValidatorContext
+import java.text.SimpleDateFormat
 
 class ScheduledTimePeriodIsDateValidValidatorTest extends Specification {
 

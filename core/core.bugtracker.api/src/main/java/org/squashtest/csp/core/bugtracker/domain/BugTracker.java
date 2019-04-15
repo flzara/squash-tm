@@ -23,14 +23,12 @@ package org.squashtest.csp.core.bugtracker.domain;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.servers.AuthenticationPolicy;
-import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 @Entity

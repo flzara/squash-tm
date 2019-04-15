@@ -18,17 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security.acls.domain;
+package org.squashtest.tm.service.security.acls.domain
 
+import org.hibernate.Session
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
+import spock.lang.Specification
 
-import javax.persistence.EntityManager;
-
-import org.hibernate.Session;
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-
-import spock.lang.Specification;
-
+import javax.persistence.EntityManager
 
 /**
  * @author Gregory Fouquet

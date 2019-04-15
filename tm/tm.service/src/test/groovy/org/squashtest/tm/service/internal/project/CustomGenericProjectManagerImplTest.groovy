@@ -20,39 +20,37 @@
  */
 package org.squashtest.tm.service.internal.project
 
-import org.squashtest.tm.domain.campaign.CampaignLibrary
-import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.requirement.RequirementLibrary
-import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.exception.project.LockedParameterException
-import org.squashtest.tm.service.internal.repository.ProjectDao
-import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
-
-import javax.persistence.EntityManager;
-
 import org.hibernate.Session
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.exception.NameAlreadyInUseException
+import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.service.infolist.InfoListFinderService
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
 import org.squashtest.tm.service.project.GenericProjectCopyParameter
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
-
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
 
 /**
  * @author Gregory Fouquet

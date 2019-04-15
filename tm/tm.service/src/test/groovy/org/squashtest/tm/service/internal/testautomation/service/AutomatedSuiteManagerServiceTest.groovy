@@ -20,40 +20,28 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.campaign.TestSuite
-
-import javax.inject.Provider
-
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
-import org.squashtest.tm.domain.testautomation.AutomatedSuite
-import org.squashtest.tm.domain.testautomation.AutomatedTest
-import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.domain.testautomation.*
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl
-import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
-import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
-import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExtenderSorter
 import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
-import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
-import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExtenderSorter
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
-
 import spock.lang.Specification
+
+import javax.inject.Provider
 
 class AutomatedSuiteManagerServiceTest extends Specification {
 

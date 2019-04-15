@@ -170,12 +170,12 @@ public class AutomatedSuitePreview {
 		}
 
 		private void setNodes(String asCsv){
-			String[] nodes = asCsv
+			String[] nodesArray = asCsv
 								 .trim()
 								 .replaceAll("\\s*;\\s*", ";")
 								 .split(";");
 
-			this.nodes = Arrays.asList(nodes);
+			this.nodes = Arrays.asList(nodesArray);
 		}
 	}
 }

@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.domain.search
 
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-
+import org.squashtest.tm.domain.customfield.CustomFieldValue
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

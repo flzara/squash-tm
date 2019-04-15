@@ -20,18 +20,16 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import com.querydsl.core.types.dsl.EntityPathBase
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.PathBuilder
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import com.querydsl.jpa.hibernate.HibernateQuery
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
-
 import spock.lang.Specification
-
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.hibernate.HibernateQuery
 
 class QuerydslToolboxTest extends Specification{
 

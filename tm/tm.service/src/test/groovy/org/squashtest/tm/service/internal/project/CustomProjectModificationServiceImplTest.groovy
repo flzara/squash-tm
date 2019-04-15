@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.project
 
-import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
+
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
-import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
+import org.squashtest.tm.service.project.GenericProjectCopyParameter
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.project.GenericProjectCopyParameter;
-
 import spock.lang.Specification
 
 class CustomProjectModificationServiceImplTest extends Specification {

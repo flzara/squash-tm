@@ -20,14 +20,10 @@
  */
 package org.squashtest.tm.domain.jpql
 
-import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
-import org.squashtest.tm.domain.testcase.QTestCase;
-
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-
-import spock.lang.Specification;
+import com.querydsl.core.types.dsl.Expressions
+import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder
+import org.squashtest.tm.domain.testcase.QTestCase
+import spock.lang.Specification
 
 class QuerydslStringExtentionTest extends Specification{
 

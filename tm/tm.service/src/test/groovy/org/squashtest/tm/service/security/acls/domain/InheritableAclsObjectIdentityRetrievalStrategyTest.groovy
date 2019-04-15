@@ -20,14 +20,12 @@
  */
 package org.squashtest.tm.service.security.acls.domain
 
-import javax.persistence.EntityManager;
-
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.squashtest.tm.security.annotation.InheritsAcls
-
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
 import javax.persistence.Query
 
 class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {

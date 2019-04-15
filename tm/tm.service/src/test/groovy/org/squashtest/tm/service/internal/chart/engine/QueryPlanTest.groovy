@@ -20,18 +20,14 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.QueryPlanJoinIterator;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
-import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
 
-import com.querydsl.jpa.hibernate.HibernateQuery;
-
+import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
 import spock.lang.Specification
-import spock.lang.Unroll;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
+import spock.lang.Unroll
+
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
 
 class QueryPlanTest extends Specification {
 

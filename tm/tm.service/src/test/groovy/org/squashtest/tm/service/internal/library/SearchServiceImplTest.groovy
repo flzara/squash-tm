@@ -22,15 +22,10 @@ package org.squashtest.tm.service.internal.library
 
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.internal.library.SearchServiceImpl;
+import org.squashtest.tm.service.internal.library.SearchServiceImpl
 import org.squashtest.tm.service.internal.repository.CampaignDao
-import org.squashtest.tm.service.internal.repository.RequirementDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.project.ProjectFilterModificationService;
-
+import org.squashtest.tm.service.project.ProjectFilterModificationService
 import spock.lang.Specification
-
 
 class SearchServiceImplTest extends Specification {
 

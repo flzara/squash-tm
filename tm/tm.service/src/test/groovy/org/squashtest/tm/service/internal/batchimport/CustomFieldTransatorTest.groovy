@@ -31,11 +31,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.domain.customfield.MultiSelectField
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll

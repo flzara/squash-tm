@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.milestone
+
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.service.internal.repository.MilestoneDao
-
 import spock.lang.Specification
+
 class CustomMilestoneManagerServiceImplTest extends Specification {
 
 	CustomMilestoneManagerServiceImpl manager = new CustomMilestoneManagerServiceImpl()

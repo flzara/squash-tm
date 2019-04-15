@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import static RequirementCriticality.*
-
 import org.squashtest.tm.domain.requirement.RequirementCriticality
-
 import spock.lang.Specification
+
+import static org.squashtest.tm.domain.requirement.RequirementCriticality.*
 
 class RequirementCriticalityTest extends Specification {
 	def "should convert level into criticality"() {

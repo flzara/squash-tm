@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.web.internal.interceptor
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.web.servlet.HandlerInterceptor;
-
+import org.springframework.web.servlet.HandlerInterceptor
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Gregory Fouquet

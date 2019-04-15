@@ -20,14 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testautomation.tasks
 
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
-
 import spock.lang.Specification
 
 class FetchTestListTaskTest extends Specification {

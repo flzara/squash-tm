@@ -20,11 +20,10 @@
  */
 package test.hibernate.hql
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory;
-
-import spock.lang.Specification;
+import org.hibernate.SessionFactory
+import org.hibernate.cfg.Configuration
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
+import spock.lang.Specification
 
 class HqlSpecification extends Specification {
 	Configuration config = new Configuration()

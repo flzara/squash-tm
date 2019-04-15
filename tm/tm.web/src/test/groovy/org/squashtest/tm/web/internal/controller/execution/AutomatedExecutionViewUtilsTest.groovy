@@ -18,19 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.execution;
+package org.squashtest.tm.web.internal.controller.execution
 
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.ExecutionAutoView;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.ExecutionAutoView
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

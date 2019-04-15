@@ -24,7 +24,6 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectFilterDao
 import org.squashtest.tm.service.security.UserContextService
-
 import spock.lang.Specification
 
 class ProjectFilterModificationServiceImplTest extends Specification {

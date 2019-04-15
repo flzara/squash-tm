@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.domain.NamedReferencePair;
-import org.squashtest.tm.domain.library.structures.LibraryGraph;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.domain.NamedReferencePair
+import org.squashtest.tm.domain.library.structures.LibraryGraph
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import spock.lang.Specification
 
 class TestCaseCallTreeFinderTest extends Specification {

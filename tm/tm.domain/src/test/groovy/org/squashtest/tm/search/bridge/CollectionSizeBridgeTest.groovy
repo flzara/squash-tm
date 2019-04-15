@@ -20,18 +20,10 @@
  */
 package org.squashtest.tm.search.bridge
 
-import org.hibernate.Criteria
-import org.hibernate.Filter
-import org.hibernate.FlushMode
-import org.hibernate.Query
-import org.hibernate.Session
-import org.hibernate.SessionFactory
-import org.hibernate.Transaction
+import org.hibernate.*
 import org.hibernate.collection.internal.PersistentList
 import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SessionImplementor
-import org.hibernate.internal.SessionImpl
-import org.hibernate.type.LongType
 import org.squashtest.tm.domain.Identified
 import org.squashtest.tm.domain.search.CollectionSizeBridge
 import spock.lang.Specification

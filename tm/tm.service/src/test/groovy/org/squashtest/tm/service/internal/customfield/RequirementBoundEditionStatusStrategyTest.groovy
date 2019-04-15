@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
-import javax.persistence.EntityManager;
-
 import org.hibernate.Session
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import javax.persistence.EntityManager
 
 /**
  * @author Gregory

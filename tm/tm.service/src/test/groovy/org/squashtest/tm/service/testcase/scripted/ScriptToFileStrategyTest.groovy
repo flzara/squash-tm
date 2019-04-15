@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.testcase.scripted
 
-
-import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
-import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.GHERKIN_STRATEGY
 import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
+import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.GHERKIN_STRATEGY
 
 class ScriptToFileStrategyTest extends Specification{
 

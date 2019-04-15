@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.exception.DuplicateNameException
-import spock.lang.Ignore;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class RequirementFolderTest extends Specification {

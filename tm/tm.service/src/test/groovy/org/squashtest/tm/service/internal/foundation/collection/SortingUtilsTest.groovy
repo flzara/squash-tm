@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.foundation.collection
 import org.squashtest.tm.core.foundation.collection.MultiSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.core.foundation.collection.Sorting
-
 import spock.lang.Specification
 
 /**

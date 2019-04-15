@@ -28,7 +28,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.project.ProjectFilterModificationService
 import org.squashtest.tm.service.testcase.DatasetModificationService
-
 import spock.lang.Specification
 
 class CallStepManagerServiceImplTest extends Specification {

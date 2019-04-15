@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.domain.campaign
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.exception.DuplicateNameException;
-
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class TestSuiteTest extends Specification {

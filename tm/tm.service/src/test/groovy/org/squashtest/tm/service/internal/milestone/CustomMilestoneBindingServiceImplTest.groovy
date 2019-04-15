@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.service.internal.milestone
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.milestone.Milestone
-import org.squashtest.tm.domain.milestone.MilestoneRange;
+import org.squashtest.tm.domain.milestone.MilestoneRange
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.service.advancedsearch.IndexationService
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import org.squashtest.tm.service.internal.repository.MilestoneDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
-
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import spock.lang.Specification
 import spock.lang.Unroll
-import spock.lang.Specification;
 
 class CustomMilestoneBindingServiceImplTest extends Specification{
 	CustomMilestoneBindingServiceImpl manager = new CustomMilestoneBindingServiceImpl()

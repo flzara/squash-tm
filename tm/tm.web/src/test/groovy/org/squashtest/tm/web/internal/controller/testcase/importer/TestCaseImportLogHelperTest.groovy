@@ -20,29 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer
 
-import org.squashtest.tm.service.importer.EntityType
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet
-
-import java.io.FileInputStream
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.apache.poi.ss.util.WorkbookUtil
-import org.springframework.web.context.request.WebRequest
 import org.squashtest.tm.service.importer.ImportLog
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.importer.LogEntry
 import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
-
 import spock.lang.Specification
-
-import java.lang.reflect.Method
 
 /**
  * @author Gregory Fouquet

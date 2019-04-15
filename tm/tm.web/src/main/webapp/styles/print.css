@@ -519,11 +519,7 @@ p {
   /** sprite-ref: sprites-icons; */
   background-repeat: no-repeat;
 }
-.illustration-grid {
-  /*background-image: url(../images/messagebox_warning.png);*/
-  /*!** sprite-ref: sprites-icons; *!*/
-  /*background-repeat: no-repeat;*/
-}
+
 .wizard-step-active {
   background-image: url(../images/Raccourcis_Active_State-26.png);
   /** sprite-ref: sprites-icons; */

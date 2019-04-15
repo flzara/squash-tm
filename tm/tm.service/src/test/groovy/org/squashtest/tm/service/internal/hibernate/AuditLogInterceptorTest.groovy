@@ -18,15 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.hibernate;
+package org.squashtest.tm.service.internal.hibernate
 
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.tm.domain.audit.AuditableEntity;
+import org.squashtest.tm.domain.audit.AuditableEntity
 import org.squashtest.tm.domain.audit.AuditableSupport
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import spock.lang.Specification
 
 class AuditLogInterceptorTest extends Specification {

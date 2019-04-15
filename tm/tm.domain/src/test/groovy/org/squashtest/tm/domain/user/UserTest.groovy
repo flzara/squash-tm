@@ -18,15 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.user;
+package org.squashtest.tm.domain.user
 
-import static org.junit.Assert.*;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.squashtest.tm.domain.users.User;
-
-import spock.lang.Specification;
+import org.apache.commons.lang3.StringUtils
+import org.junit.Test
+import org.squashtest.tm.domain.users.User
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

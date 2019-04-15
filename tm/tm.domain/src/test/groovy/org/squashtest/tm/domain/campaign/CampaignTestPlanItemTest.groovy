@@ -18,15 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.campaign;
+package org.squashtest.tm.domain.campaign
 
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.users.User
-
 import spock.lang.Specification
-
 
 class CampaignTestPlanItemTest extends Specification{
 	def "should create a copy of test plan item not affected to any campaign"() {

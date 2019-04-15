@@ -18,19 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.report.criteria;
+package org.squashtest.tm.web.internal.report.criteria
 
-import static org.junit.Assert.*;
-
-import java.util.Calendar;
-
-import org.spockframework.compiler.model.Spec;
-import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.form.InputType;
-import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
-import org.apache.commons.lang3.time.DateUtils;
-
-import spock.lang.Specification;
+import org.apache.commons.lang3.time.DateUtils
+import org.squashtest.tm.api.report.criteria.Criteria
+import org.squashtest.tm.api.report.form.InputType
+import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

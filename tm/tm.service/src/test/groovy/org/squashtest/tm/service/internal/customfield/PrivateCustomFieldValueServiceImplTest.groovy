@@ -18,15 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customfield 
+package org.squashtest.tm.service.internal.customfield
 
-import javax.inject.Provider;
+import org.squashtest.tm.domain.customfield.BindableEntity
+import spock.lang.Specification
+import spock.lang.Unroll
 
-import org.squashtest.tm.domain.customfield.BindableEntity;
-
-import static org.squashtest.tm.domain.customfield.BindableEntity.*;
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_VERSION;
 
 /**
  * @author Gregory

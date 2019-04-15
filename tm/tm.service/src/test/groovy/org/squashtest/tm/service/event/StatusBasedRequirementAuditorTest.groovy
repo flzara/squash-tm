@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.event
 
-import javax.persistence.EntityManager
-
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.event.RequirementAuditEvent
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.domain.event.RequirementPropertyChange
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.internal.event.StatusBasedRequirementAuditor;
-
+import org.squashtest.tm.service.internal.event.StatusBasedRequirementAuditor
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import javax.persistence.EntityManager
 
 class StatusBasedRequirementAuditorTest extends Specification {
 	StatusBasedRequirementAuditor auditor= new StatusBasedRequirementAuditor()

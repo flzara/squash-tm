@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
-
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.squashtest.tm.core.foundation.lang.DateUtils
@@ -33,9 +30,10 @@ import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
 
 /**
  * @author Gregory Fouquet

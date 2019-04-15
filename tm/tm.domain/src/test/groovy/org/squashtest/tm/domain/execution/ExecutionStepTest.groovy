@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.execution
 
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.testcase.ActionTestStep
-
 import spock.lang.Specification
 import spock.lang.Timeout
 

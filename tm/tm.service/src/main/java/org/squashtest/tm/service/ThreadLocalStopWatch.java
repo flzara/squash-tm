@@ -25,6 +25,8 @@ import org.apache.commons.lang3.time.StopWatch;
 
 public class ThreadLocalStopWatch {
 
+	private ThreadLocalStopWatch(){}
+
 	private static final ThreadLocal<StopWatch> THREAD_LOCAL = new ThreadLocal<>();
 
 	public static void set(StopWatch sw){

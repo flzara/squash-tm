@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.helper
 
-
 import com.querydsl.core.types.Order
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.dsl.EntityPathBase
@@ -34,7 +33,6 @@ import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -42,6 +40,7 @@ import spock.lang.Unroll
 import java.text.SimpleDateFormat
 import java.time.temporal.Temporal
 
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.MEDIUM
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter.CompOperator.*
 

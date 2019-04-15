@@ -20,22 +20,19 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.service.attachment.AttachmentManagerService;
-
-import javax.persistence.EntityManager;
-
 import org.hibernate.Session
-import org.hibernate.SessionFactory
+import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.advancedsearch.IndexationService
+import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.requirement.CustomRequirementVersionManagerServiceImpl
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
-
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
 
 class CustomRequirementVersionManagerServiceImplTest extends Specification {
 	CustomRequirementVersionManagerServiceImpl service = new CustomRequirementVersionManagerServiceImpl()

@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.customexport;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
-import org.squashtest.tm.jooq.domain.tables.CustomExportColumn;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 

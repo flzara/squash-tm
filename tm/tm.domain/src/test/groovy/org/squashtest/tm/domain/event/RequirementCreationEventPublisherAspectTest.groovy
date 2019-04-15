@@ -18,15 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.event;
+package org.squashtest.tm.domain.event
 
 import org.springframework.security.core.Authentication
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.event.RequirementAuditor;
+import org.squashtest.tm.event.RequirementAuditor
 import org.squashtest.tm.security.UserContextHolder
-import spock.lang.Ignore;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**

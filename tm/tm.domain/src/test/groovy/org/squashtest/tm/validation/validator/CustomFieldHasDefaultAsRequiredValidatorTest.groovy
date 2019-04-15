@@ -22,7 +22,6 @@ package org.squashtest.tm.validation.validator
 
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.validation.validator.CustomFieldHasDefaultAsRequiredValidator
-
 import spock.lang.Specification
 import spock.lang.Unroll
 

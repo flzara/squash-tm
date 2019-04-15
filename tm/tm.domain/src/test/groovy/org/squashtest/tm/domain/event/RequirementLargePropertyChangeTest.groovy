@@ -18,12 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.event;
-
+package org.squashtest.tm.domain.event
 
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange
 import org.squashtest.tm.domain.requirement.RequirementVersion
-
 import spock.lang.Specification
 
 class RequirementLargePropertyChangeTest extends Specification {

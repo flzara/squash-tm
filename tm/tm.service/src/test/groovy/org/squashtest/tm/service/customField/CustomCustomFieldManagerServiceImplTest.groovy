@@ -20,17 +20,13 @@
  */
 package org.squashtest.tm.service.customField
 
-import org.springframework.context.ApplicationEventPublisher;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
+import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException
 import org.squashtest.tm.service.internal.customfield.CustomCustomFieldManagerServiceImpl
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
-
 import spock.lang.Specification
-import spock.lang.Unroll;
 
 class CustomCustomFieldManagerServiceImplTest extends Specification {
 

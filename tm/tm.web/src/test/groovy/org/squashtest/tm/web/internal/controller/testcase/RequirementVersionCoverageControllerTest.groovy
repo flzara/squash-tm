@@ -22,9 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase
 
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVersionCoverageController
-
 import spock.lang.Specification
-
 
 class RequirementVersionCoverageControllerTest extends Specification{
 	RequirementVersionCoverageController controller = new RequirementVersionCoverageController()

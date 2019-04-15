@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import java.lang.reflect.Modifier
-
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testutils.MockFactory
+import org.squashtest.tm.exception.UnknownEntityException
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.testautomation.AutomatedTest
-import org.squashtest.tm.domain.testutils.MockFactory;
-import org.squashtest.tm.exception.UnknownEntityException
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.lang.reflect.Modifier
 
 class TestCaseTest extends Specification {
 

@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-import static org.junit.Assert.*
-
 import org.squashtest.tm.service.batchimport.excel.ColumnMismatch
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus
-
 import spock.lang.Specification
 
 /**

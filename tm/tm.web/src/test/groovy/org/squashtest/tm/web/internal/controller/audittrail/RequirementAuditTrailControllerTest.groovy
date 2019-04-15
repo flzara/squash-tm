@@ -18,19 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.audittrail;
+package org.squashtest.tm.web.internal.controller.audittrail
 
-import org.springframework.context.MessageSource
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+
+import org.springframework.data.domain.Page
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.audit.RequirementAuditTrailService
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
-import org.springframework.data.domain.Page
-
 import spock.lang.Specification
 
 /**

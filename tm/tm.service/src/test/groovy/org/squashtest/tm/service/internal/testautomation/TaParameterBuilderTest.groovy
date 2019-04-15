@@ -18,20 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation;
+package org.squashtest.tm.service.internal.testautomation
 
-import java.util.Map;
-
-import org.junit.Test;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder;
-
-import spock.lang.Specification;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

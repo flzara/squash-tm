@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.statistics.campaign
 
-import java.text.SimpleDateFormat
-
 import spock.lang.Specification
+
+import java.text.SimpleDateFormat
 
 class ScheduledIterationTest extends Specification {
 	

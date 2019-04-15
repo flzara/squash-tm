@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.deletion
 
-import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph
-
 import spock.lang.Specification
 
 class LockedFileInferenceGraphTest extends Specification {

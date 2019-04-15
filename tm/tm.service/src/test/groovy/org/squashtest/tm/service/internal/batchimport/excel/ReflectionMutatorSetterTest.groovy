@@ -18,14 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.internal.batchimport.excel
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

@@ -21,9 +21,7 @@
 package org.squashtest.tm.domain.library.structures
 
 import org.squashtest.tm.domain.library.structures.StringPathMap
-
 import spock.lang.Specification
-
 
 class StringPathMapTest extends Specification {
 

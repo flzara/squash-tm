@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
-import static RequirementCriticality.*
-
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
@@ -31,7 +27,12 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
+
+import static RequirementCriticality.*
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+
 class TestCaseImportanceManagerServiceImplTest extends Specification {
 	TestCaseImportanceManagerServiceImpl service = new TestCaseImportanceManagerServiceImpl()
 	TestCaseCallTreeFinder callTreeFinder = Mock()

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.core.dynamicmanager.factory
 
-import javax.persistence.EntityManager;
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import javax.persistence.EntityManager
 
 /**
  * Superclass for testing the interface of a Dynamic Manager.

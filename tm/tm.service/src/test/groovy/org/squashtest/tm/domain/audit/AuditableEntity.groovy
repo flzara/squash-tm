@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.audit;
+package org.squashtest.tm.domain.audit
+
+import org.squashtest.tm.domain.audit.Auditable
+import org.squashtest.tm.domain.audit.AuditableSupport
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
-
-import org.squashtest.tm.domain.audit.AuditableSupport
-import org.squashtest.tm.domain.audit.Auditable
 
 @Entity
 @Auditable

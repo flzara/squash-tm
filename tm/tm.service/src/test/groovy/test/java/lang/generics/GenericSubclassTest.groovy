@@ -20,11 +20,7 @@
  */
 package test.java.lang.generics
 
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class GenericSubclassTest extends Specification {
 	def "clazz field should be initialized with parameter type"() {

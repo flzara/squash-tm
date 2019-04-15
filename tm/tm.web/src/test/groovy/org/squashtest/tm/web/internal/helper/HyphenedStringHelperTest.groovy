@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.web.internal.helper
 
-import org.squashtest.tm.service.internal.helper.HyphenedStringHelper;
-
-import spock.lang.Specification;
+import org.squashtest.tm.service.internal.helper.HyphenedStringHelper
+import spock.lang.Specification
 
 class HyphenedStringHelperTest  extends Specification{
 	def "should camelcase 'foo-bar'"() {

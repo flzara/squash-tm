@@ -18,16 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase
 
-
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
 import org.springframework.context.MessageSource
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
-
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
 
 /**
  * @author Gregory Fouquet

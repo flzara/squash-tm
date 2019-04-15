@@ -20,41 +20,33 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
-
-
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
-
-import javax.inject.Provider
 import org.springframework.data.domain.Page
-import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.infolist.ListItemReference
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
-import org.squashtest.tm.service.requirement.RequirementVersionResolverService
+import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
-import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
-import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
+import org.squashtest.tm.web.internal.helper.JsonHelper
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
-import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
-import org.squashtest.tm.web.testutils.MockFactory;
-
+import org.squashtest.tm.web.testutils.MockFactory
 import spock.lang.Specification
 
+import javax.inject.Provider
 
 class RequirementVersionModificationControllerTest extends Specification {
 	RequirementVersionModificationController controller = new RequirementVersionModificationController()

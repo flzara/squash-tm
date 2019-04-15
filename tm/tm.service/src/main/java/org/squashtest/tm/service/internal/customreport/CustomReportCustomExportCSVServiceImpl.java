@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSelectStep;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
@@ -34,8 +39,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.*;
-import static org.squashtest.tm.jooq.domain.Tables.*;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_ISSUES;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LINKED_REQUIREMENTS_IDS;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
+import static org.squashtest.tm.jooq.domain.Tables.DATASET;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
+import static org.squashtest.tm.jooq.domain.Tables.ISSUE_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_CAMPAIGN;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
 
 @Service
 public class CustomReportCustomExportCSVServiceImpl implements CustomReportCustomExportCSVService {
@@ -157,13 +191,13 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 
 			// These four lines are actually not used because TEST_STEPS coverage is included in TEST_CASE coverage...
-
-//			.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
-//			.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
-//			.leftJoin(ACTION_TEST_STEP).on(ACTION_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
-//			.leftJoin(VERIFYING_STEPS.as("ts_vs")).on(VERIFYING_STEPS.as("ts_vs").TEST_STEP_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID))
-//			.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc").REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.as("ts_vs").REQUIREMENT_VERSION_COVERAGE_ID))
-
+/*
+			.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
+			.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
+			.leftJoin(ACTION_TEST_STEP).on(ACTION_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
+			.leftJoin(VERIFYING_STEPS.as("ts_vs")).on(VERIFYING_STEPS.as("ts_vs").TEST_STEP_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID))
+			.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc").REQUIREMENT_VERSION_COVERAGE_ID.eq(VERIFYING_STEPS.as("ts_vs").REQUIREMENT_VERSION_COVERAGE_ID))
+*/
 			if (isFetchTestSuite(entityList)) {
 				joinQuery.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 					.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID));

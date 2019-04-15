@@ -21,7 +21,9 @@
 
 package org.squashtest.tm.api.security.authentication;
 
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.condition.ConditionMessage;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -31,11 +33,16 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  *
- * This is a custom OnPropertyCondition class to replace {@link OnPropertyCondition} and used
+ * This is a custom OnPropertyCondition class to replace {@link org.springframework.boot.autoconfigure.condition.OnPropertyCondition} and used
  * in {@link ConditionalOnAuthProviderProperty}.
  * instead of the original havingValue() check, here we check if lists or arrays contains a specific value
  *

@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.hibernate.Session;
-import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 

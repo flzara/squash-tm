@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
-import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService

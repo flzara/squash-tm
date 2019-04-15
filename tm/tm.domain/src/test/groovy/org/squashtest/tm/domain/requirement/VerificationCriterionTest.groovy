@@ -18,14 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
+package org.squashtest.tm.domain.requirement
 
-import static org.junit.Assert.*;
-
-import org.squashtest.tm.domain.requirement.VerificationCriterion;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import org.squashtest.tm.domain.requirement.VerificationCriterion
+import spock.lang.Specification
 
 class VerificationCriterionTest extends Specification{
 	def "should return correct i18n key"() {

@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.domain.library.structures
 
-import org.apache.commons.collections.Transformer
+
 import org.squashtest.tm.domain.library.structures.LibraryTree
 import org.squashtest.tm.domain.library.structures.LibraryTree.TreeNodePair
-
 import spock.lang.Specification
 
 class LibraryTreeTest extends Specification{

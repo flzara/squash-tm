@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.json
 
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.dto.json.JsonProject
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 /**

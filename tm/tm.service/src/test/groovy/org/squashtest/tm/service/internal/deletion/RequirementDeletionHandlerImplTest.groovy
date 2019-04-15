@@ -20,15 +20,13 @@
  */
 package org.squashtest.tm.service.internal.deletion
 
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.internal.repository.DeletionDao;
-import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
-
-import spock.lang.Specification;
+import org.squashtest.tm.domain.library.NodeContainer
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.deletion.OperationReport
+import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.deletion
 
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.service.attachment.AttachmentManagerService
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
+import org.squashtest.tm.service.internal.repository.CampaignDeletionDao
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
-import  org.squashtest.tm.domain.campaign.TestSuite
-import  org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import spock.lang.Specification;
-
+import spock.lang.Specification
 
 class CampaignDeletionHandlerImplTest  extends Specification{
 

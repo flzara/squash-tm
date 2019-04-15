@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
-import java.util.Optional
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.*

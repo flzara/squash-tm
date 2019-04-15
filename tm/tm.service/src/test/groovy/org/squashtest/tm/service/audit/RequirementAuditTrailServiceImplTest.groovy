@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.audit
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.event.RequirementAuditEvent
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.service.internal.audit.RequirementAuditTrailServiceImpl
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
-
 import spock.lang.Specification
 
 /**

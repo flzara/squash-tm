@@ -20,12 +20,9 @@
  */
 package test
 
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import spock.lang.Specification;
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.squashtest.csp.core.bugtracker.domain.BTIssue
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

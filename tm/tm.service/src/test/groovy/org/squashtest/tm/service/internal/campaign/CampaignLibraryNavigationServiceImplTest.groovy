@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import org.squashtest.tm.domain.customfield.BindableEntity
-import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.domain.customfield.CustomFieldBinding
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.campaign.IterationModificationService
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
 import org.squashtest.tm.service.internal.repository.CampaignDao
@@ -39,6 +38,7 @@ import org.squashtest.tm.service.internal.repository.CampaignFolderDao
 import org.squashtest.tm.service.internal.repository.CampaignLibraryDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class CampaignLibraryNavigationServiceImplTest extends Specification {

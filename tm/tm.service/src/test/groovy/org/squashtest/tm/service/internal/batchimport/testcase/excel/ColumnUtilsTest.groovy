@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

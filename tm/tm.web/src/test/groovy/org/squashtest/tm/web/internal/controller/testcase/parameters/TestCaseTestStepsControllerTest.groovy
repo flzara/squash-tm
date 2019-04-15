@@ -18,11 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase.parameters;
+package org.squashtest.tm.web.internal.controller.testcase.parameters
 
-import javax.servlet.http.HttpServletRequest
-
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
@@ -33,11 +30,13 @@ import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestCaseTestStepsController
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
-
 import spock.lang.Specification
+
+import javax.servlet.http.HttpServletRequest
 
 class TestCaseTestStepsControllerTest extends Specification {
 	TestCaseTestStepsController controller = new TestCaseTestStepsController()

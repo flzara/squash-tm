@@ -22,13 +22,15 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.InconsistentInfoListItemException
@@ -36,19 +38,16 @@ import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
-import org.squashtest.tm.service.internal.repository.ActionTestStepDao
-import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.GenericNodeManagementService
+import org.squashtest.tm.service.internal.repository.ActionTestStepDao
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
 

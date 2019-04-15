@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.datatable
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.Requirement;
-
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.Requirement
 import spock.lang.Specification
 
 /**

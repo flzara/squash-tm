@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
 
+import org.squashtest.tm.domain.chart.SpecializedEntityType
 import spock.lang.Specification
 
 class FilterPlannerTest extends Specification {

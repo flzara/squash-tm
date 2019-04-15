@@ -18,16 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.helper;
+package org.squashtest.tm.web.internal.helper
 
-import java.lang.reflect.Constructor;
+import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.Level
+import spock.lang.Specification
+import spock.lang.Unroll
 
-import org.springframework.context.MessageSource;
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
-import org.squashtest.tm.domain.Level;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import java.lang.reflect.Constructor
 
 /**
  * @author Gregory

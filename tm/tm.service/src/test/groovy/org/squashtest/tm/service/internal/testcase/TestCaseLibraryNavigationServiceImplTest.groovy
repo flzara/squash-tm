@@ -24,27 +24,17 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
-import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
-
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 

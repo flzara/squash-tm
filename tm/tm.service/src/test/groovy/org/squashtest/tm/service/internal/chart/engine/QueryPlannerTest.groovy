@@ -20,30 +20,21 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.testcase.TestCase;
-
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-
+import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.dsl.PathBuilder
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.chart.*
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import static org.squashtest.tm.domain.chart.DataType.*;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.Operation.*;
 
-
-
+import static org.squashtest.tm.domain.chart.ColumnType.*
+import static org.squashtest.tm.domain.chart.DataType.*
+import static org.squashtest.tm.domain.chart.Operation.COUNT
+import static org.squashtest.tm.domain.chart.Operation.NONE
+import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
 
 class QueryPlannerTest extends Specification {
 

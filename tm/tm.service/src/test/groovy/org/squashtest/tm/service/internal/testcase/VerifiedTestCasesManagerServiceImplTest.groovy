@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
@@ -34,15 +32,11 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao
-import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
-
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
-
 
 class VerifiedTestCasesManagerServiceImplTest extends Specification {
 

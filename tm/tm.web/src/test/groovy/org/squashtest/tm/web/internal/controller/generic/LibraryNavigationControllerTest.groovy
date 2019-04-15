@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import org.squashtest.tm.domain.customfield.BindableEntity
-
-import java.util.Optional
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.library.*
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project

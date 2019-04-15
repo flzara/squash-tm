@@ -20,15 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.squashtest.tm.core.foundation.collection.DefaultSorting
-import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting
-import org.squashtest.tm.core.foundation.collection.MultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
-import org.squashtest.tm.core.foundation.collection.Pagings
-import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-
+import org.squashtest.tm.core.foundation.collection.*
+import org.squashtest.tm.domain.Level
 import spock.lang.Specification
 
 class LevelImplementorSorterTest extends Specification {

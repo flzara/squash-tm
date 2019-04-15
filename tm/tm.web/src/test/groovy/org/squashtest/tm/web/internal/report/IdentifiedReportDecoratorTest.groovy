@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.report
 
 import org.squashtest.tm.api.report.Report
-
 import spock.lang.Specification
 
 /**

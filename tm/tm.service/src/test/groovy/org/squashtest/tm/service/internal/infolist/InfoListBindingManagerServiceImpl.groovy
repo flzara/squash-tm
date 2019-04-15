@@ -24,11 +24,11 @@ import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
-import org.squashtest.tm.exception.project.LockedParameterException;
+import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
-import org.squashtest.tm.service.internal.repository.InfoListDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import spock.lang.Specification;
+import org.squashtest.tm.service.internal.repository.InfoListDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import spock.lang.Specification
 
 public class InfoListBindingManagerServiceImplTest extends Specification {
 

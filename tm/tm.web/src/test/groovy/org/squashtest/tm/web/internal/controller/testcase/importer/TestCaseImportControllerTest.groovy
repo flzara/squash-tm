@@ -24,7 +24,6 @@ import org.springframework.web.context.request.WebRequest
 import org.squashtest.tm.service.importer.ImportLog
 import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportController
 import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper
-
 import spock.lang.Specification
 
 /**

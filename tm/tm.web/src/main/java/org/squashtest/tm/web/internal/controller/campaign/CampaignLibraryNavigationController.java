@@ -48,7 +48,6 @@ import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;

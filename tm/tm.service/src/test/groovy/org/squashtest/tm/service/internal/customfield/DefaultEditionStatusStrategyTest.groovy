@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 /**

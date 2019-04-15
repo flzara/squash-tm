@@ -40,36 +40,27 @@
 */
 package org.squashtest.tm.service.internal.chart.engine
 
-import javax.persistence.EntityManager;
-
-import org.apache.commons.collections.map.MultiValueMap;
-import org.hibernate.SessionFactory
-import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityReference
 import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
-import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
-import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntitiesImpl
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntitiesImpl
-import static org.squashtest.tm.service.internal.chart.engine.ScopePlanner.JoinableColumns.*
+import org.squashtest.tm.domain.chart.AxisColumn
+import org.squashtest.tm.domain.chart.ChartQuery
+import org.squashtest.tm.domain.chart.ColumnPrototype
 import org.squashtest.tm.domain.chart.SpecializedEntityType
-import org.squashtest.tm.domain.chart.ColumnType
-
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntities
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntitiesImpl
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntities
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntitiesImpl
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
+import javax.persistence.EntityManager
+
+import static org.squashtest.tm.service.internal.chart.engine.ScopePlanner.JoinableColumns.*
 
 class ScopePlannerTest extends Specification {
 

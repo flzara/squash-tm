@@ -25,12 +25,12 @@ import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
+import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.stream.Collectors
-import org.squashtest.tm.service.testutils.MockFactory
 
 class ScmRepositoryManifestTest extends Specification{
 

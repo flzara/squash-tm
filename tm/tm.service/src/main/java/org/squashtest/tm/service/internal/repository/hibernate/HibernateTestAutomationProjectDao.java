@@ -20,25 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import org.squashtest.tm.domain.jpql.ExtendedJPQLQuery;
-import org.squashtest.tm.domain.testautomation.QAutomatedTest;
-import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -46,17 +32,8 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-
-import static org.squashtest.tm.domain.campaign.QIteration.iteration;
-import static org.squashtest.tm.domain.campaign.QTestSuite.testSuite;
-import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem;
-import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
-import static org.squashtest.tm.domain.testautomation.QAutomatedTest.automatedTest;
-import static org.squashtest.tm.domain.testautomation.QTestAutomationProject.testAutomationProject;
 
 
 @Repository

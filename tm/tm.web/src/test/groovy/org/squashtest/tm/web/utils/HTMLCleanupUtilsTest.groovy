@@ -18,14 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.utils;
+package org.squashtest.tm.web.utils
 
-
-
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
-
-import spock.lang.Specification;
-
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils
+import spock.lang.Specification
 
 public class HTMLCleanupUtilsTest extends Specification {
 

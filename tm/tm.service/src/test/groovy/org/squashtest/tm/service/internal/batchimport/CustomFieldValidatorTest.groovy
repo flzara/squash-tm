@@ -20,17 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.apache.commons.lang3.StringUtils
-import org.aspectj.apache.bcel.generic.SwitchBuilder
-import org.spockframework.compiler.model.SetupBlock
-import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.domain.customfield.CustomFieldOption
-import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.domain.customfield.InputType
-import org.squashtest.tm.domain.customfield.SingleSelectField
+
+import org.squashtest.tm.domain.customfield.*
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.LogEntry
-
 import spock.lang.Specification
 import spock.lang.Unroll
 

@@ -22,11 +22,7 @@ package org.squashtest.tm.domain.customfield
 
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList
-
 import spock.lang.Specification
-
-
-
 
 class CustomFieldBindingTest extends Specification {
 	

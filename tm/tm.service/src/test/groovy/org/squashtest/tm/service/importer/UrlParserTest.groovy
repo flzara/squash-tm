@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.service.importer
 
-
-import org.squashtest.tm.service.internal.importer.UrlParser;
-
-import spock.lang.Specification;
-
+import org.squashtest.tm.service.internal.importer.UrlParser
+import spock.lang.Specification
 
 class UrlParserTest extends Specification{
 	def "should parse simple path"(){

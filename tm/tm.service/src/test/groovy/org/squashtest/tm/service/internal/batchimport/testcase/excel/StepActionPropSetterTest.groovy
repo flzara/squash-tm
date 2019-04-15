@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
-import org.squashtest.tm.service.internal.batchimport.CallStepParamsInfo;
+import org.squashtest.tm.service.internal.batchimport.CallStepParamsInfo
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget
-
 import spock.lang.Specification
 import spock.lang.Unroll
 

@@ -19,14 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.model.json;
-import java.util.Collection;
-
-import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
-import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
+import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
+
+import java.util.Collection;
 
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public abstract class AutomatedSuitePreviewMixin {

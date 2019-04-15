@@ -18,16 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
+import org.apache.commons.io.IOUtils
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
+import spock.lang.Specification
 
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
-import spock.lang.Specification;
-
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
 
 /**
  * @author Gregory Fouquet

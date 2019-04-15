@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.domain.planning
 
-import java.text.SimpleDateFormat;
-
-import org.joda.time.LocalDate;
-
-import spock.lang.Shared;
+import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import java.text.SimpleDateFormat
 
 class StandardWorkloadCalendarTest extends Specification {
 

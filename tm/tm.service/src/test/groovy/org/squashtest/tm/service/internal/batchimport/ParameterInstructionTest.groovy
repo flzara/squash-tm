@@ -18,23 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.internal.batchimport.Facility;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
-import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.service.importer.ImportMode
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.Facility
+import org.squashtest.tm.service.internal.batchimport.LogTrain
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

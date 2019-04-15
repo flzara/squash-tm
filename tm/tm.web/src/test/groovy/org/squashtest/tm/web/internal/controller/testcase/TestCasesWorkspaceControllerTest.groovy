@@ -20,28 +20,26 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import java.util.Optional
+import org.springframework.ui.Model
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService
 import org.squashtest.tm.service.infolist.InfoListModelService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
+import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-import org.springframework.ui.Model
 import org.squashtest.tm.service.milestone.MilestoneModelService
+import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.service.user.PartyPreferenceService
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.service.workspace.WorkspaceHelperService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
-import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 
-import javax.inject.Inject
 import javax.inject.Provider
 
 class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {

@@ -74,8 +74,12 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 
 @Component
 @Scope("prototype")

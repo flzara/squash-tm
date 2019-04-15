@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.security.authentication
 
-import org.springframework.security.core.context.SecurityContext
+
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.project.GenericProject
@@ -34,8 +34,8 @@ import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.service.servers.CredentialsProvider
 import org.squashtest.tm.service.servers.UserCredentialsCache
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import spock.lang.Specification
 import org.squashtest.tm.web.internal.security.authentication.BugTrackerAutoconnectCallback.AsynchronousBugTrackerAutoconnect
+import spock.lang.Specification
 
 /**
  * Does not exactly test BugTrackerAutoconnectCallback but rather its asynchronous inner worker class,

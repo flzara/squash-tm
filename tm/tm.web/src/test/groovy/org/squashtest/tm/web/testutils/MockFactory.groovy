@@ -24,8 +24,7 @@ import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class MockFactory extends Specification {
 

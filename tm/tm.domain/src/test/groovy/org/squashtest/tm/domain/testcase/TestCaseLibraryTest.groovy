@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.infolist.SystemListItem
+
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
-import org.squashtest.tm.domain.testutils.MockFactory;
+import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.exception.DuplicateNameException
-
 import spock.lang.Specification
 
 class TestCaseLibraryTest   extends Specification {

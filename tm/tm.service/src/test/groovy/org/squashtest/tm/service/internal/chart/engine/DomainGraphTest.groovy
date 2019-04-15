@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
-import org.squashtest.tm.service.internal.chart.engine.DomainGraph;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
-
+import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery
+import org.squashtest.tm.service.internal.chart.engine.DomainGraph
+import org.squashtest.tm.service.internal.chart.engine.InternalEntityType
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan
 import spock.lang.Specification
-import spock.lang.Unroll;
-import static org.squashtest.tm.domain.EntityType.*
-import org.apache.commons.collections.Transformer
+import spock.lang.Unroll
+
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
 
 class DomainGraphTest extends Specification {
 

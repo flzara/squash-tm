@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.service.customField
 
-
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.util.ReflectionUtils
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -39,7 +37,6 @@ import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
-import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class CustomFieldBindingModificationServiceImplTest extends Specification {

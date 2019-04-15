@@ -20,16 +20,13 @@
  */
 package org.squashtest.tm.service.statistics.requirement
 
-import javax.persistence.EntityManager
-import javax.persistence.Query;
-
 import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl;
+import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.service.internal.requirement.RequirementStatisticsServiceImpl
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
+import javax.persistence.Query
 
 class RequirementStatisticsServiceImplTest extends Specification {
 

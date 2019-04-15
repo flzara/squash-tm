@@ -23,18 +23,11 @@ package org.squashtest.tm.domain.scm
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.squashtest.tm.domain.testutils.MockFactory
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Timeout
 
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
-import java.util.regex.Pattern
+import java.util.concurrent.*
 
 class ScmRepositoryTest extends Specification {
 

@@ -22,8 +22,13 @@ package org.squashtest.tm.domain.scm;
 
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;

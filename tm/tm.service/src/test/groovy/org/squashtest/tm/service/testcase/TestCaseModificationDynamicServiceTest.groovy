@@ -18,21 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
+package org.squashtest.tm.service.testcase
 
 
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerInterfaceSpecification
-import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
-
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.service.testcase.TestCaseModificationService
 import spock.lang.Shared
 
 /**

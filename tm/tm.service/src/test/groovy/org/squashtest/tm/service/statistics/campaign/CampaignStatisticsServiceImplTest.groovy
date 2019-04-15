@@ -19,13 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.statistics.campaign
-import javax.persistence.EntityManager
-import javax.persistence.Query;
 
-import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl;
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
+import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
+import javax.persistence.Query
+
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
 class CampaignStatisticsServiceImplTest extends Specification {
 

@@ -23,8 +23,15 @@ package org.squashtest.csp.core.bugtracker.spi;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
-import org.squashtest.csp.core.bugtracker.domain.*;
+import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.Category;
+import org.squashtest.csp.core.bugtracker.domain.Priority;
+import org.squashtest.csp.core.bugtracker.domain.User;
+import org.squashtest.csp.core.bugtracker.domain.Version;
+
 import java.util.List;
+
 
 
 /**
@@ -41,15 +48,15 @@ import java.util.List;
  * project B. Among those listable item the BugTrackerConnecter focus on four of them :
  * <ul>
  * 	<li> {@link Priority} </li>
- *  <li>(assignable) {@link User} </li>
- *  <li> {@link Version} </li>
- *  <li> {@link Category} </li>
+ *  <li>(assignable) {@link org.squashtest.csp.core.bugtracker.domain.User} </li>
+ *  <li> {@link org.squashtest.csp.core.bugtracker.domain.Version} </li>
+ *  <li> {@link org.squashtest.csp.core.bugtracker.domain.Category} </li>
  * </ul>
  *
  * In some cases those lists may be empty (no assignable users for instance).
  * For such cases, an implementation of {@link BugTrackerConnector} should never return the empty list :
- * the returned list should contain a specific singleton. See {@link User#NO_USER} or
- * {@link Version#NO_VERSION} for instance.
+ * the returned list should contain a specific singleton. See {@link org.squashtest.csp.core.bugtracker.domain.User#NO_USER} or
+ * {@link org.squashtest.csp.core.bugtracker.domain.Version#NO_VERSION} for instance.
  *
  * </p>
  *

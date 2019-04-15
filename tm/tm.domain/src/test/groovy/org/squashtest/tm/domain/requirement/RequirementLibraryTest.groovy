@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.requirement
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.library.TreeNode
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.exception.DuplicateNameException
 import spock.lang.Specification
 
 class RequirementLibraryTest extends Specification {

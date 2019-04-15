@@ -136,7 +136,6 @@ public interface TestAutomationConnector {
 	 * @param testAutomationProject
 	 *            : the {@link TestAutomationProject} we want the URL of
 	 * @return : the URL for the given {@link TestAutomationProject}
-	 * @throws SE
 	 */
 	URL findTestAutomationProjectURL(TestAutomationProject testAutomationProject);
 

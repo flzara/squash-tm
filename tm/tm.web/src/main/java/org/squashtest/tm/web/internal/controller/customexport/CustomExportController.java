@@ -22,10 +22,13 @@ package org.squashtest.tm.web.internal.controller.customexport;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
@@ -91,7 +94,6 @@ public class CustomExportController {
 	@ResponseBody
 	@RequestMapping(value = "/update/{nodeId}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	public String updateCustomExport(@RequestBody CustomReportCustomExport modifiedCustomExport, @PathVariable("nodeId") long nodeId) {
-		CustomReportCustomExport formerCustomExport = reportLibraryNodeService.findCustomExportByNodeId(nodeId);
 		customExportModificationService.updateCustomExport(nodeId, modifiedCustomExport);
 		return String.valueOf(nodeId);
 	}

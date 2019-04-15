@@ -18,14 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.project;
+package org.squashtest.tm.service.project
 
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerInterfaceSpecification
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.project.GenericProjectManagerService;
-import org.squashtest.tm.service.project.ProjectManagerService;
-
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.project.GenericProjectManagerService
 import spock.lang.Shared
 
 /**

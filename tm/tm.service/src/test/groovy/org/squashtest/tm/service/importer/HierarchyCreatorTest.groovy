@@ -20,23 +20,16 @@
  */
 package org.squashtest.tm.service.importer
 
-
-import java.util.zip.ZipInputStream
-
-import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.service.internal.archive.Entry
 import org.squashtest.tm.service.internal.archive.ZipReader.ZipReaderEntry
 import org.squashtest.tm.service.internal.importer.ExcelTestCaseParser
 import org.squashtest.tm.service.internal.importer.HierarchyCreator
-
+import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
 
+import java.util.zip.ZipInputStream
 
 class HierarchyCreatorTest extends Specification {
 

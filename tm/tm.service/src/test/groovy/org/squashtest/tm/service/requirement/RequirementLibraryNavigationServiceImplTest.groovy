@@ -20,33 +20,27 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.squashtest.tm.domain.campaign.CampaignLibrary
+
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibrary
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.resource.Resource
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
+import org.squashtest.tm.service.infolist.InfoListItemFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
 import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl
-import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager
 import org.squashtest.tm.service.project.ProjectFilterModificationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testutils.MockFactory;
-
+import org.squashtest.tm.service.testutils.MockFactory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class RequirementLibraryNavigationServiceImplTest extends Specification {

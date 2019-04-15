@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.library
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * @author Gregory Fouquet

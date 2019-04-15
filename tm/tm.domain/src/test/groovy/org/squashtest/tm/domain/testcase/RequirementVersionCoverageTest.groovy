@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import static org.squashtest.tm.domain.requirement.RequirementStatus.*
-
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.testutils.MockFactory;
+import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
-
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 class RequirementVersionCoverageTest extends Specification {
 

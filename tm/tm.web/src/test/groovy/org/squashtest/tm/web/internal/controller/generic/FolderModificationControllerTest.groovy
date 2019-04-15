@@ -20,20 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import org.squashtest.tm.domain.Workspace
+import org.springframework.web.servlet.ModelAndView
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.customreport.CustomReportDashboardService
-
-import java.util.Set;
+import org.squashtest.tm.service.library.FolderModificationService
+import spock.lang.Specification
 
 import javax.servlet.http.HttpServletRequest
-
-import org.springframework.web.servlet.ModelAndView
-import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.library.Folder
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.library.FolderModificationService
-
-import spock.lang.Specification
 
 class FolderModificationControllerTest extends Specification {
 	DummyFolderModificationController controller = new DummyFolderModificationController()

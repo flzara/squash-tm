@@ -24,14 +24,12 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.exception.CyclicStepCallException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 public class IterationTestPlanItemTest extends Specification {
 	IterationTestPlanItem copySource = new IterationTestPlanItem(iteration : Mock(Iteration), executionStatus: ExecutionStatus.FAILURE, label: "copy source")

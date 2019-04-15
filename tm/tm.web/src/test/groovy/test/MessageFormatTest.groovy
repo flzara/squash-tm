@@ -20,9 +20,9 @@
  */
 package test
 
-import java.text.MessageFormat;
+import spock.lang.Specification
 
-import spock.lang.Specification;
+import java.text.MessageFormat
 
 /**
  * @author Gregory

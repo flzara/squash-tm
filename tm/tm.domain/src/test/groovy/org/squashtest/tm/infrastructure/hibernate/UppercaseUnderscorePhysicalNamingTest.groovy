@@ -18,13 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.infrastructure.hibernate;
+package org.squashtest.tm.infrastructure.hibernate
 
-import static org.junit.Assert.*
-import org.hibernate.boot.model.naming.PhysicalNamingStrategy
 import org.hibernate.boot.model.naming.Identifier
-
-
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy
 import spock.lang.Specification
 import spock.lang.Unroll
 

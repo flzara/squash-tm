@@ -280,7 +280,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				})
 				.done(function(testList){					
 					var html = listTemplate(testList);
-					var body = $pane.find('.tl-body').html(html);					
+					$pane.find('.tl-body').html(html);
 					$pane.data('loaded', true);
 				});
 			},

@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.internal.spring
 
-import java.lang.reflect.Method;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.core.ParameterNameDiscoverer
+import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer
+import spock.lang.Specification
 
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.springframework.core.ParameterNameDiscoverer;
-import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
-
-import spock.lang.Specification;
+import java.lang.reflect.Method
 
 /**
  * @author Gregory Fouquet

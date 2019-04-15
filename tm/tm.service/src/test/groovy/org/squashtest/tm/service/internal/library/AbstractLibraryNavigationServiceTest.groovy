@@ -20,19 +20,15 @@
  */
 package org.squashtest.tm.service.internal.library
 
-
-import javax.inject.Provider;
-
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
-import org.squashtest.tm.service.internal.library.PasteStrategy;
-import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl;
-
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
+import org.squashtest.tm.service.internal.library.PasteStrategy
+import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl
 import spock.lang.Specification
 
-
+import javax.inject.Provider
 
 class AbstractLibraryNavigationServiceTest extends Specification {
 
