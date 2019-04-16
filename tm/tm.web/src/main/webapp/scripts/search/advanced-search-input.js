@@ -102,11 +102,11 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				var panel = $('#perimeter-panel-id');
 				var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
 				var place = "toSelect" + location.search;
-				var toselect = $.cookie(place);
+				var toselect = JSON.parse($.cookie(place));
 				options.children().each(function () {
 					if (toselect !== null) {
 						if (this.selected) {
-							if (toselect.indexOf(this.value) === -1) {
+							if (toselect.indexOf(Number(this.value) )=== -1) {
 								this.selected = false;
 							}
 						}
