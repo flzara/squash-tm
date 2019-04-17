@@ -24,14 +24,12 @@ define(["jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", 
 	function init() {
 
 		$("#back-popup").confirmDialog().on('confirmdialogconfirm', function() {
-			// We don't need this popup for the moment.
+			var url = router.buildURL('custom-report-base');
+			window.location.href = url;
 		});
 
 		$("#back").on('click', function() {
-			// We don't need to open a popup for the moment.
-			var url = router.buildURL('custom-report-base');
-      window.location.href = url;
-//		$("#back-popup").confirmDialog('open');
+			$("#back-popup").confirmDialog('open');
 		});
 
 		// - Shortcuts
