@@ -112,6 +112,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		CAMPAIGN.ACTUAL_END_DATE,
 		EntityType.CAMPAIGN),
 
+	CAMPAIGN_CUF(
+		null,
+		null,
+		EntityType.CAMPAIGN
+	),
+
 	// --- ITERATION ---
 	ITERATION_LABEL(
 		I18nKeys.I18N_KEY_LABEL,
@@ -158,6 +164,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		ITERATION.ACTUAL_END_DATE,
 		EntityType.ITERATION),
 
+	ITERATION_CUF(
+		null,
+		null,
+		EntityType.ITERATION
+	),
+
 	// -- TEST SUITE ---
 	TEST_SUITE_LABEL(
 		I18nKeys.I18N_KEY_LABEL,
@@ -183,6 +195,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		"test-suite.progress_status.label",
 		Fields.TEST_SUITE_PROGRESS_STATUS,
 		EntityType.TEST_SUITE),
+
+	TEST_SUITE_CUF(
+		null,
+		null,
+		EntityType.TEST_SUITE
+	),
 
 	// --- TEST CASE ---
 	TEST_CASE_PROJECT(
@@ -250,6 +268,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("tc_rvc_ids"),
 		EntityType.TEST_CASE),
 
+	TEST_CASE_CUF(
+		null,
+		null,
+		EntityType.TEST_CASE
+	),
+
 	// --- EXECUTION ---
 	EXECUTION_EXECUTION_MODE(
 		"label.ExecutionMode",
@@ -280,6 +304,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		"executions.steps.table.column-header.comment.label",
 		EXECUTION.DESCRIPTION,
 		EntityType.EXECUTION),
+
+	EXECUTION_CUF(
+		null,
+		null,
+		EntityType.EXECUTION
+	),
 
 	// --- EXECUTION STEP ---
 	EXECUTION_STEP_STEP_NUMBER(
@@ -321,6 +351,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		"custom-export.column.EXECUTION_STEP.STEP_LINKED_REQUIREMENTS_IDS",
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("es_rvc_ids"),
 		EntityType.EXECUTION_STEP),
+
+	EXECUTION_STEP_CUF(
+		null,
+		null,
+		EntityType.EXECUTION_STEP
+	),
 
 	// --- ISSUE ---
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES(

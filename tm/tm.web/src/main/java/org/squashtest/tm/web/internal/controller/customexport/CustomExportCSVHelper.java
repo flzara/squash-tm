@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.customexport;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
+import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
@@ -30,14 +32,17 @@ import java.util.Locale;
 
 public class CustomExportCSVHelper {
 
-	private static final char seperator = ';';
+	private static final char SEPARATOR = ';';
+	private static final char UNDERSCORE = '_';
 
 	private CustomReportCustomExportCSVService csvService;
+	private CustomFieldFinderService cufService;
 	private InternationalizationHelper translator;
 	private Locale locale;
 
-	public CustomExportCSVHelper(CustomReportCustomExportCSVService csvService, InternationalizationHelper translator, Locale locale) {
+	public CustomExportCSVHelper(CustomReportCustomExportCSVService csvService, CustomFieldFinderService cufService, InternationalizationHelper translator, Locale locale) {
 		this.csvService = csvService;
+		this.cufService = cufService;
 		this.translator = translator;
 		this.locale = locale;
 	}
@@ -45,18 +50,25 @@ public class CustomExportCSVHelper {
 	public String getInternationalizedHeaders(CustomReportCustomExport customExport) {
 		StringBuilder builder = new StringBuilder();
 		for(CustomReportCustomExportColumn column : customExport.getColumns()) {
-			// TODO: Temporaire pour avoir un tableau cohérent  pour la vérification de la requête
-			if(column.getLabel().getJooqTableField() != null) {
-				// A column ' Name ' will be written ' "Name"; '
-				CustomExportColumnLabel columnLabel = column.getLabel();
-				builder.append("\"")
-					.append(columnLabel.getEntityType() + "_" + translator.internationalize(columnLabel.getI18nKey(), locale))
-					.append("\"")
-					.append(seperator);
+			CustomExportColumnLabel columnLabel = column.getLabel();
+			String headerLabel;
+			if(column.getCufId() != null) {
+				headerLabel = cufService.findById(column.getCufId()).getLabel();
+			} else {
+				headerLabel = translator.internationalize(columnLabel.getI18nKey(), locale);
 			}
+			// A column ' CAMPAIGN_LABEL ' will be written ' "CAMPAIGN_LABEL"; '
+			builder.append("\"")
+				.append(buildHeader(columnLabel.getEntityType(), headerLabel))
+				.append("\"")
+				.append(SEPARATOR);
 		}
 		builder.append("\n");
 		return builder.toString();
+	}
+
+	private String buildHeader(EntityType entityType, String columnLabel) {
+		return entityType.toString() + UNDERSCORE + columnLabel;
 	}
 
 	public String getRowsData(CustomReportCustomExport customExport) {

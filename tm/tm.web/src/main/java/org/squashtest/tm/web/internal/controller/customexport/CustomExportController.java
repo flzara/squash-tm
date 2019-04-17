@@ -29,16 +29,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -46,8 +58,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("custom-exports")
@@ -63,6 +75,15 @@ public class CustomExportController {
 	private CustomReportCustomExportCSVService csvExportService;
 	@Inject
 	private CampaignFinder campaignFinder;
+	@Inject
+	private JsonProjectBuilder jsonProjectBuilder;
+	@Inject
+	private CustomFieldFinderService cufService;
+	@Inject
+	private CustomFieldBindingFinderService cufBindingService;
+	@Inject
+	private CustomFieldJsonConverter customFieldConverter;
+
 
 	@RequestMapping("/wizard/{parentId}")
 	public ModelAndView getWizard(@PathVariable Long parentId, Locale locale) {
@@ -74,6 +95,7 @@ public class CustomExportController {
 			CustomReportCustomExport customExportDefinition = (CustomReportCustomExport) crln.getEntity();
 			mav.addObject("customExportDefinition", JsonHelper.serialize(customExportDefinition));
 			mav.addObject("scopeCampaignName", getScopeCampaignName(customExportDefinition.getScope().get(0)));
+			mav.addObject("availableCustomFields", getCustomFieldBindingsData(customExportDefinition.getScope().get(0).getId()));
 		}
 
 		mav.addObject("parentId", parentId);
@@ -118,7 +140,7 @@ public class CustomExportController {
 	private File createCustomExportFile(CustomReportCustomExport customExport, Locale locale) {
 		File file;
 		PrintWriter writer = null;
-		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService, i18nHelper, locale);
+		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService,cufService, i18nHelper, locale);
 
 		try {
 			file = File.createTempFile("custom-export", "tmp");
@@ -137,5 +159,35 @@ public class CustomExportController {
 				writer.close();
 			}
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/cuf-data", method = RequestMethod.GET)
+	public Map<String, List<CustomFieldBindingModel>> getCustomFieldBindingsData(@RequestParam Long campaignId) {
+		Campaign campaign = campaignFinder.findById(campaignId);
+		Project project = campaign.getProject();
+
+		// Main Map
+		Map<String, List<CustomFieldBindingModel>> map = jsonProjectBuilder.buildProjectCufBindingsMap(project.getId());
+
+		// Need to add the Cufs bound to the linked Test Cases
+		List<Iteration> iterations = campaign.getIterations();
+
+		// Get the ids of the projects of the test case linked to the given campaign (excluding the main project)
+		List<Long> projectIds = iterations.stream()
+			.map(Iteration::getTestPlans)
+			.flatMap(Collection::stream)
+			.map(itpi -> itpi.getReferencedTestCase().getProject().getId())
+			.distinct()
+			.filter(projectId -> !projectId.equals(project.getId()))
+			.collect(Collectors.toList());
+
+		for(Long projectId : projectIds) {
+			List<CustomFieldBinding> cufs = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+			for(CustomFieldBinding binding : cufs) {
+				map.get(BindableEntity.TEST_CASE.toString()).add(customFieldConverter.toJson(binding));
+			}
+		}
+		return map;
 	}
 }

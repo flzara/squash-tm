@@ -62,6 +62,7 @@
   squashtm.customExport.parentId = /*[[${parentId}]]*/ '456';
   squashtm.customExport.definition = /*[[${customExportDefinition}]]*/ '{ scope: ... }';
   squashtm.customExport.scopeCampaignName = /*[[${scopeCampaignName}]]*/ 'Campaign_8';
+  squashtm.customExport.availableCustomFields = /*[[${availableCustomFields}]]*/ '{ CAMPAIGN : [], ...}';
   /* ]]> */
 </script>
 
@@ -85,6 +86,10 @@
 <script id="attributes-step-tpl" type="text/x-handlebars-template"
         th:inline="text"
         th:include="custom-exports/wizard/attributesStep :: custom-export-wizard-attributes" />
+
+<script id="cuf-popup-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/attributesStep :: custom-export-custom-fields-popup" />
 
 <script id="name-step-tpl" type="text/x-handlebars-template"
         th:inline="text"

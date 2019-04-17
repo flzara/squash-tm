@@ -52,6 +52,12 @@
   <div id="{{entityKey}}-panel" class="sq-tg expand not-displayed">
     <div class="tg-head">
       <h3>{{i18n entityKey prefix='chart.entityType.'}}</h3>
+      {{#if (contains ../attributes.entityWithCuf @key)}}
+      <div class="tg-toolbar">
+        <input id="cuf-btn" type="button" class="sq-btn wizard-cuf-btn" data-entity="{{@key}}" role="button"
+               th:attr="value=#{generics.customfieldvalues.title}, title=#{generics.customfieldvalues.title}" />
+      </div>
+      {{/if}}
     </div>
     <div class="tg-body">
       <div class="criterion-block">
@@ -62,11 +68,54 @@
             <label for="{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
           </div>
           {{/each}}
+          {{#each (lookup ../attributes.availableCustomFields entityKey)}}
+            <div id="wrapper-{{id}}" class="chart-wizard-hidden" style="float: left; min-width:240px;">
+              <input id="{{id}}" name="{{id}}" type="checkbox" data-cuf="true"
+                     {{#if (contains ../attributes.selectedCufAttributes id)}}
+                      checked="checked"
+                    {{/if}}
+              />
+              {{cuf-label label}}
+            </div>
+          {{/each}}
         </div>
       </div>
     </div>
   </div>
   {{/each}}
 
+  <div id="cuf-popup-container">
+    <div id="cuf-popup" class="popup-dialog not-displayed" th:title="#{generics.customfieldvalues.title}">
+    </div>
+  </div>
+</div>
+
+<div th:fragment="custom-export-custom-fields-popup">
+  <table>
+    <thead>
+    <tr>
+      <th width="25px" class="th-check ui-state-default"></th>
+      <th class="th-name ui-state-default" th:text="#{label.Label}">Label</th>
+      <th class="th-name ui-state-default" th:text="#{label.code}">Code</th>
+      <th class="th-name ui-state-default" th:text="#{label.Type}">Cuf type</th>
+    </tr>
+    </thead>
+    <tbody class="available-fields">
+    {{#each attributes.cufToDisplay}}
+    <tr>
+      <td>
+        <input type="checkbox" class="cuf-checkbox"
+               id="cuf-checkbox-{{id}}" name="cuf" value="{{id}}"
+               {{#if (contains ../attributes.selectedCufAttributes id)}} checked="checked" {{/if}}
+        />
+      </td>
+      <td>{{label}}</td>
+      <td>{{code}}</td>
+      <td>{{type}}</td>
+      {{/each}}
+    </tr>
+    </tbody>
+  </table>
+  <div class="unsnap not-displayed"></div>
 </div>
 

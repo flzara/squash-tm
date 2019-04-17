@@ -232,6 +232,7 @@ define([], function(){
 		'chart.wizard' :					root + '/charts/wizard/{\\d+}',
 		'chart.instance' :					root + '/charts/{\\d+}/instance',
 		'custom-report.custom-export.wizard': root + '/custom-exports/wizard/{\\d+}',
+		'custom-report.custom-export.cufs': root + '/custom-exports/cuf-data',
 		'custom-report.custom-export.new': root + '/custom-exports/new/{\\d+}',
 		'custom-report.custom-export.update': root + '/custom-exports/update/{\\d+}',
 		'custom-report.custom-export.generate': root + '/custom-exports/generate/{\\d+}',

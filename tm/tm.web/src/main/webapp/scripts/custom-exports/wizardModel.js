@@ -119,19 +119,44 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 
 			var self = this;
 
-			this.set({ entityMap: entityMap })
+			this.set({ entityMap: entityMap });
+			this.set({ entityWithCuf: ["CAMPAIGN", "ITERATION", "TEST_SUITE", "TEST_CASE", "EXECUTION", "EXECUTION_STEP"]});
+
 			var customExportDef = data.customExportDef;
 
+			this.set({
+				parentId: squashtm.customExport.parentId
+
+			});
 			if (customExportDef) {
 				// Reload customExportDef into this model
 
 				// put the name of the scope campaign in the scope attribute
 				customExportDef.scope[0].name = customExportDef.scopeCampaignName;
 
-				this.set({ scope: customExportDef.scope });
 				this.set({
-					selectedAttributes: _.map(customExportDef.columns, function(column) { return column.label; })
+					scope: customExportDef.scope
 				});
+
+				var standardAttributes = _.chain(customExportDef.columns)
+					.filter(function(column) { return column.cufId == undefined; })
+					.map(function(column) { return column.label })
+					.value();
+				var cufAttributes = _.chain(customExportDef.columns)
+					.filter(function(column) { return column.cufId !== undefined && column.cufId !== null ; })
+					.map(function(column) { return column.label + "-" + column.cufId })
+					.value();
+
+				this.set({
+					selectedAttributes: standardAttributes
+				});
+				this.set({
+					selectedCufAttributes: cufAttributes
+				});
+
+				var cufMap = squashtm.customExport.availableCustomFields;
+				this.set({ availableCustomFields: this.computeAvailableCustomFields(cufMap) });
+
 				this.set({ name: customExportDef.name });
 
 				this.set({
@@ -141,8 +166,19 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 					selectedEntities: this.deduceSelectedEntities()
 				});
 			}
-			this.set({ parentId: squashtm.customExport.parentId });
+		},
 
+		computeAvailableCustomFields: function(cufMap) {
+			return _.chain(cufMap).pick(this.get('entityWithCuf')).mapObject(function(cufList) {
+				return _.map(cufList, function(cufBinding) {
+						return {
+									id: cufBinding.boundEntity.enumName + "_CUF-" + cufBinding.customField.id,
+									label: cufBinding.customField.label,
+									code: cufBinding.customField.code,
+									type: cufBinding.customField.inputType.friendlyName
+						};
+				});
+			}).value();
 		},
 
 		deduceSelectedEntities: function() {
@@ -157,16 +193,34 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 		},
 
 		toJson: function() {
+			var self = this;
 			return JSON.stringify({
 				scope: _.map(this.get("scope"), function(entity) {
 					return { id: entity.id, type: entity.type };
 				}),
-				columns: _.map(this.get("selectedAttributes"), function(attr) {
-					return { label: attr };
-				}),
+				columns: self.extractColumns(),
 				name: this.get("name")
 
 			});
+		},
+
+		extractColumns: function() {
+			var selectedAttributes = this.get("selectedAttributes");
+			var selectedCufAttributes = this.get("selectedCufAttributes");
+
+			var standardAttributes = _.map(selectedAttributes, function(attr) {
+				return { label: attr };
+			});
+			var cufAttributes = _.map(selectedCufAttributes, function(attr) {
+				// Separate ColumnLabel and CufId
+				var splitAttr = attr.split('-');
+				return {
+					label: splitAttr[0],
+					cufId: splitAttr[1]
+				};
+			});
+			return _.union(standardAttributes, cufAttributes);
+
 		}
 
 	});

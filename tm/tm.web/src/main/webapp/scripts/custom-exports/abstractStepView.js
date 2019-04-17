@@ -27,6 +27,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 
 		_initialize : function(data, wizrouter) {
 			this.router = wizrouter;
+			this.registerHandlebarHelper();
 			this.steps = this.model.get("steps");
 			var currStep = _.findWhere(this.steps, { name : data.name });
 			this.next = currStep.nextStep;
@@ -37,9 +38,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			this.missingStepNames = missingStepNames;
 
 			if (_.isEmpty(missingStepNames)){
-
 				this.render(data, $(this.tmpl));
-
 			} else {
 				var missingSteps = _.chain(this.steps)
 				.filter(function(step){
@@ -51,6 +50,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 				var model = {steps : missingSteps, totalStep : this.steps.length};
 				this.render(model, $("#missing-step-tpl"));
 			}
+		},
+
+		registerHandlebarHelper: function() {
+			var genericCufLabel = translator.get("label.customField");
+			Handlebars.registerHelper("cuf-label", function(prototype) {
+				var html = prototype + "<span class='small txt-discreet'> (" + genericCufLabel + ")</span>";
+				return new Handlebars.SafeString(html);
+			});
 		},
 
 		showViewTitle : function(title, stepNumber) {
@@ -95,7 +102,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			this.remove();
 			Backbone.View.prototype.remove.call(this);
 		},
-
 
 		navigateNext : function() {
 			this.updateModel();

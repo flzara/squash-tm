@@ -95,18 +95,7 @@ public class JsonProjectBuilder {
 		res.setTestCaseTypes(types);
 
 		// the custom field bindings
-		Map<String, List<CustomFieldBindingModel>> cufBindings = new HashMap<>();
-
-		for (BindableEntity entity : BindableEntity.values()){
-			List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(p.getId(), entity);
-			List<CustomFieldBindingModel> jsBindings = new ArrayList<>(bindings.size());
-			for (CustomFieldBinding binding : bindings){
-				jsBindings.add(customFieldConverter.toJson(binding));
-			}
-			cufBindings.put(entity.toString(), jsBindings);
-		}
-
-		res.setCustomFieldBindings(cufBindings);
+		res.setCustomFieldBindings(buildProjectCufBindingsMap(p.getId()));
 
 		// the milestones
 		Collection<Milestone> milestones = p.getMilestones();
@@ -119,6 +108,21 @@ public class JsonProjectBuilder {
 		res.setMilestones(jsmilestones);
 
 		return res;
+	}
+
+	public Map<String, List<CustomFieldBindingModel>> buildProjectCufBindingsMap(long projectId) {
+
+		Map<String, List<CustomFieldBindingModel>> cufBindings = new HashMap<>();
+
+		for (BindableEntity entity : BindableEntity.values()){
+			List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, entity);
+			List<CustomFieldBindingModel> jsBindings = new ArrayList<>(bindings.size());
+			for (CustomFieldBinding binding : bindings){
+				jsBindings.add(customFieldConverter.toJson(binding));
+			}
+			cufBindings.put(entity.toString(), jsBindings);
+		}
+		return cufBindings;
 	}
 
 }
