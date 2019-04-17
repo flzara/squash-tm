@@ -38,7 +38,9 @@ public class CustomReportCustomExportModificationServiceImpl implements CustomRe
 	@Override
 	public void updateCustomExport(Long customExportId, CustomReportCustomExport updatedCustomExport) {
 		CustomReportCustomExport customExport = reportLibraryNodeService.findCustomExportByNodeId(customExportId);
-		reportLibraryNodeService.renameNode(customExportId, updatedCustomExport.getName());
+		if(!customExport.getName().equals(updatedCustomExport.getName())) {
+			reportLibraryNodeService.renameNode(customExportId, updatedCustomExport.getName());
+		}
 		customExport.setScope(updatedCustomExport.getScope());
 		customExport.setColumns(updatedCustomExport.getColumns());
 	}
