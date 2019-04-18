@@ -20,10 +20,15 @@
  */
 package org.squashtest.tm.service.customreport;
 
+import org.jooq.Record;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
+
+import java.util.Iterator;
 
 public interface CustomReportCustomExportCSVService {
 
-	String getRowsData(CustomReportCustomExport customExport);
+	Iterator<Record> getRowsData(CustomReportCustomExport customExport);
 
+	String buildCufColumnName(EntityType entityType, long cufId);
 }

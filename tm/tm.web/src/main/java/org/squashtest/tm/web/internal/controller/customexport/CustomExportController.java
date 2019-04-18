@@ -26,19 +26,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
@@ -58,7 +57,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -149,7 +152,7 @@ public class CustomExportController {
 			// print headers
 			writer.write(csvHelper.getInternationalizedHeaders(customExport));
 			// print the data
-			writer.write(csvHelper.getRowsData(customExport));
+			writer.write(csvHelper.getWritableRowsData(customExport));
 			writer.close();
 			return file;
 		} catch (IOException ioEx) {

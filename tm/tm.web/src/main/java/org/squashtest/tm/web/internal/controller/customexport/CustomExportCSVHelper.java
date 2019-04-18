@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.customexport;
 
+import org.jooq.Field;
+import org.jooq.Record;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
@@ -28,12 +30,22 @@ import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_NATURE;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_TYPE;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
 
 public class CustomExportCSVHelper {
 
 	private static final char SEPARATOR = ';';
 	private static final char UNDERSCORE = '_';
+	private static final String NOT_AVAILABLE = "n/a;";
+	private static final String ESCAPED_QUOTE = "\"";
+	private static final String UNDERSCORE_CUF_UNDERSCORE = "_cuf_";
+	private static final String CARRIAGE_RETURN = "\n";
 
 	private CustomReportCustomExportCSVService csvService;
 	private CustomFieldFinderService cufService;
@@ -58,20 +70,55 @@ public class CustomExportCSVHelper {
 				headerLabel = translator.internationalize(columnLabel.getI18nKey(), locale);
 			}
 			// A column ' CAMPAIGN_LABEL ' will be written ' "CAMPAIGN_LABEL"; '
-			builder.append("\"")
-				.append(buildHeader(columnLabel.getEntityType(), headerLabel))
-				.append("\"")
+			builder.append(ESCAPED_QUOTE)
+				.append(buildHeaderName(columnLabel.getEntityType(), headerLabel))
+				.append(ESCAPED_QUOTE)
 				.append(SEPARATOR);
 		}
-		builder.append("\n");
+		builder.append(CARRIAGE_RETURN);
 		return builder.toString();
 	}
 
-	private String buildHeader(EntityType entityType, String columnLabel) {
+	private String buildHeaderName(EntityType entityType, String columnLabel) {
 		return entityType.toString() + UNDERSCORE + columnLabel;
 	}
 
-	public String getRowsData(CustomReportCustomExport customExport) {
-		return csvService.getRowsData(customExport);
+	public String getWritableRowsData(CustomReportCustomExport customExport) {
+		Iterator<Record> rowData = csvService.getRowsData(customExport);
+		// Build the result String
+		return buildResultString(rowData, customExport.getColumns());
+	}
+
+	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns) {
+		StringBuilder dataBuilder = new StringBuilder();
+		resultSet.forEachRemaining(record -> {
+				for (CustomReportCustomExportColumn column : selectedColumns) {
+					CustomExportColumnLabel label = column.getLabel();
+					Field columnField = label.getJooqTableField();
+					Object value;
+					if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
+						value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
+					} else if (columnField != null) {
+						value = record.get(columnField);
+					} else {
+						// Custom field column
+						value = record.get(CUSTOM_FIELD_VALUE.as(
+							csvService.buildCufColumnName(label.getEntityType(), column.getCufId()))
+							.VALUE);
+					}
+					// Append the value
+					if(value != null) {
+						dataBuilder.append(ESCAPED_QUOTE)
+							.append(value)
+							.append(ESCAPED_QUOTE)
+							.append(SEPARATOR);
+					} else {
+						dataBuilder.append(NOT_AVAILABLE);
+					}
+				}
+				dataBuilder.append("\n");
+			}
+		);
+		return dataBuilder.toString();
 	}
 }

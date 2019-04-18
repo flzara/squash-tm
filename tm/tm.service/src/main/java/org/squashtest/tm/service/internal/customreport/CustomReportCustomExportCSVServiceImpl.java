@@ -28,7 +28,6 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSelectStep;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
@@ -89,13 +88,11 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		cufJoinColumnMap.put(EntityType.EXECUTION_STEP, EXECUTION_STEP.EXECUTION_STEP_ID);
 	}
 
-	private static final String NOT_AVAILABLE = "n/a;";
-
 	@Inject
 	private DSLContext DSL;
 
 	@Override
-	public String getRowsData(CustomReportCustomExport customExport) {
+	public Iterator<Record> getRowsData(CustomReportCustomExport customExport) {
 		List<CustomReportCustomExportColumn> selectedColumns = customExport.getColumns();
 		// Extract EntityTypes from the selected columns
 		List<EntityType> entityList = selectedColumns.stream()
@@ -114,41 +111,8 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				Collectors.groupingBy(column->column.getLabel().getEntityType(),
 					Collectors.mapping(CustomReportCustomExportColumn::getCufId, Collectors.toList()))
 			);
-
 		// Fetch data from database
-		Iterator<Record> resultSet = fetchData(customExport.getScope().get(0).getId(), fieldsList, entityList, cufMap);
-		// Build the result String
-		return buildResultString(resultSet, selectedColumns);
-	}
-
-	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns) {
-		StringBuilder dataBuilder = new StringBuilder();
-		resultSet.forEachRemaining(record -> {
-				for (CustomReportCustomExportColumn column : selectedColumns) {
-					CustomExportColumnLabel label = column.getLabel();
-					Field columnField = label.getJooqTableField();
-
-					Object value;
-					if (columnField != null) {
-						value = record.get(columnField);
-					} else {
-						// Custom field column
-						value = record.get(CUSTOM_FIELD_VALUE.as(buildCufColumnName(label.getEntityType(), column.getCufId())).VALUE);
-					}
-					// Append the value
-					if(value != null) {
-					dataBuilder.append("\"")
-						.append(value)
-						.append("\"")
-						.append(";");
-					} else {
-						dataBuilder.append(NOT_AVAILABLE);
-					}
-				}
-				dataBuilder.append("\n");
-			}
-		);
-		return dataBuilder.toString();
+		return fetchData(customExport.getScope().get(0).getId(), fieldsList, entityList, cufMap);
 	}
 
 	/**
@@ -286,10 +250,6 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		return joinQuery.fetch().iterator();
 	}
 
-	private String buildCufColumnName(EntityType entityType, long cufId) {
-		return entityType.toString() + "_cuf_" + cufId;
-	}
-
 	private List<Field<?>> getOrderByFieldList(int queryDepth) {
 		List<Field<?>> orderByFieldList = new ArrayList<>();
 		if(queryDepth > 1) {
@@ -345,5 +305,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		groupByFieldList.addAll(cufFieldList);
 
 		return groupByFieldList;
+	}
+
+	@Override
+	public String buildCufColumnName(EntityType entityType, long cufId) {
+		return entityType.toString() + "_cuf_" + cufId;
 	}
 }
