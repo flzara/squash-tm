@@ -26,6 +26,9 @@ import org.jooq.impl.SQLDataType;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.EntityType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.jooq.impl.DSL.concat;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.groupConcatDistinct;
@@ -234,7 +237,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_STATUS(
-		I18nKeys.LABEL_STATUS,
+		I18nKeys.I18N_KEY_STATUS,
 		TEST_CASE.TC_STATUS,
 		EntityType.TEST_CASE),
 
@@ -254,7 +257,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_DATASET(
-		"label.Dataset",
+		"label.dataset",
 		DATASET.NAME,
 		EntityType.TEST_CASE),
 
@@ -264,7 +267,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_LINKED_REQUIREMENTS_IDS(
-		"custom-export.column.TEST_CASE.LINKED_REQUIREMENTS_IDS",
+		I18nKeys.I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS,
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("tc_rvc_ids"),
 		EntityType.TEST_CASE),
 
@@ -281,7 +284,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.EXECUTION),
 
 	EXECUTION_STATUS(
-		I18nKeys.LABEL_STATUS,
+		I18nKeys.I18N_KEY_STATUS,
 		EXECUTION.EXECUTION_STATUS,
 		EntityType.EXECUTION),
 
@@ -328,7 +331,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.EXECUTION_STEP),
 
 	EXECUTION_STEP_STATUS(
-		I18nKeys.LABEL_STATUS,
+		I18nKeys.I18N_KEY_STATUS,
 		EXECUTION_STEP.EXECUTION_STATUS,
 		EntityType.EXECUTION_STEP),
 
@@ -348,7 +351,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.EXECUTION_STEP),
 
 	EXECUTION_STEP_LINKED_REQUIREMENTS_IDS(
-		"custom-export.column.EXECUTION_STEP.STEP_LINKED_REQUIREMENTS_IDS",
+		I18nKeys.I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS,
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("es_rvc_ids"),
 		EntityType.EXECUTION_STEP),
 
@@ -360,20 +363,19 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	// --- ISSUE ---
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES(
-		"custom-export.column.ISSUE.ALL_LINKED_ISSUES",
+		"label.Execution",
 		groupConcatDistinct(ISSUE.as("exec_issue").ISSUE_ID).separator(", ").as("exec_and_es_issue_ids"),
 		EntityType.ISSUE),
 
 	ISSUE_EXECUTION_ISSUES(
-		"custom-export.column.ISSUE.STEP_LINKED_ISSUES",
+		"chart.entityType.EXECUTION_STEP",
 		groupConcatDistinct(ISSUE.as("es_issue").ISSUE_ID).separator(", ").as("es_issue_ids"),
 		EntityType.ISSUE);
 
 	private String i18nKey;
 	private Field jooqTableField;
 	/**
-	 * The deepest entity to join so the column can be fetched/computed.
-	 * It is used to find the query depth.
+	 * The EntityType corresponding to the column.
 	 */
 	private EntityType entityType;
 
@@ -396,23 +398,28 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		return entityType;
 	}
 
-	private static class I18nKeys {
-		public static final String I18N_KEY_LABEL = "label.Label";
-		public static final String I18N_KEY_ID = "label.id";
-		public static final String I18N_KEY_REFERENCE = "label.Reference";
-		public static final String I18N_KEY_DESCRIPTION = "label.Description";
-		public static final String I18N_KEY_STATE = "label.State";
-		public static final String I18N_KEY_PROGRESS_STATUS = "campaign.progress_status.label";
-		public static final String I18N_KEY_MILESTONE = "label.Milestone";
-		public static final String I18N_KEY_SCHEDULED_START = "chart.column.CAMPAIGN_SCHED_START";
-		public static final String I18N_KEY_SCHEDULED_END = "chart.column.CAMPAIGN_SCHED_END";
-		public static final String I18N_KEY_ACTUAL_START = "chart.column.CAMPAIGN_ACTUAL_START";
-		public static final String I18N_KEY_ACTUAL_END = "chart.column.CAMPAIGN_ACTUAL_END";
-		public static final String I18N_KEY_USER = "label.User";
-		public static final String LABEL_STATUS = "label.Status";
+	public String getShortenedEntityType() {
+		return ShortenedNames.getShortenedEntityType(entityType);
 	}
 
-	private static class Fields {
+	private static final class I18nKeys {
+		private static final String I18N_KEY_ACTUAL_END = "dialog.label.campaign.actual_end.label";
+		private static final String I18N_KEY_ACTUAL_START = "dialog.label.campaign.actual_start.label";
+		private static final String I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS = "custom-export.column.LINKED_REQUIREMENTS_IDS";
+		private static final String I18N_KEY_DESCRIPTION = "label.Description";
+		private static final String I18N_KEY_ID = "label.id";
+		private static final String I18N_KEY_LABEL = "label.Label";
+		private static final String I18N_KEY_MILESTONE = "label.Milestones";
+		private static final String I18N_KEY_PROGRESS_STATUS = "campaign.progress_status.label";
+		private static final String I18N_KEY_REFERENCE = "label.Reference";
+		private static final String I18N_KEY_SCHEDULED_END = "dialog.label.campaign.scheduled_end.label";
+		private static final String I18N_KEY_SCHEDULED_START = "dialog.label.campaign.scheduled_start.label";
+		private static final String I18N_KEY_STATE = "label.State";
+		private static final String I18N_KEY_STATUS = "label.Status";
+		private static final String I18N_KEY_USER = "label.User";
+	}
+
+	private static final class Fields {
 
 		private final static Field FIELD_ITPI_DONE_COUNT =
 			DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
@@ -486,6 +493,25 @@ public enum CustomExportColumnLabel implements Internationalizable {
 			.cast(SQLDataType.VARCHAR(5)),
 			val(" "),
 			val("%"));
+	}
+
+	private static final class ShortenedNames {
+
+		private static final Map<EntityType, String> ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP = new HashMap<>(7);
+
+		static {
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.CAMPAIGN, "CPG");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.ITERATION, "IT");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.TEST_SUITE, "SUI");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.TEST_CASE, "TC");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.EXECUTION, "EXEC");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.EXECUTION_STEP, "EXEC_STEP");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.ISSUE, "BUG");
+		}
+
+		private static String getShortenedEntityType(EntityType entityType) {
+			return ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.get(entityType);
+		}
 	}
 }
 

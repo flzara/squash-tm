@@ -31,7 +31,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				CAMPAIGN_DESCRIPTION: 'label.Description',
 				CAMPAIGN_STATE: 'label.State',
 				CAMPAIGN_PROGRESS_STATUS: 'campaign.progress_status.label',
-				CAMPAIGN_MILESTONE: 'label.Milestone',
+				CAMPAIGN_MILESTONE: 'label.Milestones',
 				CAMPAIGN_SCHEDULED_START: 'chart.column.CAMPAIGN_SCHED_START',
 				CAMPAIGN_SCHEDULED_END: 'chart.column.CAMPAIGN_SCHED_END',
 				CAMPAIGN_ACTUAL_START: 'chart.column.CAMPAIGN_ACTUAL_START',
@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 			iconClass: "icon-chart-test-case",
 			attributes: {
 				TEST_CASE_PROJECT: 'label.project',
-				TEST_CASE_MILESTONE: 'label.Milestone',
+				TEST_CASE_MILESTONE: 'label.Milestones',
 				TEST_CASE_LABEL: 'label.Label',
 				TEST_CASE_ID: 'label.id',
 				TEST_CASE_REFERENCE: 'label.Reference',
@@ -75,9 +75,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				TEST_CASE_IMPORTANCE: 'label.Importance',
 				TEST_CASE_NATURE: 'chart.column.TEST_CASE_NATURE',
 				TEST_CASE_TYPE: 'label.Type',
-				TEST_CASE_DATASET: 'label.Dataset',
+				TEST_CASE_DATASET: 'label.dataset',
 				TEST_CASE_PREREQUISITE: 'generics.prerequisite.title',
-				TEST_CASE_LINKED_REQUIREMENTS_IDS: 'custom-export.column.TEST_CASE.LINKED_REQUIREMENTS_IDS'
+				TEST_CASE_LINKED_REQUIREMENTS_IDS: 'custom-export.column.LINKED_REQUIREMENTS_IDS'
 			}
 		},
 		EXECUTION: {
@@ -101,14 +101,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				EXECUTION_STEP_USER: 'label.User',
 				EXECUTION_STEP_EXECUTION_DATE: 'iteration.executions.table.column-header.execution-date.label',
 				EXECUTION_STEP_COMMENT: 'executions.steps.table.column-header.comment.label',
-				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.EXECUTION_STEP.STEP_LINKED_REQUIREMENTS_IDS'
+				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.LINKED_REQUIREMENTS_IDS'
 			}
 		},
 		ISSUE: {
 			iconClass: "icon-chart-issue",
 			attributes: {
-				ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES: 'custom-export.column.ISSUE.ALL_LINKED_ISSUES',
-				ISSUE_EXECUTION_ISSUES: 'custom-export.column.ISSUE.STEP_LINKED_ISSUES'
+				ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES: 'custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES',
+				ISSUE_EXECUTION_ISSUES: 'custom-export.wizard.attributes.ISSUE.STEP_LINKED_ISSUES'
 			}
 		}
 	};
