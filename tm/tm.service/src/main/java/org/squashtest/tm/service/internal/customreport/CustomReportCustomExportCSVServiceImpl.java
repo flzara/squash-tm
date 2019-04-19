@@ -277,17 +277,17 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			groupByFieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
 			groupByFieldList.add(CORE_USER.LOGIN);
 			groupByFieldList.add(DATASET.NAME);
-			if (simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
-				groupByFieldList.add(TEST_SUITE.ID);
-			}
+//			if (simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
+//				groupByFieldList.add(TEST_SUITE.ID);
+//			}
 			if (isFetchTestSuite(entityList)) {
 				groupByFieldList.add(TEST_SUITE.ID);
 			}
 			groupByFieldList.add(TEST_CASE.TCLN_ID);
 			groupByFieldList.add(PROJECT.NAME);
-			if(simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
-				groupByFieldList.add(MILESTONE.as("tc_milestone").MILESTONE_ID);
-			}
+//			if(simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
+//				groupByFieldList.add(MILESTONE.as("tc_milestone").MILESTONE_ID);
+//			}
 		}
 		if(queryDepth > 3) {
 			groupByFieldList.add(EXECUTION.EXECUTION_ID);
@@ -302,7 +302,8 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				!field.equals(TEST_CASE_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
 					!field.equals(EXECUTION_STEP_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
 					!field.equals(ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES.getJooqTableField()) &&
-					!field.equals(ISSUE_EXECUTION_ISSUES.getJooqTableField())
+					!field.equals(ISSUE_EXECUTION_ISSUES.getJooqTableField()) &&
+					!field.equals(TEST_CASE_MILESTONE.getJooqTableField())
 			).collect(Collectors.toList())
 		);
 		groupByFieldList.addAll(cufFieldList);

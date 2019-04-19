@@ -212,8 +212,8 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_MILESTONE(
-		I18nKeys.I18N_KEY_MILESTONE,
-		MILESTONE.as("tc_milestone").LABEL,
+		I18nKeys.I18N_KEY_MILESTONES,
+		groupConcatDistinct(MILESTONE.as("tc_milestone").LABEL).separator(", ").as("tc_milestone_labels"),
 		EntityType.TEST_CASE),
 
 	TEST_CASE_LABEL(
@@ -409,7 +409,8 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		private static final String I18N_KEY_DESCRIPTION = "label.Description";
 		private static final String I18N_KEY_ID = "label.id";
 		private static final String I18N_KEY_LABEL = "label.Label";
-		private static final String I18N_KEY_MILESTONE = "label.Milestones";
+		private static final String I18N_KEY_MILESTONE = "label.Milestone";
+		private static final String I18N_KEY_MILESTONES = "label.Milestones";
 		private static final String I18N_KEY_PROGRESS_STATUS = "campaign.progress_status.label";
 		private static final String I18N_KEY_REFERENCE = "label.Reference";
 		private static final String I18N_KEY_SCHEDULED_END = "dialog.label.campaign.scheduled_end.label";
