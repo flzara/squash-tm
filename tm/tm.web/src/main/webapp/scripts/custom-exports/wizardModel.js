@@ -174,14 +174,26 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 		},
 
 		deduceSelectedEntities: function() {
-			var selectedAttributes = this.get("selectedAttributes");
+			// Deduce from standard attributes
+			var selectedStandardAttributes = this.get("selectedAttributes");
+			// Filter entityMap keeping only the entities which have at least a selected attribute
 			var filteredMap = _.pick(entityMap, function(value) {
-				var labelKeys = _.keys(value.attributes);
-				var intersection = _.intersection(selectedAttributes, labelKeys);
-				return intersection.length > 0;
+				var allLabelKeys = _.keys(value.attributes);
+				var selectedLabels = _.intersection(selectedStandardAttributes, allLabelKeys);
+				return selectedLabels.length > 0;
 			});
-			var selectedEntities = _.keys(filteredMap);
-			return selectedEntities;
+			var selectedEntitiesFromStandard = _.keys(filteredMap);
+
+			// Deduce from cuf attributes
+			var selectedCufAttributes = this.get("selectedCufAttributes");
+			var selectedEntitiesFromCufs =
+				_.chain(selectedCufAttributes)
+					.map(function(attr) {
+						// Deduce entity name from the computed cuf name
+						return attr.split('-')[0].split('_')[0];
+					}).uniq()
+					.value();
+			return _.union(selectedEntitiesFromStandard, selectedEntitiesFromCufs);
 		},
 
 		toJson: function() {
