@@ -116,55 +116,47 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 	return Backbone.Model.extend({
 
 		initialize : function(data) {
-
 			var self = this;
+
+			var customExportDef = data.customExportDef;
 
 			this.set({ entityMap: entityMap });
 			this.set({ entityWithCuf: ["CAMPAIGN", "ITERATION", "TEST_SUITE", "TEST_CASE", "EXECUTION", "EXECUTION_STEP"]});
 
-			var customExportDef = data.customExportDef;
+			this.set({ parentId: squashtm.customExport.parentId });
 
-			this.set({
-				parentId: squashtm.customExport.parentId
-
-			});
+			// Reload customExportDef into this model if it is a modification of an existing CustomExport
 			if (customExportDef) {
-				// Reload customExportDef into this model
-
 				// put the name of the scope campaign in the scope attribute
 				customExportDef.scope[0].name = customExportDef.scopeCampaignName;
+				this.set({ scope: customExportDef.scope });
+				this.set({ selectedTreeNodes: [{ id: "Campaign-" + customExportDef.scope[0].id }] });
 
-				this.set({
-					scope: customExportDef.scope
+				var loadedStandardAttributes = [];
+				var loadedCufAttributes = [];
+				var loadedAllAttributes = [];
+
+				// Iterate on the loaded columns and fill the different Arrays
+				_.each(customExportDef.columns, function(column) {
+					if(column.cufId == null) {
+						loadedStandardAttributes.push(column.label);
+						loadedAllAttributes.push(column.label);
+					} else {
+						var computedCufLabel = column.label + '-' + column.cufId;
+						loadedCufAttributes.push(computedCufLabel);
+						loadedAllAttributes.push(computedCufLabel);
+					}
 				});
 
-				var standardAttributes = _.chain(customExportDef.columns)
-					.filter(function(column) { return column.cufId == undefined; })
-					.map(function(column) { return column.label })
-					.value();
-				var cufAttributes = _.chain(customExportDef.columns)
-					.filter(function(column) { return column.cufId !== undefined && column.cufId !== null ; })
-					.map(function(column) { return column.label + "-" + column.cufId })
-					.value();
-
-				this.set({
-					selectedAttributes: standardAttributes
-				});
-				this.set({
-					selectedCufAttributes: cufAttributes
-				});
+				this.set({ selectedAttributes: loadedStandardAttributes });
+				this.set({ selectedCufAttributes: loadedCufAttributes });
+				this.set({ selectedAllAttributes: loadedAllAttributes });
+				this.set({ selectedEntities: this.deduceSelectedEntities() });
 
 				var cufMap = squashtm.customExport.availableCustomFields;
 				this.set({ availableCustomFields: this.computeAvailableCustomFields(cufMap) });
 
 				this.set({ name: customExportDef.name });
-
-				this.set({
-					selectedTreeNodes: [{ id: "Campaign-" + customExportDef.scope[0].id }]
-				});
-				this.set({
-					selectedEntities: this.deduceSelectedEntities()
-				});
 			}
 		},
 
@@ -183,7 +175,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 
 		deduceSelectedEntities: function() {
 			var selectedAttributes = this.get("selectedAttributes");
-			var filteredMap = _.pick(this.get("entityMap"), function(value) {
+			var filteredMap = _.pick(entityMap, function(value) {
 				var labelKeys = _.keys(value.attributes);
 				var intersection = _.intersection(selectedAttributes, labelKeys);
 				return intersection.length > 0;
@@ -205,22 +197,16 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 		},
 
 		extractColumns: function() {
-			var selectedAttributes = this.get("selectedAttributes");
-			var selectedCufAttributes = this.get("selectedCufAttributes");
+			var selectedAllAttributes = this.get("selectedAllAttributes");
 
-			var standardAttributes = _.map(selectedAttributes, function(attr) {
-				return { label: attr };
-			});
-			var cufAttributes = _.map(selectedCufAttributes, function(attr) {
-				// Separate ColumnLabel and CufId
+			return _.map(selectedAllAttributes, function(attr) {
+				// Split ColumnLabel and CufId (if it exists)
 				var splitAttr = attr.split('-');
 				return {
 					label: splitAttr[0],
 					cufId: splitAttr[1]
-				};
+				}
 			});
-			return _.union(standardAttributes, cufAttributes);
-
 		}
 
 	});

@@ -62,14 +62,17 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 			updateModel: function () {
 				// Store selected entities (only saved for the current wizard)
 				var selectedEntities = _.pluck($("[name='entity']:checked"), 'id');
-				// Store attributes
+				// Store standard attributes
 				var selectedAttributes = _.pluck($("input[type=checkbox][name!='entity']:not([data-cuf]):checked"), 'id');
-				// Update selectedCufAttributes
+				// Store cuf attributes
 				var selectedCufAttributes = _.pluck($("input[type=checkbox][name!='entity'][data-cuf]:checked"), 'id');
+				// Store all the attributes in order
+				var selectedAllAttributes = _.pluck($("input[type=checkbox][name!='entity']:checked"), 'id');
 
 				this.model.set("selectedEntities", selectedEntities);
 				this.model.set("selectedAttributes", selectedAttributes);
 				this.model.set("selectedCufAttributes", selectedCufAttributes);
+				this.model.set("selectedAllAttributes", selectedAllAttributes);
 			},
 
 			toggleEntityPanelVisibility: function(event) {

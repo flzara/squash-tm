@@ -28,9 +28,7 @@
       <div style="display: table; height: 50px; width: 100%;">
         <div style="display: table-row; height: 50px;">
           <div style="display: table-cell; vertical-align:middle; width: 40%;">
-            <input id="{{@key}}" type="checkbox" name="entity" value="{{@key}}"
-                   {{#if (contains ../attributes.selectedEntity @key)}} checked="checked" {{/if}}
-            />
+            <input id="{{@key}}" type="checkbox" name="entity" value="{{@key}}" />
           </div>
           <div style="display: table-cell; vertical-align: middle;">
             <label for="{{@key}}" class="{{this.iconClass}} ui-helper-reset icon-chart"
