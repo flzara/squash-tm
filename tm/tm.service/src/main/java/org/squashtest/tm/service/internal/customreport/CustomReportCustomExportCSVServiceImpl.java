@@ -26,6 +26,7 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSelectStep;
+import org.jooq.TableField;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES;
@@ -52,6 +54,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY_NODE;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
@@ -152,7 +155,16 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		List<Field<?>> cufFieldList = new ArrayList<>();
 		for(Map.Entry<EntityType, List<Long>> entry : cufMap.entrySet()) {
 			for(Long cufId : entry.getValue()) {
-				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnName(entry.getKey(), cufId)).VALUE);
+				// selecting the field type to know what column to select
+				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).FIELD_TYPE);
+				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).VALUE);
+				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).NUMERIC_VALUE);
+				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).LARGE_VALUE);
+				cufFieldList.add(
+					groupConcatDistinct(CUSTOM_FIELD_VALUE_OPTION.as(buildCufOptionColumnAliasName(entry.getKey(), cufId)).LABEL)
+						.separator(", ")
+						.as(buildAggregateCufColumnAliasName(entry.getKey(), cufId))
+				);
 			}
 		}
 		selectQuery.select(cufFieldList);
@@ -231,11 +243,14 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		// Joining on all cuf columns
 		for(EntityType entityType : cufMap.keySet()) {
 			for (Long cufId : cufMap.get(entityType)) {
-				String columnAlias = buildCufColumnName(entityType, cufId);
-				joinQuery.leftJoin(CUSTOM_FIELD_VALUE.as(columnAlias))
-					.on(CUSTOM_FIELD_VALUE.as(columnAlias).BOUND_ENTITY_ID.eq(cufJoinColumnMap.get(entityType)))
-					.and(CUSTOM_FIELD_VALUE.as(columnAlias).BOUND_ENTITY_TYPE.eq(entityType.toString()))
-					.and(CUSTOM_FIELD_VALUE.as(columnAlias).CF_ID.eq(cufId));
+				String valueColumnAlias = buildCufColumnAliasName(entityType, cufId);
+				String optionColumnAlias = buildCufOptionColumnAliasName(entityType, cufId);
+				joinQuery.leftJoin(CUSTOM_FIELD_VALUE.as(valueColumnAlias))
+					.on(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_ID.eq(cufJoinColumnMap.get(entityType)))
+					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_TYPE.eq(entityType.toString()))
+					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CF_ID.eq(cufId));
+				joinQuery.leftJoin(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias))
+					.on(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias).CFV_ID.eq(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CFV_ID));
 			}
 		}
 		joinQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
@@ -306,13 +321,32 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 					!field.equals(TEST_CASE_MILESTONE.getJooqTableField())
 			).collect(Collectors.toList())
 		);
-		groupByFieldList.addAll(cufFieldList);
+		groupByFieldList.addAll(
+			cufFieldList.stream().filter(field -> {
+				try {
+					((TableField) field).getTable();
+					return true;
+				} catch (ClassCastException ex) {
+					return false;
+				}
+				}
+			).collect(Collectors.toList())
+		);
 
 		return groupByFieldList;
 	}
 
 	@Override
-	public String buildCufColumnName(EntityType entityType, long cufId) {
+	public String buildCufColumnAliasName(EntityType entityType, long cufId) {
 		return entityType.toString() + "_cuf_" + cufId;
+	}
+
+	private String buildCufOptionColumnAliasName(EntityType entityType, long cufId) {
+		return entityType.toString() + "_cuf_option_" + cufId;
+	}
+
+	@Override
+	public String buildAggregateCufColumnAliasName(EntityType entityType, long cufId) {
+		return entityType.toString() + "_aggregate_cuf_" + cufId;
 	}
 }

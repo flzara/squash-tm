@@ -36,6 +36,7 @@ import java.util.Locale;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_NATURE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_TYPE;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 
 public class CustomExportCSVHelper {
 
@@ -93,16 +94,40 @@ public class CustomExportCSVHelper {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
 					CustomExportColumnLabel label = column.getLabel();
 					Field columnField = label.getJooqTableField();
-					Object value;
+					Object value = null;
 					if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
 						value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
 					} else if (columnField != null) {
 						value = record.get(columnField);
 					} else {
+						String cufInputType = record.get(CUSTOM_FIELD_VALUE.as(
+							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+							.FIELD_TYPE);
 						// Custom field column
-						value = record.get(CUSTOM_FIELD_VALUE.as(
-							csvService.buildCufColumnName(label.getEntityType(), column.getCufId()))
-							.VALUE);
+						// cufInputType can be null if it the custom_field_value table is joined with a null TEST_SUITE
+						if(cufInputType != null) {
+							switch (cufInputType) {
+								case "TAG":
+									value = record.get(
+										csvService.buildAggregateCufColumnAliasName(label.getEntityType(), column.getCufId()));
+									break;
+								case "RTF":
+									Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
+										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+										.LARGE_VALUE);
+									value = String.valueOf(rawValue).replaceAll("\n", "").replaceAll("\"", "\'");
+									break;
+								case "NUM":
+									value = record.get(CUSTOM_FIELD_VALUE.as(
+										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+										.NUMERIC_VALUE);
+									break;
+								default:
+									value = record.get(CUSTOM_FIELD_VALUE.as(
+										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+										.VALUE);
+							}
+						}
 					}
 					// Append the value
 					if(value != null) {
@@ -114,7 +139,7 @@ public class CustomExportCSVHelper {
 						dataBuilder.append(NOT_AVAILABLE);
 					}
 				}
-				dataBuilder.append("\n");
+				dataBuilder.append(CARRIAGE_RETURN);
 			}
 		);
 		return dataBuilder.toString();

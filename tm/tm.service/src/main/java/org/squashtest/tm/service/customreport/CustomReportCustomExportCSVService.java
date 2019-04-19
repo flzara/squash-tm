@@ -30,5 +30,7 @@ public interface CustomReportCustomExportCSVService {
 
 	Iterator<Record> getRowsData(CustomReportCustomExport customExport);
 
-	String buildCufColumnName(EntityType entityType, long cufId);
+	String buildCufColumnAliasName(EntityType entityType, long cufId);
+
+	String buildAggregateCufColumnAliasName(EntityType entityType, long cufId);
 }
