@@ -240,7 +240,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		}
 		joinQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
 
-			.groupBy(getGroupByFieldList(queryDepth, fieldList, cufFieldList))
+			.groupBy(getGroupByFieldList(queryDepth, fieldList, cufFieldList, entityList))
 
 			.orderBy(getOrderByFieldList(queryDepth))
 
@@ -267,7 +267,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		return orderByFieldList;
 	}
 
-	private List<Field<?>> getGroupByFieldList(int queryDepth, Collection<Field<?>> simpleFieldList, Collection<Field<?>> cufFieldList) {
+	private List<Field<?>> getGroupByFieldList(int queryDepth, Collection<Field<?>> simpleFieldList, Collection<Field<?>> cufFieldList, List<EntityType> entityList) {
 		List<Field<?>> groupByFieldList = new ArrayList<>();
 		groupByFieldList.add(CAMPAIGN.CLN_ID);
 		if(queryDepth > 1) {
@@ -278,6 +278,9 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			groupByFieldList.add(CORE_USER.LOGIN);
 			groupByFieldList.add(DATASET.NAME);
 			if (simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
+				groupByFieldList.add(TEST_SUITE.ID);
+			}
+			if (isFetchTestSuite(entityList)) {
 				groupByFieldList.add(TEST_SUITE.ID);
 			}
 			groupByFieldList.add(TEST_CASE.TCLN_ID);
