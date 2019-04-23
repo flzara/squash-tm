@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -792,6 +793,9 @@ class QuerydslToolbox {
 					case EXECUTION_STATUS:
 						operand = ExecutionStatus.valueOf(val);
 						break;
+					case REQUIREMENT_STATUS:
+						operand = RequirementStatus.valueOf(val);
+						break;
 					case LEVEL_ENUM:
 						operand = LevelEnumHelper.valueOf(val);
 						break;
@@ -933,6 +937,9 @@ class QuerydslToolbox {
 				break;
 			case INFO_LIST_ITEM:
 				result = InfoListItem.class;
+				break;
+			case REQUIREMENT_STATUS:
+				result = RequirementStatus.class;
 				break;
 			case LEVEL_ENUM:
 				result = Level.class;

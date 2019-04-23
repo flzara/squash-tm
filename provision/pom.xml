@@ -36,8 +36,6 @@
     <log.level.global>INFO</log.level.global>
     <log.level.squash>DEBUG</log.level.squash>
 
-    <lucene.dir>${project.build.directory}/luceneindexes</lucene.dir>
-
     <master.changelog>${db.resources.dir}/sample/sample-db.changelog.xml</master.changelog>
     <master.emptychangelog>${db.resources.dir}/global.changelog-master.xml</master.emptychangelog>
 

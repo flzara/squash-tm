@@ -91,4 +91,12 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-180" author="abo">
+    <comment>Change dataType for RequirementStatus</comment>
+    <sql>
+      UPDATE CHART_COLUMN_PROTOTYPE ccp SET ccp.DATA_TYPE = 'REQUIREMENT_STATUS'
+      WHERE ccp.LABEL = 'REQUIREMENT_STATUS' OR ccp.LABEL = 'REQUIREMENT_VERSION_STATUS';
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

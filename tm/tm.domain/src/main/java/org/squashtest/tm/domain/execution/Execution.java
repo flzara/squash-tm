@@ -197,7 +197,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
-	// @IndexedEmbedded
 	private TestCase referencedTestCase;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
