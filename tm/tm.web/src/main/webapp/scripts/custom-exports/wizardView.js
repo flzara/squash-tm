@@ -60,7 +60,7 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 			},
 			{
 				name: "attributes",
-				validationParam: "selectedAttributes"
+				validationParam: "selectedAllAttributes"
 			},
 			{
 				name: "name",
