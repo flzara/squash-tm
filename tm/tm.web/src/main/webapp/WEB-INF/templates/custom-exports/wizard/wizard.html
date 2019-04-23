@@ -99,6 +99,10 @@
         th:inline="text"
         th:include="custom-exports/wizard/sideView :: custom-export-wizard-side-view" />
 
+<script id="missing-steps-tpl" type="text/x-handlebars-template"
+        th:inline="text"
+        th:include="custom-exports/wizard/missingSteps :: custom-export-wizard-missing-steps" />
+
 <div id="navigation" th:include="navbar.frag :: navbar('custom-report')">NAVBAR</div>
 
 <div id="workspace">

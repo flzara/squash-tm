@@ -39,6 +39,7 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 				nextStep: "name",
 				viewTitle: "custom-export.wizard.step.attributes.title",
 				stepNumber: 2,
+				neededStep: ["perimeter"],
 				buttons: ["previous", "next"],
 				clickable: true
 			},
@@ -48,6 +49,7 @@ define(["jquery", "backbone", "squash.translator", "./perimeterStepView", "./att
 				nextStep : "",
 				viewTitle : "custom-export.wizard.step.name.title",
 				stepNumber : 3,
+				neededStep: ["perimeter", "attributes"],
 				buttons : ["previous", "save"],
 				clickable: true
 		}

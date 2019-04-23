@@ -30,10 +30,19 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				this.model = data;
 				data.name = "name";
 				this._initialize(data, wizrouter);
+				this.updateSaveButtonStatus();
 				this.reloadModelInView();
 			},
 
 			events: {
+			},
+
+			updateSaveButtonStatus: function() {
+				if(!this.previousStepsAreValid()) {
+					$('#save').attr('disabled', true);
+				} else {
+					$('#save').attr('disabled', false);
+				}
 			},
 
 			updateModel: function () {

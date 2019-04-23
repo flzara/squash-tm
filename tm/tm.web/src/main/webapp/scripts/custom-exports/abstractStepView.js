@@ -37,7 +37,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
 			this.missingStepNames = missingStepNames;
 
-			if (_.isEmpty(missingStepNames)){
+			if (this.previousStepsAreValid()){
 				this.render(data, $(this.tmpl));
 			} else {
 				var missingSteps = _.chain(this.steps)
@@ -48,7 +48,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 				.value();
 
 				var model = {steps : missingSteps, totalStep : this.steps.length};
-				this.render(model, $("#missing-step-tpl"));
+				this.render(model, $("#missing-steps-tpl"));
 			}
 		},
 
@@ -65,11 +65,20 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			$("#step-title").text(text);
 		},
 
-		/**
-		* Always return empty array for the moment.
-		*/
-		findMissingSteps: function() {
-			return [];
+		findMissingSteps: function(data, neededSteps) {
+			var self = this;
+			return _.filter(neededSteps, function(step) {
+				var validationParams = _.chain(self.model.get("validation"))
+					.find(function(val) { return val.name === step; })
+					.result("validationParam")
+					.value();
+
+				return _.isEmpty(_.result(data.attributes, validationParams));
+			});
+		},
+
+		previousStepsAreValid: function() {
+			return _.isEmpty(this.missingStepNames);
 		},
 
 		initButtons: function (buttons) {
