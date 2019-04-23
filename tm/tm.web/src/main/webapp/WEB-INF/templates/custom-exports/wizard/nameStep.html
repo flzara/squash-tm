@@ -22,8 +22,11 @@
 -->
 <div th:fragment="custom-export-wizard-name">
 
-  <label for="custom-export-name" th:text="#{label.Name}"></label>
-  <input type="text" id="custom-export-name" name="custom-export-name" size="35" />
+  <div class="control-group">
+    <label for="custom-export-name" th:text="#{label.Name}"></label>
+    <input type="text" id="custom-export-name" name="name" size="35" />
+    <span class="help-inline">&nbsp;</span>
+  </div>
 
 </div>
 
