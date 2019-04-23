@@ -30,8 +30,6 @@
     <db.url>jdbc:h2:${squashtest.rootDir}/data/squash-tm</db.url>
     <db.username>sa</db.username>
 
-    <hibernate.search.index>./indexes</hibernate.search.index>
-
     <log.dir>./logs</log.dir>
     <log.level.global>INFO</log.level.global>
     <log.level.squash>DEBUG</log.level.squash>
