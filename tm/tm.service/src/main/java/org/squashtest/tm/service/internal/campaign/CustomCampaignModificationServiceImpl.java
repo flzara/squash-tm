@@ -92,6 +92,16 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
+	public boolean checkIterationNameAvailable(String name, List<Iteration>iterations) {
+
+		for (Iteration iteration : iterations) {
+			if (iteration.getName().equals(name)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	@Override
 	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);

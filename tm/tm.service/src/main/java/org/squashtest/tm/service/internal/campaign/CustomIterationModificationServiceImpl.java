@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
@@ -52,6 +53,7 @@ import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
+import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
@@ -107,6 +109,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private CampaignDao campaignDao;
+
+	@Inject
+	private CustomCampaignModificationService campaignModificationService;
 
 	@Inject
 	private IterationDao iterationDao;
@@ -245,8 +250,18 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
-		iteration.setName(newName);
+		List<Iteration> list= iteration.getCampaign().getIterations();
+
+		String trimedName = newName.trim();
+
+		if (!campaignModificationService.checkIterationNameAvailable(trimedName, list)) {
+			throw new DuplicateNameException("Cannot rename iteration " + iteration.getName() + " : new name " + trimedName
+				+ " already exists in iteration " + campaignModificationService);
+		}
+		iteration.setName(trimedName);
 	}
+
+
 
 	/**
 	 *

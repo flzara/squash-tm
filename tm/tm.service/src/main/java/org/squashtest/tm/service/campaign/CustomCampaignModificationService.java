@@ -35,6 +35,8 @@ public interface CustomCampaignModificationService {
 
 	void rename(long campaignId, String newName);
 
+	boolean checkIterationNameAvailable(String name, List<Iteration> iterations);
+
 	Collection<Campaign> findCampaignsByMilestoneId(long milestoneId);
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
