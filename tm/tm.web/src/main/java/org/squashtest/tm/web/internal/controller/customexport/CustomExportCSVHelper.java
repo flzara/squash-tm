@@ -28,15 +28,23 @@ import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_DESCRIPTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_COMMENT;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_ACTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_RESULT;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ITERATION_DESCRIPTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_NATURE;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_PREREQUISITE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_TYPE;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_SUITE_DESCRIPTION;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 
 public class CustomExportCSVHelper {
 
@@ -92,43 +100,7 @@ public class CustomExportCSVHelper {
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
-					CustomExportColumnLabel label = column.getLabel();
-					Field columnField = label.getJooqTableField();
-					Object value = null;
-					if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
-						value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
-					} else if (columnField != null) {
-						value = record.get(columnField);
-					} else {
-						String cufInputType = record.get(CUSTOM_FIELD_VALUE.as(
-							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-							.FIELD_TYPE);
-						// Custom field column
-						// cufInputType can be null if it the custom_field_value table is joined with a null TEST_SUITE
-						if(cufInputType != null) {
-							switch (cufInputType) {
-								case "TAG":
-									value = record.get(
-										csvService.buildAggregateCufColumnAliasName(label.getEntityType(), column.getCufId()));
-									break;
-								case "RTF":
-									Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
-										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-										.LARGE_VALUE);
-									value = String.valueOf(rawValue).replaceAll("\n", "").replaceAll("\"", "\'");
-									break;
-								case "NUM":
-									value = record.get(CUSTOM_FIELD_VALUE.as(
-										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-										.NUMERIC_VALUE);
-									break;
-								default:
-									value = record.get(CUSTOM_FIELD_VALUE.as(
-										csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-										.VALUE);
-							}
-						}
-					}
+					String value = computeOutputValue(record, column);
 					// Append the value
 					if(value != null) {
 						dataBuilder.append(ESCAPED_QUOTE)
@@ -144,4 +116,61 @@ public class CustomExportCSVHelper {
 		);
 		return dataBuilder.toString();
 	}
+
+	private String computeOutputValue(Record record, CustomReportCustomExportColumn column) {
+		CustomExportColumnLabel label = column.getLabel();
+		Field columnField = label.getJooqTableField();
+		Object value = null;
+		if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
+			// Translate i18n keys of the info list items
+			value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
+		} else if (label.equals(CAMPAIGN_DESCRIPTION) || label.equals(ITERATION_DESCRIPTION) ||
+			label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) || label.equals(TEST_CASE_PREREQUISITE) ||
+			label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
+			// Clean Html content
+			String htmlFreeValue = HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(record.get(columnField))));
+			value = removeCarriageReturnsAndReplaceDoubleQuotes(htmlFreeValue);
+		} else if (columnField != null) {
+			// Standard content
+			value = record.get(columnField);
+		} else {
+			// Custom fields content
+			String cufInputType = record.get(CUSTOM_FIELD_VALUE.as(
+				csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+				.FIELD_TYPE);
+			// cufInputType can be null if the custom_field_value table is joined with a null TEST_SUITE
+			if(cufInputType != null) {
+				switch (cufInputType) {
+					case "TAG":
+						value = record.get(
+							csvService.buildAggregateCufColumnAliasName(label.getEntityType(), column.getCufId()));
+						break;
+					case "RTF":
+						Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
+							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+							.LARGE_VALUE);
+						value = removeCarriageReturnsAndReplaceDoubleQuotes(String.valueOf(rawValue));
+						break;
+					case "NUM":
+						value = record.get(CUSTOM_FIELD_VALUE.as(
+							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+							.NUMERIC_VALUE);
+						break;
+					default:
+						value = record.get(CUSTOM_FIELD_VALUE.as(
+							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+							.VALUE);
+				}
+			}
+		}
+		return String.valueOf(value);
+	}
+
+	private String removeCarriageReturnsAndReplaceDoubleQuotes(String text) {
+		return text
+			.replaceAll("\r\n", "")
+			.replaceAll("\n", "")
+			.replaceAll("\"", "\'");
+	}
+
 }
