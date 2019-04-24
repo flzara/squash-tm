@@ -100,7 +100,7 @@ public class CustomExportCSVHelper {
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
-					String value = computeOutputValue(record, column);
+					Object value = computeOutputValue(record, column);
 					// Append the value
 					if(value != null) {
 						dataBuilder.append(ESCAPED_QUOTE)
@@ -117,7 +117,7 @@ public class CustomExportCSVHelper {
 		return dataBuilder.toString();
 	}
 
-	private String computeOutputValue(Record record, CustomReportCustomExportColumn column) {
+	private Object computeOutputValue(Record record, CustomReportCustomExportColumn column) {
 		CustomExportColumnLabel label = column.getLabel();
 		Field columnField = label.getJooqTableField();
 		Object value = null;
@@ -128,8 +128,8 @@ public class CustomExportCSVHelper {
 			label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) || label.equals(TEST_CASE_PREREQUISITE) ||
 			label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
 			// Clean Html content
-			String htmlFreeValue = HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(record.get(columnField))));
-			value = removeCarriageReturnsAndReplaceDoubleQuotes(htmlFreeValue);
+			Object rawValue = record.get(columnField);
+			value = computeRichValue(rawValue);
 		} else if (columnField != null) {
 			// Standard content
 			value = record.get(columnField);
@@ -149,7 +149,7 @@ public class CustomExportCSVHelper {
 						Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
 							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
 							.LARGE_VALUE);
-						value = removeCarriageReturnsAndReplaceDoubleQuotes(String.valueOf(rawValue));
+						value = computeRichValue(rawValue);
 						break;
 					case "NUM":
 						value = record.get(CUSTOM_FIELD_VALUE.as(
@@ -163,7 +163,16 @@ public class CustomExportCSVHelper {
 				}
 			}
 		}
-		return String.valueOf(value);
+		return value;
+	}
+
+	private String computeRichValue(Object rawValue) {
+		if(rawValue == null) {
+			return null;
+		} else {
+			String htmlFreeValue = HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(rawValue)));
+			return  removeCarriageReturnsAndReplaceDoubleQuotes(htmlFreeValue);
+		}
 	}
 
 	private String removeCarriageReturnsAndReplaceDoubleQuotes(String text) {
