@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -33,7 +35,7 @@ public interface CampaignAdvancedSearchService extends AdvancedSearchService {
 
 	List<String> findAllAuthorizedUsersForACampaign(List<Long> idList);
 
-	PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-			PagingAndMultiSorting paging, Locale locale);
+	Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
+															   Pageable paging, Locale locale);
 
 }

@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -213,9 +216,9 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService
+		Page<TestCase> holder = testCaseAdvancedSearchService
 			.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
@@ -242,9 +245,9 @@ public class TestCaseSearchController extends GlobalSearchController {
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
 		addMilestoneToSearchModel(searchModel);
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder =
+		Page<TestCase> holder =
 				testCaseAdvancedSearchService.searchForTestCases(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);

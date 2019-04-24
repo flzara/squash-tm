@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,10 +45,12 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -149,9 +153,9 @@ public class RequirementSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService
+		Page<RequirementVersion> holder = requirementVersionAdvancedSearchService
 			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);

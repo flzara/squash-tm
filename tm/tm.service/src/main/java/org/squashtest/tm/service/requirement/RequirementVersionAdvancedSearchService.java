@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.requirement;
 
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -38,7 +40,7 @@ public interface RequirementVersionAdvancedSearchService {
 	//Querying
 
 
-	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
+	Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel searchModel, Pageable paging, MessageSource source, Locale locale);
 
 	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
 

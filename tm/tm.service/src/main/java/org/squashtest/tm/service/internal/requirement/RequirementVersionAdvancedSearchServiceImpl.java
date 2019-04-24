@@ -23,6 +23,9 @@ package org.squashtest.tm.service.internal.requirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -96,14 +99,14 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel model,
-		PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
+	public Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model,
+																	   Pageable sorting, MessageSource source, Locale locale) {
 
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
 
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
+		return new PageImpl(result, sorting, countAll);
 	}
 
 }

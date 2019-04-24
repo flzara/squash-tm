@@ -21,6 +21,9 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import org.jooq.DSLContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -138,15 +141,15 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}*/
 
 	@Override
-	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-																							 PagingAndMultiSorting paging, Locale locale) {
+	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
+																	  Pageable paging, Locale locale) {
 
 
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
 		// Please, don't return null there, it will explode everything. It did.
-		return new PagingBackedPagedCollectionHolder<>(paging, countAll, result);
+		return new PageImpl(result, paging, countAll);
 
 	}
 

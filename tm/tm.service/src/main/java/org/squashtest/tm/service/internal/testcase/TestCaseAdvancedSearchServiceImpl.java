@@ -21,8 +21,12 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -140,24 +144,24 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model,
-		PagingAndMultiSorting sorting, Locale locale) {
+	public Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model,
+																	Pageable sorting, Locale locale) {
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
 		int countAll=0;
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, testcases);
+		return new PageImpl(testcases,sorting, countAll);
 	}
 
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model,
-		PagingAndMultiSorting sorting, Locale locale) {
+	public Page<TestCase> searchForTestCases(AdvancedSearchModel model,
+											 Pageable sorting, Locale locale) {
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
 		int countAll=0;
 
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, testcases);
+		return new PageImpl(testcases,sorting, countAll);
 	}
 
 

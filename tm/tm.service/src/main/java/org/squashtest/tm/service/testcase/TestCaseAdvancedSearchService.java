@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -34,9 +36,9 @@ public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
 	//Querying
 
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
+	Page<TestCase> searchForTestCases(AdvancedSearchModel model, Pageable sorting, Locale locale);
 
-	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
+	Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Pageable sorting, Locale locale);
 
 	List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale);
 
