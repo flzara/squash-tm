@@ -62,5 +62,41 @@
     <div class="unsnap"></div>
   </div>
 
+  <div class="sq-tg expand">
+    <div class="tg-head">
+      <h3>
+        <span th:text="#{label.Attributes}">Attributes</span>
+      </h3>
+    </div>
+    <div class="tg-body">
+      <div class="display-table">
+        <div class="display-table-row">
+          <label for="custom-export-perimeter" class="display-table-cell">
+            <span th:text="#{chart.label.perimeter}">Périmètre</span>
+          </label>
+          <div id="custom-export-perimeter" class="display-table-cell">
+            {{scope}}
+          </div>
+        </div>
+        <div class="display-table-row">
+          <label for="custom-export-attributes" class="display-table-cell">
+            <span th:text="#{label.Columns}">Colonnes</span>
+          </label>
+          <div id="custom-export-attributes" class="display-table-cell">
+            {{#each columns as |labelList entityKey|}}
+            <div>
+              <span style="font-weight: bold;">{{i18n entityKey prefix='chart.entityType.'}}:</span>
+              <div style="display-table-row; padding-left: 2em;">
+                {{#each labelList}}
+                <span>| {{this}}</span>
+                {{/each}} |
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 

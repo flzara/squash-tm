@@ -63,6 +63,8 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 						});
 					}).then(function (json) {
 						self.setBaseModelAttributes(json);
+						self.setScopeAttribute(json);
+						self.setColumns(json);
 						self.template();
 				});
 
@@ -81,11 +83,19 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 			setBaseModelAttributes: function (json) {
 				this.model.set("name", json.name);
 				this.model.set("createdBy", json.createdBy);
-				this.model.set("createdOn", (this.i18nFormatDate(json.createdOn) + " " + this.i18nFormatHour(json.createdOn)));
+				this.model.set("createdOn", json.createdOn);
 				if (json.lastModifiedBy) {
 					this.model.set("lastModifiedBy", json.lastModifiedBy);
-					this.model.set("lastModifiedOn", (this.i18nFormatDate(json.lastModifiedOn) + " " + this.i18nFormatHour(json.lastModifiedOn)));
+					this.model.set("lastModifiedOn", json.lastModifiedOn);
 				}
+			},
+
+			setScopeAttribute: function(json) {
+				this.model.set("scope", json.scope[0]);
+			},
+
+			setColumns: function(json) {
+				this.model.set("columns", json.columns);
 			},
 
 			i18nFormatDate: function (date) {

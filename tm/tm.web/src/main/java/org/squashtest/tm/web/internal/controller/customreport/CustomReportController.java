@@ -43,8 +43,10 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
+import org.squashtest.tm.web.internal.model.builder.JsonCustomExportBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
 import org.squashtest.tm.web.internal.model.json.JsonDynamicScope;
 
@@ -76,6 +78,10 @@ public class CustomReportController {
 	@Inject
 	@Named("customReport.dashboardBuilder")
 	private Provider<JsonCustomReportDashboardBuilder> builderProvider;
+
+	@Inject
+	@Named("customReport.customExportBuilder")
+	private Provider<JsonCustomExportBuilder> customExportBuilderProvider;
 
 
 
@@ -117,9 +123,9 @@ public class CustomReportController {
 
 	@ResponseBody
 	@RequestMapping(value = "custom-report-custom-export/{id}", method = RequestMethod.GET)
-	public CustomReportCustomExport getCustomExportDetails(@PathVariable Long id, Locale locale) {
+	public JsonCustomReportCustomExport getCustomExportDetails(@PathVariable Long id, Locale locale) {
 		CustomReportCustomExport customExport = customReportLibraryNodeService.findCustomExportByNodeId(id);
-		return customExport;
+		return customExportBuilderProvider.get().build(customExport, locale);
 	}
 
 	@ResponseBody
