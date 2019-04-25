@@ -241,7 +241,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				.leftJoin(ISSUE.as("es_issue")).on(ISSUE.as("es_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID))
 
 				.leftJoin(ISSUE_LIST.as("exec_issue_list")).on(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID))
-				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID).or(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID)));
+				.leftJoin(EXECUTION_EXECUTION_STEPS.as("side_execution_execution_steps")).on(EXECUTION_EXECUTION_STEPS.as("side_execution_execution_steps").EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+				.leftJoin(EXECUTION_STEP.as("side_execution_step")).on(EXECUTION_STEP.as("side_execution_step").EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.as("side_execution_execution_steps").EXECUTION_STEP_ID))
+				.leftJoin(ISSUE_LIST.as("side_es_issue_list")).on(ISSUE_LIST.as("side_es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.as("side_execution_step").ISSUE_LIST_ID))
+				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID).or(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("side_es_issue_list").ISSUE_LIST_ID)));
 		}
 
 		// Joining on all cuf columns
