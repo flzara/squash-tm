@@ -45,9 +45,13 @@ import java.util.stream.Collectors;
 import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_ISSUES;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_STEP_ISSUES_IDS;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_STEP_ISSUES_NUMBER;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LINKED_REQUIREMENTS_IDS;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LINKED_REQUIREMENTS_NUMBER;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
@@ -314,21 +318,25 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 		groupByFieldList.addAll(
 			simpleFieldList.stream().filter(field ->
-				!field.equals(TEST_CASE_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
+				!field.equals(TEST_CASE_MILESTONE.getJooqTableField()) &&
+					!field.equals(TEST_CASE_LINKED_REQUIREMENTS_NUMBER.getJooqTableField()) &&
+					!field.equals(TEST_CASE_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
+					!field.equals(EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER.getJooqTableField()) &&
 					!field.equals(EXECUTION_STEP_LINKED_REQUIREMENTS_IDS.getJooqTableField()) &&
-					!field.equals(ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES.getJooqTableField()) &&
-					!field.equals(ISSUE_EXECUTION_ISSUES.getJooqTableField()) &&
-					!field.equals(TEST_CASE_MILESTONE.getJooqTableField())
+					!field.equals(ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER.getJooqTableField()) &&
+					!field.equals(ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS.getJooqTableField()) &&
+					!field.equals(ISSUE_EXECUTION_STEP_ISSUES_NUMBER.getJooqTableField()) &&
+					!field.equals(ISSUE_EXECUTION_STEP_ISSUES_IDS.getJooqTableField())
 			).collect(Collectors.toList())
 		);
 		groupByFieldList.addAll(
 			cufFieldList.stream().filter(field -> {
-				try {
-					((TableField) field).getTable();
-					return true;
-				} catch (ClassCastException ex) {
-					return false;
-				}
+					try {
+						((TableField) field).getTable();
+						return true;
+					} catch (ClassCastException ex) {
+						return false;
+					}
 				}
 			).collect(Collectors.toList())
 		);

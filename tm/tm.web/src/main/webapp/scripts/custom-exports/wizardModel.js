@@ -77,6 +77,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				TEST_CASE_TYPE: 'label.Type',
 				TEST_CASE_DATASET: 'label.dataset',
 				TEST_CASE_PREREQUISITE: 'generics.prerequisite.title',
+				TEST_CASE_LINKED_REQUIREMENTS_NUMBER: 'custom-export.column.LINKED_REQUIREMENTS_COUNT',
 				TEST_CASE_LINKED_REQUIREMENTS_IDS: 'custom-export.column.LINKED_REQUIREMENTS_IDS'
 			}
 		},
@@ -101,14 +102,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				EXECUTION_STEP_USER: 'label.User',
 				EXECUTION_STEP_EXECUTION_DATE: 'iteration.executions.table.column-header.execution-date.label',
 				EXECUTION_STEP_COMMENT: 'executions.steps.table.column-header.comment.label',
+				EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER: 'custom-export.column.LINKED_REQUIREMENTS_COUNT',
 				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.LINKED_REQUIREMENTS_IDS'
 			}
 		},
 		ISSUE: {
 			iconClass: "icon-chart-issue",
 			attributes: {
-				ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES: 'custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES',
-				ISSUE_EXECUTION_ISSUES: 'custom-export.wizard.attributes.ISSUE.STEP_LINKED_ISSUES'
+				ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER: 'custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES_COUNT',
+				ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS: 'custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES',
+				ISSUE_EXECUTION_STEP_ISSUES_NUMBER: 'custom-export.wizard.attributes.ISSUE.STEP_LINKED_ISSUES_COUNT',
+				ISSUE_EXECUTION_STEP_ISSUES_IDS: 'custom-export.wizard.attributes.ISSUE.STEP_LINKED_ISSUES'
 			}
 		}
 	};

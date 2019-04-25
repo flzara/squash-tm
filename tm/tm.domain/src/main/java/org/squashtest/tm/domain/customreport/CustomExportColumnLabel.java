@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static org.jooq.impl.DSL.concat;
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.val;
@@ -266,6 +267,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		TEST_CASE.PREREQUISITE,
 		EntityType.TEST_CASE),
 
+	TEST_CASE_LINKED_REQUIREMENTS_NUMBER(
+			I18nKeys.I18N_KEY_LINKED_REQUIREMENTS_NUMBER,
+		countDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).as("tc_rvc_number"),
+		EntityType.TEST_CASE
+	),
+
 	TEST_CASE_LINKED_REQUIREMENTS_IDS(
 		I18nKeys.I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS,
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("tc_rvc_ids"),
@@ -350,6 +357,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EXECUTION_STEP.COMMENT,
 		EntityType.EXECUTION_STEP),
 
+	EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER(
+		I18nKeys.I18N_KEY_LINKED_REQUIREMENTS_NUMBER,
+		countDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).as("es_rvc_number"),
+		EntityType.EXECUTION_STEP
+	),
+
 	EXECUTION_STEP_LINKED_REQUIREMENTS_IDS(
 		I18nKeys.I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS,
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("es_rvc_ids"),
@@ -362,12 +375,24 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	),
 
 	// --- ISSUE ---
-	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES(
+	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER(
+		"custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES_COUNT",
+		countDistinct(ISSUE.as("exec_issue").ISSUE_ID).as("exec_and_es_issue_number"),
+		EntityType.ISSUE
+	),
+
+	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS(
 		"label.Execution",
 		groupConcatDistinct(ISSUE.as("exec_issue").ISSUE_ID).separator(", ").as("exec_and_es_issue_ids"),
 		EntityType.ISSUE),
 
-	ISSUE_EXECUTION_ISSUES(
+	ISSUE_EXECUTION_STEP_ISSUES_NUMBER(
+		"custom-export.wizard.attributes.ISSUE.STEP_LINKED_ISSUES_COUNT",
+		countDistinct(ISSUE.as("es_issue").ISSUE_ID).as("es_issue_number"),
+		EntityType.ISSUE
+	),
+
+	ISSUE_EXECUTION_STEP_ISSUES_IDS(
 		"chart.entityType.EXECUTION_STEP",
 		groupConcatDistinct(ISSUE.as("es_issue").ISSUE_ID).separator(", ").as("es_issue_ids"),
 		EntityType.ISSUE);
@@ -405,6 +430,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	private static final class I18nKeys {
 		private static final String I18N_KEY_ACTUAL_END = "dialog.label.campaign.actual_end.label";
 		private static final String I18N_KEY_ACTUAL_START = "dialog.label.campaign.actual_start.label";
+		private static final String I18N_KEY_LINKED_REQUIREMENTS_NUMBER = "custom-export.column.LINKED_REQUIREMENTS_COUNT";
 		private static final String I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS = "custom-export.column.LINKED_REQUIREMENTS_IDS";
 		private static final String I18N_KEY_DESCRIPTION = "label.Description";
 		private static final String I18N_KEY_ID = "label.id";
