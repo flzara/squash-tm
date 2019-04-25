@@ -62,7 +62,7 @@
         <div id="{{entityKey}}-inputs">
           {{#each this.attributes as |attrValue attrKey|}}
           <div style="float: left; min-width:240px;">
-            <input id="{{attrKey}}" name="{{attrKey}}" type="checkbox" />
+            <input id="{{attrKey}}" name="{{attrKey}}" type="checkbox" data-cuf="false"/>
             <label for="{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
           </div>
           {{/each}}
