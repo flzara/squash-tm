@@ -37,6 +37,7 @@ import java.util.Locale;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_COMMENT;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_ACTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_COMMENT;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_RESULT;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ITERATION_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_DESCRIPTION;
@@ -124,9 +125,8 @@ public class CustomExportCSVHelper {
 		if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
 			// Translate i18n keys of the info list items
 			value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
-		} else if (label.equals(CAMPAIGN_DESCRIPTION) || label.equals(ITERATION_DESCRIPTION) ||
-			label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) || label.equals(TEST_CASE_PREREQUISITE) ||
-			label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
+		} else if (label.equals(CAMPAIGN_DESCRIPTION) || label.equals(ITERATION_DESCRIPTION) || label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) ||
+			label.equals(TEST_CASE_PREREQUISITE) || label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_COMMENT) || label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
 			// Clean Html content
 			Object rawValue = record.get(columnField);
 			value = computeRichValue(rawValue);
