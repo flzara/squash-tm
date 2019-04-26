@@ -50,8 +50,8 @@
  		remove: function() {
  			Backbone.View.prototype.remove.apply(this, arguments);
  			$('#cuf-popup-container').html(
- 				"<div id='cuf-popup' class='not-displayed popup-dialog'"
- 				+ translator.get('generics.customfieldvalues.title') + '" />');
+ 				"<div id='cuf-popup' class='not-displayed popup-dialog' title='"
+ 				+ translator.get('generics.customfieldvalues.title') + "' />");
  		},
 
  		confirm: function(event) {
