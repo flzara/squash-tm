@@ -21,11 +21,11 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
 	<TEST_CASE_LIBRARY_NODE TCLN_ID="-10" NAME="foo" CREATED_ON="2011-01-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" />
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-10" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-100" />
 	<TEST_STEP TEST_STEP_ID="-100" />

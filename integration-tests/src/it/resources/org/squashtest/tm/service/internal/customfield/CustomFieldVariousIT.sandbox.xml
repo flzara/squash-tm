@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.20.0.dtd">
 
 <dataset>
 	<!--  general setup -->
@@ -11,11 +11,11 @@
 	
 	<!-- test cases definition -->
 	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-111" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 1" PROJECT_ID="-1"/>
-	<TEST_CASE TCLN_ID="-111" VERSION="1" PREREQUISITE="" />	
+	<TEST_CASE TCLN_ID="-111" VERSION="1" PREREQUISITE="" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-111" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
 
 	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-112" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 2"  PROJECT_ID="-1"/>
-	<TEST_CASE TCLN_ID="-112" VERSION="1" PREREQUISITE="" />	
+	<TEST_CASE TCLN_ID="-112" VERSION="1" PREREQUISITE="" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-112" LIBRARY_ID="-1" CONTENT_ORDER="1"/>	
 
 	<!-- custom fields definition -->
@@ -38,7 +38,7 @@
 	
 	<!--  that test case doesn't have its custom fields yet -->
 	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-1" TCLN_ID="-113" CREATED_ON="2012-10-05" CREATED_BY="admin" NAME="test case 3" PROJECT_ID="-1"/>
-	<TEST_CASE TCLN_ID="-113" VERSION="1" PREREQUISITE="" />	
+	<TEST_CASE TCLN_ID="-113" VERSION="1" PREREQUISITE="" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	<TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-113" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
 
 </dataset>

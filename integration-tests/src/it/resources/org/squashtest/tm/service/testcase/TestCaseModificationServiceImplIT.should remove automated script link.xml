@@ -21,13 +21,13 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-250"/> <!-- dummy attachment list -->
 	<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-250" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME=""/>
 	<AUTOMATED_TEST TEST_ID="-1"/>
 	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="-250" TCLN_ID="-11" CREATED_ON="2012-10-18" CREATED_BY="IT" NAME="tc" PROJECT_ID="-1"/>
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" TA_TEST="-1" EXECUTION_MODE="MANUAL" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" TA_TEST="-1" EXECUTION_MODE="MANUAL" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	<test_step/>
 	<action_test_step/>
 	<call_test_step/>

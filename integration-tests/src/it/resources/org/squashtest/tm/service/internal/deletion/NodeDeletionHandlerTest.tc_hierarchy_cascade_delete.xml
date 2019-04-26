@@ -26,7 +26,7 @@
 
  -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -91,8 +91,8 @@
 	
 	<!-- ============================ test case ======================================================== -->
 	
-	<TEST_CASE TCLN_ID="-11" VERSION="1" PREREQUISITE=""/>
-	<TEST_CASE TCLN_ID="-12" VERSION="1" PREREQUISITE=""/>
+	<TEST_CASE TCLN_ID="-11" VERSION="1" PREREQUISITE="" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
+	<TEST_CASE TCLN_ID="-12" VERSION="1" PREREQUISITE="" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	
 	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-11" CFV_ID="-11" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-1" />
 	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-11" CFV_ID="-12" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-2" />
