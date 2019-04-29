@@ -55,7 +55,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 			// it is so because the information could be either a boolean or its string representation
 			var checked = (data.verifiedByStep === "true" || data.verifiedByStep === true); 
 
-			var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w";
+			var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w opacity-link-step";
 
 			var elt = this.linkTemplate({
 				cssClass : cssClass
@@ -85,7 +85,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 					type : ajaxType
 				}).success(function() {
 					data.verifiedByStep = newState; // should use a setter to be clean
-					target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w');
+					target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w opacity-link-step');
 				}).fail(function() {
 					// nothing, let the normal handler kick in
 				});

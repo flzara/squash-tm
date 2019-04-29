@@ -2119,3 +2119,8 @@ button.tf:hover {
 .rangedatepicker-input {
 	width: 90%;
 }
+
+.opacity-link-step{
+
+	opacity: 0;
+}

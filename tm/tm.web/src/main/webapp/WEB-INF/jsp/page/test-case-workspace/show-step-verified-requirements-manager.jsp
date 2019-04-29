@@ -137,7 +137,7 @@
   <jsp:attribute name="tableTitlePane">
 		<div class="snap-left" style="height:100%;">
       <h2>
-        <f:message var="title" key="title.verifiedRequirements.test-steps"/>
+        <f:message var="title" key="label.verifiedRequirements.test-cases"/>
         <span>${title}</span>
       </h2>
     </div>
