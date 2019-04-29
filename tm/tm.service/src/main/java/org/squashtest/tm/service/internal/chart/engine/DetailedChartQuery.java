@@ -94,6 +94,24 @@ class DetailedChartQuery extends ChartQuery{
 
 	}
 
+	DetailedChartQuery(IChartQuery parent, InternalEntityType rootEntity) {
+
+		getFilters().addAll(parent.getFilters());
+
+		getMeasures().addAll(parent.getMeasures());
+
+		setJoinStyle(parent.getJoinStyle());
+
+		setStrategy(parent.getStrategy());
+
+		this.rootEntity = rootEntity;
+
+		measuredEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
+
+		// find all the target entities
+		computeTargetEntities();
+	}
+
 	/**
 	 * Constructor that will build a DetailedChartQuery for the subquery of the given column
 	 *

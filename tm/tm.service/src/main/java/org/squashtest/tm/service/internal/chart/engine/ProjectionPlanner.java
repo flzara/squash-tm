@@ -25,12 +25,15 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
 import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
@@ -115,6 +118,10 @@ class ProjectionPlanner {
 		addProjections();
 		addGroupBy();
 		addSortBy();
+	}
+
+	void modifySearchQuery() {
+		addProjections();
 	}
 
 	private void addProjections(){
