@@ -111,4 +111,38 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-244-remote-automation-request-extender" author="jlor">
+
+    <comment>Create new table for RemoteAutomationRequestExtender</comment>
+
+    <createTable tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER">
+
+      <column name="REMOTE_AUTOMATION_REQUEST_EXTENDER_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="AUTOMATION_REQUEST_ID" type="BIGINT" remarks="The automation request this extender extends">
+        <constraints nullable="false" foreignKeyName="fk_remote_automation_request_extender_automation_request_id" references="AUTOMATION_REQUEST (AUTOMATION_REQUEST_ID)" />
+      </column>
+
+      <column name="BUGTRACKER_ID" type="BIGINT" remarks="The bugtracker to which the automation request is linked">
+        <constraints nullable="true" foreignKeyName="fk_remote_automation_request_extender_bugtracker_id" references="BUGTRACKER (BUGTRACKER_ID)" />
+      </column>
+
+      <column name="REMOTE_STATUS" type="VARCHAR(255)" remarks="The remote status as defined in the bugtracker">
+        <constraints nullable="false" />
+      </column>
+
+    </createTable>
+
+    <createIndex tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER" indexName="idx_fk_remote_automation_request_extender_automation_request_id">
+      <column name="AUTOMATION_REQUEST_ID" />
+    </createIndex>
+
+    <createIndex tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER" indexName="idx_fk_remote_automation_request_extender_bugtracker_id">
+      <column name="BUGTRACKER_ID" />
+    </createIndex>
+
+  </changeSet>
+
 </databaseChangeLog>

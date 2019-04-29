@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -101,6 +102,9 @@ public class AutomationRequest implements Identified {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
+
+	@OneToOne(mappedBy = "bugTracker", optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private RemoteAutomationRequestExtender remoteAutomationRequestExtender;
 
 	public Long getId() {
 		return id;
