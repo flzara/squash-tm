@@ -20,14 +20,19 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestListElement {
 
 	private String name;
+	private MetadataElement metadata;
 	private Date timestamp;
 	private TestListElement[] contents;
 
@@ -71,10 +76,18 @@ public class TestListElement {
 		}
 	}
 
+	public MetadataElement getMetadata() {
+		return metadata;
+	}
 
-	public Collection<String> collectAllTestNames(){
+	public void setMetadata(MetadataElement metadata) {
+		this.metadata = metadata;
+	}
 
-		Collection<String> allNames = new LinkedList<>();
+	//[TM-13] Instead of a list of test names, we now return a mapof the test names with the associated SquashTM TestCases'UUID.
+	public Map<String, List<String>> collectAllTestNamesWithLinkedTestCases(){
+
+		Map<String, List<String>> testNamesWithLinkedTCMap = new LinkedHashMap<>();
 
 		//case : directory
 		if (contents != null){
@@ -83,19 +96,40 @@ public class TestListElement {
 			String thisName = ! amIPseudoRoot() ? name + "/" : "";
 
 			for (TestListElement content : contents){
-
-				Collection<String> subNames = content.collectAllTestNames();
-				for (String sub : subNames){
-					allNames.add(thisName + sub);
-				}
-
+				Map<String, List<String>> subMap = content.collectAllTestNamesWithLinkedTestCases();
+				subMap.forEach((testName, linkedTestCaseList) -> testNamesWithLinkedTCMap.put(thisName + testName, linkedTestCaseList));
 			}
 		}
 		// case : test
 		else{
-			allNames.add(name);
+			if(metadata == null || metadata.getLinkedTC() == null){
+				testNamesWithLinkedTCMap.put(name, Collections.emptyList());
+			} else {
+				testNamesWithLinkedTCMap.put(name, metadata.getLinkedTC());
+			}
 		}
 
-		return allNames;
+		return testNamesWithLinkedTCMap;
+	}
+
+	// [TM-13] New sub-element of TestListElement containing metadatas. For now, only the list of Squash-TM TestCases'UUID have interest for us.
+	private class MetadataElement {
+
+		@JsonProperty("linked-TC")
+		private List<String> linkedTC;
+
+		public List<String> getLinkedTC() {
+			return linkedTC;
+		}
+
+		public void setLinkedTC(List<String> linkedTC) {
+			this.linkedTC = linkedTC;
+		}
+
+		public MetadataElement(){
+			super();
+		}
+
+
 	}
 }
