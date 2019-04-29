@@ -91,22 +91,22 @@
 
   <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="postgresql">
    <sql>
-     UPDATE automation_request SET is_manual = true
-     WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc, automation_request ar WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+     UPDATE AUTOMATION_REQUEST SET IS_MANUAL = true
+     WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc, AUTOMATION_REQUEST ar WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
    </sql>
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="mysql">
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual-mysql" author="amk" dbms="mysql">
     <sql>
-      UPDATE automation_request ar SET ar.is_manual = true
-      WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+      UPDATE AUTOMATION_REQUEST ar SET ar.IS_MANUAL = true
+      WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
     </sql>
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="h2">
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual-h2" author="amk" dbms="h2">
     <sql>
-      UPDATE automation_request ar SET ar.is_manual = true
-      WHERE test_case_id in (SELECT tc.tcln_id FROM test_case tc WHERE ar.test_case_id = tc.tcln_id AND tc.ta_test IS NOT null);
+      UPDATE AUTOMATION_REQUEST ar SET ar.IS_MANUAL = true
+      WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
     </sql>
   </changeSet>
 
@@ -117,25 +117,32 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-13-create-uuid-module-postgresql" author="aguilhem" dbms="postgresql">
+    <comment>create uuid extension if not exist (for postgresql > 9.1 </comment>
+    <sql>
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    </sql>
+  </changeSet>
+
   <changeSet id="tm-1.20.0-TM-13-update-uuid-postgresql" author="amk" dbms="postgresql">
     <comment>generate uuid if it's null </comment>
     <sql>
-      UPDATE test_case SET uuid =  uuid_generate_v4() WHERE uuid is NULL;
-      ALTER TABLE test_case ALTER COLUMN uuid SET NOT NULL;
+      UPDATE TEST_CASE SET UUID =  uuid_generate_v4() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE ALTER COLUMN UUID SET NOT NULL;
     </sql>
   </changeSet>
   <changeSet id="tm-1.20.0-TM-13-update-uuid-mysql" author="amk" dbms="mysql">
     <comment>generate uuid if it's null </comment>
     <sql>
-      UPDATE test_case SET uuid =  uuid() WHERE uuid is NULL;
-      ALTER TABLE test_case MODIFY uuid VARCHAR(36) NOT NULL;
+      UPDATE TEST_CASE SET UUID =  uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE MODIFY UUID VARCHAR(36) NOT NULL;
     </sql>
   </changeSet>
   <changeSet id="tm-1.20.0-TM-13-update-uuid-h2" author="amk" dbms="h2">
     <comment>generate uuid if it's null </comment>
     <sql>
-      UPDATE test_case SET uuid =  random_uuid() WHERE uuid is NULL;
-      ALTER TABLE test_case MODIFY uuid VARCHAR2(36) NOT NULL;
+      UPDATE TEST_CASE SET UUID =  random_uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE MODIFY UUID VARCHAR2(36) NOT NULL;
     </sql>
   </changeSet>
 
