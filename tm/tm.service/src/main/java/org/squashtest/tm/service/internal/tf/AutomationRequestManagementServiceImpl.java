@@ -230,9 +230,10 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Override
 	public void updateScriptTa(Long tcId) {
 
-		/*//demande list script qui correspond au projet et job
+
+		//demande list script qui correspond au projet et job
 		List<Couple<String, String>> listScriptTa = new ArrayList<>();
-		listScriptTa.add(new Couple("308add11-ab10-46f6-9c67-5fb8a63698d2", "first-test.ta"));
+		listScriptTa.add(new Couple("86281bdd-01ad-426b-a7cb-a93c27ffcb67", "first-test.ta"));
 		listScriptTa.add(new Couple("36a2eae2-7c64-4fd9-a97a-ab4c0608271c", "first-test.ta"));
 		listScriptTa.add(new Couple("04e1bc3a-b1b1-4ce4-ab88-3cf93a95226e", "script2.ta"));
 		listScriptTa.add(new Couple("e46b65ca-91b9-458b-aeba-0f6ba8caf894", "script3.ta"));
@@ -246,23 +247,22 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 					Collectors.toList())));
 
 		TestCase tc = testCaseDao.findById(tcId);
-
 		if (mapTcScript.containsKey(tc.getUuid())) {
 			for (Map.Entry<String, List<String>> entry : mapTcScript.entrySet()) {
 				if (entry.getKey().equals(tc.getUuid())) {
-
-					//conflit d'association
+					// plusieurs script
 					if (entry.getValue().size() > 1) {
-						tc.getAutomationRequest().setConflictAssociation(true);
-					} else {
-						tc.getAutomatedTest().setName(entry.getValue().get(0));
-						tc.getAutomationRequest().setConflictAssociation(false);
+						manageConflictAssociation(tc, entry.getValue());
+					}else if(entry.getValue().size()==1){	// un seul script
+						addEditNewScript(tc,entry.getValue());
 					}
-
+				}else{// pas de correspondance  pr ce tc
+					managerScriptNull(tc);
 				}
-
 			}
-		}*/
+		}
+
+
 	}
 
 
@@ -337,4 +337,33 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		indexationService.batchReindexItpi(itpiIds);
 	}
 
+	private void manageConflictAssociation(TestCase tc, List<String> listScriptTa){
+		StringBuilder listScriptConflit =new StringBuilder();
+		if (tc.getAutomatedTest()!=null){
+			//suppAutomatedTest
+		}
+
+		tc.getAutomationRequest().setManual(false);
+		//listScriptConflit
+		for (String script: listScriptTa){
+			listScriptConflit.append(script).append("\n");
+		}
+		tc.getAutomationRequest().setConflictAssociation(listScriptConflit.toString());
+	}
+
+	private void addEditNewScript(TestCase tc, List<String> listScriptTa){
+
+		if (tc.getAutomatedTest()!=null){
+			//suppAutomatedTest
+		}
+		//créer un nouveau
+		tc.getAutomationRequest().setManual(false);
+	}
+
+	private void managerScriptNull(TestCase tc){
+		if (tc.getAutomatedTest()!=null && tc.getAutomationRequest().isManual()== false ){
+			//suppAutomatedTest
+
+		}
+	}
 }

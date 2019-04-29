@@ -1298,7 +1298,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		request.setCreatedBy(currentUser);
 
 		/*TM-13: verifier si  TC a un mapping manuel en verifiant ta_test!=null*/
-		if(!testCase.getAutomatedTest().equals(null))
+		if(testCase.getAutomatedTest()!=null)
 		{
 			request.setManual(true);
 		}
