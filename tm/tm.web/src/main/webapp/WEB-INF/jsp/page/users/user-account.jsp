@@ -148,7 +148,7 @@
 	<div class="fragment-body">
 
 		<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true" >
-		
+
 			<jsp:attribute name="body">
 				<div class="display-table">
 					<div class="user-account-unmodifiable-field display-table-row">
@@ -174,13 +174,15 @@
 		 				<span class="display-table-cell"><f:message key="message.managedPassword"/></span>
 		 			</c:otherwise>
 		 			</c:choose>	
-					</div>	 					
+					</div>
+        </div>
 			</jsp:attribute>
-			
+
 		</comp:toggle-panel>
 
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" open="true">
 			<jsp:attribute name="body">
+        <div class="display-table">
 				<table id="project-permission-table" data-def="hover">
 				<thead>
 					<tr>
@@ -197,6 +199,7 @@
 					</c:forEach>
 				</tbody>
 			</table>
+        </div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 
