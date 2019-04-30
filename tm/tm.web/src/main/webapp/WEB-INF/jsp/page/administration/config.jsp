@@ -104,6 +104,25 @@
       </div>
     </div>
 
+    <%-- Callback URL panel --%>
+
+    <div id="callback-url-panel" class="sq-tg expand">
+      <div class="tg-head">
+        <h3><f:message key="label.PublicUrl" /></h3>
+      </div>
+      <div class="tg-body">
+        <div class="display-table">
+          <div class="display-table-row control-group">
+            <label for="callback-url"><f:message key="label.SquashPublicUrl"/></label>
+            <div id="callbackUrl" type="text" size="50" class="display-table-cell">${callbackUrl}</div>
+            <span class="help-inline" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%-- // Callback URL panel --%>
+
     <%-- oauth clients config --%>
     <div id="client-config-panel" class="sq-tg expand">
       <div class="tg-head">

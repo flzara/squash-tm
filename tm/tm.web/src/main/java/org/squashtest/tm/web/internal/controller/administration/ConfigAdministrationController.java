@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.event.ConfigUpdateEvent;
+import org.squashtest.tm.exception.WrongUrlException;
 import org.squashtest.tm.exception.client.ClientNameAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -49,6 +50,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -108,6 +111,8 @@ public class ConfigAdministrationController {
         mav.addObject("uploadSizeLimit", configService.findConfiguration(UPLOAD_SIZE_LIMIT));
         mav.addObject("uploadImportSizeLimit", configService.findConfiguration(IMPORT_SIZE_LIMIT));
 
+        mav.addObject("callbackUrl", configService.findConfiguration(ConfigurationService.Properties.SQUASH_CALLBACK_URL));
+
         mav.addObject("caseInsensitiveLogin", features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN));
         mav.addObject("duplicateLogins", userManager.findAllDuplicateLogins());
 
@@ -145,6 +150,18 @@ public class ConfigAdministrationController {
 		ConfigUpdateEvent event = new ConfigUpdateEvent("");
 		eventPublisher.publishEvent(event);
     }
+
+	@RequestMapping(method = RequestMethod.POST, params={"id=callbackUrl", VALUE})
+	@ResponseBody
+	public String changeCallbackUrl(@RequestParam(VALUE) String newCallbackUrl) {
+		try {
+			new URL(newCallbackUrl);
+		} catch (MalformedURLException ex) {
+			throw new WrongUrlException("callbackUrl", ex);
+		}
+		configService.set(ConfigurationService.Properties.SQUASH_CALLBACK_URL, newCallbackUrl);
+		return newCallbackUrl;
+	}
 
     @ResponseBody
 	@RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)

@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
-			function($, msg) {
+	require(["jquery", "squash.translator", "jeditable.simpleJEditable", "app/lnf/Forms", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
+			function($, msg, SimpleJEditable, Forms) {
 		"use strict";
 				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 					var token = $("meta[name='_csrf']").attr("content");
@@ -33,6 +33,15 @@ require(["common"], function() {
 			$("#case-insensitive-login").switchButton({
 				on_label: msg.get("label.insensitive"),
 				off_label: msg.get("label.sensitive")
+			});
+
+			var callbackUrlInput = new SimpleJEditable({
+				targetUrl: squashtm.appRoot + "administration/config",
+				componentId: "callbackUrl"
+			});
+
+			$("#callbackUrl").on("click", function() {
+				Forms.input($(this)).clearState();
 			});
 
 			$(document).on("change", "#case-insensitive-login", function onChangeCase(event) {
