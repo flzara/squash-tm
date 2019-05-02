@@ -36,6 +36,8 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.internal.configuration.ConfigurationServiceImpl;
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
@@ -89,6 +91,8 @@ public class HttpRequestFactory {
 
 	private final CallbackURLProvider callbackProvider = new CallbackURLProvider();
 
+	private ConfigurationService configService = new ConfigurationServiceImpl();
+
 	public String newRandomId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
@@ -136,35 +140,43 @@ public class HttpRequestFactory {
 	}
 
 	public ParameterArray getStartTestSuiteBuildParameters(String externalID) {
-		String strURL = callbackProvider.get().toExternalForm();
-
+		String callbackUrl = getSquashCallbackUrl();
 		return new ParameterArray(
 			new Object[]{
 				Parameter.operationRunSuiteParameter(),
 				Parameter.newExtIdParameter(externalID),
-				Parameter.newCallbackURlParameter(strURL),
+				Parameter.newCallbackURlParameter(callbackUrl),
 				Parameter.testListParameter(),
 				new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 			});
 	}
 
 	public ParameterArray getStartTestSuiteBuildParameters(String externalID, String executor) {
-		String strURL = callbackProvider.get().toExternalForm();
-
+		String callbackUrl = getSquashCallbackUrl();
 		if (StringUtils.isBlank(executor)) {
 			return getStartTestSuiteBuildParameters(externalID);
-
 		} else {
 			return new ParameterArray(
 				new Object[]{
 					Parameter.operationRunSuiteParameter(),
 					Parameter.newExtIdParameter(externalID),
-					Parameter.newCallbackURlParameter(strURL),
+					Parameter.newCallbackURlParameter(callbackUrl),
 					Parameter.testListParameter(),
 					Parameter.executorParameter(executor),
 					new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 				});
 		}
+	}
+
+	private String getSquashCallbackUrl() {
+		String squashCallbackUrl;
+		String urlFromDatabase = configService.findConfiguration(ConfigurationService.Properties.SQUASH_CALLBACK_URL);
+		if(urlFromDatabase != null) {
+			squashCallbackUrl = urlFromDatabase;
+		} else {
+			squashCallbackUrl = callbackProvider.get().toExternalForm();
+		}
+		return squashCallbackUrl;
 	}
 
 	public HttpGet newCheckQueue(TestAutomationProject project) {

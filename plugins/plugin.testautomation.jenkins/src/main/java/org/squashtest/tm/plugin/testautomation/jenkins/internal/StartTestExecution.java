@@ -81,6 +81,8 @@ public class StartTestExecution {
 
         private RestTemplate template;
 
+        private HttpRequestFactory httpRequestFactory = new HttpRequestFactory();
+
 	public StartTestExecution(BuildDef buildDef, HttpClientProvider clientProvider, String externalId) {
 		super();
 		this.buildDef = buildDef;
@@ -199,7 +201,7 @@ public class StartTestExecution {
 
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
-		ParameterArray stdParams = new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId,
+		ParameterArray stdParams = httpRequestFactory.getStartTestSuiteBuildParameters(externalId,
 			buildDef.getNode());
 
 		File tmp;

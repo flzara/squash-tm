@@ -31,6 +31,8 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackURL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
+import org.squashtest.tm.service.configuration.ConfigurationService
 import spock.lang.Specification
 import java.net.URL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef
@@ -95,14 +97,41 @@ class StartTestExecutionIT extends Specification {
                 
         }
 
-	def "should start a new build"() {
+	def "should start a new build with a callback url set in database"() {
 		given:
-                HttpClientProvider provider = new HttpClientProvider()
+			HttpClientProvider provider = new HttpClientProvider()
+
+			ConfigurationService configService = Mock()
+			configService.findConfiguration(_) >> "https://127.0.0.1:8080/squash/"
+
+			HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
+			httpRequestFactory.configService = configService
+
+			StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, "EXTERNAL-ID")
+			startTestExecution.httpRequestFactory = httpRequestFactory
 
 		when:
-		new StartTestExecution(buildDef, provider, "EXTERNAL-ID").run();
-
+			startTestExecution.run()
 		then:
-		notThrown(Exception)
+			notThrown(Exception)
+	}
+
+	def "should start a new build with a callback url set in configuration file"() {
+		given:
+			HttpClientProvider provider = new HttpClientProvider()
+
+			ConfigurationService configService = Mock()
+			configService.findConfiguration(_) >> null
+
+			HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
+			httpRequestFactory.configService = configService
+
+			StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, "EXTERNAL-ID")
+			startTestExecution.httpRequestFactory = httpRequestFactory
+
+		when:
+			startTestExecution.run()
+		then:
+			notThrown(Exception)
 	}
 }
