@@ -304,7 +304,7 @@
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
 	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
-	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
+	"select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("
@@ -326,7 +326,7 @@
 	+ " group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id, tc.kind, scExt.language, scExt.script "
 	),
 
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
+	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("

@@ -37,6 +37,7 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	TC_PATH(MANDATORY),
 	TC_NUM,
 	TC_ID(IGNORED),
+	TC_UUID,
 	TC_REFERENCE,
 	TC_NAME,
 	TC_MILESTONE,

@@ -51,6 +51,7 @@ import java.util.List;
 	private String nature = "";
 	private String type = "";
 	private String status = "";
+	private String uuid = "";
 
 	// the first element of the list is the description itself
 	// others are complementary elements
@@ -280,6 +281,11 @@ import java.util.List;
 		return stepElements;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
 
-
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 }

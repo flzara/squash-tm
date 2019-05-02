@@ -39,6 +39,7 @@ interface ExcelTestCaseParser {
 	String PREREQUISITE_TAG = "Prerequisite";
 	String ACTION_STEP_TAG = "Action_step";
 	String AUTOMATABLE_TAG = "Automatable";
+	String UUID_TAG = "UUID";
 
 	TestCase parseFile(Workbook workbook, ImportSummaryImpl summary) throws SheetCorruptedException;
 

@@ -135,6 +135,7 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_PATH,
 		TestCaseSheetColumn.TC_NUM,
 		TestCaseSheetColumn.TC_ID,
+		TestCaseSheetColumn.TC_UUID,
 		TestCaseSheetColumn.TC_REFERENCE,
 		TestCaseSheetColumn.TC_NAME,
 		TestCaseSheetColumn.TC_WEIGHT_AUTO,
@@ -259,6 +260,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getPath());
 				r.createCell(cIdx++).setCellValue(tcm.getOrder());
 				r.createCell(cIdx++).setCellValue(tcm.getId());
+				r.createCell(cIdx++).setCellValue(tcm.getUuid());
 				r.createCell(cIdx++).setCellValue(tcm.getReference());
 				r.createCell(cIdx++).setCellValue(tcm.getName());
 				if (milestonesEnabled) {
