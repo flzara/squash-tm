@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 

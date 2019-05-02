@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -33,6 +33,8 @@ import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.query.engine.InternalEntityType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +50,7 @@ import java.util.Set;
  * @author bsiri
  *
  */
-class DetailedChartQuery extends ChartQuery{
+public class DetailedChartQuery extends ChartQuery{
 
 	private InternalEntityType rootEntity;
 
@@ -69,7 +71,7 @@ class DetailedChartQuery extends ChartQuery{
 	 *
 	 * @param parent
 	 */
-	DetailedChartQuery(IChartQuery parent){
+	public DetailedChartQuery(IChartQuery parent){
 
 		super();
 

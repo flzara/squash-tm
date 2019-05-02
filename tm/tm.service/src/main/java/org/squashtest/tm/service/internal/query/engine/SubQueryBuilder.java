@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
@@ -26,10 +26,12 @@ import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.query.Aggregate;
+import org.squashtest.tm.domain.query.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.Projection;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +53,7 @@ class SubQueryBuilder extends QueryBuilder {
 
 
 
-	SubQueryBuilder(DetailedChartQuery queryDefinition) {
+	SubQueryBuilder(Query queryDefinition) {
 		super(queryDefinition);
 	}
 
@@ -95,7 +97,7 @@ class SubQueryBuilder extends QueryBuilder {
 	// **************** actual building ***************************
 
 	@Override
-	ExtendedHibernateQuery<?> createQuery(){
+	public ExtendedHibernateQuery<?> createQuery(){
 
 		checkConfiguration();
 
@@ -118,9 +120,9 @@ class SubQueryBuilder extends QueryBuilder {
 	private void joinWithOuterquery(){
 		BooleanBuilder joinWhere = new BooleanBuilder();
 
-		List<AxisColumn> axes = queryDefinition.getAxis();
+		List<Aggregate> axes = queryDefinition.getAggregateQueries();
 
-		for (AxisColumn axe : axes) {
+		for (Aggregate axe : axes) {
 
 			Expression<?> outerAxis = subselectProfileJoinExpression.get(0);
 			Expression<?> subAxis = utils.getQBean(axe);
@@ -137,7 +139,7 @@ class SubQueryBuilder extends QueryBuilder {
 	// additional filter will take the form of a having clause.
 	private void addSubwhereSpecifics(){
 
-		MeasureColumn measure = queryDefinition.getMeasures().get(0);
+		Projection measure = queryDefinition.getProjectionQueries().get(0);
 
 		Expression<?> measureExpr = utils.createAsSelect(measure);
 		Operation operation = subwhereProfileFilterExpression.getOperation();
@@ -174,7 +176,7 @@ class SubQueryBuilder extends QueryBuilder {
 			throw new IllegalArgumentException("subselect queries must always provide a join with the outer query, please use joinAxesOn()");
 		}
 
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
+		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregateQueries().size()){
 			throw new IllegalArgumentException("subselect queries joined entities must match (in number and type) the axis entities of the subquery");
 		}
 	}
@@ -184,7 +186,7 @@ class SubQueryBuilder extends QueryBuilder {
 			throw new IllegalArgumentException("subwhere queries must always provide a join with the outer query, please use joinAxesOn()");
 		}
 
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
+		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregateQueries().size()){
 			throw new IllegalArgumentException("subwhere queries joined entities must match (in number and type) the axis entities of the subquery");
 		}
 		if (subwhereProfileFilterExpression == null){

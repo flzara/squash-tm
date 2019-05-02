@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -42,7 +42,8 @@ import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
+import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.query.engine.PlannedJoin.JoinType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,9 +78,9 @@ import java.util.Set;
  *
  */
 
-class QueryPlanner {
+public class QueryPlanner {
 
-	private DetailedChartQuery definition;
+	private Query definition;
 
 	private QuerydslToolbox utils;
 
@@ -102,14 +103,14 @@ class QueryPlanner {
 		super();
 	}
 
-	QueryPlanner(DetailedChartQuery definition){
+	QueryPlanner(Query definition){
 		super();
 		this.definition = definition;
 		this.utils = new QuerydslToolbox();
 	}
 
 
-	QueryPlanner(DetailedChartQuery definition, QuerydslToolbox utils){
+	QueryPlanner(Query definition, QuerydslToolbox utils){
 		this.definition = definition;
 		this.utils = utils;
 	}
@@ -202,7 +203,7 @@ class QueryPlanner {
 
 			EntityPathBase<?> subRootpath = utils.getQBean(column.getColumn().getSpecializedType());
 
-			DetailedChartQuery detailedSub = new DetailedChartQuery(column);
+			Query detailedSub = new Query(column);
 
 			QuerydslToolbox toolbox = new QuerydslToolbox(column);
 
@@ -225,7 +226,7 @@ class QueryPlanner {
 		// consider mapping the missing relationships instead.
 		// (eg TestCase -> IterationTestPlanItem)
 		if (hasLeftWhereJoin(plan)){
-			actualRootEntity = definition.getMeasuredEntity();
+			actualRootEntity = definition.getTargetEntity();
 			domain = new DomainGraph(definition);
 			domain.reversePlan();
 			plan = domain.getQueryPlan();
@@ -327,9 +328,9 @@ class QueryPlanner {
      */
 	private Map<ColumnPrototype, Set<Long>> extractAllCufPrototype() {
 		Map<ColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
-		extractCufPrototype(cufPrototypesWithIds, definition.getFilters());
-		extractCufPrototype(cufPrototypesWithIds, definition.getAxis());
-		extractCufPrototype(cufPrototypesWithIds, definition.getMeasures());
+		extractCufPrototype(cufPrototypesWithIds, definition.getFilterQueries());
+		extractCufPrototype(cufPrototypesWithIds, definition.getAggregateQueries());
+		extractCufPrototype(cufPrototypesWithIds, definition.getProjectionQueries());
 		return cufPrototypesWithIds;
 	}
 

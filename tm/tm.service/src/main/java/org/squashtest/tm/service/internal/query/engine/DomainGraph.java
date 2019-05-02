@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
+import org.squashtest.tm.service.internal.query.engine.PlannedJoin.JoinType;
+import org.squashtest.tm.service.internal.query.engine.QueryPlan.TraversedEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,25 +35,25 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_TEST;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.CAMPAIGN;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.CAMPAIGN_MILESTONE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.EXECUTION;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ISSUE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITEM_TEST_PLAN;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_MILESTONE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.AUTOMATED_TEST;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.CAMPAIGN;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.CAMPAIGN_MILESTONE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.EXECUTION;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.ISSUE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.ITEM_TEST_PLAN;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.ITERATION;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.REQUIREMENT;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.TEST_CASE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.TEST_CASE_MILESTONE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.TEST_CASE_NATURE;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.TEST_CASE_STEP;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.TEST_CASE_TYPE;
 
 /**
  * <p>
@@ -127,7 +127,7 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
  */
 class DomainGraph {
 
-	private DetailedChartQuery definition;
+	private Query definition;
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
 
@@ -182,7 +182,7 @@ class DomainGraph {
 
 	// **************************** under the hood ****************************
 
-	DomainGraph(DetailedChartQuery def){
+	DomainGraph(Query def){
 		super();
 
 		this.definition = def;
@@ -302,7 +302,7 @@ class DomainGraph {
 
 
 	/**
-	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartQuery)})</p>
+	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(Query)})</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
 	 *
 	 */
@@ -338,7 +338,7 @@ class DomainGraph {
 		else{
 			// we must start the planning from the measured entity,
 			// instead of the regular root entity (which is an axis entity)
-			rootType = definition.getMeasuredEntity();
+			rootType = definition.getTargetEntity();
 		}
 
 

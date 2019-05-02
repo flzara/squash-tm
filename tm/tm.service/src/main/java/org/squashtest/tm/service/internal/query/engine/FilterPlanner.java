@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.query.Filter;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
@@ -45,20 +45,20 @@ import java.util.Map.Entry;
  */
 class FilterPlanner {
 
-	private DetailedChartQuery definition;
+	private Query definition;
 
 	private QuerydslToolbox utils;
 
 	private ExtendedHibernateQuery<?> query;
 
-	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
+	FilterPlanner(Query definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query= query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
+	FilterPlanner(Query definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query= query;
@@ -120,7 +120,7 @@ class FilterPlanner {
 	}
 
 	private Map<ColumnPrototype, Collection<Filter>> findWhereFilters(){
-		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+		Collection<Filter> filters = new ArrayList<>(definition.getFilterQueries());
 
 		CollectionUtils.filter(filters, new Predicate() {
 			@Override
@@ -134,7 +134,7 @@ class FilterPlanner {
 
 
 	private Map<ColumnPrototype, Collection<Filter>> findHavingFilters(){
-		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+		Collection<Filter> filters = new ArrayList<>(definition.getFilterQueries());
 
 		CollectionUtils.filter(filters, new Predicate() {
 			@Override

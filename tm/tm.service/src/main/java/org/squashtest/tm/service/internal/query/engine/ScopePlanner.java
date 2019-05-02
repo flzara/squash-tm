@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Ops;
@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestCasePathEdge;
+import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.annotation.PostConstruct;
@@ -156,7 +157,7 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
  */
 @Component()
 @Scope("prototype")
-class ScopePlanner {
+public class ScopePlanner {
 	// infrastructure
 	@PersistenceContext
 	private EntityManager em;
@@ -181,15 +182,15 @@ class ScopePlanner {
 		super();
 	}
 
-	void setHibernateQuery(ExtendedHibernateQuery<?> hibQuery) {
+	public void setHibernateQuery(ExtendedHibernateQuery<?> hibQuery) {
 		this.hibQuery = hibQuery;
 	}
 
-	void setChartQuery(DetailedChartQuery chartQuery) {
+	public void setChartQuery(DetailedChartQuery chartQuery) {
 		this.chartQuery = chartQuery;
 	}
 
-	void setScope(List<EntityReference> scope) {
+	public void setScope(List<EntityReference> scope) {
 		this.scope = scope;
 	}
 
@@ -200,7 +201,7 @@ class ScopePlanner {
 
 	// *********************** main methods **********************************
 
-	protected void appendScope() {
+	public void appendScope() {
 
 		if (!scope.isEmpty()) {
 
@@ -224,7 +225,7 @@ class ScopePlanner {
 	}
 
 
-	protected void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+	public void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
 		//If a dynamic scope is provided whe substitute the chart def scope by the client provided scope
 		if(dynamicScope != null && !dynamicScope.isEmpty()){
 			this.setScope(dynamicScope);
@@ -331,10 +332,11 @@ class ScopePlanner {
 
 		// create the dummy query
 		ChartQuery dummy = createDummyQuery(extraJoins);
-		DetailedChartQuery detailDummy = new DetailedChartQuery(dummy);
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(dummy);
+		org.squashtest.tm.service.internal.query.engine.Query q = transformer.transformToQuery();
 
 		// ... and then run it in a QueryPlanner
-		appendScopeToQuery(detailDummy);
+		appendScopeToQuery(q);
 	}
 
 
@@ -369,7 +371,7 @@ class ScopePlanner {
 	}
 
 
-	private void appendScopeToQuery(DetailedChartQuery extraQuery) {
+	private void appendScopeToQuery(org.squashtest.tm.service.internal.query.engine.Query extraQuery) {
 		QueryPlanner planner = new QueryPlanner(extraQuery);
 		planner.appendToQuery(hibQuery);
 		planner.modifyQuery();

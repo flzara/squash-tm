@@ -18,25 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
+import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.query.engine.QueryBuilder.QueryProfile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
+import static org.squashtest.tm.service.internal.query.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.query.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
 
 /**
  * <p>
@@ -79,7 +77,7 @@ import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.Query
  */
 class ProjectionPlanner {
 
-	private DetailedChartQuery definition;
+	private Query definition;
 
 	private ExtendedHibernateQuery<?> query;
 
@@ -96,14 +94,14 @@ class ProjectionPlanner {
 		REPLACE_BY_ALIAS;
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
+	ProjectionPlanner(Query definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(Query definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query = query;
@@ -130,11 +128,11 @@ class ProjectionPlanner {
 
 		switch(profile){
 		case MAIN_QUERY :
-			populateClauses(selection, definition.getAxis(), SubqueryAliasStrategy.APPEND_ALIAS);
-			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getAggregateQueries(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getProjectionQueries(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBSELECT_QUERY :
-			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getProjectionQueries(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBWHERE_QUERY :
 			// that one is special : it's always 'select 1'
@@ -159,7 +157,7 @@ class ProjectionPlanner {
 		if ( profile != SUBSELECT_QUERY){
 			List<Expression<?>> groupBy = new ArrayList<>();
 
-			populateClauses(groupBy, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(groupBy, definition.getAggregateQueries(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			query.groupBy(groupBy.toArray(new Expression[]{}));
 		}
@@ -171,7 +169,7 @@ class ProjectionPlanner {
 
 			List<Expression<?>> expressions = new ArrayList<>();
 
-			populateClauses(expressions, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(expressions, definition.getAggregateQueries(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			List<OrderSpecifier> orders = new ArrayList<>();
 			populateOrders(orders, expressions);

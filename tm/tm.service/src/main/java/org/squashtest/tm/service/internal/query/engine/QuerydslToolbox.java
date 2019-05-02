@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query.engine;
 
 
 import com.querydsl.core.JoinExpression;
@@ -49,8 +49,7 @@ import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.query.Filter;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
@@ -60,6 +59,8 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.Projection;
+import org.squashtest.tm.domain.query.ProjectionQuery;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 import java.text.ParseException;
@@ -377,8 +378,10 @@ class QuerydslToolbox {
 			// NOSONAR because this is definitely not too long
 			case INLINED:
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(col);
-				MeasureColumn submeasure = col.getColumn().getSubQuery().getMeasures().get(0);    // take that Demeter !
-				expression = subtoolbox.createAsSelect(submeasure);
+				ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(col.getColumn().getSubQuery());
+				Query q = transformer.transformToQuery();
+				ProjectionQuery projectionQuery = (ProjectionQuery)q.getProjectionQueries().get(0);    // take that Demeter !
+				expression = subtoolbox.createAsSelect(projectionQuery);
 				break;
 
 
@@ -470,7 +473,9 @@ class QuerydslToolbox {
 				break;
 
 			case INLINED:
-				MeasureColumn submeasure = filter.getColumn().getSubQuery().getMeasures().get(0);    // and take that again !
+				ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(filter.getColumn().getSubQuery());
+				Query q = transformer.transformToQuery();
+				Projection submeasure = q.getProjectionQueries().get(0);    // and take that again !
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(filter);    // create a new toolbox configured with a proper subcontext
 
 				//ok, it is semantically sloppy. But for now the produced element is what we need :-S
@@ -834,9 +839,10 @@ class QuerydslToolbox {
 	private SubQueryBuilder createSubquery(ColumnPrototypeInstance col) {
 		ColumnPrototype prototype = col.getColumn();
 		ChartQuery queryDef = prototype.getSubQuery();
-		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(queryDef);
+		Query q = transformer.transformToQuery();
 
-		return new SubQueryBuilder(detailedDef);
+		return new SubQueryBuilder(q);
 	}
 
 

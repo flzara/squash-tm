@@ -41,6 +41,12 @@ import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
+import org.squashtest.tm.service.internal.query.engine.ChartQueryToQueryTransformer;
+import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.engine.Query;
+import org.squashtest.tm.service.internal.query.engine.QueryBuilder;
+import org.squashtest.tm.service.internal.query.engine.QueryPlanner;
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -363,6 +369,8 @@ public class ChartDataFinder {
 	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
 
 		ChartQuery chartQuery = definition.getQuery();
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery);
+		Query query = transformer.transformToQuery();
 		DetailedChartQuery enhancedDefinition;
 		if (milestoneId != null && workspace != null && Workspace.isWorkspaceMilestoneFilterable(workspace)) {
 			IChartQuery milestoneAwareChartQuery = new MilestoneAwareChartQuery(chartQuery, milestoneId, workspace);
@@ -374,7 +382,7 @@ public class ChartDataFinder {
 
 		// *********** step 1 : create the query ************************
 
-		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
+		ExtendedHibernateQuery detachedQuery = new QueryBuilder(query).createQuery();
 
 		// *********** step 2 : determine scope and ACL **********************
 
