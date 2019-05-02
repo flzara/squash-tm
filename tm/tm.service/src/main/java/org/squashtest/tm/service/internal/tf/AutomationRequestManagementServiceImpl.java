@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,6 +79,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestManagementServiceImpl.class);
+
 	@Inject
 	private AutomationRequestDao requestDao;
 
@@ -102,7 +106,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
-	TestCaseDao testCaseDao;
+	private TestCaseDao testCaseDao;
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
