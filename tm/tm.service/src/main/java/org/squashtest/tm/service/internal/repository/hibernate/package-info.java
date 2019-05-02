@@ -1057,7 +1057,11 @@
 	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)"),
 
 	// RemoteSynchronisation
-	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId")
+	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId"),
+
+	// AutomationRequest
+	@NamedQuery(name="AutomationRequest.updateIsManual", query = "UPDATE AutomationRequest ar SET ar.isManual = :isManual WHERE ar.testCase.id = :testCaseId"),
+	@NamedQuery(name="AutomationRequest.updateConflictAssociation", query = "UPDATE AutomationRequest ar SET ar.conflictAssociation = :conflictAssociation WHERE ar.testCase.id = :testCaseId"),
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

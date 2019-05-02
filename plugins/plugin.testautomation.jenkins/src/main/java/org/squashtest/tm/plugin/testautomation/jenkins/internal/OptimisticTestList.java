@@ -63,6 +63,21 @@ public class OptimisticTestList {
 
 		try {
 			String response = RequestExecutor.getInstance().execute(client, method);
+
+			// Mock response for test purposes
+			// TODO Remove when Squash-TF can delivered metadata
+			response= "{\"timestamp\":\"2019-04-29T13:46:51.470+0000\"," +
+				"\"name\":\"tests\",\"contents\":[" +
+				"{\"name\":\"first-test.ta\",\"metadata\" : {\"linked-TC\": [\"05dab8b8-630a-427f-a9e7-52cabcb3e3dd\"]},\"contents\":null}," +
+				"{\"name\":\"script1.ta\",\"contents\":null}," +
+				"{\"name\":\"script2.ta\",\"contents\":null}," +
+				"{\"name\":\"script3.ta\",\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_all.ta\",\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_CP.ta\",\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_IT.ta\",\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_TC.ta\",\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_TS.ta\",\"contents\":null}" +
+				"]}";
 			TestListElement testList = parser.getTestListFromJson(response);
 
 

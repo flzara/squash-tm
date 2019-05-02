@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
-import com.querydsl.core.types.CollectionExpression;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -46,11 +46,12 @@ import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,6 +103,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	TestCaseDao testCaseDao;
+
+	@Inject
+	private TestCaseModificationService testCaseModificationService;
 
 
 	// *************** implementation of the finder interface *************************
@@ -230,38 +234,26 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Override
 	public void updateScriptTa(Long tcId) {
 
-
-		//demande list script qui correspond au projet et job
-		List<Couple<String, String>> listScriptTa = new ArrayList<>();
-		listScriptTa.add(new Couple("86281bdd-01ad-426b-a7cb-a93c27ffcb67", "first-test.ta"));
-		listScriptTa.add(new Couple("36a2eae2-7c64-4fd9-a97a-ab4c0608271c", "first-test.ta"));
-		listScriptTa.add(new Couple("04e1bc3a-b1b1-4ce4-ab88-3cf93a95226e", "script2.ta"));
-		listScriptTa.add(new Couple("e46b65ca-91b9-458b-aeba-0f6ba8caf894", "script3.ta"));
-		listScriptTa.add(new Couple("e46b65ca-91b9-458b-aeba-0f6ba8caf894", "script_custom_field_params_CP.ta"));
-		listScriptTa.add(new Couple("984e2952-fb65-455c-810f-6f42fe620f3d", "script_custom_field_params_TS.ta"));
-		listScriptTa.add(new Couple("984e2952-fb65-455c-810f-6f42fe620f3d", "script_custom_field_params_CP.ta"));
-
-		Map<String, List<String>> mapTcScript =
-			listScriptTa.stream().collect(Collectors.groupingBy(Couple::getA1,
-				Collectors.mapping(Couple::getA2,
-					Collectors.toList())));
-
 		TestCase tc = testCaseDao.findById(tcId);
-		if (mapTcScript.containsKey(tc.getUuid())) {
-			for (Map.Entry<String, List<String>> entry : mapTcScript.entrySet()) {
-				if (entry.getKey().equals(tc.getUuid())) {
-					// plusieurs script
-					if (entry.getValue().size() > 1) {
-						manageConflictAssociation(tc, entry.getValue());
-					}else if(entry.getValue().size()==1){	// un seul script
-						addEditNewScript(tc,entry.getValue());
-					}
-				}else{// pas de correspondance  pr ce tc
-					managerScriptNull(tc);
-				}
-			}
-		}
 
+		Collection<TestAutomationProjectContent> testAutomationProjects =  testCaseModificationService.findAssignableAutomationTests(tcId);
+
+		List<AutomatedTest> assignableAutomatedTestList = testAutomationProjects.stream()
+			.map(TestAutomationProjectContent::getTests)
+			.flatMap(Collection::stream)
+			.filter(automatedTest -> automatedTest.getLinkedTC().contains(tc.getUuid()))
+			.collect(Collectors.toList());
+
+		if(assignableAutomatedTestList.size() > 0){
+			if(assignableAutomatedTestList.size() == 1){
+				addOrEditAutomatedScript(tc,assignableAutomatedTestList.get(0));
+			}
+			else {
+				manageConflictAssociation(tc, assignableAutomatedTestList);
+			}
+		} else {
+			manageNoScript(tc);
+		}
 
 	}
 
@@ -326,6 +318,33 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return requestDao.countAutomationRequestValid(projectIds);
 	}
 
+	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList){
+
+		requestDao.updateIsManual(tc.getId(), false);
+
+		if (tc.getAutomatedTest()!= null){
+			testCaseModificationService.removeAutomation(tc.getId());
+		}
+
+		StringJoiner stringJoiner = new StringJoiner(",");
+		automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
+
+		requestDao.updateConflictAssociation(tc.getId(), stringJoiner.toString());
+	}
+
+	private void addOrEditAutomatedScript(TestCase tc, AutomatedTest automatedTest){
+		requestDao.updateIsManual(tc.getId(), false);
+
+		testCaseModificationService.bindAutomatedTest(tc.getId(), automatedTest.getProject().getId(), automatedTest.getName());
+	}
+
+	private void manageNoScript(TestCase tc){
+		if (tc.getAutomatedTest()!=null && !tc.getAutomationRequest().isManual() ){
+			testCaseModificationService.removeAutomation(tc.getId());
+		}
+		requestDao.updateIsManual(tc.getId(), true);
+	}
+
 	// **************************** boiler plate code *************************************
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {
@@ -335,35 +354,5 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 			itpiIds.add(itpi.getId());
 		}
 		indexationService.batchReindexItpi(itpiIds);
-	}
-
-	private void manageConflictAssociation(TestCase tc, List<String> listScriptTa){
-		StringBuilder listScriptConflit =new StringBuilder();
-		if (tc.getAutomatedTest()!=null){
-			//suppAutomatedTest
-		}
-
-		tc.getAutomationRequest().setManual(false);
-		//listScriptConflit
-		for (String script: listScriptTa){
-			listScriptConflit.append(script).append("\n");
-		}
-		tc.getAutomationRequest().setConflictAssociation(listScriptConflit.toString());
-	}
-
-	private void addEditNewScript(TestCase tc, List<String> listScriptTa){
-
-		if (tc.getAutomatedTest()!=null){
-			//suppAutomatedTest
-		}
-		//créer un nouveau
-		tc.getAutomationRequest().setManual(false);
-	}
-
-	private void managerScriptNull(TestCase tc){
-		if (tc.getAutomatedTest()!=null && tc.getAutomationRequest().isManual()== false ){
-			//suppAutomatedTest
-
-		}
 	}
 }

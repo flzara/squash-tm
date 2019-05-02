@@ -58,13 +58,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							$.ajax({
 								url: self.settings.urls.testCaseUrl,
 								method: 'POST',
-								/*data: {
+								data: {
 									'id': 'automation-request-status',
 									'value': 'TRANSMITTED'
-								}*/
+								}
 							}).success(function() {
-								self.refresh();
-								/*$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));*/
+								self.trySquashTAScriptAssociation();
+								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 							});
 						});
 
@@ -102,6 +102,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						$('.test-case-automation-request-block').hide();
 					}
 				},
+
+				trySquashTAScriptAssociation : function () {
+					$.ajax({
+						url:  this.settings.urls.testCaseUrl + "/associate-TA-script",
+						method: 'POST'
+					});
+			  },
 
 				events : {
 
