@@ -46,6 +46,9 @@
 	<field name="testCase.id" class="java.lang.Long">
 		<fieldDescription><![CDATA[testCase.id]]></fieldDescription>
 	</field>
+	<field name="testCase.uuid" class="java.lang.String">
+		<fieldDescription><![CDATA[testCase.uuid]]></fieldDescription>
+	</field>
 	<field name="testCase.name" class="java.lang.String">
 		<fieldDescription><![CDATA[testCase.name]]></fieldDescription>
 	</field>
@@ -123,7 +126,15 @@
 				<textFieldExpression><![CDATA[$F{testCase.id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f02e1263-d8c7-4c33-ad51-97ae81a9f14e" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="340" y="0" width="170" height="20">
+				<reportElement uuid="23c46dd2-ccbb-46f0-a572-a018e6b52760" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="340" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{testCase.uuid}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f02e1263-d8c7-4c33-ad51-97ae81a9f14e" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="510" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -131,7 +142,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.reference}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="80201325-dd95-4f8b-abd5-514419ef6f64" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="510" y="0" width="170" height="20">
+				<reportElement uuid="80201325-dd95-4f8b-abd5-514419ef6f64" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="680" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -139,7 +150,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.name}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="84465d5a-7b0d-4269-9cf6-7489ba741e16" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="680" y="0" width="170" height="20">
+				<reportElement uuid="84465d5a-7b0d-4269-9cf6-7489ba741e16" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="850" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -147,7 +158,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.weight}.name()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4f44cd9b-d5c6-4a70-828d-098bea20fd77" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="850" y="0" width="170" height="20">
+				<reportElement uuid="4f44cd9b-d5c6-4a70-828d-098bea20fd77" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1020" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -155,7 +166,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.nature}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e296df31-a634-454e-ab20-2c1de4c20a85" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1020" y="0" width="170" height="20">
+				<reportElement uuid="e296df31-a634-454e-ab20-2c1de4c20a85" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1190" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -163,7 +174,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="45a7ce19-2adc-48fe-8b08-a8d734371f49" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1190" y="0" width="170" height="20">
+				<reportElement uuid="45a7ce19-2adc-48fe-8b08-a8d734371f49" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1360" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -171,7 +182,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.status}.name()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="8e84909c-306c-45c6-89c9-02df1b203151" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1360" y="0" width="170" height="20">
+				<reportElement uuid="8e84909c-306c-45c6-89c9-02df1b203151" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -179,7 +190,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4ad1180d-81cc-4c84-a921-1a7dc5ee04a1" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1530" y="0" width="170" height="20">
+				<reportElement uuid="4ad1180d-81cc-4c84-a921-1a7dc5ee04a1" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -187,7 +198,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.prerequisite}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fac86aad-f36a-493b-9e9b-8f9e92c3ebda" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1700" y="0" width="170" height="20">
+				<reportElement uuid="fac86aad-f36a-493b-9e9b-8f9e92c3ebda" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1870" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -195,7 +206,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.createdOn}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="1a5ca154-f5e8-4296-8a73-df9ad4ae824e" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="1870" y="0" width="170" height="20">
+				<reportElement uuid="1a5ca154-f5e8-4296-8a73-df9ad4ae824e" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2040" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -203,7 +214,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.createdBy}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="99d539fe-4ec6-4d9e-ac53-bd0f1cee343d" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2380" y="0" width="170" height="20">
+				<reportElement uuid="99d539fe-4ec6-4d9e-ac53-bd0f1cee343d" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2550" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -211,7 +222,7 @@
 				<textFieldExpression><![CDATA[$F{action}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f5cb6e30-a638-430e-9a85-b0070f130775" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2550" y="0" width="170" height="20">
+				<reportElement uuid="f5cb6e30-a638-430e-9a85-b0070f130775" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2720" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -219,7 +230,7 @@
 				<textFieldExpression><![CDATA[$F{expectedResult}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="84b8916e-d156-4519-9f50-aeea37d8d8dc" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2040" y="0" width="170" height="20">
+				<reportElement uuid="84b8916e-d156-4519-9f50-aeea37d8d8dc" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2210" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -227,7 +238,7 @@
 				<textFieldExpression><![CDATA[$F{testCase.lastModifiedOn}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fbbd8b88-918f-4655-80f1-f6460894c315" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2210" y="0" width="170" height="20">
+				<reportElement uuid="fbbd8b88-918f-4655-80f1-f6460894c315" style="table_TD" stretchType="RelativeToBandHeight" mode="Transparent" x="2380" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
