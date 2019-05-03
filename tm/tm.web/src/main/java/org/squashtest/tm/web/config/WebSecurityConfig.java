@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.squashtest.tm.api.security.authentication.SecurityExemptionEndPoint;
 import org.squashtest.tm.web.internal.controller.authentication.HttpSessionRequestCacheWithExceptions;
 
 import javax.inject.Inject;
@@ -41,6 +43,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -66,7 +73,6 @@ public class WebSecurityConfig {
 	 *  Enpoint-specific security filter chains
 	 *
 	 * *********************************************************/
-
 
 	@Configuration
 	@Order(10)
@@ -151,6 +157,15 @@ public class WebSecurityConfig {
 	@Order(30)
 	public static class StandardWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
+		private static final List<String> DEFAULT_IGNORE_AUTH_URLS =
+			Arrays.asList(ROOT_PATH, LOGIN, ALTERNATE_AUTH_PATH, "/logout", "/logged-out");
+
+		/**
+		 * The Collection of collected SecurityExemptionEndPoint from the classpath.
+		 */
+		@Autowired(required = false)
+		private Collection<SecurityExemptionEndPoint> securityExemptionEndPoints = Collections.EMPTY_LIST;
+
 		@Value("${squash.security.filter.debug.enabled:false}")
 		private boolean debugSecurityFilter;
 
@@ -176,7 +191,7 @@ public class WebSecurityConfig {
 			// @formatter:off
 			http
 				.csrf()
-					.ignoringAntMatchers(ALTERNATE_AUTH_PATH)
+					.ignoringAntMatchers(gatherIgnoringCsrfUrlPatterns())
 				.and()
 				.headers()
 				.defaultsDisabled()
@@ -203,12 +218,7 @@ public class WebSecurityConfig {
 					// note : on this domain the requests will always succeed,
 					// thus the user will not be redirected via the main entry
 					// point
-					.antMatchers(
-						ROOT_PATH,
-						LOGIN,
-						ALTERNATE_AUTH_PATH,
-						"/logout",
-						"/logged-out")
+					.antMatchers(gatherIgnoringAuthUrlPatterns())
 					.permitAll()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
@@ -263,6 +273,24 @@ public class WebSecurityConfig {
 			return entryPoint;
 		}
 
+		private String[] gatherIgnoringCsrfUrlPatterns() {
+			List<String> result = new ArrayList<>();
+			result.add(ALTERNATE_AUTH_PATH);
+			for(SecurityExemptionEndPoint endPoint : securityExemptionEndPoints) {
+				result.addAll(endPoint.getIgnoreCsrfUrlPatterns());
+			}
+			return result.toArray(new String[result.size()]);
+		}
+
+		private String[] gatherIgnoringAuthUrlPatterns() {
+			List<String> result = new ArrayList<>();
+			result.addAll(DEFAULT_IGNORE_AUTH_URLS);
+			for(SecurityExemptionEndPoint endPoint : securityExemptionEndPoints) {
+				result.addAll(endPoint.getIgnoreAuthUrlPatterns());
+			}
+			return result.toArray(new String[result.size()]);
+		}
+
 	}
 
 
@@ -294,5 +322,6 @@ public class WebSecurityConfig {
 		}
 
 	}
+
 }
 
