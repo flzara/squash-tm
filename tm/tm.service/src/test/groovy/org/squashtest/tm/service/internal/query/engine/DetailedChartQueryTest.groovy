@@ -18,17 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.QueryStrategy.*;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.ColumnPrototype;
+import org.squashtest.tm.domain.query.ColumnType;
+import static org.squashtest.tm.domain.query.ColumnType.*;
+import static org.squashtest.tm.domain.query.QueryStrategy.*;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.query;
 
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-
 import java.util.List;
 
 public interface Filter extends ColumnPrototypeInstance {

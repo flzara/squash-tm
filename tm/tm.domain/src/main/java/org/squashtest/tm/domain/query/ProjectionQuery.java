@@ -21,10 +21,6 @@
 package org.squashtest.tm.domain.query;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
 
 public class ProjectionQuery implements Projection {
 

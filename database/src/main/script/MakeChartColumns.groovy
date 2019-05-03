@@ -83,8 +83,7 @@ def definition = [
 			reqProject : ['PROJECT', 'NUMERIC', 'project.id', 'none'],
 			reqCat : ['CRITICALITY', 'LEVEL_ENUM', 'resource.criticality', 'all'],
 			reqStatus : ['STATUS', 'LEVEL_ENUM', 'resource.status', 'all'],
-			reqCategory : ['CATEGORY', 'INFO_LIST_ITEM', 'resource.category.code', 'all']
-		],
+			reqCategory : ['CATEGORY', 'INFO_LIST_ITEM', 'resource.category.code', 'all']		],
 
 		subqueries : [
 			reqVCountSub : [

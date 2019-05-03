@@ -20,7 +20,19 @@
  */
 package org.squashtest.tm.domain.query;
 
-public interface Projection extends ColumnPrototypeInstance {
+import org.squashtest.tm.domain.EntityType;
 
+public interface ColumnPrototypeInstance {
 
+	ColumnPrototype getColumn();
+
+	EntityType getEntityType();
+
+	SpecializedEntityType getSpecializedType();
+
+	DataType getDataType();
+
+	Operation getOperation();
+
+	Long getCufId();
 }

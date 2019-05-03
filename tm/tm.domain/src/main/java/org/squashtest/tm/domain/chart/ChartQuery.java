@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import org.squashtest.tm.domain.query.ColumnPrototype;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;

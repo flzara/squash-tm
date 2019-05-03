@@ -18,11 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
+package org.squashtest.tm.domain.query;
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Sizes;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;

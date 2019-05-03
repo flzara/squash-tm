@@ -25,11 +25,9 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.query.Aggregate;
 import org.squashtest.tm.domain.query.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.Projection;
 

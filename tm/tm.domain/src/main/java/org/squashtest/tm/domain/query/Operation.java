@@ -20,7 +20,28 @@
  */
 package org.squashtest.tm.domain.query;
 
-public interface Projection extends ColumnPrototypeInstance {
-
-
+public enum Operation {
+	// @formatter:off
+	NONE,
+	GREATER,
+	GREATER_EQUAL,
+	LOWER,
+	LOWER_EQUAL,
+	BETWEEN,
+	EQUALS,
+	IN,
+	LIKE,
+	MIN,
+	MAX,
+	AVG,
+	SUM,
+	COUNT,
+	IS_NULL,
+	NOT_NULL,
+	NOT_EQUALS,
+	BY_DAY,
+	BY_WEEK,
+	BY_MONTH,
+	BY_YEAR;
+	// @formatter:on
 }

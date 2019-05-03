@@ -24,9 +24,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.query.ColumnPrototype;
 import org.squashtest.tm.domain.query.Filter;
-import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import java.util.ArrayList;

@@ -22,9 +22,9 @@ package org.squashtest.tm.service.internal.query.engine;
 
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.query.Aggregate;
 import org.squashtest.tm.domain.query.AggregateQuery;
 import org.squashtest.tm.domain.query.Filter;

@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

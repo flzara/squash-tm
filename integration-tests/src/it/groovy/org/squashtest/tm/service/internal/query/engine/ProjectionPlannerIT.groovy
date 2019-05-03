@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import org.hibernate.Query
 import org.hibernate.type.LongType
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.Operation
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
@@ -35,11 +36,10 @@ import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import static org.squashtest.tm.domain.EntityType.*
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.DATE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.*
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.DataType.DATE
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.service.internal.query.engine.ChartEngineTestUtils.*
 
 @NotThreadSafe
 @UnitilsSupport
@@ -77,9 +77,9 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartQuery definition = new DetailedChartQuery(
-				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")],
-				axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id")]
+		org.squashtest.tm.service.internal.query.engine.Query definition = new org.squashtest.tm.service.internal.query.engine.Query(
+				projectionQueries: [mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, REQUIREMENT_VERSION, "id")],
+				aggregateQueries : [mkAggregate(ATTRIBUTE, NUMERIC, Operation.NONE, TEST_CASE, "id")]
 				)
 
 		when :
@@ -106,10 +106,10 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartQuery definition =
-				new DetailedChartQuery(
-				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
-				axis : [mkAxe(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn")]
+		org.squashtest.tm.service.internal.query.engine.Query definition =
+				new org.squashtest.tm.service.internal.query.engine.Query(
+				projectionQueries : [mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, EXECUTION, "id")],
+				aggregateQueries : [mkAggregate(ATTRIBUTE, DATE, Operation.BY_MONTH, EXECUTION, "lastExecutedOn")]
 				)
 
 		when :
@@ -172,12 +172,12 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 				.join(cov.verifiedRequirementVersion, v)
 				.join(v.requirement, r);
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, TEST_CASE, "id"),
-							mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")
-						],
-						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id")]
-						)
+				definition = new org.squashtest.tm.service.internal.query.engine.Query(
+					projectionQueries: [mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, TEST_CASE, "id"),
+										mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, REQUIREMENT_VERSION, "id")
+					],
+					aggregateQueries: [mkAggregate(ATTRIBUTE, NUMERIC, Operation.NONE, REQUIREMENT, "id")]
+				)
 
 				expected = [[-1l, 2, 2],  [-2l, 1, 1], [-3l, 2, 2]]
 				break;
@@ -185,10 +185,10 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 			case 2 : // case 2 -> select count(exec) group by it id and referenced tc id
 				query = from(exec).join(exec.testPlan, itp).join(itp.iteration, ite)
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
-						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
-							mkAxe(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id")]
+				definition = new org.squashtest.tm.service.internal.query.engine.Query(
+						projectionQueries : [mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, EXECUTION, "id")],
+						aggregateQueries : [mkAggregate(ATTRIBUTE, NUMERIC, Operation.NONE, ITERATION, "id"),
+							mkAggregate(ATTRIBUTE, NUMERIC, Operation.NONE, EXECUTION, "referencedTestCase.id")]
 						)
 
 				expected = [[-11l, -1l, 3], [-12l, -1l, 1], [-12l, null, 1]]
@@ -198,9 +198,9 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 				query = from(r)
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT, "id")],
-						axis : [mkAxe(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn")]
+				definition = new org.squashtest.tm.service.internal.query.engine.Query(
+						projectionQueries : [mkProjection(ATTRIBUTE, NUMERIC, Operation.COUNT, REQUIREMENT, "id")],
+						aggregateQueries : [mkAggregate(ATTRIBUTE, DATE, Operation.BY_YEAR, REQUIREMENT, "audit.createdOn")]
 						)
 
 				expected = [[2015, 2], [2016, 1]]
@@ -222,7 +222,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	class ManyQueryPojo {
 		ExtendedHibernateQuery query
-		DetailedChartQuery definition
+		org.squashtest.tm.service.internal.query.engine.Query definition
 		Set<?> expected
 	}
 

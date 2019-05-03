@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.dsl.EntityPathBase
@@ -31,14 +31,15 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery
+import org.squashtest.tm.service.internal.query.engine.InternalEntityType
+import org.squashtest.tm.service.internal.query.engine.QueryPlanner
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
-
 /**
- * This class will test the {@link QueryPlanner}. It role is to create the
+ * This class will test the {@link org.squashtest.tm.service.internal.query.engine.QueryPlanner}. It role is to create the
  * bulk of the query, which is made only of the required entities joined together.
  *
  * It has no projection, filter nor group by. so
@@ -56,16 +57,16 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 	// some abreviations
 
-	static InternalEntityType REQ = REQUIREMENT
-	static InternalEntityType RV = REQUIREMENT_VERSION
-	static InternalEntityType COV = REQUIREMENT_VERSION_COVERAGE
-	static InternalEntityType TC = TEST_CASE
-	static InternalEntityType ITP = ITEM_TEST_PLAN
-	static InternalEntityType IT = ITERATION
-	static InternalEntityType CP = CAMPAIGN
-	static InternalEntityType EX = EXECUTION
-	static InternalEntityType ISS = ISSUE
-	static InternalEntityType TATEST = AUTOMATED_TEST
+	static InternalEntityType REQ = InternalEntityType.REQUIREMENT
+	static InternalEntityType RV = InternalEntityType.REQUIREMENT_VERSION
+	static InternalEntityType COV = InternalEntityType.REQUIREMENT_VERSION_COVERAGE
+	static InternalEntityType TC = InternalEntityType.TEST_CASE
+	static InternalEntityType ITP = InternalEntityType.ITEM_TEST_PLAN
+	static InternalEntityType IT = InternalEntityType.ITERATION
+	static InternalEntityType CP = InternalEntityType.CAMPAIGN
+	static InternalEntityType EX = InternalEntityType.EXECUTION
+	static InternalEntityType ISS = InternalEntityType.ISSUE
+	static InternalEntityType TATEST = InternalEntityType.AUTOMATED_TEST
 
 	// fix the requirementVersion - requirement relation
 	def setup(){
@@ -86,7 +87,9 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
+		org.squashtest.tm.service.internal.query.engine.Query definition =
+			new org.squashtest.tm.service.internal.query.engine.Query(rootEntity : InternalEntityType.REQUIREMENT_VERSION,
+				targetEntities : [InternalEntityType.REQUIREMENT_VERSION, InternalEntityType.TEST_CASE])
 
 		and :
 		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -109,7 +112,9 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
+		org.squashtest.tm.service.internal.query.engine.Query definition =
+			new org.squashtest.tm.service.internal.query.engine.Query(rootEntity : InternalEntityType.TEST_CASE,
+				targetEntities : [InternalEntityType.TEST_CASE])
 
 		and :
 		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -133,7 +138,9 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
+		org.squashtest.tm.service.internal.query.engine.Query definition =
+			new org.squashtest.tm.service.internal.query.engine.Query(rootEntity : InternalEntityType.TEST_CASE,
+				targetEntities : [InternalEntityType.TEST_CASE, InternalEntityType.EXECUTION])
 
 		and :
 		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -156,7 +163,9 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 	def "should test many possible queries"(){
 
 		expect :
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targetEntities)
+		org.squashtest.tm.service.internal.query.engine.Query definition =
+			new org.squashtest.tm.service.internal.query.engine.Query(rootEntity : rootEntity,
+				targetEntities : targetEntities)
 
 		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
 		q.where(wherePath)

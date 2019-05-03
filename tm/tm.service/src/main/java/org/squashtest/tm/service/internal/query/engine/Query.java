@@ -22,11 +22,11 @@ package org.squashtest.tm.service.internal.query.engine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
-import org.squashtest.tm.domain.chart.QueryStrategy;
+import org.squashtest.tm.domain.query.ColumnPrototype;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.query.Aggregate;
 import org.squashtest.tm.domain.query.Filter;
 import org.squashtest.tm.domain.query.Order;

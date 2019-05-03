@@ -45,14 +45,14 @@ import com.querydsl.core.types.dsl.SimpleExpression;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.query.ColumnPrototype;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.Filter;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -71,7 +71,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
+import static org.squashtest.tm.domain.query.DataType.BOOLEAN;
 
 class QuerydslToolbox {
 

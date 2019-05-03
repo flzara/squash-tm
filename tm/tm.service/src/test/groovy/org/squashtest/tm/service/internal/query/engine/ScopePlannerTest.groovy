@@ -38,35 +38,26 @@
 *     You should have received a copy of the GNU Lesser General Public License
 *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManager
 
-import org.apache.commons.collections.map.MultiValueMap;
-import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter
+import org.squashtest.tm.domain.query.ColumnPrototype
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
-import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner.ScopeUtils
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntitiesImpl
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntitiesImpl
-import static org.squashtest.tm.service.internal.chart.engine.ScopePlanner.JoinableColumns.*
-import org.squashtest.tm.domain.chart.SpecializedEntityType
-import org.squashtest.tm.domain.chart.ColumnType
-
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner.ScopedEntities
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner.QueriedEntities
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner.ScopedEntitiesImpl
+import org.squashtest.tm.service.internal.query.engine.ScopePlanner.QueriedEntitiesImpl
+import static org.squashtest.tm.service.internal.query.engine.ScopePlanner.JoinableColumns.*
+import org.squashtest.tm.domain.query.SpecializedEntityType
 import spock.lang.Specification
 import spock.lang.Unroll;
 
@@ -346,7 +337,7 @@ where testCase.project.id = ?1"""
         def measure = iet(meaType)
         def target = [root, measure]
 
-        new DetailedChartQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
+        new Query(rootEntity : root, targetEntity : measure, targetEntities : target)
 
     }
 

@@ -22,15 +22,13 @@ package org.squashtest.tm.service.internal.chart.engine
 
 import com.querydsl.core.Tuple
 import org.squashtest.tm.domain.chart.AxisColumn
-import org.squashtest.tm.domain.chart.ChartSeries
-import org.squashtest.tm.domain.chart.DataType
+import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.customfield.CustomFieldOption
 import org.squashtest.tm.domain.customfield.SingleSelectField
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.UserListItem
-import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.repository.InfoListItemDao
 
@@ -41,7 +39,7 @@ import java.text.SimpleDateFormat
 
 import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
-import static org.squashtest.tm.domain.chart.DataType.*
+import static org.squashtest.tm.domain.query.DataType.*
 import spock.lang.Specification
 
 class TupleProcessorTest extends Specification{

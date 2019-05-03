@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
-import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
-import org.squashtest.tm.service.internal.chart.engine.DomainGraph;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
+import org.squashtest.tm.service.internal.query.engine.InternalEntityType;
+import static org.squashtest.tm.service.internal.query.engine.InternalEntityType.*;
+import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.engine.DomainGraph;
+import org.squashtest.tm.service.internal.query.engine.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
@@ -81,15 +81,15 @@ class DomainGraphTest extends Specification {
 
 		where :
 		rootEntity				|	definition
-		REQUIREMENT				|	new DetailedChartQuery(rootEntity : REQ)
-		REQUIREMENT_VERSION 	|	new DetailedChartQuery(rootEntity : RV)
-		COV					 	|	new DetailedChartQuery(rootEntity : COV)
-		TEST_CASE				|	new DetailedChartQuery(rootEntity : TC)
-		ITEM_TEST_PLAN			|	new DetailedChartQuery(rootEntity : ITP)
-		ITERATION				|	new DetailedChartQuery(rootEntity : IT)
-		CAMPAIGN				|	new DetailedChartQuery(rootEntity : CP)
-		EXECUTION				|	new DetailedChartQuery(rootEntity : EX)
-		ISS						|	new DetailedChartQuery(rootEntity : ISS)
+		REQUIREMENT				|	new Query(rootEntity : REQ)
+		REQUIREMENT_VERSION 	|	new Query(rootEntity : RV)
+		COV					 	|	new Query(rootEntity : COV)
+		TEST_CASE				|	new Query(rootEntity : TC)
+		ITEM_TEST_PLAN			|	new Query(rootEntity : ITP)
+		ITERATION				|	new Query(rootEntity : IT)
+		CAMPAIGN				|	new Query(rootEntity : CP)
+		EXECUTION				|	new Query(rootEntity : EX)
+		ISS						|	new Query(rootEntity : ISS)
 
 	}
 
@@ -100,7 +100,7 @@ class DomainGraphTest extends Specification {
 	def "should test many query plans"(){
 
 		expect :
-		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new Query(rootEntity : rootEntity, targetEntities : targets))
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeHierarchy(plan, hierarchy)
@@ -122,7 +122,7 @@ class DomainGraphTest extends Specification {
 	def "should convey the correct join metadata when creating the tree"(){
 
 		expect :
-		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new Query(rootEntity : rootEntity, targetEntities : targets))
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeJoins(plan, joinInfos)
@@ -143,8 +143,8 @@ class DomainGraphTest extends Specification {
 	def "should morph to a directed graph and generate an oversized query plan"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE,
+		Query definition =
+				new Query(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		and :
@@ -197,8 +197,8 @@ class DomainGraphTest extends Specification {
 	def "should find a query plan for root entity TestCase and other target entities : Requirement, Iteration"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE,
+		Query definition =
+				new Query(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		when :
@@ -227,8 +227,8 @@ class DomainGraphTest extends Specification {
 	def "when requested, should generate a reversed query plan"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE, measuredEntity : CAMPAIGN,
+		Query definition =
+				new Query(rootEntity : TEST_CASE, targetEntity : CAMPAIGN,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 		when :
 

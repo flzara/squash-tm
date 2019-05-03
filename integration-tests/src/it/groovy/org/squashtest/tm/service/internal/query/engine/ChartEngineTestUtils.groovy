@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.bugtracker.QIssue
@@ -27,6 +27,16 @@ import org.squashtest.tm.domain.campaign.QIteration
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.query.Aggregate
+import org.squashtest.tm.domain.query.AggregateQuery
+import org.squashtest.tm.domain.query.ColumnPrototype
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.FilterQuery
+import org.squashtest.tm.domain.query.Operation
+import org.squashtest.tm.domain.query.Projection
+import org.squashtest.tm.domain.query.ProjectionQuery
+import org.squashtest.tm.domain.query.SpecializedEntityType
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testautomation.QAutomatedTest
@@ -55,6 +65,15 @@ public class ChartEngineTestUtils{
 
 	}
 
+	public static Projection mkProjection(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def proj = new ProjectionQuery(column : proto, operation : operation)
+
+		return proj
+
+	}
+
 	public static AxisColumn mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
@@ -64,10 +83,28 @@ public class ChartEngineTestUtils{
 
 	}
 
+	public static Aggregate mkAggregate(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def agr = new AggregateQuery(column : proto, operation : operation)
+
+		return agr
+
+	}
+
 	public static Filter mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def filter = new Filter(column : proto, operation : operation, values : values)
+
+		return filter
+
+	}
+
+	public static org.squashtest.tm.domain.query.Filter mkFilterQuery(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def filter = new FilterQuery(column : proto, operation : operation, values : values)
 
 		return filter
 

@@ -18,16 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
-import org.squashtest.tm.domain.chart.QueryStrategy;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -36,11 +35,10 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder;
 
 import spock.lang.Specification
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import static org.squashtest.tm.domain.chart.DataType.*;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.Operation.*;
+import static ChartEngineTestUtils.*
+import static org.squashtest.tm.domain.query.DataType.*;
+import static org.squashtest.tm.domain.query.ColumnType.*;
+import static org.squashtest.tm.domain.query.Operation.*;
 
 
 
@@ -53,9 +51,9 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.REQUIREMENT,
+				targetEntities : [InternalEntityType.REQUIREMENT, InternalEntityType.REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
 				)
 
@@ -85,9 +83,9 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.REQUIREMENT,
+				targetEntities : [InternalEntityType.REQUIREMENT, InternalEntityType.REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
 				)
 
@@ -117,9 +115,9 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.REQUIREMENT,
+				targetEntities : [InternalEntityType.REQUIREMENT, InternalEntityType.REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
 				)
 
@@ -149,9 +147,9 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.TEST_CASE,
+				targetEntities : [InternalEntityType.TEST_CASE, InternalEntityType.ITEM_TEST_PLAN]
 				)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
@@ -181,9 +179,9 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.TEST_CASE,
+				targetEntities : [InternalEntityType.TEST_CASE, InternalEntityType.ITEM_TEST_PLAN]
 				)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
@@ -211,9 +209,9 @@ class QueryPlannerTest extends Specification {
 	def "should create a query from a main chart query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : TEST_CASE,
-				targetEntities : [REQUIREMENT, TEST_CASE]
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.TEST_CASE,
+				targetEntities : [InternalEntityType.REQUIREMENT, InternalEntityType.TEST_CASE]
 				)
 
 		QueryPlanner planner = new QueryPlanner(cquery)
@@ -234,9 +232,9 @@ from TestCase testCase
 	def "should append a subquery to a main query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : REQUIREMENT_VERSION,
-				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.REQUIREMENT_VERSION,
+				targetEntities : [InternalEntityType.REQUIREMENT_VERSION, InternalEntityType.REQUIREMENT_VERSION_CATEGORY]
 				)
 
 		ExtendedHibernateQuery mainq =
@@ -271,9 +269,9 @@ from Requirement requirement
 	def "should not append twice a subquery to a main query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
-				rootEntity : REQUIREMENT_VERSION,
-				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
+		Query cquery = new Query(
+				rootEntity : InternalEntityType.REQUIREMENT_VERSION,
+				targetEntities : [InternalEntityType.REQUIREMENT_VERSION, InternalEntityType.REQUIREMENT_VERSION_CATEGORY]
 				)
 
 		ExtendedHibernateQuery mainq =
@@ -355,9 +353,9 @@ from Requirement requirement
 				filters : [inlinedCateg],
 				axis : [tcid]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(mainquery)
 		when :
-		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+		QueryPlanner planner = new QueryPlanner(transformer.transformToQuery())
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
 
@@ -384,9 +382,10 @@ from TestCase testCase
 			filters : [],
 			axis : [cufTextAxis]
 		)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(mainquery);
+		Query query = transformer.transformToQuery();
 		when:
-		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+		QueryPlanner planner = new QueryPlanner(query)
 
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)

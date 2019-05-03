@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
+import org.dbunit.database.QueryTableIterator
 import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
@@ -27,16 +28,16 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.ColumnPrototype
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.Operation
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.GREATER
-import static org.squashtest.tm.domain.chart.Operation.NONE
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.mkAxe
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.mkMeasure;
+import static org.squashtest.tm.service.internal.query.engine.ChartEngineTestUtils.mkAxe
+import static org.squashtest.tm.service.internal.query.engine.ChartEngineTestUtils.mkMeasure;
 
 @NotThreadSafe
 @UnitilsSupport
@@ -69,17 +70,18 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 		and :
 		def measure = new MeasureColumn(column : measureProto, operation : Operation.NONE)
-		def axe = mkAxe(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def axe = mkAxe(ColumnType.ATTRIBUTE, DataType.NUMERIC, Operation.NONE, EntityType.REQUIREMENT, "id")
 
 		ChartQuery chartquery = new ChartQuery(
 				measures : [measure],
 				axis : [axe]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartquery)
+		org.squashtest.tm.service.internal.query.engine.Query queryQ = transformer.transformToQuery()
 		when :
 
 
-		def _q = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery()
+		def _q = new QueryBuilder(queryQ).createQuery()
 		def query = _q.clone(getSession())
 		def res = query.fetch();
 
@@ -101,19 +103,20 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		def filterProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
-		def measure = mkMeasure(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def measure = mkMeasure(ColumnType.ATTRIBUTE, DataType.NUMERIC, Operation.NONE, EntityType.REQUIREMENT, "id")
 		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values : ["1"])
-		def axe = mkAxe(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def axe = mkAxe(ColumnType.ATTRIBUTE, DataType.NUMERIC, Operation.NONE, EntityType.REQUIREMENT, "id")
 
 		ChartQuery chartquery = new ChartQuery(
 				measures : [measure],
 				filters : [filter],
 				axis : [axe]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartquery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
 
-		def query = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery().clone(getSession())
+		def query = new QueryBuilder(queryT).createQuery().clone(getSession())
 		def res = query.fetch();
 
 
@@ -149,9 +152,10 @@ order by requirement.id asc"""
 				axis : [axe]
 				)
 
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery().clone(getSession())
+		def query = new QueryBuilder(queryT).createQuery().clone(getSession())
 		def res = query.fetch()
 
 		then :
@@ -186,9 +190,10 @@ order by testCase.id asc"""
 				measures : [measure],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -215,7 +220,7 @@ order by testCase.id asc"""
 
 		and :
 		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : GREATER, values : ["0"])
+		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values : ["0"])
 		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
 
 		ChartQuery chartQuery = new ChartQuery(
@@ -223,9 +228,10 @@ order by testCase.id asc"""
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -271,9 +277,10 @@ order by requirement.id asc"""
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -308,9 +315,10 @@ order by testCase.id asc"""
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -345,9 +353,10 @@ order by testCase.id asc"""
 				measures : [measure],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -386,9 +395,10 @@ order by case when automatedTest_subcolumn_sub.id is not null then true else fal
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -425,9 +435,10 @@ order by iteration.id asc"""
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -464,9 +475,10 @@ order by iteration.id asc"""
 				measures : [measure],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -499,9 +511,10 @@ order by iterationTestPlanItem.id asc"""
 				measures : [measure],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -538,9 +551,10 @@ order by iterationTestPlanItem.id asc"""
 				filters : [filter],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -582,9 +596,10 @@ order by iteration.id asc"""
 				filters : [filter, filter2],
 				axis : [axis]
 				)
-
+		ChartQueryToQueryTransformer transformer = new ChartQueryToQueryTransformer(chartQuery)
+		org.squashtest.tm.service.internal.query.engine.Query queryT = transformer.transformToQuery()
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(queryT).createQuery()
 		def clone = query.clone(getSession())
 
 		def res = clone.fetch()
@@ -610,7 +625,7 @@ order by iteration.id asc"""
 
 	class ManyQueryPojo {
 		ExtendedHibernateQuery query
-		DetailedChartQuery definition
+		org.squashtest.tm.service.internal.query.engine.Query definition
 		Set<?> expected
 	}
 }

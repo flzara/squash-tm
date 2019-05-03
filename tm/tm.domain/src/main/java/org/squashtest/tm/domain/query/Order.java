@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.query;
 
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-
 public interface Order extends ColumnPrototypeInstance {
 
 	com.querydsl.core.types.Order getOrder();

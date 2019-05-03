@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query.engine
 
 import com.querydsl.core.types.Projections
 import org.spockframework.util.NotThreadSafe
@@ -29,10 +29,10 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import static org.squashtest.tm.domain.EntityType.TEST_CASE
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.EQUALS
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.domain.query.Operation.EQUALS
+import static org.squashtest.tm.service.internal.query.engine.ChartEngineTestUtils.*
 
 @NotThreadSafe
 @UnitilsSupport
@@ -55,8 +55,8 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 				.groupBy(v.id)
 
 		and : "the definition"
-		DetailedChartQuery definition = new DetailedChartQuery(
-				filters : [mkFilter(ATTRIBUTE, NUMERIC, EQUALS, TEST_CASE, "id", ["-1"])]
+		Query definition = new Query(
+				filterQueries : [mkFilterQuery(ATTRIBUTE, NUMERIC, EQUALS, TEST_CASE, "id", ["-1"])]
 				)
 
 		when :
@@ -84,7 +84,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	class ManyQueryPojo {
 		ExtendedHibernateQuery query
-		DetailedChartQuery definition
+		Query definition
 		Set<?> expected
 	}
 }

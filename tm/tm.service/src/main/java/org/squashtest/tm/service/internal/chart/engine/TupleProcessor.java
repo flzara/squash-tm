@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
