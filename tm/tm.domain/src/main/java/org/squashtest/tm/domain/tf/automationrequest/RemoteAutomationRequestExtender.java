@@ -60,7 +60,7 @@ public class RemoteAutomationRequestExtender {
 	private AutomationRequest automationRequest;
 
 	@NotNull
-	@JoinColumn(name = "REMOTE_STATUS")
+	@Column(name = "REMOTE_STATUS")
 	private String automationRequestStatus;
 
 	public Long getId() {

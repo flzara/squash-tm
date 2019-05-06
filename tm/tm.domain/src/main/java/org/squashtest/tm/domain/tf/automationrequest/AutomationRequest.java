@@ -103,7 +103,7 @@ public class AutomationRequest implements Identified {
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
-	@OneToOne(mappedBy = "bugTracker", optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "automationRequest", optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private RemoteAutomationRequestExtender remoteAutomationRequestExtender;
 
 	public Long getId() {
