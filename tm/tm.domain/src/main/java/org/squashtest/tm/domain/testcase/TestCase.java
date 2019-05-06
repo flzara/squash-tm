@@ -65,6 +65,7 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -220,11 +221,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/*TM-13*/
 	@NotNull
 	@Column(name = "UUID")
+	@Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
 	private String uuid;
-
-	public String getUuid() {	return uuid;}
-
-	public void setUuid(String uuid) {this.uuid = uuid;	}
 
 	// *************************** CODE *************************************
 
@@ -447,6 +445,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
 		this.kind = source.getKind();
+		this.uuid = source.getUuid();
 	}
 
 	/**
@@ -980,5 +979,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void setAutomatable(@NotNull TestCaseAutomatable automatable) {
 		this.automatable = automatable;
 	}
+
+	public String getUuid() {	return uuid;}
+
+	public void setUuid(String uuid) {this.uuid = uuid;	}
 }
 
