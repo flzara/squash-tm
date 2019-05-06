@@ -53,6 +53,7 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCol
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -67,6 +68,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
@@ -192,6 +194,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private UserContextService userContextService;
+
+	@Inject
+	private TestCaseDao testCaseDao;
 
 
 	private EntityValidator entityValidator = new EntityValidator(this);
@@ -848,6 +853,19 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 3-6 : check the parameters names inside prerequisite
 		checkParamNameInString(target, logs,testCase.getPrerequisite(), TestCaseSheetColumn.TC_PRE_REQUISITE);
+
+		// 3-7 : check UUID unicity and format
+		if (!StringUtils.isBlank(testCase.getUuid())) {
+			if (testCaseDao.findTestCaseByUuid(testCase.getUuid()) != null){
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_ALREADY_EXISTING_UUID, testCase.getUuid()).build());
+			} else {
+				Pattern uuidPattern = Pattern.compile("[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}");
+				if (!uuidPattern.matcher(testCase.getUuid()).matches()){
+					logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_WRONG_UUID_FORMAT).build());
+				}
+			}
+
+		}
 
 		return logs;
 

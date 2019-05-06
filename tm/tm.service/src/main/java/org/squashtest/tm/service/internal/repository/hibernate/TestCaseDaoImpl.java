@@ -49,6 +49,9 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -113,6 +116,8 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	@Inject
 	private DSLContext DSL;
 
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	public void safePersist(TestCase testCase) {
@@ -485,6 +490,18 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 				.and(PROJECT.PROJECT_ID.eq(projectId)))
 				.and(TEST_CASE.TA_TEST.isNotNull())
 			.fetchOne().value1();
+	}
+
+	@Override
+	public TestCase findTestCaseByUuid(String uuid) {
+		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findTestCaseByUuid");
+		query.setParameter("uuid", uuid);
+		try {
+			TestCase result = (TestCase) query.getSingleResult();
+			return result;
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
