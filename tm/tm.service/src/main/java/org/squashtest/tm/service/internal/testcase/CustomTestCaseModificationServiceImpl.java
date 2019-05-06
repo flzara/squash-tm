@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -85,6 +86,9 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -200,6 +204,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
+	private ApplicationEventPublisher eventPublisher;
+
+	@Inject
 	private TestCaseFolderDao testCaseFolderDao;
 
 	@Inject
@@ -218,6 +225,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		testCaseManagementService.renameNode(testCaseId, newName);
 
+		eventPublisher.publishEvent(new TestCaseNameChangeEvent(testCaseId, newName));
+
 		LOGGER.trace("reindexing");
 		// [Issue 6337] sorry ma, they forced me to
 		reindexItpisReferencingTestCase(testCase);
@@ -235,6 +244,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} reference from '{}' to '{}' ", testCase.getId(), testCase.getReference(), reference);
 
 		testCase.setReference(reference);
+
+		eventPublisher.publishEvent(new TestCaseReferenceChangeEvent(testCaseId, reference));
 
 		LOGGER.trace("reindexing");
 		// [Issue 6337] sorry ma, they forced me to
@@ -679,6 +690,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.trace("deleting previous automated test if exists and unused");
 			taService.removeIfUnused(previousTest);
 		}
+
+		eventPublisher.publishEvent(new TestCaseScriptAutoChangeEvent(testCaseId, newTest.getFullName()));
 
 		return newTest;
 	}

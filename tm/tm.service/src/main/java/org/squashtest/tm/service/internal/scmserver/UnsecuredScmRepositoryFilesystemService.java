@@ -25,11 +25,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.library.PathService;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
@@ -53,6 +55,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	private static final String TEST_CASE_PATH_ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-\\/]";
 
 	private static final boolean USE_HIERARCHY = true;
+
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
 
 	@Inject
 	private PathService pathService;
@@ -182,12 +187,20 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			File targetStandardFile = new File(workingDirectory, correctStandardRelativePath);
 			try {
 				tryMoveFile(originalFile, targetStandardFile);
+				eventPublisher.publishEvent(
+					new TestCaseGherkinLocationChangeEvent(
+						testCase.getId(),
+						testCase.getProject().getScmRepository().getScmServer().getUrl() + "/" + correctStandardRelativePath));
 				return targetStandardFile;
 			} catch (IOException ex) {
 				// Operation failed, try with the backup name
 				File targetBackUpFile = new File(workingDirectory, correctBackupRelativePath);
 				try {
 					tryMoveFile(originalFile, targetBackUpFile);
+					eventPublisher.publishEvent(
+					new TestCaseGherkinLocationChangeEvent(
+						testCase.getId(),
+						testCase.getProject().getScmRepository().getScmServer().getUrl() + "/" + correctBackupRelativePath));
 					return targetBackUpFile;
 				} catch (IOException ioEx) {
 					throw new RuntimeException(ex);
