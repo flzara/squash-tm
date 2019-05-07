@@ -81,8 +81,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                            												 "mDataProp": "listScriptConflict",
                            												  "mRender": function (data) {
                            												  							var btn=""
+                           												  							var title = translator.get('test-case.automation-btn-conflict')
                            																				if (data!=''){
-                           																					btn='<input type="button" class="tf-sm script-conflict" th:title="#{test-case.automation-btn-conflict}"  th:text="#{test-case.automation-btn-conflict}"></button>';
+                           																					btn='<button class="tf-sm script-conflict" >'+ title +'</button>';
                            																				}else {
                            																						btn="-"
                            																				}

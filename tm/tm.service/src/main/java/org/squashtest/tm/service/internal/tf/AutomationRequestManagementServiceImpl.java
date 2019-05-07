@@ -330,7 +330,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 			testCaseModificationService.removeAutomation(tc.getId());
 		}
 
-		StringJoiner stringJoiner = new StringJoiner(",");
+		StringJoiner stringJoiner = new StringJoiner("#");
 		automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
 
 		requestDao.updateConflictAssociation(tc.getId(), stringJoiner.toString());
