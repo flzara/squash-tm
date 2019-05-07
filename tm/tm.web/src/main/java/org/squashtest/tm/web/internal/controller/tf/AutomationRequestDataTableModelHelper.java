@@ -33,10 +33,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 
@@ -76,12 +73,20 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
+		data.put("listScriptConflict",  convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()));
 		data.put("writable", isWritable(item.getTestCase(), true));
 		data.put("writableAutom", isWritable(item.getTestCase(), false));
 
 		return data;
 	}
 
+	/*TM-13*/
+	private List<String> convertChaineToList(String chaine){
+
+		String[] list = chaine.split("#");
+		ArrayList listScript = new ArrayList(Arrays.asList(list));
+		return listScript;
+	}
 	// Issue 7880
 	private String populateScriptAuto(AutomationRequest item) {
 		if (item.getProject().hasTestAutomationProjects()) {
