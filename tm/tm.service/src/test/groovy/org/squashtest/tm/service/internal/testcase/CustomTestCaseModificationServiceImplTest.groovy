@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
+import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomField
@@ -45,6 +46,8 @@ import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
+import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
+import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
@@ -66,6 +69,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	IndexationService indexationService = Mock()
 	ActionTestStepDao actionStepDao = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
+	ApplicationEventPublisher eventPublisher = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -85,6 +89,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.indexationService = indexationService
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
+		service.eventPublisher = eventPublisher
 	}
 
 	def "should find test case and add a step at last position"() {
@@ -306,7 +311,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		]
 		1 *indexationService.batchReindexItpi([1L, 2L])
 		1 * indexationService.batchReindexTc([10L])
-
+		1 * eventPublisher.publishEvent(_) >> { args ->
+			def event = args[0]
+			assert event instanceof TestCaseNameChangeEvent
+			assert event.testCaseId == 10L
+			assert event.newName == "Bob"
+		}
 	}
 
 
@@ -334,6 +344,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		]
 		1 *indexationService.batchReindexItpi([1L, 2L])
 		1 * indexationService.batchReindexTc([10L])
+		1 * eventPublisher.publishEvent(_) >> { args ->
+			def event = args[0]
+			assert event instanceof TestCaseReferenceChangeEvent
+			assert event.testCaseId == 10L
+			assert event.newReference == "reref"
+		}
 
 	}
 

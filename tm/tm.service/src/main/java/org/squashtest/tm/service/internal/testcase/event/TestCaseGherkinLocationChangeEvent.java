@@ -29,6 +29,7 @@ public class TestCaseGherkinLocationChangeEvent extends TestCaseBaseEvent {
 		this.gherkinFileLocation = newGherkinLocation;
 	}
 
+	public Long getTestCaseId() { return (Long) getSource(); }
 	public String getGherkinFileLocation() {
 		return gherkinFileLocation;
 	}

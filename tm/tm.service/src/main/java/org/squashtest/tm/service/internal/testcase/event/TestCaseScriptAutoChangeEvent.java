@@ -29,6 +29,8 @@ public class TestCaseScriptAutoChangeEvent extends TestCaseBaseEvent {
 		this.scriptLocation = newScriptLocation;
 	}
 
+	public Long getTestCaseId() { return (Long) getSource(); }
+
 	public String getScriptLocation() {
 		return scriptLocation;
 	}
