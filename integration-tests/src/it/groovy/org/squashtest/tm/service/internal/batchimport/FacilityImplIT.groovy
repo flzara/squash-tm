@@ -174,6 +174,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		t.importanceAuto == Boolean.FALSE
 		t.importance == TestCaseImportance.LOW
+		t.uuid == "44d63d7e-11dd-44b0-b584-565b6f791fa9"
 
 		storedcufs.size() == 2
 		storedcufs.hasCuf "TXT_TC", "shazam"
@@ -243,6 +244,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		new ListItemReference("TYP_REGRESSION_TESTING").references(t.type)
 		storedcufs.hasCuf  "CK_TC" , "false"
+		t.uuid == "44d63d7e-11dd-44b0-b584-565b6f791fa4"
 
 	}
 
