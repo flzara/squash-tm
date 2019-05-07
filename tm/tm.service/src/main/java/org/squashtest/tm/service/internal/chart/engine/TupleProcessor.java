@@ -212,7 +212,6 @@ class TupleProcessor {
 					break;
 
 				// the cases below are why we are doing all of this
-				case REQUIREMENT_STATUS:
 				case LEVEL_ENUM:
 					inLoopComparator  = comparing(levelExtractor(idx), nullsFirst(this::compareLevelEnum));
 					break;
