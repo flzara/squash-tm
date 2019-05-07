@@ -99,4 +99,383 @@
     </sql>
   </changeSet>
 
+
+  <!-- =====================================================================================
+
+    TM-282 : https://project.squashtest.org/browse/TM-282
+
+  Summary
+  +++++++
+
+  The modelization in the database of CHART_QUERY and associated tables will now evolve into
+  a generalized form, QUERY_MODEL (and associated tables).
+
+  The previous model was incomplete, because in the context of charts we could make some
+  assumptions that would make up for its shortcomings. For instance, the ordering was
+  always set to Ascending, and always applied to Axis columns only.
+
+  In the new modelization we now need those assumptions aren't always true and the missing
+  concepts must be added. Instead of Axis, Measure and Filter we now have four possible
+  roles for a Column Prototype : Projection, Aggregation, Filtering and Ordering. Note that
+  the new semantic is much closer to SQL concepts, whereas the former one was closer
+  to the business concepts (ie, the charts).
+
+
+  Migration
+  +++++++++
+
+  The tables CHART_QUERY, CHART_AXIS_COLUMN, CHART_FILTER and CHART_MEASURE_COLUMN are special
+  in the sense that they contain both referential data (you can generate a new schema from
+  an earlier version to see they aren't initially empty), and user data (more entries goes
+  into them as users create more charts).
+
+  The referential data in those tables are the components of subqueries which calculate the
+  value of certain CHART_COLUMN_PROTOTYPEs (ie of type 'CALCULATED'). They work exactly like
+  user-defined queries and are treated just the same. Those elements that constitute the
+  calculated subqueries are the sole property of squash-tm
+  and will be re-modelized in the new format, ie they will be the initial entries for
+  QUERY_MODEL, PROJECTION_CLAUSE etc. They will be removed from CHART_AXIS_COLUMN and alike
+  accordingly, leaving only user data in them.
+
+  Note that the former modelization will be partially maintained : CHART_AXIS_COLUMN will
+  still exist despite being redundant regarding the new table AGGREGATION_CLAUSE, which is
+  almost identical in term of structure and function. Maintaining those redundant tables is
+  interesting because :
+    a/ we break much less code that way, especially in the UI and
+    b/ charts are specialized queries for a dedicated business, and it makes sense to keep it
+    that way instead of converting everything to a one-size-fit-all format (note : there is
+    no eurosceptic subtext in that statement).
+
+  However, when a chart query must be executed at runtime, the execution service should first
+  be converted to the new QUERY_MODEL format (specifying ordering etc), because that's what
+  the engine will now accept.
+
+
+  Migration implementation
+  ++++++++++++++++++++++++
+
+  - TODO : document once I actually decided how to do it
+
+
+  ====================================================================================== -->
+
+  <changeSet id="tm-1.20.0-TM-282-00" author="bsiri">
+    <comment>Preparatory step : dropping foreign keys pointing to CHART_QUERY and CHART_COLUMN_PROTOTYPE.</comment>
+
+
+    <!-- foreign keys pointing to : CHART_QUERY -->
+
+    <dropForeignKeyConstraint baseTableName="CHART_DEFINITION" constraintName="fk_chart_query"/>
+    <dropForeignKeyConstraint baseTableName="CHART_COLUMN_PROTOTYPE" constraintName="fk_column_query"/>
+    <dropForeignKeyConstraint baseTableName="CHART_AXIS_COLUMN" constraintName="fk_chart_axis_chart_query"/>
+    <dropForeignKeyConstraint baseTableName="CHART_FILTER" constraintName="fk_chart_FILTER_chart_query"/>
+    <dropForeignKeyConstraint baseTableName="CHART_MEASURE_COLUMN" constraintName="fk_chart_measure_chart_query"/>
+
+    <!-- foreign keys pointing to : CHART_COLUMN_PROTOTYPE -->
+
+    <dropForeignKeyConstraint baseTableName="CHART_COLUMN_ROLE" constraintName="fk_column_role_chart_column"/>
+    <dropForeignKeyConstraint baseTableName="CHART_AXIS_COLUMN" constraintName="fk_axis_column_chart_column"/>
+    <dropForeignKeyConstraint baseTableName="CHART_FILTER" constraintName="fk_chart_filter_chart_column"/>
+    <dropForeignKeyConstraint baseTableName="CHART_MEASURE_COLUMN" constraintName="fk_chart_measure_chart_column"/>
+
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-282-01" author="bsiri" >
+    <comment>Rename CHART_QUERY and CHART_COLUMN_PROTOTYPE</comment>
+
+    <renameTable oldTableName="CHART_QUERY" newTableName="QUERY_MODEL"/>
+    <renameTable oldTableName="CHART_COLUMN_PROTOTYPE" newTableName="QUERY_COLUMN_PROTOTYPE"/>
+
+    <!--
+      Also rename the ID columns while we're at it. Mysql will not complain since we dropped the foreign keys first.
+    -->
+    <renameColumn tableName="QUERY_MODEL" oldColumnName="CHART_QUERY_ID" newColumnName="QUERY_MODEL_ID" columnDataType="BIGINT"/>
+    <renameColumn tableName="QUERY_COLUMN_PROTOTYPE" oldColumnName="CHART_COLUMN_ID" newColumnName="QUERY_COLUMN_ID" columnDataType="BIGINT"/>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-282-02" author="bsiri">
+    <comment>Create the new tables that hosts the query components.</comment>
+
+
+    <comment>
+      This table define which columns are part of tuple returned by a query.
+    </comment>
+    <createTable tableName="QUERY_PROJECTION_COLUMN" >
+
+      <column name="QUERY_PROJECTION_ID" type="BIGINT" remarks="autogenerated primary key" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="QUERY_COLUMN_ID" type="BIGINT" remarks="foreign key to the QUERY_COLUMN_PROTOTYPE this projection applies to">
+        <constraints nullable="false" foreignKeyName="fk_query_projection_query_column"
+                     references="QUERY_COLUMN_PROTOTYPE(QUERY_COLUMN_ID)" />
+      </column>
+
+      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_projection_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
+      </column>
+
+      <column name="LABEL" type="java.sql.Types.VARCHAR(30)"
+              remarks="A label for this projected column. Will override the default label of the column prototype if non null."/>
+
+      <column name="PROJECTION_OPERATION" type="java.sql.Types.VARCHAR(20)" remarks="the operation applied to the column, if any."/>
+
+      <column name="PROJECTION_RANK" type="java.sql.Types.INTEGER"
+              remarks="the order in which this projected column in the returned tuple."/>
+
+      <column name="CUF_ID" type="BIGINT" remarks="the custom field id for this projection column, if the referenced column is a custom field."/>
+
+    </createTable>
+
+
+
+    <comment>
+      This table indicates which projected columns are aggregated on for a given query.
+    </comment>
+    <createTable tableName="QUERY_AGGREGATION_COLUMN" >
+
+      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_aggr_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
+      </column>
+
+      <column name="PROJECTION_COLUMN_ID" type="BIGINT" remarks="foreign key to the QUERY_PROJECTION_COLUMN which must be aggregated on">
+        <constraints nullable="false" foreignKeyName="fk_query_aggr_query_projection"
+                     references="QUERY_PROJECTION_COLUMN(QUERY_PROJECTION_ID)" />
+      </column>
+
+      <column name="AGGREGATION_RANK" type="java.sql.Types.INTEGER"
+              remarks="the order in which this projected column in the returned tuple."/>
+
+    </createTable>
+
+
+    <comment>
+      This table defines the columns on which one want to filter the data.
+    </comment>
+
+    <createTable tableName="QUERY_FILTER_COLUMN">
+      <column name="QUERY_FILTER_ID" type="BIGINT" autoIncrement="true" remarks="autogenerated ID">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="QUERY_COLUMN_ID" type="BIGINT" remarks="foreign key to a QUERY_COLUMN_PROTOTYPE">
+        <constraints nullable="false" foreignKeyName="fk_query_filter_query_column"
+                     references="QUERY_COLUMN_PROTOTYPE(QUERY_COLUMN_ID)" />
+      </column>
+
+      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_filter_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
+      </column>
+
+      <column name="FILTER_OPERATION" type="java.sql.Types.VARCHAR(20)" remarks="a comparison operator"/>
+
+      <column name="CUF_ID" type="BIGINT" remarks="the custom field id for this filter column, if the referenced column is a custom field."/>
+
+    </createTable>
+
+    <createIndex tableName="QUERY_FILTER_COLUMN" indexName="idx_query_filter">
+      <column name="QUERY_FILTER_ID" />
+    </createIndex>
+
+
+
+
+    <comment>
+      This table holds the values used by a QUERY_FILTER_COLUMN.
+    </comment>
+    <createTable tableName="QUERY_FILTER_VALUES">
+
+      <column name="QUERY_FILTER_ID" type="BIGINT" remarks="foreign key to QUERY_FILTER_COLUMN" >
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_filter_value_query_filter" references="QUERY_FILTER_COLUMN(QUERY_FILTER_ID)" />
+      </column>
+
+      <column name="FILTER_VALUE" type="java.sql.Types.VARCHAR(255)" remarks="a value for this filter"/>
+
+    </createTable>
+
+
+
+    <comment>
+      This table indicates how the projected columns are ordered.
+    </comment>
+
+    <createTable tableName="QUERY_ORDERING_COLUMN" >
+
+      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_order_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
+      </column>
+
+      <column name="PROJECTION_COLUMN_ID" type="BIGINT" remarks="foreign key to the QUERY_PROJECTION_COLUMN which must be ordered">
+        <constraints nullable="false" foreignKeyName="fk_query_order_query_projection"
+                     references="QUERY_PROJECTION_COLUMN(QUERY_PROJECTION_ID)" />
+      </column>
+
+      <column name="ORDER_RANK" type="java.sql.Types.INTEGER"
+              remarks="the order in which this ordering instruction must be treated."/>
+
+      <column name="ORDER_DIR" type="java.sql.Types.CHAR(3)" defaultValue="ASC" remarks="either ASC or DESC"/>
+
+    </createTable>
+
+  </changeSet>
+
+
+
+
+  <changeSet id="tm-1.20.0-TM-282-03" author="bsiri">
+    <comment>Now the fun part : migrate the former content into the new content</comment>
+
+    <!-- TODO -->
+
+  </changeSet>
+
+
+  <!--
+    MORE REWIRING
+
+    Tables CHART_FILTER, CHART_AXIS_COLUMN and CHART_MEASURE_COLUMN now point directly to the CHART_DEFINITION.
+  -->
+
+
+  <changeSet id="tm-1.20.0-TM-282-04a" author="bsiri">
+    <comment>Creating the new foreign keys from CHART_X_COLUMNS tables, to CHART_DEFINITION. Initially nullable.</comment>
+
+    <addColumn tableName="CHART_AXIS_COLUMN">
+      <column name="CHART_DEFINITION_ID" type="BIGINT" remarks="foreign key to the chart_definition">
+        <constraints nullable="true" foreignKeyName="fk_chart_axis_chart_def" references="CHART_DEFINITION(CHART_ID)"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="CHART_FILTER">
+      <column name="CHART_DEFINITION_ID" type="BIGINT" remarks="foreign key to the chart_definition" >
+        <constraints nullable="true" foreignKeyName="fk_chart_filter_chart_def" references="CHART_DEFINITION(CHART_ID)" />
+      </column>
+    </addColumn>
+
+    <addColumn tableName="CHART_MEASURE_COLUMN">
+      <column name="CHART_DEFINITION_ID" type="BIGINT" remarks="foreign key to the chart_definition">
+        <constraints nullable="true" foreignKeyName="fk_chart_meas_chart_def" references="CHART_DEFINITION(CHART_ID)"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-282-04b-mysql" author="bsiri" dbms="h2,mysql">
+    <comment>Populating the new columns foreign keys</comment>
+
+    <!-- TODO -->
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-282-04c" author="bsiri">
+    <comment>Now dropping the former, useless columns </comment>
+
+    <dropColumn tableName="CHART_AXIS_COLUMN" columnName="QUERY_ID"/>
+    <dropColumn tableName="CHART_FILTER" columnName="QUERY_ID"/>
+    <dropColumn tableName="CHART_MEASURE_COLUMN" columnName="QUERY_ID"/>
+
+  </changeSet>
+
+  <!--
+    FINALIZATION
+  -->
+
+
+  <changeSet id="tm-1.20.0-TM-282-XX" author="bsiri">
+    <comment>Now rewire the remaining foreign keys.</comment>
+
+
+    <!-- foreign keys pointing to : CHART_QUERY -->
+
+    <addForeignKeyConstraint constraintName="fk_chart_def_query_model"
+                             baseTableName="CHART_DEFINITION" baseColumnNames="QUERY_ID"
+                             referencedTableName="QUERY_MODEL" referencedColumnNames="QUERY_MODEL_ID"/>
+    <addForeignKeyConstraint constraintName="fk_query_col_query_model"
+                             baseTableName="QUERY_COLUMN_PROTOTYPE" baseColumnNames="SUBQUERY_ID"
+                             referencedTableName="QUERY_MODEL" referencedColumnNames="QUERY_MODEL_ID"/>
+
+
+    <!-- foreign keys pointing to : CHART_COLUMN_PROTOTYPE -->
+
+    <addForeignKeyConstraint constraintName="fk_column_role_chart_column"
+                             baseTableName="CHART_COLUMN_ROLE" baseColumnNames="CHART_COLUMN_ID"
+                             referencedTableName="QUERY_COLUMN_PROTOTYPE" referencedColumnNames="QUERY_COLUMN_ID"/>
+    <addForeignKeyConstraint constraintName="fk_axis_column_chart_column"
+                             baseTableName="CHART_AXIS_COLUMN" baseColumnNames="CHART_COLUMN_ID"
+                             referencedTableName="QUERY_COLUMN_PROTOTYPE" referencedColumnNames="QUERY_COLUMN_ID"/>
+    <addForeignKeyConstraint constraintName="fk_chart_filter_chart_column"
+                             baseTableName="CHART_FILTER" baseColumnNames="CHART_COLUMN_ID"
+                             referencedTableName="QUERY_COLUMN_PROTOTYPE" referencedColumnNames="QUERY_COLUMN_ID"/>
+    <addForeignKeyConstraint constraintName="fk_chart_measure_chart_column"
+                             baseTableName="CHART_MEASURE_COLUMN" baseColumnNames="CHART_COLUMN_ID"
+                             referencedTableName="QUERY_COLUMN_PROTOTYPE" referencedColumnNames="QUERY_COLUMN_ID"/>
+
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-1.20.0-TM-282-XXb" author="bsiri" dbms="postgresql">
+
+    <comment>For postgresql, we need to explicitly create the index on foreign key columns.</comment>
+
+    <createIndex tableName="QUERY_PROJECTION_COLUMN" indexName="idx_fk_query_projection_query_column">
+      <column name="QUERY_COLUMN_ID" type="BIGINT"/>
+    </createIndex>
+    <createIndex tableName="QUERY_PROJECTION_COLUMN" indexName="idx_fk_query_projection_query_model">
+      <column name="QUERY_MODEL_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_aggr_query_proj">
+      <column name="PROJECTION_COLUMN_ID" type="BIGINT"/>
+    </createIndex>
+    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_aggr_query_model">
+      <column name="QUERY_MODEL_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="QUERY_FILTER_COLUMN" indexName="idx_fk_query_filter_query_column">
+      <column name="QUERY_COLUMN_ID" type="BIGINT"/>
+    </createIndex>
+    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_filter_query_model">
+      <column name="QUERY_MODEL_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="QUERY_ORDERING_COLUMN" indexName="idx_fk_query_order_query_proj">
+      <column name="PROJECTION_COLUMN_ID" type="BIGINT"/>
+    </createIndex>
+    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_aggr_query_model">
+      <column name="QUERY_MODEL_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_fk_chatr_axis_chart_def">
+      <column name="CHART_DEFINITION_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="CHART_FILTER" indexName="idx_fk_chart_filter_chart_def">
+      <column name="CHART_DEFINITION_ID" type="BIGINT"/>
+    </createIndex>
+
+
+    <createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_fk_chart_meas_chart_def">
+      <column name="CHART_DEFINITION_ID" type="BIGINT"/>
+    </createIndex>
+
+  </changeSet>
+
+
+
 </databaseChangeLog>
