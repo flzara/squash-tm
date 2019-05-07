@@ -25,8 +25,6 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.query.DataType
-import org.squashtest.tm.domain.query.Operation
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

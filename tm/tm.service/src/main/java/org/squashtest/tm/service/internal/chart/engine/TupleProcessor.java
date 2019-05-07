@@ -29,12 +29,11 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.service.internal.query.engine.DetailedChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -212,6 +211,7 @@ class TupleProcessor {
 					break;
 
 				// the cases below are why we are doing all of this
+				case REQUIREMENT_STATUS:
 				case LEVEL_ENUM:
 					inLoopComparator  = comparing(levelExtractor(idx), nullsFirst(this::compareLevelEnum));
 					break;

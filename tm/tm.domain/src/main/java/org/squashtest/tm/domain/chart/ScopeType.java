@@ -20,24 +20,15 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * Created by jthebault on 29/11/2016.
+ * Created by jthebault on 19/09/2016.
  */
-public interface IChartQuery {
-
-	List<Filter> getFilters();
-
-	List<AxisColumn> getAxis();
-
-	List<MeasureColumn> getMeasures();
-
-	QueryStrategy getStrategy();
-
-	NaturalJoinStyle getJoinStyle();
-
-	Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
+public enum ScopeType {
+	// @formatter:off
+	DEFAULT,//The perimeter will be the current project of the chart if user look just the chart or the dashboard's project id the chart is looked into a dashboard
+	PROJECTS,//The perimeter will be a fix selection of project
+	CUSTOM;//the perimeter is a custom selection of entities.
+	// All joins on other entities will be performed on all database.
+	//So the final perimeter is selected entities + all entities linked to them
+	// @formatter:on
 }

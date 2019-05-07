@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
-import org.squashtest.tm.domain.query.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
 
 import java.util.List;
 import java.util.Map;

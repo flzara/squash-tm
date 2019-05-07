@@ -20,24 +20,19 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.squashtest.tm.domain.EntityType;
 
-/**
- * Created by jthebault on 29/11/2016.
- */
-public interface IChartQuery {
+public interface ColumnPrototypeInstance {
 
-	List<Filter> getFilters();
+	ColumnPrototype getColumn();
 
-	List<AxisColumn> getAxis();
+	EntityType getEntityType();
 
-	List<MeasureColumn> getMeasures();
+	SpecializedEntityType getSpecializedType();
 
-	QueryStrategy getStrategy();
+	DataType getDataType();
 
-	NaturalJoinStyle getJoinStyle();
+	Operation getOperation();
 
-	Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
+	Long getCufId();
 }
