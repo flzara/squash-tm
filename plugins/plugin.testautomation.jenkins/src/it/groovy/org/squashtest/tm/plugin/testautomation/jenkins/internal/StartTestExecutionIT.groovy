@@ -46,32 +46,33 @@ class StartTestExecutionIT extends Specification {
 
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
-        TestAutomationServer server
+	TestAutomationServer server
+	HttpRequestFactory httpRequestFactory = Mock()
 
 	def setup() {
-                // server reference conf
+		// server reference conf
 		def stubPort = System.getProperty("stubTaServer.webapp.port")
-                server = new TestAutomationServer("server", new URL("http://localhost:${stubPort}/stub-ta-server"), "login", "password")		
-                // this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
+		server = new TestAutomationServer("server", new URL("http://localhost:${stubPort}/stub-ta-server"), "login", "password")
+		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
 		new CallbackURL().setURL("http://127.0.0.1/squashtm")
-                
-                // project conf
-                project.server >> server
+
+		// project conf
+		project.server >> server
 		project.jobName >> "fancy job"
-                
-                              
-                // build definition conf  
-                AutomatedExecutionExtender exec = Mock()
+
+
+		// build definition conf
+		AutomatedExecutionExtender exec = Mock()
 		exec.getId() >> 12
 		AutomatedTest test = Mock()
 		test.fullName >> "fancy test"
 		exec.getAutomatedTest() >> test
-        
-		buildDef.project >> project		
+
+		buildDef.project >> project
 		buildDef.parameterizedExecutions >> [
 			new Couple(exec, [batman: "leatherpants"])
 		]
-                
+
 	}
 
 
@@ -82,56 +83,56 @@ class StartTestExecutionIT extends Specification {
 
 		return res
 	}
-        
-        def "should fetch a crumb on a CSRF-protected instance"(){
-            
+
+	def "should fetch a crumb on a CSRF-protected instance"(){
+
 		given:
-                HttpClientProvider provider = new HttpClientProvider()
+		HttpClientProvider provider = new HttpClientProvider()
 
 		when:
-		def crumb = new StartTestExecution(buildDef, provider, "EXTERNAL-ID").getCrumb(server);
-                
-                then :
-                crumb.crumb == "90aa718b6091e5caef090ee450219b6b"
-                crumb.crumbRequestField == "Jenkins-Crumb"
-                
-        }
+		def crumb = new StartTestExecution(buildDef, provider, httpRequestFactory, "EXTERNAL-ID").getCrumb(server);
+
+		then :
+		crumb.crumb == "90aa718b6091e5caef090ee450219b6b"
+		crumb.crumbRequestField == "Jenkins-Crumb"
+
+	}
 
 	def "should start a new build with a callback url set in database"() {
 		given:
-			HttpClientProvider provider = new HttpClientProvider()
+		HttpClientProvider provider = new HttpClientProvider()
 
-			ConfigurationService configService = Mock()
-			configService.findConfiguration(_) >> "https://127.0.0.1:8080/squash/"
+		ConfigurationService configService = Mock()
+		configService.findConfiguration(_) >> "https://127.0.0.1:8080/squash/"
 
-			HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
-			httpRequestFactory.configService = configService
+		HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
+		httpRequestFactory.configService = configService
 
-			StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, "EXTERNAL-ID")
-			startTestExecution.httpRequestFactory = httpRequestFactory
+		StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, httpRequestFactory, "EXTERNAL-ID")
+		startTestExecution.httpRequestFactory = httpRequestFactory
 
 		when:
-			startTestExecution.run()
+		startTestExecution.run()
 		then:
-			notThrown(Exception)
+		notThrown(Exception)
 	}
 
 	def "should start a new build with a callback url set in configuration file"() {
 		given:
-			HttpClientProvider provider = new HttpClientProvider()
+		HttpClientProvider provider = new HttpClientProvider()
 
-			ConfigurationService configService = Mock()
-			configService.findConfiguration(_) >> null
+		ConfigurationService configService = Mock()
+		configService.findConfiguration(_) >> null
 
-			HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
-			httpRequestFactory.configService = configService
+		HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
+		httpRequestFactory.configService = configService
 
-			StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, "EXTERNAL-ID")
-			startTestExecution.httpRequestFactory = httpRequestFactory
+		StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, httpRequestFactory, "EXTERNAL-ID")
+		startTestExecution.httpRequestFactory = httpRequestFactory
 
 		when:
-			startTestExecution.run()
+		startTestExecution.run()
 		then:
-			notThrown(Exception)
+		notThrown(Exception)
 	}
 }

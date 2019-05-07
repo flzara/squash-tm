@@ -73,7 +73,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	private HttpClientProvider clientProvider;
 
 	private JsonParser jsonParser = new JsonParser();
-	private HttpRequestFactory requestFactory = new HttpRequestFactory();
+
+	@Inject
+	private HttpRequestFactory requestFactory;
 
 	@Value("${tm.test.automation.pollinterval.millis}")
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
@@ -166,7 +168,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		for (BuildDef buildDef : buildDefs) {
 
-			new StartTestExecution(buildDef, clientProvider, externalId).run();
+			new StartTestExecution(buildDef, clientProvider, requestFactory, externalId).run();
 
 		}
 

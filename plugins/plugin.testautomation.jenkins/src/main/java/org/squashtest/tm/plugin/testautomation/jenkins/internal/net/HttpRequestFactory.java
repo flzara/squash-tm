@@ -29,6 +29,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -41,6 +42,7 @@ import org.squashtest.tm.service.internal.configuration.ConfigurationServiceImpl
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
+import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,6 +54,7 @@ import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenk
  * TODO Crudely migrated from httpclient 3 to httpclient 4. Test coverage was mostly null so when it breaks,
  * write some tests. Or use RestTemplate.
  */
+@Component
 public class HttpRequestFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
@@ -91,7 +94,8 @@ public class HttpRequestFactory {
 
 	private final CallbackURLProvider callbackProvider = new CallbackURLProvider();
 
-	private ConfigurationService configService = new ConfigurationServiceImpl();
+	@Inject
+	private ConfigurationService configService;
 
 	public String newRandomId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
