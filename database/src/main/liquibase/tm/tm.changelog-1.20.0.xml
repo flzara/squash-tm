@@ -237,14 +237,15 @@
     </comment>
     <createTable tableName="QUERY_AGGREGATION_COLUMN" >
 
-      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
-        <constraints nullable="false"
-                     foreignKeyName="fk_query_aggr_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
-      </column>
-
       <column name="PROJECTION_COLUMN_ID" type="BIGINT" remarks="foreign key to the QUERY_PROJECTION_COLUMN which must be aggregated on">
         <constraints nullable="false" foreignKeyName="fk_query_aggr_query_projection"
                      references="QUERY_PROJECTION_COLUMN(QUERY_PROJECTION_ID)" />
+      </column>
+
+      <column name="QUERY_MODEL_ID" type="BIGINT"
+              remarks="foreign key to a QUERY_MODEL. Note that this is a denormalization : that value could be retrieved via the referenced projection column">
+        <constraints nullable="false"
+                     foreignKeyName="fk_query_aggr_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
       </column>
 
       <column name="AGGREGATION_RANK" type="java.sql.Types.INTEGER"
@@ -307,7 +308,8 @@
 
     <createTable tableName="QUERY_ORDERING_COLUMN" >
 
-      <column name="QUERY_MODEL_ID" type="BIGINT" remarks="foreign key to a QUERY_MODEL">
+      <column name="QUERY_MODEL_ID" type="BIGINT"
+              remarks="foreign key to a QUERY_MODEL. Note that this is a denormalization : that value could be retrieved via the referenced projection column">
         <constraints nullable="false"
                      foreignKeyName="fk_query_order_query_model" references="QUERY_MODEL(QUERY_MODEL_ID)" />
       </column>
@@ -327,12 +329,101 @@
   </changeSet>
 
 
+  <!--
+
+    POPULATION OF THE NEW COLUMN TABLES
+
+    The content of the new Projection, Aggregation, Filter and Ordering comes from the initial
+    CHART_FILTER, CHART_FILTER_VALUES, CHART_AXIS_COLUMN and CHART_MEASURE_COLUMN.
+
+    The process is the following :
+
+    * CHART_AXIS_COLUMN are migrated first. Those columns are inserted as Projections, Aggregation and Ordering (asc only). Their rank are preserved.
+    * CHART_MEASURE_COLUMN are migrated then. Those columns are inserted as Projections. Their rank are adjusted, so that they come after the (former data from the) axes.
+    * CHART_FILTER are migrated as-is, along with their values.
+
+    Note that, however, the only entries that must be migrated are those that are part of subqueries (ie the strategy is <> 'MAIN').
+    The other entries are user-defined data that should not be migrated.
+
+  -->
 
 
-  <changeSet id="tm-1.20.0-TM-282-03" author="bsiri">
+
+  <changeSet id="tm-1.20.0-TM-282-03-mysql" author="bsiri">
     <comment>Now the fun part : migrate the former content into the new content</comment>
 
-    <!-- TODO -->
+    <sql>
+
+      -- --------------------
+      -- migration of axis --
+      -- --------------------
+
+
+      insert into QUERY_PROJECTION_COLUMN (query_column_id, query_model_id, label, projection_operation, projection_rank, cuf_id)
+      select cac.chart_column_id, cac.query_id, cac.label, cac.axis_operation, cac.axis_rank, cac.cuf_id
+      from CHART_AXIS_COLUMN cac
+      inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
+      where qm.strategy != 'MAIN';
+
+
+      insert into QUERY_AGGREGATION_COLUMN (query_model_id, aggregation_rank, projection_column_id)
+      select cac.query_id, cac.axis_rank,
+      (
+        select qpc.query_projection_id
+        from QUERY_PROJECTION_COLUMN qpc
+        where qpc.query_column_id = cac.chart_column_id and qpc.query_model_id = cac.query_id
+      ) as proj_id
+      from CHART_AXIS_COLUMN cac
+      inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
+      where qm.strategy != 'MAIN';
+
+
+
+      insert into QUERY_ORDERING_COLUMN (query_model_id, projection_column_id, order_rank, order_dir)
+      select qac.query_model_id, qac.projection_column_id, qac.aggregation_rank, 'ASC'
+      from QUERY_AGGREGATION_COLUMN qac;
+
+
+      -- ------------------------
+      -- migration of measures --
+      -- ------------------------
+
+
+      insert into QUERY_PROJECTION_COLUMN (query_column_id, query_model_id, label, projection_operation, cuf_id, projection_rank)
+      select cmc.chart_column_id, cmc.query_id, cmc.label, cmc.measure_operation, cmc.cuf_id, cmc.measure_rank + (
+        select count(*) from CHART_AXIS_COLUMN cac where cac.query_id = cmc.query_id
+      ) as meas_rank
+      from CHART_MEASURE_COLUMN cmc
+      inner join QUERY_MODEL qm on cmc.query_id = qm.query_model_id
+      where qm.strategy != 'MAIN';
+
+
+      -- -----------------------
+      -- migration of filters --
+      -- -----------------------
+
+      insert into QUERY_FILTER_COLUMN (query_column_id, query_model_id, filter_operation, cuf_id)
+      select cfc.chart_column_id, cfc.query_id, cfc.filter_operation, cfc.cuf_id
+      from CHART_FILTER cfc
+      inner join QUERY_MODEL qm on cfc.query_id = qm.query_model_id
+      where qm.strategy != 'MAIN';
+
+
+      insert into QUERY_FILTER_VALUES (filter_value, query_filter_id)
+      select cfv.filter_value, qfc.query_filter_id
+      from CHART_FILTER_VALUES cfv
+      inner join CHART_FILTER cfc on cfv.filter_id = cfc.filter_id
+      inner join QUERY_MODEL qm on cfc.query_id = qm.query_model_id
+      inner join QUERY_FILTER_COLUMN qfc on (
+      cfc.chart_column_id = qfc.query_column_id and
+      cfc.query_id = qfc.query_model_id and
+      cfc.filter_operation = qfc.filter_operation
+      )
+      where qm.strategy != 'MAIN';
+
+
+
+    </sql>
 
   </changeSet>
 
@@ -367,17 +458,96 @@
 
   </changeSet>
 
-
-  <changeSet id="tm-1.20.0-TM-282-04b-mysql" author="bsiri" dbms="h2,mysql">
+  <changeSet id="tm-1.20.0-TM-282-04b-h2" author="bsiri" dbms="h2">
     <comment>Populating the new columns foreign keys</comment>
 
-    <!-- TODO -->
+    <sql>
+      update CHART_AXIS_COLUMN cac
+      set cac.chart_definition_id = (
+        select cd.chart_id
+        from QUERY_MODEL qm
+        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+        where qm.strategy = 'MAIN'
+        and cac.query_id = qm.query_model_id
+      );
+
+      update CHART_FILTER cf
+      set cf.chart_definition_id = (
+        select cd.chart_id
+        from QUERY_MODEL qm
+        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+        where qm.strategy = 'MAIN'
+        and cf.query_id = qm.query_model_id
+      );
+
+      update CHART_MEASURE_COLUMN cmc
+      set cmc.chart_definition_id = (
+        select cd.chart_id
+        from QUERY_MODEL qm
+        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+        where qm.strategy = 'MAIN'
+        and cmc.query_id = qm.query_model_id
+      );
+    </sql>
+
+
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-282-04b-mysql" author="bsiri" dbms="mysql">
+    <comment>Populating the new columns foreign keys</comment>
+
+    <sql>
+      update CHART_AXIS_COLUMN cac
+      inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      set cac.chart_definition_id = cd.chart_id
+      where qm.strategy = 'MAIN';
+
+
+      update CHART_FILTER cf
+      inner join QUERY_MODEL qm on cf.query_id = qm.query_model_id
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      set cf.chart_definition_id = cd.chart_id
+      where qm.strategy = 'MAIN';
+
+
+      update CHART_MEASURE_COLUMN cmc
+      inner join QUERY_MODEL qm on cmc.query_id = qm.query_model_id
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      set cmc.chart_definition_id = cd.chart_id
+      where qm.strategy = 'MAIN';
+
+
+    </sql>
+
 
   </changeSet>
 
 
   <changeSet id="tm-1.20.0-TM-282-04c" author="bsiri">
-    <comment>Now dropping the former, useless columns </comment>
+    <comment>Deleting the former referential data (that now exist in the new QUERY_X tables)</comment>
+
+    <sql>
+
+      delete from CHART_FILTER_VALUES
+      where filter_id in (
+      select filter_id from CHART_FILTER where chart_definition_id is null
+      );
+
+      delete from CHART_FILTER where chart_definition_id is null;
+
+      delete from CHART_AXIS_COLUMN where chart_definition_id is null;
+
+      delete from CHART_MEASURE_COLUMN where chart_definition_id is null;
+
+
+    </sql>
+
+  </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-282-04d" author="bsiri">
+    <comment>Now dropping the former, useless columns that pointed to QUERY_MODEL </comment>
 
     <dropColumn tableName="CHART_AXIS_COLUMN" columnName="QUERY_ID"/>
     <dropColumn tableName="CHART_FILTER" columnName="QUERY_ID"/>
@@ -385,13 +555,13 @@
 
   </changeSet>
 
+
   <!--
     FINALIZATION
   -->
 
-
-  <changeSet id="tm-1.20.0-TM-282-XX" author="bsiri">
-    <comment>Now rewire the remaining foreign keys.</comment>
+  <changeSet id="tm-1.20.0-TM-282-05" author="bsiri">
+    <comment>Rewiring the remaining foreign keys.</comment>
 
 
     <!-- foreign keys pointing to : CHART_QUERY -->
@@ -424,7 +594,7 @@
 
 
 
-  <changeSet id="tm-1.20.0-TM-282-XXb" author="bsiri" dbms="postgresql">
+  <changeSet id="tm-1.20.0-TM-282-05b" author="bsiri" dbms="postgresql">
 
     <comment>For postgresql, we need to explicitly create the index on foreign key columns.</comment>
 
