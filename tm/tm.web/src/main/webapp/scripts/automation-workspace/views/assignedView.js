@@ -147,7 +147,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [15]
+                        "aTargets": [16]
                     }],
                     "bFilter": true,
 
