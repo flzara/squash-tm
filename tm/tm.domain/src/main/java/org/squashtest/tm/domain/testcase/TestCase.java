@@ -445,7 +445,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
 		this.kind = source.getKind();
-		this.uuid = source.getUuid();
 	}
 
 	/**

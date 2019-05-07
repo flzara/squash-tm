@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.result.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.0.result.dtd">
 <dataset >
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>

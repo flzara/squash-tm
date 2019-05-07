@@ -46,8 +46,8 @@
 	
 	<!-- ============================ test case ======================================================== -->
 	
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-12" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-11" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-12" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa2"/>
 	
 	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="0"/> <!--  tcfolder 1 contains tc1 -->
 	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-12" CONTENT_ORDER="1"/> <!--  tcfolder 1 contains t2 -->
