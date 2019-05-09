@@ -22,9 +22,11 @@ package org.squashtest.tm.domain.query;
 
 import com.querydsl.core.types.Order;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,14 +35,23 @@ import javax.persistence.Table;
 @Table(name = "QUERY_ORDERING_COLUMN")
 public class QueryOrderingColumn {
 
-	@JoinColumn(name = "QUERY_PROJECTION_ID")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "QUERY_PROJECTION_ID", nullable = false)
 	private QueryProjectionColumn queryProjectionColumn;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "ORDER_DIR")
 	private Order order = Order.ASC;
 
 	public QueryProjectionColumn getQueryProjectionColumn() {
 		return queryProjectionColumn;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
+	public Order getOrder() {
+		return order;
 	}
 }

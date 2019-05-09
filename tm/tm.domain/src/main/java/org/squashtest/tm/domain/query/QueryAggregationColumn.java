@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.query;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,6 +31,10 @@ import javax.persistence.Table;
 public class QueryAggregationColumn {
 
 	@JoinColumn(name = "PROJECTION_COLUMN_ID")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private QueryProjectionColumn projectionColumn;
+
+	public QueryProjectionColumn getProjectionColumn() {
+		return projectionColumn;
+	}
 }

@@ -46,8 +46,8 @@ public class QueryFilterColumn {
 	@SequenceGenerator(name = "query_filter_column_query_filter_id", sequenceName = "query_filter_column_query_filter_id")
 	private Long id;
 
-	@JoinColumn(name = "QUERY_COLUMN_ID")
 	@ManyToOne
+	@JoinColumn(name = "QUERY_COLUMN_ID", nullable = false)
 	private QueryColumnPrototype columnPrototype;
 
 	@Enumerated(EnumType.STRING)

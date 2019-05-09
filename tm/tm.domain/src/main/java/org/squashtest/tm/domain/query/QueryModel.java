@@ -90,4 +90,20 @@ public class QueryModel {
 	public NaturalJoinStyle getJoinStyle() {
 		return joinStyle;
 	}
+
+	public List<QueryAggregationColumn> getAggregationColumns() {
+		return aggregationColumns;
+	}
+
+	public List<QueryFilterColumn> getFilterColumns() {
+		return filterColumns;
+	}
+
+	public List<QueryProjectionColumn> getProjectionColumns() {
+		return projectionColumns;
+	}
+
+	public List<QueryOrderingColumn> getOrderingColumns() {
+		return orderingColumns;
+	}
 }
