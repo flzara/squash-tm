@@ -37,16 +37,11 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-import org.squashtest.tm.service.configuration.ConfigurationService;
-import org.squashtest.tm.service.internal.configuration.ConfigurationServiceImpl;
-import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 import javax.inject.Inject;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenkinsConnector.getJobSubPath;
 
@@ -89,13 +84,10 @@ public class HttpRequestFactory {
 		new BasicNameValuePair(TREE, "suites[name,cases[name,status]]")
 	};
 
-
 	private final JsonParser jsonParser = new JsonParser();
 
-	private final CallbackURLProvider callbackProvider = new CallbackURLProvider();
-
 	@Inject
-	private ConfigurationService configService;
+	private CallbackUrlProvider callbackUrlProvider;
 
 	public String newRandomId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
@@ -173,14 +165,7 @@ public class HttpRequestFactory {
 	}
 
 	private String getSquashCallbackUrl() {
-		String squashCallbackUrl;
-		String urlFromDatabase = configService.findConfiguration(ConfigurationService.Properties.SQUASH_CALLBACK_URL);
-		if(urlFromDatabase != null) {
-			squashCallbackUrl = urlFromDatabase;
-		} else {
-			squashCallbackUrl = callbackProvider.get().toExternalForm();
-		}
-		return squashCallbackUrl;
+		return callbackUrlProvider.getCallbackUrl().toExternalForm();
 	}
 
 	public HttpGet newCheckQueue(TestAutomationProject project) {
@@ -297,29 +282,6 @@ public class HttpRequestFactory {
 			sb.insert(insertIndex, "," + JOB_PARAM);
 		}
 		return sb.toString();
-	}
-
-	private static class CallbackURLProvider {
-
-		public URL get() {
-
-			CallbackURL callback = CallbackURL.getInstance();
-			String strURL = callback.getValue();
-
-			try {
-				return new URL(strURL);
-			} catch (MalformedURLException ex) {
-				BadConfiguration bc = new BadConfiguration(
-					"Test Automation configuration : The test could not be started because the service is not configured properly. The url '" + strURL + "' specified at property '" + callback.getConfPropertyName()
-						+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please contact the administration team.", ex);
-
-				bc.setPropertyName(callback.getConfPropertyName());
-
-				throw bc;
-			}
-
-		}
-
 	}
 
 }

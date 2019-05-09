@@ -151,6 +151,11 @@ public class ConfigAdministrationController {
 		eventPublisher.publishEvent(event);
     }
 
+	private void sendUpdateEvent(String source) {
+		ConfigUpdateEvent event = new ConfigUpdateEvent(source);
+		eventPublisher.publishEvent(event);
+	}
+
 	@RequestMapping(method = RequestMethod.POST, params={"id=callbackUrl", VALUE})
 	@ResponseBody
 	public String changeCallbackUrl(@RequestParam(VALUE) String newCallbackUrl) {
@@ -160,6 +165,7 @@ public class ConfigAdministrationController {
 			throw new WrongUrlException("callbackUrl", ex);
 		}
 		configService.set(ConfigurationService.Properties.SQUASH_CALLBACK_URL, newCallbackUrl);
+		sendUpdateEvent("squashtest.tm.callbackurl");
 		return newCallbackUrl;
 	}
 

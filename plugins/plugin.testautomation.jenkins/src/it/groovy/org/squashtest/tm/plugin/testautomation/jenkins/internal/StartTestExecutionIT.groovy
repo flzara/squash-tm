@@ -29,11 +29,14 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackURL
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackUrlProvider
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackUrlProvider
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
 import org.squashtest.tm.service.configuration.ConfigurationService
 import spock.lang.Specification
+
+import javax.security.auth.callback.Callback
 import java.net.URL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution
@@ -53,9 +56,6 @@ class StartTestExecutionIT extends Specification {
 		// server reference conf
 		def stubPort = System.getProperty("stubTaServer.webapp.port")
 		server = new TestAutomationServer("server", new URL("http://localhost:${stubPort}/stub-ta-server"), "login", "password")
-		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
-		new CallbackURL().setURL("http://127.0.0.1/squashtm")
-
 		// project conf
 		project.server >> server
 		project.jobName >> "fancy job"
@@ -102,11 +102,11 @@ class StartTestExecutionIT extends Specification {
 		given:
 		HttpClientProvider provider = new HttpClientProvider()
 
-		ConfigurationService configService = Mock()
-		configService.findConfiguration(_) >> "https://127.0.0.1:8080/squash/"
-
 		HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
-		httpRequestFactory.configService = configService
+
+		CallbackUrlProvider callbackUrlProvider = Mock()
+		callbackUrlProvider.getCallbackUrl() >> new URL("http://127.0.0.1/squash")
+		httpRequestFactory.callbackUrlProvider = callbackUrlProvider
 
 		StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, httpRequestFactory, "EXTERNAL-ID")
 		startTestExecution.httpRequestFactory = httpRequestFactory
@@ -121,14 +121,13 @@ class StartTestExecutionIT extends Specification {
 		given:
 		HttpClientProvider provider = new HttpClientProvider()
 
-		ConfigurationService configService = Mock()
-		configService.findConfiguration(_) >> null
-
 		HttpRequestFactory httpRequestFactory = new HttpRequestFactory()
-		httpRequestFactory.configService = configService
+
+		CallbackUrlProvider callbackUrlProvider = Mock()
+		callbackUrlProvider.getCallbackUrl() >> new URL("http://127.0.0.1/squash")
+		httpRequestFactory.callbackUrlProvider = callbackUrlProvider
 
 		StartTestExecution startTestExecution = new StartTestExecution(buildDef, provider, httpRequestFactory, "EXTERNAL-ID")
-		startTestExecution.httpRequestFactory = httpRequestFactory
 
 		when:
 		startTestExecution.run()
