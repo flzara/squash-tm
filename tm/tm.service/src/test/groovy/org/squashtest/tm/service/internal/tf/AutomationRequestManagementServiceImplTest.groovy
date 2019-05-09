@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.tf
 
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import spock.lang.Specification
@@ -37,29 +41,45 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 	TestCaseDao testCaseDao = Mock()
 	TestCaseModificationService testCaseModificationService = Mock()
+	UnsecuredAutomatedTestManagerService taService = Mock()
 
 	def setup(){
 		service.testCaseDao = testCaseDao
 		service.requestDao = automationRequestDao
 		service.testCaseModificationService = testCaseModificationService
+		service.taService = taService
 	}
 
 	def "Should find no TA script to associate with test case and remove previous auto associated script"(){
 		given:
+		// A test Case
 		TestCase targetTC = Mock()
 		targetTC.id >> -1L
 		targetTC.uuid >> "uuidNotFound"
 		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
 
+		// An automation Request
 		AutomationRequest automationRequest = Mock()
 		automationRequest.manual >> false
 		targetTC.automationRequest >> automationRequest
 
-		testCaseDao.findById(-1L) >> targetTC
-		testCaseModificationService.findAssignableAutomationTests(-1L) >> createAssignableTestList()
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		project.testAutomationProjects >> []
+		targetTC.project >> project
+
+		// A test automation server
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		project.testAutomationServer >> server
+
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateScriptTa(-1L)
+		service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		1 * testCaseModificationService.removeAutomation(-1L)
@@ -68,20 +88,36 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 	def "Should find no TA script to associate with test case and not remove previous auto associated script"(){
 		given:
+
+		// A TestCase
 		TestCase targetTC = Mock()
 		targetTC.id >> -1L
 		targetTC.uuid >> "uuidNotFound"
 		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
 
+
+		// An AutomationRequest
 		AutomationRequest automationRequest = Mock()
 		automationRequest.manual >> true
 		targetTC.automationRequest >> automationRequest
 
-		testCaseDao.findById(-1L) >> targetTC
-		testCaseModificationService.findAssignableAutomationTests(-1L) >> createAssignableTestList()
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		project.testAutomationProjects >> []
+		targetTC.project >> project
+
+		// A TestAutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		project.testAutomationServer >> server
+
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateScriptTa(-1L)
+		service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		0 * testCaseModificationService.removeAutomation(-1L)
@@ -90,53 +126,104 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 	def "Should find one TA script to associate with test case"(){
 		given:
+
+		// A TestCase
 		TestCase targetTC = Mock()
 		targetTC.id >> -1L
 		targetTC.uuid >> "uuid1"
 		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
 
+		// An AutomationRequest
 		AutomationRequest automationRequest = Mock()
 		automationRequest.manual >> true
 		targetTC.automationRequest >> automationRequest
 
-		testCaseDao.findById(-1L) >> targetTC
-		testCaseModificationService.findAssignableAutomationTests(-1L) >> createAssignableTestList()
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		targetTC.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateScriptTa(-1L)
+		service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
-		1 * testCaseModificationService.bindAutomatedTest(-1L, -1L, "test1")
+		1 * testCaseModificationService.bindAutomatedTestAutomatically(-1L, -1L, "test1")
 		1 * automationRequestDao.updateIsManual(-1L, false)
 	}
 
 	def "Should find more than one TA script to associate with test case"(){
 		given:
+		// A TestCase
 		TestCase targetTC = Mock()
 		targetTC.id >> -1L
 		targetTC.uuid >> "uuid2"
 		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
 
+		// An AutomationRequest
 		AutomationRequest automationRequest = Mock()
 		automationRequest.manual >> true
 		targetTC.automationRequest >> automationRequest
 
-		testCaseDao.findById(-1L) >> targetTC
-		testCaseModificationService.findAssignableAutomationTests(-1L) >> createAssignableTestList()
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		targetTC.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateScriptTa(-1L)
+		service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		1 * testCaseModificationService.removeAutomation(-1L)
 		1 * automationRequestDao.updateIsManual(-1L, false)
-		1 * automationRequestDao.updateConflictAssociation(-1L, "jobTA/test1,jobTA/test2")
+		1 * automationRequestDao.updateConflictAssociation(-1L, "jobTA/test1#jobTA/test2")
 	}
 
 	def createAssignableTestList() {
+
+		// Create a mocked TestAutomationProject
 		TestAutomationProject automationProject = Mock()
 		automationProject.jobName >> "jobTA"
 		automationProject.id >> -1L
+
+		// With a mocked AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+
+		// Create a list of mocked AutomatedTest
 		AutomatedTest automatedTest1 = Mock()
 		automatedTest1.name >> "test1"
 		automatedTest1.getFullName() >> "jobTA/test1"
@@ -150,8 +237,10 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		automatedTest3.getFullName() >> "jobTA/test3"
 		automatedTest3.linkedTC >> []
 
+		// Linked them to the previously created AutomationProject
 		[automatedTest1, automatedTest2, automatedTest3].each {it.project >> automationProject}
 
+		// Create the corresponding TestAutomationProjectContent
 		TestAutomationProjectContent projectContent = Mock()
 		projectContent.project >> automationProject
 		projectContent.tests >> [automatedTest1, automatedTest2, automatedTest3]

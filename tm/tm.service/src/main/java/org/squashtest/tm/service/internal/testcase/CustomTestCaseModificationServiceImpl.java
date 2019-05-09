@@ -650,6 +650,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
+		Collection<TestAutomationProject> taProjects = extractAutomationProject(testCase);
+
+		return taService.listTestsInProjects(taProjects);
+	}
+
+	private Collection<TestAutomationProject> extractAutomationProject(TestCase testCase){
+
 		Collection<TestAutomationProject> taProjects = testCase.getProject().getTestAutomationProjects();
 
 		if (LOGGER.isTraceEnabled()){
@@ -657,7 +664,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.trace("involved test automation projects are : {}", taProjectIds);
 		}
 
-		return taService.listTestsInProjects(taProjects);
+		return taProjects;
 	}
 
 	@Override
@@ -959,6 +966,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName) {
+			return bindAutomatedTest(testCaseId, taProjectId, testName);
 	}
 
 	@Override

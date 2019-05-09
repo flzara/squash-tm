@@ -611,6 +611,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.deselectAll(table);
             },
 
+					  trySquashTAScriptAssociation : function (tcIds) {
+						  return $.ajax({
+								url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
+							  method: 'POST',
+								data: {
+									"tcIds": tcIds
+								}
+						  });
+					  },
+
             actions: function (table, url) {
                 var tcIds = this.getSelectedTcIds(table);
 
@@ -660,6 +670,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         notification.showWarning(translator.get("automation.notification.script.none"));
                     } */else {
                         self.updateStatus(domtable, "AUTOMATED");
+                        self.trySquashTAScriptAssociation(tcIds);
                     }
                 });
 

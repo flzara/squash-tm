@@ -29,10 +29,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
@@ -42,6 +43,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
@@ -55,6 +57,9 @@ import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
@@ -111,6 +116,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
+	@Inject
+	private UnsecuredAutomatedTestManagerService taService;
 
 	// *************** implementation of the finder interface *************************
 
@@ -236,33 +243,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public void updateScriptTa(Long tcId) {
-
-		TestCase tc = testCaseDao.findById(tcId);
-
-		Collection<TestAutomationProjectContent> testAutomationProjects =  testCaseModificationService.findAssignableAutomationTests(tcId);
-
-		List<AutomatedTest> assignableAutomatedTestList = testAutomationProjects.stream()
-			.map(TestAutomationProjectContent::getTests)
-			.flatMap(Collection::stream)
-			.filter(automatedTest -> automatedTest.getLinkedTC().contains(tc.getUuid()))
-			.collect(Collectors.toList());
-
-		if(assignableAutomatedTestList.size() > 0){
-			if(assignableAutomatedTestList.size() == 1){
-				addOrEditAutomatedScript(tc,assignableAutomatedTestList.get(0));
-			}
-			else {
-				manageConflictAssociation(tc, assignableAutomatedTestList);
-			}
-		} else {
-			manageNoScript(tc);
-		}
-
-	}
-
-
-	@Override
 	public void changeStatus(List<Long> tcIds, AutomationRequestStatus automationRequestStatus) {
 		String username = userCtxt.getUsername();
 		User user = userDao.findUserByLogin(username);
@@ -322,6 +302,72 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return requestDao.countAutomationRequestValid(projectIds);
 	}
 
+	// **************************** TA script auto association section *************************************
+
+	@Override
+	public void updateTAScript(List<Long> tcIds) {
+
+		// 1 - We fetch all the test cases from DB (with project and AutomationProject list)
+		List<TestCase> testCases = testCaseDao.findAllByIdsWithProject(tcIds);
+
+		// 2 - We extract all test automation projects for the given TM projects
+		List<TestAutomationProject> testAutomationProjects = testCases.stream()
+			.flatMap(tc -> tc.getProject().getTestAutomationProjects().stream())
+			// 3 - We filter them to have one element only with the same combination remote server/jobName. This in order to make the minimum call to the automation server in step 4.
+			.filter(distinctByKey(tap -> Arrays.asList(tap.getServer().getId(), tap.getJobName())))
+			.collect(Collectors.toList());
+
+		// 4 - We retrieve the TA scripts from the TA jobs
+		Collection<TestAutomationProjectContent> taProjectContents = taService.listTestsFromRemoteServers(testAutomationProjects);
+
+		testCases.forEach(tc -> {
+			// if block to update only automatable test cases in a project with automation workflow allowed.
+			if(tc.getProject().isAllowAutomationWorkflow()
+				&& TestCaseAutomatable.Y.equals(tc.getAutomatable())) {
+				// We extract the TestAutomationProjectContent relevant for the current test case
+				List<TestAutomationProjectContent> testAutomationProjectContentsFilteredByTestCaseAutomationServer =
+					taProjectContents.stream().filter(tapc -> tapc.getProject().getServer().getId().equals(tc.getProject().getTestAutomationServer().getId())).collect(Collectors.toList());
+
+				// Finally we do the TA script association
+				doTAScriptAssignation(tc, testAutomationProjectContentsFilteredByTestCaseAutomationServer);
+			} else {
+				throw new IllegalArgumentException();
+			}
+		});
+	}
+
+	// Method allowed to retrieve distinct element from a list based on multiple attributes.
+	// Thank you stack overflow: https://stackoverflow.com/questions/48165456/retrieve-distinct-element-based-on-multiple-attributes-of-java-object-using-java
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
+	}
+
+	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents){
+		List<AutomatedTest> assignableAutomatedTestList = extractAssignableAutomatedTestList(testCase, testAutomationProjectContents);
+
+		if(assignableAutomatedTestList.size() > 0){
+			if(assignableAutomatedTestList.size() == 1){
+				addOrEditAutomatedScript(testCase,assignableAutomatedTestList.get(0));
+			}
+			else {
+				manageConflictAssociation(testCase, assignableAutomatedTestList);
+			}
+		} else {
+			manageNoScript(testCase);
+		}
+	}
+
+	private List<AutomatedTest> extractAssignableAutomatedTestList (TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents) {
+		List<AutomatedTest> assignableAutomatedTestList = testAutomationProjectContents.stream()
+			.map(TestAutomationProjectContent::getTests)
+			.flatMap(Collection::stream)
+			.filter(automatedTest -> automatedTest.getLinkedTC().contains(testCase.getUuid()))
+			.collect(Collectors.toList());
+
+		return assignableAutomatedTestList;
+	}
+
 	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList){
 
 		requestDao.updateIsManual(tc.getId(), false);
@@ -337,9 +383,14 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void addOrEditAutomatedScript(TestCase tc, AutomatedTest automatedTest){
+
+		// Because we made the minimum call to automation server in updateTAScript method, the AutomatedTest in argument is not necessarily linked to the test case's AutomationProject.
+		// Hence the stream on the list of TestAutomationProject of the test case's tm project.
+		TestAutomationProject trueAutomationProject = tc.getProject().getTestAutomationProjects().stream().filter(tap -> tap.getJobName().equals(automatedTest.getProject().getJobName())).findFirst().get();
+
 		requestDao.updateIsManual(tc.getId(), false);
 
-		testCaseModificationService.bindAutomatedTest(tc.getId(), automatedTest.getProject().getId(), automatedTest.getName());
+		testCaseModificationService.bindAutomatedTestAutomatically(tc.getId(), trueAutomationProject.getId(), automatedTest.getName());
 	}
 
 	private void manageNoScript(TestCase tc){

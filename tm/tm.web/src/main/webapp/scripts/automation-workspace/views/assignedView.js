@@ -582,6 +582,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.storage.remove(this.key);
                 this.deselectAll(table);
             },
+					  trySquashTAScriptAssociation : function (tcIds) {
+						  return $.ajax({
+							  url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
+							  method: 'POST',
+							  data: {
+								  "tcIds": tcIds
+							  }
+						  });
+					  },
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
@@ -623,9 +632,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     var scripts = self.checkScriptAutoIsAbsent(domtable);
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts !== 0) {
+                    } /* else if (scripts !== 0) {
                         notification.showWarning(translator.get("automation.notification.script.none"));
-                    } else {
+                    } */ else {
                         $.ajax({
                             url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                             method: 'POST',
@@ -636,6 +645,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         }).success(function () {
                             domtable.refresh();
                         });
+                        self.trySquashTAScriptAssociation(tcIds);
                     }
                     self.storage.remove(self.key);
                     self.deselectAll(domtable);

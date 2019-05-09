@@ -243,6 +243,7 @@
 	@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByUuid", query = "select tc from TestCase tc where tc.uuid = :uuid"),
+	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr inner join fetch pr.testAutomationProjects where tc.id in (:tcIds)"),
 
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the

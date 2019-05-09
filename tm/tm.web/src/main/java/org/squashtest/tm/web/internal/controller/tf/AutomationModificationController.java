@@ -91,4 +91,10 @@ public class AutomationModificationController {
 	public void assigneeToAutomationReq(@RequestParam("tcIds[]") List<Long> tcIds) {
 		automationRequestModificationService.assignedToRequest(tcIds);
 	}
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {"tcIds[]"})
+	@ResponseBody
+	public void resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
+		automationRequestModificationService.updateTAScript(tcIds);
+	}
 }

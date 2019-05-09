@@ -40,6 +40,10 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 
 	void assignedToRequest(List<Long> tcIds);
 
-	void updateScriptTa(Long tcId);
+	/**
+	 * Given a list of test case's id, will try to update value of automation script for each test case
+	 * @param tcIds : a list of test case ids
+	 */
+	void updateTAScript(List<Long> tcIds);
 
 }

@@ -504,6 +504,13 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		}
 	}
 
+	@Override
+	public List<TestCase> findAllByIdsWithProject(List<Long> testCaseIds) {
+		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findAllByIdsWithProject");
+		query.setParameter("tcIds", testCaseIds);
+		return query.getResultList();
+	}
+
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
 
 		boolean isEmpty1 = tc1.getMilestones().isEmpty();
