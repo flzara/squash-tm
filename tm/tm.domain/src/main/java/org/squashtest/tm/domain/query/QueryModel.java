@@ -114,39 +114,41 @@ public class QueryModel {
 
 	public QueryModel createCopy() {
 		QueryModel copy = new QueryModel();
+		copy.setName(getName());
+		copy.setJoinStyle(getJoinStyle());
+		copy.setStrategy(getStrategy());
 		return copy;
 	}
 
-	public List<QueryAggregationColumn> copyAggregation() {
-		List<QueryAggregationColumn> copies = new ArrayList<>();
-		for (QueryAggregationColumn queryAggregationColumn : getAggregationColumns()) {
-
-		}
-
-		return copies;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
-
-		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(4);
-
-		Collection<? extends ColumnPrototypeInstance> columns;
-
-		columns = getAggregationColumns();
-		if (! columns.isEmpty()){
-			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
-			result.put(ColumnRole.FILTER, filterTypes);
-		}
-
-		return result;
-
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
-		Set<SpecializedEntityType> types = new HashSet<>();
-		for (ColumnPrototypeInstance col : columns){
-			types.add(col.getSpecializedType());
-		}
-		return types;
+	public void setStrategy(QueryStrategy strategy) {
+		this.strategy = strategy;
+	}
+
+	public void setJoinStyle(NaturalJoinStyle joinStyle) {
+		this.joinStyle = joinStyle;
+	}
+
+	public void setAggregationColumns(List<QueryAggregationColumn> aggregationColumns) {
+		this.aggregationColumns = aggregationColumns;
+	}
+
+	public void setFilterColumns(List<QueryFilterColumn> filterColumns) {
+		this.filterColumns = filterColumns;
+	}
+
+	public void setProjectionColumns(List<QueryProjectionColumn> projectionColumns) {
+		this.projectionColumns = projectionColumns;
+	}
+
+	public void setOrderingColumns(List<QueryOrderingColumn> orderingColumns) {
+		this.orderingColumns = orderingColumns;
 	}
 }
