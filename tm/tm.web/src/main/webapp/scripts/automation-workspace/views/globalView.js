@@ -75,7 +75,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    "bSortable": true,
                                                    "aTargets": [8],
                                                    "mDataProp": "status"
-                                               }, {
+                                               },
+/*                                               {
                            												 "bSortable": false,
                            												 "aTargets": [9],
                            												 "mDataProp": "listScriptConflict",
@@ -89,30 +90,43 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                            																				}
                            																				console.log("data : "+data);
                            																				return btn
-                           										 }},{
+                           										 }},*/
+                           										 {
                                                    "bSortable": true,
-                                                   "aTargets": [10],
+                                                   "aTargets": [9],
                                                    "mDataProp": "assigned-to"
                                                }, {
                                                    "bSortable": true,
-                                                   "aTargets": [11],
+                                                   "aTargets": [10],
                                                    "mDataProp": "script",
-                                                   "sClass": "assigned-script"
+                                                   "sClass": "assigned-script",
+																									 "mRender": function (data, type, row) {
+																																var btnScript="";
+																																var $row = $(row);
+																																var title = translator.get('test-case.automation-btn-conflict');
+																																if (row['listScriptConflict'].length!=1) {
+																																	btnScript='<button class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</button>';
+																															 }else{
+																																 btnScript = data;
+																															}
+
+																															 return btnScript;
+																										}
                                                }, {
                            												 "bSortable": false,
-                           												 "aTargets": [12],
+                           												 "aTargets": [11],
                            												 "mDataProp": "uuid"
                            										 },{
                                                    "bSortable": true,
-                                                   "aTargets": [13],
+                                                   "aTargets": [12],
                                                    "mDataProp": "transmitted-on"
                                                }, {
                                                    "bSortable": true,
-                                                   "aTargets": [14],
+                                                   "aTargets": [13],
                                                    "mDataProp": "assigned-on"
                                                }, {
                                                    "bSortable": false,
-                                                   "aTargets": [15],
+                                                   "aTargets": [14],
                                                    "mDataProp": "tc-id",
                                                    "sClass": "centered",
                                                    "sWidth": "2.5em",
@@ -122,10 +136,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                }, {
                                                    "mDataProp": "writableAutom",
                                                    "bVisible": false,
-                                                   "aTargets": [16]
+                                                   "aTargets": [15]
                                                }, {
                                                    "bSortable": false,
-                                                   "aTargets": [17],
+                                                   "aTargets": [16],
                                                    "mDataProp": "checkbox",
                                                    "sClass": "centered",
                                                    "mRender": function (data, type, row) {
@@ -150,11 +164,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                }, {
                                                    "mDataProp": "requestId",
                                                    "bVisible": false,
-                                                   "aTargets": [18]
+                                                   "aTargets": [17]
                                                }, {
 																									 "mDataProp": "listScriptConflict",
 																									 "bVisible": false,
-																									 "aTargets": [19]
+																									 "aTargets": [18]
 																							 }],
                                                "bFilter": true,
 
@@ -205,6 +219,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    }
 
                                                    edObj.buttons = function (settings, original) {
+
                                                        //first apply the original function
                                                        edFnButtons.call(this, settings, original);
 
@@ -225,11 +240,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                                                    // this is overriden so as to enforce the width.
                                                    edObj.element = function (settings, original) {
+
                                                        var input = edFnElements.call(this, settings, original);
                                                        input.css('width', '70%');
                                                        input.css('height', '16px');
                                                        return input;
                                                    };
+
 
                                                    $.editable.addInputType('ta-picker', edObj);
                                                    var cellId = "assigned-script" + data["entity-id"];
@@ -253,6 +270,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                            id: cellId
                                                        };
 
+                                                       /*TM-13: liste script en conflit*/
+
+																											cell.on('click', '.script-conflict', function(evt){
+
+																													var $btn = $(evt.currentTarget);
+																													var $row = $btn.parents('tr');
+																													var rowmodel = sqtable.fnGetData($row);
+																													var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+																													var listScript = list.replace(',', '');
+																													notification.showInfo(listScript);
+
+																													evt.stopPropagation();
+																											 });
+
                                                        cell.on("click", function () {
                                                            $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
                                                        });
@@ -274,6 +305,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                            }
                                                            return false;// see comment above
                                                        });
+                                                       /*TM-13
+                                                       cell.on('click', '.assigned-script', function () {
+																														if(data['script']!=null) {
+																															$row.addClass("no-user-select");
+																														}
+																													} );*/
                                                    } else if (isGherkin && data['script'] !== '-') {
                                                        cell.css({ 'color': 'gray', 'font-style': 'italic' });
                                                    }
@@ -312,21 +349,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 sqtable.on('change', function () {
 
                     self.changeNumberSelectedRows($("#automation-table").squashTable().getSelectedRows().length);
-                });
-
-                // TM-13 : script association conflict
-                sqtable.on('click', '.script-conflict', function(evt){
-
-                	var $btn = $(evt.currentTarget);
-                	var $row = $btn.parents('tr');
-
-                	var rowmodel = sqtable.fnGetData($row);
-
-                	var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
-									var listScript = list.replace(',', '');
-                	notification.showInfo(listScript);
-
-                	console.log(rowmodel);
                 });
             },
 
