@@ -22,17 +22,18 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.IChartQuery;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.IQueryModel;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryOrderingColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +49,7 @@ import java.util.Set;
  * @author bsiri
  *
  */
-class DetailedChartQuery extends ChartQuery{
+class DetailedChartQuery extends QueryModel {
 
 	private InternalEntityType rootEntity;
 
@@ -69,25 +70,27 @@ class DetailedChartQuery extends ChartQuery{
 	 *
 	 * @param parent
 	 */
-	DetailedChartQuery(IChartQuery parent){
+	DetailedChartQuery(IQueryModel parent){
 
 		super();
 
-		getAxis().addAll(parent.getAxis());
+		getAggregationColumns().addAll(parent.getAggregationColumns());
 
-		getFilters().addAll(parent.getFilters());
+		getFilterColumns().addAll(parent.getFilterColumns());
 
-		getMeasures().addAll(parent.getMeasures());
+		getProjectionColumns().addAll(parent.getProjectionColumns());
+
+		getOrderingColumns().addAll(parent.getOrderingColumns());
 
 		setJoinStyle(parent.getJoinStyle());
 
 		setStrategy(parent.getStrategy());
 
 		// find the root entity
-		rootEntity = InternalEntityType.fromSpecializedType(parent.getAxis().get(0).getSpecializedType());
+		rootEntity = InternalEntityType.fromSpecializedType(parent.getAggregationColumns().get(0).getColumn().getSpecializedType());
 
 		// find the measured Entity
-		measuredEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
+		measuredEntity = InternalEntityType.fromSpecializedType(parent.getProjectionColumns().get(0).getSpecializedType());
 
 		// find all the target entities
 		computeTargetEntities();
@@ -151,35 +154,43 @@ class DetailedChartQuery extends ChartQuery{
 
 
 	@Override
-	public void setMeasures(List<MeasureColumn> measures){
-		getMeasures().addAll(measures);
+	public void setAggregationColumns(List<QueryAggregationColumn> aggregationColumns) {
+		getAggregationColumns().addAll(aggregationColumns);
 	}
 
 	@Override
-	public void setAxis(List<AxisColumn> axes){
-		getAxis().addAll(axes);
+	public void setFilterColumns(List<QueryFilterColumn> filterColumns) {
+		getFilterColumns().addAll(filterColumns);
 	}
 
 	@Override
-	public void setFilters(List<Filter> filters){
-		getFilters().addAll(filters);
+	public void setProjectionColumns(List<QueryProjectionColumn> projectionColumns) {
+		getProjectionColumns().addAll(projectionColumns);
 	}
 
+	@Override
+	public void setOrderingColumns(List<QueryOrderingColumn> orderingColumns) {
+		getOrderingColumns().addAll(orderingColumns);
+	}
 
 	private Collection<ColumnPrototypeInstance> findSubqueriesForStrategy(PerStrategyColumnFinder finder){
 		Collection<ColumnPrototypeInstance> found = new ArrayList<>();
 
-		Collection<? extends ColumnPrototypeInstance> measures = new ArrayList<>(getMeasures());
-		CollectionUtils.filter(measures, finder);
-		found.addAll(measures);
+		Collection<? extends ColumnPrototypeInstance> projection = new ArrayList<>(getProjectionColumns());
+		CollectionUtils.filter(projection, finder);
+		found.addAll(projection);
 
-		Collection<? extends ColumnPrototypeInstance> axes = new ArrayList<>(getAxis());
-		CollectionUtils.filter(axes, finder);
-		found.addAll(axes);
+		Collection<? extends ColumnPrototypeInstance> aggregation = new ArrayList<>(getAggregationColumns());
+		CollectionUtils.filter(aggregation, finder);
+		found.addAll(aggregation);
 
-		Collection<? extends ColumnPrototypeInstance> filters = new ArrayList<>(getFilters());
+		Collection<? extends ColumnPrototypeInstance> filters = new ArrayList<>(getFilterColumns());
 		CollectionUtils.filter(filters, finder);
 		found.addAll(filters);
+
+		Collection<? extends ColumnPrototypeInstance> ordering = new ArrayList<>(getOrderingColumns());
+		CollectionUtils.filter(ordering, finder);
+		found.addAll(ordering);
 
 		return found;
 	}
@@ -193,7 +204,7 @@ class DetailedChartQuery extends ChartQuery{
 
 		@Override
 		public boolean evaluate(Object col) {
-			ColumnPrototype proto = ((ColumnPrototypeInstance)col).getColumn();
+			QueryColumnPrototype proto = ((ColumnPrototypeInstance)col).getColumn();
 			return proto.getColumnType() == ColumnType.CALCULATED &&
             proto.getSubQuery().getStrategy() == strategy;
 		}

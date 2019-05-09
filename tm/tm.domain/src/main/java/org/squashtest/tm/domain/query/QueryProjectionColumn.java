@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.query;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,7 +37,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "QUERY_PROJECTION_COLUMN")
-public class QueryProjectionColumn {
+public class QueryProjectionColumn implements ColumnPrototypeInstance{
 
 	@Id
 	@Column(name = "QUERY_PROJECTION_ID")
@@ -57,10 +59,38 @@ public class QueryProjectionColumn {
 	@Column(name = "PROJECTION_OPERATION")
 	private Operation operation;
 
-	private Long cufId;
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return columnPrototype;
+	}
 
-	public Long getId() {
-		return id;
+	@Override
+	public EntityType getEntityType() {
+		return columnPrototype.getEntityType();
+	}
+
+	@Override
+	public SpecializedEntityType getSpecializedType() {
+		return columnPrototype.getSpecializedType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return columnPrototype.getDataType();
+	}
+
+	@Override
+	public Operation getOperation() {
+		return operation;
+	}
+
+	@Override
+	public Long getCufId() {
+		return getCufId();
+	}
+
+	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
+		this.columnPrototype = columnPrototype;
 	}
 
 	public QueryColumnPrototype getColumnPrototype() {
@@ -73,13 +103,5 @@ public class QueryProjectionColumn {
 
 	public String getLabel() {
 		return label;
-	}
-
-	public Operation getOperation() {
-		return operation;
-	}
-
-	public Long getCufId() {
-		return cufId;
 	}
 }

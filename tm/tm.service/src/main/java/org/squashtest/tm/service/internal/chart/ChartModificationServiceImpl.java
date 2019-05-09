@@ -32,11 +32,11 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.QQueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
@@ -91,12 +91,12 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 
 	@Override
-	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
+	public Map<EntityType, Set<QueryColumnPrototype>> getColumnPrototypes() {
 
 		JPAQueryFactory factory = new JPAQueryFactory(em);
-		QColumnPrototype prototype = QColumnPrototype.columnPrototype;
+		QQueryColumnPrototype prototype = QQueryColumnPrototype.queryColumnPrototype;
 
-		Map<EntityType, Set<ColumnPrototype>> prototypes;
+		Map<EntityType, Set<QueryColumnPrototype>> prototypes;
 
 		prototypes = factory.from(prototype).where(prototype.business.eq(true)).orderBy(prototype.id.asc())
 				.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));

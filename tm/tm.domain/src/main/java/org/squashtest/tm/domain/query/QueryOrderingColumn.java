@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.query;
 
 import com.querydsl.core.types.Order;
+import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -33,7 +34,7 @@ import javax.persistence.Table;
 
 @Embeddable
 @Table(name = "QUERY_ORDERING_COLUMN")
-public class QueryOrderingColumn {
+public class QueryOrderingColumn implements ColumnPrototypeInstance{
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "QUERY_PROJECTION_ID", nullable = false)
@@ -53,5 +54,35 @@ public class QueryOrderingColumn {
 
 	public Order getOrder() {
 		return order;
+	}
+
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return queryProjectionColumn.getColumn();
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return queryProjectionColumn.getColumn().getEntityType();
+	}
+
+	@Override
+	public SpecializedEntityType getSpecializedType() {
+		return queryProjectionColumn.getColumn().getSpecializedType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return queryProjectionColumn.getColumn().getDataType();
+	}
+
+	@Override
+	public Operation getOperation() {
+		return queryProjectionColumn.getOperation();
+	}
+
+	@Override
+	public Long getCufId() {
+		return queryProjectionColumn.getCufId();
 	}
 }

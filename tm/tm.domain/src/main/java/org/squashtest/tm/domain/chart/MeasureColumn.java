@@ -56,10 +56,6 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 
 	private Long cufId;
 
-	@ManyToOne
-	@JoinColumn(name = "CHART_DEFINITION_ID")
-	private ChartDefinition chartDefinition;
-
 	public String getLabel() {
 		return label;
 	}
@@ -104,14 +100,6 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		this.operation = operation;
 	}
 
-	public ChartDefinition getChartDefinition() {
-		return chartDefinition;
-	}
-
-	public void setChartDefinition(ChartDefinition chartDefinition) {
-		this.chartDefinition = chartDefinition;
-	}
-
 	@Override
 	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
@@ -128,7 +116,6 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		copy.setOperation(this.getOperation());
 		copy.setCufId(this.getCufId());
 		copy.setLabel(this.getLabel());
-		copy.setChartDefinition(this.getChartDefinition());
 		return copy;
 	}
 }

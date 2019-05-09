@@ -38,6 +38,7 @@
 *     You should have received a copy of the GNU Lesser General Public License
 *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
 package org.squashtest.tm.service.internal.chart.engine
 
 import javax.persistence.EntityManager;
@@ -213,7 +214,7 @@ class ScopePlannerTest extends Specification {
 
     // ****************** Extra joins computation tests ********************
 
-    @Unroll("should deduce the extra joins given the required (from scope) and possible joins (from query)")
+    @Unroll("should deduce the extra joins given the required (from scope) and possible joins (from queryModel)")
     def "should deduce the extra joins given the required (from scope) and possible joins (from query)"(){
 
         given :
@@ -232,7 +233,7 @@ class ScopePlannerTest extends Specification {
         where :
 
             scopeRequiredColumns                 |   queryPossibleColumns       |   finalColumns
-            // first dataset is the "gentle" scenario : the columns from the query win
+            // first dataset is the "gentle" scenario : the columns from the queryModel win
             [POSSIBLE_COLUMNS_ONLY]         |   [TEST_CASE_ID, CAMPAIGN_ID]     |   [TEST_CASE_ID, CAMPAIGN_ID]
             // second dataset is the "traumatic" scenario : the columns from the scope win
             [TEST_CASE_ID]                  |   [REQUIREMENT_ID]                |   [TEST_CASE_ID]
@@ -267,10 +268,10 @@ class ScopePlannerTest extends Specification {
 
     def "should generate the required extra joins between the main query and the scope"(){
 
-        given : "the extra query"
+        given : "the extra queryModel"
             def extraQuery = mockQuery('R', 'TC')
 
-        and : "the main hibernate query"
+        and : "the main hibernate queryModel"
             def r = QRequirement.requirement
             def testquery = new ExtendedHibernateQuery()
             testquery.from(r).select(r.id)
@@ -386,3 +387,4 @@ where testCase.project.id = ?1"""
 
 
 }
+*/

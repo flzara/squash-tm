@@ -56,10 +56,6 @@ public class AxisColumn implements ColumnPrototypeInstance {
 
 	private Long cufId;
 
-	@ManyToOne
-	@JoinColumn(name = "CHART_DEFINITION_ID")
-	private ChartDefinition chartDefinition;
-
 	public String getLabel() {
 		return label;
 	}
@@ -110,21 +106,12 @@ public class AxisColumn implements ColumnPrototypeInstance {
 		this.cufId = cufId;
 	}
 
-	public ChartDefinition getChartDefinition() {
-		return chartDefinition;
-	}
-
-	public void setChartDefinition(ChartDefinition chartDefinition) {
-		this.chartDefinition = chartDefinition;
-	}
-
 	public AxisColumn createCopy(){
 		AxisColumn copy = new AxisColumn();
 		copy.setColumn(this.getColumn());
 		copy.setOperation(this.getOperation());
 		copy.setCufId(this.getCufId());
 		copy.setLabel(this.getLabel());
-		copy.setChartDefinition(this.getChartDefinition());
 		return copy;
 	}
 

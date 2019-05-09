@@ -221,13 +221,13 @@ enum InternalEntityType {
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 
 
-	static InternalEntityType fromSpecializedType(SpecializedEntityType domainType){
+	static InternalEntityType fromSpecializedType(org.squashtest.tm.domain.query.SpecializedEntityType domainType){
 		String name =  domainType.getEntityType().name();
-		SpecializedEntityType.EntityRole entityRole = domainType.getEntityRole();
-		if (entityRole != null && entityRole != SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+		org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole entityRole = domainType.getEntityRole();
+		if (entityRole != null && entityRole != org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
 			name = entityRole.name();
 		}
-		if (entityRole != null && entityRole == SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+		if (entityRole != null && entityRole == org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
 			name = domainType.getEntityType().name();
 		}
 		try{

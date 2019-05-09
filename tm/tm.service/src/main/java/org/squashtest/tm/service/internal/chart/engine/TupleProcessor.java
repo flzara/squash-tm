@@ -29,11 +29,13 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -171,7 +173,7 @@ class TupleProcessor {
 			throw new IllegalStateException("TupleProcessor has not yet processed anything, this is a programming error");
 		}
 
-		int nbMeasures = definition.getMeasures().size();
+		int nbMeasures = definition.getProjectionColumns().size();
 
 		ChartSeries chartSeries = new ChartSeries();
 
@@ -179,8 +181,8 @@ class TupleProcessor {
 		chartSeries.setColours(colours);
 
 		for (int mIdx = 0; mIdx < nbMeasures; mIdx++) {
-			MeasureColumn measure = definition.getMeasures().get(mIdx);
-			chartSeries.addSerie(measure.getLabel(), series.get(mIdx));
+			QueryProjectionColumn projectionColumn = definition.getProjectionColumns().get(mIdx);
+			chartSeries.addSerie(projectionColumn.getLabel(), series.get(mIdx));
 		}
 
 		return chartSeries;
@@ -192,13 +194,13 @@ class TupleProcessor {
 
 	private void initializeTupleSorter(){
 
-		List<AxisColumn> axisColumns = definition.getAxis();
+		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
 
 		Comparator<Tuple> mainComparator = null;
 
-		for (int idx=0; idx< axisColumns.size(); idx++) {
+		for (int idx=0; idx< aggregationColumns.size(); idx++) {
 
-			AxisColumn axis = axisColumns.get(idx);
+			QueryAggregationColumn axis = aggregationColumns.get(idx);
 
 			Comparator<Tuple> inLoopComparator = null;
 
@@ -243,13 +245,13 @@ class TupleProcessor {
 
 	private void initializeAbscissaPostProcessors(){
 
-		List<AxisColumn> axisColumns = definition.getAxis();
+		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
 
 		Consumer<Object[]> mainPostprocessor = null;
 
-		for (int idx=0; idx< axisColumns.size(); idx++){
+		for (int idx=0; idx< aggregationColumns.size(); idx++){
 
-			AxisColumn axis = axisColumns.get(idx);
+			QueryAggregationColumn axis = aggregationColumns.get(idx);
 
 			Consumer<Object[]> inLoopPostProcessor = null;
 
@@ -281,10 +283,10 @@ class TupleProcessor {
 	}
 
 	private boolean isResortRequired(){
-		List<AxisColumn> axisColumns = definition.getAxis();
+		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
 
-		return axisColumns.stream()
-				   .map(AxisColumn::getDataType)
+		return aggregationColumns.stream()
+				   .map(QueryAggregationColumn::getDataType)
 				   .filter(this::isResortableType)
 				   .findAny()
 				   .isPresent();
@@ -310,10 +312,10 @@ class TupleProcessor {
 	}
 
 	private boolean isPostProcessingRequired(){
-		List<AxisColumn> axisColumns = definition.getAxis();
+		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
 
-		return axisColumns.stream()
-				   .map(AxisColumn::getDataType)
+		return aggregationColumns.stream()
+				   .map(QueryAggregationColumn::getDataType)
 				   .filter(this::isPostProcessableType)
 				   .findAny()
 				   .isPresent();
@@ -335,14 +337,14 @@ class TupleProcessor {
 		// here we will only get colours in the case where we work with a CUF List or an InfoList
 		// colours associated to "fixed list" (some classes implement Level), the colours are on the client in colours-utils.js
 		// colours-utils.js also includes the part where we fill the empty colours
-		List<AxisColumn> axis = definition.getAxis();
+		List<QueryAggregationColumn> axis = definition.getAggregationColumns();
 
 		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
 		// if there are two (trend or cumulative chart) it's the second one
 		// hence the axis.size()-1
 		int lastIndex = axis.size() -1;
 
-		AxisColumn lastAxis = axis.get(lastIndex);
+		QueryAggregationColumn lastAxis = axis.get(lastIndex);
 		switch(lastAxis.getDataType()){
 
 			case LIST :
@@ -412,8 +414,8 @@ class TupleProcessor {
  	*/
 	private void extractAbscissaAndSeries(List<Tuple> tuples){
 		// initialize temporary structures
-		int nbAxes = definition.getAxis().size();
-		int nbMeasures = definition.getMeasures().size();
+		int nbAxes = definition.getAggregationColumns().size();
+		int nbMeasures = definition.getProjectionColumns().size();
 
 		abscissa = new ArrayList<>();
 		series = new ArrayList<List<Object>>();

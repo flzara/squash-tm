@@ -18,12 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.domain.query;
 
-import spock.lang.Specification
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-class ProjectionPlannerTest extends Specification {
+public interface IQueryModel {
 
+	List<QueryAggregationColumn> getAggregationColumns();
+
+	List<QueryFilterColumn> getFilterColumns();
+
+	List<QueryOrderingColumn> getOrderingColumns();
+
+	List<QueryProjectionColumn> getProjectionColumns();
+
+	QueryStrategy getStrategy();
+
+	NaturalJoinStyle getJoinStyle();
+
+	Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
 }
-*/

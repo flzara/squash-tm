@@ -30,7 +30,7 @@ import javax.persistence.Table;
 
 @Embeddable
 @Table(name = "QUERY_AGGREGATION_COLUMN")
-public class QueryAggregationColumn {
+public class QueryAggregationColumn implements ColumnPrototypeInstance {
 
 	@JoinColumn(name = "PROJECTION_COLUMN_ID")
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -40,7 +40,33 @@ public class QueryAggregationColumn {
 		return projectionColumn;
 	}
 
-	public QueryAggregationColumn createCopy() {
-		return null;
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return projectionColumn.getColumn();
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return projectionColumn.getColumn().getEntityType();
+	}
+
+	@Override
+	public SpecializedEntityType getSpecializedType() {
+		return projectionColumn.getColumn().getSpecializedType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return projectionColumn.getColumn().getDataType();
+	}
+
+	@Override
+	public Operation getOperation() {
+		return projectionColumn.getOperation();
+	}
+
+	@Override
+	public Long getCufId() {
+		return projectionColumn.getCufId();
 	}
 }

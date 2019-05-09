@@ -24,10 +24,11 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +70,7 @@ class FilterPlanner {
 
 	/**
 	 * <p>A given column may be filtered multiple time. This is represented by the
-	 * multiple {@link Filter} that target the same {@link ColumnPrototype}.</p>
+	 * multiple {@link Filter} that target the same {@link QueryColumnPrototype}.</p>
 	 *
 	 * <p>All filters for a given prototype are ORed together,
 	 * then the ORed expressions are ANDed together.</p>
@@ -83,28 +84,28 @@ class FilterPlanner {
 
 
 	private void addWhereClauses(){
-		Map<ColumnPrototype, Collection<Filter>> whereFilters = findWhereFilters();
+		Map<QueryColumnPrototype, Collection<QueryFilterColumn>> whereFilters = findWhereFilters();
 		BooleanBuilder wherebuilder = makeBuilder(whereFilters);
 
 		query.where(wherebuilder);
 	}
 
 	private void addHavingClauses(){
-		Map<ColumnPrototype, Collection<Filter>> havingFilters = findHavingFilters();
+		Map<QueryColumnPrototype, Collection<QueryFilterColumn>> havingFilters = findHavingFilters();
 
 		BooleanBuilder havingbuilder = makeBuilder(havingFilters);
 
 		query.having(havingbuilder);
 	}
 
-	private BooleanBuilder makeBuilder(Map<ColumnPrototype, Collection<Filter>> sortedFilters){
+	private BooleanBuilder makeBuilder(Map<QueryColumnPrototype, Collection<QueryFilterColumn>> sortedFilters){
 		BooleanBuilder mainBuilder = new BooleanBuilder();
 
-		for (Entry<ColumnPrototype, Collection<Filter>> entry : sortedFilters.entrySet()) {
+		for (Entry<QueryColumnPrototype, Collection<QueryFilterColumn>> entry : sortedFilters.entrySet()) {
 
 			BooleanBuilder orBuilder = new BooleanBuilder();
 
-			for (Filter filter : entry.getValue()) {
+			for (QueryFilterColumn filter : entry.getValue()) {
 
 				if (filter.getOperation() != Operation.NONE){
 					BooleanExpression comparison = utils.createAsPredicate(filter);
@@ -119,13 +120,13 @@ class FilterPlanner {
 		return mainBuilder;
 	}
 
-	private Map<ColumnPrototype, Collection<Filter>> findWhereFilters(){
-		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+	private Map<QueryColumnPrototype, Collection<QueryFilterColumn>> findWhereFilters(){
+		Collection<QueryFilterColumn> filters = new ArrayList<>(definition.getFilterColumns());
 
 		CollectionUtils.filter(filters, new Predicate() {
 			@Override
 			public boolean evaluate(Object filter) {
-				return utils.isWhereClauseComponent((Filter)filter);
+				return utils.isWhereClauseComponent((QueryFilterColumn)filter);
 			}
 		});
 
@@ -133,13 +134,13 @@ class FilterPlanner {
 	}
 
 
-	private Map<ColumnPrototype, Collection<Filter>> findHavingFilters(){
-		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+	private Map<QueryColumnPrototype, Collection<QueryFilterColumn>> findHavingFilters(){
+		Collection<QueryFilterColumn> filters = new ArrayList<>(definition.getFilterColumns());
 
 		CollectionUtils.filter(filters, new Predicate() {
 			@Override
 			public boolean evaluate(Object filter) {
-				return utils.isHavingClauseComponent((Filter)filter);
+				return utils.isHavingClauseComponent((QueryFilterColumn)filter);
 			}
 		});
 
@@ -150,15 +151,15 @@ class FilterPlanner {
 
 	// this will regroup filters by column prototype. Filters grouped that way will be
 	// OR'ed together.
-	private Map<ColumnPrototype, Collection<Filter>> sortFilters(Collection<Filter> filters){
+	private Map<QueryColumnPrototype, Collection<QueryFilterColumn>> sortFilters(Collection<QueryFilterColumn> filters){
 
-		Map<ColumnPrototype, Collection<Filter>> res = new HashMap<>();
+		Map<QueryColumnPrototype, Collection<QueryFilterColumn>> res = new HashMap<>();
 
-		for (Filter filter : filters){
-			ColumnPrototype prototype = filter.getColumn();
+		for (QueryFilterColumn filter : filters){
+			QueryColumnPrototype prototype = filter.getColumn();
 
 			if (! res.containsKey(prototype)){
-				res.put(prototype, new ArrayList<Filter>());
+				res.put(prototype, new ArrayList<QueryFilterColumn>());
 			}
 
 			res.get(prototype).add(filter);

@@ -18,6 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package org.squashtest.tm.service.internal.chart.engine
 
 import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
@@ -58,12 +59,14 @@ class DomainGraphTest extends Specification {
 
 
 
-	/*
+	*/
+/*
 	 * General properties :
 	 * 1/ the root node has no inbounds
 	 * 2/ the other nodes has 1 inbound only
 	 * 3/ all entities are traversed
-	 */
+	 *//*
+
 	@Unroll("check general asumption about morphed graphs with #rootEntity (see comments)")
 	def "check general asumption about morphed graphs (see comments)"(){
 
@@ -341,3 +344,4 @@ class DomainGraphTest extends Specification {
 	}
 
 }
+*/

@@ -123,11 +123,11 @@ class ProjectionPlanner {
 
 		switch(profile){
 		case MAIN_QUERY :
-			populateClauses(selection, definition.getAxis(), SubqueryAliasStrategy.APPEND_ALIAS);
-			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getAggregationColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBSELECT_QUERY :
-			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBWHERE_QUERY :
 			// that one is special : it's always 'select 1'
@@ -152,7 +152,7 @@ class ProjectionPlanner {
 		if ( profile != SUBSELECT_QUERY){
 			List<Expression<?>> groupBy = new ArrayList<>();
 
-			populateClauses(groupBy, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(groupBy, definition.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			query.groupBy(groupBy.toArray(new Expression[]{}));
 		}
@@ -164,7 +164,7 @@ class ProjectionPlanner {
 
 			List<Expression<?>> expressions = new ArrayList<>();
 
-			populateClauses(expressions, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(expressions, definition.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			List<OrderSpecifier> orders = new ArrayList<>();
 			populateOrders(orders, expressions);

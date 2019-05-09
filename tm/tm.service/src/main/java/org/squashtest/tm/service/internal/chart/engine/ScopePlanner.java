@@ -34,12 +34,13 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QCampaignPathEdge;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.ScopeType;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
 import org.squashtest.tm.domain.testcase.QTestCase;
@@ -94,7 +95,7 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
  * </p>
  *
  *	<p>
- * 		Only entities that belong to the main query are filtered that way. Entities part of subqueries won't be,
+ * 		Only entities that belong to the main queryModel are filtered that way. Entities part of subqueries won't be,
  * 		and we don't want to : that's why they are in a separated subquery in the first place.
  * </p>
  *
@@ -112,13 +113,13 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
  *	As of TM 1.14 the following rules apply :
  *
  *      <h4>A - custom scope (traumatic approach)</h4>
- *      When a custom scope is defined the main query <b>will be required</b> to join with any entities in order to honor the scope.
+ *      When a custom scope is defined the main queryModel <b>will be required</b> to join with any entities in order to honor the scope.
  *      For example, if the user selected a test cases folder as a scope, and his chart is aimed for requirements, the implicit semantic
  *      of his chart is "chart on requirements verified by test cases from this folder". In that sense, this approach is said to be "traumatic"
  *      because the semantic of the chart has been altered by the inclusion of the scope.
  *
  *      <h4>B - project scope (gentle approach)</h4>
- *      When the scope is a project, the main query will join with the scope <b>only when relevant</b>. For example, if the user
+ *      When the scope is a project, the main queryModel will join with the scope <b>only when relevant</b>. For example, if the user
  *      selected a project as a scope, and his chart is aimed for requirements, the implicit semantic of his chart is "chart on requirements
  *      that belong to this project". Note that, as opposed to the above, those requirements do not have to be verified at all. In that sense,
  *      this approach is said to be "gentle".
@@ -141,11 +142,11 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
  * <h3> How is this done </h3>
  *
  * <p>
- * Depending on the content of the scope the main query may be appended with additional joins and/or subqueries, and additional where clauses will be added. The optional
- * join queries ensure that some key entities will be present in the main query (they will be joined on) because some useful tests will be applied on them by the "where" clauses.
+ * Depending on the content of the scope the main queryModel may be appended with additional joins and/or subqueries, and additional where clauses will be added. The optional
+ * join queries ensure that some key entities will be present in the main queryModel (they will be joined on) because some useful tests will be applied on them by the "where" clauses.
  *
- * For example, if the Scope says that "elements must belong to CampaignFolder 15" and the main query only treat the Execution, in order to test whether this execution belong to
- * that folder we must then append to the main query all required joins from Execution to Campaign because there are no other way to test the ancestry of the Executions.
+ * For example, if the Scope says that "elements must belong to CampaignFolder 15" and the main queryModel only treat the Execution, in order to test whether this execution belong to
+ * that folder we must then append to the main queryModel all required joins from Execution to Campaign because there are no other way to test the ancestry of the Executions.
  *
  * In a second phase, when this is done, some "where" clauses will be added. In our example, the "where" clause would test that the campaign (to which belong the executions)
  * is itself a child or grandchild of CampaignFolder 15.
@@ -165,7 +166,7 @@ class ScopePlanner {
 	private PermissionEvaluationService permissionService;
 
 	// work variables
-	private DetailedChartQuery chartQuery;
+	private DetailedChartQuery queryModel;
 
 	private List<EntityReference> scope;
 
@@ -186,7 +187,7 @@ class ScopePlanner {
 	}
 
 	void setChartQuery(DetailedChartQuery chartQuery) {
-		this.chartQuery = chartQuery;
+		this.queryModel = chartQuery;
 	}
 
 	void setScope(List<EntityReference> scope) {
@@ -214,7 +215,7 @@ class ScopePlanner {
 				return;
 			}
 
-			// step 2.b : join the main query with projects and/or libraries if some are specified
+			// step 2.b : join the main queryModel with projects and/or libraries if some are specified
 			addExtraJoins();
 
 			// step 3 : add the filters
@@ -280,13 +281,13 @@ class ScopePlanner {
 	private void prepareExtraJoins() {
 
 		ScopedEntities scopedEntities = new ScopedEntitiesImpl(scope);
-		QueriedEntities queriedEntities = new QueriedEntitiesImpl(chartQuery);
+		QueriedEntities queriedEntities = new QueriedEntitiesImpl(queryModel);
 
 		deduceExtraJoins(scopedEntities, queriedEntities);
 	}
 
 	/*
-	 * This will determine which columns are actually included in the final query in order to add
+	 * This will determine which columns are actually included in the final queryModel in order to add
      * the scope. See rules on the class-level javadoc: "Details on the semantic of a scope"
      */
 	private void deduceExtraJoins(ScopedEntities scopedEntities, QueriedEntities queriedEntities) {
@@ -301,14 +302,14 @@ class ScopePlanner {
 			if (scopeColumn == JoinableColumns.POSSIBLE_COLUMNS_ONLY) {
 
 				// this is the "gentle" approach : joins columns are selected only with
-				// those deemed acceptable by the query
+				// those deemed acceptable by the queryModel
 				Set<JoinableColumns> queriedColumns = queriedEntities.getPossibleJoinColumns();
 				for (JoinableColumns queryColumn : queriedColumns) {
 					extraJoins.add(queryColumn);
 				}
 			}
 			// case A - custom scope
-			// this is the "traumatic" approach: we don't ask the query for permission
+			// this is the "traumatic" approach: we don't ask the queryModel for permission
 			else {
 				extraJoins.add(scopeColumn);
 			}
@@ -319,18 +320,18 @@ class ScopePlanner {
 	// *********************** step 2.b ***********************
 
 	/*
-	 * In order to extend the main query we will create a dummy query, that will be merged
-	 * with the main query just like inlined subqueries do.
+	 * In order to extend the main queryModel we will create a dummy queryModel, that will be merged
+	 * with the main queryModel just like inlined subqueries do.
 	 *
-	 * The aim of that dummy query is to make sure that the entities from which a project can be joined on
-	 * will be present in the query (even if in some occurences they are already present).
+	 * The aim of that dummy queryModel is to make sure that the entities from which a project can be joined on
+	 * will be present in the queryModel (even if in some occurences they are already present).
 	 *
 	 *
 	 */
 	private void addExtraJoins() {
 
-		// create the dummy query
-		ChartQuery dummy = createDummyQuery(extraJoins);
+		// create the dummy queryModel
+		QueryModel dummy = createDummyQuery(extraJoins);
 		DetailedChartQuery detailDummy = new DetailedChartQuery(dummy);
 
 		// ... and then run it in a QueryPlanner
@@ -340,30 +341,30 @@ class ScopePlanner {
 
 	/*
 	 * The goal here is to create a Query with as little detail as possible, we just add what
-	 * a QueryPlanner would need to add the join clauses to an existing query.
+	 * a QueryPlanner would need to add the join clauses to an existing queryModel.
 	 *
 	 * For that we forge that Query using the same axis than the HibernateQuery we want to extend,
 	 * and fake measure columns that exists only to make the QueryPlanner join on them.
 	 */
-	private ChartQuery createDummyQuery(Set<JoinableColumns> fakeMeasureColLabels) {
+	private QueryModel createDummyQuery(Set<JoinableColumns> fakeMeasureColLabels) {
 
-		ChartQuery dummy = new ChartQuery();
+		QueryModel dummy = new QueryModel();
 
 		// the axis
-		dummy.setAxis(chartQuery.getAxis());
+		dummy.setAggregationColumns(queryModel.getAggregationColumns());
 
 		// now the dummy measures
-		List<MeasureColumn> fakeMeasures = new ArrayList<>();
+		List<QueryProjectionColumn> fakeMeasures = new ArrayList<>();
 		for (JoinableColumns fakeMeasure : fakeMeasureColLabels) {
-			ColumnPrototype mProto = utils.findColumnPrototype(fakeMeasure.toString());
-			MeasureColumn meas = new MeasureColumn();
-			meas.setColumn(mProto);
+			QueryColumnPrototype mProto = utils.findColumnPrototype(fakeMeasure.toString());
+			QueryProjectionColumn meas = new QueryProjectionColumn();
+			meas.setColumnPrototype(mProto);
 			fakeMeasures.add(meas);
 		}
 
-		dummy.setMeasures(fakeMeasures);
+		dummy.setProjectionColumns(fakeMeasures);
 
-		// now we have defined the extension of our query
+		// now we have defined the extension of our queryModel
 		// we can return
 		return dummy;
 	}
@@ -379,7 +380,7 @@ class ScopePlanner {
 
 
 	/*
-	 * Once the main query is properly extended, we can add the where clauses.
+	 * Once the main queryModel is properly extended, we can add the where clauses.
 	 *
 	 * According to the class-level documentation, those where clauses will take two forms :
 	 *
@@ -570,7 +571,7 @@ class ScopePlanner {
 
 		/*
 		 * the value POSSIBLE_COLUMNS_ONLY is only used when the scope is of type PROJECT :
-         * it means that only columns compatible with the query will be added, and thus we will
+         * it means that only columns compatible with the queryModel will be added, and thus we will
          * not force unrelated columns (see javadoc at the class-level)
          */
 		POSSIBLE_COLUMNS_ONLY;
@@ -612,8 +613,8 @@ class ScopePlanner {
 			return column;
 		}
 
-		// that method is used for Entities defined in the query
-		// it is defined only for elements a query can be made of
+		// that method is used for Entities defined in the queryModel
+		// it is defined only for elements a queryModel can be made of
 		static JoinableColumns forQueriedType(InternalEntityType type) {
 			JoinableColumns column;
 			switch (type) {
@@ -712,7 +713,7 @@ class ScopePlanner {
 	}
 
 
-	// Performs the same job than ScopeEntities but for the chart query.
+	// Performs the same job than ScopeEntities but for the chart queryModel.
 	// Note that it is relevant for the join columns only.
 
 	private static final class QueriedEntitiesImpl implements QueriedEntities {
@@ -726,7 +727,7 @@ class ScopePlanner {
 
 
 		/*
-         * Returns the columns on which the query can be joined on
+         * Returns the columns on which the queryModel can be joined on
          */
 		@Override
 		public Set<JoinableColumns> getPossibleJoinColumns() {
@@ -785,10 +786,10 @@ class ScopePlanner {
 		}
 
 
-		ColumnPrototype findColumnPrototype(String colName) {
+		QueryColumnPrototype findColumnPrototype(String colName) {
 			Query q = getSession().createQuery("select p from ColumnPrototype p where p.label = :label");
 			q.setParameter("label", colName);
-			return (ColumnPrototype) q.uniqueResult();
+			return (QueryColumnPrototype) q.uniqueResult();
 		}
 
 

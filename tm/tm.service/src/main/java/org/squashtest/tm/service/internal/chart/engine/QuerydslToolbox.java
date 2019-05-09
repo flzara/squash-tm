@@ -44,22 +44,22 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 import java.text.ParseException;
@@ -168,18 +168,18 @@ class QuerydslToolbox {
 		return path.getMetadata().getName();
 	}
 
-	String getCustomFieldValueTableAlias(ColumnPrototype columnPrototype, Long cufId) {
+	String getCustomFieldValueTableAlias(QueryColumnPrototype columnPrototype, Long cufId) {
 		if (columnPrototype.getDataType().equals(DataType.TAG)){
 			return getCustomFieldValueOptionTableAlias(columnPrototype,cufId);
 		}
 		return getCustomFieldValueStandardTableAlias(columnPrototype,cufId);
 	}
 
-	String getCustomFieldValueStandardTableAlias(ColumnPrototype columnPrototype, Long cufId) {
+	String getCustomFieldValueStandardTableAlias(QueryColumnPrototype columnPrototype, Long cufId) {
 		return columnPrototype.getLabel() + "_" + cufId;
 	}
 
-	String getCustomFieldValueOptionTableAlias(ColumnPrototype columnPrototype, Long cufId) {
+	String getCustomFieldValueOptionTableAlias(QueryColumnPrototype columnPrototype, Long cufId) {
 		return columnPrototype.getLabel() + "_value_option_" + cufId;
 	}
 
@@ -233,19 +233,19 @@ class QuerydslToolbox {
 	 * want to count how many tags a given cuf taglist contains).
 	 *
 	 */
-	boolean isWhereClauseComponent(Filter filter) {
+	boolean isWhereClauseComponent(QueryFilterColumn filter) {
 		ColumnPrototypeInstance column = filter;
 
 		while (column.getColumn().getColumnType() == ColumnType.CALCULATED &&
 			subQueryStrategy(column) == QueryStrategy.INLINED
 			) {
-			column = column.getColumn().getSubQuery().getMeasures().get(0);
+			column = column.getColumn().getSubQuery().getProjectionColumns().get(0);
 		}
 
 		return !isAggregate(column.getOperation());
 	}
 
-	boolean isHavingClauseComponent(Filter filter) {
+	boolean isHavingClauseComponent(QueryFilterColumn filter) {
 		return !isWhereClauseComponent(filter);
 	}
 
@@ -260,7 +260,7 @@ class QuerydslToolbox {
 
 		Expression<?> selectElement;
 
-		ColumnPrototype proto = col.getColumn();
+		QueryColumnPrototype proto = col.getColumn();
 
 		switch (proto.getColumnType()) {
 			case ATTRIBUTE:
@@ -288,10 +288,10 @@ class QuerydslToolbox {
 	 * Note that  the caller is responsible of the usage of this expression - 'where' or 'having'.
 	 *
 	 */
-	BooleanExpression createAsPredicate(Filter filter) {
+	BooleanExpression createAsPredicate(QueryFilterColumn filter) {
 		BooleanExpression predicate;
 
-		ColumnPrototype proto = filter.getColumn();
+		QueryColumnPrototype proto = filter.getColumn();
 
 		switch (proto.getColumnType()) {
 			case ATTRIBUTE:
@@ -377,7 +377,7 @@ class QuerydslToolbox {
 			// NOSONAR because this is definitely not too long
 			case INLINED:
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(col);
-				MeasureColumn submeasure = col.getColumn().getSubQuery().getMeasures().get(0);    // take that Demeter !
+				QueryProjectionColumn submeasure = col.getColumn().getSubQuery().getProjectionColumns().get(0);    // take that Demeter !
 				expression = subtoolbox.createAsSelect(submeasure);
 				break;
 
@@ -403,7 +403,7 @@ class QuerydslToolbox {
 	private Expression<?> createCustomFieldSelect(ColumnPrototypeInstance col) {
 		Expression<?> expression;
 
-		ColumnPrototype columnPrototype = col.getColumn();
+		QueryColumnPrototype columnPrototype = col.getColumn();
 		DataType dataType = columnPrototype.getDataType();
 		Long cufId = col.getCufId();
 		String alias = getCustomFieldValueTableAlias(columnPrototype, cufId);
@@ -429,7 +429,7 @@ class QuerydslToolbox {
 	 *
 	 */
 	@SuppressWarnings("unchecked")
-	BooleanExpression createAttributePredicate(Filter filter) {
+	BooleanExpression createAttributePredicate(QueryFilterColumn filter) {
 		DataType datatype = filter.getDataType();
 		Operation operation = filter.getOperation();
 
@@ -449,7 +449,7 @@ class QuerydslToolbox {
 	 * know what to do with that.
 	 *
 	 */
-	BooleanExpression createSubqueryPredicate(Filter filter) {
+	BooleanExpression createSubqueryPredicate(QueryFilterColumn filter) {
 		BooleanExpression predicate = null;
 
 		switch (subQueryStrategy(filter)) {
@@ -470,16 +470,16 @@ class QuerydslToolbox {
 				break;
 
 			case INLINED:
-				MeasureColumn submeasure = filter.getColumn().getSubQuery().getMeasures().get(0);    // and take that again !
+				QueryProjectionColumn subProjection = filter.getColumn().getSubQuery().getProjectionColumns().get(0);    // and take that again !
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(filter);    // create a new toolbox configured with a proper subcontext
 
 				//ok, it is semantically sloppy. But for now the produced element is what we need :-S
-				Expression<?> subexpr = subtoolbox.createAsSelect(submeasure);
+				Expression<?> subexpr = subtoolbox.createAsSelect(subProjection);
 
 				List<Expression<?>> valExpr = makeOperands(filter.getOperation(), filter.getDataType(), filter.getValues());
 				Expression<?>[] operands = valExpr.toArray(new Expression[valExpr.size()]);
 
-				predicate = createPredicate(filter.getOperation(), subexpr, submeasure.getDataType(), operands);
+				predicate = createPredicate(filter.getOperation(), subexpr, subProjection.getDataType(), operands);
 
 				break;
 
@@ -501,8 +501,8 @@ class QuerydslToolbox {
 	 * @return
      */
 	//TODO make predicate for different data types
-	BooleanExpression createCufPredicate(Filter filter) {
-		ColumnPrototype columnPrototype = filter.getColumn();
+	BooleanExpression createCufPredicate(QueryFilterColumn filter) {
+		QueryColumnPrototype columnPrototype = filter.getColumn();
 		DataType dataType = columnPrototype.getDataType();
 		Long cufId = filter.getCufId();
 		String alias = getCustomFieldValueStandardTableAlias(columnPrototype, cufId);
@@ -725,7 +725,7 @@ class QuerydslToolbox {
 
 	}
 
-	List<Expression<?>> createOperands(Filter filter, Operation operation) {
+	List<Expression<?>> createOperands(QueryFilterColumn filter, Operation operation) {
 		DataType type = filter.getDataType();
 		List<String> values = filter.getValues();
 		return makeOperands(operation, type, values);
@@ -747,7 +747,7 @@ class QuerydslToolbox {
 	 */
 	private PathBuilder attributePath(ColumnPrototypeInstance column) {
 
-		ColumnPrototype prototype = column.getColumn();
+		QueryColumnPrototype prototype = column.getColumn();
 
 		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 
@@ -770,7 +770,7 @@ class QuerydslToolbox {
 			 * the column they apply to, except for NOT_NULL which accepts a
 			 * boolean instead. Hence the line below.
 			 */
-			DataType actualType = operation == Operation.NOT_NULL ? BOOLEAN : type;
+			DataType actualType = operation == Operation.NOT_NULL ? DataType.BOOLEAN : type;
 
 			for (String val : values) {// NOSONAR that's a <no swearing please> it's not complex !
 
@@ -832,8 +832,8 @@ class QuerydslToolbox {
 
 
 	private SubQueryBuilder createSubquery(ColumnPrototypeInstance col) {
-		ColumnPrototype prototype = col.getColumn();
-		ChartQuery queryDef = prototype.getSubQuery();
+		QueryColumnPrototype prototype = col.getColumn();
+		QueryModel queryDef = prototype.getSubQuery();
 		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
 
 		return new SubQueryBuilder(detailedDef);
@@ -955,7 +955,7 @@ class QuerydslToolbox {
 
 	// warning : should be called on columns that have a ColumnType = CALCULATED only
 	private QueryStrategy subQueryStrategy(ColumnPrototypeInstance col) {
-		ColumnPrototype proto = col.getColumn();
+		QueryColumnPrototype proto = col.getColumn();
 		if (proto.getColumnType() != ColumnType.CALCULATED) {
 			throw new IllegalArgumentException("column '" + proto.getLabel() + "' has a column type of '" + proto.getColumnType() + "', therefore it has no subquery");
 		}

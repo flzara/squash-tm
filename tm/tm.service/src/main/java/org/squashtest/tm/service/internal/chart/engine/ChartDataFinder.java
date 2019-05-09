@@ -30,9 +30,7 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
@@ -40,6 +38,8 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.IQueryModel;
+import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
@@ -362,13 +362,13 @@ public class ChartDataFinder {
 	@Transactional(readOnly = true)
 	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
 
-		ChartQuery chartQuery = definition.getQuery();
+		QueryModel queryModel = definition.getQuery();
 		DetailedChartQuery enhancedDefinition;
 		if (milestoneId != null && workspace != null && Workspace.isWorkspaceMilestoneFilterable(workspace)) {
-			IChartQuery milestoneAwareChartQuery = new MilestoneAwareChartQuery(chartQuery, milestoneId, workspace);
+			IQueryModel milestoneAwareChartQuery = new MilestoneAwareChartQuery(queryModel, milestoneId, workspace);
 			enhancedDefinition = new DetailedChartQuery(milestoneAwareChartQuery);
 		} else {
-			enhancedDefinition = new DetailedChartQuery(chartQuery);
+			enhancedDefinition = new DetailedChartQuery(queryModel);
 		}
 
 

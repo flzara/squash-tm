@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.query;
 
 import org.squashtest.tm.domain.EntityType;
+
 public interface ColumnPrototypeInstance {
 
 	QueryColumnPrototype getColumn();

@@ -52,6 +52,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -129,13 +130,17 @@ public class ChartDefinition implements TreeEntity{
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
-	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	@OneToMany(mappedBy = "chartDefinition")
 	private List<Filter> filters;
 
-	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	@ElementCollection
+	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "QUERY_ID") )
+	@OrderColumn(name = "AXIS_RANK")
 	private List<AxisColumn> axis;
 
-	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	@ElementCollection
+	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "QUERY_ID") )
+	@OrderColumn(name = "MEASURE_RANK")
 	private List<MeasureColumn> measures;
 
 	public User getOwner() {
@@ -313,6 +318,18 @@ public class ChartDefinition implements TreeEntity{
 
 	public void setProjectScope(List<String> projectScope) {
 		this.projectScope = projectScope;
+	}
+
+	public void setFilters(List<Filter> filters) {
+		this.filters = filters;
+	}
+
+	public void setAxis(List<AxisColumn> axis) {
+		this.axis = axis;
+	}
+
+	public void setMeasures(List<MeasureColumn> measures) {
+		this.measures = measures;
 	}
 
 	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){

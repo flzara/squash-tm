@@ -45,7 +45,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "QUERY_MODEL")
-public class QueryModel {
+public class QueryModel implements IQueryModel{
 
 	@Id
 	@Column(name = "QUERY_MODEL_ID")
@@ -88,26 +88,32 @@ public class QueryModel {
 		return name;
 	}
 
+	@Override
 	public QueryStrategy getStrategy() {
 		return strategy;
 	}
 
+	@Override
 	public NaturalJoinStyle getJoinStyle() {
 		return joinStyle;
 	}
 
+	@Override
 	public List<QueryAggregationColumn> getAggregationColumns() {
 		return aggregationColumns;
 	}
 
+	@Override
 	public List<QueryFilterColumn> getFilterColumns() {
 		return filterColumns;
 	}
 
+	@Override
 	public List<QueryProjectionColumn> getProjectionColumns() {
 		return projectionColumns;
 	}
 
+	@Override
 	public List<QueryOrderingColumn> getOrderingColumns() {
 		return orderingColumns;
 	}
@@ -151,4 +157,37 @@ public class QueryModel {
 	public void setOrderingColumns(List<QueryOrderingColumn> orderingColumns) {
 		this.orderingColumns = orderingColumns;
 	}
+
+	@Override
+	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities() {
+
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(4);
+
+		Collection<? extends ColumnPrototypeInstance> columns;
+		columns = getFilterColumns();
+		if(!columns.isEmpty()) {
+			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+		//TODO continue method
+		columns = getAggregationColumns();
+		columns = getOrderingColumns();
+		columns = getProjectionColumns();
+
+
+
+
+
+		return result;
+	}
+
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<SpecializedEntityType> types = new HashSet<>();
+		for (ColumnPrototypeInstance col : columns){
+			types.add(col.getSpecializedType());
+		}
+		return types;
+	}
+
+
 }

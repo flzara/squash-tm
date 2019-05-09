@@ -29,17 +29,17 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.QTagsValue;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
@@ -315,7 +315,7 @@ class QueryPlanner {
 
 	private void appendCufJoins() {
 		//1 detecting all the cuf present in chart definition and get the ids of the cufs
-		Map<ColumnPrototype,Set<Long>> cufPrototypesWithIds = extractAllCufPrototype();
+		Map<QueryColumnPrototype,Set<Long>> cufPrototypesWithIds = extractAllCufPrototype();
 		//2 create a where join (ie a cartesian product with where clause) for each cuf column needed in chart aliased by the column protoLabel and the cuf ID
 		//We have to do it this way because no hibernate mapping exist between an entity and the cuf
 		createCufJoins(cufPrototypesWithIds);
@@ -325,17 +325,18 @@ class QueryPlanner {
 	 * Extract all cuf columns proto in filters, axis and measures
 	 * @return
      */
-	private Map<ColumnPrototype, Set<Long>> extractAllCufPrototype() {
-		Map<ColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
-		extractCufPrototype(cufPrototypesWithIds, definition.getFilters());
-		extractCufPrototype(cufPrototypesWithIds, definition.getAxis());
-		extractCufPrototype(cufPrototypesWithIds, definition.getMeasures());
+	private Map<QueryColumnPrototype, Set<Long>> extractAllCufPrototype() {
+		Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
+		extractCufPrototype(cufPrototypesWithIds, definition.getFilterColumns());
+		extractCufPrototype(cufPrototypesWithIds, definition.getAggregationColumns());
+		extractCufPrototype(cufPrototypesWithIds, definition.getProjectionColumns());
+		extractCufPrototype(cufPrototypesWithIds, definition.getOrderingColumns());
 		return cufPrototypesWithIds;
 	}
 
-	private void extractCufPrototype(Map<ColumnPrototype, Set<Long>> cufPrototypesWithIds, List<? extends ColumnPrototypeInstance> prototypes) {
+	private void extractCufPrototype(Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds, List<? extends ColumnPrototypeInstance> prototypes) {
 		for (ColumnPrototypeInstance prototypeInstance : prototypes) {
-			ColumnPrototype columnPrototype = prototypeInstance.getColumn();
+			QueryColumnPrototype columnPrototype = prototypeInstance.getColumn();
 			if (columnPrototype.getColumnType() == ColumnType.CUF) {
 				Set<Long> cufIds = cufPrototypesWithIds.get(columnPrototype);
 				if (cufIds == null) {
@@ -349,10 +350,10 @@ class QueryPlanner {
 		}
 	}
 
-	private void createCufJoins(Map<ColumnPrototype, Set<Long>> cufPrototypes) {
-		for (Map.Entry<ColumnPrototype,Set<Long>> entry :cufPrototypes.entrySet()) {
+	private void createCufJoins(Map<QueryColumnPrototype, Set<Long>> cufPrototypes) {
+		for (Map.Entry<QueryColumnPrototype,Set<Long>> entry :cufPrototypes.entrySet()) {
 			Set<Long> cufIds = entry.getValue();
-			ColumnPrototype columnPrototype = entry.getKey();
+			QueryColumnPrototype columnPrototype = entry.getKey();
 			for (Long cufId : cufIds) {
 				String alias = utils.getCustomFieldValueStandardTableAlias(columnPrototype, cufId);
 				if(columnPrototype.getDataType().equals(DataType.TAG)){
@@ -366,7 +367,7 @@ class QueryPlanner {
 		}
 	}
 
-	private void createJoinForUniqueValue(ColumnPrototype columnPrototype, Long cufId, String alias) {
+	private void createJoinForUniqueValue(QueryColumnPrototype columnPrototype, Long cufId, String alias) {
 		//now we join as cartesian product because we have no hibernate mapping between entities
 		QCustomFieldValue qCustomFieldValue = new QCustomFieldValue(alias);
 		query.from(qCustomFieldValue);
@@ -380,7 +381,7 @@ class QueryPlanner {
 		query.where(qCustomFieldValue.cufId.eq(cufId));
 	}
 
-	private void createJoinForMultipleValues(ColumnPrototype columnPrototype, Long cufId, String alias, String cufValueOptionAlias) {
+	private void createJoinForMultipleValues(QueryColumnPrototype columnPrototype, Long cufId, String alias, String cufValueOptionAlias) {
 		//if TAG we make a cross join on TagsValue and an inner joins on custom field value option as we need one tuple for each cuf value option
 		QTagsValue qTagsValue = new QTagsValue(alias);
 		QCustomFieldValueOption qCustomFieldValueOption = new QCustomFieldValueOption(cufValueOptionAlias);
@@ -393,7 +394,7 @@ class QueryPlanner {
 	}
 
 	//return the path for the entity attribute id for the designed cuf column prototype
-	private NumberPath<Long> getEntityIdForCufValue(ColumnPrototype columnPrototype) {
+	private NumberPath<Long> getEntityIdForCufValue(QueryColumnPrototype columnPrototype) {
 		EntityType entityType = columnPrototype.getEntityType();
 		NumberPath<Long> id;
 		switch (entityType){
@@ -418,7 +419,7 @@ class QueryPlanner {
 		return id;
 	}
 
-	private BindableEntity getBoundEntityType(ColumnPrototype columnPrototype) {
+	private BindableEntity getBoundEntityType(QueryColumnPrototype columnPrototype) {
 		EntityType entityType = columnPrototype.getEntityType();
 		BindableEntity bindableEntity;
 		switch (entityType){

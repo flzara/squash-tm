@@ -18,6 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package org.squashtest.tm.service.internal.chart.engine
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -338,7 +339,7 @@ from Requirement requirement
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
 				)
 
-		and : "the main query"
+		and : "the main queryModel"
 
 		Filter inlinedCateg = mkFilter(CALCULATED, STRING, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "category", ["functional test"])
 		inlinedCateg.column.subQuery = categQuery
@@ -398,3 +399,4 @@ where null_12.boundEntityType = ?1 and null_12.boundEntityId = testCase.id and n
 	}
 
 }
+*/

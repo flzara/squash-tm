@@ -23,16 +23,21 @@ package org.squashtest.tm.service.internal.chart.engine.proxy;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.IQueryModel;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryOrderingColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 
 import javax.inject.Inject;
@@ -45,38 +50,20 @@ import java.util.Set;
  * Created by jthebault on 29/11/2016.
  */
 @Configurable
-public class MilestoneAwareChartQuery implements IChartQuery{
+public class MilestoneAwareChartQuery implements IQueryModel {
 
 	@Inject
 	private ColumnPrototypeDao columnPrototypeDao;
 
-	private ChartQuery proxiedQuery;
+	private QueryModel proxiedQuery;
 	private Long milestoneId;
 	private Workspace workspace;
-	private List<Filter> filters =  new ArrayList<>();
+	private List<QueryFilterColumn> filters =  new ArrayList<>();
 
-	public MilestoneAwareChartQuery(ChartQuery proxiedQuery, Long milestoneId, Workspace workspace) {
+	public MilestoneAwareChartQuery(QueryModel proxiedQuery, Long milestoneId, Workspace workspace) {
 		this.proxiedQuery = proxiedQuery;
 		this.milestoneId = milestoneId;
 		this.workspace = workspace;
-	}
-
-	@Override
-	public List<Filter> getFilters() {
-		Filter additionalFilter = getAdditionalFilter();
-		filters.addAll(proxiedQuery.getFilters());
-		filters.add(additionalFilter);
-		return filters;
-	}
-
-	@Override
-	public List<AxisColumn> getAxis() {
-		return proxiedQuery.getAxis();
-	}
-
-	@Override
-	public List<MeasureColumn> getMeasures() {
-		return proxiedQuery.getMeasures();
 	}
 
 	@Override
@@ -94,9 +81,9 @@ public class MilestoneAwareChartQuery implements IChartQuery{
 		return proxiedQuery.getInvolvedEntities();
 	}
 
-	private Filter getAdditionalFilter(){
-		Filter filter = new Filter();
-		ColumnPrototype columnPrototype = null;
+	private QueryFilterColumn getAdditionalFilter(){
+		QueryFilterColumn filter = new QueryFilterColumn();
+		QueryColumnPrototype columnPrototype = null;
 		switch (this.workspace){
 			case TEST_CASE:
 				columnPrototype = columnPrototypeDao.findByLabel("TEST_CASE_MILESTONE_ID");
@@ -110,9 +97,32 @@ public class MilestoneAwareChartQuery implements IChartQuery{
 			default:
 				break;
 		}
-		filter.setColumn(columnPrototype);
+		filter.setColumnPrototype(columnPrototype);
 		filter.setOperation(Operation.EQUALS);
 		filter.getValues().add(this.milestoneId.toString());
 		return filter;
+	}
+
+	@Override
+	public List<QueryAggregationColumn> getAggregationColumns() {
+		return proxiedQuery.getAggregationColumns();
+	}
+
+	@Override
+	public List<QueryFilterColumn> getFilterColumns() {
+		QueryFilterColumn additionalFilter = getAdditionalFilter();
+		filters.addAll(proxiedQuery.getFilterColumns());
+		filters.add(additionalFilter);
+		return filters;
+	}
+
+	@Override
+	public List<QueryOrderingColumn> getOrderingColumns() {
+		return proxiedQuery.getOrderingColumns();
+	}
+
+	@Override
+	public List<QueryProjectionColumn> getProjectionColumns() {
+		return proxiedQuery.getProjectionColumns();
 	}
 }

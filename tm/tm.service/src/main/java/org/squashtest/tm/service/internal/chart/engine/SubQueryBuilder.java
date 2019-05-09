@@ -28,8 +28,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +50,7 @@ class SubQueryBuilder extends QueryBuilder {
 	private List<Expression<?>> subselectProfileJoinExpression;
 
 	// used for subwhere subqueries
-	private Filter subwhereProfileFilterExpression;
+	private QueryFilterColumn subwhereProfileFilterExpression;
 
 
 
@@ -86,7 +89,7 @@ class SubQueryBuilder extends QueryBuilder {
 		return this;
 	}
 
-	SubQueryBuilder filterMeasureOn(Filter filter){
+	SubQueryBuilder filterMeasureOn(QueryFilterColumn filter){
 		this.subwhereProfileFilterExpression = filter;
 		return this;
 	}
@@ -118,9 +121,9 @@ class SubQueryBuilder extends QueryBuilder {
 	private void joinWithOuterquery(){
 		BooleanBuilder joinWhere = new BooleanBuilder();
 
-		List<AxisColumn> axes = queryDefinition.getAxis();
+		List<QueryAggregationColumn> aggregationColumns = queryDefinition.getAggregationColumns();
 
-		for (AxisColumn axe : axes) {
+		for (QueryAggregationColumn axe : aggregationColumns) {
 
 			Expression<?> outerAxis = subselectProfileJoinExpression.get(0);
 			Expression<?> subAxis = utils.getQBean(axe);
@@ -137,16 +140,16 @@ class SubQueryBuilder extends QueryBuilder {
 	// additional filter will take the form of a having clause.
 	private void addSubwhereSpecifics(){
 
-		MeasureColumn measure = queryDefinition.getMeasures().get(0);
+		QueryProjectionColumn projectionColumn = queryDefinition.getProjectionColumns().get(0);
 
-		Expression<?> measureExpr = utils.createAsSelect(measure);
+		Expression<?> measureExpr = utils.createAsSelect(projectionColumn);
 		Operation operation = subwhereProfileFilterExpression.getOperation();
 		List<Expression<?>> operands = utils.createOperands(subwhereProfileFilterExpression, operation);
 
-		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, measure.getDataType(),
+		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, projectionColumn.getDataType(),
 				operands.toArray(new Expression[] {}));
 
-		if (utils.isAggregate(measure.getOperation())){
+		if (utils.isAggregate(projectionColumn.getOperation())){
 			detachedQuery.having(predicate);
 		}
 		else{
@@ -174,7 +177,7 @@ class SubQueryBuilder extends QueryBuilder {
 			throw new IllegalArgumentException("subselect queries must always provide a join with the outer query, please use joinAxesOn()");
 		}
 
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
+		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregationColumns().size()){
 			throw new IllegalArgumentException("subselect queries joined entities must match (in number and type) the axis entities of the subquery");
 		}
 	}
@@ -184,7 +187,7 @@ class SubQueryBuilder extends QueryBuilder {
 			throw new IllegalArgumentException("subwhere queries must always provide a join with the outer query, please use joinAxesOn()");
 		}
 
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
+		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregationColumns().size()){
 			throw new IllegalArgumentException("subwhere queries joined entities must match (in number and type) the axis entities of the subquery");
 		}
 		if (subwhereProfileFilterExpression == null){

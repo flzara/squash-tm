@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.query;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -38,7 +40,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "QUERY_FILTER_COLUMN")
-public class QueryFilterColumn {
+public class QueryFilterColumn implements ColumnPrototypeInstance{
 
 	@Id
 	@Column(name = "QUERY_FILTER_ID")
@@ -61,20 +63,46 @@ public class QueryFilterColumn {
 	@Column(name = "FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
 
-	public Long getId() {
-		return id;
-	}
-
-	public QueryColumnPrototype getColumnPrototype() {
+	@Override
+	public QueryColumnPrototype getColumn() {
 		return columnPrototype;
 	}
 
+	@Override
+	public EntityType getEntityType() {
+		return columnPrototype.getEntityType();
+	}
+
+	@Override
+	public SpecializedEntityType getSpecializedType() {
+		return columnPrototype.getSpecializedType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return columnPrototype.getDataType();
+	}
+
+	@Override
 	public Operation getOperation() {
 		return operation;
 	}
 
+	@Override
 	public Long getCufId() {
 		return cufId;
+	}
+
+	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
+		this.columnPrototype = columnPrototype;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
 	}
 
 	public List<String> getValues() {

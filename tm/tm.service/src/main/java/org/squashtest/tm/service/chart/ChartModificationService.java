@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public interface ChartModificationService {
 	 * For 1.13 we filter the CUF in a where clause in the request.
 	 * @return
 	 */
-	Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes();
+	Map<EntityType, Set<QueryColumnPrototype>> getColumnPrototypes();
 
 
 	/**
