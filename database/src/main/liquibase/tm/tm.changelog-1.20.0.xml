@@ -94,9 +94,10 @@
   <changeSet id="tm-1.20.0-TM-180" author="abo">
     <comment>Change dataType for RequirementStatus</comment>
     <sql>
-      UPDATE CHART_COLUMN_PROTOTYPE ccp SET ccp.DATA_TYPE = 'REQUIREMENT_STATUS'
-      WHERE ccp.LABEL = 'REQUIREMENT_STATUS' OR ccp.LABEL = 'REQUIREMENT_VERSION_STATUS';
+      UPDATE CHART_COLUMN_PROTOTYPE SET DATA_TYPE = 'REQUIREMENT_STATUS'
+      WHERE LABEL = 'REQUIREMENT_STATUS' OR LABEL = 'REQUIREMENT_VERSION_STATUS';
     </sql>
+
   </changeSet>
 
 
@@ -126,7 +127,7 @@
 
   The tables CHART_QUERY, CHART_AXIS_COLUMN, CHART_FILTER and CHART_MEASURE_COLUMN are special
   in the sense that they contain both referential data (you can generate a new schema from
-  an earlier version to see they aren't initially empty), and user data (more entries goes
+  an earlier version and see they aren't initially empty), and user data (more entries goes
   into them as users create more charts).
 
   The referential data in those tables are the components of subqueries which calculate the
@@ -134,11 +135,11 @@
   user-defined queries and are treated just the same. Those elements that constitute the
   calculated subqueries are the sole property of squash-tm
   and will be re-modelized in the new format, ie they will be the initial entries for
-  QUERY_MODEL, PROJECTION_CLAUSE etc. They will be removed from CHART_AXIS_COLUMN and alike
+  QUERY_MODEL, QUERY_PROJECTION_COLUMN etc. They will be removed from CHART_AXIS_COLUMN and alike
   accordingly, leaving only user data in them.
 
   Note that the former modelization will be partially maintained : CHART_AXIS_COLUMN will
-  still exist despite being redundant regarding the new table AGGREGATION_CLAUSE, which is
+  still exist despite being redundant regarding the new table QUERY_PROJECTION_COLUMN, which is
   almost identical in term of structure and function. Maintaining those redundant tables is
   interesting because :
     a/ we break much less code that way, especially in the UI and
@@ -148,13 +149,38 @@
 
   However, when a chart query must be executed at runtime, the execution service should first
   be converted to the new QUERY_MODEL format (specifying ordering etc), because that's what
-  the engine will now accept.
+  the engine will now accept. This will be handled by code at runtime.
 
 
   Migration implementation
   ++++++++++++++++++++++++
 
-  - TODO : document once I actually decided how to do it
+  1 - tables CHART_QUERY and CHART_COLUMN_PROTOTYPE are renamed to QUERY_MODEL and QUERY_COLUMN_PROTOTYPE.
+  Their primary keys are renamed as well for good measure. Inbound foreign keys are severed temporarily
+  in order to perform those changes without inappropriate warnings.
+
+  2 - tables QUERY_PROJECTION_COLUMN, QUERY_AGGREGATION_COLUMN, QUERY_FILTER_COLUMN and QUERY_ORDERING_COLUMN
+  are created.
+
+  3 - those tables are populated as follow :
+
+  * referential entries of CHART_AXIS_COLUMN are transfered to QUERY_PROJECTION_COLUMN with respect to
+  the subquery. Their rank is preserved. Tables QUERY_AGGREGATION_COLUMN and QUERY_ORDERING_COLUMN are then populated
+  accordingly (chart axes are also grouped and ordered on).
+
+  * referential entries of CHART_FILTER is transfered as-is to QUERY_FILTER_COLUMN, so is the companion table
+  CHART_FILTER_VALUES to QUERY_FILTER_VALUES.
+
+  * referential entries of CHART_MEASURE_COLUMN is transfered to QUERY_PROJECTION_COLUMN. If the referenced query already
+  has one or several entries in QUERY_PROJECTION_COLUMN (ie axes we just migrated in the first step), the rank will be
+  adjusted accordingly.
+
+  4 - user-defined entries in tables CHART_AXIS_COLUMN, CHART_MEASURE_COLUMN and CHART_FILTER won't point anymore to a query,
+  but directly to the CHART_DEFINITION.
+
+  5 - referential data in the aforementioned tables are then removed.
+
+  6 - the foreign keys that were disabled in step 1 are then restored.
 
 
   ====================================================================================== -->
@@ -349,7 +375,7 @@
 
 
 
-  <changeSet id="tm-1.20.0-TM-282-03-mysql" author="bsiri">
+  <changeSet id="tm-1.20.0-TM-282-03" author="bsiri">
     <comment>Now the fun part : migrate the former content into the new content</comment>
 
     <sql>
@@ -369,9 +395,9 @@
       insert into QUERY_AGGREGATION_COLUMN (query_model_id, aggregation_rank, projection_column_id)
       select cac.query_id, cac.axis_rank,
       (
-        select qpc.query_projection_id
-        from QUERY_PROJECTION_COLUMN qpc
-        where qpc.query_column_id = cac.chart_column_id and qpc.query_model_id = cac.query_id
+      select qpc.query_projection_id
+      from QUERY_PROJECTION_COLUMN qpc
+      where qpc.query_column_id = cac.chart_column_id and qpc.query_model_id = cac.query_id
       ) as proj_id
       from CHART_AXIS_COLUMN cac
       inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
@@ -391,7 +417,7 @@
 
       insert into QUERY_PROJECTION_COLUMN (query_column_id, query_model_id, label, projection_operation, cuf_id, projection_rank)
       select cmc.chart_column_id, cmc.query_id, cmc.label, cmc.measure_operation, cmc.cuf_id, cmc.measure_rank + (
-        select count(*) from CHART_AXIS_COLUMN cac where cac.query_id = cmc.query_id
+      select count(*) from CHART_AXIS_COLUMN cac where cac.query_id = cmc.query_id
       ) as meas_rank
       from CHART_MEASURE_COLUMN cmc
       inner join QUERY_MODEL qm on cmc.query_id = qm.query_model_id
@@ -458,70 +484,73 @@
 
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-282-04b-h2" author="bsiri" dbms="h2">
-    <comment>Populating the new columns foreign keys</comment>
+  <changeSet id="tm-1.20.0-TM-282-04b" author="bsiri" dbms="h2,mysql">
+    <comment>Populating the new foreign keys from the tables CHART_X_COLUMN  to CHART_DEFINITION</comment>
 
     <sql>
       update CHART_AXIS_COLUMN cac
       set cac.chart_definition_id = (
-        select cd.chart_id
-        from QUERY_MODEL qm
-        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-        where qm.strategy = 'MAIN'
-        and cac.query_id = qm.query_model_id
+      select cd.chart_id
+      from QUERY_MODEL qm
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      where qm.strategy = 'MAIN'
+      and cac.query_id = qm.query_model_id
       );
 
       update CHART_FILTER cf
       set cf.chart_definition_id = (
-        select cd.chart_id
-        from QUERY_MODEL qm
-        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-        where qm.strategy = 'MAIN'
-        and cf.query_id = qm.query_model_id
+      select cd.chart_id
+      from QUERY_MODEL qm
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      where qm.strategy = 'MAIN'
+      and cf.query_id = qm.query_model_id
       );
 
       update CHART_MEASURE_COLUMN cmc
       set cmc.chart_definition_id = (
-        select cd.chart_id
-        from QUERY_MODEL qm
-        inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-        where qm.strategy = 'MAIN'
-        and cmc.query_id = qm.query_model_id
+      select cd.chart_id
+      from QUERY_MODEL qm
+      inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
+      where qm.strategy = 'MAIN'
+      and cmc.query_id = qm.query_model_id
       );
     </sql>
 
 
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-282-04b-mysql" author="bsiri" dbms="mysql">
-    <comment>Populating the new columns foreign keys</comment>
+
+  <changeSet id="tm-1.20.0-TM-282-04b-postgresql" author="bsiri" dbms="postgresql">
+    <comment>Populating the new foreign keys from the tables CHART_X_COLUMN  to CHART_DEFINITION</comment>
 
     <sql>
-      update CHART_AXIS_COLUMN cac
-      inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
+      update CHART_AXIS_COLUMN
+      set chart_definition_id = cd.chart_id
+      from QUERY_MODEL qm
       inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-      set cac.chart_definition_id = cd.chart_id
-      where qm.strategy = 'MAIN';
+      where qm.strategy = 'MAIN'
+      and CHART_AXIS_COLUMN.query_id = qm.query_model_id;
 
-
-      update CHART_FILTER cf
-      inner join QUERY_MODEL qm on cf.query_id = qm.query_model_id
+      update CHART_FILTER
+      set chart_definition_id = cd.chart_id
+      from QUERY_MODEL qm
       inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-      set cf.chart_definition_id = cd.chart_id
-      where qm.strategy = 'MAIN';
+      where qm.strategy = 'MAIN'
+      and CHART_FILTER.query_id = qm.query_model_id;
 
-
-      update CHART_MEASURE_COLUMN cmc
-      inner join QUERY_MODEL qm on cmc.query_id = qm.query_model_id
+      update CHART_MEASURE_COLUMN
+      set chart_definition_id = cd.chart_id
+      from QUERY_MODEL qm
       inner join CHART_DEFINITION cd on qm.query_model_id = cd.query_id
-      set cmc.chart_definition_id = cd.chart_id
-      where qm.strategy = 'MAIN';
-
-
+      where qm.strategy = 'MAIN'
+      and CHART_MEASURE_COLUMN.query_id = qm.query_model_id;
     </sql>
 
 
   </changeSet>
+
+
+
 
 
   <changeSet id="tm-1.20.0-TM-282-04c" author="bsiri">
@@ -547,7 +576,7 @@
 
 
   <changeSet id="tm-1.20.0-TM-282-04d" author="bsiri">
-    <comment>Now dropping the former, useless columns that pointed to QUERY_MODEL </comment>
+    <comment>Now dropping the now useless columns that pointed to QUERY_MODEL </comment>
 
     <dropColumn tableName="CHART_AXIS_COLUMN" columnName="QUERY_ID"/>
     <dropColumn tableName="CHART_FILTER" columnName="QUERY_ID"/>
@@ -617,7 +646,7 @@
     <createIndex tableName="QUERY_FILTER_COLUMN" indexName="idx_fk_query_filter_query_column">
       <column name="QUERY_COLUMN_ID" type="BIGINT"/>
     </createIndex>
-    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_filter_query_model">
+    <createIndex tableName="QUERY_FILTER_COLUMN" indexName="idx_fk_query_filter_query_model">
       <column name="QUERY_MODEL_ID" type="BIGINT"/>
     </createIndex>
 
@@ -625,12 +654,12 @@
     <createIndex tableName="QUERY_ORDERING_COLUMN" indexName="idx_fk_query_order_query_proj">
       <column name="PROJECTION_COLUMN_ID" type="BIGINT"/>
     </createIndex>
-    <createIndex tableName="QUERY_AGGREGATION_COLUMN" indexName="idx_fk_query_aggr_query_model">
+    <createIndex tableName="QUERY_ORDERING_COLUMN" indexName="idx_fk_query_order_query_model">
       <column name="QUERY_MODEL_ID" type="BIGINT"/>
     </createIndex>
 
 
-    <createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_fk_chatr_axis_chart_def">
+    <createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_fk_chart_axis_chart_def">
       <column name="CHART_DEFINITION_ID" type="BIGINT"/>
     </createIndex>
 
@@ -640,12 +669,11 @@
     </createIndex>
 
 
-    <createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_fk_chart_meas_chart_def">
+    <createIndex tableName="CHART_MEASURE_COLUMN" indexName="idx_fk_chart_meas_chart_def">
       <column name="CHART_DEFINITION_ID" type="BIGINT"/>
     </createIndex>
 
   </changeSet>
-
 
 
 </databaseChangeLog>
