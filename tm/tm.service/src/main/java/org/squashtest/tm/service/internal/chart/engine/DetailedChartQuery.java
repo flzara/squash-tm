@@ -25,7 +25,7 @@ import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.Filter;

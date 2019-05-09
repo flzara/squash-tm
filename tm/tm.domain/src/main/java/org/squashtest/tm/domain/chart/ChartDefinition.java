@@ -27,6 +27,9 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -55,6 +58,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -118,11 +123,20 @@ public class ChartDefinition implements TreeEntity{
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "QUERY_ID", nullable = false)
-	private ChartQuery query = new ChartQuery();
+	private QueryModel query = new QueryModel();
 
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
+
+	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	private List<Filter> filters;
+
+	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	private List<AxisColumn> axis;
+
+	@OneToMany(mappedBy = "CHART_DEFINITION_ID")
+	private List<MeasureColumn> measures;
 
 	public User getOwner() {
 		return owner;
@@ -145,18 +159,18 @@ public class ChartDefinition implements TreeEntity{
 	}
 
 	public List<Filter> getFilters() {
-		return query.getFilters();
+		return filters;
 	}
 
 	public List<AxisColumn> getAxis() {
-		return query.getAxis();
+		return axis;
 	}
 
 	public List<MeasureColumn> getMeasures() {
-		return query.getMeasures();
+		return measures;
 	}
 
-	public ChartQuery getQuery(){
+	public QueryModel getQuery() {
 		return query;
 	}
 
@@ -174,7 +188,29 @@ public class ChartDefinition implements TreeEntity{
 	 * @return
 	 */
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
-		return query.getInvolvedEntities();
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(3);
+
+		Collection<? extends ColumnPrototypeInstance> columns;
+
+		columns = getFilters();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+
+		columns = getAxis();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> axisTypes = collectTypes(columns);
+			result.put(ColumnRole.AXIS, axisTypes);
+		}
+
+		columns = getMeasures();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> measureTypes = collectTypes(columns);
+			result.put(ColumnRole.MEASURE, measureTypes);
+		}
+
+		return result;
 	}
 
 
@@ -230,7 +266,7 @@ public class ChartDefinition implements TreeEntity{
 		this.scope = scope;
 	}
 
-	public void setQuery(ChartQuery query) {
+	public void setQuery(QueryModel query) {
 		this.query = query;
 	}
 
@@ -250,7 +286,7 @@ public class ChartDefinition implements TreeEntity{
 		return copy;
 	}
 
-	private ChartQuery copyQuery() {
+	private QueryModel copyQuery() {
 		return this.getQuery().createCopy();
 	}
 
@@ -279,4 +315,11 @@ public class ChartDefinition implements TreeEntity{
 		this.projectScope = projectScope;
 	}
 
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<SpecializedEntityType> types = new HashSet<>();
+		for (ColumnPrototypeInstance col : columns){
+			types.add(col.getSpecializedType());
+		}
+		return types;
+	}
 }

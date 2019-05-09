@@ -21,6 +21,11 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -34,7 +39,7 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 @Table(name = "CHART_AXIS_COLUMN")
-public class AxisColumn implements ColumnPrototypeInstance{
+public class AxisColumn implements ColumnPrototypeInstance {
 
 
 	@NotBlank
@@ -43,13 +48,17 @@ public class AxisColumn implements ColumnPrototypeInstance{
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
-	private ColumnPrototype column;
+	private QueryColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name ="AXIS_OPERATION")
 	private Operation operation;
 
 	private Long cufId;
+
+	@ManyToOne
+	@JoinColumn(name = "CHART_DEFINITION_ID")
+	private ChartDefinition chartDefinition;
 
 	public String getLabel() {
 		return label;
@@ -60,11 +69,11 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	}
 
 	@Override
-	public ColumnPrototype getColumn() {
+	public QueryColumnPrototype getColumn() {
 		return column;
 	}
 
-	public void setColumn(ColumnPrototype column) {
+	public void setColumn(QueryColumnPrototype column) {
 		this.column = column;
 	}
 
@@ -83,13 +92,13 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	}
 
 	@Override
-	public SpecializedEntityType getSpecializedType(){
+	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return getColumn().getDataType();
+		return column.getDataType();
 	}
 
 	@Override
@@ -101,12 +110,21 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		this.cufId = cufId;
 	}
 
+	public ChartDefinition getChartDefinition() {
+		return chartDefinition;
+	}
+
+	public void setChartDefinition(ChartDefinition chartDefinition) {
+		this.chartDefinition = chartDefinition;
+	}
+
 	public AxisColumn createCopy(){
 		AxisColumn copy = new AxisColumn();
 		copy.setColumn(this.getColumn());
 		copy.setOperation(this.getOperation());
 		copy.setCufId(this.getCufId());
 		copy.setLabel(this.getLabel());
+		copy.setChartDefinition(this.getChartDefinition());
 		return copy;
 	}
 

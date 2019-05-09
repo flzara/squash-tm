@@ -36,7 +36,12 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "QUERY_MODEL")
@@ -105,5 +110,43 @@ public class QueryModel {
 
 	public List<QueryOrderingColumn> getOrderingColumns() {
 		return orderingColumns;
+	}
+
+	public QueryModel createCopy() {
+		QueryModel copy = new QueryModel();
+		return copy;
+	}
+
+	public List<QueryAggregationColumn> copyAggregation() {
+		List<QueryAggregationColumn> copies = new ArrayList<>();
+		for (QueryAggregationColumn queryAggregationColumn : getAggregationColumns()) {
+
+		}
+
+		return copies;
+	}
+
+	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
+
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(4);
+
+		Collection<? extends ColumnPrototypeInstance> columns;
+
+		columns = getAggregationColumns();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+
+		return result;
+
+	}
+
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<SpecializedEntityType> types = new HashSet<>();
+		for (ColumnPrototypeInstance col : columns){
+			types.add(col.getSpecializedType());
+		}
+		return types;
 	}
 }

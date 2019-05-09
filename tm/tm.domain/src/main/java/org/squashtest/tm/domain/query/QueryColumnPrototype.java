@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.query;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -131,5 +133,9 @@ public class QueryColumnPrototype {
 
 	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
+	}
+
+	public EntityType getEntityType() {
+		return specializedType.getEntityType();
 	}
 }

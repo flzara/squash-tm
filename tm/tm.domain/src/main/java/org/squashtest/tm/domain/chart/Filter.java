@@ -21,6 +21,11 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -50,7 +55,7 @@ public class Filter implements ColumnPrototypeInstance {
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
-	private ColumnPrototype column;
+	private QueryColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "FILTER_OPERATION")
@@ -61,7 +66,20 @@ public class Filter implements ColumnPrototypeInstance {
 	@Column(name="FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
 
+	@ManyToOne
+	@JoinColumn(name = "CHART_DEFINITION_ID")
+	private ChartDefinition chartDefinition;
+
 	private Long cufId;
+
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return column;
+	}
+
+	public void setColumn(QueryColumnPrototype column) {
+		this.column = column;
+	}
 
 	@Override
 	public Operation getOperation() {
@@ -70,15 +88,6 @@ public class Filter implements ColumnPrototypeInstance {
 
 	public void setOperation(Operation operation) {
 		this.operation = operation;
-	}
-
-	@Override
-	public ColumnPrototype getColumn() {
-		return column;
-	}
-
-	public void setColumn(ColumnPrototype column) {
-		this.column = column;
 	}
 
 	public List<String> getValues() {
@@ -95,13 +104,13 @@ public class Filter implements ColumnPrototypeInstance {
 	}
 
 	@Override
-	public SpecializedEntityType getSpecializedType(){
+	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return getColumn().getDataType();
+		return column.getDataType();
 	}
 
 	@Override
@@ -113,6 +122,13 @@ public class Filter implements ColumnPrototypeInstance {
 		this.cufId = cufId;
 	}
 
+	public ChartDefinition getChartDefinition() {
+		return chartDefinition;
+	}
+
+	public void setChartDefinition(ChartDefinition chartDefinition) {
+		this.chartDefinition = chartDefinition;
+	}
 
 	public Filter createCopy(){
 		Filter copy = new Filter();
@@ -120,6 +136,7 @@ public class Filter implements ColumnPrototypeInstance {
 		copy.setOperation(this.getOperation());
 		copy.getValues().addAll(this.getValues());
 		copy.setCufId(this.getCufId());
+		copy.setChartDefinition(this.getChartDefinition());
 		return copy;
 	}
 }

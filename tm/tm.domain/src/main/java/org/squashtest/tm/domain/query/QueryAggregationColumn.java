@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.query;
 
+import org.squashtest.tm.domain.EntityType;
+
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -28,7 +30,7 @@ import javax.persistence.Table;
 
 @Embeddable
 @Table(name = "QUERY_AGGREGATION_COLUMN")
-public class QueryAggregationColumn {
+public class QueryAggregationColumn implements ColumnPrototypeInstance {
 
 	@JoinColumn(name = "PROJECTION_COLUMN_ID")
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -36,5 +38,39 @@ public class QueryAggregationColumn {
 
 	public QueryProjectionColumn getProjectionColumn() {
 		return projectionColumn;
+	}
+
+	public QueryAggregationColumn createCopy() {
+		return null;
+	}
+
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return null;
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return null;
+	}
+
+	@Override
+	public SpecializedEntityType getSpecializedType() {
+		return null;
+	}
+
+	@Override
+	public DataType getDataType() {
+		return null;
+	}
+
+	@Override
+	public Operation getOperation() {
+		return null;
+	}
+
+	@Override
+	public Long getCufId() {
+		return null;
 	}
 }
