@@ -32,6 +32,25 @@
 
     <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
 
+    <!-- 
+    	TM-346, 08/05/2019 :
+    	
+    	A security breach has been discovered in Tomcat (see https://www.nextinpact.com/brief/la-fondation-apache-corrige-une-importante-faille-dans-tomcat-8443.htm).
+    	Vulnerables versions are :
+			- 9.0.0.M1 to 9.0.17
+			- 8.5.0 to 8.5.39
+			- 7.0.0 to 7.0.93   	
+    	
+    	An update is required to fix that. However at the moment there is no release of spring-boot-starter-tomcat that ships with a patched version of Tomcat. 
+    	Until one is available we need to override Tomcat version here. All the required dependencies had to be declared explicitly (see all the imports sites for groupid 'org.apache.tomcat.embed').
+    	When Tomcat is properly imported via a suitable version of spring-boot-starter-tomcat, cleanup the override as indicated at each import site.
+    	
+    	Note : several places over the web mentions that overriding spring own property 'tomcat.versin' should be enough, but I couldn't make it to work 
+    	and I have no time to investigate now.
+    
+     -->
+    <tomcat.85-security.version>8.5.40</tomcat.85-security.version>
+
     <!-- Default jacoco dont record any coverage data -->
     <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
     <!--<spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug-->
@@ -356,18 +375,27 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- ====================================
+      TOMCAT OVERRIDES
+    ======================================== -->
+
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
+
+      <!--
+        See comment on tomcat.85-security.version.
+        Cleanup : just remove the version clause.
+      -->
+      <version>${tomcat.85-security.version}</version>
       <scope>${appserver.scope}</scope>
       <exclusions>
         <!--
-      re-excluding tomcat annotations as intended by Spring Boot,
-      see https://github.com/spring-projects/spring-boot/issues/10133
-      and https://github.com/spring-projects/spring-boot/commit/0aedd3f11de9fe2fff927d3f3c921ae40feded95
+          re-excluding tomcat annotations as intended by Spring Boot,
+          see https://github.com/spring-projects/spring-boot/issues/10133
+          and https://github.com/spring-projects/spring-boot/commit/0aedd3f11de9fe2fff927d3f3c921ae40feded95
 
-      REASON : we now rely on the official javax.annotation-api artifact
-
+          REASON : we now rely on the official javax.annotation-api artifact
        -->
         <exclusion>
           <groupId>org.apache.tomcat</groupId>
@@ -378,9 +406,40 @@
 
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
+      <artifactId>tomcat-embed-el</artifactId>
+      <!--
+        See comment on tomcat.85-security.version.
+        Cleanup : remove the dependency import entirely.
+      -->
+      <version>${tomcat.85-security.version}</version>
       <scope>${appserver.scope}</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <!--
+        See comment on tomcat.85-security.version.
+        Cleanup : just remove the version clause.
+      -->
+      <version>${tomcat.85-security.version}</version>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-websocket</artifactId>
+      <!--
+        See comment on tomcat.85-security.version.
+        Cleanup : remove the dependency import entirely.
+      -->
+      <version>${tomcat.85-security.version}</version>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+    <!-- ====================================
+      /TOMCAT OVERRIDES
+    ======================================== -->
 
     <!-- =================================================
     	DEPRECATED DEPENDENCIES
