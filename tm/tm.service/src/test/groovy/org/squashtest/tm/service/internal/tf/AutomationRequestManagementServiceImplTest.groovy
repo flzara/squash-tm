@@ -211,6 +211,68 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		1 * automationRequestDao.updateConflictAssociation(-1L, "jobTA/test1#jobTA/test2")
 	}
 
+	def "For multiple testcases update, should ask for automation server's test list the minimum time"(){
+		given:
+		// Two TestCases
+
+		TestCase targetTC = Mock()
+		targetTC.id >> -1L
+		targetTC.uuid >> "uuid1"
+		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
+
+		TestCase targetTC2 = Mock()
+		targetTC2.id >> -2L
+		targetTC2.uuid >> "uuid2"
+		targetTC2.automatedTest >> Mock(AutomatedTest)
+		targetTC2.automatable >> TestCaseAutomatable.Y
+
+		// Two AutomationRequest
+		AutomationRequest automationRequest = Mock()
+		automationRequest.manual >> true
+		targetTC.automationRequest >> automationRequest
+
+		AutomationRequest automationRequest2 = Mock()
+		automationRequest2.manual >> true
+		targetTC2.automationRequest >> automationRequest2
+
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		targetTC.project >> project
+		targetTC2.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		testCaseDao.findAllByIdsWithProject([-1L, -2L]) >> [targetTC, targetTC2]
+
+		when:
+		service.updateTAScript([-1L, -2L])
+
+		then:
+		1 * taService.listTestsFromRemoteServers(_) >> { arguments ->
+			final Collection<TestAutomationProject> projects = arguments[0]
+			assert projects.size() == 1
+			return createAssignableTestList()
+		}
+		1 * testCaseModificationService.bindAutomatedTestAutomatically(-1L, -1L, "test1")
+		1 * automationRequestDao.updateIsManual(-1L, false)
+
+		1 * automationRequestDao.updateConflictAssociation(-2L, "jobTA/test1#jobTA/test2")
+		1 * testCaseModificationService.removeAutomation(-2L)
+		1 * automationRequestDao.updateIsManual(-2L, false)
+	}
+
 	def createAssignableTestList() {
 
 		// Create a mocked TestAutomationProject
