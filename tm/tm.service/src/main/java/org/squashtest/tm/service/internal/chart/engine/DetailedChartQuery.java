@@ -86,6 +86,7 @@ class DetailedChartQuery extends QueryModel {
 
 		setStrategy(parent.getStrategy());
 
+		// TODO : this is no longer valid (there may be no aggregation for instance)
 		// find the root entity
 		rootEntity = InternalEntityType.fromSpecializedType(parent.getAggregationColumns().get(0).getColumn().getSpecializedType());
 

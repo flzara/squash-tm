@@ -106,14 +106,20 @@ public class ChartDefinition implements TreeEntity{
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
 
+	// --------------- scope ----------------------
+
+	/**
+	 * The ScopeType is the coarse-grained hint about whether, and how, the attribute 'scope' should be considered.
+	 * The doc in the enum type will tell you more about.
+	 */
 	@Enumerated(EnumType.STRING)
 	private ScopeType scopeType;
 
-	@ElementCollection
-	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
-	private List<String> projectScope = new ArrayList<>();
-
-
+	/**
+	 * The scope forms the boundaries of the data that should be retrieved. It consists of a set of domain object
+	 * instances that the data processed in the chart will be restricted to. They can be either specific
+	 * instances, or folder/projects.
+	 */
 	@ElementCollection
 	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@AttributeOverrides({
@@ -122,6 +128,24 @@ public class ChartDefinition implements TreeEntity{
 	})
 	private List<EntityReference> scope = new ArrayList<>();
 
+	// -------------- /scope --------------------
+
+	// ---------------- project scope --------------
+
+	/**
+	 * The project scope has unfortunately a bad name. It has nothing to do with the Chart Scope,
+	 * ie the set of entities that forms the boundaries of the expected results.
+	 *
+	 * What the projectScope really is, is an indicator for the GUI (the chart creation wizard) so that it knows
+	 * which custom fields should be proposed in the interface. It has no other purpose and is ignored when
+	 * the query is processed.
+	 */
+	@ElementCollection
+	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
+	private List<String> projectScope = new ArrayList<>();
+
+
+	// --------------- /project scope --------------
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "QUERY_ID", nullable = false)
