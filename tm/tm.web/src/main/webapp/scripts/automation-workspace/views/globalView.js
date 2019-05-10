@@ -76,21 +76,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    "aTargets": [8],
                                                    "mDataProp": "status"
                                                },
-/*                                               {
-                           												 "bSortable": false,
-                           												 "aTargets": [9],
-                           												 "mDataProp": "listScriptConflict",
-                           												  "mRender": function (data) {
-                           												  							var btn=""
-                           												  							var title = translator.get('test-case.automation-btn-conflict')
-                           																				if (data!=''){
-                           																					btn='<button class="tf-sm script-conflict" >'+ title +'</button>';
-                           																				}else {
-                           																						btn="-"
-                           																				}
-                           																				console.log("data : "+data);
-                           																				return btn
-                           										 }},*/
                            										 {
                                                    "bSortable": true,
                                                    "aTargets": [9],
@@ -102,10 +87,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    "sClass": "assigned-script",
 																									 "mRender": function (data, type, row) {
 																																var btnScript="";
-																																var $row = $(row);
 																																var title = translator.get('test-case.automation-btn-conflict');
 																																if (row['listScriptConflict'].length!=1) {
 																																	btnScript='<button class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</button>';
+
 																															 }else{
 																																 btnScript = data;
 																															}
@@ -219,7 +204,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    }
 
                                                    edObj.buttons = function (settings, original) {
-
+																											if (data['listScriptConflict'].length==1) {
                                                        //first apply the original function
                                                        edFnButtons.call(this, settings, original);
 
@@ -235,12 +220,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                        });
                                                        this.append(btnChoose)
                                                            .append(btnRemove);
-
+																											}
                                                    };
 
                                                    // this is overriden so as to enforce the width.
                                                    edObj.element = function (settings, original) {
-
                                                        var input = edFnElements.call(this, settings, original);
                                                        input.css('width', '70%');
                                                        input.css('height', '16px');
@@ -282,6 +266,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 																													notification.showInfo(listScript);
 
 																													evt.stopPropagation();
+
 																											 });
 
                                                        cell.on("click", function () {
@@ -486,6 +471,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 };
 
                 // ************ events *********************
+
+                $('.assigned-script').on('click',function(evt){
+
+                                	var $toto = $(evt.currentTarget);
+                                	console.log("evt" +  $toto);
+
+                                });
 
                 dialog.on('formdialogconfirm', submit);
 
@@ -707,6 +699,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#unassigned-automation-button").on("click", function () {
                     self.actions(domtable, "automation-requests/unassigned");
                 });
+
+
             }
 
 

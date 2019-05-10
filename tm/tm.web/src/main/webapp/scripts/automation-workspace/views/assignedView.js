@@ -93,8 +93,20 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [9],
                         "mDataProp": "script",
-                        "sClass": "assigned-script"
-                    }, {
+                        "sClass": "assigned-script",
+												"mRender": function (data, type, row) {
+																			var btnScript="";
+																			var $row = $(row);
+																			var title = translator.get('test-case.automation-btn-conflict');
+																			if (row['listScriptConflict'].length!=1) {
+																				btnScript='<button class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</button>';
+																		 }else{
+																			 btnScript = data;
+																		}
+
+																		 return btnScript;
+												}
+											},  {
 												 "bSortable": false,
 												 "aTargets": [10],
 												 "mDataProp": "uuid"
@@ -148,7 +160,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mDataProp": "requestId",
                         "bVisible": false,
                         "aTargets": [16]
-                    }],
+                    }, {
+											 "mDataProp": "listScriptConflict",
+											 "bVisible": false,
+											 "aTargets": [17]
+									 }],
                     "bFilter": true,
 
                     fnRowCallback: function (row, data, displayIndex) {
@@ -243,6 +259,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 id: cellId
                             };
 
+												  /*TM-13: liste script en conflit*/
+
+													cell.on('click', '.script-conflict', function(evt){
+
+															var $btn = $(evt.currentTarget);
+															var $row = $btn.parents('tr');
+															var rowmodel = sqtable.fnGetData($row);
+															var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+															var listScript = list.replace(',', '');
+															notification.showInfo(listScript);
+
+															evt.stopPropagation();
+													 });
                             cell.on("click", function () {
                                 $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
                             });
