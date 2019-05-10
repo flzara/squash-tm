@@ -86,16 +86,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    "mDataProp": "script",
                                                    "sClass": "assigned-script",
 																									 "mRender": function (data, type, row) {
-																																var btnScript="";
+																																var hrefScript="";
 																																var title = translator.get('test-case.automation-btn-conflict');
 																																if (row['listScriptConflict'].length!=1) {
-																																	btnScript='<button class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</button>';
+																																	hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
 
 																															 }else{
-																																 btnScript = data;
+																																 hrefScript = data;
 																															}
 
-																															 return btnScript;
+																															 return hrefScript;
 																										}
                                                }, {
                            												 "bSortable": false,
@@ -204,7 +204,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    }
 
                                                    edObj.buttons = function (settings, original) {
-																											if (data['listScriptConflict'].length===1) {
                                                        //first apply the original function
                                                        edFnButtons.call(this, settings, original);
 
@@ -220,7 +219,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                        });
                                                        this.append(btnChoose)
                                                            .append(btnRemove);
-																											}
+
                                                    };
 
                                                    // this is overriden so as to enforce the width.
@@ -242,7 +241,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                                                    var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                                                    var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                                                   if (data['script'] !== '-' && !isGherkin && data['listScriptConflict'].length===1) {
+                                                   if (data['script'] !== '-' && data['script']===null && !isGherkin && data['listScriptConflict'].length===1) {
                                                        cell.editable(url, editable);
                                                        cell.css({ "font-style": "italic" });
 
@@ -275,19 +274,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                            }
                                                            return false;// see comment above
                                                        });
-                                                       /*TM-13
-                                                       cell.on('click', '.assigned-script', function () {
-																														if(data['script']!=null) {
-																															$row.addClass("no-user-select");
-																														}
-																													} );*/
-                                                   } else if (isGherkin && data['script'] !== '-') {
+                                                   } else if (isGherkin && data['script'] !== '-' || data['script']!==null) {
                                                        cell.css({ 'color': 'gray', 'font-style': 'italic' });
                                                    } else if (data['listScriptConflict'].length!==1) {
 																										 /*TM-13: liste script en conflit*/
 																										 cell.css({ 'color': 'gray', 'font-style': 'italic' });
 																										 cell.on('click', '.script-conflict', function(evt){
-
+																											 event.preventDefault();
 																											 var $btn = $(evt.currentTarget);
 																											 var $row = $btn.parents('tr');
 																											 var rowmodel = sqtable.fnGetData($row);

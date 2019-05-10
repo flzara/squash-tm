@@ -95,16 +95,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "mDataProp": "script",
                         "sClass": "assigned-script",
 												"mRender": function (data, type, row) {
-																			var btnScript="";
-																			var $row = $(row);
-																			var title = translator.get('test-case.automation-btn-conflict');
-																			if (row['listScriptConflict'].length!=1) {
-																				btnScript='<button class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</button>';
-																		 }else{
-																			 btnScript = data;
-																		}
+																		var hrefScript="";
+																		var title = translator.get('test-case.automation-btn-conflict');
+																		if (row['listScriptConflict'].length!=1) {
+																			hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
 
-																		 return btnScript;
+																	 }else{
+																		 hrefScript = data;
+																	}
+
+																	 return hrefScript;
 												}
 											},  {
 												 "bSortable": false,
@@ -249,7 +249,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                        if (data['script'] !== '-' && !isGherkin) {
+                        if (data['script'] !== '-' && data['script']===null && !isGherkin && data['listScriptConflict'].length===1) {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
                             var urlTa = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
@@ -259,19 +259,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 id: cellId
                             };
 
-												  /*TM-13: liste script en conflit*/
-
-													cell.on('click', '.script-conflict', function(evt){
-
-															var $btn = $(evt.currentTarget);
-															var $row = $btn.parents('tr');
-															var rowmodel = sqtable.fnGetData($row);
-															var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
-															var listScript = list.replace(',', '');
-															notification.showInfo(listScript);
-
-															evt.stopPropagation();
-													 });
                             cell.on("click", function () {
                                 $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
                             });
@@ -293,9 +280,24 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 return false;// see comment above
                             });
-                        } else if (isGherkin && data['script'] !== '-') {
+                        } else if (isGherkin && data['script'] !== '-' || data['script']!==null ) {
                             cell.css({ 'color': 'gray', 'font-style': 'italic' });
-                        }
+                        } else if (data['listScriptConflict'].length!==1) {
+													 /*TM-13: liste script en conflit*/
+													 cell.css({ 'color': 'gray', 'font-style': 'italic' });
+													 cell.on('click', '.script-conflict', function(evt){
+														 event.preventDefault();
+														 var $btn = $(evt.currentTarget);
+														 var $row = $btn.parents('tr');
+														 var rowmodel = sqtable.fnGetData($row);
+														 var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+														 var listScript = list.replace(',', '');
+														 notification.showInfo(listScript);
+
+														 evt.stopPropagation();
+
+													 });
+												 }
                     },
 
                     fnDrawCallback: function () {
