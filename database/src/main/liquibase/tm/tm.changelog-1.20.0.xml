@@ -582,6 +582,8 @@
     <dropColumn tableName="CHART_FILTER" columnName="QUERY_ID"/>
     <dropColumn tableName="CHART_MEASURE_COLUMN" columnName="QUERY_ID"/>
 
+    <dropColumn tableName="CHART_DEFINITION" columnName="QUERY_ID"/>
+
   </changeSet>
 
 
@@ -594,10 +596,6 @@
 
 
     <!-- foreign keys pointing to : CHART_QUERY -->
-
-    <addForeignKeyConstraint constraintName="fk_chart_def_query_model"
-                             baseTableName="CHART_DEFINITION" baseColumnNames="QUERY_ID"
-                             referencedTableName="QUERY_MODEL" referencedColumnNames="QUERY_MODEL_ID"/>
     <addForeignKeyConstraint constraintName="fk_query_col_query_model"
                              baseTableName="QUERY_COLUMN_PROTOTYPE" baseColumnNames="SUBQUERY_ID"
                              referencedTableName="QUERY_MODEL" referencedColumnNames="QUERY_MODEL_ID"/>
