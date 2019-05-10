@@ -46,6 +46,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 * Given a list of test case's id, will try to update value of automation script for each test case
 	 * @param tcIds : a list of test case ids
 	 */
-	Set<Long> updateTAScript(List<Long> tcIds);
+	Map<Long, String> updateTAScript(List<Long> tcIds);
 
 }

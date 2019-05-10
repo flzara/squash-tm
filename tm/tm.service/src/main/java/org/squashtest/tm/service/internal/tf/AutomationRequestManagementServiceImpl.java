@@ -305,8 +305,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	// **************************** TA script auto association section *************************************
 
 	@Override
-	public Set<Long> updateTAScript(List<Long> tcIds) {
-		Set<Long> losingTAScriptTestCases = new HashSet<>();
+	public Map<Long, String> updateTAScript(List<Long> tcIds) {
+		Map<Long, String> losingTAScriptTestCases = new HashMap<>();
 
 		// 1 - We fetch all the test cases from DB (with project and AutomationProject list)
 		List<TestCase> testCases = testCaseDao.findAllByIdsWithProject(tcIds);
@@ -346,7 +346,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return t -> seen.add(keyExtractor.apply(t));
 	}
 
-	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents, Set<Long> losingTAScriptTestCases){
+	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents, Map<Long, String> losingTAScriptTestCases){
 		List<AutomatedTest> assignableAutomatedTestList = extractAssignableAutomatedTestList(testCase, testAutomationProjectContents);
 
 		if(assignableAutomatedTestList.size() > 0){
@@ -371,13 +371,13 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return assignableAutomatedTestList;
 	}
 
-	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList, Set<Long> losingTAScriptTestCases){
+	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList, Map<Long, String> losingTAScriptTestCases){
 
 		requestDao.updateIsManual(tc.getId(), false);
 
 		if (tc.getAutomatedTest()!= null){
 			testCaseModificationService.removeAutomation(tc.getId());
-			losingTAScriptTestCases.add(tc.getId());
+			losingTAScriptTestCases.put(tc.getId(), tc.getName());
 		}
 
 		StringJoiner stringJoiner = new StringJoiner("#");
@@ -397,10 +397,10 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		testCaseModificationService.bindAutomatedTestAutomatically(tc.getId(), trueAutomationProject.getId(), automatedTest.getName());
 	}
 
-	private void manageNoScript(TestCase tc, Set<Long> losingTAScriptTestCases){
+	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
 		if (tc.getAutomatedTest()!=null && !tc.getAutomationRequest().isManual() ){
 			testCaseModificationService.removeAutomation(tc.getId());
-			losingTAScriptTestCases.add(tc.getId());
+			losingTAScriptTestCases.put(tc.getId(), tc.getName());
 		}
 		requestDao.updateIsManual(tc.getId(), true);
 	}

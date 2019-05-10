@@ -96,7 +96,7 @@ public class AutomationModificationController {
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {"tcIds[]"})
 	@ResponseBody
-	public Set<Long> resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
+	public Map<Long, String> resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
 		return automationRequestModificationService.updateTAScript(tcIds);
 	}
 }

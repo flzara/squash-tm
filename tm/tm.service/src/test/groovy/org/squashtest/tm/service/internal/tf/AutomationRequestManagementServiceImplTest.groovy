@@ -86,7 +86,8 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		1 * testCaseModificationService.removeAutomation(-1L)
 		1 * automationRequestDao.updateIsManual(-1L, true)
 		result.size() == 1
-		result.contains(-1L)
+		result.containsKey(-1L)
+		result.containsValue("TestWithUuidNotFound")
 	}
 
 	def "Should find no TA script to associate with test case and not remove previous auto associated script"(){
@@ -216,7 +217,8 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		1 * automationRequestDao.updateIsManual(-1L, false)
 		1 * automationRequestDao.updateConflictAssociation(-1L, "jobTA/test1#jobTA/test2")
 		result.size() == 1
-		result.contains(-1L)
+		result.containsKey(-1L)
+		result.containsValue("TCWithMoreThanOneTAScript")
 	}
 
 	def "For multiple testcases update, should ask for automation server's test list the minimum time"(){
