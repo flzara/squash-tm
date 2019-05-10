@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.tf.automationrequest;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,12 +50,12 @@ public class RemoteAutomationRequestExtender {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "BUGTRACKER_ID", nullable = true)
-	private BugTracker bugTracker;
+	@JoinColumn(name = "SERVER_ID", referencedColumnName = "BUGTRACKER_ID")
+	private BugTracker server;
 
 	@NotNull
 	@OneToOne(optional = false)
-	@JoinColumn(name = "AUTOMATION_REQUEST_ID")
+	@JoinColumn(name = "AUTOMATION_REQUEST_ID", referencedColumnName = "AUTOMATION_REQUEST_ID")
 	private AutomationRequest automationRequest;
 
 	@NotNull
@@ -70,11 +69,11 @@ public class RemoteAutomationRequestExtender {
 		this.id = id;
 	}
 
-	public BugTracker getBugTracker() {
-		return bugTracker;
+	public BugTracker getServer() {
+		return server;
 	}
-	public void setBugTracker(BugTracker bugTracker) {
-		this.bugTracker = bugTracker;
+	public void setServer(BugTracker server) {
+		this.server = server;
 	}
 
 	public AutomationRequest getAutomationRequest() {

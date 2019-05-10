@@ -125,8 +125,8 @@
         <constraints nullable="false" foreignKeyName="fk_remote_automation_request_extender_automation_request_id" references="AUTOMATION_REQUEST (AUTOMATION_REQUEST_ID)" />
       </column>
 
-      <column name="BUGTRACKER_ID" type="BIGINT" remarks="The bugtracker to which the automation request is linked">
-        <constraints nullable="true" foreignKeyName="fk_remote_automation_request_extender_bugtracker_id" references="BUGTRACKER (BUGTRACKER_ID)" />
+      <column name="SERVER_ID" type="BIGINT" remarks="The bugtracker to which the automation request is linked">
+        <constraints nullable="true" foreignKeyName="fk_remote_automation_request_extender_server_id" references="BUGTRACKER (BUGTRACKER_ID)" />
       </column>
 
       <column name="REMOTE_STATUS" type="VARCHAR(255)" remarks="The remote status as defined in the bugtracker">
@@ -139,8 +139,8 @@
       <column name="AUTOMATION_REQUEST_ID" />
     </createIndex>
 
-    <createIndex tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER" indexName="idx_fk_remote_automation_request_extender_bugtracker_id">
-      <column name="BUGTRACKER_ID" />
+    <createIndex tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER" indexName="idx_fk_remote_automation_request_extender_server_id">
+      <column name="SERVER_ID" />
     </createIndex>
 
   </changeSet>
