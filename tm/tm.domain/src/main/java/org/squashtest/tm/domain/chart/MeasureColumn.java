@@ -41,7 +41,6 @@ import javax.validation.constraints.Size;
 @Table(name = "CHART_MEASURE_COLUMN")
 public class MeasureColumn implements ColumnPrototypeInstance {
 
-
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
 	private QueryColumnPrototype column;
@@ -64,14 +63,10 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		this.label = label;
 	}
 
-
-
 	@Override
 	public EntityType getEntityType() {
 		return column.getEntityType();
 	}
-
-
 
 	@Override
 	public Long getCufId() {

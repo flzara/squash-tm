@@ -130,7 +130,8 @@ public class ChartDefinition implements TreeEntity{
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
-	@OneToMany(mappedBy = "chartDefinition")
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CHART_DEFINTION_ID", nullable = false)
 	private List<Filter> filters;
 
 	@ElementCollection

@@ -66,10 +66,6 @@ public class Filter implements ColumnPrototypeInstance {
 	@Column(name="FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
 
-	@ManyToOne
-	@JoinColumn(name = "CHART_DEFINITION_ID")
-	private ChartDefinition chartDefinition;
-
 	private Long cufId;
 
 	@Override
@@ -122,21 +118,12 @@ public class Filter implements ColumnPrototypeInstance {
 		this.cufId = cufId;
 	}
 
-	public ChartDefinition getChartDefinition() {
-		return chartDefinition;
-	}
-
-	public void setChartDefinition(ChartDefinition chartDefinition) {
-		this.chartDefinition = chartDefinition;
-	}
-
 	public Filter createCopy(){
 		Filter copy = new Filter();
 		copy.setColumn(this.getColumn());
 		copy.setOperation(this.getOperation());
 		copy.getValues().addAll(this.getValues());
 		copy.setCufId(this.getCufId());
-		copy.setChartDefinition(this.getChartDefinition());
 		return copy;
 	}
 }
