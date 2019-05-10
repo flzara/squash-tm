@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
+import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
@@ -59,6 +60,10 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	def setup() {
 		service.pathService = pathService
 		service.eventPublisher = eventPublisher
+
+		def server = Mock(ScmServer)
+		server.getUrl() >> "http://github.com"
+		scm.setScmServer(server)
 	}
 
 	def cleanupSpec(){
@@ -162,7 +167,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			def manifest = new ScmRepositoryManifest(scm)
 		and:
 			nbrPathCall * pathService.buildTestCaseFoldersPath(pTestCaseId) >> pReturnedFoldersPath
-			eventPublisher.publishEvent(_) >> { }
 		when:
 			def file = service.locateOrMoveOrCreateTestFile(manifest, tc)
 		then:
@@ -186,18 +190,10 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			nbrPathCall = pUseTreeStructure ? 1 : 0 // pathService is only called (twice) if the tree structure is used
 	}
 
-
 	def "#moveAndRenameFileIfNeeded - Should rename/move the file or not"() {
 		given:
-			def scmServer = Mock(ScmServer) {
-				getUrl() >> "http://myUrl.com"
-			}
-			def scmRepo = Mock(ScmRepository) {
-				getScmServer() >> scmServer
-			}
 			def project = Mock(Project) {
 				isUseTreeStructureInScmRepo() >> pUseTreeStructure
-				getScmRepository() >> scmRepo
 			}
 			def workingFolder = scm.getWorkingFolder()
 			def file = new File(workingFolder, pInitialFilePath)
@@ -210,9 +206,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			}
 		and:
 			pNbrePathCall * pathService.buildTestCaseFoldersPath(499L) >> pReturnedFoldersPath
-			eventPublisher.publishEvent(_) >> { }
 		when:
-			def resultFile = service.moveAndRenameFileIfNeeded(testCase, file, workingFolder)
+			def resultFile = service.moveAndRenameFileIfNeeded(testCase, file, scm)
 		then:
 			relativePathFromWorkingDirectory(resultFile) == pExpectedRelativePath
 			resultFile.exists()
@@ -349,7 +344,6 @@ go home quickly before someone notices that the ITs are broken"""
 		}
 		updateTcExtender.setTestCase(updateTc)
 
-		eventPublisher.publishEvent(_) >> { }
 		when:
 		service.createOrUpdateScriptFile(scm, [updateTc, newTc])
 

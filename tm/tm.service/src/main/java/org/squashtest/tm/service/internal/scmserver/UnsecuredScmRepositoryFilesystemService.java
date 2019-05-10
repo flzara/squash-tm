@@ -142,7 +142,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		if (maybeTestFile.isPresent()){
 			testfile = maybeTestFile.get();
 			LOGGER.trace("found file : '{}'", testfile.getAbsolutePath());
-			testfile = moveAndRenameFileIfNeeded(testCase, testfile, manifest.getScm().getWorkingFolder());
+			testfile = moveAndRenameFileIfNeeded(testCase, testfile, manifest.getScm());
 		} else {
 			LOGGER.trace("file not found, attempting to create a new one");
 			// roundtrip 1 : attempt the creation with the normal filename
@@ -167,11 +167,12 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * the backup name if it failed.
 	 * @param testCase The Test Case being transmitted
 	 * @param originalFile The File corresponding to the given Test Case that was found (but potentially at the wrong place)
-	 * @param workingDirectory The Scm Repository working directory in which operations are occurring
+	 * @param scmRepository The Scm Repository in which operations are occurring
 	 * @return The moved/renamed File if such operations were needed. The original File it was not moved/renamed
 	 */
-	private File moveAndRenameFileIfNeeded(TestCase testCase, File originalFile, File workingDirectory) {
+	private File moveAndRenameFileIfNeeded(TestCase testCase, File originalFile, ScmRepository scmRepository) {
 
+		File workingDirectory = scmRepository.getWorkingFolder();
 		// Determine CORRECT folders path
 		String foldersPath = getFoldersPath(testCase);
 		// Determine CORRECT relative path of the given TestCase with the STANDARD name
@@ -185,12 +186,13 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		if(!correctStandardRelativePath.equals(currentPath) && !correctBackupRelativePath.equals(currentPath)) {
 			// Try to move/rename with the standard name
 			File targetStandardFile = new File(workingDirectory, correctStandardRelativePath);
+
 			try {
 				tryMoveFile(originalFile, targetStandardFile);
 				eventPublisher.publishEvent(
 					new TestCaseGherkinLocationChangeEvent(
 						testCase.getId(),
-						testCase.getProject().getScmRepository().getScmServer().getUrl() + "/" + correctStandardRelativePath));
+						scmRepository.getScmServer().getUrl() + "/" + scmRepository.getName() + "/" + correctStandardRelativePath));
 				return targetStandardFile;
 			} catch (IOException ex) {
 				// Operation failed, try with the backup name
@@ -200,7 +202,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 					eventPublisher.publishEvent(
 					new TestCaseGherkinLocationChangeEvent(
 						testCase.getId(),
-						testCase.getProject().getScmRepository().getScmServer().getUrl() + "/" + correctBackupRelativePath));
+						scmRepository.getScmServer().getUrl() + "/" + scmRepository.getName() + "/" + correctBackupRelativePath));
 					return targetBackUpFile;
 				} catch (IOException ioEx) {
 					throw new RuntimeException(ex);
