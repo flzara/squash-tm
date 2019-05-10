@@ -323,6 +323,17 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 }
             },
 
+					  trySquashTAScriptAssociation : function (table) {
+							var tcIds = this.getSelectedTcIds(table);
+						  return $.ajax({
+							  url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
+							  method: 'POST',
+							  data: {
+								"tcIds": tcIds
+							  }
+						  });
+					  },
+
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
@@ -339,6 +350,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 $("#transmitted-automation-button").on("click", function () {
+                		self.trySquashTAScriptAssociation(domtable);
                     self.changeStatus("TRANSMITTED", domtable);
                 });
 
