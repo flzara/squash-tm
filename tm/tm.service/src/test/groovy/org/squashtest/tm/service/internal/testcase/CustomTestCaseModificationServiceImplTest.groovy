@@ -311,12 +311,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		]
 		1 *indexationService.batchReindexItpi([1L, 2L])
 		1 * indexationService.batchReindexTc([10L])
-		1 * eventPublisher.publishEvent(_) >> { args ->
-			def event = args[0]
-			assert event instanceof TestCaseNameChangeEvent
-			assert event.testCaseId == 10L
-			assert event.newName == "Bob"
-		}
+		1* eventPublisher.publishEvent({
+			it instanceof TestCaseNameChangeEvent && it.testCaseId == 10L && it.newName == "Bob"
+		})
 	}
 
 
@@ -344,13 +341,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		]
 		1 *indexationService.batchReindexItpi([1L, 2L])
 		1 * indexationService.batchReindexTc([10L])
-		1 * eventPublisher.publishEvent(_) >> { args ->
-			def event = args[0]
-			assert event instanceof TestCaseReferenceChangeEvent
-			assert event.testCaseId == 10L
-			assert event.newReference == "reref"
-		}
-
+		1 * eventPublisher.publishEvent({
+			it instanceof TestCaseReferenceChangeEvent && it.testCaseId == 10L && it.newReference == "reref"
+		})
 	}
 
 	def "should change the importance of a test case"(){
