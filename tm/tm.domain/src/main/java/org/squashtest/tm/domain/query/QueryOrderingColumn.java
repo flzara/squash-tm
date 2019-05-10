@@ -34,7 +34,7 @@ import javax.persistence.Table;
 
 @Embeddable
 @Table(name = "QUERY_ORDERING_COLUMN")
-public class QueryOrderingColumn implements ColumnPrototypeInstance{
+public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "QUERY_PROJECTION_ID", nullable = false)

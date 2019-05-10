@@ -37,7 +37,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "QUERY_PROJECTION_COLUMN")
-public class QueryProjectionColumn implements ColumnPrototypeInstance{
+public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "QUERY_PROJECTION_ID")

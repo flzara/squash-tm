@@ -30,7 +30,7 @@ import javax.persistence.Table;
 
 @Embeddable
 @Table(name = "QUERY_AGGREGATION_COLUMN")
-public class QueryAggregationColumn implements ColumnPrototypeInstance {
+public class QueryAggregationColumn implements QueryColumnPrototypeInstance {
 
 	@JoinColumn(name = "PROJECTION_COLUMN_ID")
 	@ManyToOne(fetch = FetchType.EAGER)

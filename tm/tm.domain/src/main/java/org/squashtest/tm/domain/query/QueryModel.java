@@ -163,7 +163,7 @@ public class QueryModel implements IQueryModel{
 
 		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(4);
 
-		Collection<? extends ColumnPrototypeInstance> columns;
+		Collection<? extends QueryColumnPrototypeInstance> columns;
 		columns = getFilterColumns();
 		if(!columns.isEmpty()) {
 			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
@@ -181,9 +181,9 @@ public class QueryModel implements IQueryModel{
 		return result;
 	}
 
-	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends QueryColumnPrototypeInstance> columns){
 		Set<SpecializedEntityType> types = new HashSet<>();
-		for (ColumnPrototypeInstance col : columns){
+		for (QueryColumnPrototypeInstance col : columns){
 			types.add(col.getSpecializedType());
 		}
 		return types;

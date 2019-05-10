@@ -40,7 +40,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "QUERY_FILTER_COLUMN")
-public class QueryFilterColumn implements ColumnPrototypeInstance{
+public class QueryFilterColumn implements QueryColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "QUERY_FILTER_ID")

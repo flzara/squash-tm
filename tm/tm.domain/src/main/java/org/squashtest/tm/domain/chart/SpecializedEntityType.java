@@ -29,12 +29,12 @@ import javax.persistence.Enumerated;
 @Embeddable
 public class SpecializedEntityType {
 	/**
-	 * Used in {@link ColumnPrototype} : when the EntityType referenced by this ColumnPrototype may support different roles depending
+	 * Used in {@link org.squashtest.tm.domain.query.QueryColumnPrototype} : when the EntityType referenced by this ColumnPrototype may support different roles depending
 	 * on the context, an EntityRole will help to know which one.
 	 *
 	 * @author bsiri
 	 *
-	 */
+	 *//*
 	public enum EntityRole {
 		TEST_CASE_NATURE,
 		TEST_CASE_TYPE,
@@ -101,5 +101,5 @@ public class SpecializedEntityType {
 	}
 
 
-
+*/
 }

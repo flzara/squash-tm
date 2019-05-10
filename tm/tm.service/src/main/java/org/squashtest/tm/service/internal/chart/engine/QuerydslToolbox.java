@@ -44,7 +44,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -69,8 +69,6 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
 
 class QuerydslToolbox {
 
@@ -102,7 +100,7 @@ class QuerydslToolbox {
 	 * Constructor with context name driven by the given column
 	 *
 	 */
-	QuerydslToolbox(ColumnPrototypeInstance column) {
+	QuerydslToolbox(QueryColumnPrototypeInstance column) {
 		super();
 		this.subContext = "subcolumn_" + column.getColumn().getId();
 	}
@@ -159,7 +157,7 @@ class QuerydslToolbox {
 		return getQBean(type);
 	}
 
-	EntityPathBase<?> getQBean(ColumnPrototypeInstance column) {
+	EntityPathBase<?> getQBean(QueryColumnPrototypeInstance column) {
 		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 		return getQBean(type);
 	}
@@ -234,7 +232,7 @@ class QuerydslToolbox {
 	 *
 	 */
 	boolean isWhereClauseComponent(QueryFilterColumn filter) {
-		ColumnPrototypeInstance column = filter;
+		QueryColumnPrototypeInstance column = filter;
 
 		while (column.getColumn().getColumnType() == ColumnType.CALCULATED &&
 			subQueryStrategy(column) == QueryStrategy.INLINED
@@ -249,14 +247,14 @@ class QuerydslToolbox {
 		return !isWhereClauseComponent(filter);
 	}
 
-	boolean isSubquery(ColumnPrototypeInstance proto) {
+	boolean isSubquery(QueryColumnPrototypeInstance proto) {
 		return proto.getColumn().getColumnType() == ColumnType.CALCULATED;
 	}
 
 	// ***************************** high level API ***********************
 
 
-	Expression<?> createAsSelect(ColumnPrototypeInstance col) {
+	Expression<?> createAsSelect(QueryColumnPrototypeInstance col) {
 
 		Expression<?> selectElement;
 
@@ -343,7 +341,7 @@ class QuerydslToolbox {
 	 * Creates an expression fit for a "select" clause,  for columns of ColumnType = ATTRIBUTE
 	 *
 	 */
-	Expression<?> createAttributeSelect(ColumnPrototypeInstance column) {
+	Expression<?> createAttributeSelect(QueryColumnPrototypeInstance column) {
 		Expression attribute = attributePath(column);
 		Operation operation = column.getOperation();
 
@@ -360,7 +358,7 @@ class QuerydslToolbox {
 	 * Creates an expression fit for a "select" clause,  for columns of ColumnType = CALCULATED
 	 *
 	 */
-	Expression<?> createSubquerySelect(ColumnPrototypeInstance col) {
+	Expression<?> createSubquerySelect(QueryColumnPrototypeInstance col) {
 		Expression<?> expression = null;
 
 		switch (subQueryStrategy(col)) {
@@ -400,7 +398,7 @@ class QuerydslToolbox {
 		return expression;
 	}
 
-	private Expression<?> createCustomFieldSelect(ColumnPrototypeInstance col) {
+	private Expression<?> createCustomFieldSelect(QueryColumnPrototypeInstance col) {
 		Expression<?> expression;
 
 		QueryColumnPrototype columnPrototype = col.getColumn();
@@ -745,7 +743,7 @@ class QuerydslToolbox {
 	 * should be invoked only on columns of AttributeType = ATTRIBUTE
 	 *
 	 */
-	private PathBuilder attributePath(ColumnPrototypeInstance column) {
+	private PathBuilder attributePath(QueryColumnPrototypeInstance column) {
 
 		QueryColumnPrototype prototype = column.getColumn();
 
@@ -831,7 +829,7 @@ class QuerydslToolbox {
 	}
 
 
-	private SubQueryBuilder createSubquery(ColumnPrototypeInstance col) {
+	private SubQueryBuilder createSubquery(QueryColumnPrototypeInstance col) {
 		QueryColumnPrototype prototype = col.getColumn();
 		QueryModel queryDef = prototype.getSubQuery();
 		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
@@ -954,7 +952,7 @@ class QuerydslToolbox {
 
 
 	// warning : should be called on columns that have a ColumnType = CALCULATED only
-	private QueryStrategy subQueryStrategy(ColumnPrototypeInstance col) {
+	private QueryStrategy subQueryStrategy(QueryColumnPrototypeInstance col) {
 		QueryColumnPrototype proto = col.getColumn();
 		if (proto.getColumnType() != ColumnType.CALCULATED) {
 			throw new IllegalArgumentException("column '" + proto.getLabel() + "' has a column type of '" + proto.getColumnType() + "', therefore it has no subquery");

@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.IQueryModel;
@@ -102,17 +102,17 @@ class DetailedChartQuery extends QueryModel {
 	 *
 	 * @param column
 	 */
-	DetailedChartQuery(ColumnPrototypeInstance column){
+	DetailedChartQuery(QueryColumnPrototypeInstance column){
 		this(column.getColumn().getSubQuery());
 	}
 
 
-	Collection<? extends ColumnPrototypeInstance> getInlinedColumns(){
+	Collection<? extends QueryColumnPrototypeInstance> getInlinedColumns(){
 		return findSubqueriesForStrategy(new PerStrategyColumnFinder(QueryStrategy.INLINED));
 
 	}
 
-	Collection<? extends ColumnPrototypeInstance> getSubqueryColumns(){
+	Collection<? extends QueryColumnPrototypeInstance> getSubqueryColumns(){
 		return findSubqueriesForStrategy(new PerStrategyColumnFinder(QueryStrategy.SUBQUERY));
 
 	}
@@ -173,22 +173,22 @@ class DetailedChartQuery extends QueryModel {
 		getOrderingColumns().addAll(orderingColumns);
 	}
 
-	private Collection<ColumnPrototypeInstance> findSubqueriesForStrategy(PerStrategyColumnFinder finder){
-		Collection<ColumnPrototypeInstance> found = new ArrayList<>();
+	private Collection<QueryColumnPrototypeInstance> findSubqueriesForStrategy(PerStrategyColumnFinder finder){
+		Collection<QueryColumnPrototypeInstance> found = new ArrayList<>();
 
-		Collection<? extends ColumnPrototypeInstance> projection = new ArrayList<>(getProjectionColumns());
+		Collection<? extends QueryColumnPrototypeInstance> projection = new ArrayList<>(getProjectionColumns());
 		CollectionUtils.filter(projection, finder);
 		found.addAll(projection);
 
-		Collection<? extends ColumnPrototypeInstance> aggregation = new ArrayList<>(getAggregationColumns());
+		Collection<? extends QueryColumnPrototypeInstance> aggregation = new ArrayList<>(getAggregationColumns());
 		CollectionUtils.filter(aggregation, finder);
 		found.addAll(aggregation);
 
-		Collection<? extends ColumnPrototypeInstance> filters = new ArrayList<>(getFilterColumns());
+		Collection<? extends QueryColumnPrototypeInstance> filters = new ArrayList<>(getFilterColumns());
 		CollectionUtils.filter(filters, finder);
 		found.addAll(filters);
 
-		Collection<? extends ColumnPrototypeInstance> ordering = new ArrayList<>(getOrderingColumns());
+		Collection<? extends QueryColumnPrototypeInstance> ordering = new ArrayList<>(getOrderingColumns());
 		CollectionUtils.filter(ordering, finder);
 		found.addAll(ordering);
 
@@ -204,7 +204,7 @@ class DetailedChartQuery extends QueryModel {
 
 		@Override
 		public boolean evaluate(Object col) {
-			QueryColumnPrototype proto = ((ColumnPrototypeInstance)col).getColumn();
+			QueryColumnPrototype proto = ((QueryColumnPrototypeInstance)col).getColumn();
 			return proto.getColumnType() == ColumnType.CALCULATED &&
             proto.getSubQuery().getStrategy() == strategy;
 		}

@@ -27,7 +27,8 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.tree.TreeEntity;
@@ -196,7 +197,7 @@ public class ChartDefinition implements TreeEntity{
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(3);
 
-		Collection<? extends ColumnPrototypeInstance> columns;
+		Collection<? extends QueryColumnPrototypeInstance> columns;
 
 		columns = getFilters();
 		if (! columns.isEmpty()){
@@ -333,9 +334,9 @@ public class ChartDefinition implements TreeEntity{
 		this.measures = measures;
 	}
 
-	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends QueryColumnPrototypeInstance> columns){
 		Set<SpecializedEntityType> types = new HashSet<>();
-		for (ColumnPrototypeInstance col : columns){
+		for (QueryColumnPrototypeInstance col : columns){
 			types.add(col.getSpecializedType());
 		}
 		return types;

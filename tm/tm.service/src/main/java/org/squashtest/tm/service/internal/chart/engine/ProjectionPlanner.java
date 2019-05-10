@@ -25,7 +25,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
@@ -175,10 +175,10 @@ class ProjectionPlanner {
 	}
 
 
-	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
+	private void populateClauses(List<Expression<?>> toPopulate, List<? extends QueryColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
 
 		int count = 0;
-		for (ColumnPrototypeInstance col : columns){
+		for (QueryColumnPrototypeInstance col : columns){
 
 			Expression<?> expr = null;
 

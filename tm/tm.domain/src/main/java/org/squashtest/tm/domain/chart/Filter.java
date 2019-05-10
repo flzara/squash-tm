@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -45,7 +45,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "CHART_FILTER")
-public class Filter implements ColumnPrototypeInstance {
+public class Filter implements QueryColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "FILTER_ID")

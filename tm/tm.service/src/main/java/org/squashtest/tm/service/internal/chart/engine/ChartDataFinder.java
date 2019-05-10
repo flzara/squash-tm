@@ -31,11 +31,10 @@ import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.IQueryModel;
@@ -73,7 +72,7 @@ import java.util.List;
  *
  * <p>
  * The main java type that define a column is {@link ColumnPrototype}. All available columns are statically defined in the database.
- * When a column is included in a chart it will assume the role of a Measure, Axis or Column ({@link ColumnPrototypeInstance}).
+ * When a column is included in a chart it will assume the role of a Measure, Axis or Column ({@link QueryColumnPrototypeInstance}).
  * </p>
  *
  * <h1>Column types</h1>

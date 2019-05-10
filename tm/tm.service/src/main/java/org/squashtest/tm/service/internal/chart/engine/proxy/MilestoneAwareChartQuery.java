@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.IChartQuery;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.query.IQueryModel;

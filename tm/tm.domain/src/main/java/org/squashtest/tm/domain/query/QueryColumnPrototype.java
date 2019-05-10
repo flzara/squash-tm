@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.query;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ColumnRole;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;

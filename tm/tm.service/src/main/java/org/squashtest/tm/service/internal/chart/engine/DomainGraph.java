@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
 

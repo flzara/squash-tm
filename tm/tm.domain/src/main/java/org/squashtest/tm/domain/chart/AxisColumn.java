@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -39,7 +39,7 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 @Table(name = "CHART_AXIS_COLUMN")
-public class AxisColumn implements ColumnPrototypeInstance {
+public class AxisColumn implements QueryColumnPrototypeInstance {
 
 
 	@NotBlank

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.query;
 
-import org.squashtest.tm.domain.query.Operation;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;

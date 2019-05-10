@@ -29,8 +29,8 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.query.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
@@ -198,7 +198,7 @@ class QueryPlanner {
 
 		// now process the inlined subqueries and append their table to the
 		// join clauses as well.
-		for (ColumnPrototypeInstance column : definition.getInlinedColumns()){
+		for (QueryColumnPrototypeInstance column : definition.getInlinedColumns()){
 
 			EntityPathBase<?> subRootpath = utils.getQBean(column.getColumn().getSpecializedType());
 
@@ -334,8 +334,8 @@ class QueryPlanner {
 		return cufPrototypesWithIds;
 	}
 
-	private void extractCufPrototype(Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds, List<? extends ColumnPrototypeInstance> prototypes) {
-		for (ColumnPrototypeInstance prototypeInstance : prototypes) {
+	private void extractCufPrototype(Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds, List<? extends QueryColumnPrototypeInstance> prototypes) {
+		for (QueryColumnPrototypeInstance prototypeInstance : prototypes) {
 			QueryColumnPrototype columnPrototype = prototypeInstance.getColumn();
 			if (columnPrototype.getColumnType() == ColumnType.CUF) {
 				Set<Long> cufIds = cufPrototypesWithIds.get(columnPrototype);

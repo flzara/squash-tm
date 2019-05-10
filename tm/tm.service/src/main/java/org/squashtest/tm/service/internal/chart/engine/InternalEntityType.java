@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -221,13 +221,13 @@ enum InternalEntityType {
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 
 
-	static InternalEntityType fromSpecializedType(org.squashtest.tm.domain.query.SpecializedEntityType domainType){
+	static InternalEntityType fromSpecializedType(SpecializedEntityType domainType){
 		String name =  domainType.getEntityType().name();
-		org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole entityRole = domainType.getEntityRole();
-		if (entityRole != null && entityRole != org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+		SpecializedEntityType.EntityRole entityRole = domainType.getEntityRole();
+		if (entityRole != null && entityRole != SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
 			name = entityRole.name();
 		}
-		if (entityRole != null && entityRole == org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
+		if (entityRole != null && entityRole == SpecializedEntityType.EntityRole.CUSTOM_FIELD) {
 			name = domainType.getEntityType().name();
 		}
 		try{
