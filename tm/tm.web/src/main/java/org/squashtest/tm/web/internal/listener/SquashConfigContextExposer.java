@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -51,9 +49,6 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 	volatile private ServletContextEvent sce;
 	volatile private boolean contextReady = false;
 
-	@Value("${tm.test.automation.server.callbackurl}")
-	private String callbackUrlFromConfFile;
-
 	@Inject
 	private ConfigurationService configurationService;
 
@@ -64,7 +59,6 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 	public void contextInitialized(ServletContextEvent sce) {
 		this.sce = sce;
 		exposeMilestoneFeatEnabled();
-		copySquashPublicUrlFromConfFileIntoDatabase();
 	}
 
 	private synchronized void exposeMilestoneFeatEnabled() {
@@ -77,23 +71,6 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 			MILESTONE_FEATURE_ENABLED, enabled);
 
 		sce.getServletContext().setAttribute(MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, enabled);
-
-	}
-
-	/**
-	 * If the value of SquashTM public Url is not set in database
-	 * (property {@value ConfigurationService.Properties#SQUASH_CALLBACK_URL}), and if it is set in configuration file
-	 * (property 'tm.test.automation.server.callbackurl'), then copy this value into the database property.
-	 * <br\>
-	 * Here the validity of the property in configuration file is not verified before being copied.
-	 * I think it will accustom users to use the property in database in the future.
-	 */
-	private void copySquashPublicUrlFromConfFileIntoDatabase() {
-		String callbackUrlFromDatabase =
-			configurationService.findConfiguration(ConfigurationService.Properties.SQUASH_CALLBACK_URL);
-		if(Strings.isBlank(callbackUrlFromDatabase) && !Strings.isBlank(callbackUrlFromConfFile)) {
-			configurationService.set(ConfigurationService.Properties.SQUASH_CALLBACK_URL, callbackUrlFromConfFile);
-		}
 
 	}
 
