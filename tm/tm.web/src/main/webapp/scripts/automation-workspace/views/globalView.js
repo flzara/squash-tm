@@ -204,7 +204,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                    }
 
                                                    edObj.buttons = function (settings, original) {
-																											if (data['listScriptConflict'].length==1) {
+																											if (data['listScriptConflict'].length===1) {
                                                        //first apply the original function
                                                        edFnButtons.call(this, settings, original);
 
@@ -242,7 +242,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                                                    var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                                                    var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                                                   if (data['script'] !== '-' && !isGherkin) {
+                                                   if (data['script'] !== '-' && !isGherkin && data['listScriptConflict'].length===1) {
                                                        cell.editable(url, editable);
                                                        cell.css({ "font-style": "italic" });
 
@@ -253,21 +253,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                            url: urlTa,
                                                            id: cellId
                                                        };
-
-                                                       /*TM-13: liste script en conflit*/
-
-																											cell.on('click', '.script-conflict', function(evt){
-
-																													var $btn = $(evt.currentTarget);
-																													var $row = $btn.parents('tr');
-																													var rowmodel = sqtable.fnGetData($row);
-																													var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
-																													var listScript = list.replace(',', '');
-																													notification.showInfo(listScript);
-
-																													evt.stopPropagation();
-
-																											 });
 
                                                        cell.on("click", function () {
                                                            $("td[id!=" + cellId + "]").find("form button[type=cancel]").click();
@@ -298,7 +283,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 																													} );*/
                                                    } else if (isGherkin && data['script'] !== '-') {
                                                        cell.css({ 'color': 'gray', 'font-style': 'italic' });
-                                                   }
+                                                   } else if (data['listScriptConflict'].length!==1) {
+																										 /*TM-13: liste script en conflit*/
+																										 cell.css({ 'color': 'gray', 'font-style': 'italic' });
+																										 cell.on('click', '.script-conflict', function(evt){
+
+																											 var $btn = $(evt.currentTarget);
+																											 var $row = $btn.parents('tr');
+																											 var rowmodel = sqtable.fnGetData($row);
+																											 var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+																											 var listScript = list.replace(',', '');
+																											 notification.showInfo(listScript);
+
+																											 evt.stopPropagation();
+
+																										 });
+																									 }
                                                },
 
                                                fnDrawCallback: function () {
