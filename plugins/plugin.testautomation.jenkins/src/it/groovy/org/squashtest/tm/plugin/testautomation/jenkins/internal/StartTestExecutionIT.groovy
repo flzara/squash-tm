@@ -29,8 +29,8 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackUrlProvider
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackUrlProvider
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
 import org.squashtest.tm.service.configuration.ConfigurationService

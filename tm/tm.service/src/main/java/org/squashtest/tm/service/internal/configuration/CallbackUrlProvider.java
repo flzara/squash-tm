@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
+package org.squashtest.tm.service.internal.configuration;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,8 +95,7 @@ public class CallbackUrlProvider {
 				return new URL(callbackUrlFromDatabase);
 			} catch (MalformedURLException ex) {
 				BadConfiguration bc = new BadConfiguration(
-					"Test Automation configuration : The test could not be started because the service is not configured properly. " +
-						"The url '" + callbackUrlFromDatabase + "' specified at property '" + SQUASH_CALLBACK_URL + "' in database is malformed. " +
+					"The url '" + callbackUrlFromDatabase + "' specified at property '" + SQUASH_CALLBACK_URL + "' in database is malformed. " +
 						"Please contact the administration team.", ex);
 				bc.setPropertyName(SQUASH_CALLBACK_URL);
 				throw bc;
@@ -106,18 +105,17 @@ public class CallbackUrlProvider {
 				return new URL(callbackUrlFromConfFile);
 			} catch(MalformedURLException ex) {
 				BadConfiguration bc = new BadConfiguration(
-					"Test Automation configuration : The test could not be started because the service is not configured properly. " +
-						"The url '" + callbackUrlFromConfFile + "' specified at property '" + PROPERTY_NAME + "' in configuration file 'tm.testautomation.conf.properties' is malformed. " +
+					"The url '" + callbackUrlFromConfFile + "' specified at property '" + PROPERTY_NAME + "' in configuration file is malformed. " +
 						"Please contact the administration team." +
-						"Note that it is possible to set SquashTM callback property in administration settings.", ex);
+						"Note that the property '" + PROPERTY_NAME + "' in configuration file is now DEPRECATED and a configuration in administration settings page is preferred. "
+						, ex);
 				bc.setPropertyName(PROPERTY_NAME);
 				throw bc;
 			}
 		} else {
-			throw new BadConfiguration(
-				"Test Automation configuration: The test could not be started because the service is not configured properly. " +
-					"The public Url of Squash is not set. Please contact the administration team." +
-					"It is recommended to set SquashTM callback property in administration settings");
+			throw new BadConfiguration("The public Url of Squash is not set. " +
+				"Please contact the administration team. " +
+				"It is recommended to set SquashTM callback url property in administration settings page.");
 		}
 	}
 }

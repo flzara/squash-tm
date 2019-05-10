@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net
 
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration
 import spock.lang.Specification
 

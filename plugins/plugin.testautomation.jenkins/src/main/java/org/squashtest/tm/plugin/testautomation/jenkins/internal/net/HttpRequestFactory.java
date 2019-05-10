@@ -37,6 +37,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 import javax.inject.Inject;
