@@ -38,6 +38,8 @@ import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
@@ -94,7 +96,7 @@ public class AutomationModificationController {
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {"tcIds[]"})
 	@ResponseBody
-	public void resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
-		automationRequestModificationService.updateTAScript(tcIds);
+	public Set<Long> resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
+		return automationRequestModificationService.updateTAScript(tcIds);
 	}
 }

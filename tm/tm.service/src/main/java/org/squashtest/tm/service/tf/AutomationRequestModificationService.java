@@ -23,6 +23,8 @@ package org.squashtest.tm.service.tf;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface AutomationRequestModificationService extends AutomationRequestFinderService{
 
@@ -44,6 +46,6 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 * Given a list of test case's id, will try to update value of automation script for each test case
 	 * @param tcIds : a list of test case ids
 	 */
-	void updateTAScript(List<Long> tcIds);
+	Set<Long> updateTAScript(List<Long> tcIds);
 
 }

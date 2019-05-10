@@ -58,6 +58,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		targetTC.uuid >> "uuidNotFound"
 		targetTC.automatedTest >> Mock(AutomatedTest)
 		targetTC.automatable >> TestCaseAutomatable.Y
+		targetTC.name >> "TestWithUuidNotFound"
 
 		// An automation Request
 		AutomationRequest automationRequest = Mock()
@@ -79,11 +80,13 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateTAScript(Collections.singletonList(-1L))
+		def result = service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		1 * testCaseModificationService.removeAutomation(-1L)
 		1 * automationRequestDao.updateIsManual(-1L, true)
+		result.size() == 1
+		result.contains(-1L)
 	}
 
 	def "Should find no TA script to associate with test case and not remove previous auto associated script"(){
@@ -117,11 +120,12 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateTAScript(Collections.singletonList(-1L))
+		def result = service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		0 * testCaseModificationService.removeAutomation(-1L)
 		1 * automationRequestDao.updateIsManual(-1L, true)
+		result.size() == 0
 	}
 
 	def "Should find one TA script to associate with test case"(){
@@ -161,11 +165,12 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateTAScript(Collections.singletonList(-1L))
+		def result = service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		1 * testCaseModificationService.bindAutomatedTestAutomatically(-1L, -1L, "test1")
 		1 * automationRequestDao.updateIsManual(-1L, false)
+		result.size() == 0
 	}
 
 	def "Should find more than one TA script to associate with test case"(){
@@ -176,6 +181,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		targetTC.uuid >> "uuid2"
 		targetTC.automatedTest >> Mock(AutomatedTest)
 		targetTC.automatable >> TestCaseAutomatable.Y
+		targetTC.name >> "TCWithMoreThanOneTAScript"
 
 		// An AutomationRequest
 		AutomationRequest automationRequest = Mock()
@@ -203,12 +209,14 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		service.updateTAScript(Collections.singletonList(-1L))
+		def result = service.updateTAScript(Collections.singletonList(-1L))
 
 		then:
 		1 * testCaseModificationService.removeAutomation(-1L)
 		1 * automationRequestDao.updateIsManual(-1L, false)
 		1 * automationRequestDao.updateConflictAssociation(-1L, "jobTA/test1#jobTA/test2")
+		result.size() == 1
+		result.contains(-1L)
 	}
 
 	def "For multiple testcases update, should ask for automation server's test list the minimum time"(){
