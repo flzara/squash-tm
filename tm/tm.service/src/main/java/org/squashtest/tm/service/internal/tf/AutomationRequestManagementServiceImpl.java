@@ -398,11 +398,16 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
-		if (tc.getAutomatedTest()!=null && !tc.getAutomationRequest().isManual() ){
-			testCaseModificationService.removeAutomation(tc.getId());
+		if(!tc.getAutomationRequest().isManual()){
+			if (tc.getAutomatedTest()!=null ){
+				testCaseModificationService.removeAutomation(tc.getId());
+			}else if(tc.getAutomationRequest().getConflictAssociation()!=null){
+				requestDao.updateConflictAssociation(tc.getId(), "");
+			}
 			losingTAScriptTestCases.put(tc.getId(), tc.getName());
+			requestDao.updateIsManual(tc.getId(), false);
 		}
-		requestDao.updateIsManual(tc.getId(), true);
+
 	}
 
 	// **************************** boiler plate code *************************************

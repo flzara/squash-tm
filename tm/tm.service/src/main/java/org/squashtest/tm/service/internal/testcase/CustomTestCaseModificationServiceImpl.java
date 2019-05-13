@@ -958,7 +958,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			} else {
 
 				Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
-
+				/*TM-13: Màj is-Manuel = true */
+				requestDao.updateIsManual(testCaseId, true);
 				// once it's okay we commit the test association
 				return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
 			}

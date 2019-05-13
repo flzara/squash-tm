@@ -68,11 +68,11 @@ public class OptimisticTestList {
 			// TODO Remove when Squash-TF can delivered metadata
 			response= "{\"timestamp\":\"2019-04-29T13:46:51.470+0000\"," +
 				"\"name\":\"tests\",\"contents\":[" +
-				"{\"name\":\"first-test.ta\",\"metadata\" : {\"linked-TC\": [\"05dab8b8-630a-427f-a9e7-52cabcb3e3dd\"]},\"contents\":null}," +
+				"{\"name\":\"script_custom_field_params_all.ta\",\"metadata\" : {\"linked-TC\": [\"3e4d2ab7-4e7c-4eb4-9e2b-eaaccb3affc4\"]},\"contents\":null}," +
 				"{\"name\":\"script1.ta\",\"contents\":null}," +
 				"{\"name\":\"script2.ta\",\"contents\":null}," +
 				"{\"name\":\"script3.ta\",\"contents\":null}," +
-				"{\"name\":\"script_custom_field_params_all.ta\",\"contents\":null}," +
+				"{\"name\":\"first-test.ta\",\"contents\":null}," +
 				"{\"name\":\"script_custom_field_params_CP.ta\",\"contents\":null}," +
 				"{\"name\":\"script_custom_field_params_IT.ta\",\"contents\":null}," +
 				"{\"name\":\"script_custom_field_params_TC.ta\",\"contents\":null}," +
