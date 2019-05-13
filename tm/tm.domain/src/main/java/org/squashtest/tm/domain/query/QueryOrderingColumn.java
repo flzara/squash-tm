@@ -56,6 +56,10 @@ public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 		return order;
 	}
 
+	public void setQueryProjectionColumn(QueryProjectionColumn queryProjectionColumn) {
+		this.queryProjectionColumn = queryProjectionColumn;
+	}
+
 	@Override
 	public QueryColumnPrototype getColumn() {
 		return queryProjectionColumn.getColumn();

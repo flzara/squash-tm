@@ -53,11 +53,16 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 	@JoinColumn(name = "QUERY_MODEL_ID", insertable = false, updatable = false, nullable = false)
 	private QueryModel queryModel;
 
+	@Column(name = "LABEL")
 	private String label;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROJECTION_OPERATION")
 	private Operation operation;
+
+	@Column(name = "CUF_ID")
+	private Long cufId;
+
 
 	@Override
 	public QueryColumnPrototype getColumn() {
@@ -86,7 +91,7 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
 	@Override
 	public Long getCufId() {
-		return getCufId();
+		return cufId;
 	}
 
 	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
@@ -104,4 +109,21 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 	public String getLabel() {
 		return label;
 	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+	public void setQueryModel(QueryModel queryModel) {
+		this.queryModel = queryModel;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
+
 }

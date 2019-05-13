@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.Tuple;
 import org.hibernate.Session;
@@ -39,7 +39,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.IQueryModel;
 import org.squashtest.tm.domain.query.QueryModel;
-import org.squashtest.tm.service.internal.chart.engine.proxy.MilestoneAwareChartQuery;
+import org.squashtest.tm.service.internal.query.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -64,7 +64,7 @@ import java.util.List;
  * </ul>
  * </p>
  *
- * <p>Based on this specification the {@link ChartDataFinder} will design the query plan and run it. The rest of this javadoc
+ * <p>Based on this specification the {@link QueryProcessingServiceImpl} will design the query plan and run it. The rest of this javadoc
  * is a technical documentation of its internal processes.</p>
  *
  *
@@ -330,7 +330,7 @@ import java.util.List;
  * the chart query will be applied to. At runtime it is refined into an Effective Scope, which is the conjunction of :
  * <ul>
  * <li>the content of the projects/folders/nodes selected by the user <b>who designed</b> the ChartDefinition (the scope part)</li>
- * <li>the nodes that can actually be READ by the user <b>who is running</b> the ChartDataFinder (the acl part)</li>
+ * <li>the nodes that can actually be READ by the user <b>who is running</b> the QueryProcessingServiceImpl (the acl part)</li>
  * </ul>
  *
  * An amusing side effect of this is that the user may end up with no data available for plot.
@@ -344,11 +344,12 @@ import java.util.List;
  */
 @Component
 @SuppressWarnings(value = {"rawtypes", "unchecked"})
-public class ChartDataFinder {
+public class QueryProcessingServiceImpl {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueryProcessingServiceImpl.class);
 	@Inject
 	Provider<ScopePlanner> scopePlannerProvider;
+
 	@PersistenceContext
 	private EntityManager em;
 	@Inject

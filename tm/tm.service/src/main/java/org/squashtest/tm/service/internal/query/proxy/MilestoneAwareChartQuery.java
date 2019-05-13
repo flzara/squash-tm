@@ -18,13 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine.proxy;
+package org.squashtest.tm.service.internal.query.proxy;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.Workspace;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.query.IQueryModel;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;

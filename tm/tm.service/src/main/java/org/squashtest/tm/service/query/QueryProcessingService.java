@@ -33,6 +33,12 @@ public interface QueryProcessingService {
 	 * Will execute the query as configured (with paging and scope), and returns the
 	 * resultset as a list of tuples.
 	 *
+	 * The effects of missing bits of configuration in the ConfiguredQuery are explained
+	 * in ConfiguredQuery itself.
+	 *
+	 * In addition, the milestone mode will be checked and implicitly applied if turned on
+	 * and an active Milestone has been defined for the current Thread (see {@link org.squashtest.tm.service.milestone.ActiveMilestoneHolder}.
+	 *
 	 * @param configuredQuery
 	 * @return
 	 */

@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,7 +20,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import com.querydsl.core.types.dsl.PathBuilder
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;

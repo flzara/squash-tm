@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Ops;
@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QCampaignPathEdge;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.ScopeType;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
@@ -125,7 +124,7 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
  *      this approach is said to be "gentle".
  *
  *      <br/>
- *       More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
+ *       More details in the main documentation (see {@link QueryProcessingServiceImpl} and issues #6260, #6275.
  * </p>
  * <p>
  * As of Squash 1.15 the rules for scope are following :

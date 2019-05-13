@@ -39,10 +39,11 @@ import org.squashtest.tm.domain.query.QQueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -65,7 +66,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	private EntityManager em;
 
 	@Inject
-	private ChartDataFinder dataFinder;
+	private QueryProcessingServiceImpl dataFinder;
 
 	@Inject
 	private CustomChartDefinitionDao chartDefinitionDao;
@@ -139,12 +140,6 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
-	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
-		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId, milestoneId, workspace);
-		return new ChartInstance(definition, series);
-	}
-
-	@Override
 	@PreAuthorize("hasPermission(#definition.id, 'org.squashtest.tm.domain.chart.ChartDefinition' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void updateDefinition(ChartDefinition definition, ChartDefinition oldDef) {
@@ -192,5 +187,21 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		}
 		return  entityReferences;
 	}
+
+
+
+	@Override
+	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
+		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId, milestoneId, workspace);
+		return new ChartInstance(definition, series);
+	}
+
+
+	// *************** query building function ************************
+
+	private ConfiguredQuery createConfiguredQuery(ChartDefinition definition){
+
+	}
+
 
 }

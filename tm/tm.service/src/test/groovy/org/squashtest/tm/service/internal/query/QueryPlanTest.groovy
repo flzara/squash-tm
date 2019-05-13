@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,20 +20,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.QueryPlanJoinIterator;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
+import org.squashtest.tm.service.internal.query.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.QueryPlan;
+import org.squashtest.tm.service.internal.query.QueryPlan.QueryPlanJoinIterator;
+import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
 import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
 
 class QueryPlanTest extends Specification {
 

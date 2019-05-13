@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,11 +20,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 
 import spock.lang.Specification
 
-class ProjectionPlannerTest extends Specification {
+class FilterPlannerTest extends Specification {
+
+	// No test... yet
+
+
+	def spec(type){
+		return new SpecializedEntityType(type, null)
+	}
 
 }
 */

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
+import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +70,7 @@ import java.util.Set;
  * 	Remember that the query created is detached from the session, don't forget to attach it via query.clone(session)
  * </p>
  *
- * <p>See javadoc on {@link ChartDataFinder}</p>
+ * <p>See javadoc on {@link QueryProcessingServiceImpl}</p>
  *
  *
  * @author bsiri

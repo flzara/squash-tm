@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,13 +20,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
-import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
-import org.squashtest.tm.service.internal.chart.engine.DomainGraph;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
+import org.squashtest.tm.service.internal.query.InternalEntityType;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
+import org.squashtest.tm.service.internal.query.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.DomainGraph;
+import org.squashtest.tm.service.internal.query.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;

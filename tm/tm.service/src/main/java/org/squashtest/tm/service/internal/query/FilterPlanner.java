@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 
 
 /**
- * This class will apply filters on the query, see doc on ChartDataFinder for rules about
+ * This class will apply filters on the query, see doc on QueryProcessingServiceImpl for rules about
  * logical combination on filters.
  *
  * @author bsiri

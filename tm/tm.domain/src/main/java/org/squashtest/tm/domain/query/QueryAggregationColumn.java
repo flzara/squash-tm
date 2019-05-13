@@ -40,6 +40,10 @@ public class QueryAggregationColumn implements QueryColumnPrototypeInstance {
 		return projectionColumn;
 	}
 
+	public void setProjectionColumn(QueryProjectionColumn projectionColumn) {
+		this.projectionColumn = projectionColumn;
+	}
+
 	@Override
 	public QueryColumnPrototype getColumn() {
 		return projectionColumn.getColumn();

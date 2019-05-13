@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.google.common.collect.ImmutableMap;
 import com.querydsl.core.Tuple;
@@ -65,7 +65,7 @@ import static org.squashtest.tm.domain.execution.ExecutionStatus.WARNING;
 
 
 /**
- * This is a companion class for ChartDataFinder. Its role is to turn the tuples from the database
+ * This is a companion class for QueryProcessingServiceImpl. Its role is to turn the tuples from the database
  * into instances of ChartSeries. This operation include bits of data postprocessing, for transformations
  * that we were unable or unwilling to undergo in the database.
  *
@@ -329,7 +329,7 @@ class TupleProcessor {
 	}
 
 
-	// @codetrack : imported from ChartDataFinder 1.19.0.RELEASE
+	// @codetrack : imported from QueryProcessingServiceImpl 1.19.0.RELEASE
 	private void extractColours() {
 
 		// here we will only get colours in the case where we work with a CUF List or an InfoList

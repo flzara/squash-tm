@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
@@ -27,18 +27,18 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
+import org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
+import static org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
 
 /**
  * <p>
  * 	This class is responsible for adding the "select" and "group by" clauses. See main documentation on
- * 	{@link ChartDataFinder} for more details on how it is done.
+ * 	{@link QueryProcessingServiceImpl} for more details on how it is done.
  * </p>
  *
  * <p>

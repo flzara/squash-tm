@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,7 +20,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.chart.AxisColumn;
@@ -37,8 +38,8 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder;
 
 import spock.lang.Specification
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
+import static org.squashtest.tm.service.internal.query.ChartEngineTestUtils.*;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
 import static org.squashtest.tm.domain.chart.DataType.*;
 import static org.squashtest.tm.domain.chart.ColumnType.*;
 import static org.squashtest.tm.domain.chart.Operation.*;

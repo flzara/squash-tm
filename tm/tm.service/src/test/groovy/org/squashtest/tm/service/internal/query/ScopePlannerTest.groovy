@@ -1,3 +1,4 @@
+package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -39,7 +40,7 @@
 *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import javax.persistence.EntityManager;
 
@@ -56,15 +57,15 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
+import org.squashtest.tm.service.internal.query.ScopePlanner.ScopeUtils;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntities
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntitiesImpl
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.QueriedEntitiesImpl
-import static org.squashtest.tm.service.internal.chart.engine.ScopePlanner.JoinableColumns.*
+import org.squashtest.tm.service.internal.query.ScopePlanner.ScopedEntities
+import org.squashtest.tm.service.internal.query.ScopePlanner.QueriedEntities
+import org.squashtest.tm.service.internal.query.ScopePlanner.ScopedEntitiesImpl
+import org.squashtest.tm.service.internal.query.ScopePlanner.QueriedEntitiesImpl
+import static org.squashtest.tm.service.internal.query.ScopePlanner.JoinableColumns.*
 import org.squashtest.tm.domain.chart.SpecializedEntityType
 import org.squashtest.tm.domain.chart.ColumnType
 
