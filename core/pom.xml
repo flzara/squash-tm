@@ -25,6 +25,7 @@
     <module>core.dynamicmanager</module>
     <module>core.wizard.api</module>
     <module>core.scm.api</module>
+    <module>core.automationworkflow.api</module>
   </modules>
 
   <build>
