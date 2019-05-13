@@ -84,7 +84,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 		then:
 		1 * testCaseModificationService.removeAutomation(-1L)
-		1 * automationRequestDao.updateIsManual(-1L, true)
+		1 * automationRequestDao.updateIsManual(-1L, false)
 		result.size() == 1
 		result.containsKey(-1L)
 		result.containsValue("TestWithUuidNotFound")
@@ -125,7 +125,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 		then:
 		0 * testCaseModificationService.removeAutomation(-1L)
-		1 * automationRequestDao.updateIsManual(-1L, true)
+		0 * automationRequestDao.updateIsManual(-1L, false)
 		result.size() == 0
 	}
 

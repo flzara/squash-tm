@@ -401,7 +401,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		if(!tc.getAutomationRequest().isManual()){
 			if (tc.getAutomatedTest()!=null ){
 				testCaseModificationService.removeAutomation(tc.getId());
-			}else if(tc.getAutomationRequest().getConflictAssociation()!=null){
+			}else if(tc.getAutomationRequest().getConflictAssociation()!=null && !tc.getAutomationRequest().getConflictAssociation().isEmpty()){
 				requestDao.updateConflictAssociation(tc.getId(), "");
 			}
 			losingTAScriptTestCases.put(tc.getId(), tc.getName());
