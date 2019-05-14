@@ -67,6 +67,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
+import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -81,6 +82,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
@@ -144,6 +146,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
+
+	@Inject
+	private AutomationRequestModificationService automationRequestModificationService;
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -581,6 +586,77 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
 
 		return createFromItems(items);
+	}
+	/*TM-13:update automatic script before execution */
+	@Override
+	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
+
+		Iteration iteration = iterationDao.findById(iterationId);
+		List<IterationTestPlanItem> items = iteration.getTestPlans();
+		List<Long> tcIds = getListTcIdsFromListItems(items);
+
+		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+
+		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
+
+		TestSuite suite = testSuiteDao.getOne(testSuiteId);
+		List<IterationTestPlanItem> items = suite.getTestPlan();
+		List<Long> tcIds = getListTcIdsFromListItems(items);
+
+		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+
+		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForIterationItems(Long iterationId, List<Long> testPlanIds) {
+
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedByIterationTestPlan(testPlanIds);
+		List<Long> tcIds = getListTcIdsFromListItems(items);
+
+		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+
+		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForTestSuiteItems(Long testSuiteId, List<Long> testPlanIds) {
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
+		List<Long> tcIds = getListTcIdsFromListItems(items);
+
+		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+
+		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+	}
+
+
+
+	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> listTcIdTcNameInConflict){
+		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
+		Iterator it = items.iterator();
+		listTcIdTcNameInConflict.forEach((k,v)-> {
+			while (it.hasNext()) {
+				IterationTestPlanItem item= (IterationTestPlanItem) it.next();
+				if(item.getReferencedTestCase().getId().equals(k)){
+					mapItpiIdTcNameInConflict.put(item.getId(), v);
+				}
+			}
+		});
+		return  mapItpiIdTcNameInConflict;
+	}
+
+	private List<Long> getListTcIdsFromListItems(List<IterationTestPlanItem> items){
+		List<Long> listIds = items.stream()
+			.collect(Collectors.mapping(IterationTestPlanItem::getReferencedTestCase, Collectors.toList()))
+			.stream()
+			.filter(tc-> !tc.getAutomationRequest().isManual())
+			.collect(Collectors.mapping(TestCase::getId, Collectors.toList()));
+
+		return  listIds;
 	}
 
 }

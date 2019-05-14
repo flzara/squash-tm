@@ -30,6 +30,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface AutomatedSuiteManagerService {
 
@@ -143,5 +144,12 @@ public interface AutomatedSuiteManagerService {
 	 * @return
 	 */
 	AutomatedSuite createFromItemsAndTestSuite(List<Long> testPlanIds, long testSuiteId);
+
+	/*TM-13*/
+	Map<Long, String> updateTAScriptForIteration(Long iterationId);
+	Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId);
+	Map<Long, String> updateTAScriptForIterationItems(Long iterationId,List<Long> testPlanIds);
+	Map<Long, String> updateTAScriptForTestSuiteItems(Long testSuiteId,List<Long> testPlanIds );
+
 
 }

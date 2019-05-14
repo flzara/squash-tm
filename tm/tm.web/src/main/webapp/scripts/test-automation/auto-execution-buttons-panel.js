@@ -41,7 +41,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
-		createSuite([]).done(startSuite);
+		updateTaScript([]).done(createSuite([])).done(startSuite);
 	}
 
 	function executeSelection() {

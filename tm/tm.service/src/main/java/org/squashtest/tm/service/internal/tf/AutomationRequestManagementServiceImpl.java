@@ -55,6 +55,7 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -373,17 +374,18 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList, Map<Long, String> losingTAScriptTestCases){
 
-		requestDao.updateIsManual(tc.getId(), false);
+			requestDao.updateIsManual(tc.getId(), false);
 
-		if (tc.getAutomatedTest()!= null){
-			testCaseModificationService.removeAutomation(tc.getId());
-			losingTAScriptTestCases.put(tc.getId(), tc.getName());
-		}
+			if (tc.getAutomatedTest() != null) {
+				testCaseModificationService.removeAutomation(tc.getId());
+				losingTAScriptTestCases.put(tc.getId(), tc.getName());
+			}
 
-		StringJoiner stringJoiner = new StringJoiner("#");
-		automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
+			StringJoiner stringJoiner = new StringJoiner("#");
+			automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
 
-		requestDao.updateConflictAssociation(tc.getId(), stringJoiner.toString());
+			requestDao.updateConflictAssociation(tc.getId(), stringJoiner.toString());
+
 	}
 
 	private void addOrEditAutomatedScript(TestCase tc, AutomatedTest automatedTest){
@@ -398,6 +400,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
+
 		if(!tc.getAutomationRequest().isManual()){
 			if (tc.getAutomatedTest()!=null ){
 				testCaseModificationService.removeAutomation(tc.getId());
