@@ -24,7 +24,7 @@ package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.service.internal.query.InternalEntityType;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
-import org.squashtest.tm.service.internal.query.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.ExpandedConfiguredQuery;
 import org.squashtest.tm.service.internal.query.DomainGraph;
 import org.squashtest.tm.service.internal.query.QueryPlan;
 
@@ -72,7 +72,7 @@ class DomainGraphTest extends Specification {
 	def "check general asumption about morphed graphs (see comments)"(){
 
 		expect :
-		def domain = new DomainGraph(definition);
+		def domain = new DomainGraph(expandedQuery);
 		domain.morphToQueryPlan();
 
 		// root entity has no inbound connections
@@ -84,16 +84,16 @@ class DomainGraphTest extends Specification {
 
 
 		where :
-		rootEntity				|	definition
-		REQUIREMENT				|	new DetailedChartQuery(rootEntity : REQ)
-		REQUIREMENT_VERSION 	|	new DetailedChartQuery(rootEntity : RV)
-		COV					 	|	new DetailedChartQuery(rootEntity : COV)
-		TEST_CASE				|	new DetailedChartQuery(rootEntity : TC)
-		ITEM_TEST_PLAN			|	new DetailedChartQuery(rootEntity : ITP)
-		ITERATION				|	new DetailedChartQuery(rootEntity : IT)
-		CAMPAIGN				|	new DetailedChartQuery(rootEntity : CP)
-		EXECUTION				|	new DetailedChartQuery(rootEntity : EX)
-		ISS						|	new DetailedChartQuery(rootEntity : ISS)
+		rootEntity				|	expandedQuery
+		REQUIREMENT				|	new ExpandedConfiguredQuery(rootEntity : REQ)
+		REQUIREMENT_VERSION 	|	new ExpandedConfiguredQuery(rootEntity : RV)
+		COV					 	|	new ExpandedConfiguredQuery(rootEntity : COV)
+		TEST_CASE				|	new ExpandedConfiguredQuery(rootEntity : TC)
+		ITEM_TEST_PLAN			|	new ExpandedConfiguredQuery(rootEntity : ITP)
+		ITERATION				|	new ExpandedConfiguredQuery(rootEntity : IT)
+		CAMPAIGN				|	new ExpandedConfiguredQuery(rootEntity : CP)
+		EXECUTION				|	new ExpandedConfiguredQuery(rootEntity : EX)
+		ISS						|	new ExpandedConfiguredQuery(rootEntity : ISS)
 
 	}
 
@@ -104,7 +104,7 @@ class DomainGraphTest extends Specification {
 	def "should test many query plans"(){
 
 		expect :
-		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new ExpandedConfiguredQuery(rootEntity : rootEntity, targetEntities : targets))
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeHierarchy(plan, hierarchy)
@@ -126,7 +126,7 @@ class DomainGraphTest extends Specification {
 	def "should convey the correct join metadata when creating the tree"(){
 
 		expect :
-		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new ExpandedConfiguredQuery(rootEntity : rootEntity, targetEntities : targets))
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeJoins(plan, joinInfos)
@@ -147,12 +147,12 @@ class DomainGraphTest extends Specification {
 	def "should morph to a directed graph and generate an oversized query plan"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE,
+		ExpandedConfiguredQuery expandedQuery =
+				new ExpandedConfiguredQuery(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		and :
-		def domain = new DomainGraph(definition)
+		def domain = new DomainGraph(expandedQuery)
 
 		when :
 		def plan = domain.morphToQueryPlan();
@@ -201,12 +201,12 @@ class DomainGraphTest extends Specification {
 	def "should find a query plan for root entity TestCase and other target entities : Requirement, Iteration"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE,
+		ExpandedConfiguredQuery expandedQuery =
+				new ExpandedConfiguredQuery(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		when :
-		def domain = new DomainGraph(definition);
+		def domain = new DomainGraph(expandedQuery);
 		QueryPlan plan = domain.getQueryPlan();
 
 		then :
@@ -231,12 +231,12 @@ class DomainGraphTest extends Specification {
 	def "when requested, should generate a reversed query plan"(){
 
 		given :
-		DetailedChartQuery definition =
-				new DetailedChartQuery(rootEntity : TEST_CASE, measuredEntity : CAMPAIGN,
+		ExpandedConfiguredQuery expandedQuery =
+				new ExpandedConfiguredQuery(rootEntity : TEST_CASE, measuredEntity : CAMPAIGN,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 		when :
 
-		DomainGraph domain = new DomainGraph(definition);
+		DomainGraph domain = new DomainGraph(expandedQuery);
 		domain.reversePlan();
 		QueryPlan plan = domain.getQueryPlan();
 

@@ -66,6 +66,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
@@ -309,17 +310,19 @@ public class ChartDefinition implements TreeEntity{
 		copy.setProject(this.getProject());
 		copy.setProjectScope(copyProjectScope());
 		copy.setDescription(this.getDescription());
-		copy.setQuery(this.copyQuery());
+
 		copy.setType(this.getType());
 		copy.setScope(this.copyScope());
 		copy.setVisibility(this.getVisibility());
 		copy.setScopeType(this.getScopeType());
+
+		copy.setAxis(copyAxis());
+		copy.setFilters(copyFilters());
+		copy.setMeasures(copyMeasures());
+
 		return copy;
 	}
 
-	private QueryModel copyQuery() {
-		return this.getQuery().createCopy();
-	}
 
 	private List<EntityReference> copyScope() {
 		List<EntityReference> copy = new ArrayList<>();
@@ -364,5 +367,17 @@ public class ChartDefinition implements TreeEntity{
 			types.add(col.getSpecializedType());
 		}
 		return types;
+	}
+
+	private List<AxisColumn> copyAxis(){
+		return axis.stream().map(AxisColumn::createCopy).collect(Collectors.toList());
+	}
+
+	private List<MeasureColumn> copyMeasures(){
+		return measures.stream().map(MeasureColumn::createCopy).collect(Collectors.toList());
+	}
+
+	private List<Filter> copyFilters(){
+		return filters.stream().map(Filter::createCopy).collect(Collectors.toList());
 	}
 }

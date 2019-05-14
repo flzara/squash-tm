@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.query;
 
+import com.querydsl.core.types.Order;
 import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.Column;
@@ -124,6 +125,33 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
 	public void setCufId(Long cufId) {
 		this.cufId = cufId;
+	}
+
+
+	public QueryAggregationColumn createAggregation(){
+		QueryAggregationColumn aggregation = new QueryAggregationColumn();
+		aggregation.setProjectionColumn(this);
+		return aggregation;
+	}
+
+
+	public QueryOrderingColumn createOrderingAsc(){
+		QueryOrderingColumn ordering = new QueryOrderingColumn();
+
+		ordering.setOrder(Order.ASC);
+		ordering.setQueryProjectionColumn(this);
+
+		return ordering;
+	}
+
+
+	public QueryOrderingColumn createOrderingDesc(){
+		QueryOrderingColumn ordering = new QueryOrderingColumn();
+
+		ordering.setOrder(Order.DESC);
+		ordering.setQueryProjectionColumn(this);
+
+		return ordering;
 	}
 
 }

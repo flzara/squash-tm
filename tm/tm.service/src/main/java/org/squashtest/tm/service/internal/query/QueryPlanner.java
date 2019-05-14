@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ import java.util.Set;
 
 class QueryPlanner {
 
-	private DetailedChartQuery definition;
+	private ExpandedConfiguredQuery expandedQuery;
 
 	private QuerydslToolbox utils;
 
@@ -87,9 +88,12 @@ class QueryPlanner {
 
 	private Set<String> aliases = new HashSet<>();
 
-	// may be either the normal root entity, either the measured entity
-	// (see createQueryPlan() and comments within)
-	private InternalEntityType actualRootEntity;
+	// This type represents the initial node from which the
+	// domain graph should start when computing the query plan
+	private InternalEntityType graphSeed;
+
+	// state variable used when searching for a valid graph seed
+	private Iterator<InternalEntityType> seedIterator;
 
 
 	// ***** optional argument, you may specify them if using a ChartQuery with strategy INLINED ****
@@ -102,15 +106,15 @@ class QueryPlanner {
 		super();
 	}
 
-	QueryPlanner(DetailedChartQuery definition){
+	QueryPlanner(ExpandedConfiguredQuery expandedQuery){
 		super();
-		this.definition = definition;
+		this.expandedQuery = expandedQuery;
 		this.utils = new QuerydslToolbox();
 	}
 
 
-	QueryPlanner(DetailedChartQuery definition, QuerydslToolbox utils){
-		this.definition = definition;
+	QueryPlanner(ExpandedConfiguredQuery definition, QuerydslToolbox utils){
+		this.expandedQuery = definition;
 		this.utils = utils;
 	}
 
@@ -131,16 +135,18 @@ class QueryPlanner {
 	}
 
 	/**
-	 * Use if you intend to use the queryplanner to append on a mainquery,
-	 * before invoking {@link #modifyQuery()}. This method supplies
-	 * the root entity, where the join should be made between the main query and
-	 * this query
+	 * If you intend to use the queryplanner to append a subquery to a mainquery,
+	 * use this method to define on which entity the subquery and the main query
+	 * should be joined on.
+	 * Set this up before invoking {@link #modifyQuery()}. The path should be a
+	 * QueryDsl path on an entity (eg a testCase), and not an attribute (eg not
+	 * testCase.id)
 	 *
 	 * @param
 	 * @return
 	 */
-	QueryPlanner joinRootEntityOn(EntityPathBase<?> axeEntity){
-		utils.forceAlias(definition.getRootEntity(), axeEntity.getMetadata().getName());
+	QueryPlanner joinRootEntityOn(EntityPathBase<?> mainJoinEntity){
+		utils.forceAlias(expandedQuery.getRootEntity(), mainJoinEntity.getMetadata().getName());
 		return this;
 	}
 
@@ -178,6 +184,9 @@ class QueryPlanner {
 
 	private void doTheJob(){
 
+		// init the seed
+		nextSeed();
+
 		// get the query plan : the orderly set of joins this
 		// planner must now put together
 
@@ -198,11 +207,11 @@ class QueryPlanner {
 
 		// now process the inlined subqueries and append their table to the
 		// join clauses as well.
-		for (QueryColumnPrototypeInstance column : definition.getInlinedColumns()){
+		for (QueryColumnPrototypeInstance column : expandedQuery.getInlinedColumns()){
 
 			EntityPathBase<?> subRootpath = utils.getQBean(column.getColumn().getSpecializedType());
 
-			DetailedChartQuery detailedSub = new DetailedChartQuery(column);
+			ExpandedConfiguredQuery detailedSub = ExpandedConfiguredQuery.createFor(column);
 
 			QuerydslToolbox toolbox = new QuerydslToolbox(column);
 
@@ -212,26 +221,50 @@ class QueryPlanner {
 		}
 	}
 
-	private QueryPlan createQueryPlan(){
-
-		// first, try a normal query plan
-		actualRootEntity = definition.getRootEntity();
-		DomainGraph domain = new DomainGraph(definition);
-		QueryPlan plan = domain.getQueryPlan();
-
-		// test whether the "left where join" corner case occurs
-		// if so, generate a reverse query plan instead.
-		// for now this is enough. Later on if really we are stuck,
-		// consider mapping the missing relationships instead.
-		// (eg TestCase -> IterationTestPlanItem)
-		if (hasLeftWhereJoin(plan)){
-			actualRootEntity = definition.getMeasuredEntity();
-			domain = new DomainGraph(definition);
-			domain.reversePlan();
-			plan = domain.getQueryPlan();
+	/**
+	 * Sets the graphSeed to the next possible value.
+	 */
+	private void nextSeed(){
+		// will initialize the iterator if does not exist yet
+		if (seedIterator == null){
+			seedIterator = expandedQuery.getTargetEntities().iterator();
 		}
 
+		if (seedIterator.hasNext()) {
+			graphSeed = seedIterator.next();
+		}
+		else{
+			// well, we've exhausted all our seeds...
+			// see #createQueryPlan about why.
+			throw new RuntimeException("Could not find a suitable seed for generating the query plan : there is no way to generate " +
+										   "a query that would not require a left outer join on an unmapped attribute (something that " +
+										   "Hibernate doesn't support)." );
+		}
+	}
+
+	/*
+	 * Here we look for a valid QueryPlan. A QueryPlan is valid if
+	 * there is no "left where" joins in it, see #hasLeftWhereJoin
+	 * for an explanation of it.
+	 *
+	 * The method succeeds if such plan is found, and fails if
+	 * all seeds were exhausted (see #nextSeed above)
+	 */
+	private QueryPlan createQueryPlan(){
+
+		DomainGraph graph;
+		QueryPlan plan;
+
+		do{
+			graph = new DomainGraph(expandedQuery, graphSeed);
+			plan = graph.getQueryPlan();
+		}
+		// the stop condition is that the dreaded corner case
+		// is not met.
+		while(hasLeftWhereJoin(plan));
+
 		return plan;
+
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -242,7 +275,8 @@ class QueryPlanner {
 		aliases = utils.getJoinedAliases(query);
 
 		// initialize the query if needed
-		EntityPathBase<?> rootPath = utils.getQBean(actualRootEntity);
+		// Note : at this stage of execution the graph seed is set and valid.
+		EntityPathBase<?> rootPath = utils.getQBean(graphSeed);
 		if (! isKnown(rootPath)){
 			query.from(rootPath);
 		}
@@ -276,7 +310,7 @@ class QueryPlanner {
 
 			PathBuilder join = utils.makePath(src, dest, attribute);
 
-			switch(definition.getJoinStyle()){
+			switch(expandedQuery.getJoinStyle()){
 			case INNER_JOIN :
 				query.innerJoin(join, dest);
 				break;
@@ -314,7 +348,7 @@ class QueryPlanner {
 	}
 
 	private void appendCufJoins() {
-		//1 detecting all the cuf present in chart definition and get the ids of the cufs
+		//1 detecting all the cuf present in chart expandedQuery and get the ids of the cufs
 		Map<QueryColumnPrototype,Set<Long>> cufPrototypesWithIds = extractAllCufPrototype();
 		//2 create a where join (ie a cartesian product with where clause) for each cuf column needed in chart aliased by the column protoLabel and the cuf ID
 		//We have to do it this way because no hibernate mapping exist between an entity and the cuf
@@ -327,10 +361,10 @@ class QueryPlanner {
      */
 	private Map<QueryColumnPrototype, Set<Long>> extractAllCufPrototype() {
 		Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
-		extractCufPrototype(cufPrototypesWithIds, definition.getFilterColumns());
-		extractCufPrototype(cufPrototypesWithIds, definition.getAggregationColumns());
-		extractCufPrototype(cufPrototypesWithIds, definition.getProjectionColumns());
-		extractCufPrototype(cufPrototypesWithIds, definition.getOrderingColumns());
+		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getFilterColumns());
+		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getAggregationColumns());
+		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getProjectionColumns());
+		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getOrderingColumns());
 		return cufPrototypesWithIds;
 	}
 
@@ -447,7 +481,12 @@ class QueryPlanner {
 
 	/*
 	 * Detects whether the given plan contains a "left where join", which is impossible to
-	 * actually implement
+	 * actually implement.
+	 *
+	 * A "left where join" is when we need to left-outer join on an unmapped attributes,
+	 * which is impossible to express in JPA. The 'where' part comes from the workaround
+	 * when attempting to join on unmapped relations : since natural join is impossible
+	 * we resort to the cartesian product + where clause.
 	 */
 	private boolean hasLeftWhereJoin(QueryPlan plan){
 
@@ -455,7 +494,7 @@ class QueryPlanner {
 		boolean hasWhereJoin = false;
 
 		// condition 1
-		hasLeftJoin = definition.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
+		hasLeftJoin = expandedQuery.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
 
 		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
 			PlannedJoin join = iter.next();

@@ -76,7 +76,7 @@ import static org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile
  */
 class ProjectionPlanner {
 
-	private DetailedChartQuery definition;
+	private ExpandedConfiguredQuery expandedQuery;
 
 	private ExtendedHibernateQuery<?> query;
 
@@ -93,16 +93,16 @@ class ProjectionPlanner {
 		REPLACE_BY_ALIAS;
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
+	ProjectionPlanner(ExpandedConfiguredQuery expandedQuery, ExtendedHibernateQuery<?> query){
 		super();
-		this.definition = definition;
+		this.expandedQuery = expandedQuery;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(ExpandedConfiguredQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
-		this.definition = definition;
+		this.expandedQuery = definition;
 		this.query = query;
 		this.utils = utils;
 	}
@@ -123,11 +123,11 @@ class ProjectionPlanner {
 
 		switch(profile){
 		case MAIN_QUERY :
-			populateClauses(selection, definition.getAggregationColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
-			populateClauses(selection, definition.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBSELECT_QUERY :
-			populateClauses(selection, definition.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBWHERE_QUERY :
 			// that one is special : it's always 'select 1'
@@ -152,7 +152,7 @@ class ProjectionPlanner {
 		if ( profile != SUBSELECT_QUERY){
 			List<Expression<?>> groupBy = new ArrayList<>();
 
-			populateClauses(groupBy, definition.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(groupBy, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			query.groupBy(groupBy.toArray(new Expression[]{}));
 		}
@@ -164,7 +164,7 @@ class ProjectionPlanner {
 
 			List<Expression<?>> expressions = new ArrayList<>();
 
-			populateClauses(expressions, definition.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+			populateClauses(expressions, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			List<OrderSpecifier> orders = new ArrayList<>();
 			populateOrders(orders, expressions);

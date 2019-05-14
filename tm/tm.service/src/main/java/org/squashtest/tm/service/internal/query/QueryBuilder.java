@@ -75,7 +75,7 @@ class QueryBuilder {
 
 	protected QuerydslToolbox utils = new QuerydslToolbox();
 
-	protected DetailedChartQuery queryDefinition;
+	protected ExpandedConfiguredQuery queryDefinition;
 
 	// the SubQueryBuilder would use a different strategy.
 	// for the QueryBuilder, it is set to MAIN_QUERY.
@@ -83,7 +83,7 @@ class QueryBuilder {
 
 	protected ExtendedHibernateQuery<?> detachedQuery;
 
-	QueryBuilder(DetailedChartQuery queryDefinition){
+	QueryBuilder(ExpandedConfiguredQuery queryDefinition){
 		super();
 		this.queryDefinition = queryDefinition;
 	}

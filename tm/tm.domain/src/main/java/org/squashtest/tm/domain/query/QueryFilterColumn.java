@@ -108,4 +108,13 @@ public class QueryFilterColumn implements QueryColumnPrototypeInstance {
 	public List<String> getValues() {
 		return values;
 	}
+
+	public void addValues(List<String> values){
+		this.values.addAll(values);
+	}
+
+	public void removeValues(List<String> values){
+		this.values.removeAll(values);
+	}
+
 }

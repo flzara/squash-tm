@@ -195,7 +195,7 @@ class ScopePlannerTest extends Specification {
     def "should build a QueriedEntities from the chart and extract the possible join columns" (){
 
         given :
-            DetailedChartQuery detail = Mock(DetailedChartQuery)
+            ExpandedConfiguredQuery detail = Mock(ExpandedConfiguredQuery)
             detail.getTargetEntities() >> targetEntities
 
         when :
@@ -249,7 +249,7 @@ class ScopePlannerTest extends Specification {
 
             given :
                     def axis = Mock(AxisColumn)
-                    DetailedChartQuery q = new DetailedChartQuery(axis : [axis])
+                    ExpandedConfiguredQuery q = new ExpandedConfiguredQuery(axis : [axis])
                     scopePlanner.chartQuery = q
 
             and :
@@ -348,7 +348,7 @@ where testCase.project.id = ?1"""
         def measure = iet(meaType)
         def target = [root, measure]
 
-        new DetailedChartQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
+        new ExpandedConfiguredQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
 
     }
 

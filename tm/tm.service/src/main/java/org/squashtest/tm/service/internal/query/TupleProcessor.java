@@ -91,7 +91,7 @@ class TupleProcessor {
 	private CustomFieldDao customFieldDao;
 
 	// must be set before invocation
-	DetailedChartQuery definition;
+	ExpandedConfiguredQuery definition;
 
 
 	// set during initialization
@@ -127,7 +127,7 @@ class TupleProcessor {
 
 	// ************* main methods ************************
 
-	TupleProcessor setDefinition(DetailedChartQuery definition){
+	TupleProcessor setDefinition(ExpandedConfiguredQuery definition){
 		this.definition = definition;
 		return this;
 	}

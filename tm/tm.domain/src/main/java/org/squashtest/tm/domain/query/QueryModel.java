@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "QUERY_MODEL")
@@ -118,14 +119,6 @@ public class QueryModel implements IQueryModel{
 		return orderingColumns;
 	}
 
-	public QueryModel createCopy() {
-		QueryModel copy = new QueryModel();
-		copy.setName(getName());
-		copy.setJoinStyle(getJoinStyle());
-		copy.setStrategy(getStrategy());
-		return copy;
-	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -157,37 +150,5 @@ public class QueryModel implements IQueryModel{
 	public void setOrderingColumns(List<QueryOrderingColumn> orderingColumns) {
 		this.orderingColumns = orderingColumns;
 	}
-
-	@Override
-	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities() {
-
-		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(4);
-
-		Collection<? extends QueryColumnPrototypeInstance> columns;
-		columns = getFilterColumns();
-		if(!columns.isEmpty()) {
-			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
-			result.put(ColumnRole.FILTER, filterTypes);
-		}
-		//TODO continue method
-		columns = getAggregationColumns();
-		columns = getOrderingColumns();
-		columns = getProjectionColumns();
-
-
-
-
-
-		return result;
-	}
-
-	private Set<SpecializedEntityType> collectTypes(Collection<? extends QueryColumnPrototypeInstance> columns){
-		Set<SpecializedEntityType> types = new HashSet<>();
-		for (QueryColumnPrototypeInstance col : columns){
-			types.add(col.getSpecializedType());
-		}
-		return types;
-	}
-
 
 }

@@ -51,7 +51,7 @@ class SubQueryBuilder extends QueryBuilder {
 
 
 
-	SubQueryBuilder(DetailedChartQuery queryDefinition) {
+	SubQueryBuilder(ExpandedConfiguredQuery queryDefinition) {
 		super(queryDefinition);
 	}
 

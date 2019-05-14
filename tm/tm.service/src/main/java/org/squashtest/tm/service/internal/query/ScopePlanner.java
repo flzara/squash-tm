@@ -33,9 +33,6 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QCampaignPathEdge;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ScopeType;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryModel;
@@ -74,7 +71,7 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 /**
  * <p>
- * 	This class will stuff a DetailedChartQuery with transient additional filters on which parts of the global repository should be considered.
+ * 	This class will stuff a ExpandedConfiguredQuery with transient additional filters on which parts of the global repository should be considered.
  *	</p>
  *
  *	<h3>specification for TM 1.13</h3>
@@ -165,7 +162,7 @@ class ScopePlanner {
 	private PermissionEvaluationService permissionService;
 
 	// work variables
-	private DetailedChartQuery queryModel;
+	private ExpandedConfiguredQuery queryModel;
 
 	private List<EntityReference> scope;
 
@@ -185,7 +182,7 @@ class ScopePlanner {
 		this.hibQuery = hibQuery;
 	}
 
-	void setChartQuery(DetailedChartQuery chartQuery) {
+	void setChartQuery(ExpandedConfiguredQuery chartQuery) {
 		this.queryModel = chartQuery;
 	}
 
@@ -223,38 +220,6 @@ class ScopePlanner {
 
 	}
 
-
-	protected void setDynamicScope(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
-		//If a dynamic scope is provided whe substitute the chart def scope by the client provided scope
-		if(dynamicScope != null && !dynamicScope.isEmpty()){
-			this.setScope(dynamicScope);
-		}
-		else{
-			//If scope type is default, the perimeter is either :
-			// The chart def project if the chart is visualized alone
-			// The dashboard project if the chart is visualized in a dashboard
-			ScopeType scopeType = chartDefinition.getScopeType();
-			if (scopeType==ScopeType.DEFAULT){
-				setDefaultScope(chartDefinition,dashboardId);
-			}
-			else{
-				//Else the scope is the original scope when visualizing in custom report workspace
-				this.setScope(chartDefinition.getScope());
-			}
-		}
-	}
-
-	private void setDefaultScope(ChartDefinition chartDefinition, Long dashboardId) {
-		List<EntityReference> defaultScope = new ArrayList<>();
-		if (dashboardId != null){
-			CustomReportDashboard dashboard = em.find(CustomReportDashboard.class, dashboardId);
-			defaultScope.add(new EntityReference(PROJECT, dashboard.getProject().getId()));
-		}
-		else{
-			defaultScope.add(new EntityReference(PROJECT,chartDefinition.getProject().getId()));
-		}
-		this.setScope(defaultScope);
-	}
 
 
 	// *********************** step 1 ***********************
@@ -331,7 +296,7 @@ class ScopePlanner {
 
 		// create the dummy queryModel
 		QueryModel dummy = createDummyQuery(extraJoins);
-		DetailedChartQuery detailDummy = new DetailedChartQuery(dummy);
+		ExpandedConfiguredQuery detailDummy = ExpandedConfiguredQuery.createFor(dummy);
 
 		// ... and then run it in a QueryPlanner
 		appendScopeToQuery(detailDummy);
@@ -369,7 +334,7 @@ class ScopePlanner {
 	}
 
 
-	private void appendScopeToQuery(DetailedChartQuery extraQuery) {
+	private void appendScopeToQuery(ExpandedConfiguredQuery extraQuery) {
 		QueryPlanner planner = new QueryPlanner(extraQuery);
 		planner.appendToQuery(hibQuery);
 		planner.modifyQuery();
@@ -717,9 +682,9 @@ class ScopePlanner {
 
 	private static final class QueriedEntitiesImpl implements QueriedEntities {
 
-		private DetailedChartQuery query;
+		private ExpandedConfiguredQuery query;
 
-		QueriedEntitiesImpl(DetailedChartQuery query) {
+		QueriedEntitiesImpl(ExpandedConfiguredQuery query) {
 			super();
 			this.query = query;
 		}
@@ -731,7 +696,7 @@ class ScopePlanner {
 		@Override
 		public Set<JoinableColumns> getPossibleJoinColumns() {
 			Set<JoinableColumns> possibles = new HashSet<>();
-			Set<InternalEntityType> types = query.getTargetEntities();
+			List<InternalEntityType> types = query.getTargetEntities();
 
 			for (InternalEntityType type : types) {
 				JoinableColumns column = JoinableColumns.forQueriedType(type);

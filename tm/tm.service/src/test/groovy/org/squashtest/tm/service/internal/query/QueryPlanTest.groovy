@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.query
 package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.query.DetailedChartQuery;
+import org.squashtest.tm.service.internal.query.ExpandedConfiguredQuery;
 import org.squashtest.tm.service.internal.query.QueryPlan;
 import org.squashtest.tm.service.internal.query.QueryPlan.QueryPlanJoinIterator;
 import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
@@ -54,12 +54,12 @@ class QueryPlanTest extends Specification {
 
 
 	@Unroll
-	def "should trim to fit the chart definition"(){
+	def "should trim to fit the chart expandedQuery"(){
 
 		expect :
 		// given
 		def tree = buildTree(rootEntity, nodes)
-		def chartDef = new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targetEntities)
+		def chartDef = new ExpandedConfiguredQuery(rootEntity : rootEntity, targetEntities : targetEntities)
 		tree.trim(chartDef)
 
 		// then

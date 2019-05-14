@@ -46,6 +46,7 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -66,6 +67,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	private EntityManager em;
 
 	@Inject
+	private Provider<ChartToConfiguredQueryConverter> converterProvider;
+
+	@Inject
 	private QueryProcessingServiceImpl dataFinder;
 
 	@Inject
@@ -74,11 +78,6 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
-	@Inject
-	private ProjectFinder projectFinder;
-
-	@Inject
-	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Override
 	public void persist(ChartDefinition newChartDefinition) {
@@ -116,12 +115,19 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public ChartInstance generateChart(long chartDefId, List<EntityReference> dynamicScope, Long dashboardId){
 		ChartDefinition def = findById(chartDefId);
-		return generateChart(def,dynamicScope,dashboardId, null, null);
-
+		return generateChart(def,dynamicScope,dashboardId);
 	}
 
 	@Override
 	public ChartInstance generateChart(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+
+		ChartToConfiguredQueryConverter converter = converterProvider.get();
+
+		ConfiguredQuery configuredQuery = converter.withDefinition(chartDefinition)
+					.forDynamicScope(dynamicScope)
+					.forDashboard(dashboardId)
+					.convert();
+
 		return generateChart(chartDefinition,dynamicScope,dashboardId, null, null);
 	}
 
@@ -178,15 +184,6 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		return chartDefinitionDao.hasChart(userIds);
 	}
 
-	private List<EntityReference> generateScopeForMilestoneDashboard (){
-		List<Project> projects = projectFinder.findAllReadable();
-
-		List<EntityReference> entityReferences = new ArrayList<>();
-		for (Project project : projects) {
-			entityReferences.add(new EntityReference(EntityType.PROJECT,project.getId()));
-		}
-		return  entityReferences;
-	}
 
 
 
@@ -194,13 +191,6 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
 		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId, milestoneId, workspace);
 		return new ChartInstance(definition, series);
-	}
-
-
-	// *************** query building function ************************
-
-	private ConfiguredQuery createConfiguredQuery(ChartDefinition definition){
-
 	}
 
 

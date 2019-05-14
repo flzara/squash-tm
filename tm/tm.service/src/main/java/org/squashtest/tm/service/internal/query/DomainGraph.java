@@ -61,7 +61,7 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
  * business domain.
  * </p>
  * <p>
- * 	Its purpose is to provide a query plan. It is defined as the spanning tree that originates from a root entity and spreads until
+ * 	Its purpose is to provide a query plan. It is defined as the spanning tree that originates from a seed and spreads until
  * 	every target entity is reached.
  * </p>
  * <p>Please note that, for that purpose different enum is used here : {@link InternalEntityType}.</p>
@@ -117,17 +117,12 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
  * @author bsiri
  *
  */
-/*
- * PLEASE UPDATE THE DOCUMENTATION IF THE DOMAIN CHANGES !
- */
 
-/*
- * Implementation note : I ditched the "extends LibraryGraph" because due to ill conception this class
- * doesn't allow edges customization with metadata, sorry for the engineering fail.
- */
 class DomainGraph {
 
-	private DetailedChartQuery definition;
+	private ExpandedConfiguredQuery expandedQuery;
+
+	private InternalEntityType seed;
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
 
@@ -135,28 +130,9 @@ class DomainGraph {
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
 
-	/**
-	 * <p>
-	 * Used in some corner case (namely : we need a query plan that requires a left join over a join accessible only
-	 * through a "where join". The solution is thus to change the RootEntity, so that the plan now originate from the
-	 * Measure entity instead of the Axis entity.
-	 * </p>
-	 *
-	 * <p>
-	 * 	<ul>
-	 * 	<li>if reverse == false -&gt; the root entity stays the same</li>
-	 * 	<li>if reverse == true  -&gt; the root entity is the Measured entity</li>
-	 * 	</ul>
-	 * </p>
-	 */
-	private boolean reverse = false;
 
 	// **************************** API methods ******************************
 
-	DomainGraph reversePlan(){
-		this.reverse=true;
-		return this;
-	}
 
 	/*
 	 * The creation of a query plan is a two step process :
@@ -173,7 +149,7 @@ class DomainGraph {
 
 		QueryPlan plan = morphToQueryPlan();
 
-		plan.trim(definition);
+		plan.trim(expandedQuery);
 
 		return plan;
 
@@ -182,10 +158,11 @@ class DomainGraph {
 
 	// **************************** under the hood ****************************
 
-	DomainGraph(DetailedChartQuery def){
+	DomainGraph(ExpandedConfiguredQuery expandedQuery, InternalEntityType seed){
 		super();
 
-		this.definition = def;
+		this.expandedQuery = expandedQuery;
+		this.seed = seed;
 
 		// declare all the nodes
 		TraversableEntity campaignNode = new TraversableEntity(CAMPAIGN);
@@ -302,7 +279,7 @@ class DomainGraph {
 
 
 	/**
-	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartQuery)})</p>
+	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(ExpandedConfiguredQuery)})</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
 	 *
 	 */
@@ -330,19 +307,7 @@ class DomainGraph {
 
 		QueryPlan plan = new QueryPlan();
 
-		InternalEntityType rootType = definition.getRootEntity();
-
-		if (!reverse){
-			rootType = definition.getRootEntity();
-		}
-		else{
-			// we must start the planning from the measured entity,
-			// instead of the regular root entity (which is an axis entity)
-			rootType = definition.getMeasuredEntity();
-		}
-
-
-		TraversableEntity rootNode = getNode(rootType);
+		TraversableEntity rootNode = getNode(seed);
 
 		// init the query plan
 		TraversedEntity treeRoot = rootNode.toTraversedEntity();

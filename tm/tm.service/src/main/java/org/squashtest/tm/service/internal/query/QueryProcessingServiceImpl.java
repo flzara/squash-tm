@@ -42,6 +42,8 @@ import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.service.internal.query.proxy.MilestoneAwareChartQuery;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
+import org.squashtest.tm.service.query.ConfiguredQuery;
+import org.squashtest.tm.service.query.QueryProcessingService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -344,7 +346,7 @@ import java.util.List;
  */
 @Component
 @SuppressWarnings(value = {"rawtypes", "unchecked"})
-public class QueryProcessingServiceImpl {
+public class QueryProcessingServiceImpl implements QueryProcessingService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryProcessingServiceImpl.class);
 	@Inject
@@ -359,16 +361,25 @@ public class QueryProcessingServiceImpl {
 	@Inject
 	private Provider<TupleProcessor> tupleProcessorProvider;
 
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Tuple> executeQuery(ConfiguredQuery configuredQuery) {
+		// TODO
+	}
+
+
+
 	@Transactional(readOnly = true)
 	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
 
 		QueryModel queryModel = definition.getQuery();
-		DetailedChartQuery enhancedDefinition;
+		ExpandedConfiguredQuery enhancedDefinition;
 		if (milestoneId != null && workspace != null && Workspace.isWorkspaceMilestoneFilterable(workspace)) {
 			IQueryModel milestoneAwareChartQuery = new MilestoneAwareChartQuery(queryModel, milestoneId, workspace);
-			enhancedDefinition = new DetailedChartQuery(milestoneAwareChartQuery);
+			enhancedDefinition = new ExpandedConfiguredQuery(milestoneAwareChartQuery);
 		} else {
-			enhancedDefinition = new DetailedChartQuery(queryModel);
+			enhancedDefinition = new ExpandedConfiguredQuery(queryModel);
 		}
 
 

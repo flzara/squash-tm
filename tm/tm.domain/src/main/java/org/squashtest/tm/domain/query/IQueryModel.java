@@ -38,5 +38,4 @@ public interface IQueryModel {
 
 	NaturalJoinStyle getJoinStyle();
 
-	Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
 }

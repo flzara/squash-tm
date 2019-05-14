@@ -132,13 +132,13 @@ class ChartToConfiguredQueryConverter {
 		return this;
 	}
 
-	ChartToConfiguredQueryConverter forDefaultChartScope(){
-		// it just means that the scope defined in the ChartDefinition will be used
+	ChartToConfiguredQueryConverter forAutoScope(){
+		// it just means that the scope will be defined by other ways (milestone, or dasboard project etc)
 		this.customScope = null;
 		return this;
 	}
 
-	ChartToConfiguredQueryConverter forCustomScope(List<EntityReference> customScope){
+	ChartToConfiguredQueryConverter forDynamicScope(List<EntityReference> customScope){
 		this.customScope = customScope;
 		return this;
 	}
@@ -153,6 +153,11 @@ class ChartToConfiguredQueryConverter {
 
 		this.customScope = entityReferences;
 
+		return this;
+	}
+
+	ChartToConfiguredQueryConverter forDashboard(Long dashboardId){
+		this.dashboardId = dashboardId;
 		return this;
 	}
 
@@ -245,7 +250,7 @@ class ChartToConfiguredQueryConverter {
 		// per construction, the X first elements of the projection are the axes, where X is the number of axes.
 		List<QueryProjectionColumn> projectedAxes = projections.subList(0,axes.size());
 
-		List<QueryAggregationColumn> aggregationColumns = projectedAxes.stream().map(this::toAggregationColumn).collect(toList());
+		List<QueryAggregationColumn> aggregationColumns = projectedAxes.stream().map(QueryProjectionColumn::createAggregation).collect(toList());
 
 		return aggregationColumns;
 
@@ -267,7 +272,7 @@ class ChartToConfiguredQueryConverter {
 		// per construction, the X first elements of the projection are the axes, where X is the number of axes.
 		List<QueryProjectionColumn> projectedAxes = projections.subList(0,axes.size());
 
-		List<QueryOrderingColumn> orderingColumns = projectedAxes.stream().map(this::toOrderingColumn).collect(toList());
+		List<QueryOrderingColumn> orderingColumns = projectedAxes.stream().map(QueryProjectionColumn::createOrderingAsc).collect(toList());
 
 		return orderingColumns;
 	}
@@ -296,14 +301,6 @@ class ChartToConfiguredQueryConverter {
 		return projection;
 	}
 
-
-	private QueryAggregationColumn toAggregationColumn(QueryProjectionColumn projection){
-		QueryAggregationColumn aggregation = new QueryAggregationColumn();
-		aggregation.setProjectionColumn(projection);
-		return aggregation;
-	}
-
-
 	private QueryFilterColumn toQueryFilterColumn(Filter chartFilter){
 		QueryFilterColumn queryFilter = new QueryFilterColumn();
 
@@ -313,17 +310,6 @@ class ChartToConfiguredQueryConverter {
 
 		return queryFilter;
 	}
-
-	private QueryOrderingColumn toOrderingColumn(QueryProjectionColumn projection){
-		QueryOrderingColumn ordering = new QueryOrderingColumn();
-
-		ordering.setOrder(Order.ASC);
-		ordering.setQueryProjectionColumn(projection);
-
-		return ordering;
-
-	}
-
 
 	// ********************* Milestone handling methods ********************
 

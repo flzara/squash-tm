@@ -73,4 +73,7 @@ public class QueryAggregationColumn implements QueryColumnPrototypeInstance {
 	public Long getCufId() {
 		return projectionColumn.getCufId();
 	}
+
+
+
 }

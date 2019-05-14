@@ -55,7 +55,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
@@ -70,7 +70,7 @@ class QueryPlannerTest extends Specification {
 				aliases : aliases,
 				utils : tools,
 				query : hquery,
-				definition : cquery
+				expandedQuery : cquery
 				)
 
 		when :
@@ -87,7 +87,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
@@ -102,7 +102,7 @@ class QueryPlannerTest extends Specification {
 				aliases : aliases,
 				utils : tools,
 				query : hquery,
-				definition : cquery
+				expandedQuery : cquery
 				)
 
 		when :
@@ -119,7 +119,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
@@ -134,7 +134,7 @@ class QueryPlannerTest extends Specification {
 				aliases : aliases,
 				utils : tools,
 				query : hquery,
-				definition : cquery
+				expandedQuery : cquery
 				)
 
 		when :
@@ -151,7 +151,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -165,7 +165,7 @@ class QueryPlannerTest extends Specification {
 				aliases : aliases,
 				utils : tools,
 				query : hquery,
-				definition : cquery
+				expandedQuery : cquery
 				)
 
 		when :
@@ -183,7 +183,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -197,7 +197,7 @@ class QueryPlannerTest extends Specification {
 				aliases : aliases,
 				utils : tools,
 				query : hquery,
-				definition : cquery
+				expandedQuery : cquery
 				)
 
 		when :
@@ -213,7 +213,7 @@ class QueryPlannerTest extends Specification {
 	def "should create a query from a main chart query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : TEST_CASE,
 				targetEntities : [REQUIREMENT, TEST_CASE]
 				)
@@ -236,7 +236,7 @@ from TestCase testCase
 	def "should append a subquery to a main query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -273,7 +273,7 @@ from Requirement requirement
 	def "should not append twice a subquery to a main query"(){
 
 		given :
-		DetailedChartQuery cquery = new DetailedChartQuery(
+		ExpandedConfiguredQuery cquery = new ExpandedConfiguredQuery(
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -359,7 +359,7 @@ from Requirement requirement
 				)
 
 		when :
-		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+		QueryPlanner planner = new QueryPlanner(new ExpandedConfiguredQuery(mainquery))
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
 
@@ -388,7 +388,7 @@ from TestCase testCase
 		)
 
 		when:
-		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+		QueryPlanner planner = new QueryPlanner(new ExpandedConfiguredQuery(mainquery))
 
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)

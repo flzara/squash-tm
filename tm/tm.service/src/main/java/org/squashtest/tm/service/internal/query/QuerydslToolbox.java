@@ -830,9 +830,7 @@ class QuerydslToolbox {
 
 
 	private SubQueryBuilder createSubquery(QueryColumnPrototypeInstance col) {
-		QueryColumnPrototype prototype = col.getColumn();
-		QueryModel queryDef = prototype.getSubQuery();
-		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
+		ExpandedConfiguredQuery detailedDef = ExpandedConfiguredQuery.createFor(col);
 
 		return new SubQueryBuilder(detailedDef);
 	}
