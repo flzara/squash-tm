@@ -89,6 +89,7 @@
 
 	<div data-def="state=main">
 		<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
+      <span id="unlaunchable-tests"></span>
       <table class="display-table dataTable" style="width:100%">
         <thead>
           <tr>

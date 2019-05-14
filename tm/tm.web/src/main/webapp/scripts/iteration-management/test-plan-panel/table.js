@@ -320,17 +320,22 @@ define(
 					formParams[ent] = window.squashtm.page.identity.resid;
 					formParams.testPlanItemsIds = tpiIds;
 
-					$.ajax({
-						url: url,
-						dataType: 'json',
-						type: 'post',
-						data: formParams,
-						contentType: "application/x-www-form-urlencoded;charset=UTF-8"
-					}).done(function (suite) {
-						window.squashtm.context.autosuiteOverview.start(suite);
+					updateTAScript(formParams).done(function(map){
+						if (map[tpiId] !== undefined){
+							$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+						} else {
+							$.ajax({
+								url: url,
+								dataType: 'json',
+								type: 'post',
+								data: formParams,
+								contentType: "application/x-www-form-urlencoded;charset=UTF-8"
+							}).done(function (suite) {
+								window.squashtm.context.autosuiteOverview.start(suite);
+							});
+						}
 					});
 					return false;
-
 				}
 			};
 
@@ -519,6 +524,18 @@ define(
 				sconf: squashSettings
 			};
 
+		}
+
+		function updateTAScript(data) {
+			var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+			return $.ajax({
+				type : "POST",
+				url : associateUrl,
+				dataType : "json",
+				data : data,
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+			});
 		}
 
 		// **************** MAIN ****************

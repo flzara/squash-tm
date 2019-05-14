@@ -47,6 +47,8 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 
 				this.options.executionRowTemplate = Handlebars.compile($("#exec-info-tpl").html());
 				this.options.executionAutoInfos = $("#executions-auto-infos");
+				this.options.unlaunchableTest = $("#unlaunchable-tests");
+				this.options.unlaunchableTest.hide();
 
 				// progressbar
 				var executionProgressBar = $("#execution-auto-progress-bar");
@@ -117,9 +119,9 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				// refreshStatistics();
 			},
 
-			watch: function (suite) {
+			watch: function (suite, unlaunchableTest) {
 				this.options.suite = suite;
-				this._initWatch();
+				this._initWatch(unlaunchableTest);
 				this.setState("main");
 				this.open();
 
@@ -132,21 +134,21 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				}
 			},
 
-			start: function (suite) {
+			start: function (suite, unlaunchableTest) {
 				if (suite.manualNodeSelection) {
 					this._startManualSelectNodes(suite);
 				} else {
-					this._startAutoSelectNodes(suite);
+					this._startAutoSelectNodes(suite, unlaunchableTest);
 				}
 			},
 
-			_startAutoSelectNodes: function (suite) {
+			_startAutoSelectNodes: function (suite, unlaunchableTest) {
 				this._execAndWatch(suite.id, function () {
 					return [];
-				});
+				}, unlaunchableTest);
 			},
 
-			_execAndWatch: function (suiteId, dataMapper) {
+			_execAndWatch: function (suiteId, dataMapper, unlaunchableTest) {
 				var runUrl = this.options.url + "/" + suiteId + "/executor";
 				var self = this;
 
@@ -160,7 +162,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 					if (overview.executions.length === 0) {
 						$.squash.openMessage(translator.get("popup.title.Info"), translator.get("dialog.execution.auto.overview.error.none"));
 					} else {
-						self.watch(overview);
+						self.watch(overview, unlaunchableTest);
 					}
 				});
 			},
@@ -213,7 +215,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
-			_initWatch: function () {
+			_initWatch: function (unlaunchableTests) {
 				var data = this.options.suite;
 				var executions = data.executions,
 					progress = data.percentage;
@@ -226,6 +228,11 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				// the "table"
 				var htmlRows = this.options.executionRowTemplate({execs: executions});
 				this.options.executionAutoInfos.html(htmlRows);
+
+				if(unlaunchableTests !== undefined && unlaunchableTests.length !== 0) {
+					this.options.unlaunchableTest.html(translator.get("dialog.execute-auto.overview.unexecutableItem", unlaunchableTests));
+					this.options.unlaunchableTest.show();
+				}
 			},
 
 			_updateWatch: function () {

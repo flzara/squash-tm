@@ -41,20 +41,54 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
-		updateTaScript([]).done(createSuite([])).done(startSuite);
+		var unlaunchableTest;
+		updateTAScript(ids).done(function(map){
+			// No arrow function in IE 11 ...
+			var launchableIds = ids.filter(function(id){
+				return map[id] === undefined;
+			});
+			if (launchableIds.length === 0){
+				$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+			} else {
+				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
+				unlaunchableTest = Object.keys(map).map(function(e) {
+					return map[e]
+				});
+				createSuite(launchableIds).done(function(suite) {
+					startSuite(suite, unlaunchableTest);
+				});
+			}
+		});
 	}
 
 	function executeSelection() {
 		var ids = $(".test-plan-table").squashTable().getSelectedIds();
+		var unlaunchableTest;
 		if (ids.length === 0) {
 			$.squash.openMessage(messages.get("popup.title.error"), messages.get("message.EmptyTableSelection"));
 		} else {
-			createSuite(ids).done(startSuite);
+			updateTAScript(ids).done(function(map){
+				// No arrow function in IE 11 ...
+				var launchableIds = ids.filter(function(id){
+					return map[id] === undefined;
+				});
+				if (launchableIds.length === 0){
+					$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+				} else {
+					//Alternative which work with IE. The ébetter" version but not compatible IE is unlaunchableTest = Object.values(map);
+					unlaunchableTest = Object.keys(map).map(function(e) {
+						return map[e]
+					});
+					createSuite(launchableIds).done(function(suite) {
+						startSuite(suite, unlaunchableTest);
+					});
+				}
+			});
 		}
 	}
 
-	function startSuite(suite) {
-		squashtm.context.autosuiteOverview.start(suite);
+	function startSuite(suite, unlaunchableTest) {
+		squashtm.context.autosuiteOverview.start(suite, unlaunchableTest);
 	}
 
 	/**
@@ -74,6 +108,26 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		return $.ajax({
 			type : "POST",
 			url : createUrl,
+			dataType : "json",
+			data : data,
+			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+	}
+
+	function updateTAScript(itemIds){
+		var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+		var data = {};
+		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+		data[ent] = squashtm.page.identity.resid;
+
+		if (!!itemIds && itemIds.length > 0) {
+			data.testPlanItemsIds = itemIds;
+		}
+
+		return $.ajax({
+			type : "POST",
+			url : associateUrl,
 			dataType : "json",
 			data : data,
 			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
