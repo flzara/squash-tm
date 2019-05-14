@@ -239,7 +239,7 @@ public class LinkedRequirementVersionsManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/{relatedIds}", params = {IS_RELATED_ID_A_NODE_ID}, method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public Map<String, String> getRequirementVersionInformation(@PathVariable List<Long> relatedIds, @RequestParam(IS_RELATED_ID_A_NODE_ID) boolean isRelatedIdANodeId) {
-		return linkedReqVersionManager.getRequirementVersionInformation(relatedIds);
+		return linkedReqVersionManager.getRequirementVersionInformation(relatedIds, isRelatedIdANodeId);
 	}
 
 	@ResponseBody

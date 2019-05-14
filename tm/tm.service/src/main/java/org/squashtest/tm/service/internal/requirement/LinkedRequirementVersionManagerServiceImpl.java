@@ -355,9 +355,18 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		}
 	}
 
+
 	@Override
-	public Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids) {
-		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementVersionids);
+	public Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids, boolean isRelatedIdANodeId) {
+
+		List<RequirementVersion> requirementVersions;
+
+		if(isRelatedIdANodeId == true){
+		requirementVersions = findRequirementVersions(requirementVersionids);
+		}
+		else {
+		requirementVersions = reqVersionDao.findAllById(requirementVersionids);
+		}
 		String name = "";
 		Map<String, String> versionInfosMap = new HashMap<>();
 		for (RequirementVersion relatedId : requirementVersions) {

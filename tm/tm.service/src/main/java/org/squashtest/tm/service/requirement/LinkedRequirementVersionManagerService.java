@@ -116,5 +116,5 @@ public interface LinkedRequirementVersionManagerService {
 
 	List<RequirementVersionLinkType> findAllRequirementVersionLinkType();
 
-	Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids);
+	Map<String, String> getRequirementVersionInformation(List<Long> requirementVersionids,boolean isRelatedIdANodeId);
 }
