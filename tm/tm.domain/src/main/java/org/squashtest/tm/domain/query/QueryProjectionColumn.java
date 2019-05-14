@@ -40,11 +40,6 @@ import javax.persistence.Table;
 @Table(name = "QUERY_PROJECTION_COLUMN")
 public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
-	@Id
-	@Column(name = "QUERY_PROJECTION_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "query_projection_column_query_projection_id_seq")
-	@SequenceGenerator(name = "query_projection_column_query_projection_id_seq", sequenceName = "query_projection_column_query_projection_id_seq")
-	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "QUERY_COLUMN_ID", nullable = false)
@@ -128,30 +123,5 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 	}
 
 
-	public QueryAggregationColumn createAggregation(){
-		QueryAggregationColumn aggregation = new QueryAggregationColumn();
-		aggregation.setProjectionColumn(this);
-		return aggregation;
-	}
-
-
-	public QueryOrderingColumn createOrderingAsc(){
-		QueryOrderingColumn ordering = new QueryOrderingColumn();
-
-		ordering.setOrder(Order.ASC);
-		ordering.setQueryProjectionColumn(this);
-
-		return ordering;
-	}
-
-
-	public QueryOrderingColumn createOrderingDesc(){
-		QueryOrderingColumn ordering = new QueryOrderingColumn();
-
-		ordering.setOrder(Order.DESC);
-		ordering.setQueryProjectionColumn(this);
-
-		return ordering;
-	}
 
 }

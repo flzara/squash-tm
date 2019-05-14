@@ -153,6 +153,7 @@
             </configuration>
           </execution>
 
+
           <execution>
             <!-- Performs incremental updates in h2 -->
             <id>test-h2-incremental-updates</id>
@@ -185,7 +186,6 @@
               <password>sa</password>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
 

@@ -53,13 +53,10 @@
 
   <changeSet id="tm-1.20.0-TM-282-test1" author="bsiri">
     <!-- checks that all new entries into QUERY_X_COLUMNS are available -->
+
     <preConditions>
       <sqlCheck expectedResult="21">
         select count(*) from QUERY_PROJECTION_COLUMN where PROJECTION_RANK = 0;
-      </sqlCheck>
-
-      <sqlCheck expectedResult="21">
-        select count(*) from QUERY_PROJECTION_COLUMN where PROJECTION_RANK = 1;
       </sqlCheck>
 
       <sqlCheck expectedResult="21">
@@ -67,7 +64,11 @@
       </sqlCheck>
 
       <sqlCheck expectedResult="21">
-        select count(*) from QUERY_ORDERING_COLUMN;
+        select count(*) from QUERY_ORDERING_COLUMN where ORDER_RANK = 0;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="21">
+        select count(*) from QUERY_ORDERING_COLUMN where ORDER_RANK = 1;
       </sqlCheck>
 
 
@@ -80,6 +81,7 @@
       </sqlCheck>
 
     </preConditions>
+
   </changeSet>
 
 
@@ -89,6 +91,7 @@
       checks that all referential data in tables CHART_X_COLUMN et al. are gone, and
       that the user-defined chart is still there.
     -->
+
     <preConditions>
       <!-- first, check that there is only one record left in each tables -->
       <sqlCheck expectedResult="1">
@@ -118,6 +121,10 @@
 
       <sqlCheck expectedResult="1">
         select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = -1;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        select count(*) from QUERY_MODEL where query_model_id = -22;
       </sqlCheck>
 
     </preConditions>

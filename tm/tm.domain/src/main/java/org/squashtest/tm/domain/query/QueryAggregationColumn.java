@@ -22,7 +22,10 @@ package org.squashtest.tm.domain.query;
 
 import org.squashtest.tm.domain.EntityType;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -32,48 +35,72 @@ import javax.persistence.Table;
 @Table(name = "QUERY_AGGREGATION_COLUMN")
 public class QueryAggregationColumn implements QueryColumnPrototypeInstance {
 
-	@JoinColumn(name = "PROJECTION_COLUMN_ID")
+	@JoinColumn(name = "QUERY_COLUMN_ID")
 	@ManyToOne(fetch = FetchType.EAGER)
-	private QueryProjectionColumn projectionColumn;
+	private QueryColumnPrototype columnPrototype;
 
-	public QueryProjectionColumn getProjectionColumn() {
-		return projectionColumn;
+	@Column(name = "LABEL")
+	private String label;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "AGGREGATION_OPERATION")
+	private Operation operation;
+
+	@Column(name = "CUF_ID")
+	private Long cufId;
+	
+	
+	public QueryColumnPrototype getColumnPrototype() {
+		return columnPrototype;
 	}
 
-	public void setProjectionColumn(QueryProjectionColumn projectionColumn) {
-		this.projectionColumn = projectionColumn;
+	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
+		this.columnPrototype = columnPrototype;
 	}
 
 	@Override
 	public QueryColumnPrototype getColumn() {
-		return projectionColumn.getColumn();
+		return columnPrototype;
 	}
 
 	@Override
 	public EntityType getEntityType() {
-		return projectionColumn.getColumn().getEntityType();
+		return columnPrototype.getEntityType();
 	}
 
 	@Override
 	public SpecializedEntityType getSpecializedType() {
-		return projectionColumn.getColumn().getSpecializedType();
+		return columnPrototype.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return projectionColumn.getColumn().getDataType();
+		return columnPrototype.getDataType();
 	}
 
 	@Override
 	public Operation getOperation() {
-		return projectionColumn.getOperation();
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
 	}
 
 	@Override
 	public Long getCufId() {
-		return projectionColumn.getCufId();
+		return cufId;
 	}
 
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
 
+	public String getLabel() {
+		return label;
+	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
 }

@@ -37,16 +37,15 @@ import javax.persistence.Table;
 public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "QUERY_PROJECTION_ID", nullable = false)
-	private QueryProjectionColumn queryProjectionColumn;
+	@JoinColumn(name = "QUERY_COLUMN_ID", nullable = false)
+	private QueryColumnPrototype columnPrototype;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORDER_DIR")
 	private Order order = Order.ASC;
 
-	public QueryProjectionColumn getQueryProjectionColumn() {
-		return queryProjectionColumn;
-	}
+	@Column(name = "CUF_ID")
+	private Long cufId;
 
 	public void setOrder(Order order) {
 		this.order = order;
@@ -56,37 +55,45 @@ public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 		return order;
 	}
 
-	public void setQueryProjectionColumn(QueryProjectionColumn queryProjectionColumn) {
-		this.queryProjectionColumn = queryProjectionColumn;
+	public QueryColumnPrototype getColumnPrototype() {
+		return columnPrototype;
+	}
+
+	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
+		this.columnPrototype = columnPrototype;
 	}
 
 	@Override
 	public QueryColumnPrototype getColumn() {
-		return queryProjectionColumn.getColumn();
+		return columnPrototype;
 	}
 
 	@Override
 	public EntityType getEntityType() {
-		return queryProjectionColumn.getColumn().getEntityType();
+		return columnPrototype.getEntityType();
 	}
 
 	@Override
 	public SpecializedEntityType getSpecializedType() {
-		return queryProjectionColumn.getColumn().getSpecializedType();
+		return columnPrototype.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return queryProjectionColumn.getColumn().getDataType();
+		return columnPrototype.getDataType();
 	}
 
 	@Override
 	public Operation getOperation() {
-		return queryProjectionColumn.getOperation();
+		return Operation.NONE;
 	}
 
 	@Override
 	public Long getCufId() {
-		return queryProjectionColumn.getCufId();
+		return cufId;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
 	}
 }
