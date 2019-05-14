@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
+import org.squashtest.tm.service.internal.repository.hibernate.IterationTestPlanDaoImpl;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
@@ -65,6 +68,9 @@ public class AutomatedSuiteManagementController {
 	@Inject
 	private AutomationRequestModificationService automationRequestModificationService;
 
+	@Inject
+	private IterationTestPlanDaoImpl itpdao;
+
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {ITERATION_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam(ITERATION_ID) long iterationId) {
@@ -76,6 +82,7 @@ public class AutomatedSuiteManagementController {
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {TEST_SUITE_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
+
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
 		return toProjectContentModel(suite);
 	}
@@ -84,6 +91,7 @@ public class AutomatedSuiteManagementController {
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIterationItems(
 		@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam(ITERATION_ID) long iterationId) {
+
 		if (testPlanIds.isEmpty()) {
 			createNewAutomatedSuiteForIteration(iterationId);
 		}
@@ -216,15 +224,15 @@ public class AutomatedSuiteManagementController {
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, ITERATION_ID}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public Map<Long, String> resolveTAScriptAssociationForIterationItems
-									(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam(ITERATION_ID) long iterationId) {
-		return service.updateTAScriptForIterationItems(iterationId,testPlanIds );
+									(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
+		return service.updateTAScriptForItems(testPlanIds);
 	}
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, TEST_SUITE_ID}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public Map<Long, String> resolveTAScriptAssociationForTestSuiteItems(
-									@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam("testSuiteId") long testSuiteId) {
-		return service.updateTAScriptForTestSuiteItems(testSuiteId, testPlanIds);
+									@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
+		return service.updateTAScriptForItems(testPlanIds);
 	}
 
 

@@ -148,8 +148,7 @@ public interface AutomatedSuiteManagerService {
 	/*TM-13*/
 	Map<Long, String> updateTAScriptForIteration(Long iterationId);
 	Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId);
-	Map<Long, String> updateTAScriptForIterationItems(Long iterationId,List<Long> testPlanIds);
-	Map<Long, String> updateTAScriptForTestSuiteItems(Long testSuiteId,List<Long> testPlanIds );
+	Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds);
 
 
 }

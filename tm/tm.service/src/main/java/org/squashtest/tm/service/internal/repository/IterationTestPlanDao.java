@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -58,4 +59,5 @@ public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanIte
 	
 	@EmptyCollectionGuard
 	List<Long> findAllForMilestones(@Param("milestonesIds") List<Long> milestonesIds);
+
 }

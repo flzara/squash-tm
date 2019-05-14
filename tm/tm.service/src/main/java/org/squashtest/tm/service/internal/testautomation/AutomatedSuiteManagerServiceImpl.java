@@ -57,6 +57,7 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.hibernate.IterationTestPlanDaoImpl;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
@@ -149,6 +150,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private AutomationRequestModificationService automationRequestModificationService;
+	@Inject
+	private IterationTestPlanDaoImpl iterationTestPlanDaoImpl;
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -591,59 +594,38 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
 
-		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items = iteration.getTestPlans();
+		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByIterationIdWithTCAutomated(iterationId);
 		List<Long> tcIds = getListTcIdsFromListItems(items);
-
-		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-
-		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
 	}
 
 	@Override
 	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
 
-		TestSuite suite = testSuiteDao.getOne(testSuiteId);
-		List<IterationTestPlanItem> items = suite.getTestPlan();
+		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
 		List<Long> tcIds = getListTcIdsFromListItems(items);
 
-		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
+		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
 
-		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
 	}
 
 	@Override
-	public Map<Long, String> updateTAScriptForIterationItems(Long iterationId, List<Long> testPlanIds) {
+	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
 
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedByIterationTestPlan(testPlanIds);
+		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByItemsIdWithTCAutomated(testPlanIds);
 		List<Long> tcIds = getListTcIdsFromListItems(items);
+		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
 
-		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-
-		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
+		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
 	}
 
-	@Override
-	public Map<Long, String> updateTAScriptForTestSuiteItems(Long testSuiteId, List<Long> testPlanIds) {
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
-		List<Long> tcIds = getListTcIdsFromListItems(items);
-
-		Map<Long, String> listTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-
-		return getListItpiIdNameTc(items, listTcIdTcNameInConflict);
-	}
-
-
-
-	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> listTcIdTcNameInConflict){
+	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
 		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
-		Iterator it = items.iterator();
-		listTcIdTcNameInConflict.forEach((k,v)-> {
-			while (it.hasNext()) {
-				IterationTestPlanItem item= (IterationTestPlanItem) it.next();
-				if(item.getReferencedTestCase().getId().equals(k)){
-					mapItpiIdTcNameInConflict.put(item.getId(), v);
-				}
+		items.forEach(itpi->{
+			if(mapTcIdTcNameInConflict.containsKey(itpi.getReferencedTestCase().getId())){
+				mapItpiIdTcNameInConflict.put(itpi.getId(),mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
 			}
 		});
 		return  mapItpiIdTcNameInConflict;
@@ -651,11 +633,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private List<Long> getListTcIdsFromListItems(List<IterationTestPlanItem> items){
 		List<Long> listIds = items.stream()
-			.collect(Collectors.mapping(IterationTestPlanItem::getReferencedTestCase, Collectors.toList()))
-			.stream()
-			.filter(tc-> !tc.getAutomationRequest().isManual())
-			.collect(Collectors.mapping(TestCase::getId, Collectors.toList()));
-
+			.map(itpi -> itpi.getReferencedTestCase().getId()).collect(Collectors.toList());
 		return  listIds;
 	}
 
