@@ -28,8 +28,10 @@ import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryProjectionColumn;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,49 +46,51 @@ class SubQueryBuilder extends QueryBuilder {
 
 
 	// used for subselect subqueries
-	private List<Expression<?>> subselectProfileJoinExpression;
+	private Expression<?> subselectProfileJoinExpression;
 
 	// used for subwhere subqueries
 	private QueryFilterColumn subwhereProfileFilterExpression;
 
 
-
-	SubQueryBuilder(ExpandedConfiguredQuery queryDefinition) {
-		super(queryDefinition);
+	SubQueryBuilder(QueryColumnPrototypeInstance columnInstance) {
+		super( ExpandedConfiguredQuery.createFor(columnInstance) );
 	}
 
 
 	// ====================== configuration section =============
 
-	SubQueryBuilder asMainQuery(){
-		profile = QueryProfile.MAIN_QUERY;
-		utils.setSubContext(null);
+	SubQueryBuilder withRootEntity(InternalEntityType type){
+		expandedQuery.withRootEntity(type);
+		return this;
+	}
+
+	SubQueryBuilder withRootEntity(SpecializedEntityType type){
+		InternalEntityType internalType = InternalEntityType.fromSpecializedType(type);
+		expandedQuery.withRootEntity(internalType);
 		return this;
 	}
 
 	SubQueryBuilder asSubselectQuery(){
 		profile = QueryProfile.SUBSELECT_QUERY;
+		expandedQuery.withProfile(profile);
 		utils.setSubContext(generateContextName());
 		return this;
 	}
 
 	SubQueryBuilder asSubwhereQuery(){
 		profile = QueryProfile.SUBWHERE_QUERY;
+		expandedQuery.withProfile(profile);
 		utils.setSubContext(generateContextName());
 		return this;
 	}
 
-	SubQueryBuilder joinAxesOn(List<Expression<?>> axes){
-		this.subselectProfileJoinExpression = axes;
+
+	SubQueryBuilder joinRootEntityOn(Expression<?> mainQueryPath) {
+		this.subselectProfileJoinExpression = mainQueryPath;
 		return this;
 	}
 
-	SubQueryBuilder joinAxesOn(Expression<?>... axes) {
-		this.subselectProfileJoinExpression = Arrays.asList(axes);
-		return this;
-	}
-
-	SubQueryBuilder filterMeasureOn(QueryFilterColumn filter){
+	SubQueryBuilder filterOn(QueryFilterColumn filter){
 		this.subwhereProfileFilterExpression = filter;
 		return this;
 	}
@@ -114,19 +118,15 @@ class SubQueryBuilder extends QueryBuilder {
 
 	}
 
-	// we must join on the axes with those of the outer query
+	// we must join on the root entity of the subquery with the specified axe
 	private void joinWithOuterquery(){
-		BooleanBuilder joinWhere = new BooleanBuilder();
 
-		List<QueryAggregationColumn> aggregationColumns = queryDefinition.getAggregationColumns();
+		List<QueryAggregationColumn> aggregationColumns = expandedQuery.getAggregationColumns();
 
-		for (QueryAggregationColumn axe : aggregationColumns) {
+		Expression<?> outerQueryJoinPath = subselectProfileJoinExpression;
+		Expression<?> subQueryJoinPath = utils.getQBean(expandedQuery.getRootEntity());
 
-			Expression<?> outerAxis = subselectProfileJoinExpression.get(0);
-			Expression<?> subAxis = utils.getQBean(axe);
-
-			joinWhere.and(Expressions.predicate(Ops.EQ, outerAxis, subAxis));
-		}
+		BooleanExpression joinWhere = Expressions.predicate(Ops.EQ, outerQueryJoinPath, subQueryJoinPath);
 
 		detachedQuery.where(joinWhere);
 	}
@@ -137,7 +137,7 @@ class SubQueryBuilder extends QueryBuilder {
 	// additional filter will take the form of a having clause.
 	private void addSubwhereSpecifics(){
 
-		QueryProjectionColumn projectionColumn = queryDefinition.getProjectionColumns().get(0);
+		QueryProjectionColumn projectionColumn = expandedQuery.getProjectionColumns().get(0);
 
 		Expression<?> measureExpr = utils.createAsSelect(projectionColumn);
 		Operation operation = subwhereProfileFilterExpression.getOperation();
@@ -171,24 +171,17 @@ class SubQueryBuilder extends QueryBuilder {
 
 	private void checkSubselectConfiguration(){
 		if (subselectProfileJoinExpression == null){
-			throw new IllegalArgumentException("subselect queries must always provide a join with the outer query, please use joinAxesOn()");
-		}
-
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregationColumns().size()){
-			throw new IllegalArgumentException("subselect queries joined entities must match (in number and type) the axis entities of the subquery");
+			throw new IllegalArgumentException("subselect queries must always provide a join with the outer query, please use joinRootEntityOn()");
 		}
 	}
 
 	private void checkSubwhereConfiguration(){
 		if (subselectProfileJoinExpression == null){
-			throw new IllegalArgumentException("subwhere queries must always provide a join with the outer query, please use joinAxesOn()");
+			throw new IllegalArgumentException("subwhere queries must always provide a join with the outer query, please use joinRootEntityOn()");
 		}
 
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAggregationColumns().size()){
-			throw new IllegalArgumentException("subwhere queries joined entities must match (in number and type) the axis entities of the subquery");
-		}
 		if (subwhereProfileFilterExpression == null){
-			throw new IllegalArgumentException("subwhere queries must always provide a filter on the measure, please use filterMeasureOn()");
+			throw new IllegalArgumentException("subwhere queries must always provide a filter on the measure, please use filterOn()");
 		}
 	}
 

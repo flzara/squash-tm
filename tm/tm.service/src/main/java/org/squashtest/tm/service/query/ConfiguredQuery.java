@@ -38,6 +38,14 @@ public class ConfiguredQuery {
 
 	private QueryModel queryModel;
 
+	public ConfiguredQuery(){
+		super();
+	}
+
+	public ConfiguredQuery(QueryModel queryModel){
+		this.queryModel = queryModel;
+	}
+
 	/**
 	 * The scope defines the set of domain object instances that that chart will account for. An instance will be considered
 	 * if it is either directly referenced by one of the EntityReference, of indirectly if it belongs to a referenced

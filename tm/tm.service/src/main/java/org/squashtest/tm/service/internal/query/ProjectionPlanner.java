@@ -27,13 +27,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile.MAIN_QUERY;
-import static org.squashtest.tm.service.internal.query.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
+import static org.squashtest.tm.service.internal.query.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.query.QueryProfile.SUBSELECT_QUERY;
 
 /**
  * <p>
@@ -82,8 +81,6 @@ class ProjectionPlanner {
 
 	private QuerydslToolbox utils;
 
-	private QueryProfile profile = MAIN_QUERY;
-
 	// see comment on that hack above
 	private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
 
@@ -107,9 +104,6 @@ class ProjectionPlanner {
 		this.utils = utils;
 	}
 
-	void setProfile(QueryProfile profile){
-		this.profile = profile;
-	}
 
 	void modifyQuery(){
 		addProjections();
@@ -119,22 +113,22 @@ class ProjectionPlanner {
 
 	private void addProjections(){
 
+		QueryProfile profile = expandedQuery.getQueryProfile();
+
 		List<Expression<?>> selection = new ArrayList<>();
 
 		switch(profile){
-		case MAIN_QUERY :
-			populateClauses(selection, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
-			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
-			break;
-		case SUBSELECT_QUERY :
-			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
-			break;
+
+		// The case of the SubWhere query is special
 		case SUBWHERE_QUERY :
 			// that one is special : it's always 'select 1'
 			Expression<?> select1 = Expressions.constant(1);
 			selection.add(select1);
 			break;
+
+		// for the rest no problem
 		default:
+			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		}
 
@@ -147,30 +141,24 @@ class ProjectionPlanner {
 
 
 	private void addGroupBy(){
-		// SUBSELECT queries have no group by : this is unneeded because
-		// they are correlated subqueries
-		if ( profile != SUBSELECT_QUERY){
-			List<Expression<?>> groupBy = new ArrayList<>();
+		List<Expression<?>> groupBy = new ArrayList<>();
 
-			populateClauses(groupBy, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(groupBy, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
-			query.groupBy(groupBy.toArray(new Expression[]{}));
-		}
+		query.groupBy(groupBy.toArray(new Expression[]{}));
 	}
 
+
 	private void addSortBy(){
-		// subqueries have no sorting because we don't need to
-		if ( profile == MAIN_QUERY){
 
-			List<Expression<?>> expressions = new ArrayList<>();
+		List<Expression<?>> expressions = new ArrayList<>();
 
-			populateClauses(expressions, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(expressions, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
-			List<OrderSpecifier> orders = new ArrayList<>();
-			populateOrders(orders, expressions);
+		List<OrderSpecifier> orders = new ArrayList<>();
+		populateOrders(orders, expressions);
 
-			query.orderBy(orders.toArray(new OrderSpecifier[]{}));
-		}
+		query.orderBy(orders.toArray(new OrderSpecifier[]{}));
 
 	}
 

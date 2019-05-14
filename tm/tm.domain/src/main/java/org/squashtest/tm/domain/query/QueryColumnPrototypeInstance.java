@@ -35,4 +35,5 @@ public interface QueryColumnPrototypeInstance {
 	Operation getOperation();
 
 	Long getCufId();
+
 }

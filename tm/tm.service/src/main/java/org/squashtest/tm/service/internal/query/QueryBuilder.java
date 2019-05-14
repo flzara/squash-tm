@@ -66,16 +66,10 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
  */
 class QueryBuilder {
 
-	enum QueryProfile{
-		MAIN_QUERY,			// for the main query, tuples returns the full axis + measures data
-		SUBSELECT_QUERY,	// generate correlated subqueries, returning the measure only, correlated on axes supplied by the outer query
-		SUBWHERE_QUERY;		// the "where" clause is supplied by the outer query and joined with axes from he outer query. 
-							// Returns 1 or null, ie it's test the existence of elements matching the predicate.
-	}
 
 	protected QuerydslToolbox utils = new QuerydslToolbox();
 
-	protected ExpandedConfiguredQuery queryDefinition;
+	protected ExpandedConfiguredQuery expandedQuery;
 
 	// the SubQueryBuilder would use a different strategy.
 	// for the QueryBuilder, it is set to MAIN_QUERY.
@@ -83,9 +77,9 @@ class QueryBuilder {
 
 	protected ExtendedHibernateQuery<?> detachedQuery;
 
-	QueryBuilder(ExpandedConfiguredQuery queryDefinition){
+	QueryBuilder(ExpandedConfiguredQuery expandedQuery){
 		super();
-		this.queryDefinition = queryDefinition;
+		this.expandedQuery = expandedQuery;
 	}
 
 
@@ -95,17 +89,17 @@ class QueryBuilder {
 
 	ExtendedHibernateQuery<?> createQuery(){
 
+		expandedQuery.configure();
 
-		QueryPlanner mainPlanner = new QueryPlanner(queryDefinition, utils);
+		QueryPlanner mainPlanner = new QueryPlanner(expandedQuery, utils);
 		detachedQuery = mainPlanner.createQuery();
 
 
-		ProjectionPlanner projectionPlanner = new ProjectionPlanner(queryDefinition, detachedQuery, utils);
-		projectionPlanner.setProfile(profile);
+		ProjectionPlanner projectionPlanner = new ProjectionPlanner(expandedQuery, detachedQuery, utils);
 		projectionPlanner.modifyQuery();
 
 
-		FilterPlanner filterPlanner = new FilterPlanner(queryDefinition, detachedQuery, utils);
+		FilterPlanner filterPlanner = new FilterPlanner(expandedQuery, detachedQuery, utils);
 		filterPlanner.modifyQuery();
 
 		return detachedQuery;

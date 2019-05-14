@@ -366,8 +366,16 @@ class QuerydslToolbox {
 			// create a subselect statement
 			// NOSONAR because this is definitely not too long
 			case SUBQUERY:
+
+				SpecializedEntityType specType = col.getSpecializedType();
+				InternalEntityType internalType = InternalEntityType.fromSpecializedType(specType);
 				EntityPathBase<?> colBean = getQBean(col);
-				SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
+
+				SubQueryBuilder qbuilder = new SubQueryBuilder(col)
+											   .asSubselectQuery()
+											   .withRootEntity(internalType)
+											   .joinRootEntityOn(colBean);
+
 				expression = qbuilder.createQuery();
 				break;
 
@@ -375,8 +383,10 @@ class QuerydslToolbox {
 			// NOSONAR because this is definitely not too long
 			case INLINED:
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(col);
-				QueryProjectionColumn submeasure = col.getColumn().getSubQuery().getProjectionColumns().get(0);    // take that Demeter !
-				expression = subtoolbox.createAsSelect(submeasure);
+				QueryModel subqueryModel = col.getColumn().getSubQuery();
+				QueryProjectionColumn projectedColumn = subqueryModel.getProjectionColumns().get(0);
+
+				expression = subtoolbox.createAsSelect(projectedColumn);
 				break;
 
 
@@ -456,10 +466,12 @@ class QuerydslToolbox {
 			case SUBQUERY:
 				EntityPathBase<?> colBean = getQBean(filter);
 				//create the subquery
-				QueryBuilder qbuilder = createSubquery(filter)
+				QueryBuilder qbuilder = new SubQueryBuilder(filter)
 					.asSubwhereQuery()
-					.joinAxesOn(colBean)
-					.filterMeasureOn(filter);
+					.withRootEntity(filter.getSpecializedType())
+					.joinRootEntityOn(colBean)
+					.filterOn(filter);
+
 				Expression<?> subquery = qbuilder.createQuery();
 
 				// now integrate the subquery
@@ -468,7 +480,8 @@ class QuerydslToolbox {
 				break;
 
 			case INLINED:
-				QueryProjectionColumn subProjection = filter.getColumn().getSubQuery().getProjectionColumns().get(0);    // and take that again !
+				QueryModel subqueryModel = filter.getColumn().getSubQuery();
+				QueryProjectionColumn subProjection = subqueryModel.getProjectionColumns().get(0);
 				QuerydslToolbox subtoolbox = new QuerydslToolbox(filter);    // create a new toolbox configured with a proper subcontext
 
 				//ok, it is semantically sloppy. But for now the produced element is what we need :-S
@@ -828,12 +841,6 @@ class QuerydslToolbox {
 		}
 	}
 
-
-	private SubQueryBuilder createSubquery(QueryColumnPrototypeInstance col) {
-		ExpandedConfiguredQuery detailedDef = ExpandedConfiguredQuery.createFor(col);
-
-		return new SubQueryBuilder(detailedDef);
-	}
 
 
 	private Operator getOperator(Operation operation) {

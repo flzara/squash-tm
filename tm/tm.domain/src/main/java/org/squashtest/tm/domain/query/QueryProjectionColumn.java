@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.query;
 
 import com.querydsl.core.types.Order;
+import org.springframework.beans.BeanUtils;
 import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.Column;
@@ -121,7 +122,5 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 	public void setCufId(Long cufId) {
 		this.cufId = cufId;
 	}
-
-
 
 }

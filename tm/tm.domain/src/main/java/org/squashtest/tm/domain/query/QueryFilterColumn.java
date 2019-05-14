@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.query;
 
+import org.springframework.beans.BeanUtils;
 import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.CollectionTable;
