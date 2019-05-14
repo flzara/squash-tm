@@ -31,9 +31,6 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.squashtest.tm.service.internal.query.QueryProfile.MAIN_QUERY;
-import static org.squashtest.tm.service.internal.query.QueryProfile.SUBSELECT_QUERY;
-
 /**
  * <p>
  * 	This class is responsible for adding the "select" and "group by" clauses. See main documentation on
@@ -75,7 +72,7 @@ import static org.squashtest.tm.service.internal.query.QueryProfile.SUBSELECT_QU
  */
 class ProjectionPlanner {
 
-	private ExpandedConfiguredQuery expandedQuery;
+	private InternalQueryModel internalQueryModel;
 
 	private ExtendedHibernateQuery<?> query;
 
@@ -90,16 +87,16 @@ class ProjectionPlanner {
 		REPLACE_BY_ALIAS;
 	}
 
-	ProjectionPlanner(ExpandedConfiguredQuery expandedQuery, ExtendedHibernateQuery<?> query){
+	ProjectionPlanner(InternalQueryModel internalQueryModel, ExtendedHibernateQuery<?> query){
 		super();
-		this.expandedQuery = expandedQuery;
+		this.internalQueryModel = internalQueryModel;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(ExpandedConfiguredQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(InternalQueryModel definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
-		this.expandedQuery = definition;
+		this.internalQueryModel = definition;
 		this.query = query;
 		this.utils = utils;
 	}
@@ -113,7 +110,7 @@ class ProjectionPlanner {
 
 	private void addProjections(){
 
-		QueryProfile profile = expandedQuery.getQueryProfile();
+		QueryProfile profile = internalQueryModel.getQueryProfile();
 
 		List<Expression<?>> selection = new ArrayList<>();
 
@@ -128,7 +125,7 @@ class ProjectionPlanner {
 
 		// for the rest no problem
 		default:
-			populateClauses(selection, expandedQuery.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, internalQueryModel.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		}
 
@@ -143,7 +140,7 @@ class ProjectionPlanner {
 	private void addGroupBy(){
 		List<Expression<?>> groupBy = new ArrayList<>();
 
-		populateClauses(groupBy, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(groupBy, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 		query.groupBy(groupBy.toArray(new Expression[]{}));
 	}
@@ -153,7 +150,7 @@ class ProjectionPlanner {
 
 		List<Expression<?>> expressions = new ArrayList<>();
 
-		populateClauses(expressions, expandedQuery.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(expressions, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 		List<OrderSpecifier> orders = new ArrayList<>();
 		populateOrders(orders, expressions);

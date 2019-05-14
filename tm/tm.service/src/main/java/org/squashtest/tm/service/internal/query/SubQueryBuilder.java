@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.query;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -33,7 +32,6 @@ import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,33 +51,33 @@ class SubQueryBuilder extends QueryBuilder {
 
 
 	SubQueryBuilder(QueryColumnPrototypeInstance columnInstance) {
-		super( ExpandedConfiguredQuery.createFor(columnInstance) );
+		super( InternalQueryModel.createFor(columnInstance) );
 	}
 
 
 	// ====================== configuration section =============
 
 	SubQueryBuilder withRootEntity(InternalEntityType type){
-		expandedQuery.withRootEntity(type);
+		internalQueryModel.withRootEntity(type);
 		return this;
 	}
 
 	SubQueryBuilder withRootEntity(SpecializedEntityType type){
 		InternalEntityType internalType = InternalEntityType.fromSpecializedType(type);
-		expandedQuery.withRootEntity(internalType);
+		internalQueryModel.withRootEntity(internalType);
 		return this;
 	}
 
 	SubQueryBuilder asSubselectQuery(){
 		profile = QueryProfile.SUBSELECT_QUERY;
-		expandedQuery.withProfile(profile);
+		internalQueryModel.withProfile(profile);
 		utils.setSubContext(generateContextName());
 		return this;
 	}
 
 	SubQueryBuilder asSubwhereQuery(){
 		profile = QueryProfile.SUBWHERE_QUERY;
-		expandedQuery.withProfile(profile);
+		internalQueryModel.withProfile(profile);
 		utils.setSubContext(generateContextName());
 		return this;
 	}
@@ -121,10 +119,10 @@ class SubQueryBuilder extends QueryBuilder {
 	// we must join on the root entity of the subquery with the specified axe
 	private void joinWithOuterquery(){
 
-		List<QueryAggregationColumn> aggregationColumns = expandedQuery.getAggregationColumns();
+		List<QueryAggregationColumn> aggregationColumns = internalQueryModel.getAggregationColumns();
 
 		Expression<?> outerQueryJoinPath = subselectProfileJoinExpression;
-		Expression<?> subQueryJoinPath = utils.getQBean(expandedQuery.getRootEntity());
+		Expression<?> subQueryJoinPath = utils.getQBean(internalQueryModel.getRootEntity());
 
 		BooleanExpression joinWhere = Expressions.predicate(Ops.EQ, outerQueryJoinPath, subQueryJoinPath);
 
@@ -137,7 +135,7 @@ class SubQueryBuilder extends QueryBuilder {
 	// additional filter will take the form of a having clause.
 	private void addSubwhereSpecifics(){
 
-		QueryProjectionColumn projectionColumn = expandedQuery.getProjectionColumns().get(0);
+		QueryProjectionColumn projectionColumn = internalQueryModel.getProjectionColumns().get(0);
 
 		Expression<?> measureExpr = utils.createAsSelect(projectionColumn);
 		Operation operation = subwhereProfileFilterExpression.getOperation();

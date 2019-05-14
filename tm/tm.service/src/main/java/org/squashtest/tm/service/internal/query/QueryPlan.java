@@ -34,7 +34,7 @@ import java.util.Queue;
 /**
  * <p>
  * 	This class represent which entities (tables) should be traversed, and in which direction (this last detail matters when a left join occurs)
- * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(ExpandedConfiguredQuery)};
+ * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(InternalQueryModel)};
  *</p>
  *
  * @author bsiri
@@ -61,7 +61,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 	}
 
 
-	void trim(ExpandedConfiguredQuery definition){
+	void trim(InternalQueryModel definition){
 
 		Collection<InternalEntityType> targets = definition.getTargetEntities();
 

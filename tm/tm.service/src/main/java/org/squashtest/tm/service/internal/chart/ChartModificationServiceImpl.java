@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,18 +42,14 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -78,6 +75,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
+	@Inject
+	private Provider<TupleProcessor> tupleProcessorProvider;
 
 	@Override
 	public void persist(ChartDefinition newChartDefinition) {
@@ -87,6 +86,12 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public ChartDefinition findById(long id) {
 		return (ChartDefinition) session().get(ChartDefinition.class, id);
+	}
+
+
+	@Override
+	public boolean hasChart(List<Long> userIds) {
+		return chartDefinitionDao.hasChart(userIds);
 	}
 
 
@@ -124,11 +129,11 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
 		ConfiguredQuery configuredQuery = converter.withDefinition(chartDefinition)
-					.forDynamicScope(dynamicScope)
-					.forDashboard(dashboardId)
-					.convert();
+											  .forDynamicScope(dynamicScope)
+											  .forDashboard(dashboardId)
+											  .convert();
 
-		return generateChart(chartDefinition,dynamicScope,dashboardId, null, null);
+		return generateChart(chartDefinition, configuredQuery);
 	}
 
 	@Override
@@ -137,7 +142,13 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 			Project project = em.find(Project.class, projectId);
 			chartDef.setProject(project);
 		}
-		return generateChart(chartDef,null,null,null,null);
+
+		ChartToConfiguredQueryConverter converter = converterProvider.get();
+
+		ConfiguredQuery configuredQuery = converter.withDefinition(chartDef)
+											  .convert();
+
+		return generateChart(chartDef, configuredQuery);
 	}
 
 
@@ -164,34 +175,47 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Override
 	public ChartInstance generateChartForMilestoneDashboard(ChartDefinition chart, Long milestoneId, Workspace workspace) {
-		List<EntityReference> scope = generateScopeForMilestoneDashboard();
-		return generateChart(chart, scope, null, milestoneId, workspace);
+
+		ChartToConfiguredQueryConverter converter = converterProvider.get();
+
+		ConfiguredQuery configuredQuery = converter.withDefinition(chart)
+											  .forMilestone(milestoneId)
+											  .forWorkspace(workspace)
+											  .convert();
+
+		return generateChart(chart, configuredQuery);
 	}
 
 	@Override
 	public ChartInstance generateChartInMilestoneMode(ChartDefinition chart, List<EntityReference> scope, Workspace workspace) {
-		Optional<Milestone> optional = activeMilestoneHolder.getActiveMilestone();
-		if(optional.isPresent()){
-			Milestone milestone = optional.get();
-			return generateChart(chart, scope, null, milestone.getId(), workspace);
-		} else {
-			return generateChart(chart, scope, null, null, null);
-		}
-	}
+		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
-	@Override
-	public boolean hasChart(List<Long> userIds) {
-		return chartDefinitionDao.hasChart(userIds);
+		ConfiguredQuery configuredQuery = converter.withDefinition(chart)
+											  .forCurrentActiveMilestone()
+											  .forWorkspace(workspace)
+											  .convert();
+
+		return generateChart(chart, configuredQuery);
 	}
 
 
+	private ChartInstance generateChart(ChartDefinition definition, ConfiguredQuery configuredQuery){
 
+		// first, gather the tuples
+		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
 
-	@Override
-	public ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
-		ChartSeries series = dataFinder.findData(definition, dynamicScope, dashboardId, milestoneId, workspace);
+		// now postprocess them
+		TupleProcessor processor = tupleProcessorProvider.get();
+
+		ChartSeries series = processor
+				   .setDefinition(definition)
+				   .initialize()
+				   .process(tuples)
+				   .createChartSeries();
+
+		// create the chart instance and return it
 		return new ChartInstance(definition, series);
-	}
 
+	}
 
 }

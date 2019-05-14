@@ -55,6 +55,9 @@ public interface ChartModificationService {
 	 */
 	void update(ChartDefinition chartDef);
 
+
+	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
+
 	/**
 	 * Generate a chart with the given definition for the given projectId.
 	 * Use only for transient {@link ChartDefinition} which are not linked to project and aren't no persisted...
@@ -63,6 +66,8 @@ public interface ChartModificationService {
 	 * @return
 	 */
 	ChartInstance generateChart(ChartDefinition definition, Long projectId);
+
+
 
 	/**
 	 * Instanciate a ChartDefinition given its id.
@@ -74,11 +79,6 @@ public interface ChartModificationService {
 
 	ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId);
 
-	ChartInstance generateChart(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace);
-
-
-
-	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
 
 	ChartInstance generateChartForMilestoneDashboard(ChartDefinition chart, Long milestoneId, Workspace workspace);
 

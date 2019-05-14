@@ -204,7 +204,7 @@ class ChartToConfiguredQueryConverter {
 		projections.forEach(projection -> projection.setQueryModel(query));
 
 		// gather the aggregations now
-		List<QueryAggregationColumn> aggregations = extractAggregations(definition, projections);
+		List<QueryAggregationColumn> aggregations = extractAggregations(definition);
 		query.setAggregationColumns(aggregations);
 
 		// the filters
@@ -212,7 +212,7 @@ class ChartToConfiguredQueryConverter {
 		query.setFilterColumns(filters);
 
 		// the ordering
-		List<QueryOrderingColumn> ordering = extractOrdering(definition, projections);
+		List<QueryOrderingColumn> ordering = extractOrdering(definition);
 		query.setOrderingColumns(ordering);
 
 		return query;
@@ -244,13 +244,11 @@ class ChartToConfiguredQueryConverter {
 	}
 
 
-	private List<QueryAggregationColumn> extractAggregations(ChartDefinition definition, List<QueryProjectionColumn> projections){
+	private List<QueryAggregationColumn> extractAggregations(ChartDefinition definition){
 
 		List<AxisColumn> axes = definition.getAxis();
-		// per construction, the X first elements of the projection are the axes, where X is the number of axes.
-		List<QueryProjectionColumn> projectedAxes = projections.subList(0,axes.size());
 
-		List<QueryAggregationColumn> aggregationColumns = projectedAxes.stream().map(QueryProjectionColumn::createAggregation).collect(toList());
+		List<QueryAggregationColumn> aggregationColumns = axes.stream().map(this::toAggregationColumn).collect(toList());
 
 		return aggregationColumns;
 
@@ -266,16 +264,16 @@ class ChartToConfiguredQueryConverter {
 
 	}
 
-	private List<QueryOrderingColumn> extractOrdering(ChartDefinition definition, List<QueryProjectionColumn> projections){
+	private List<QueryOrderingColumn> extractOrdering(ChartDefinition definition){
 
 		List<AxisColumn> axes = definition.getAxis();
-		// per construction, the X first elements of the projection are the axes, where X is the number of axes.
-		List<QueryProjectionColumn> projectedAxes = projections.subList(0,axes.size());
 
-		List<QueryOrderingColumn> orderingColumns = projectedAxes.stream().map(QueryProjectionColumn::createOrderingAsc).collect(toList());
+		List<QueryOrderingColumn> orderingColumns = axes.stream().map(this::toOrderingColumn).collect(toList());
 
 		return orderingColumns;
 	}
+
+
 
 
 	private QueryProjectionColumn toProjectionColumn(AxisColumn axis){
@@ -301,7 +299,20 @@ class ChartToConfiguredQueryConverter {
 		return projection;
 	}
 
+	private QueryAggregationColumn toAggregationColumn(AxisColumn axis){
+
+		QueryAggregationColumn aggregation = new QueryAggregationColumn();
+
+		aggregation.setLabel(axis.getLabel());
+		aggregation.setOperation(axis.getOperation());
+		aggregation.setColumnPrototype(axis.getColumn());
+		aggregation.setCufId(axis.getCufId());
+
+		return aggregation;
+	}
+
 	private QueryFilterColumn toQueryFilterColumn(Filter chartFilter){
+
 		QueryFilterColumn queryFilter = new QueryFilterColumn();
 
 		queryFilter.setColumnPrototype(chartFilter.getColumn());
@@ -309,6 +320,18 @@ class ChartToConfiguredQueryConverter {
 		queryFilter.setCufId(chartFilter.getCufId());
 
 		return queryFilter;
+	}
+
+	private QueryOrderingColumn toOrderingColumn(AxisColumn axis){
+
+		QueryOrderingColumn order = new QueryOrderingColumn();
+
+		order.setOrder(Order.ASC);
+		order.setColumnPrototype(axis.getColumn());
+		order.setCufId(axis.getCufId());
+
+		return order;
+
 	}
 
 	// ********************* Milestone handling methods ********************

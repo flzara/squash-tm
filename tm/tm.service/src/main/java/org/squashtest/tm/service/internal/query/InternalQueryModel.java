@@ -43,14 +43,14 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * An ExpandedConfiguredQuery knows more about the context of use, specifically if that
+ * An InternalQueryModel knows more about the context of use, specifically if that
  * query is used as a MAIN or as a SUBQUERY, and in the latter case whether it will be
  * a subselect or a sub where clause. It has an impact on which columns will be really
  * used for aggregation, projections etc.
  * </p>
  *
  * <p>
- *     Building an ExpandedConfiguredQuery is a two part process. First you need to
+ *     Building an InternalQueryModel is a two part process. First you need to
  *     call the constructor, as usual, and optionally configure the queryprofile and
  *     the rootEntity (see methods withRootEntity and withProfile). Then, you
  *     must invoke #configure() to finalize the creation of your instance.
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
  * @author bsiri
  *
  */
-class ExpandedConfiguredQuery {
+class InternalQueryModel {
 
 	private ConfiguredQuery parent;
 
@@ -84,12 +84,12 @@ class ExpandedConfiguredQuery {
 
 	// ******************* factories ***********************************
 
-	static ExpandedConfiguredQuery createFor(QueryModel queryModel){
+	static InternalQueryModel createFor(QueryModel queryModel){
 		ConfiguredQuery confQuery = new ConfiguredQuery(queryModel);
-		return new ExpandedConfiguredQuery(confQuery);
+		return new InternalQueryModel(confQuery);
 	}
 
-	static ExpandedConfiguredQuery createFor(QueryColumnPrototypeInstance columnInstance){
+	static InternalQueryModel createFor(QueryColumnPrototypeInstance columnInstance){
 		QueryColumnPrototype proto = columnInstance.getColumn();
 		if (proto.getColumnType() != ColumnType.CALCULATED){
 			throw new RuntimeException("Attempted to create a subquery for a column that has no subquery");
@@ -101,12 +101,12 @@ class ExpandedConfiguredQuery {
 
 
 	// for testing purposes - do not use
-	ExpandedConfiguredQuery(){
+	InternalQueryModel(){
 		super();
 	}
 
 
-	ExpandedConfiguredQuery(ConfiguredQuery parent){
+	InternalQueryModel(ConfiguredQuery parent){
 
 		this.parent = parent;
 	}
@@ -118,17 +118,17 @@ class ExpandedConfiguredQuery {
 	 * @param rootEntity
 	 * @return
 	 */
-	ExpandedConfiguredQuery withRootEntity(InternalEntityType rootEntity){
+	InternalQueryModel withRootEntity(InternalEntityType rootEntity){
 		this.rootEntity = rootEntity;
 		return this;
 	}
 
-	ExpandedConfiguredQuery withProfile(QueryProfile profile){
+	InternalQueryModel withProfile(QueryProfile profile){
 		this.queryProfile = profile;
 		return this;
 	}
 
-	ExpandedConfiguredQuery configure(){
+	InternalQueryModel configure(){
 
 		// init the root entity if the method withRootEntity wasn't invoked.
 		assignRootEntityIfUnspecified();

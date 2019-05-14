@@ -68,11 +68,11 @@ class TupleProcessorTest extends Specification{
 	def "should detect that re-sorting is necessary (or not)"(){
 
 		expect :
-		processor.setDefinition(expandedQuery).isResortRequired () == answer
+		processor.setDefinition(internalQueryModel).isResortRequired () == answer
 
 		where :
 
-		answer	| not	| reason						|	expandedQuery
+		answer	| not	| reason						|	internalQueryModel
 		true	| ""	| "axes use execution status"	|	definitionWithAxes(NUMERIC, EXECUTION_STATUS, TAG)
 		true	| ""	| "axes use level enum"			|	definitionWithAxes(NUMERIC, LEVEL_ENUM, TAG)
 		true	| ""	| "axes use boolean"			|	definitionWithAxes(BOOLEAN, STRING, TAG)
@@ -264,8 +264,8 @@ class TupleProcessorTest extends Specification{
 
 
 	def "post processing : should extract the colours for axes that are infolists"() {
-		given: "the expandedQuery"
-		ExpandedConfiguredQuery expandedQuery = new ExpandedConfiguredQuery(
+		given: "the internalQueryModel"
+		InternalQueryModel internalQueryModel = new InternalQueryModel(
 			measures: [
 				measure("total testcase")
 			],
@@ -274,7 +274,7 @@ class TupleProcessorTest extends Specification{
 				axis("test case category", INFO_LIST_ITEM)
 			]
 		)
-		processor.expandedQuery = expandedQuery
+		processor.internalQueryModel = internalQueryModel
 
 		and: "the abscissa"
 		def abscissa = [
@@ -306,8 +306,8 @@ class TupleProcessorTest extends Specification{
 
 
 	def "post processing : should extract the colours for axes that are cuf lists"() {
-		given: "the expandedQuery"
-		ExpandedConfiguredQuery expandedQuery = new ExpandedConfiguredQuery(
+		given: "the internalQueryModel"
+		InternalQueryModel internalQueryModel = new InternalQueryModel(
 			measures: [
 				measure("total testcase")
 			],
@@ -316,7 +316,7 @@ class TupleProcessorTest extends Specification{
 				axis("test case flavour", LIST)
 			]
 		)
-		processor.expandedQuery = expandedQuery
+		processor.internalQueryModel = internalQueryModel
 
 		and: "the abscissa"
 		def abscissa = [
@@ -354,10 +354,10 @@ class TupleProcessorTest extends Specification{
 	def "should know whether post processing is required or not"(){
 
 		expect :
-		processor.setDefinition(expandedQuery).isPostProcessingRequired() == answer
+		processor.setDefinition(internalQueryModel).isPostProcessingRequired() == answer
 
 		where:
-		answer	| not	| reason								|	expandedQuery
+		answer	| not	| reason								|	internalQueryModel
 		true	| ""	| "axes use info list item"				|	definitionWithAxes(NUMERIC, INFO_LIST_ITEM, TAG)
 		false	| "not"	| "axes use no datatype requiring it"	|	definitionWithAxes(NUMERIC, LEVEL_ENUM, TAG)
 
@@ -438,7 +438,7 @@ class TupleProcessorTest extends Specification{
 	def "should create the series based once the data were processed"(){
 
 		given :
-		def expandedQuery = new ExpandedConfiguredQuery(
+		def internalQueryModel = new InternalQueryModel(
 			measures: [
 				measure("total testcase", NUMERIC)
 			],
@@ -448,7 +448,7 @@ class TupleProcessorTest extends Specification{
 			]
 		)
 
-		processor.expandedQuery = expandedQuery
+		processor.internalQueryModel = internalQueryModel
 
 		and:
 		processor.abscissa = abscissa([
@@ -495,7 +495,7 @@ class TupleProcessorTest extends Specification{
 	def definitionWithAxes(DataType... types){
 		def axes = types.collect { axis("axis", it)	}
 
-		return Mock(ExpandedConfiguredQuery){
+		return Mock(InternalQueryModel){
 			getAxis() >> axes
 		}
 	}

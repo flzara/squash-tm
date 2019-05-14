@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.query;
+package org.squashtest.tm.service.internal.chart;
 
 import com.google.common.collect.ImmutableMap;
 import com.querydsl.core.Tuple;
@@ -27,13 +27,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.query.DataType;
-import org.squashtest.tm.domain.query.QueryAggregationColumn;
-import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -65,7 +66,7 @@ import static org.squashtest.tm.domain.execution.ExecutionStatus.WARNING;
 
 
 /**
- * This is a companion class for QueryProcessingServiceImpl. Its role is to turn the tuples from the database
+ * This is a companion class for ChartModificationServiceImpl. Its role is to turn the tuples from the database
  * into instances of ChartSeries. This operation include bits of data postprocessing, for transformations
  * that we were unable or unwilling to undergo in the database.
  *
@@ -91,7 +92,7 @@ class TupleProcessor {
 	private CustomFieldDao customFieldDao;
 
 	// must be set before invocation
-	ExpandedConfiguredQuery definition;
+	ChartDefinition definition;
 
 
 	// set during initialization
@@ -127,7 +128,7 @@ class TupleProcessor {
 
 	// ************* main methods ************************
 
-	TupleProcessor setDefinition(ExpandedConfiguredQuery definition){
+	TupleProcessor setDefinition(ChartDefinition definition){
 		this.definition = definition;
 		return this;
 	}
@@ -171,7 +172,7 @@ class TupleProcessor {
 			throw new IllegalStateException("TupleProcessor has not yet processed anything, this is a programming error");
 		}
 
-		int nbMeasures = definition.getProjectionColumns().size();
+		int nbMeasures = definition.getMeasures().size();
 
 		ChartSeries chartSeries = new ChartSeries();
 
@@ -179,8 +180,8 @@ class TupleProcessor {
 		chartSeries.setColours(colours);
 
 		for (int mIdx = 0; mIdx < nbMeasures; mIdx++) {
-			QueryProjectionColumn projectionColumn = definition.getProjectionColumns().get(mIdx);
-			chartSeries.addSerie(projectionColumn.getLabel(), series.get(mIdx));
+			MeasureColumn measure = definition.getMeasures().get(mIdx);
+			chartSeries.addSerie(measure.getLabel(), series.get(mIdx));
 		}
 
 		return chartSeries;
@@ -192,13 +193,13 @@ class TupleProcessor {
 
 	private void initializeTupleSorter(){
 
-		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
+		List<AxisColumn> axisColumn = definition.getAxis();
 
 		Comparator<Tuple> mainComparator = null;
 
-		for (int idx=0; idx< aggregationColumns.size(); idx++) {
+		for (int idx=0; idx < axisColumn.size(); idx++) {
 
-			QueryAggregationColumn axis = aggregationColumns.get(idx);
+			AxisColumn axis = axisColumn.get(idx);
 
 			Comparator<Tuple> inLoopComparator = null;
 
@@ -243,13 +244,13 @@ class TupleProcessor {
 
 	private void initializeAbscissaPostProcessors(){
 
-		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
+		List<AxisColumn> axisColumns = definition.getAxis();
 
 		Consumer<Object[]> mainPostprocessor = null;
 
-		for (int idx=0; idx< aggregationColumns.size(); idx++){
+		for (int idx=0; idx< axisColumns.size(); idx++){
 
-			QueryAggregationColumn axis = aggregationColumns.get(idx);
+			AxisColumn axis = axisColumns.get(idx);
 
 			Consumer<Object[]> inLoopPostProcessor = null;
 
@@ -281,10 +282,10 @@ class TupleProcessor {
 	}
 
 	private boolean isResortRequired(){
-		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
+		List<AxisColumn> axisColumns = definition.getAxis();
 
-		return aggregationColumns.stream()
-				   .map(QueryAggregationColumn::getDataType)
+		return axisColumns.stream()
+				   .map(AxisColumn::getDataType)
 				   .filter(this::isResortableType)
 				   .findAny()
 				   .isPresent();
@@ -310,10 +311,10 @@ class TupleProcessor {
 	}
 
 	private boolean isPostProcessingRequired(){
-		List<QueryAggregationColumn> aggregationColumns = definition.getAggregationColumns();
+		List<AxisColumn> aggregationColumns = definition.getAxis();
 
 		return aggregationColumns.stream()
-				   .map(QueryAggregationColumn::getDataType)
+				   .map(AxisColumn::getDataType)
 				   .filter(this::isPostProcessableType)
 				   .findAny()
 				   .isPresent();
@@ -335,14 +336,14 @@ class TupleProcessor {
 		// here we will only get colours in the case where we work with a CUF List or an InfoList
 		// colours associated to "fixed list" (some classes implement Level), the colours are on the client in colours-utils.js
 		// colours-utils.js also includes the part where we fill the empty colours
-		List<QueryAggregationColumn> axis = definition.getAggregationColumns();
+		List<AxisColumn> axis = definition.getAxis();
 
 		// if there's only one axis (with a measure => bar chart, or not => pie chart), the first axis is the one with the colors
 		// if there are two (trend or cumulative chart) it's the second one
 		// hence the axis.size()-1
 		int lastIndex = axis.size() -1;
 
-		QueryAggregationColumn lastAxis = axis.get(lastIndex);
+		AxisColumn lastAxis = axis.get(lastIndex);
 		switch(lastAxis.getDataType()){
 
 			case LIST :
@@ -412,8 +413,8 @@ class TupleProcessor {
  	*/
 	private void extractAbscissaAndSeries(List<Tuple> tuples){
 		// initialize temporary structures
-		int nbAxes = definition.getAggregationColumns().size();
-		int nbMeasures = definition.getProjectionColumns().size();
+		int nbAxes = definition.getAxis().size();
+		int nbMeasures = definition.getMeasures().size();
 
 		abscissa = new ArrayList<>();
 		series = new ArrayList<List<Object>>();

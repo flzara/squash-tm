@@ -195,7 +195,7 @@ class ScopePlannerTest extends Specification {
     def "should build a QueriedEntities from the chart and extract the possible join columns" (){
 
         given :
-            ExpandedConfiguredQuery detail = Mock(ExpandedConfiguredQuery)
+            InternalQueryModel detail = Mock(InternalQueryModel)
             detail.getTargetEntities() >> targetEntities
 
         when :
@@ -215,7 +215,7 @@ class ScopePlannerTest extends Specification {
 
     // ****************** Extra joins computation tests ********************
 
-    @Unroll("should deduce the extra joins given the required (from scope) and possible joins (from queryModel)")
+    @Unroll("should deduce the extra joins given the required (from scope) and possible joins (from internalQueryModel)")
     def "should deduce the extra joins given the required (from scope) and possible joins (from query)"(){
 
         given :
@@ -234,7 +234,7 @@ class ScopePlannerTest extends Specification {
         where :
 
             scopeRequiredColumns                 |   queryPossibleColumns       |   finalColumns
-            // first dataset is the "gentle" scenario : the columns from the queryModel win
+            // first dataset is the "gentle" scenario : the columns from the internalQueryModel win
             [POSSIBLE_COLUMNS_ONLY]         |   [TEST_CASE_ID, CAMPAIGN_ID]     |   [TEST_CASE_ID, CAMPAIGN_ID]
             // second dataset is the "traumatic" scenario : the columns from the scope win
             [TEST_CASE_ID]                  |   [REQUIREMENT_ID]                |   [TEST_CASE_ID]
@@ -249,7 +249,7 @@ class ScopePlannerTest extends Specification {
 
             given :
                     def axis = Mock(AxisColumn)
-                    ExpandedConfiguredQuery q = new ExpandedConfiguredQuery(axis : [axis])
+                    InternalQueryModel q = new InternalQueryModel(axis : [axis])
                     scopePlanner.chartQuery = q
 
             and :
@@ -269,10 +269,10 @@ class ScopePlannerTest extends Specification {
 
     def "should generate the required extra joins between the main query and the scope"(){
 
-        given : "the extra queryModel"
+        given : "the extra internalQueryModel"
             def extraQuery = mockQuery('R', 'TC')
 
-        and : "the main hibernate queryModel"
+        and : "the main hibernate internalQueryModel"
             def r = QRequirement.requirement
             def testquery = new ExtendedHibernateQuery()
             testquery.from(r).select(r.id)
@@ -348,7 +348,7 @@ where testCase.project.id = ?1"""
         def measure = iet(meaType)
         def target = [root, measure]
 
-        new ExpandedConfiguredQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
+        new InternalQueryModel(rootEntity : root, measuredEntity : measure, targetEntities : target)
 
     }
 

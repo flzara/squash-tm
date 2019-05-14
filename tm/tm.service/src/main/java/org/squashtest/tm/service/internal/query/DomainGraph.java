@@ -120,7 +120,7 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
 
 class DomainGraph {
 
-	private ExpandedConfiguredQuery expandedQuery;
+	private InternalQueryModel internalQueryModel;
 
 	private InternalEntityType seed;
 
@@ -149,7 +149,7 @@ class DomainGraph {
 
 		QueryPlan plan = morphToQueryPlan();
 
-		plan.trim(expandedQuery);
+		plan.trim(internalQueryModel);
 
 		return plan;
 
@@ -158,10 +158,10 @@ class DomainGraph {
 
 	// **************************** under the hood ****************************
 
-	DomainGraph(ExpandedConfiguredQuery expandedQuery, InternalEntityType seed){
+	DomainGraph(InternalQueryModel internalQueryModel, InternalEntityType seed){
 		super();
 
-		this.expandedQuery = expandedQuery;
+		this.internalQueryModel = internalQueryModel;
 		this.seed = seed;
 
 		// declare all the nodes
@@ -279,7 +279,7 @@ class DomainGraph {
 
 
 	/**
-	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(ExpandedConfiguredQuery)})</p>
+	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(InternalQueryModel)})</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
 	 *
 	 */

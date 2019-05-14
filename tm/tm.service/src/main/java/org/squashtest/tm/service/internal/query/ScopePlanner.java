@@ -71,7 +71,7 @@ import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 /**
  * <p>
- * 	This class will stuff a ExpandedConfiguredQuery with transient additional filters on which parts of the global repository should be considered.
+ * 	This class will stuff a InternalQueryModel with transient additional filters on which parts of the global repository should be considered.
  *	</p>
  *
  *	<h3>specification for TM 1.13</h3>
@@ -162,7 +162,7 @@ class ScopePlanner {
 	private PermissionEvaluationService permissionService;
 
 	// work variables
-	private ExpandedConfiguredQuery queryModel;
+	private InternalQueryModel queryModel;
 
 	private List<EntityReference> scope;
 
@@ -182,7 +182,7 @@ class ScopePlanner {
 		this.hibQuery = hibQuery;
 	}
 
-	void setChartQuery(ExpandedConfiguredQuery chartQuery) {
+	void setQueryModel(InternalQueryModel chartQuery) {
 		this.queryModel = chartQuery;
 	}
 
@@ -199,7 +199,7 @@ class ScopePlanner {
 
 	protected void appendScope() {
 
-		if (!scope.isEmpty()) {
+		if (scope != null && !scope.isEmpty()) {
 
 			// step 1 : test the ACLs
 			filterByACLs();
@@ -296,7 +296,7 @@ class ScopePlanner {
 
 		// create the dummy queryModel
 		QueryModel dummy = createDummyQuery(extraJoins);
-		ExpandedConfiguredQuery detailDummy = ExpandedConfiguredQuery.createFor(dummy);
+		InternalQueryModel detailDummy = InternalQueryModel.createFor(dummy);
 
 		// ... and then run it in a QueryPlanner
 		appendScopeToQuery(detailDummy);
@@ -334,7 +334,7 @@ class ScopePlanner {
 	}
 
 
-	private void appendScopeToQuery(ExpandedConfiguredQuery extraQuery) {
+	private void appendScopeToQuery(InternalQueryModel extraQuery) {
 		QueryPlanner planner = new QueryPlanner(extraQuery);
 		planner.appendToQuery(hibQuery);
 		planner.modifyQuery();
@@ -682,9 +682,9 @@ class ScopePlanner {
 
 	private static final class QueriedEntitiesImpl implements QueriedEntities {
 
-		private ExpandedConfiguredQuery query;
+		private InternalQueryModel query;
 
-		QueriedEntitiesImpl(ExpandedConfiguredQuery query) {
+		QueriedEntitiesImpl(InternalQueryModel query) {
 			super();
 			this.query = query;
 		}

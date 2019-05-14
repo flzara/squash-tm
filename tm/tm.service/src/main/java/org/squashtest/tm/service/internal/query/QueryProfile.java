@@ -23,14 +23,14 @@ package org.squashtest.tm.service.internal.query;
 
 /**
  * <p>
- * The enum QueryProfile provides more information about how an ExpandedConfiguredQuery will be used.
+ * The enum QueryProfile provides more information about how an InternalQueryModel will be used.
  * Depending on that context, the query may alter the content of the projection, grouping etc when it
  * is run as a subquery. Depending on whether it is main query, a subselect or a subwhere has subtle
  * implications on the final shape of the query.
  * </p>
  *
  * <p>
- *     More on this in {@link ExpandedConfiguredQuery} and in {@link SubQueryBuilder}.
+ *     More on this in {@link InternalQueryModel} and in {@link SubQueryBuilder}.
  * </p>
  *
  *

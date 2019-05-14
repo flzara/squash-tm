@@ -24,24 +24,17 @@ import com.querydsl.core.Tuple;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.query.IQueryModel;
-import org.squashtest.tm.domain.query.QueryModel;
-import org.squashtest.tm.service.internal.query.proxy.MilestoneAwareChartQuery;
-import org.squashtest.tm.service.internal.repository.CustomFieldDao;
-import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.query.QueryProcessingService;
 
@@ -73,7 +66,7 @@ import java.util.List;
  * <h1>Column prototypes</h1>
  *
  * <p>
- * The main java type that define a column is {@link ColumnPrototype}. All available columns are statically defined in the database.
+ * The main java type that define a column is {@link org.squashtest.tm.domain.query.QueryColumnPrototype}. All available columns are statically defined in the database.
  * When a column is included in a chart it will assume the role of a Measure, Axis or Column ({@link QueryColumnPrototypeInstance}).
  * </p>
  *
@@ -89,13 +82,13 @@ import java.util.List;
  * <p>
  * An exception to this are the custom field columns, which have a different semantic : a custom field column here is "custom field of type X" of an entity.
  * An example for instance is "a custom field of type date of a TestCase". Here the column doesn't hold the name of the attribute, as opposed to the other columns described
- * above. This discrepancy of the model stems from the need of having a unmodifiable set of {@link ColumnPrototype}, statically defined in the database as referential data.
+ * above. This discrepancy of the model stems from the need of having a unmodifiable set of {@link org.squashtest.tm.domain.query.QueryColumnPrototype}, statically defined in the database as referential data.
  * This requirement is incompatible with the custom fields, which are essentially dynamic. The alternative would have been to manage (CRUD-like) a moving set of column
  * prototypes that reflect the state of the custom fields.
  * </p>
  *
  * <p>
- * You can check a column type by looking at {@link ColumnPrototype#getColumnType()} :
+ * You can check a column type by looking at {@link org.squashtest.tm.domain.query.QueryColumnPrototype#getColumnType()} :
  * </p>
  *
  * <ul>
@@ -279,7 +272,7 @@ import java.util.List;
  *
  * <h4>Subquery strategy</h4>
  *
- * <p>In more complex cases a subquery will be required. The decision is driven by the attribute 'columnType' of the {@link ColumnPrototype}
+ * <p>In more complex cases a subquery will be required. The decision is driven by the attribute 'columnType' of the {@link org.squashtest.tm.domain.query.QueryColumnPrototype}
  * referenced by the filters : if at least one of them is of type {@link ColumnType#CUF} or {@link ColumnType#CALCULATED}
  * then one/several subqueries will be used. We need them for the following reasons :
  *
@@ -354,64 +347,41 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 
 	@PersistenceContext
 	private EntityManager em;
-	@Inject
-	private InfoListItemDao infoListItemDao;
-	@Inject
-	private CustomFieldDao customFieldDao;
-	@Inject
-	private Provider<TupleProcessor> tupleProcessorProvider;
+
 
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<Tuple> executeQuery(ConfiguredQuery configuredQuery) {
-		// TODO
-	}
-
-
-
-	@Transactional(readOnly = true)
-	public ChartSeries findData(ChartDefinition definition, List<EntityReference> dynamicScope, Long dashboardId, Long milestoneId, Workspace workspace) {
-
-		QueryModel queryModel = definition.getQuery();
-		ExpandedConfiguredQuery enhancedDefinition;
-		if (milestoneId != null && workspace != null && Workspace.isWorkspaceMilestoneFilterable(workspace)) {
-			IQueryModel milestoneAwareChartQuery = new MilestoneAwareChartQuery(queryModel, milestoneId, workspace);
-			enhancedDefinition = new ExpandedConfiguredQuery(milestoneAwareChartQuery);
-		} else {
-			enhancedDefinition = new ExpandedConfiguredQuery(queryModel);
-		}
-
 
 		// *********** step 1 : create the query ************************
 
-		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
+		InternalQueryModel internalQueryModel = new InternalQueryModel(configuredQuery).configure();
+
+		ExtendedHibernateQuery detachedQuery = new QueryBuilder(internalQueryModel).createQuery();
 
 		// *********** step 2 : determine scope and ACL **********************
 
 		ScopePlanner scopePlanner = scopePlannerProvider.get();
-		scopePlanner.setChartQuery(enhancedDefinition);
+		scopePlanner.setQueryModel(internalQueryModel);
 		scopePlanner.setHibernateQuery(detachedQuery);
-		// *********** override the chart scope if needed ************************
-		scopePlanner.setDynamicScope(definition, dynamicScope, dashboardId);
 		scopePlanner.appendScope();
 
-		// ******************* step 3 : run the query *************************
+		// ********** step 3 : add paging ************************************
 
+		if (internalQueryModel.getPaging() != null ){
+			Pageable page = internalQueryModel.getPaging();
+			detachedQuery.offset(page.getOffset());
+			detachedQuery.limit(page.getPageSize());
+		}
+
+		// ********** step 4 : run the query *********************************
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery) detachedQuery.clone(em.unwrap(Session.class));
 
 		try {
 			List<Tuple> tuples = finalQuery.fetch();
 
-			// ****************** step 6 : convert the data *********************
-
-			TupleProcessor processor = tupleProcessorProvider.get();
-
-			return processor
-					   .setDefinition(enhancedDefinition)
-					   .initialize()
-					   .process(tuples)
-					   .createChartSeries();
+			return tuples;
 
 		} catch (Exception ex) {
 			LOGGER.error("attempted to execute a chart query and failed : ");
@@ -419,8 +389,8 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 			throw new RuntimeException(ex);
 		}
 
-	}
 
+	}
 
 
 }

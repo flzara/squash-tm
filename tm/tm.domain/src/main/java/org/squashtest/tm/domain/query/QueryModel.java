@@ -36,17 +36,11 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "QUERY_MODEL")
-public class QueryModel implements IQueryModel{
+public class QueryModel{
 
 	@Id
 	@Column(name = "QUERY_MODEL_ID")
@@ -89,32 +83,32 @@ public class QueryModel implements IQueryModel{
 		return name;
 	}
 
-	@Override
+
 	public QueryStrategy getStrategy() {
 		return strategy;
 	}
 
-	@Override
+
 	public NaturalJoinStyle getJoinStyle() {
 		return joinStyle;
 	}
 
-	@Override
+
 	public List<QueryAggregationColumn> getAggregationColumns() {
 		return aggregationColumns;
 	}
 
-	@Override
+
 	public List<QueryFilterColumn> getFilterColumns() {
 		return filterColumns;
 	}
 
-	@Override
+
 	public List<QueryProjectionColumn> getProjectionColumns() {
 		return projectionColumns;
 	}
 
-	@Override
+
 	public List<QueryOrderingColumn> getOrderingColumns() {
 		return orderingColumns;
 	}

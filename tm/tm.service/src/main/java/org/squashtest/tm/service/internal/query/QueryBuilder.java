@@ -69,7 +69,7 @@ class QueryBuilder {
 
 	protected QuerydslToolbox utils = new QuerydslToolbox();
 
-	protected ExpandedConfiguredQuery expandedQuery;
+	protected InternalQueryModel internalQueryModel;
 
 	// the SubQueryBuilder would use a different strategy.
 	// for the QueryBuilder, it is set to MAIN_QUERY.
@@ -77,9 +77,9 @@ class QueryBuilder {
 
 	protected ExtendedHibernateQuery<?> detachedQuery;
 
-	QueryBuilder(ExpandedConfiguredQuery expandedQuery){
+	QueryBuilder(InternalQueryModel internalQueryModel){
 		super();
-		this.expandedQuery = expandedQuery;
+		this.internalQueryModel = internalQueryModel;
 	}
 
 
@@ -89,17 +89,17 @@ class QueryBuilder {
 
 	ExtendedHibernateQuery<?> createQuery(){
 
-		expandedQuery.configure();
+		internalQueryModel.configure();
 
-		QueryPlanner mainPlanner = new QueryPlanner(expandedQuery, utils);
+		QueryPlanner mainPlanner = new QueryPlanner(internalQueryModel, utils);
 		detachedQuery = mainPlanner.createQuery();
 
 
-		ProjectionPlanner projectionPlanner = new ProjectionPlanner(expandedQuery, detachedQuery, utils);
+		ProjectionPlanner projectionPlanner = new ProjectionPlanner(internalQueryModel, detachedQuery, utils);
 		projectionPlanner.modifyQuery();
 
 
-		FilterPlanner filterPlanner = new FilterPlanner(expandedQuery, detachedQuery, utils);
+		FilterPlanner filterPlanner = new FilterPlanner(internalQueryModel, detachedQuery, utils);
 		filterPlanner.modifyQuery();
 
 		return detachedQuery;

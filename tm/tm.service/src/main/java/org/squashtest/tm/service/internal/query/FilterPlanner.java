@@ -46,20 +46,20 @@ import java.util.Map.Entry;
  */
 class FilterPlanner {
 
-	private ExpandedConfiguredQuery definition;
+	private InternalQueryModel definition;
 
 	private QuerydslToolbox utils;
 
 	private ExtendedHibernateQuery<?> query;
 
-	FilterPlanner(ExpandedConfiguredQuery definition, ExtendedHibernateQuery<?> query){
+	FilterPlanner(InternalQueryModel definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query= query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	FilterPlanner(ExpandedConfiguredQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
+	FilterPlanner(InternalQueryModel definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query= query;

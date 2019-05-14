@@ -48,7 +48,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,7 +79,7 @@ import java.util.Set;
 
 class QueryPlanner {
 
-	private ExpandedConfiguredQuery expandedQuery;
+	private InternalQueryModel internalQueryModel;
 
 	private QuerydslToolbox utils;
 
@@ -106,15 +105,15 @@ class QueryPlanner {
 		super();
 	}
 
-	QueryPlanner(ExpandedConfiguredQuery expandedQuery){
+	QueryPlanner(InternalQueryModel internalQueryModel){
 		super();
-		this.expandedQuery = expandedQuery;
+		this.internalQueryModel = internalQueryModel;
 		this.utils = new QuerydslToolbox();
 	}
 
 
-	QueryPlanner(ExpandedConfiguredQuery definition, QuerydslToolbox utils){
-		this.expandedQuery = definition;
+	QueryPlanner(InternalQueryModel internalQueryModel, QuerydslToolbox utils){
+		this.internalQueryModel = internalQueryModel;
 		this.utils = utils;
 	}
 
@@ -146,7 +145,7 @@ class QueryPlanner {
 	 * @return
 	 */
 	QueryPlanner joinRootEntityOn(EntityPathBase<?> mainJoinEntity){
-		utils.forceAlias(expandedQuery.getRootEntity(), mainJoinEntity.getMetadata().getName());
+		utils.forceAlias(internalQueryModel.getRootEntity(), mainJoinEntity.getMetadata().getName());
 		return this;
 	}
 
@@ -207,11 +206,11 @@ class QueryPlanner {
 
 		// now process the inlined subqueries and append their table to the
 		// join clauses as well.
-		for (QueryColumnPrototypeInstance column : expandedQuery.getInlinedColumns()){
+		for (QueryColumnPrototypeInstance column : internalQueryModel.getInlinedColumns()){
 
 			EntityPathBase<?> subRootpath = utils.getQBean(column.getColumn().getSpecializedType());
 
-			ExpandedConfiguredQuery detailedSub = ExpandedConfiguredQuery.createFor(column);
+			InternalQueryModel detailedSub = InternalQueryModel.createFor(column);
 
 			QuerydslToolbox toolbox = new QuerydslToolbox(column);
 
@@ -227,7 +226,7 @@ class QueryPlanner {
 	private void nextSeed(){
 		// will initialize the iterator if does not exist yet
 		if (seedIterator == null){
-			seedIterator = expandedQuery.getTargetEntities().iterator();
+			seedIterator = internalQueryModel.getTargetEntities().iterator();
 		}
 
 		if (seedIterator.hasNext()) {
@@ -256,7 +255,7 @@ class QueryPlanner {
 		QueryPlan plan;
 
 		do{
-			graph = new DomainGraph(expandedQuery, graphSeed);
+			graph = new DomainGraph(internalQueryModel, graphSeed);
 			plan = graph.getQueryPlan();
 		}
 		// the stop condition is that the dreaded corner case
@@ -310,7 +309,7 @@ class QueryPlanner {
 
 			PathBuilder join = utils.makePath(src, dest, attribute);
 
-			switch(expandedQuery.getJoinStyle()){
+			switch(internalQueryModel.getJoinStyle()){
 			case INNER_JOIN :
 				query.innerJoin(join, dest);
 				break;
@@ -348,7 +347,7 @@ class QueryPlanner {
 	}
 
 	private void appendCufJoins() {
-		//1 detecting all the cuf present in chart expandedQuery and get the ids of the cufs
+		//1 detecting all the cuf present in chart internalQueryModel and get the ids of the cufs
 		Map<QueryColumnPrototype,Set<Long>> cufPrototypesWithIds = extractAllCufPrototype();
 		//2 create a where join (ie a cartesian product with where clause) for each cuf column needed in chart aliased by the column protoLabel and the cuf ID
 		//We have to do it this way because no hibernate mapping exist between an entity and the cuf
@@ -361,10 +360,10 @@ class QueryPlanner {
      */
 	private Map<QueryColumnPrototype, Set<Long>> extractAllCufPrototype() {
 		Map<QueryColumnPrototype, Set<Long>> cufPrototypesWithIds= new HashMap<>();
-		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getFilterColumns());
-		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getAggregationColumns());
-		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getProjectionColumns());
-		extractCufPrototype(cufPrototypesWithIds, expandedQuery.getOrderingColumns());
+		extractCufPrototype(cufPrototypesWithIds, internalQueryModel.getFilterColumns());
+		extractCufPrototype(cufPrototypesWithIds, internalQueryModel.getAggregationColumns());
+		extractCufPrototype(cufPrototypesWithIds, internalQueryModel.getProjectionColumns());
+		extractCufPrototype(cufPrototypesWithIds, internalQueryModel.getOrderingColumns());
 		return cufPrototypesWithIds;
 	}
 
@@ -494,7 +493,7 @@ class QueryPlanner {
 		boolean hasWhereJoin = false;
 
 		// condition 1
-		hasLeftJoin = expandedQuery.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
+		hasLeftJoin = internalQueryModel.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
 
 		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
 			PlannedJoin join = iter.next();

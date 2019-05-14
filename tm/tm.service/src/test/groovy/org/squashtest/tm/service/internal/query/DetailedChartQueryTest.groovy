@@ -62,7 +62,7 @@ class DetailedChartQueryTest extends Specification{
 				)
 
 		and :
-		ExpandedConfiguredQuery detailed = new ExpandedConfiguredQuery(parent)
+		InternalQueryModel detailed = new InternalQueryModel(parent)
 
 		when :
 		def inlined = detailed.getInlinedColumns();
