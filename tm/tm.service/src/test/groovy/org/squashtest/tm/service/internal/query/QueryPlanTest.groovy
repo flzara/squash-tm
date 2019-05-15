@@ -19,18 +19,8 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.query
 
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.query.InternalQueryModel;
-import org.squashtest.tm.service.internal.query.QueryPlan;
-import org.squashtest.tm.service.internal.query.QueryPlan.QueryPlanJoinIterator;
 import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
-import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
-
-import com.querydsl.jpa.hibernate.HibernateQuery;
-
 import spock.lang.Specification
 import spock.lang.Unroll;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
@@ -269,4 +259,3 @@ class QueryPlanTest extends Specification {
 
 
 }
-*/

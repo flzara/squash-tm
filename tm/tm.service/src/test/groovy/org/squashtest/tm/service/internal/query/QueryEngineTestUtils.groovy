@@ -1,4 +1,3 @@
-package org.squashtest.tm.service.internal.query
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,38 +18,33 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*package org.squashtest.tm.service.internal.query
 
-import java.util.List;
+package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.Operation
+import org.squashtest.tm.domain.query.QueryAggregationColumn
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryFilterColumn
+import org.squashtest.tm.domain.query.QueryProjectionColumn
+import org.squashtest.tm.domain.query.SpecializedEntityType
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.bugtracker.QIssue;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExecutionCollector;
 
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
 
 import spock.lang.Specification;
 
-public class ChartEngineTestUtils extends Specification{
+public class QueryEngineTestUtils extends Specification{
 
 	public static QTestCase tc = QTestCase.testCase
 	public static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
@@ -62,31 +56,31 @@ public class ChartEngineTestUtils extends Specification{
 	public static QExecution exec = QExecution.execution
 	public static QIssue iss = QIssue.issue
 
-	public static MeasureColumn mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+	public static QueryProjectionColumn mkProj(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new MeasureColumn(column : proto, operation : operation)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def meas = new QueryProjectionColumn(column : proto, operation : operation)
 
 		return meas
 
 	}
 
-	public static AxisColumn mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+	public static QueryAggregationColumn mkAggr(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def axe = new AxisColumn(column : proto, operation : operation)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def axe = new QueryAggregationColumn(column : proto, operation : operation)
 
 		return axe
 
 	}
 
-	public static Filter mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
+	public static QueryFilterColumn mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def filter = new Filter(column : proto, operation : operation, values : values)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def filter = new QueryFilterColumn(column : proto, operation : operation, values : values)
 
 		return filter
 
 	}
 
-}*/
+}

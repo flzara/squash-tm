@@ -19,33 +19,33 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.NaturalJoinStyle;
-import org.squashtest.tm.domain.chart.QueryStrategy;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.NaturalJoinStyle
+import org.squashtest.tm.domain.query.QueryAggregationColumn
+import org.squashtest.tm.domain.query.QueryFilterColumn
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryProjectionColumn
+import org.squashtest.tm.domain.query.QueryStrategy
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-
+import com.querydsl.core.types.dsl.PathBuilder
+import org.squashtest.tm.service.query.ConfiguredQuery;
 import spock.lang.Specification
-import static org.squashtest.tm.service.internal.query.ChartEngineTestUtils.*;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
-import static org.squashtest.tm.domain.chart.DataType.*;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.Operation.*;
+import static org.squashtest.tm.domain.query.DataType.*;
+import static org.squashtest.tm.domain.query.ColumnType.*;
+import static org.squashtest.tm.domain.query.Operation.*;
 
 
-
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 
 class QueryPlannerTest extends Specification {
 
@@ -56,6 +56,7 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
@@ -88,6 +89,7 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
@@ -120,6 +122,7 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
@@ -152,6 +155,7 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -184,6 +188,7 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -214,6 +219,7 @@ class QueryPlannerTest extends Specification {
 
 		given :
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : TEST_CASE,
 				targetEntities : [REQUIREMENT, TEST_CASE]
 				)
@@ -237,6 +243,7 @@ from TestCase testCase
 
 		given :
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -274,6 +281,7 @@ from Requirement requirement
 
 		given :
 		InternalQueryModel cquery = new InternalQueryModel(
+				parent: new ConfiguredQuery(new QueryModel()),
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -314,52 +322,52 @@ from Requirement requirement
 
 		given : " the first subquery"
 
-		MeasureColumn selectCateg = mkMeasure(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.INFO_LIST_ITEM, "label")
+		QueryProjectionColumn selectCateg = mkProj(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.INFO_LIST_ITEM, "label")
 		selectCateg.specializedType.entityRole = EntityRole.REQUIREMENT_VERSION_CATEGORY
 
-		AxisColumn axReqversion = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "id")
+		QueryAggregationColumn aggReqversion = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "id")
 
-		ChartQuery categQuery = new ChartQuery(
-				measures : [selectCateg],
-				axis : [axReqversion],
+		QueryModel categQuery = new QueryModel(
+				projectionColumns : [selectCateg],
+				aggregationColumns : [aggReqversion],
 				strategy : QueryStrategy.INLINED,
 				joinStyle : NaturalJoinStyle.INNER_JOIN
 				)
 
 		and : "the second subquery"
 
-		MeasureColumn selectMiles = mkMeasure(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.MILESTONE, "label")
+		QueryProjectionColumn selectMiles = mkProj(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.MILESTONE, "label")
 		selectMiles.specializedType.entityRole = EntityRole.TEST_CASE_MILESTONE
 
-		AxisColumn axTC = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
+		QueryAggregationColumn aggTC = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
 
-		ChartQuery tcmilesQuery = new ChartQuery(
-				measures : [selectMiles],
-				axis : [axTC],
+		QueryModel tcmilesQuery = new QueryModel(
+				projectionColumns : [selectMiles],
+				aggregationColumns : [aggTC],
 				strategy : QueryStrategy.INLINED,
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
 				)
 
 		and : "the main internalQueryModel"
 
-		Filter inlinedCateg = mkFilter(CALCULATED, STRING, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "category", ["functional test"])
+		QueryFilterColumn inlinedCateg = mkFilter(CALCULATED, STRING, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "category", ["functional test"])
 		inlinedCateg.column.subQuery = categQuery
 		inlinedCateg.column.id = 5
 
-		MeasureColumn inlinedTCMiles = mkMeasure(CALCULATED, INFO_LIST_ITEM, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "milestones")
+		QueryProjectionColumn inlinedTCMiles = mkProj(CALCULATED, INFO_LIST_ITEM, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "milestones")
 		inlinedTCMiles.column.subQuery = tcmilesQuery
 		inlinedTCMiles.column.id = 7
 
-		AxisColumn tcid = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
+		QueryAggregationColumn tcid = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
 
-		ChartQuery mainquery = new ChartQuery(
-				measures : [ inlinedTCMiles	],
-				filters : [inlinedCateg],
-				axis : [tcid]
+		QueryModel mainquery = new QueryModel(
+				projectionColumns : [ inlinedTCMiles	],
+				filterColumns : [inlinedCateg],
+				aggregationColumns : [tcid]
 				)
 
 		when :
-		QueryPlanner planner = new QueryPlanner(new InternalQueryModel(mainquery))
+		QueryPlanner planner = new QueryPlanner(new InternalQueryModel(new ConfiguredQuery(mainquery)))
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
 
@@ -376,15 +384,15 @@ from TestCase testCase
 
 	def "Should generate correct request for chart def with cuf"(){
 		given:
-		MeasureColumn selectId = mkMeasure(ATTRIBUTE, NUMERIC, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "id");
-		AxisColumn cufTextAxis = mkAxe(CUF, STRING, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "value")
+		QueryProjectionColumn selectId = mkProj(ATTRIBUTE, NUMERIC, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "id");
+		QueryAggregationColumn cufTextAxis = mkAggr(CUF, STRING, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "value")
 
 		cufTextAxis.cufId = 12;
 
-		ChartQuery mainquery = new ChartQuery(
-			measures : [ selectId	],
-			filters : [],
-			axis : [cufTextAxis]
+		QueryModel mainquery = new QueryModel(
+			projectionColumns : [ selectId	],
+			filterColumns : [],
+			aggregationColumns : [cufTextAxis]
 		)
 
 		when:
@@ -400,4 +408,3 @@ where null_12.boundEntityType = ?1 and null_12.boundEntityId = testCase.id and n
 	}
 
 }
-*/

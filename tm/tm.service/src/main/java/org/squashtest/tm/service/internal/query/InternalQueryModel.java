@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.query.QueryOrderingColumn;
 import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
+import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import java.util.ArrayList;
@@ -75,6 +76,13 @@ class InternalQueryModel {
 
 	private QueryProfile queryProfile = QueryProfile.MAIN_QUERY;
 
+	private Collection<EntityReference> scope = new ArrayList<>();
+
+	private NaturalJoinStyle joinStyle = NaturalJoinStyle.INNER_JOIN;
+
+	private QueryStrategy queryStrategy = QueryStrategy.MAIN;
+
+
 	// the following properties are deduced from the others once #configure() is
 	// invoked. An NPE when calling them is a sign that #configure() has not been called.
 	private List<QueryProjectionColumn> projections;
@@ -109,6 +117,10 @@ class InternalQueryModel {
 	InternalQueryModel(ConfiguredQuery parent){
 
 		this.parent = parent;
+		this.scope = parent.getScope();
+		this.queryStrategy = parent.getQueryModel().getStrategy();
+		this.joinStyle = parent.getQueryModel().getJoinStyle();
+
 	}
 
 	/**
@@ -161,15 +173,15 @@ class InternalQueryModel {
 	}
 
 	NaturalJoinStyle getJoinStyle(){
-		return parent.getQueryModel().getJoinStyle();
+		return joinStyle;
 	}
 
 	QueryStrategy getStrategy(){
-		return parent.getQueryModel().getStrategy();
+		return queryStrategy;
 	}
 
 	Collection<EntityReference> getScope(){
-		return parent.getScope();
+		return scope;
 	}
 
 	InternalEntityType getRootEntity() {
