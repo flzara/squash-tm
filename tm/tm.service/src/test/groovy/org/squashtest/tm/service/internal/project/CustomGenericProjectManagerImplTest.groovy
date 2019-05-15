@@ -713,4 +713,15 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 			!project.isUseTreeStructureInScmRepo()
 	}
+
+	def "#changeAutomationWorkflow(long, String) - Should change the project automation workflow type"() {
+		given:
+			Project project = new Project()
+			project.setAutomationWorkflowType("NATIVE")
+			genericProjectDao.getOne(22L) >> project
+		when:
+			manager.changeAutomationWorkflow(22L, "Jira")
+		then:
+			project.getAutomationWorkflowType() == "Jira"
+	}
 }

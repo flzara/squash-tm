@@ -74,6 +74,7 @@ import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonUrl;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.plugins.manager.automationworkflow.AutomationWorkflowPluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
@@ -120,6 +121,9 @@ public class GenericProjectController {
 
 	@Inject
 	private WorkspaceWizardManager pluginManager;
+
+	@Inject
+	private AutomationWorkflowPluginManager workflowPluginManager;
 
 	@Inject
 	private TaskExecutor taskExecutor;
@@ -568,6 +572,9 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
 	@ResponseBody
 	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflow) {
+		if(!workflowPluginManager.getAutomationWorkflowsCodes().contains(automationWorkflow)) {
+			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
+		}
 		projectManager.changeAutomationWorkflow(projectId, automationWorkflow);
 	}
 

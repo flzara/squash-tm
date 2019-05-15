@@ -20,11 +20,24 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
 public interface AutomationWorkflowPluginManager {
 
+	/**
+	 * Get the Map of the existing automation workflows.
+	 * @param locale The Locale to which the names are to translate.
+	 * @return A Map of available automation workflows.
+	 * Keys are the codes of the workflows and values are their names.
+	 */
 	Map<String, String> getAutomationWorkflowsMap(Locale locale);
+
+	/**
+	 * Get the Collection the existing automation workflows represented by their names.
+	 * @return A Collection of names representing all the available automation workflows.
+	 */
+	Collection<String> getAutomationWorkflowsCodes();
 
 }

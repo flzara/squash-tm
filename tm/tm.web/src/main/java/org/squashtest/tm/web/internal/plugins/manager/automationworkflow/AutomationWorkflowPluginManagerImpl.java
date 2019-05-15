@@ -26,9 +26,11 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 	import javax.inject.Inject;
+	import java.util.ArrayList;
 	import java.util.Collection;
 	import java.util.Collections;
 	import java.util.LinkedHashMap;
+	import java.util.List;
 	import java.util.Locale;
 	import java.util.Map;
 
@@ -53,6 +55,17 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
 		for(AutomationWorkflow workflow : plugins) {
 			result.put(workflow.getWorkflowName(), workflow.getWorkflowName());
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<String> getAutomationWorkflowsCodes() {
+		List<String> result = new ArrayList<>();
+		result.add(NONE);
+		result.add(NATIVE);
+		for(AutomationWorkflow workflow : plugins) {
+			result.add(workflow.getWorkflowName());
 		}
 		return result;
 	}
