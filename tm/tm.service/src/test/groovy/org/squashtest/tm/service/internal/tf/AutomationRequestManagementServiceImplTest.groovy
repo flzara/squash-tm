@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.tf
 
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
@@ -28,6 +30,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
@@ -35,12 +38,17 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService
 import spock.lang.Specification
 
 class AutomationRequestManagementServiceImplTest extends Specification {
+
 	AutomationRequestManagementServiceImpl service = new AutomationRequestManagementServiceImpl()
+
+	IterationTestPlanDao iterationTestPlanDao = Mock()
 
 	AutomationRequestDao automationRequestDao = Mock()
 
 	TestCaseDao testCaseDao = Mock()
+
 	TestCaseModificationService testCaseModificationService = Mock()
+
 	UnsecuredAutomatedTestManagerService taService = Mock()
 
 	def setup(){
@@ -48,6 +56,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		service.requestDao = automationRequestDao
 		service.testCaseModificationService = testCaseModificationService
 		service.taService = taService
+		service.iterationTestPlanDao=iterationTestPlanDao
 	}
 
 	def "Should find no TA script to associate with test case and remove previous auto associated script"(){
@@ -283,6 +292,75 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		1 * automationRequestDao.updateIsManual(-2L, false)
 	}
 
+	def "Update TA script for iteration with conflict list"(){
+		given:
+		// A test Case
+		TestCase targetTC = Mock()
+		targetTC.id >> -1L
+		targetTC.uuid >> "uuid2"
+		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
+		targetTC.name >> "TCWithMoreThanOneTAScript"
+
+		// An AutomationRequest
+		AutomationRequest automationRequest = Mock()
+		automationRequest.manual >> true
+		targetTC.automationRequest >> automationRequest
+
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		targetTC.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		//Iteration
+		Iteration it = Mock()
+		it.id >> -1L
+
+		//Iteration test plan item
+		IterationTestPlanItem itpi1 =Mock()
+		itpi1.id >> -11L
+		itpi1.iteration>>it
+		itpi1.referencedTestCase >> targetTC
+		it.addTestPlan(itpi1)
+
+
+		def mapTcIdNameTC = new HashMap();
+		mapTcIdNameTC.put(-1L,"TCWithMoreThanOneTAScript")
+
+
+		def mapItpiIdNameTC= new HashMap();
+		mapItpiIdNameTC.put(-11L,"TCWithMoreThanOneTAScript")
+
+		iterationTestPlanDao.findAllByIterationIdWithTCAutomated(-1L)>>[itpi1]
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
+		//service.updateTAScript(Collections.singletonList(-1L))>>mapTcIdNameTC
+
+		//service.updateTAScriptForIteration(-1L)>>mapItpiIdNameTC
+
+		when:
+		def result = service.updateTAScriptForIteration(-1L)
+
+		then:
+		result.size() == 1
+		result.containsKey(-11L)
+		result.containsValue("TCWithMoreThanOneTAScript")
+
+
+
+	}
 	def createAssignableTestList() {
 
 		// Create a mocked TestAutomationProject
