@@ -31,12 +31,12 @@
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object" description="the testcase" %>
+<%@ attribute name="isRemoteAutomationWorkflowUsed" required="true" type="java.lang.Boolean" description="whether a remote automation workflow is used for the project" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 
 <c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
-<c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
@@ -75,21 +75,49 @@
 				  </label>
 			</div>
 		</div>
-		<div class="display-table-row test-case-automation-request-block">
-			<label class="display-table-cell" for="automation-request-priority">
-				<f:message key="test-case.automation-priority.label"/>
-			</label>
-			<div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
-		</div>
 
-		<div class="display-table-row test-case-automation-request-block">
-			<label class="display-table-cell" for="automation-request-status">
-				<f:message key="test-case.automation-status.label"/>
-			</label>
-			<div class="display-table-cell" id="automation-request-status">
-				<span id="automation-request-status">${ automReqStatusLabel }</span>
-			</div>
-		</div>
+    <c:choose>
+      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
+      <c:when test="${!isRemoteAutomationWorkflowUsed}">
+        <%--== Native Automation Workflow is used ==--%>
+        <div class="display-table-row test-case-automation-request-block">
+          <label class="display-table-cell" for="automation-request-priority">
+            <f:message key="test-case.automation-priority.label"/>
+          </label>
+          <%-- The above tags Must be on the same line, otherwise the editor will add extra spaces... --%>
+          <div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
+        </div>
+
+        <div class="display-table-row test-case-automation-request-block">
+          <label class="display-table-cell" for="automation-request-status">
+            <f:message key="test-case.automation-status.label"/>
+          </label>
+          <div class="display-table-cell" id="automation-request-status">
+            <span id="automation-request-status">${ automReqStatusLabel }</span>
+          </div>
+        </div>
+      </c:when>
+      <c:otherwise>
+        <%--== Remote Automation Workflow is used ==--%>
+        <div class="display-table-row test-case-automation-request-block">
+          <label class="display-table-cell" for="remote-automation-request-priority">
+            <f:message key="test-case.automation-priority.label" />
+          </label>
+          <div class="display-table-cell" id="remote-automation-request-priority">
+            <span>${ remoteReqPriorityLabel }</span>
+          </div>
+        </div>
+        <div class="display-table-row test-case-automation-request-block">
+          <label class="display-table-cell" for="remote-automation-request-status">
+            <f:message key="test-case.automation-status.label" />
+          </label>
+          <div class="display-table-cell" id="remote-automation-request-status">
+            <span>${ remoteReqStatusLabel }</span>
+          </div>
+        </div>
+      </c:otherwise>
+		</c:choose>
+
 	</div>
 	</jsp:attribute>
 </comp:toggle-panel>

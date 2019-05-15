@@ -176,7 +176,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@FieldBridge(impl = BooleanBridge.class)
 	private boolean allowAutomationWorkflow = false;
 
-	private String automationWorkflowType;
+	private String automationWorkflowType = "NONE";
 
 	private boolean useTreeStructureInScmRepo = true;
 

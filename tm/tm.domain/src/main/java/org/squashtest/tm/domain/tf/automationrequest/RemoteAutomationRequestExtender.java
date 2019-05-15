@@ -41,12 +41,12 @@ public class RemoteAutomationRequestExtender {
 	@Id
 	@Column(name = "REMOTE_AUTOMATION_REQUEST_EXTENDER_ID")
 	@SequenceGenerator(
-		name = "remote_automation_request_extender_remote_automation_request_extender_id_seq",
-		sequenceName = "remote_automation_request_extender_remote_automation_request_extender_id_seq",
+		name = "remote_automation_request_ext_remote_automation_request_ext_seq",
+		sequenceName = "remote_automation_request_ext_remote_automation_request_ext_seq",
 		allocationSize = 1)
 	@GeneratedValue(
 		strategy = GenerationType.AUTO,
-		generator = "remote_automation_request_extender_remote_automation_request_extender_id_seq")
+		generator = "remote_automation_request_ext_remote_automation_request_ext_seq")
 	private Long id;
 
 	@ManyToOne
@@ -58,9 +58,11 @@ public class RemoteAutomationRequestExtender {
 	@JoinColumn(name = "AUTOMATION_REQUEST_ID", referencedColumnName = "AUTOMATION_REQUEST_ID")
 	private AutomationRequest automationRequest;
 
-	@NotNull
 	@Column(name = "REMOTE_STATUS")
-	private String automationRequestStatus;
+	private String remoteRequestStatus;
+
+	@Column(name = "REMOTE_PRIORITY")
+	private Integer remoteRequestPriority;
 
 	public Long getId() {
 		return id;
@@ -83,10 +85,17 @@ public class RemoteAutomationRequestExtender {
 		this.automationRequest = automationRequest;
 	}
 
-	public String getAutomationRequestStatus() {
-		return automationRequestStatus;
+	public String getRemoteRequestStatus() {
+		return remoteRequestStatus;
 	}
-	public void setAutomationRequestStatus(String automationRequestStatus) {
-		this.automationRequestStatus = automationRequestStatus;
+	public void setRemoteRequestStatus(String remoteRequestStatus) {
+		this.remoteRequestStatus = remoteRequestStatus;
+	}
+
+	public Integer getRemoteRequestPriority() {
+		return remoteRequestPriority;
+	}
+	public void setRemoteRequestPriority(Integer remoteRequestPriority) {
+		this.remoteRequestPriority = remoteRequestPriority;
 	}
 }

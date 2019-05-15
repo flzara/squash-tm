@@ -294,6 +294,8 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("automReqStatusComboJson", buildAutomReqStatusComboData(locale));
 		mav.addObject("automReqStatusLabel", formatAutomReqStatus(testCase.getAutomationRequest(), locale));
+		mav.addObject("remoteReqPriorityLabel", formatRemoteReqPriority(testCase.getAutomationRequest(), locale));
+		mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(testCase.getAutomationRequest(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
@@ -908,6 +910,20 @@ public class TestCaseModificationController {
 			return internationalizationHelper.internationalize(request.getRequestStatus().getI18nKey(), locale);
 		}
 		return internationalizationHelper.internationalize(AutomationRequestStatus.WORK_IN_PROGRESS, locale);
+	}
+
+	private String formatRemoteReqStatus(AutomationRequest request, Locale locale) {
+		if(request != null && request.getRemoteAutomationRequestExtender() != null && request.getRemoteAutomationRequestExtender().getRemoteRequestStatus() != null) {
+			return request.getRemoteAutomationRequestExtender().getRemoteRequestStatus();
+		}
+		return internationalizationHelper.internationalize("squashtm.nodata", locale);
+	}
+
+	private String formatRemoteReqPriority(AutomationRequest request, Locale locale) {
+		if(request != null && request.getRemoteAutomationRequestExtender() != null && request.getRemoteAutomationRequestExtender().getRemoteRequestPriority() != null) {
+			return request.getRemoteAutomationRequestExtender().getRemoteRequestPriority().toString();
+		}
+		return internationalizationHelper.internationalize("squashtm.nodata", locale);
 	}
 
 

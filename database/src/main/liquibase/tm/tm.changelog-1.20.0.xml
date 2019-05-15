@@ -130,7 +130,11 @@
       </column>
 
       <column name="REMOTE_STATUS" type="VARCHAR(255)" remarks="The remote status as defined in the bugtracker">
-        <constraints nullable="false" />
+        <constraints nullable="true" />
+      </column>
+
+      <column name="REMOTE_PRIORITY" type="INTEGER" remarks="The remote priority transposed to an integer">
+        <constraints nullable="true" />
       </column>
 
     </createTable>

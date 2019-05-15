@@ -65,6 +65,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -1299,6 +1300,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		AutomationRequest request = new AutomationRequest();
 
+		// Here a remote request is created only if the workflow is not the native one
+		if(project.getAutomationWorkflowType() != "NATIVE") {
+			RemoteAutomationRequestExtender remoteRequest = new RemoteAutomationRequestExtender();
+			remoteRequest.setAutomationRequest(request);
+			request.setRemoteAutomationRequestExtender(remoteRequest);
+		}
 
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);
