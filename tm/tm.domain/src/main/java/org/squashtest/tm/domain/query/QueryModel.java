@@ -65,8 +65,8 @@ public class QueryModel{
 	@JoinColumn(name = "QUERY_MODEL_ID", nullable = false)
 	private List<QueryFilterColumn> filterColumns = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "QUERY_MODEL_ID", nullable = false)
+	@ElementCollection
+	@CollectionTable(name = "QUERY_PROJECTION_COLUMN", joinColumns = @JoinColumn(name = "QUERY_MODEL_ID") )
 	@OrderColumn(name = "PROJECTION_RANK")
 	private List<QueryProjectionColumn> projectionColumns = new ArrayList<>();
 

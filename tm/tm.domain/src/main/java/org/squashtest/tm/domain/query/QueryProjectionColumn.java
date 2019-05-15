@@ -20,24 +20,18 @@
  */
 package org.squashtest.tm.domain.query;
 
-import com.querydsl.core.types.Order;
-import org.springframework.beans.BeanUtils;
 import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity
+@Embeddable
 @Table(name = "QUERY_PROJECTION_COLUMN")
 public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
@@ -45,10 +39,6 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "QUERY_COLUMN_ID", nullable = false)
 	private QueryColumnPrototype columnPrototype;
-
-	@ManyToOne
-	@JoinColumn(name = "QUERY_MODEL_ID", insertable = false, updatable = false, nullable = false)
-	private QueryModel queryModel;
 
 	@Column(name = "LABEL")
 	private String label;
@@ -99,10 +89,6 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 		return columnPrototype;
 	}
 
-	public QueryModel getQueryModel() {
-		return queryModel;
-	}
-
 	public String getLabel() {
 		return label;
 	}
@@ -113,10 +99,6 @@ public class QueryProjectionColumn implements QueryColumnPrototypeInstance {
 
 	public void setOperation(Operation operation) {
 		this.operation = operation;
-	}
-
-	public void setQueryModel(QueryModel queryModel) {
-		this.queryModel = queryModel;
 	}
 
 	public void setCufId(Long cufId) {

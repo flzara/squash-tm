@@ -198,10 +198,8 @@ class ChartToConfiguredQueryConverter {
 		query.setJoinStyle(NaturalJoinStyle.INNER_JOIN);
 
 		// gather the projections and add them to the query
-		// don't forget the reverse-side of the relation
 		List<QueryProjectionColumn> projections = extractProjections(definition);
 		query.setProjectionColumns(projections);
-		projections.forEach(projection -> projection.setQueryModel(query));
 
 		// gather the aggregations now
 		List<QueryAggregationColumn> aggregations = extractAggregations(definition);
