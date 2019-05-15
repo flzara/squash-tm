@@ -41,10 +41,15 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
+		var tpiIdsWithAutomaticExecutionMode = $(".test-plan-table").squashTable().fnGetData().filter(function(row){
+			return row['exec-mode'] === 'A';
+		}).map(function(row){
+			return row['entity-id'];
+		});
 		var unlaunchableTest;
-		updateTAScript(ids).done(function(map){
+		updateTAScript().done(function(map){
 			// No arrow function in IE 11 ...
-			var launchableIds = ids.filter(function(id){
+			var launchableIds = tpiIdsWithAutomaticExecutionMode.filter(function(id){
 				return map[id] === undefined;
 			});
 			if (launchableIds.length === 0){
