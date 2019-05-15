@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory
 import org.squashtest.tm.domain.query.NaturalJoinStyle
 import org.squashtest.tm.domain.query.QueryAggregationColumn
 import org.squashtest.tm.domain.query.QueryFilterColumn
@@ -55,12 +56,11 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
-				joinStyle : NaturalJoinStyle.INNER_JOIN
-				)
+		InternalQueryModel cquery = mockInternalModel(
+			rootEntity: REQUIREMENT,
+			targetEntities: [REQUIREMENT, REQUIREMENT_VERSION],
+			joinStyle: NaturalJoinStyle.INNER_JOIN
+		)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
 
@@ -88,8 +88,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.LEFT_JOIN
@@ -121,8 +120,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : REQUIREMENT,
 				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
 				joinStyle : NaturalJoinStyle.INNER_JOIN
@@ -154,8 +152,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -187,8 +184,7 @@ class QueryPlannerTest extends Specification {
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
 				)
@@ -218,10 +214,9 @@ class QueryPlannerTest extends Specification {
 	def "should create a query from a main chart query"(){
 
 		given :
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : TEST_CASE,
-				targetEntities : [REQUIREMENT, TEST_CASE]
+				targetEntities : [TEST_CASE, REQUIREMENT]
 				)
 
 		QueryPlanner planner = new QueryPlanner(cquery)
@@ -239,11 +234,70 @@ from TestCase testCase
   inner join requirementVersion.requirement as requirement"""
 	}
 
+
+
+	def "should create a query plan that uses 'inner-'where join"(){
+
+		given:
+		InternalQueryModel cquery = mockInternalModel(
+			rootEntity : TEST_CASE,
+			// joining from testcase to iteration item requires a "where" join, because the relation testCase -> item is not mapped
+			targetEntities : [TEST_CASE, ITEM_TEST_PLAN, ITERATION],
+			// here the join style is 'inner join'
+			joinStyle: NaturalJoinStyle.INNER_JOIN
+		)
+
+		QueryPlanner planner = new QueryPlanner(cquery)
+		when :
+		ExtendedHibernateQuery res = planner.createQuery()
+		res.select(tc.id)
+
+		then :
+		// test that the builder still seeded the graph from the test case
+		planner.graphSeed == TEST_CASE
+
+		// the query cannot inner join from testcase to item, so the query plan is instead using cartesian-product + where clause
+		res.toString() == """select testCase.id
+from TestCase testCase, IterationTestPlanItem iterationTestPlanItem
+  inner join iterationTestPlanItem.iteration as iteration
+where iterationTestPlanItem.referencedTestCase = testCase"""
+
+
+	}
+
+	def "should create a (degraded) query plan with an alternate graph seed because the nominal graph would have a left-where join in it"(){
+
+		given:
+		InternalQueryModel cquery = mockInternalModel(
+			rootEntity : TEST_CASE,
+			// joining from testcase to iteration item requires a "where" join, because the relation testCase -> item is not mapped
+			targetEntities : [TEST_CASE, ITEM_TEST_PLAN],
+			// also here we require a left join
+			joinStyle: NaturalJoinStyle.LEFT_JOIN
+		)
+
+		QueryPlanner planner = new QueryPlanner(cquery)
+		when :
+		ExtendedHibernateQuery res = planner.createQuery()
+		res.select(tc.id)
+
+		then :
+		// test that the builder reversed the test plan, seeding from the item instead of test case
+		planner.graphSeed == ITEM_TEST_PLAN
+
+		// the query was reversed (it initially selects from the item instead of the test case)
+		// (it is also incorrect, because the left join is in the wrong direction)
+		res.toString() == """select testCase.id
+from IterationTestPlanItem iterationTestPlanItem
+  left join iterationTestPlanItem.referencedTestCase as testCase"""
+
+	}
+
+
 	def "should append a subquery to a main query"(){
 
 		given :
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -280,8 +334,7 @@ from Requirement requirement
 	def "should not append twice a subquery to a main query"(){
 
 		given :
-		InternalQueryModel cquery = new InternalQueryModel(
-				parent: new ConfiguredQuery(new QueryModel()),
+		InternalQueryModel cquery = mockInternalModel(
 				rootEntity : REQUIREMENT_VERSION,
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
@@ -367,7 +420,8 @@ from Requirement requirement
 				)
 
 		when :
-		QueryPlanner planner = new QueryPlanner(new InternalQueryModel(new ConfiguredQuery(mainquery)))
+		def internalModel = new InternalQueryModel(new ConfiguredQuery(mainquery))
+		QueryPlanner planner = new QueryPlanner(internalModel)
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
 
@@ -396,7 +450,7 @@ from TestCase testCase
 		)
 
 		when:
-		QueryPlanner planner = new QueryPlanner(new InternalQueryModel(mainquery))
+		QueryPlanner planner = new QueryPlanner(new InternalQueryModel(new ConfiguredQuery(mainquery)))
 
 		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
@@ -406,5 +460,31 @@ from TestCase testCase
 from TestCase testCase, CustomFieldValue null_12
 where null_12.boundEntityType = ?1 and null_12.boundEntityId = testCase.id and null_12.cufId = ?2""";
 	}
+
+
+
+	// *************** test utils *************
+
+	def mockInternalModel(argMap){
+		// create the mock and configure its behavior according to the arg map
+		def model = Mock(InternalQueryModel)
+
+		argMap.each { ppt, value ->
+			model."get${ppt.capitalize()}"() >> value
+		}
+
+		// now provide default behavior for the rest
+		// (if a getter was already mocked, the default behavior below will not apply)
+		model.getJoinStyle() >> NaturalJoinStyle.INNER_JOIN
+		model.getStrategy() >> QueryStrategy.MAIN
+		model.getInlinedColumns() >> []
+		model.getFilterColumns() >> []
+		model.getAggregationColumns() >> []
+		model.getProjectionColumns() >> []
+		model.getOrderingColumns() >> []
+
+		return model
+	}
+
 
 }

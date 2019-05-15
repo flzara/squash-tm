@@ -19,41 +19,43 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*package org.squashtest.tm.service.internal.query
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.QueryAggregationColumn
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryFilterColumn
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryProjectionColumn
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType
+import org.squashtest.tm.service.query.ConfiguredQuery;
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.chart.QueryStrategy;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import static org.squashtest.tm.domain.chart.ColumnType.*;
-import static org.squashtest.tm.domain.chart.QueryStrategy.*;
+import static org.squashtest.tm.domain.query.ColumnType.*;
+import static org.squashtest.tm.domain.query.QueryStrategy.*;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 
 import spock.lang.Specification;
 
-class DetailedChartQueryTest extends Specification{
+class InternalQueryModelTest extends Specification{
 
 	def "should detect the subqueries for what they are"(){
 
 		given :
-		ChartQuery parent = new ChartQuery(
-				measures : [
-					mockColumn(ATTRIBUTE, MAIN, "measure", "meas attribute"),
-					mockColumn(CALCULATED, SUBQUERY, "measure", "measure calculated subquery"),
-					mockColumn(CUF, INLINED, "measure", "meas cuf"),
-					mockColumn(CALCULATED, INLINED, "measure", "measure calculated inlined")
+		QueryModel parent = new QueryModel(
+			projectionColumns : [
+					mockColumn(ATTRIBUTE, MAIN, "projection", "meas attribute"),
+					mockColumn(CALCULATED, SUBQUERY, "projection", "measure calculated subquery"),
+					mockColumn(CUF, INLINED, "projection", "meas cuf"),
+					mockColumn(CALCULATED, INLINED, "projection", "measure calculated inlined")
 				],
-				axis : [
-					mockColumn(ATTRIBUTE, MAIN, "axis", "axis attribute"),
-					mockColumn(CALCULATED, SUBQUERY, "axis", "axis calculated subquery"),
-					mockColumn(CUF, INLINED, "axis", "axis cuf"),
-					mockColumn(CALCULATED, INLINED, "axis", "axis calculated inlined")
+			aggregationColumns : [
+					mockColumn(ATTRIBUTE, MAIN, "aggregation", "axis attribute"),
+					mockColumn(CALCULATED, SUBQUERY, "aggregation", "axis calculated subquery"),
+					mockColumn(CUF, INLINED, "aggregation", "axis cuf"),
+					mockColumn(CALCULATED, INLINED, "aggregation", "axis calculated inlined")
 				],
-				filters: [
+			filterColumns: [
 					mockColumn(ATTRIBUTE, MAIN, "filter", "filter attribute"),
 					mockColumn(CALCULATED, SUBQUERY, "filter", "filter calculated subquery"),
 					mockColumn(CUF, INLINED, "filter", "filter cuf"),
@@ -62,7 +64,7 @@ class DetailedChartQueryTest extends Specification{
 				)
 
 		and :
-		InternalQueryModel detailed = new InternalQueryModel(parent)
+		InternalQueryModel detailed = new InternalQueryModel(new ConfiguredQuery(parent))
 
 		when :
 		def inlined = detailed.getInlinedColumns();
@@ -73,18 +75,24 @@ class DetailedChartQueryTest extends Specification{
 		subcolumns.collect{it.column.label} as Set == ["measure calculated subquery", "filter calculated subquery", "axis calculated subquery"] as Set
 	}
 
+
+
+
+	// ************ more test code ************************
+
+
 	def mockColumn(ColumnType type, QueryStrategy strategy, String columnrole, String label){
 		def col;
-		ColumnPrototype proto = Mock(ColumnPrototype);
-		ChartQuery query = Mock(ChartQuery);
+		QueryColumnPrototype proto = Mock(QueryColumnPrototype);
+		QueryModel query = Mock(QueryModel);
 
 		switch (columnrole){
-			case "measure" :
-					col = Mock(MeasureColumn); break;
-			case "axis" :
-					col = Mock(AxisColumn); break;
+			case "projection" :
+					col = Mock(QueryProjectionColumn); break;
+			case "aggregation" :
+					col = Mock(QueryAggregationColumn); break;
 			case "filter" :
-					col = Mock(Filter); break;
+					col = Mock(QueryFilterColumn); break;
 		}
 
 		col.getSpecializedType() >> new SpecializedEntityType(entityType : EntityType.TEST_CASE)
@@ -97,4 +105,4 @@ class DetailedChartQueryTest extends Specification{
 		return col
 	}
 
-}*/
+}

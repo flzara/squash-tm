@@ -61,8 +61,8 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
  * business domain.
  * </p>
  * <p>
- * 	Its purpose is to provide a query plan. It is defined as the spanning tree that originates from a seed and spreads until
- * 	every target entity is reached.
+ * 	Its purpose is to provide a query plan. It is defined as the spanning tree that originates from a given node,
+ *  call the <em>graph seed</em> and spreads until every target entity is reached.
  * </p>
  * <p>Please note that, for that purpose different enum is used here : {@link InternalEntityType}.</p>
  * <p>See javadoc on QueryProcessingServiceImpl for details on this. Excerpt pasted below for convenience.</p>

@@ -72,8 +72,8 @@ class QueryBuilder {
 	protected InternalQueryModel internalQueryModel;
 
 	// the SubQueryBuilder would use a different strategy.
-	// for the QueryBuilder, it is set to MAIN_QUERY.
-	protected QueryProfile profile = QueryProfile.MAIN_QUERY;
+	// for the QueryBuilder, it is set to REGULAR_QUERY.
+	protected QueryProfile profile = QueryProfile.REGULAR_QUERY;
 
 	protected ExtendedHibernateQuery<?> detachedQuery;
 
@@ -88,8 +88,6 @@ class QueryBuilder {
 	// **************** actual building ***************************
 
 	ExtendedHibernateQuery<?> createQuery(){
-
-		internalQueryModel.configure();
 
 		QueryPlanner mainPlanner = new QueryPlanner(internalQueryModel, utils);
 		detachedQuery = mainPlanner.createQuery();

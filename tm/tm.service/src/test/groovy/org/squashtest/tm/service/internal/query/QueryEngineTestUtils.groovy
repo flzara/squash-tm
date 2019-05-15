@@ -59,7 +59,7 @@ public class QueryEngineTestUtils extends Specification{
 	public static QueryProjectionColumn mkProj(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new QueryProjectionColumn(column : proto, operation : operation)
+		def meas = new QueryProjectionColumn(columnPrototype : proto, operation : operation)
 
 		return meas
 
@@ -68,7 +68,7 @@ public class QueryEngineTestUtils extends Specification{
 	public static QueryAggregationColumn mkAggr(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def axe = new QueryAggregationColumn(column : proto, operation : operation)
+		def axe = new QueryAggregationColumn(columnPrototype : proto, operation : operation)
 
 		return axe
 
@@ -77,7 +77,7 @@ public class QueryEngineTestUtils extends Specification{
 	public static QueryFilterColumn mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def filter = new QueryFilterColumn(column : proto, operation : operation, values : values)
+		def filter = new QueryFilterColumn(columnPrototype : proto, operation : operation, values : values)
 
 		return filter
 

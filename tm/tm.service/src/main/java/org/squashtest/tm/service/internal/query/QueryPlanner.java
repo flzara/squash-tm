@@ -183,9 +183,6 @@ class QueryPlanner {
 
 	private void doTheJob(){
 
-		// init the seed
-		nextSeed();
-
 		// get the query plan : the orderly set of joins this
 		// planner must now put together
 
@@ -255,6 +252,8 @@ class QueryPlanner {
 		QueryPlan plan;
 
 		do{
+			// try the next seed (initially null)
+			nextSeed();
 			graph = new DomainGraph(internalQueryModel, graphSeed);
 			plan = graph.getQueryPlan();
 		}

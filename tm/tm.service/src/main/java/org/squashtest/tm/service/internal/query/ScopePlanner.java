@@ -682,11 +682,11 @@ class ScopePlanner {
 
 	private static final class QueriedEntitiesImpl implements QueriedEntities {
 
-		private InternalQueryModel query;
+		private InternalQueryModel internalQuery;
 
-		QueriedEntitiesImpl(InternalQueryModel query) {
+		QueriedEntitiesImpl(InternalQueryModel internalQuery) {
 			super();
-			this.query = query;
+			this.internalQuery = internalQuery;
 		}
 
 
@@ -696,7 +696,7 @@ class ScopePlanner {
 		@Override
 		public Set<JoinableColumns> getPossibleJoinColumns() {
 			Set<JoinableColumns> possibles = new HashSet<>();
-			List<InternalEntityType> types = query.getTargetEntities();
+			Set<InternalEntityType> types = internalQuery.getTargetEntities();
 
 			for (InternalEntityType type : types) {
 				JoinableColumns column = JoinableColumns.forQueriedType(type);

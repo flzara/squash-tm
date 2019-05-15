@@ -40,7 +40,7 @@ import java.util.List;
  * <p>
  * 	Depending on the chosen profile, the projection will be :
  * 	<ul>
- * 		<li>MAIN_QUERY : the full projection will be applied (that is, axis then measures)</li>
+ * 		<li>REGULAR_QUERY : the full projection will be applied (that is, axis then measures)</li>
  * 		<li>SUBSELECT_QUERY : only the measures will be projected - the axis only value is implicit because the outer query will drive it</li>
  * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not,
  * 			the outer  query can then test with 'exists (subquery)'  </li>

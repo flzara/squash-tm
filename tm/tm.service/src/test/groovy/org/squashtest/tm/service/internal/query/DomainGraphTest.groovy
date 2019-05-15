@@ -19,8 +19,7 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.query
+
 
 import org.squashtest.tm.service.internal.query.InternalEntityType;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
@@ -59,32 +58,30 @@ class DomainGraphTest extends Specification {
 
 
 
-
-	*/
-/*
+	 /*
 	 * General properties :
-	 * 1/ the root node has no inbounds
+	 * 1/ the graph seed node has no inbounds
 	 * 2/ the other nodes has 1 inbound only
 	 * 3/ all entities are traversed
-	 *//*
+	 */
 
-	@Unroll("check general asumption about morphed graphs with #rootEntity (see comments)")
+	@Unroll("check general assumption about morphed graphs with #graphSeed (see comments)")
 	def "check general asumption about morphed graphs (see comments)"(){
 
 		expect :
-		def domain = new DomainGraph(internalQueryModel);
+		def domain = new DomainGraph(internalQueryModel, graphSeed);
 		domain.morphToQueryPlan();
 
 		// root entity has no inbound connections
-		countInbounds(domain, rootEntity) == 0
+		countInbounds(domain, graphSeed) == 0
 
 		// all other node have exactly one inbound connection
-		domain.nodes.findAll{it.type != rootEntity} as Set == domain.nodes.findAll{countInbounds(domain, it.type) == 1 } as Set
+		domain.nodes.findAll{it.type != graphSeed} as Set == domain.nodes.findAll{countInbounds(domain, it.type) == 1 } as Set
 		domain.nodes.collect{it.type} as Set == InternalEntityType.values() as Set
 
 
 		where :
-		rootEntity				|	internalQueryModel
+		graphSeed				|	internalQueryModel
 		REQUIREMENT				|	new InternalQueryModel(rootEntity : REQ)
 		REQUIREMENT_VERSION 	|	new InternalQueryModel(rootEntity : RV)
 		COV					 	|	new InternalQueryModel(rootEntity : COV)
@@ -104,7 +101,7 @@ class DomainGraphTest extends Specification {
 	def "should test many query plans"(){
 
 		expect :
-		def domain = new DomainGraph(new InternalQueryModel(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new InternalQueryModel(targetEntities : targets), graphSeed)
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeHierarchy(plan, hierarchy)
@@ -112,7 +109,7 @@ class DomainGraphTest extends Specification {
 		where :
 
 		// let's use the abbreviations
-		rootEntity	|	targets				|	hierarchy
+		graphSeed	|	targets				|	hierarchy
 		REQ			|	[REQ, TC]			|	[ REQ : [RV], RV : [COV], COV : [TC], TC : [] ]
 		ISS			|	[ISS, TC, IT]		|	[ ISS : [EX], EX : [ITP], ITP : [TC, IT], TC : [], IT : []]
 		IT			|	[IT, ISS]			|	[ IT : [ITP], ITP : [EX], EX : [ISS], ISS : []]
@@ -126,7 +123,7 @@ class DomainGraphTest extends Specification {
 	def "should convey the correct join metadata when creating the tree"(){
 
 		expect :
-		def domain = new DomainGraph(new InternalQueryModel(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new InternalQueryModel(targetEntities : targets), graphSeed)
 		def plan = domain.getQueryPlan()
 
 		checkAllTreeJoins(plan, joinInfos)
@@ -134,7 +131,7 @@ class DomainGraphTest extends Specification {
 		where :
 
 		// let's use the abbreviations
-		rootEntity	|	targets				|	joinInfos
+		graphSeed	|	targets				|	joinInfos
 		REQ			|	[REQ, TC]			|	[ REQ : [RV:"versions"], RV : [COV : "requirementVersionCoverages"], COV : [TC:"verifyingTestCase"]]
 		ISS			|	[ISS, TC, IT]		|	[ ISS : [EX : "execution"], EX : [ITP : "testPlan"], ITP : [TC:"referencedTestCase", IT:"iteration"]]
 		IT			|	[IT, ISS]			|	[ IT : [ITP:"testPlans"], ITP : [EX:"executions"], EX : [ISS:"issues"]]
@@ -148,11 +145,10 @@ class DomainGraphTest extends Specification {
 
 		given :
 		InternalQueryModel internalQueryModel =
-				new InternalQueryModel(rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
+				new InternalQueryModel(targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		and :
-		def domain = new DomainGraph(internalQueryModel)
+		def domain = new DomainGraph(internalQueryModel, TEST_CASE)
 
 		when :
 		def plan = domain.morphToQueryPlan();
@@ -202,11 +198,10 @@ class DomainGraphTest extends Specification {
 
 		given :
 		InternalQueryModel internalQueryModel =
-				new InternalQueryModel(rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
+				new InternalQueryModel(targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		when :
-		def domain = new DomainGraph(internalQueryModel);
+		def domain = new DomainGraph(internalQueryModel, TEST_CASE);
 		QueryPlan plan = domain.getQueryPlan();
 
 		then :
@@ -228,36 +223,8 @@ class DomainGraphTest extends Specification {
 
 	}
 
-	def "when requested, should generate a reversed query plan"(){
 
-		given :
-		InternalQueryModel internalQueryModel =
-				new InternalQueryModel(rootEntity : TEST_CASE, measuredEntity : CAMPAIGN,
-				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
-		when :
-
-		DomainGraph domain = new DomainGraph(internalQueryModel);
-		domain.reversePlan();
-		QueryPlan plan = domain.getQueryPlan();
-
-		then :
-
-		def traversed = plan.collectKeys() as Set
-
-		traversed as Set == [ REQUIREMENT, REQUIREMENT_VERSION, REQUIREMENT_VERSION_COVERAGE, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN ] as Set
-
-		def root = plan.getRootNodes()[0];
-		root.key == CAMPAIGN
-
-		checkTreeHierarchy(plan, CAMPAIGN, [ITERATION])
-		checkTreeHierarchy(plan, ITERATION, [ITEM_TEST_PLAN])
-		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [TEST_CASE])
-		checkTreeHierarchy(plan, TEST_CASE, [REQUIREMENT_VERSION_COVERAGE])
-		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION])
-		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT])
-		checkTreeHierarchy(plan, REQUIREMENT, [])
-
-	}
+	// ************* test utils *****************************
 
 
 	def checkTreeHierarchy(QueryPlan tree, InternalEntityType nodetype, List<InternalEntityType> childrenTypes ){
@@ -345,4 +312,3 @@ class DomainGraphTest extends Specification {
 	}
 
 }
-*/

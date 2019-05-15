@@ -356,7 +356,7 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 
 		// *********** step 1 : create the query ************************
 
-		InternalQueryModel internalQueryModel = new InternalQueryModel(configuredQuery).configure();
+		InternalQueryModel internalQueryModel = new InternalQueryModel(configuredQuery);
 
 		ExtendedHibernateQuery detachedQuery = new QueryBuilder(internalQueryModel).createQuery();
 

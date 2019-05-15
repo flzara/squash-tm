@@ -1,4 +1,4 @@
-package org.squashtest.tm.service.internal.query
+package org.squashtest.tm.service.internal.chart
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,20 +19,16 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.query
 
 import com.querydsl.core.Tuple
 import org.squashtest.tm.domain.chart.AxisColumn
-import org.squashtest.tm.domain.chart.ChartSeries
-import org.squashtest.tm.domain.chart.DataType
+import org.squashtest.tm.domain.chart.ChartDefinition
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.customfield.CustomFieldOption
 import org.squashtest.tm.domain.customfield.SingleSelectField
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.UserListItem
-import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.repository.InfoListItemDao
 
@@ -43,7 +39,7 @@ import java.text.SimpleDateFormat
 
 import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
-import static org.squashtest.tm.domain.chart.DataType.*
+import static org.squashtest.tm.domain.query.DataType.*
 import spock.lang.Specification
 
 class TupleProcessorTest extends Specification{
@@ -104,13 +100,13 @@ class TupleProcessorTest extends Specification{
 		def sorted = processor.sortTuples(tuples)
 
 		then:
-		*/
-/*
+
+		/*
 		 tuple should be sorted by :
 		 	1/ natural order then
 		 	2/ execution status specific order then
 		 	3/ natural order again
-		  *//*
+		  */
 
 
 		sorted.collect { tuple -> (0..2).collect { idx -> tuple.get(idx, Object) } } == [
@@ -157,14 +153,14 @@ class TupleProcessorTest extends Specification{
 		def sorted = processor.sortTuples(tuples)
 
 		then:
-		*/
-/*
+
+		/*
 		 tuple should be sorted by :
 			 1/ natural order then
 			 2/ test case importance then
 			 3/ execution status specific order then
 			 4/ test case importance
-		  *//*
+		  */
 
 
 		def asListList = sorted.collect { tuple -> (0..3).collect { idx -> tuple.get(idx, Object) } }
@@ -264,8 +260,8 @@ class TupleProcessorTest extends Specification{
 
 
 	def "post processing : should extract the colours for axes that are infolists"() {
-		given: "the internalQueryModel"
-		InternalQueryModel internalQueryModel = new InternalQueryModel(
+		given: "the chartDefinition"
+		ChartDefinition chartDefinition = new ChartDefinition(
 			measures: [
 				measure("total testcase")
 			],
@@ -274,7 +270,7 @@ class TupleProcessorTest extends Specification{
 				axis("test case category", INFO_LIST_ITEM)
 			]
 		)
-		processor.internalQueryModel = internalQueryModel
+		processor.definition = chartDefinition
 
 		and: "the abscissa"
 		def abscissa = [
@@ -307,7 +303,7 @@ class TupleProcessorTest extends Specification{
 
 	def "post processing : should extract the colours for axes that are cuf lists"() {
 		given: "the internalQueryModel"
-		InternalQueryModel internalQueryModel = new InternalQueryModel(
+		ChartDefinition chartDefinition = new ChartDefinition(
 			measures: [
 				measure("total testcase")
 			],
@@ -316,7 +312,7 @@ class TupleProcessorTest extends Specification{
 				axis("test case flavour", LIST)
 			]
 		)
-		processor.internalQueryModel = internalQueryModel
+		processor.definition = chartDefinition
 
 		and: "the abscissa"
 		def abscissa = [
@@ -354,10 +350,10 @@ class TupleProcessorTest extends Specification{
 	def "should know whether post processing is required or not"(){
 
 		expect :
-		processor.setDefinition(internalQueryModel).isPostProcessingRequired() == answer
+		processor.setDefinition(chartDefinition).isPostProcessingRequired() == answer
 
 		where:
-		answer	| not	| reason								|	internalQueryModel
+		answer	| not	| reason								|	chartDefinition
 		true	| ""	| "axes use info list item"				|	definitionWithAxes(NUMERIC, INFO_LIST_ITEM, TAG)
 		false	| "not"	| "axes use no datatype requiring it"	|	definitionWithAxes(NUMERIC, LEVEL_ENUM, TAG)
 
@@ -438,7 +434,7 @@ class TupleProcessorTest extends Specification{
 	def "should create the series based once the data were processed"(){
 
 		given :
-		def internalQueryModel = new InternalQueryModel(
+		def chartDefinition = new ChartDefinition(
 			measures: [
 				measure("total testcase", NUMERIC)
 			],
@@ -448,7 +444,7 @@ class TupleProcessorTest extends Specification{
 			]
 		)
 
-		processor.internalQueryModel = internalQueryModel
+		processor.definition = chartDefinition
 
 		and:
 		processor.abscissa = abscissa([
@@ -495,7 +491,7 @@ class TupleProcessorTest extends Specification{
 	def definitionWithAxes(DataType... types){
 		def axes = types.collect { axis("axis", it)	}
 
-		return Mock(InternalQueryModel){
+		return Mock(ChartDefinition){
 			getAxis() >> axes
 		}
 	}
@@ -531,4 +527,3 @@ class TupleProcessorTest extends Specification{
 
 
 }
-*/

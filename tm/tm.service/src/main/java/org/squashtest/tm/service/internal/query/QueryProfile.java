@@ -36,8 +36,7 @@ package org.squashtest.tm.service.internal.query;
  *
  */
 enum QueryProfile{
-	MAIN_QUERY,			// for the main query, tuples returns the full axis + measures data
-	SUBSELECT_QUERY,	// generate correlated subqueries, returning the measure only, correlated on axes supplied by the outer query
-	SUBWHERE_QUERY;		// the "where" clause is supplied by the outer query and joined with axes from he outer query.
-	// Returns 1 or null, ie it's test the existence of elements matching the predicate.
+	REGULAR_QUERY,		// this query is to be treated as is, it requires not particular transformation
+	SUBSELECT_QUERY,	// this query is a subquery within the select clause of the outer query. It requires special transformations, that will be undergone by the SubQueryBuilder and QueryPlanner
+	SUBWHERE_QUERY;		// this query is a subquery within the where clause of the outer query. It also requires special transformations, albeit different.
 }

@@ -1,4 +1,10 @@
 package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.domain.query.NaturalJoinStyle
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.SpecializedEntityType
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,55 +25,22 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
-*     This file is part of the Squashtest platform.
-*     Copyright (C) 2010 - 2016 Henix, henix.fr
-*
-*     See the NOTICE file distributed with this work for additional
-*     information regarding copyright ownership.
-*
-*     This is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU Lesser General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     (at your option) any later version.
-*
-*     this software is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU Lesser General Public License for more details.
-*
-*     You should have received a copy of the GNU Lesser General Public License
-*     along with this software.  If not, see <http://www.gnu.org/licenses/>.
-*/
-/*
-package org.squashtest.tm.service.internal.query
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.collections.map.MultiValueMap;
-import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
 import org.squashtest.tm.service.internal.query.ScopePlanner.ScopeUtils;
-import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.squashtest.tm.service.internal.query.ScopePlanner.ScopedEntities
 import org.squashtest.tm.service.internal.query.ScopePlanner.QueriedEntities
 import org.squashtest.tm.service.internal.query.ScopePlanner.ScopedEntitiesImpl
 import org.squashtest.tm.service.internal.query.ScopePlanner.QueriedEntitiesImpl
 import static org.squashtest.tm.service.internal.query.ScopePlanner.JoinableColumns.*
-import org.squashtest.tm.domain.chart.SpecializedEntityType
-import org.squashtest.tm.domain.chart.ColumnType
 
 import spock.lang.Specification
 import spock.lang.Unroll;
@@ -248,21 +221,23 @@ class ScopePlannerTest extends Specification {
     def "should create a mock query for the purpose of extending the main query with required joins"(){
 
             given :
-                    def axis = Mock(AxisColumn)
-                    InternalQueryModel q = new InternalQueryModel(axis : [axis])
-                    scopePlanner.chartQuery = q
+				def agg = Mock(AxisColumn)
+				InternalQueryModel q = Mock(InternalQueryModel){
+					getAggregationColumns() >> [agg]
+				}
+				scopePlanner.queryModel = q
 
             and :
-                    def joinableColumns = [REQUIREMENT_ID, CAMPAIGN_ID]
-                    def reqidProto = mockProto('REQUIREMENT_ID', null)
-                    def cidProto = mockProto('CAMPAIGN_ID', null)
+				def joinableColumns = [REQUIREMENT_ID, CAMPAIGN_ID]
+				def reqidProto = mockProto('REQUIREMENT_ID', null)
+				def cidProto = mockProto('CAMPAIGN_ID', null)
 
             when :
-                    ChartQuery dummy = scopePlanner.createDummyQuery(joinableColumns as Set)
+				QueryModel dummy = scopePlanner.createDummyQuery(joinableColumns as Set)
 
             then :
-                    dummy.axis == [ axis]
-                    dummy.measures.collect{it.column} as Set == [reqidProto, cidProto] as Set
+				dummy.aggregationColumns == [ agg]
+				dummy.projectionColumns.collect{it.column} as Set == [reqidProto, cidProto] as Set
 
     }
 
@@ -348,12 +323,17 @@ where testCase.project.id = ?1"""
         def measure = iet(meaType)
         def target = [root, measure]
 
-        new InternalQueryModel(rootEntity : root, measuredEntity : measure, targetEntities : target)
+		Mock(InternalQueryModel){
+			getRootEntity() >> root
+			getTargetEntities() >> target
+			getJoinStyle() >> NaturalJoinStyle.INNER_JOIN
+			getInlinedColumns() >> []
+		}
 
     }
 
     def mockProto(colname, spectype){
-        def proto = Mock(ColumnPrototype)
+        def proto = Mock(QueryColumnPrototype)
         if (colname != null){
             utils.findColumnPrototype(colname) >> proto
         }
@@ -388,4 +368,3 @@ where testCase.project.id = ?1"""
 
 
 }
-*/

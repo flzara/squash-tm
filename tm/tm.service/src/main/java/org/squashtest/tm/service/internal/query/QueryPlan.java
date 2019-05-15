@@ -34,7 +34,7 @@ import java.util.Queue;
 /**
  * <p>
  * 	This class represent which entities (tables) should be traversed, and in which direction (this last detail matters when a left join occurs)
- * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(InternalQueryModel)};
+ * 	This class is meant to be created via {@link DomainGraph#getQueryPlan()};
  *</p>
  *
  * @author bsiri

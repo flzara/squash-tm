@@ -1,4 +1,8 @@
 package org.squashtest.tm.service.internal.query
+
+import org.junit.Ignore
+import org.squashtest.tm.domain.query.SpecializedEntityType
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,24 +23,19 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-package org.squashtest.tm.service.internal.query
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+
 
 import spock.lang.Specification
 
+@Ignore
 class FilterPlannerTest extends Specification {
 
 	// No test... yet
-
 
 	def spec(type){
 		return new SpecializedEntityType(type, null)
 	}
 
 }
-*/
+
