@@ -169,11 +169,9 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			var userCombo = table.find(".tp-th-createdby"),
 				formatCombo = table.find(".tp-th-format"),
 				statusCombo = table.find(".tp-th-status"),
-				conflictAssociation = table.find(".tp-th-conflictAssociation"),
 				assignedToCombo = table.find(".tp-th-assignedto"),
 				assignedTime = table.find(".tp-th-affectedon"),
-				transmittedTime = table.find(".tp-th-transmittedon"),
-				uuid=table.find(".tp-th-uuid");
+				transmittedTime = table.find(".tp-th-transmittedon");
 
 
 			if(userCombo.length !== 0) {

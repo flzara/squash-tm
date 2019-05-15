@@ -97,7 +97,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 												"mRender": function (data, type, row) {
 																		var hrefScript="";
 																		var title = translator.get('test-case.automation-btn-conflict');
-																		if (row['listScriptConflict'].length!=1) {
+																		if (row['listScriptConflict'].length!==1) {
 																			hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
 
 																	 }else{
@@ -660,12 +660,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
                 $("#automated-automation-button").on("click", function () {
                     var tcIds = self.getSelectedTcIds(domtable);
-                    var scripts = self.checkScriptAutoIsAbsent(domtable);
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } /* else if (scripts !== 0) {
-                        notification.showWarning(translator.get("automation.notification.script.none"));
-                    } */ else {
+                    } else {
                         $.ajax({
                             url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
                             method: 'POST',
