@@ -190,6 +190,12 @@ class InternalQueryModel {
 	}
 
 
+	/**
+	 * Returns the rootEntity of that InternalQueryModel. If none was set using withRootEntity, a default
+	 * value will be assigned after inspection of available columns.
+	 *
+	 * @return
+	 */
 	InternalEntityType getRootEntity() {
 		assignRootEntityIfUnspecified();
 		return rootEntity;
@@ -235,7 +241,7 @@ class InternalQueryModel {
 
 		if (rootEntity == null) {
 			QueryColumnPrototypeInstance firstProto = collectAllColumns().get(0);
-			SpecializedEntityType firstSpecialType = firstProto.getColumn().getSpecializedType();
+			SpecializedEntityType firstSpecialType = firstProto.getSpecializedType();
 			InternalEntityType firstType = InternalEntityType.fromSpecializedType(firstSpecialType);
 
 			rootEntity = firstType;
@@ -265,7 +271,7 @@ class InternalQueryModel {
 			List<QueryColumnPrototypeInstance> allColumns = collectAllColumns();
 
 			Set<InternalEntityType> colTypes = allColumns.stream()
-													.map(col -> col.getColumn().getSpecializedType())
+													.map(col -> col.getSpecializedType())
 													.map(InternalEntityType::fromSpecializedType)
 													.collect(Collectors.toSet());
 
