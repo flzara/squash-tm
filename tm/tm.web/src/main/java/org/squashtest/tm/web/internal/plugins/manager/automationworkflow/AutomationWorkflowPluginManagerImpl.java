@@ -20,32 +20,39 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
-import org.apache.commons.lang.WordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.core.automationworkflow.AutomationWorkflow;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.stereotype.Component;
+	import org.squashtest.tm.core.automationworkflow.AutomationWorkflow;
+	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+	import javax.inject.Inject;
+	import java.util.Collection;
+	import java.util.Collections;
+	import java.util.LinkedHashMap;
+	import java.util.Locale;
+	import java.util.Map;
 
 @Component
 public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPluginManager {
 
-	private static final String NONE = "None";
-	private static final String NATIVE = "Native";
+	private static final String NONE = "NONE";
+	private static final String I18N_KEY_NONE = "label.None";
+	private static final String NATIVE = "NATIVE";
+	private static final String I18N_KEY_NATIVE = "label.Native";
+
+	@Inject
+	InternationalizationHelper i18nHelper;
 
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
 
 	@Override
-	public Collection<String> findAllNames() {
-		ArrayList<String> result = new ArrayList<>();
-		result.add(NONE);
-		result.add(NATIVE);
+	public Map<String, String> getAutomationWorkflowsMap(Locale locale) {
+		Map<String, String> result = new LinkedHashMap<>();
+		result.put(NONE, i18nHelper.internationalize(I18N_KEY_NONE, locale));
+		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
 		for(AutomationWorkflow workflow : plugins) {
-			result.add(WordUtils.capitalize(workflow.getId()));
+			result.put(workflow.getWorkflowName(), workflow.getWorkflowName());
 		}
 		return result;
 	}

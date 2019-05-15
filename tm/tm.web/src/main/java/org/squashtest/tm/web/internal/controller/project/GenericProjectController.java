@@ -565,6 +565,12 @@ public class GenericProjectController {
 		projectManager.changeAutomationWorkflow(projectId, active);
 	}
 
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
+	@ResponseBody
+	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflow) {
+		projectManager.changeAutomationWorkflow(projectId, automationWorkflow);
+	}
+
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=tree-structure-in-scm-repo", VALUE})
 	@ResponseBody
 	public void changeUseTreeStructureInScmRepo(@PathVariable long projectId, @RequestParam(VALUE) boolean activated) {

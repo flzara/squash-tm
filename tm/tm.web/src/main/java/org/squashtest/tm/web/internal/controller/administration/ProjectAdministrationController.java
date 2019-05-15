@@ -59,6 +59,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.project.ProjectPluginModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.plugins.manager.automationworkflow.AutomationWorkflowPluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
 import javax.inject.Inject;
@@ -105,6 +106,9 @@ public class ProjectAdministrationController {
 	private WorkspaceWizardManager pluginManager;
 
 	@Inject
+	private AutomationWorkflowPluginManager workflowPluginManager;
+
+	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
 
@@ -140,6 +144,9 @@ public class ProjectAdministrationController {
 		.buildRawModel(partyProjectPermissionsBean,1);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
+
+		// available automation workflows
+		Map<String, String> automationWorkflows = workflowPluginManager.getAutomationWorkflowsMap(locale);
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
@@ -177,6 +184,8 @@ public class ProjectAdministrationController {
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
+		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType());
+		mav.addObject("availableAutomationWorkflows", automationWorkflows);
 
 		return mav;
 	}

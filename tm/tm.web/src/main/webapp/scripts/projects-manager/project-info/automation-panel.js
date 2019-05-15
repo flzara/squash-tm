@@ -24,6 +24,8 @@
  - tmProjectURL : the url of the TM project
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
+ - availableAutomationWorkflows : the map of automation workflows available
+ - chosenAutomationWorkflow : the current automation workflow of the project
  */
 define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
 		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator) {
@@ -185,7 +187,13 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				initialize : function(conf, popups) {
 					var self = this;
+					this.changeUrl = conf.tmProjectURL;
 					this.isAdmin = conf.isAdmin;
+
+					this.automationWorkflows = conf.availableAutomationWorkflows;
+					this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
+					this.initAutomationWorkflowSelect();
+
 					this.popups = popups;
 					for(var popup in popups){
 						if (popups.hasOwnProperty(popup)) {
@@ -213,6 +221,36 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				events : {
 					"click #ta-projects-bind-button" : "openAuthenticationPopup"
+				},
+
+				initAutomationWorkflowSelect: function() {
+					var self = this;
+					new SelectJEditable({
+						componentId: "project-workflows-select",
+						jeditableSettings: {
+							data: self.automationWorkflows
+						},
+						target: function(value) {
+							if(self.chosenAutomationWorkflow !== value) {
+								self.doChangeAutomationWorkflow(value).error(function(xhr) {
+									WTF.showError(xhr.statusText);
+								});
+								self.chosenAutomationWorkflow = value;
+							}
+							return value;
+						}
+					});
+				},
+				doChangeAutomationWorkflow: function(workflow) {
+					var self = this;
+					return $.ajax({
+						method: 'POST',
+						url: self.changeUrl,
+						data: {
+							id: 'change-automation-workflow',
+							value: workflow
+						}
+					});
 				},
 
 				initTable : function(){

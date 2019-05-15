@@ -1111,6 +1111,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	@Override
+	public void changeAutomationWorkflow(long projectId, String automationWorkflow) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setAutomationWorkflowType(automationWorkflow);
+	}
+
 	@Override
 	public void changeUseTreeStructureInScmRepo(long projectId, boolean activated) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);

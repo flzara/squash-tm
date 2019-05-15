@@ -100,4 +100,6 @@ public class AdministrableProject {
 	public boolean useTreeStructureInScmRepo() {
 		return project.isUseTreeStructureInScmRepo();
 	}
+
+	public String getAutomationWorkflowType() { return project.getAutomationWorkflowType(); }
 }

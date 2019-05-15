@@ -62,6 +62,7 @@
   <jsp:attribute name="body">
 
   <div id="project-workflow-option-table" class="display-table">
+    <!-- Automation Workflow Toggle -->
   	<div class="display-table-row">
   		<div class="display-table-cell">
   			<label class="display-table-cell" style="vertical-align:bottom">
@@ -73,7 +74,24 @@
   				off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
   		</div>
   	</div>
+
+    <!-- Automation Workflow Menu -->
+    <div class="display-table-row">
+      <div class="display-table-cell">
+        <label class="display-table-cell">
+          <f:message key="label.workflow.modification" />
+        </label>
+      </div>
+      <div class="display-table-cell">
+        <div id ="project-workflows-select" style="display: inline">
+          <c:out value="${availableAutomationWorkflows[chosenAutomationWorkflow]}" />
+
+        </div>
+      </div>
+    </div>
   </div>
+
+
   <div class="ta-main-div">
 
       	<%-- =================================== server block =============================================================== --%>
@@ -457,7 +475,9 @@ require(["common"], function() {
         	isAdmin: ${isAdmin},
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
-          TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id}
+          TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
+          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };
 
         automationBlock.init(automationSettings);

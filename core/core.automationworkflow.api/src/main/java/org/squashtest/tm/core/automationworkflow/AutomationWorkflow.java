@@ -24,4 +24,10 @@ import org.squashtest.tm.api.plugin.Plugin;
 
 public interface AutomationWorkflow extends Plugin {
 
+	/**
+	 * Get the name of this AutomationWorkflow.
+	 * @return The name of this AutomationWorkflow
+	 */
+	String getWorkflowName();
+
 }

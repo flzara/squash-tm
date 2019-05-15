@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
-import org.squashtest.tm.core.automationworkflow.AutomationWorkflow;
-
-import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
 
 public interface AutomationWorkflowPluginManager {
 
-	Collection<String> findAllNames();
+	Map<String, String> getAutomationWorkflowsMap(Locale locale);
 
 }

@@ -178,6 +178,13 @@ public class AutomationRequest implements Identified {
 		this.transmittedBy = transmittedBy;
 	}
 
+	public RemoteAutomationRequestExtender getRemoteAutomationRequestExtender() {
+		return remoteAutomationRequestExtender;
+	}
+
+	public void setRemoteAutomationRequestExtender(RemoteAutomationRequestExtender remoteAutomationRequestExtender) {
+		this.remoteAutomationRequestExtender = remoteAutomationRequestExtender;
+	}
 
 	public Project getProject() {
 		return project;
