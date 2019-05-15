@@ -20,20 +20,35 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 
 import java.util.List;
 
 public interface CustomIterationTestPlanDao {
-	/*TM-13*/
 
+	/**
+	 * Given an {@link org.squashtest.tm.domain.campaign.Iteration}'s id,
+	 * return {@link IterationTestPlanItem} whom {@link org.squashtest.tm.domain.testcase.TestCase} is automated and is part of a project allowing automation workflow
+	 * @param iterationId an {@link org.squashtest.tm.domain.campaign.Iteration}'s id
+	 * @return a list of {@link IterationTestPlanItem}
+	 */
 	List<IterationTestPlanItem> findAllByIterationIdWithTCAutomated(@Param("iterationId") Long iterationId);
+
+	/**
+	 * Given an {@link org.squashtest.tm.domain.campaign.TestSuite}'s id,
+	 * return {@link IterationTestPlanItem} whom {@link org.squashtest.tm.domain.testcase.TestCase} is automated and is part of a project allowing automation workflow
+	 * @param testSuiteId a {@link org.squashtest.tm.domain.campaign.TestSuite}'s id
+	 * @return a list of {@link IterationTestPlanItem}
+	 */
 	List<IterationTestPlanItem> findAllByTestSuiteIdWithTCAutomated(@Param("testSuiteId") Long testSuiteId);
+
+	/**
+	 * Given a list of {@link IterationTestPlanItem}'s id,
+	 * return the ones whom {@link org.squashtest.tm.domain.testcase.TestCase} is automated and is part of a project allowing automation workflow
+	 * @param itemsIds {@link IterationTestPlanItem}'s id list
+	 * @return a list of {@link IterationTestPlanItem}
+	 */
 	List<IterationTestPlanItem> findAllByItemsIdWithTCAutomated(@Param("itemsIds") List<Long> itemsIds);
 
 }

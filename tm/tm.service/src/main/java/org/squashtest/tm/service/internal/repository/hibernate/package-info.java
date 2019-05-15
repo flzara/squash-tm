@@ -217,16 +217,16 @@
 	@NamedQuery(name="IterationTestPlanItem.findAllForMilestones", query="select itpi.id from IterationTestPlanItem itpi join itpi.iteration.campaign.milestones milestone where milestone.id in (:milestonesIds)"),
 	//TM-13
 	@NamedQuery(name="IterationTestPlanItem.findAllByIterationIdWithTCAutomated",
-					  	query="Select Distinct item From Iteration it join it.testPlans item join item.referencedTestCase tc join tc.automationRequest ar" +
-		       			" Where it.id = :iterationId And tc.automatable = 'Y' And ar.requestStatus = 'AUTOMATED'"),
+					  	query="select distinct item from Iteration it join it.testPlans item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+		       			" where it.id = :iterationId and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 	@NamedQuery(name="IterationTestPlanItem.findAllByTestSuiteIdWithTCAutomated",
-		query="Select Distinct item From TestSuite ts join ts.testPlan item join item.referencedTestCase tc join tc.automationRequest ar" +
-			" Where ts.id = :testSuiteId And tc.automatable = 'Y' And ar.requestStatus = 'AUTOMATED'"),
+		query="select distinct item from TestSuite ts join ts.testPlan item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+			" where ts.id = :testSuiteId and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 	@NamedQuery(name="IterationTestPlanItem.findAllByItemsIdWithTCAutomated",
-		query="Select Distinct item From IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar" +
-			" Where item.id in(:itemsIds) And tc.automatable = 'Y' And ar.requestStatus = 'AUTOMATED'"),
+		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+			" where item.id in(:itemsIds) and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 
 	// TestSuite

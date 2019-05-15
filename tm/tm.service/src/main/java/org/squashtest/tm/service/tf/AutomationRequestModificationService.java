@@ -49,9 +49,28 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 */
 	Map<Long, String> updateTAScript(List<Long> tcIds);
 
-	/*TM-13*/
+	/**
+	 * Given an {@link org.squashtest.tm.domain.campaign.Iteration}'s id,
+	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
+	 * @param iterationId : an {@link org.squashtest.tm.domain.campaign.Iteration}'s id
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "losed" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
+	 */
 	Map<Long, String> updateTAScriptForIteration(Long iterationId);
+
+	/**
+	 * Given an {@link org.squashtest.tm.domain.campaign.TestSuite}'s id,
+	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
+	 * @param testSuiteId : a {@link org.squashtest.tm.domain.campaign.TestSuite}'s id
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "losed" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
+	 */
 	Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId);
+
+	/**
+	 * Given alist of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}'s id,
+	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
+	 * @param testPlanIds : a list of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}'s id
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "lost" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
+	 */
 	Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds);
 
 }
