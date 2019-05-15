@@ -117,7 +117,7 @@ import java.util.Set;
  */
 public enum ExecutionStatus implements Internationalizable, Level {
 
-	SETTLED(10) {
+	SETTLED(11) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return needsComputation();
@@ -360,7 +360,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			return false;
 		}
 	},
-	NOT_FOUND(9) {
+	NOT_FOUND(10) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
