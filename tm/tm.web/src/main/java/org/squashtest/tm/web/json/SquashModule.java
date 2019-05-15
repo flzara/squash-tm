@@ -68,7 +68,6 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(Project.class, GenericProjectMixin.class);
 		context.setMixInAnnotations(CustomReportFolder.class, CustomReportFolderMixin.class);
 		context.setMixInAnnotations(ChartDefinition.class, ChartDefinitionMixin.class);
-		context.setMixInAnnotations(QueryModel.class, ChartQueryMixin.class);
 		context.setMixInAnnotations(Filter.class, FilterMixin.class);
 		context.setMixInAnnotations(AxisColumn.class, AxisColumnMixin.class);
 		context.setMixInAnnotations(MeasureColumn.class, MeasureColumnMixin.class);
