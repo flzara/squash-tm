@@ -148,10 +148,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
 
-	@Inject
-	private AutomationRequestModificationService automationRequestModificationService;
-	@Inject
-	private IterationTestPlanDaoImpl iterationTestPlanDaoImpl;
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -589,52 +585,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
 
 		return createFromItems(items);
-	}
-	/*TM-13:update automatic script before execution */
-	@Override
-	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
-
-		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByIterationIdWithTCAutomated(iterationId);
-		List<Long> tcIds = getListTcIdsFromListItems(items);
-		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
-	}
-
-	@Override
-	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
-
-		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
-		List<Long> tcIds = getListTcIdsFromListItems(items);
-
-		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-
-		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
-	}
-
-	@Override
-	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
-
-		List<IterationTestPlanItem> items = iterationTestPlanDaoImpl.findAllByItemsIdWithTCAutomated(testPlanIds);
-		List<Long> tcIds = getListTcIdsFromListItems(items);
-		Map<Long, String> mapTcIdTcNameInConflict = automationRequestModificationService.updateTAScript(tcIds);
-
-		return getListItpiIdNameTc(items, mapTcIdTcNameInConflict);
-	}
-
-	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
-		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
-		items.forEach(itpi->{
-			if(mapTcIdTcNameInConflict.containsKey(itpi.getReferencedTestCase().getId())){
-				mapItpiIdTcNameInConflict.put(itpi.getId(),mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
-			}
-		});
-		return  mapItpiIdTcNameInConflict;
-	}
-
-	private List<Long> getListTcIdsFromListItems(List<IterationTestPlanItem> items){
-		List<Long> listIds = items.stream()
-			.map(itpi -> itpi.getReferencedTestCase().getId()).collect(Collectors.toList());
-		return  listIds;
 	}
 
 }

@@ -75,9 +75,11 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 				if (launchableIds.length === 0){
 					$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 				} else {
-					//Alternative which work with IE. The ébetter" version but not compatible IE is unlaunchableTest = Object.values(map);
+					//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
 					unlaunchableTest = Object.keys(map).map(function(e) {
 						return map[e]
+					}).filter(function(value, index, self){
+						return self.indexOf(value) === index;
 					});
 					createSuite(launchableIds).done(function(suite) {
 						startSuite(suite, unlaunchableTest);

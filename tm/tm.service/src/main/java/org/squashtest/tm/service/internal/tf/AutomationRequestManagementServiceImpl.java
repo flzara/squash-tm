@@ -41,8 +41,10 @@ import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.repository.hibernate.IterationTestPlanDaoImpl;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -119,6 +121,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private UnsecuredAutomatedTestManagerService taService;
+
+	@Inject
+	private IterationTestPlanDao iterationTestPlanDao;
 
 	// *************** implementation of the finder interface *************************
 
@@ -411,6 +416,65 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 			requestDao.updateIsManual(tc.getId(), false);
 		}
 
+	}
+
+	/*TM-13:update automatic script before execution */
+	@Override
+	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
+
+		Map<Long, String> result = new HashMap<>();
+
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIterationIdWithTCAutomated(iterationId);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
+		Map<Long, String> result = new HashMap<>();
+
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
+		Map<Long, String> result = new HashMap<>();
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByItemsIdWithTCAutomated(testPlanIds);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+		return result;
+	}
+
+	private Map<Long, String> doItpiTAScriptUpdate(List<IterationTestPlanItem> itpisToUpdate) {
+		List<Long> tcIds = getListTcIdsFromListItems(itpisToUpdate);
+
+		Map<Long, String> mapTcIdTcNameInConflict = updateTAScript(tcIds);
+		return getListItpiIdNameTc(itpisToUpdate, mapTcIdTcNameInConflict);
+	}
+
+	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
+		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
+		items.forEach(itpi->{
+			if(mapTcIdTcNameInConflict.containsKey(itpi.getReferencedTestCase().getId())){
+				mapItpiIdTcNameInConflict.put(itpi.getId(),mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
+			}
+		});
+		return  mapItpiIdTcNameInConflict;
+	}
+
+	private List<Long> getListTcIdsFromListItems(List<IterationTestPlanItem> items){
+		List<Long> listIds = items.stream()
+			.map(itpi -> itpi.getReferencedTestCase().getId()).collect(Collectors.toList());
+		return  listIds;
 	}
 
 	// **************************** boiler plate code *************************************

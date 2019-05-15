@@ -49,4 +49,9 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 */
 	Map<Long, String> updateTAScript(List<Long> tcIds);
 
+	/*TM-13*/
+	Map<Long, String> updateTAScriptForIteration(Long iterationId);
+	Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId);
+	Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds);
+
 }

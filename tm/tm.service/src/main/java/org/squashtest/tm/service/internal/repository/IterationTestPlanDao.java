@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanItem, Long>{
+public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanItem, Long>, CustomIterationTestPlanDao{
 
 	IterationTestPlanItem findById(long itemTestPlanId);
 
