@@ -57,7 +57,15 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
