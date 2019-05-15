@@ -318,7 +318,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Map<Long, String> updateTAScript(List<Long> tcIds) {
-		LOGGER.debug(String.format("Update TA script of the following test cases: %s", tcIds.toString()));
+		LOGGER.debug("Update TA script of the following test cases: {}", tcIds.toString());
 
 		Map<Long, String> losingTAScriptTestCases = new HashMap<>();
 
@@ -386,7 +386,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList, Map<Long, String> losingTAScriptTestCases){
-		LOGGER.debug(String.format("Conflict of TA Script association detected for test case %s", tc.getId().toString()));
+		LOGGER.debug("Conflict of TA Script association detected for test case {}", tc.getId().toString());
 			requestDao.updateIsManual(tc.getId(), false);
 
 			if (tc.getAutomatedTest() != null) {
@@ -402,7 +402,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void addOrEditAutomatedScript(TestCase tc, AutomatedTest automatedTest){
-		LOGGER.debug(String.format("Add TA Script %s to test case %s", automatedTest.getName(), tc.getId().toString()));
+		LOGGER.debug("Add TA Script {} to test case {}", automatedTest.getName(), tc.getId().toString());
 
 		// Because we made the minimum call to automation server in updateTAScript method, the AutomatedTest in argument is not necessarily linked to the test case's AutomationProject.
 		// Hence the stream on the list of TestAutomationProject of the test case's tm project.
@@ -414,7 +414,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
-		LOGGER.debug(String.format("No TA script associated with test case %s", tc.getId().toString()));
+		LOGGER.debug("No TA script associated with test case {}", tc.getId().toString());
 		if(!tc.getAutomationRequest().isManual()){
 			if (tc.getAutomatedTest()!=null ){
 				testCaseModificationService.removeAutomation(tc.getId());
@@ -430,7 +430,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	/*TM-13:update automatic script before execution */
 	@Override
 	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
-		LOGGER.debug(String.format("Update TA script for following iteration's ITPI: %s", iterationId.toString()));
+		LOGGER.debug("Update TA script for following iteration's ITPI: {}", iterationId.toString());
 		Map<Long, String> result = new HashMap<>();
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIterationIdWithTCAutomated(iterationId);
@@ -443,7 +443,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
-		LOGGER.debug(String.format("Update TA script for following test suite's ITPI: %s", testSuiteId.toString()));
+		LOGGER.debug("Update TA script for following test suite's ITPI: {}", testSuiteId.toString());
 		Map<Long, String> result = new HashMap<>();
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
@@ -456,7 +456,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Override
 	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
-		LOGGER.debug(String.format("Update TA script of the following ITPI: %s", testPlanIds.toString()));
+		LOGGER.debug("Update TA script of the following ITPI: {}", testPlanIds.toString());
 		Map<Long, String> result = new HashMap<>();
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByItemsIdWithTCAutomated(testPlanIds);
 		if (!items.isEmpty()){
