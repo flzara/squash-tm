@@ -111,7 +111,7 @@ public class AutomationRequest implements Identified {
 	@Type(type = "org.hibernate.type.TextType")
 	private String conflictAssociation = "";
 
-	/*Tm-13: si mapping manuel ==> manuel = true*/
+	/*Tm-13: true if testCase's TA script is from a manual association*/
 	@Column(name= "IS_MANUAL")
 	private boolean isManual;
 

@@ -89,23 +89,9 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-13-update-is-manual-postgresql" author="amk" dbms="postgresql">
-   <sql>
-     UPDATE AUTOMATION_REQUEST SET IS_MANUAL = true
-     WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc, AUTOMATION_REQUEST ar WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
-   </sql>
-  </changeSet>
-
-  <changeSet id="tm-1.20.0-TM-13-update-is-manual-mysql" author="amk" dbms="mysql">
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual" author="amk" dbms="postgresql, mysql, h2">
     <sql>
-      UPDATE AUTOMATION_REQUEST ar SET ar.IS_MANUAL = true
-      WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
-    </sql>
-  </changeSet>
-
-  <changeSet id="tm-1.20.0-TM-13-update-is-manual-h2" author="amk" dbms="h2">
-    <sql>
-      UPDATE AUTOMATION_REQUEST ar SET ar.IS_MANUAL = true
+      UPDATE AUTOMATION_REQUEST ar SET IS_MANUAL = true
       WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
     </sql>
   </changeSet>

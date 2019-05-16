@@ -26,7 +26,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
- <!-- <include file="tm.data-1.20.0.xml" relativeToChangelogFile="true" />-->
+ <include file="tm.data-1.20.0-TM-13.xml" relativeToChangelogFile="true" />
 
 
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
@@ -35,13 +35,23 @@
   <!-- ========================================================================================================= -->
 
 
-  <changeSet id="tm-1.20.0" author="amk" dbms="mysql, postgresql, h2">
+  <changeSet id="tm-1.20.0-TM-13-test-uuid" author="amk" dbms="mysql, postgresql, h2">
     <preConditions>
       <sqlCheck expectedResult="0">
-        SELECT count(*) from test_case where uuid IS null
+        SELECT count(*) from TEST_CASE where uuid IS null
       </sqlCheck>
 
     </preConditions>
     <comment>We check that there are no null value for uuid  </comment>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-test-isManual" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from AUTOMATION_REQUEST where IS_MANUAL = true
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that IS_MANUAL value have been changed according to the changeset  </comment>
   </changeSet>
 </databaseChangeLog>
