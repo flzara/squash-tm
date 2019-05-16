@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.tf
 
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
@@ -329,26 +330,15 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		it.id >> -1L
 
 		//Iteration test plan item
-		IterationTestPlanItem itpi1 =Mock()
-		itpi1.id >> -11L
-		itpi1.iteration>>it
-		itpi1.referencedTestCase >> targetTC
-		it.addTestPlan(itpi1)
+		IterationTestPlanItem itpi =Mock()
+		itpi.id >> -11L
+		itpi.iteration>>it
+		itpi.referencedTestCase >> targetTC
+		it.addTestPlan(itpi)
 
-
-		def mapTcIdNameTC = new HashMap();
-		mapTcIdNameTC.put(-1L,"TCWithMoreThanOneTAScript")
-
-
-		def mapItpiIdNameTC= new HashMap();
-		mapItpiIdNameTC.put(-11L,"TCWithMoreThanOneTAScript")
-
-		iterationTestPlanDao.findAllByIterationIdWithTCAutomated(-1L)>>[itpi1]
+		iterationTestPlanDao.findAllByIterationIdWithTCAutomated(-1L)>>[itpi]
 		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
-		//service.updateTAScript(Collections.singletonList(-1L))>>mapTcIdNameTC
-
-		//service.updateTAScriptForIteration(-1L)>>mapItpiIdNameTC
 
 		when:
 		def result = service.updateTAScriptForIteration(-1L)
@@ -359,6 +349,136 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		result.containsValue("TCWithMoreThanOneTAScript")
 
 
+
+	}
+
+	def "Update TA script for test suite with conflict list"(){
+		// A test Case
+		TestCase targetTC = Mock()
+		targetTC.id >> -1L
+		targetTC.uuid >> "uuid2"
+		targetTC.automatedTest >> Mock(AutomatedTest)
+		targetTC.automatable >> TestCaseAutomatable.Y
+		targetTC.name >> "TCWithMoreThanOneTAScript"
+
+		// An AutomationRequest
+		AutomationRequest automationRequest = Mock()
+		automationRequest.manual >> true
+		targetTC.automationRequest >> automationRequest
+
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		targetTC.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		//Iteration
+		Iteration it = Mock()
+		it.id >> -1L
+
+		//Test suite
+		TestSuite ts= Mock()
+		ts.id >> -21L
+		ts.iteration >> -1L
+
+		//Iteration test plan item
+		IterationTestPlanItem itpi =Mock()
+		itpi.id >> -11L
+		itpi.iteration>>it
+		itpi.referencedTestCase >> targetTC
+		itpi.testSuites >> [ts]
+
+
+		iterationTestPlanDao.findAllByTestSuiteIdWithTCAutomated( -21L)>>[itpi]
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [targetTC]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
+
+		when:
+		def result = service.updateTAScriptForTestSuite(-21L)
+
+		then:
+		result.size() == 1
+		result.containsKey(-11L)
+		result.containsValue("TCWithMoreThanOneTAScript")
+
+}
+
+	def "Update TA script for items with conflict list"(){
+
+		// A test Case 1
+		TestCase tc1 = Mock()
+		tc1.id >> -1L
+		tc1.uuid >> "uuid2"
+		tc1.automatedTest >> Mock(AutomatedTest)
+		tc1.automatable >> TestCaseAutomatable.Y
+		tc1.name >> "TCWithMoreThanOneTAScript"
+
+		// An AutomationRequest
+		AutomationRequest automationRequest = Mock()
+		automationRequest.manual >> true
+		tc1.automationRequest >> automationRequest
+
+		// A project
+		Project project = Mock()
+		project.isAllowAutomationWorkflow() >> true
+		tc1.project >> project
+
+		// An AutomationProject
+		TestAutomationProject automationProject = Mock()
+		automationProject.jobName >> "jobTA"
+		automationProject.id >> -1L
+		project.testAutomationProjects >> [automationProject]
+
+		// An AutomationServer
+		TestAutomationServer server = Mock()
+		server.id >> -1L
+		automationProject.server >> server
+		project.testAutomationServer >> server
+
+		// A test Case 2
+		TestCase tc2 = Mock()
+		tc2.id >> -2L
+		tc2.uuid >> "uuid1"
+		tc2.automatable >> TestCaseAutomatable.M
+		tc2.name >> "TCIsNotAutomated"
+
+		// A project
+		Project project1 = Mock()
+		project1.isAllowAutomationWorkflow() >> false
+		tc2.project >> project1
+
+		//Iteration test plan item
+		IterationTestPlanItem itpi1 =Mock()
+		itpi1.id >> -11L
+		itpi1.referencedTestCase >> tc1
+
+		//Iteration test plan item
+		IterationTestPlanItem itpi2 =Mock()
+		itpi2.id >> -12L
+		itpi2.referencedTestCase >> tc2
+
+		iterationTestPlanDao.findAllByItemsIdWithTCAutomated([-11L,  -12L])>>[itpi1]
+		testCaseDao.findAllByIdsWithProject(Collections.singletonList(-1L)) >> [tc1]
+		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
+
+		when:
+		def result = service.updateTAScriptForItems([-11L,  -12L])
+
+		then:
+		result.size() == 1
+		result.containsKey(-11L)
+		result.containsValue("TCWithMoreThanOneTAScript")
 
 	}
 	def createAssignableTestList() {
@@ -399,3 +519,4 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 
 	}
 }
+
