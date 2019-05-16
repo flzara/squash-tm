@@ -78,7 +78,7 @@
       </column>
     </addColumn>
   </changeSet>
-
+   
   <changeSet id="tm-1.20.0-TM-220-add-missing-role-automation" author="agu">
     <comment>Add missing automation role following changeset tm-1.19.0-SQTM-510-add-roles-automation</comment>
     <sql>
@@ -109,6 +109,60 @@
       <column name="LABEL" type="VARCHAR(255)"/>
       <column name="CUF_ID" type="BIGINT" />
     </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-add-conflict-association-ismanual" author="amk">
+    <addColumn tableName="AUTOMATION_REQUEST">
+      <column name="CONFLICT_ASSOCIATION" defaultValue="NULL" type="TEXT">
+      </column>
+      <column name="IS_MANUAL" type="BOOLEAN" defaultValueBoolean="false">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-is-manual" author="amk" dbms="postgresql, mysql, h2">
+    <sql>
+      UPDATE AUTOMATION_REQUEST ar SET IS_MANUAL = true
+      WHERE TEST_CASE_ID in (SELECT tc.TCLN_ID FROM TEST_CASE tc WHERE ar.TEST_CASE_ID = tc.TCLN_ID AND tc.TA_TEST IS NOT null);
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-association-auto-cdt-script-auto" author="amk">
+    <addColumn tableName="TEST_CASE">
+      <column name="UUID" type="java.sql.Types.VARCHAR(36)" >
+      </column>
+    </addColumn>
+    <addUniqueConstraint tableName="TEST_CASE" columnNames="UUID" constraintName="uc_test_case_uuid"/>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-create-uuid-module-postgresql" author="aguilhem" dbms="postgresql">
+    <comment>create uuid extension if not exist (for postgresql > 9.1 </comment>
+    <sql>
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-postgresql" author="amk" dbms="postgresql">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE TEST_CASE SET UUID =  uuid_generate_v4() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE ALTER COLUMN UUID SET NOT NULL;
+    </sql>
+  </changeSet>
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-mysql" author="amk" dbms="mysql">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE TEST_CASE SET UUID =  uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE MODIFY UUID VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
+  <changeSet id="tm-1.20.0-TM-13-update-uuid-h2" author="amk" dbms="h2">
+    <comment>generate uuid if it's null </comment>
+    <sql>
+      UPDATE TEST_CASE SET UUID =  random_uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_CASE MODIFY UUID VARCHAR2(36) NOT NULL;
+    </sql>
   </changeSet>
 
 </databaseChangeLog>

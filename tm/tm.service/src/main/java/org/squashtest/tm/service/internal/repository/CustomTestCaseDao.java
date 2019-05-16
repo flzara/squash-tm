@@ -202,4 +202,14 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId);
 
+	TestCase findTestCaseByUuid(String uuid);
+
+	/**
+	 * Will return test cases with the given ids. Test case's project and project's automation requests are fetched.
+	 *
+	 * @param testCaseIds : the ids of the test cases to find
+	 * @return test cases corresponding to the given ids
+	 */
+	List<TestCase> findAllByIdsWithProject(List<Long> testCaseIds);
+
 }

@@ -30,6 +30,8 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.Gather
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 
 public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Collection<AutomatedTest>> {
@@ -70,12 +72,12 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 
 		if (!stepSequence.hasMoreElements()) {
 
-			Collection<String> names = ((GatherTestList) currentStep).getTestNames();
+			Map<String, List<String>> namesWithLinkedTC = ((GatherTestList) currentStep).getTestNamesWithLinkedTCMap();
 
-			for (String name : names) {
-				AutomatedTest test = new AutomatedTest(name, project);
+			namesWithLinkedTC.forEach((name, linkedTC) -> {
+				AutomatedTest test = new AutomatedTest(name, project, linkedTC);
 				tests.add(test);
-			}
+			});
 
 		} else {
 			throw new RuntimeException("tried to build the result before the computation is over, probably due to a buggy thread");

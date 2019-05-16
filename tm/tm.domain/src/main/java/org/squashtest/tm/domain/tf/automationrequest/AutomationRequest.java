@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -33,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -42,6 +44,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -101,6 +104,34 @@ public class AutomationRequest implements Identified {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
+
+	/*TM-13*/
+	@Column(name="CONFLICT_ASSOCIATION")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	private String conflictAssociation = "";
+
+	/*Tm-13: true if testCase's TA script is from a manual association*/
+	@Column(name= "IS_MANUAL")
+	private boolean isManual;
+
+	public String getConflictAssociation() {
+		return conflictAssociation;
+	}
+
+	public void setConflictAssociation(String conflictAssociation) {
+		this.conflictAssociation = conflictAssociation;
+	}
+
+	public boolean isManual() {
+		return isManual;
+	}
+
+	public void setManual(boolean manual) {
+		isManual = manual;
+	}
+
+
 
 	public Long getId() {
 		return id;

@@ -63,6 +63,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 									'value': 'TRANSMITTED'
 								}
 							}).success(function() {
+								self.trySquashTAScriptAssociation();
 								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 							});
 						});
@@ -101,6 +102,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						$('.test-case-automation-request-block').hide();
 					}
 				},
+
+				trySquashTAScriptAssociation : function () {
+					$.ajax({
+						url:  this.settings.urls.testCaseUrl + "/associate-TA-script",
+						method: 'POST'
+					});
+			  },
 
 				events : {
 

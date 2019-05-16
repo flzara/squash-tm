@@ -41,49 +41,103 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
-		sendPreview([]).done(openAutosuiteOverview);
+		var tpiIdsWithAutomaticExecutionMode = $(".test-plan-table").squashTable().fnGetData().filter(function(row){
+			return row['exec-mode'] === 'A';
+		}).map(function(row){
+			return row['entity-id'];
+		});
+		var unlaunchableTest;
+		updateTAScript().done(function(map){
+			// No arrow function in IE 11 ...
+			var launchableIds = tpiIdsWithAutomaticExecutionMode.filter(function(id){
+				return map[id] === undefined;
+			});
+			if (launchableIds.length === 0){
+				$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+			} else {
+				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
+				unlaunchableTest = Object.keys(map).map(function(e) {
+					return map[e]
+				});
+				createSuite(launchableIds).done(function(suite) {
+					startSuite(suite, unlaunchableTest);
+				});
+			}
+		});
 	}
 
-	
 	function executeSelection() {
 		var ids = $(".test-plan-table").squashTable().getSelectedIds();
+		var unlaunchableTest;
 		if (ids.length === 0) {
 			$.squash.openMessage(messages.get("popup.title.error"), messages.get("message.EmptyTableSelection"));
 		} else {
-			sendPreview(ids).done(openAutosuiteOverview);
+			updateTAScript(ids).done(function(map){
+				// No arrow function in IE 11 ...
+				var launchableIds = ids.filter(function(id){
+					return map[id] === undefined;
+				});
+				if (launchableIds.length === 0){
+					$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+				} else {
+					//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
+					unlaunchableTest = Object.keys(map).map(function(e) {
+						return map[e]
+					}).filter(function(value, index, self){
+						return self.indexOf(value) === index;
+					});
+					createSuite(launchableIds).done(function(suite) {
+						startSuite(suite, unlaunchableTest);
+					});
+				}
+			});
 		}
 	}
 
-	
-	function openAutosuiteOverview(preview) {
-		squashtm.context.autosuiteOverview.start(preview);
+	function startSuite(suite, unlaunchableTest) {
+		squashtm.context.autosuiteOverview.start(suite, unlaunchableTest);
 	}
 
 	/**
 	 * issues create suite ajax request and returns request promise
 	 */
-	function sendPreview(itemIds) {
-		var previewUrl = $("#auto-exec-btns-panel").data("suites-url") + "/preview";
-		
-		var context = {
-			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
-			id : squashtm.page.identity.resid
-		}; 		
+	function createSuite(itemIds) {
+		var createUrl = $("#auto-exec-btns-panel").data("suites-url") + "/new";
 
-		// set the test plan subset if defined
-		var testPlanSubsetIds = (!!itemIds && itemIds.length > 0) ? itemIds : [];
-		
-		var payload = {
-			context : context,
-			testPlanSubsetIds : testPlanSubsetIds
-		};
+		var data = {};
+		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+		data[ent] = squashtm.page.identity.resid;
+
+		if (!!itemIds && itemIds.length > 0) {
+			data.testPlanItemsIds = itemIds;
+		}
 
 		return $.ajax({
 			type : "POST",
-			url : previewUrl,
+			url : createUrl,
 			dataType : "json",
-			data : JSON.stringify(payload),
-			contentType : "application/json"
+			data : data,
+			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+	}
+
+	function updateTAScript(itemIds){
+		var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+		var data = {};
+		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+		data[ent] = squashtm.page.identity.resid;
+
+		if (!!itemIds && itemIds.length > 0) {
+			data.testPlanItemsIds = itemIds;
+		}
+
+		return $.ajax({
+			type : "POST",
+			url : associateUrl,
+			dataType : "json",
+			data : data,
+			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
 		});
 	}
 

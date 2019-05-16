@@ -149,6 +149,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
 
+
 	public int getTimeoutMillis() {
 		return timeoutMillis;
 	}

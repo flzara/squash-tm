@@ -262,7 +262,9 @@ public class TaParametersBuilder implements ParametersBuilder {
 
 	private void addTestCase(TestCase testCase) {
 		String value = testCase.getReference();
+		String uuid = testCase.getUuid();
 		nullSafePut("TC_REFERENCE", value);
+		params.put("TC_UUID", uuid);
 	}
 
 	private void nullSafePut(String key, String value) {

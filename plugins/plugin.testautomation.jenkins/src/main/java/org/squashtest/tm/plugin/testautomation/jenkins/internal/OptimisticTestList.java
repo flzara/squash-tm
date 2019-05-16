@@ -32,6 +32,8 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.Gather
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -61,14 +63,16 @@ public class OptimisticTestList {
 
 		try {
 			String response = RequestExecutor.getInstance().execute(client, method);
+			
 			TestListElement testList = parser.getTestListFromJson(response);
 
 
 			Collection<AutomatedTest> tests = new LinkedList<>();
-			for (String name : testList.collectAllTestNames()) {
-				AutomatedTest test = new AutomatedTest(name, project);
+			Map<String, List<String>> testNamesWithLinkTCMap = testList.collectAllTestNamesWithLinkedTestCases();
+			testNamesWithLinkTCMap.forEach((testName, linkedTestCases) -> {
+				AutomatedTest test = new AutomatedTest(testName, project, linkedTestCases);
 				tests.add(test);
-			}
+			});
 
 			return tests;
 		} finally {

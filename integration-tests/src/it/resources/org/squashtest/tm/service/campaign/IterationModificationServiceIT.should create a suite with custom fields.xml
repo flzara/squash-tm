@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
@@ -57,7 +57,7 @@
   <!-- 1 TEST CASE WITH 3 TEST STEPS -->
   <TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="test case 1" CREATED_BY="DBU" CREATED_ON="2010-02-01"
     ATTACHMENT_LIST_ID="-3" />
-  <TEST_CASE TCLN_ID="-1" VERSION="1" PREREQUISITE="TEST" />
+  <TEST_CASE TCLN_ID="-1" VERSION="1" PREREQUISITE="TEST" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
   <!-- 3 TEST CASE STEP -->
   <TEST_STEP TEST_STEP_ID="-1" />
   <ACTION_TEST_STEP TEST_STEP_ID="-1" ACTION="lipsum1" ATTACHMENT_LIST_ID="-5" />

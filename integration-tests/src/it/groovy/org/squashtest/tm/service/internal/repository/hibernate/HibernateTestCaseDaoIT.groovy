@@ -463,6 +463,32 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	}
 
+	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
+	def "should find a test case by its UUID"() {
+		given:
+		String uuid = "44d63d7e-11dd-44b0-b584-565b6f791fa1"
+
+		when:
+		def res = testCaseDao.findTestCaseByUuid(uuid)
+
+		then:
+
+		res.id == -10L
+	}
+
+	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
+	def "should not find a test case with the given UUID"() {
+		given:
+		String uuid = "44d63d7e-11dd-44b0-b584-565b6f791cd2"
+
+		when:
+		def res = testCaseDao.findTestCaseByUuid(uuid)
+
+		then:
+
+		res == null
+	}
+
 	// ************* scaffolding ************
 
 	//cannot make it more groovy because java native code wouldn't mix well with other kinds of proxies

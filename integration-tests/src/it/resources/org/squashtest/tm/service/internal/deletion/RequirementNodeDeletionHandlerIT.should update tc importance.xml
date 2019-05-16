@@ -25,7 +25,7 @@
 	depends on NodeDeletionDao.general.dbsetup.xml
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -72,7 +72,7 @@
 	
 	<!-- ============================ TC ================================================ -->
 	<TEST_CASE_LIBRARY_NODE TCLN_ID="-31" NAME="TC1" CREATED_ON="2012-01-02" CREATED_BY="DBU" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-31"/>
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-31" VERSION="1" IMPORTANCE="HIGH" IMPORTANCE_AUTO="TRUE" EXECUTION_MODE="MANUAL"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-31" VERSION="1" IMPORTANCE="HIGH" IMPORTANCE_AUTO="TRUE" EXECUTION_MODE="MANUAL" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa9"/>
 	<!-- ============================ TC / REQUIREMENT================================================ -->
 	<REQUIREMENT_VERSION_COVERAGE VERIFIED_REQ_VERSION_ID="-111" VERIFYING_TEST_CASE_ID="-31"/>
 	<RLN_RELATIONSHIP DESCENDANT_ID="-11" CONTENT_ORDER="0" ANCESTOR_ID="-1"/>

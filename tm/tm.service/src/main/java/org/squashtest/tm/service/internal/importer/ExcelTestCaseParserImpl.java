@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /*
  * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)
@@ -221,6 +223,15 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.getStepElements().add(stepInfo);
 			}
 		});
+
+		// uuid populator
+		fieldPopulators.add(new FieldPopulator(UUID_TAG) {
+			@Override
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String uuid = valueCell(row).getStringCellValue();
+				pseudoTestCase.setUuid(uuid);
+			}
+		});
 	}
 
 	@Override
@@ -309,6 +320,8 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		setTestCaseAutomatable(pseudoTestCase, summary, testCase);
 
 		setTestCaseSteps(pseudoTestCase, testCase);
+
+		setTestCaseUuid(pseudoTestCase, testCase);
 
 		return testCase;
 	}
@@ -417,6 +430,14 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private void setTestCaseDescription(PseudoTestCase pseudoTestCase, TestCase testCase) {
 		String desc = pseudoTestCase.formatDescription();
 		testCase.setDescription(desc);
+	}
+
+	private void setTestCaseUuid(PseudoTestCase pseudoTestCase, TestCase testCase) {
+		String uuid = pseudoTestCase.getUuid();
+		if (StringUtils.isBlank(uuid)){
+			uuid = UUID.randomUUID().toString();
+		}
+		testCase.setUuid(uuid);
 	}
 
 	/**

@@ -206,6 +206,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private TestCaseLibraryDao testCaseLibraryDao;
 
 
+
 	/* *************** TestCase section ***************************** */
 
 	@Override
@@ -649,6 +650,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
+		Collection<TestAutomationProject> taProjects = extractAutomationProject(testCase);
+
+		return taService.listTestsInProjects(taProjects);
+	}
+
+	private Collection<TestAutomationProject> extractAutomationProject(TestCase testCase){
+
 		Collection<TestAutomationProject> taProjects = testCase.getProject().getTestAutomationProjects();
 
 		if (LOGGER.isTraceEnabled()){
@@ -656,7 +664,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.trace("involved test automation projects are : {}", taProjectIds);
 		}
 
-		return taService.listTestsInProjects(taProjects);
+		return taProjects;
 	}
 
 	@Override
@@ -950,7 +958,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			} else {
 
 				Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
-
+				/*TM-13: Màj is-Manuel = true */
+				requestDao.updateIsManual(testCaseId, true);
 				// once it's okay we commit the test association
 				return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
 			}
@@ -958,6 +967,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName) {
+			return bindAutomatedTest(testCaseId, taProjectId, testName);
 	}
 
 	@Override
@@ -1297,6 +1311,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		User currentUser = userAccountService.findCurrentUser();
 		request.setCreatedBy(currentUser);
 
+		//TM-13: setting isManual depending on test case's automated test value
+		if(testCase.getAutomatedTest()!=null) {
+			request.setManual(true);
+		}
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
 

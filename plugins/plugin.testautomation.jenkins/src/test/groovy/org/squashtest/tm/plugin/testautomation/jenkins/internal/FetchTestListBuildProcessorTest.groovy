@@ -57,12 +57,13 @@ class FetchTestListBuildProcessorTest extends Specification {
 		given :
 		
 			def names = [ "tests/toto.txt", "tests/sub/mike.txt" ]
+			def namesWithLinkedTestCaseMap = [ "tests/toto.txt": ["UUID1", "UUID2"], "tests/sub/mike.txt": [] ]
 		
 			StartBuild start = mockStartBuild()
 			CheckBuildQueue queue = mockQueue(false)
 			GetBuildID getID = mockGetId()
 			CheckBuildRunning running = mockRunning(false)
-			GatherTestList gather = mockGather(names)
+			GatherTestList gather = mockGather(namesWithLinkedTestCaseMap)
 
 		and :
 			sequence.nextElement() >>> [start, queue, getID, running, gather ]
@@ -82,6 +83,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 			res.collect{it.class}.unique() == [AutomatedTest] 
 			res.collect{it.name} == names
 			res.collect{it.project}.unique() == [project]
+			res.each {it.linkedTC == namesWithLinkedTestCaseMap[it.name]}
 		
 	}
 	
@@ -91,12 +93,13 @@ class FetchTestListBuildProcessorTest extends Specification {
 		given :
 		
 			def names = [ "tests/toto.txt", "tests/sub/mike.txt" ]
+			def namesWithLinkedTestCaseMap = [ "tests/toto.txt": ["UUID1","UUID2"], "tests/sub/mike.txt": [] ]
 		
 			StartBuild start = mockStartBuild()
 			CheckBuildQueue queue = mockQueue(true)
 			GetBuildID getID = mockGetId()
 			CheckBuildRunning running = mockRunning(true)
-			GatherTestList gather = mockGather(names)
+			GatherTestList gather = mockGather(namesWithLinkedTestCaseMap)
 
 		and :
 			sequence.nextElement() >>> [start, queue, getID, running, gather ]
@@ -116,6 +119,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 			res.collect{it.class}.unique() == [AutomatedTest]
 			res.collect{it.name} == names
 			res.collect{it.project}.unique() == [project]
+			res.each {it.linkedTC == namesWithLinkedTestCaseMap[it.name]}
 		
 	}
 	
@@ -155,7 +159,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 		def wasRan = false
 		
 		
-		public MockGatherTest(BuildProcessor processor, Collection<String> response){
+		public MockGatherTest(BuildProcessor processor, Map<String, List<String>> response){
 			super(processor)
 			this.response = response;
 		}
@@ -165,7 +169,7 @@ class FetchTestListBuildProcessorTest extends Specification {
 			wasRan=true
 		}
 		@Override
-		public Collection<String> getTestNames(){
+		public Map<String, List<String>> getTestNamesWithLinkedTCMap(){
 			return response
 		}
 	}

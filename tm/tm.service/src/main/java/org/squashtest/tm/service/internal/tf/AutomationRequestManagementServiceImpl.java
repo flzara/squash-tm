@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +30,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
@@ -36,22 +41,35 @@ import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED;
 import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS;
@@ -74,6 +92,8 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	private static final String WRITE_AS_FUNCTIONAL = "WRITE_AS_FUNCTIONAL";
 
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestManagementServiceImpl.class);
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -100,8 +120,16 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
-	TestCaseDao testCaseDao;
+	private TestCaseDao testCaseDao;
 
+	@Inject
+	private TestCaseModificationService testCaseModificationService;
+
+	@Inject
+	private UnsecuredAutomatedTestManagerService taService;
+
+	@Inject
+	private IterationTestPlanDao iterationTestPlanDao;
 
 	// *************** implementation of the finder interface *************************
 
@@ -286,6 +314,180 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return requestDao.countAutomationRequestValid(projectIds);
 	}
 
+	// **************************** TA script auto association section *************************************
+
+	@Override
+	public Map<Long, String> updateTAScript(List<Long> tcIds) {
+		LOGGER.debug("Update TA script of the following test cases: {}", tcIds.toString());
+
+		Map<Long, String> losingTAScriptTestCases = new HashMap<>();
+
+		// 1 - We fetch all the test cases from DB (with project and AutomationProject list)
+		List<TestCase> testCases = testCaseDao.findAllByIdsWithProject(tcIds);
+
+		// 2 - We extract all test automation projects for the given TM projects
+		List<TestAutomationProject> testAutomationProjects = testCases.stream()
+			.flatMap(tc -> tc.getProject().getTestAutomationProjects().stream())
+			// 3 - We filter them to have one element only with the same combination remote server/jobName. This in order to make the minimum call to the automation server in step 4.
+			.filter(distinctByKey(tap -> Arrays.asList(tap.getServer().getId(), tap.getJobName())))
+			.collect(Collectors.toList());
+
+		// 4 - We retrieve the TA scripts from the TA jobs
+		Collection<TestAutomationProjectContent> taProjectContents = taService.listTestsFromRemoteServers(testAutomationProjects);
+
+		testCases.forEach(tc -> {
+			// if block to update only automatable test cases in a project with automation workflow allowed.
+			if(tc.getProject().isAllowAutomationWorkflow()
+				&& TestCaseAutomatable.Y.equals(tc.getAutomatable())) {
+				// We extract the TestAutomationProjectContent relevant for the current test case
+				List<TestAutomationProjectContent> testAutomationProjectContentsFilteredByTestCaseAutomationServer =
+					taProjectContents.stream().filter(tapc -> tapc.getProject().getServer().getId().equals(tc.getProject().getTestAutomationServer().getId())).collect(Collectors.toList());
+
+				// Finally we do the TA script association
+				doTAScriptAssignation(tc, testAutomationProjectContentsFilteredByTestCaseAutomationServer, losingTAScriptTestCases);
+			} else {
+				throw new IllegalArgumentException();
+			}
+		});
+
+		return losingTAScriptTestCases;
+	}
+
+	// Method allowed to retrieve distinct element from a list based on multiple attributes.
+	// Thank you stack overflow: https://stackoverflow.com/questions/48165456/retrieve-distinct-element-based-on-multiple-attributes-of-java-object-using-java
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
+	}
+
+	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents, Map<Long, String> losingTAScriptTestCases){
+		List<AutomatedTest> assignableAutomatedTestList = extractAssignableAutomatedTestList(testCase, testAutomationProjectContents);
+
+		if(assignableAutomatedTestList.size() > 0){
+			if(assignableAutomatedTestList.size() == 1){
+				addOrEditAutomatedScript(testCase,assignableAutomatedTestList.get(0));
+			}
+			else {
+				manageConflictAssociation(testCase, assignableAutomatedTestList, losingTAScriptTestCases);
+			}
+		} else {
+			manageNoScript(testCase, losingTAScriptTestCases);
+		}
+	}
+
+	private List<AutomatedTest> extractAssignableAutomatedTestList (TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents) {
+		List<AutomatedTest> assignableAutomatedTestList = testAutomationProjectContents.stream()
+			.map(TestAutomationProjectContent::getTests)
+			.flatMap(Collection::stream)
+			.filter(automatedTest -> automatedTest.getLinkedTC().contains(testCase.getUuid()))
+			.collect(Collectors.toList());
+
+		return assignableAutomatedTestList;
+	}
+
+	private void manageConflictAssociation(TestCase tc, List<AutomatedTest> automatedTestList, Map<Long, String> losingTAScriptTestCases){
+		LOGGER.debug("Conflict of TA Script association detected for test case {}", tc.getId().toString());
+			requestDao.updateIsManual(tc.getId(), false);
+
+			if (tc.getAutomatedTest() != null) {
+				testCaseModificationService.removeAutomation(tc.getId());
+				losingTAScriptTestCases.put(tc.getId(), tc.getName());
+			}
+
+			StringJoiner stringJoiner = new StringJoiner("#");
+			automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
+
+			requestDao.updateConflictAssociation(tc.getId(), stringJoiner.toString());
+
+	}
+
+	private void addOrEditAutomatedScript(TestCase tc, AutomatedTest automatedTest){
+		LOGGER.debug("Add TA Script {} to test case {}", automatedTest.getName(), tc.getId().toString());
+
+		// Because we made the minimum call to automation server in updateTAScript method, the AutomatedTest in argument is not necessarily linked to the test case's AutomationProject.
+		// Hence the stream on the list of TestAutomationProject of the test case's tm project.
+		TestAutomationProject trueAutomationProject = tc.getProject().getTestAutomationProjects().stream().filter(tap -> tap.getJobName().equals(automatedTest.getProject().getJobName())).findFirst().get();
+
+		requestDao.updateIsManual(tc.getId(), false);
+
+		testCaseModificationService.bindAutomatedTestAutomatically(tc.getId(), trueAutomationProject.getId(), automatedTest.getName());
+	}
+
+	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
+		LOGGER.debug("No TA script associated with test case {}", tc.getId().toString());
+		if(!tc.getAutomationRequest().isManual()){
+			if (tc.getAutomatedTest()!=null ){
+				testCaseModificationService.removeAutomation(tc.getId());
+			}else if(tc.getAutomationRequest().getConflictAssociation()!=null && !tc.getAutomationRequest().getConflictAssociation().isEmpty()){
+				requestDao.updateConflictAssociation(tc.getId(), "");
+			}
+			losingTAScriptTestCases.put(tc.getId(), tc.getName());
+			requestDao.updateIsManual(tc.getId(), false);
+		}
+
+	}
+
+	/*TM-13:update automatic script before execution */
+	@Override
+	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
+		LOGGER.debug("Update TA script for following iteration's ITPI: {}", iterationId.toString());
+		Map<Long, String> result = new HashMap<>();
+
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIterationIdWithTCAutomated(iterationId);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
+		LOGGER.debug("Update TA script for following test suite's ITPI: {}", testSuiteId.toString());
+		Map<Long, String> result = new HashMap<>();
+
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
+		LOGGER.debug("Update TA script of the following ITPI: {}", testPlanIds.toString());
+		Map<Long, String> result = new HashMap<>();
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByItemsIdWithTCAutomated(testPlanIds);
+		if (!items.isEmpty()){
+			result = doItpiTAScriptUpdate(items);
+		}
+		return result;
+	}
+
+	private Map<Long, String> doItpiTAScriptUpdate(List<IterationTestPlanItem> itpisToUpdate) {
+		List<Long> tcIds = getListTcIdsFromListItems(itpisToUpdate);
+
+		Map<Long, String> mapTcIdTcNameInConflict = updateTAScript(tcIds);
+		return getListItpiIdNameTc(itpisToUpdate, mapTcIdTcNameInConflict);
+	}
+
+	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
+		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
+		items.forEach(itpi->{
+			if(mapTcIdTcNameInConflict.containsKey(itpi.getReferencedTestCase().getId())){
+				mapItpiIdTcNameInConflict.put(itpi.getId(),mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
+			}
+		});
+		return  mapItpiIdTcNameInConflict;
+	}
+
+	private List<Long> getListTcIdsFromListItems(List<IterationTestPlanItem> items){
+		List<Long> listIds = items.stream()
+			.map(itpi -> itpi.getReferencedTestCase().getId()).collect(Collectors.toList());
+		return  listIds;
+	}
+
 	// **************************** boiler plate code *************************************
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {
@@ -296,5 +498,4 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		}
 		indexationService.batchReindexItpi(itpiIds);
 	}
-
 }

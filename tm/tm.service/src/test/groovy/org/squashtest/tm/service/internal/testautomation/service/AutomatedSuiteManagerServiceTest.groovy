@@ -67,7 +67,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		service.permissionService = permService
 
 		service.customFieldValueFinder = finder
-		builderProvider.get() >> new TaParametersBuilder()
+		builderProvider.get() >> { return new TaParametersBuilder()}
 		service.paramBuilder = builderProvider
 	}
 
@@ -291,6 +291,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		extender.getExecution() >> exec
 
 		TestCase tc = Mock()
+		tc.uuid >> "44d63d7e-11dd-44b0-b584-565b6f791fa9"
 
 		exec.referencedTestCase >> tc
 

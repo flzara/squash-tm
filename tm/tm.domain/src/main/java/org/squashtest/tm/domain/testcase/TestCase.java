@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
@@ -62,6 +63,7 @@ import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -78,7 +80,10 @@ import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -88,6 +93,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -119,14 +125,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES, boost=@Boost(2f), bridge = @FieldBridge(impl = StringFieldBridge.class))
+	@Field(analyze = Analyze.NO, store = Store.YES, boost = @Boost(2f), bridge = @FieldBridge(impl = StringFieldBridge.class))
 	@Size(min = 0, max = MAX_REF_SIZE)
 	@SortableField(forField = "reference")
 	private String reference = "";
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Field(index = Index.YES, analyzer = @Analyzer(definition = "htmlStrip"), store = Store.YES, boost=@Boost(2f))
+	@Field(index = Index.YES, analyzer = @Analyzer(definition = "htmlStrip"), store = Store.YES, boost = @Boost(2f))
 	private String prerequisite = "";
 
 	@NotNull
@@ -141,8 +147,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES,bridge = @FieldBridge(impl = CollectionSizeBridge.class))
-	@SortableField(forField ="requirements")
+	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
+	@SortableField(forField = "requirements")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
@@ -238,6 +244,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	private TestCaseAutomatable automatable = M;
 
+	/*TM-13*/
+	@NotNull
+	@Column(name = "UUID")
+	@Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
+	private String uuid;
 
 	// *************************** CODE *************************************
 
@@ -250,6 +261,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public TestCase() {
 		super();
+		UUID uuid = UUID.randomUUID();
+		setUuid(uuid.toString());
 	}
 
 	public int getVersion() {
@@ -567,9 +580,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public boolean isAutomated() {
 		boolean isAutomated = false;
-		if(getProject().isAllowAutomationWorkflow()) {
-			if(automatable.equals(TestCaseAutomatable.Y) && AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus())) {
-				if(TestCaseKind.GHERKIN.equals(kind)) {
+		if (getProject().isAllowAutomationWorkflow()) {
+			if (automatable.equals(TestCaseAutomatable.Y) && AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus())) {
+				if (TestCaseKind.GHERKIN.equals(kind)) {
 					isAutomated = automatedTest != null && getProject().getScmRepository() != null;
 				} else {
 					isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
@@ -891,6 +904,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.importance = null;
 		res.status = null;
 		res.automatable = null;
+		res.uuid = null;
 
 		return res;
 	}
@@ -989,6 +1003,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void setAutomatable(@NotNull TestCaseAutomatable automatable) {
 		this.automatable = automatable;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }
 

@@ -382,6 +382,12 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(status, locale);
 	}
 
+	@RequestMapping(value="/associate-TA-script", method = RequestMethod.POST)
+	@ResponseBody
+	public void resolveTAScriptAssociation(@PathVariable long testCaseId){
+		automationRequestModificationService.updateTAScript(Collections.singletonList(testCaseId));
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)
 	public JsonTestCase getNewVersionTemplate(@PathVariable(TEST_CASE_ID) Long testCaseId) {

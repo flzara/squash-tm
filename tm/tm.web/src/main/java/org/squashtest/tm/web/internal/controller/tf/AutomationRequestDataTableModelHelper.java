@@ -33,7 +33,11 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -70,17 +74,26 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 		data.put("entity-index", getCurrentIndex());
 		data.put("script", populateScriptAuto(item));
+		data.put("uuid", item.getTestCase().getUuid());
 		data.put("checkbox", "");
 		data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
+		data.put("listScriptConflict",  item.getTestCase() != null && item.getTestCase().getAutomationRequest() != null ? convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()) : null);
 		data.put("writable", isWritable(item.getTestCase(), true));
 		data.put("writableAutom", isWritable(item.getTestCase(), false));
 
 		return data;
 	}
 
+	/*TM-13*/
+	private List<String> convertChaineToList(String chaine){
+
+		String[] list = chaine.split("#");
+		ArrayList listScript = new ArrayList(Arrays.asList(list));
+		return listScript;
+	}
 	// Issue 7880
 	private String populateScriptAuto(AutomationRequest item) {
 		if (item.getProject().hasTestAutomationProjects()) {

@@ -20,24 +20,20 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
-import org.apache.http.client.methods.HttpUriRequest
-import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
-import spock.lang.Specification
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor
 
 class GatherTestListTest extends JenkinsConnectorSpec {
 
-	GatherTestList gatherList;
+	GatherTestList gatherList
 	
 	def setup(){
 		
 		gatherList = new GatherTestList()
 		gatherList.client = client
 		gatherList.method = method
-		gatherList.parser = parser;
+		gatherList.parser = parser
 		
 	}
 	
@@ -49,25 +45,25 @@ class GatherTestListTest extends JenkinsConnectorSpec {
 		
 		and :
 			def expected = [
-						  "tests/autrestests/othertest1.txt", 
-						  "tests/database-tests/dbtest-1.txt", 
-						  "tests/database-tests/dbtest-2.txt",
-						  "tests/vcs.txt"
+						  "tests/autrestests/othertest1.txt" : ["UUID1","UUID2"],
+						  "tests/database-tests/dbtest-1.txt" : [],
+						  "tests/database-tests/dbtest-2.txt" : ["UUID3"],
+						  "tests/vcs.txt": []
 						  ]
-		
+
 		when :
 			gatherList.perform()
 		
 		then :
-			gatherList.testNames == expected
+			gatherList.testNamesWithLinkedTCMap == expected
 		
 	}
 	
 	
 	def makeJson(){
 		return '{"name":"tests",'+
-				'"contents":[{"name":"autrestests","contents":[{"name":"othertest1.txt","contents":null}]},'+
+				'"contents":[{"name":"autrestests","contents":[{"name":"othertest1.txt","metadata":{"linked-TC":["UUID1", "UUID2"]},"contents":null}]},'+
 				'{"name":"database-tests","contents":[{"name":"dbtest-1.txt","contents":null},'+
-				'{"name":"dbtest-2.txt","contents":null}]},{"name" : "vcs.txt", "contents" : null}]}'
+				'{"name":"dbtest-2.txt","metadata":{"linked-TC":["UUID3"]},"contents":null}]},{"name" : "vcs.txt", "contents" : null}]}'
 	}
 }

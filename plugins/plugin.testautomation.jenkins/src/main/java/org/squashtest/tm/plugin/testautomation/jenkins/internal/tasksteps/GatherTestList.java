@@ -29,6 +29,8 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep {
 
@@ -44,7 +46,7 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	//* ************ output of the computation ******
 
-	private Collection<String> testNames;
+	private Map<String, List<String>> testNamesWithLinkedTCMap;
 
 	//************* constructor ******************
 
@@ -79,8 +81,8 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 		//not needed here
 	}
 
-	public Collection<String> getTestNames() {
-		return testNames;
+	public Map<String, List<String>> getTestNamesWithLinkedTCMap() {
+		return testNamesWithLinkedTCMap;
 	}
 
 	//**************** code **********************
@@ -96,13 +98,13 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	public void perform() throws Exception {
 		String response = RequestExecutor.getInstance().execute(client, method);
 		TestListElement testList = parser.getTestListFromJson(response);
-		testNames = testList.collectAllTestNames();
+		testNamesWithLinkedTCMap = testList.collectAllTestNamesWithLinkedTestCases();
 	}
 
 
 	@Override
 	public void reset() {
-		testNames = null;
+		testNamesWithLinkedTCMap = null;
 	}
 
 

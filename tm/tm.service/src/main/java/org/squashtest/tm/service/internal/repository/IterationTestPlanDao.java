@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanItem, Long>{
+public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanItem, Long>, CustomIterationTestPlanDao{
 
 	IterationTestPlanItem findById(long itemTestPlanId);
 
@@ -58,4 +58,5 @@ public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanIte
 	
 	@EmptyCollectionGuard
 	List<Long> findAllForMilestones(@Param("milestonesIds") List<Long> milestonesIds);
+
 }

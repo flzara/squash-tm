@@ -161,7 +161,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 
 			var tableId = table.attr("id");
 			$(tableId + "_filter").hide();
-			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script,.assigned-script')
+			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script,.assigned-script, .tp-th-uuid, .tp-th-conflictAssociation')
 				.append("<input class='th_input filter_input'/>");
 
 			$('.tp-th-label .th_input').css('width', '90%');
@@ -172,6 +172,7 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 				assignedToCombo = table.find(".tp-th-assignedto"),
 				assignedTime = table.find(".tp-th-affectedon"),
 				transmittedTime = table.find(".tp-th-transmittedon");
+
 
 			if(userCombo.length !== 0) {
 				var users = initConf.testers;

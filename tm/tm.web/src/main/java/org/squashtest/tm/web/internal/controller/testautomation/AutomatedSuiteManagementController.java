@@ -150,6 +150,7 @@ public class AutomatedSuiteManagementController {
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {ITERATION_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam(ITERATION_ID) long iterationId) {
+
 		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
 		return toProjectContentModel(suite);
 	}
@@ -157,6 +158,7 @@ public class AutomatedSuiteManagementController {
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, params = {TEST_SUITE_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
+
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
 		return toProjectContentModel(suite);
 	}
@@ -165,6 +167,7 @@ public class AutomatedSuiteManagementController {
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIterationItems(
 		@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam(ITERATION_ID) long iterationId) {
+
 		if (testPlanIds.isEmpty()) {
 			createNewAutomatedSuiteForIteration(iterationId);
 		}
@@ -233,5 +236,6 @@ public class AutomatedSuiteManagementController {
 		}
 
 	}
+
 
 }

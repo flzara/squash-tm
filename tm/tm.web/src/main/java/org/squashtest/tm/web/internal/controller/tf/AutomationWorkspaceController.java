@@ -88,11 +88,14 @@ public class AutomationWorkspaceController {
 		.map("transmitted-on", "transmissionDate")
 		.map("priority", "automationPriority")
 		.map("status", "requestStatus")
+		.map("conflictAssociation", "testCase.automationRequest.conflictAssociation")
 		.map("assigned-on", "assignmentDate")
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo.login");
+		.map("assigned-to", "assignedTo.login")
+	    .map("uuid", "testCase.uuid")
+		.map("listScriptConflict", "testCase.automationRequest.conflictAssociation");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
