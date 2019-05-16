@@ -421,7 +421,8 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.leftJoin(request.createdBy, createdBy)
 					.where(project.id.in(inProjectIds)
 						.and(request.testCase.automatable.eq(TestCaseAutomatable.Y))
-						.and(project.allowAutomationWorkflow.isTrue()));
+						.and(project.allowAutomationWorkflow.isTrue())
+						.and(project.automationWorkflowType.eq("NATIVE")));
 
 
 		return querydslRequest;
