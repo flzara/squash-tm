@@ -18,22 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
+import com.querydsl.core.types.Order
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.bugtracker.QIssue
 import org.squashtest.tm.domain.campaign.QCampaign
 import org.squashtest.tm.domain.campaign.QIteration
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
-import org.squashtest.tm.domain.chart.*
+import org.squashtest.tm.domain.query.*
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testautomation.QAutomatedTest
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.service.query.ConfiguredQuery
 
-public class ChartEngineTestUtils{
+public class QueryEngineTestUtils {
 
 	public static QTestCase tc = QTestCase.testCase
 	public static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
@@ -46,30 +48,50 @@ public class ChartEngineTestUtils{
 	public static QIssue iss = QIssue.issue
 	public static QAutomatedTest tatest = QAutomatedTest.automatedTest
 
-	public static MeasureColumn mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+	public static QueryProjectionColumn mkProj(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new MeasureColumn(column : proto, operation : operation)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def meas = new QueryProjectionColumn(columnPrototype : proto, operation : operation)
 
 		return meas
 
 	}
 
-	public static AxisColumn mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+	public static QueryAggregationColumn mkAggr(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def axe = new AxisColumn(column : proto, operation : operation)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def axe = new QueryAggregationColumn(columnPrototype : proto, operation : operation)
 
 		return axe
 
 	}
 
-	public static Filter mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
+	public static QueryFilterColumn mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def filter = new Filter(column : proto, operation : operation, values : values)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def filter = new QueryFilterColumn(columnPrototype : proto, operation : operation, values : values)
 
 		return filter
+	}
+
+
+	public static QueryOrderingColumn mkOrder(ColumnType attrType, DataType datatype, EntityType eType, String attributeName, Order dir){
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def order = new QueryOrderingColumn(columnPrototype : proto, order: dir)
+
+		return order
+	}
+
+	
+	public static InternalQueryModel createInternalModel(QueryColumnPrototypeInstance... columns){
+		def queryModel = new QueryModel()
+		queryModel.projectionColumns = columns.findAll { it instanceof QueryProjectionColumn }
+		queryModel.aggregationColumns = columns.findAll { it instanceof QueryAggregationColumn }
+		queryModel.filterColumns = columns.findAll { it instanceof QueryFilterColumn }
+		queryModel.orderingColumns = columns.findAll { it instanceof QueryOrderingColumn }
+
+		return new InternalQueryModel(new ConfiguredQuery(queryModel))
 
 	}
 

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.dsl.EntityPathBase
@@ -35,7 +35,7 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*
 
 /**
  * This class will test the {@link QueryPlanner}. It role is to create the
@@ -55,7 +55,7 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 class QueryPlannerIT extends DbunitDaoSpecification {
 
 	// some abreviations
-
+/*
 	static InternalEntityType REQ = REQUIREMENT
 	static InternalEntityType RV = REQUIREMENT_VERSION
 	static InternalEntityType COV = REQUIREMENT_VERSION_COVERAGE
@@ -194,5 +194,5 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 
 	}
-
+*/
 }

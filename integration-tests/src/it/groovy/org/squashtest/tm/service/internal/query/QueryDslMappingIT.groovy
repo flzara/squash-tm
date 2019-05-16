@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import com.querydsl.jpa.hibernate.HibernateQuery
 import org.hibernate.Query
@@ -45,7 +45,7 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class QueryDslMappingIT extends DbunitDaoSpecification {
 
-
+/*
 	static QTestCase tc = QTestCase.testCase
 	static QTestStep st = QTestStep.testStep
 	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
@@ -89,5 +89,5 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 
 	}
-
+*/
 }

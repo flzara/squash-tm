@@ -148,25 +148,21 @@ public class ChartDefinition implements TreeEntity{
 
 	// --------------- /project scope --------------
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "QUERY_ID", nullable = false)
-	private QueryModel query = new QueryModel();
-
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "CHART_DEFINTION_ID", nullable = false)
+	@JoinColumn(name = "CHART_DEFINITION_ID", nullable = false)
 	private List<Filter> filters;
 
 	@ElementCollection
-	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "QUERY_ID") )
+	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
 	@OrderColumn(name = "AXIS_RANK")
 	private List<AxisColumn> axis;
 
 	@ElementCollection
-	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "QUERY_ID") )
+	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
 	@OrderColumn(name = "MEASURE_RANK")
 	private List<MeasureColumn> measures;
 
@@ -200,10 +196,6 @@ public class ChartDefinition implements TreeEntity{
 
 	public List<MeasureColumn> getMeasures() {
 		return measures;
-	}
-
-	public QueryModel getQuery() {
-		return query;
 	}
 
 	public ScopeType getScopeType() {
@@ -298,9 +290,6 @@ public class ChartDefinition implements TreeEntity{
 		this.scope = scope;
 	}
 
-	public void setQuery(QueryModel query) {
-		this.query = query;
-	}
 
 	@Override
 	public TreeEntity createCopy() {

@@ -18,31 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
-import org.hibernate.Query
-import org.hibernate.type.LongType
+
 import org.spockframework.util.NotThreadSafe
 import org.squashtest.it.basespecs.DbunitDaoSpecification
-import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.chart.*
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
-
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.GREATER
-import static org.squashtest.tm.domain.chart.Operation.NONE
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.mkAxe
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.mkMeasure;
 
 @NotThreadSafe
 @UnitilsSupport
 @Ignore
 class QueryBuilderIT extends DbunitDaoSpecification {
-
+/*
 	// fix the requirementVersion - requirement relation
 	def setup(){
 		def session = getSession()
@@ -69,7 +57,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 		and :
 		def measure = new MeasureColumn(column : measureProto, operation : Operation.NONE)
-		def axe = mkAxe(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def axe = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
 		ChartQuery chartquery = new ChartQuery(
 				measures : [measure],
@@ -101,9 +89,9 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		def filterProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
-		def measure = mkMeasure(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def measure = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values : ["1"])
-		def axe = mkAxe(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def axe = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
 		ChartQuery chartquery = new ChartQuery(
 				measures : [measure],
@@ -613,4 +601,5 @@ order by iteration.id asc"""
 		DetailedChartQuery definition
 		Set<?> expected
 	}
+	*/
 }

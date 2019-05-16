@@ -150,7 +150,7 @@ class ProjectionPlanner {
 
 		List<Expression<?>> expressions = new ArrayList<>();
 
-		populateClauses(expressions, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(expressions, internalQueryModel.getOrderingColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 		List<OrderSpecifier> orders = new ArrayList<>();
 		populateOrders(orders, expressions);

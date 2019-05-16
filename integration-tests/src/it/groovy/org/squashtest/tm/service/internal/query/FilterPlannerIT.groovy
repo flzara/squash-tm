@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
 import com.querydsl.core.types.Projections
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.Operation
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-
-import static org.squashtest.tm.domain.EntityType.TEST_CASE
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.EQUALS
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 
 @NotThreadSafe
 @UnitilsSupport
@@ -55,12 +54,12 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 				.groupBy(v.id)
 
 		and : "the definition"
-		DetailedChartQuery definition = new DetailedChartQuery(
-				filters : [mkFilter(ATTRIBUTE, NUMERIC, EQUALS, TEST_CASE, "id", ["-1"])]
-				)
+		InternalQueryModel internalModel = createInternalModel(
+				mkFilter(ColumnType.ATTRIBUTE, DataType.NUMERIC, Operation.EQUALS, EntityType.TEST_CASE, "id", ["-1"])
+		)
 
 		when :
-		FilterPlanner planner = new FilterPlanner(definition, query)
+		FilterPlanner planner = new FilterPlanner(internalModel, query)
 		planner.modifyQuery()
 		ExtendedHibernateQuery concrete = query.clone(getSession())
 
@@ -75,16 +74,4 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 
 
-	def ExtendedHibernateQuery from(clz){
-		return new ExtendedHibernateQuery().from(clz)
-	}
-
-
-
-
-	class ManyQueryPojo {
-		ExtendedHibernateQuery query
-		DetailedChartQuery definition
-		Set<?> expected
-	}
 }

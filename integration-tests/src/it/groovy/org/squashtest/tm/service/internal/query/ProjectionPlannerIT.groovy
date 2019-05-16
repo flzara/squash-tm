@@ -18,28 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.query
 
-import org.hibernate.Query
+import com.querydsl.core.types.Order
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.Operation
+import org.squashtest.tm.domain.EntityType
+import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.query.ColumnType.*
+import static org.squashtest.tm.domain.query.DataType.*
+import static org.squashtest.tm.domain.query.Operation.*
+import static org.squashtest.tm.domain.EntityType.*
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.domain.EntityType.*
-import static org.squashtest.tm.domain.chart.ColumnType.ATTRIBUTE
-import static org.squashtest.tm.domain.chart.DataType.DATE
-import static org.squashtest.tm.domain.chart.DataType.NUMERIC
-import static org.squashtest.tm.domain.chart.Operation.*
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
+import javax.persistence.Query
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 
 @NotThreadSafe
 @UnitilsSupport
@@ -77,10 +82,12 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartQuery definition = new DetailedChartQuery(
-				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")],
-				axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id")]
-				)
+		InternalQueryModel definition = createInternalModel(
+				mkProj(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id"),
+				mkProj(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id"),
+				mkAggr(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id"),
+				mkOrder(ATTRIBUTE, NUMERIC, TEST_CASE, "id", Order.ASC)
+		)
 
 		when :
 		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
@@ -106,11 +113,12 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartQuery definition =
-				new DetailedChartQuery(
-				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
-				axis : [mkAxe(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn")]
-				)
+		InternalQueryModel definition = createInternalModel(
+			mkProj(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn"),
+			mkProj(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id"),
+			mkAggr(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn"),
+			mkOrder(ATTRIBUTE, DATE, EXECUTION, "lastExecutedOn", Order.ASC)
+		)
 
 		when :
 		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
@@ -153,8 +161,6 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 			configureManyQuery(3)
 		]
 
-
-
 	}
 
 
@@ -172,12 +178,15 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 				.join(cov.verifiedRequirementVersion, v)
 				.join(v.requirement, r);
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, TEST_CASE, "id"),
-							mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")
-						],
-						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id")]
-						)
+				definition = createInternalModel(
+					mkProj(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id"),
+					mkProj(ATTRIBUTE, NUMERIC, COUNT, TEST_CASE, "id"),
+					mkProj(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id"),
+
+					mkAggr(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id"),
+
+					mkOrder(ATTRIBUTE, NUMERIC, REQUIREMENT, "id", Order.ASC),
+				)
 
 				expected = [[-1l, 2, 2],  [-2l, 1, 1], [-3l, 2, 2]]
 				break;
@@ -185,11 +194,17 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 			case 2 : // case 2 -> select count(exec) group by it id and referenced tc id
 				query = from(exec).join(exec.testPlan, itp).join(itp.iteration, ite)
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
-						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
-							mkAxe(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id")]
-						)
+				definition = createInternalModel(
+					mkProj(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
+					mkProj(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id"),
+					mkProj(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id"),
+
+					mkAggr(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
+					mkAggr(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id"),
+
+					mkOrder(ATTRIBUTE, NUMERIC, ITERATION, "id"),
+					mkOrder(ATTRIBUTE, NUMERIC, EXECUTION, "referencedTestCase.id")
+				)
 
 				expected = [[-11l, -1l, 3], [-12l, -1l, 1], [-12l, null, 1]]
 				break;
@@ -198,10 +213,14 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 				query = from(r)
 
-				definition = new DetailedChartQuery(
-						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT, "id")],
-						axis : [mkAxe(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn")]
-						)
+				definition = createInternalModel(
+					mkProj(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn"),
+					mkProj(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT, "id"),
+
+					mkAggr(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn"),
+
+					mkOrder(ATTRIBUTE, DATE, REQUIREMENT, "audit.createdOn", Order.ASC),
+				)
 
 				expected = [[2015, 2], [2016, 1]]
 
@@ -222,7 +241,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	class ManyQueryPojo {
 		ExtendedHibernateQuery query
-		DetailedChartQuery definition
+		InternalQueryModel definition
 		Set<?> expected
 	}
 
