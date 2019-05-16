@@ -60,10 +60,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [4],
                         "mDataProp": "name"
                     }, {
-												 "bSortable": false,
-												 "aTargets": [5],
-												 "mDataProp": "uuid"
-										 }, {
+						"bSortable": false,
+						"aTargets": [5],
+						"mDataProp": "uuid"
+					}, {
                         "bSortable": true,
                         "aTargets": [6],
                         "mDataProp": "format"

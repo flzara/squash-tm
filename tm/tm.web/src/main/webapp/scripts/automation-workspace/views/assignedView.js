@@ -94,24 +94,23 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [9],
                         "mDataProp": "script",
                         "sClass": "assigned-script",
-												"mRender": function (data, type, row) {
-																		var hrefScript="";
-																		var title = translator.get('test-case.automation-btn-conflict');
-																		if (row['listScriptConflict'] !== null && row['listScriptConflict'].length!==1) {
-																			hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
+						"mRender": function (data, type, row) {
+							var hrefScript="";
+							var title = translator.get('test-case.automation-btn-conflict');
+							if (row['listScriptConflict'] !== null && row['listScriptConflict'].length!==1) {
+								hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
 
-																	 }else{
-																		 hrefScript = data;
-																	}
+							}else{
+								hrefScript = data;
+							}
 
-																	 return hrefScript;
-												}
-											},  {
-												 "bSortable": false,
-												 "aTargets": [10],
-												 "mDataProp": "uuid"
-										 },
-                    {
+							return hrefScript;
+						}
+					}, {
+						"bSortable": false,
+						"aTargets": [10],
+						"mDataProp": "uuid"
+					}, {
                         "bSortable": true,
                         "aTargets": [11],
                         "mDataProp": "transmitted-on"
@@ -161,10 +160,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bVisible": false,
                         "aTargets": [16]
                     }, {
-											 "mDataProp": "listScriptConflict",
-											 "bVisible": false,
-											 "aTargets": [17]
-									 }],
+						"mDataProp": "listScriptConflict",
+						"bVisible": false,
+						"aTargets": [17]
+					}],
                     "bFilter": true,
 
                     fnRowCallback: function (row, data, displayIndex) {
@@ -283,21 +282,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         } else if (isGherkin && data['script'] !== '-' || data['script']!==null ) {
                             cell.css({ 'color': 'gray', 'font-style': 'italic' });
                         } else if (data['listScriptConflict']!==null && data['listScriptConflict'].length!==1) {
-													 /*TM-13: liste script en conflit*/
-													 cell.css({ 'color': 'gray', 'font-style': 'italic' });
-													 cell.on('click', '.script-conflict', function(evt){
-														 event.preventDefault();
-														 var $btn = $(evt.currentTarget);
-														 var $row = $btn.parents('tr');
-														 var rowmodel = sqtable.fnGetData($row);
-														 var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
-														 var listScript = list.replace(',', '');
-														 notification.showInfo(listScript);
+							/*TM-13: liste script en conflit*/
+							cell.css({ 'color': 'gray', 'font-style': 'italic' });
+							cell.on('click', '.script-conflict', function(evt){
+								event.preventDefault();
+								var $btn = $(evt.currentTarget);
+								var $row = $btn.parents('tr');
+								var rowmodel = sqtable.fnGetData($row);
+								var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+								var listScript = list.replace(',', '');
+								notification.showInfo(listScript);
 
-														 evt.stopPropagation();
+								evt.stopPropagation();
 
-													 });
-												 }
+							});
+						}
                     },
 
                     fnDrawCallback: function () {
@@ -613,15 +612,15 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.storage.remove(this.key);
                 this.deselectAll(table);
             },
-					  trySquashTAScriptAssociation : function (tcIds) {
-						  return $.ajax({
-							  url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
-							  method: 'POST',
-							  data: {
-								  "tcIds": tcIds
-							  }
-						  });
-					  },
+			trySquashTAScriptAssociation : function (tcIds) {
+				return $.ajax({
+							url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
+							method: 'POST',
+							data: {
+								"tcIds": tcIds
+							}
+						});
+			},
             bindButtons: function () {
                 var self = this;
                 var domtable = $("#automation-table").squashTable();
