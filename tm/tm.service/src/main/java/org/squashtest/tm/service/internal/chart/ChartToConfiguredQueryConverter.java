@@ -326,6 +326,7 @@ class ChartToConfiguredQueryConverter {
 
 		order.setOrder(Order.ASC);
 		order.setColumnPrototype(axis.getColumn());
+		order.setOperation(axis.getOperation());
 		order.setCufId(axis.getCufId());
 
 		return order;

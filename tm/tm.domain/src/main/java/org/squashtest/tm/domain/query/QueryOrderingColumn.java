@@ -47,6 +47,10 @@ public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 	@Column(name = "CUF_ID")
 	private Long cufId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORDER_OPERATION")
+	private Operation operation;
+
 	public void setOrder(Order order) {
 		this.order = order;
 	}
@@ -85,7 +89,7 @@ public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 
 	@Override
 	public Operation getOperation() {
-		return Operation.NONE;
+		return operation;
 	}
 
 	@Override
@@ -95,5 +99,9 @@ public class QueryOrderingColumn implements QueryColumnPrototypeInstance {
 
 	public void setCufId(Long cufId) {
 		this.cufId = cufId;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
 	}
 }

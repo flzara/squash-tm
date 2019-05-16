@@ -346,6 +346,8 @@
                      references="QUERY_COLUMN_PROTOTYPE(QUERY_COLUMN_ID)" />
       </column>
 
+      <column name="ORDER_OPERATION" type="java.sql.Types.VARCHAR(20)" remarks="the operation applied to the column, if any. It must mirror the operation applied to the column they reference in the projection/aggregation clause."/>
+
       <column name="ORDER_RANK" type="java.sql.Types.INTEGER"
               remarks="the order in which this ordering instruction must be treated."/>
 
@@ -392,8 +394,8 @@
       inner join QUERY_MODEL qm on cac.query_id = qm.query_model_id
       where qm.strategy != 'MAIN';
 
-      insert into QUERY_ORDERING_COLUMN (query_model_id, query_column_id, order_rank, order_dir, cuf_id)
-      select qac.query_model_id, qac.query_column_id, qac.aggregation_rank, 'ASC', qac.cuf_id
+      insert into QUERY_ORDERING_COLUMN (query_model_id, query_column_id, order_rank, order_dir, cuf_id, order_operation)
+      select qac.query_model_id, qac.query_column_id, qac.aggregation_rank, 'ASC', qac.cuf_id, qac.aggregation_operation
       from QUERY_AGGREGATION_COLUMN qac;
 
 
@@ -408,8 +410,8 @@
       inner join QUERY_MODEL qm on cmc.query_id = qm.query_model_id
       where qm.strategy != 'MAIN';
 
-      insert into QUERY_ORDERING_COLUMN(query_model_id, query_column_id, order_dir, cuf_id, order_rank)
-      select cmc.query_id, cmc.chart_column_id, 'ASC', cmc.cuf_id, cmc.measure_rank + (
+      insert into QUERY_ORDERING_COLUMN(query_model_id, query_column_id, order_dir, cuf_id, order_operation, order_rank)
+      select cmc.query_id, cmc.chart_column_id, 'ASC', cmc.cuf_id, cmc.measure_operation, cmc.measure_rank + (
         select count(*) from CHART_AXIS_COLUMN cac where cac.query_id = cmc.query_id
       ) as adjust_rank
       from CHART_MEASURE_COLUMN cmc
