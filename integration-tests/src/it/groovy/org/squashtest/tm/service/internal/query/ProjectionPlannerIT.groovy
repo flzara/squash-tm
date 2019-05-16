@@ -85,8 +85,10 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		InternalQueryModel definition = createInternalModel(
 				mkProj(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id"),
 				mkProj(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id"),
+
 				mkAggr(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id"),
-				mkOrder(ATTRIBUTE, NUMERIC, TEST_CASE, "id", Order.ASC)
+
+				mkOrder(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id", Order.ASC)
 		)
 
 		when :
@@ -116,8 +118,10 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		InternalQueryModel definition = createInternalModel(
 			mkProj(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn"),
 			mkProj(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id"),
+
 			mkAggr(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn"),
-			mkOrder(ATTRIBUTE, DATE, EXECUTION, "lastExecutedOn", Order.ASC)
+
+			mkOrder(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn", Order.ASC)
 		)
 
 		when :
@@ -185,7 +189,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 					mkAggr(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id"),
 
-					mkOrder(ATTRIBUTE, NUMERIC, REQUIREMENT, "id", Order.ASC),
+					mkOrder(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id", Order.ASC),
 				)
 
 				expected = [[-1l, 2, 2],  [-2l, 1, 1], [-3l, 2, 2]]
@@ -202,8 +206,8 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 					mkAggr(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
 					mkAggr(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id"),
 
-					mkOrder(ATTRIBUTE, NUMERIC, ITERATION, "id"),
-					mkOrder(ATTRIBUTE, NUMERIC, EXECUTION, "referencedTestCase.id")
+					mkOrder(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id", Order.ASC),
+					mkOrder(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id", Order.ASC)
 				)
 
 				expected = [[-11l, -1l, 3], [-12l, -1l, 1], [-12l, null, 1]]
@@ -219,7 +223,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 					mkAggr(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn"),
 
-					mkOrder(ATTRIBUTE, DATE, REQUIREMENT, "audit.createdOn", Order.ASC),
+					mkOrder(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn", Order.ASC),
 				)
 
 				expected = [[2015, 2], [2016, 1]]

@@ -20,17 +20,35 @@
  */
 package org.squashtest.tm.service.internal.query
 
-
+import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.Operation
+import org.squashtest.tm.domain.query.QueryAggregationColumn
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryFilterColumn
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryOrderingColumn
+import org.squashtest.tm.domain.query.QueryProjectionColumn
+import org.squashtest.tm.service.query.ConfiguredQuery
+import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
+
+import static org.squashtest.tm.domain.query.ColumnType.*
+import static org.squashtest.tm.domain.query.DataType.*
+import static org.squashtest.tm.domain.query.Operation.*
+import static org.squashtest.tm.domain.EntityType.*
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
+import javax.persistence.Query
+
 @NotThreadSafe
 @UnitilsSupport
-@Ignore
 class QueryBuilderIT extends DbunitDaoSpecification {
-/*
+
 	// fix the requirementVersion - requirement relation
 	def setup(){
 		def session = getSession()
@@ -53,21 +71,24 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		// in a convoluted way of course.
 
 		given :
-		def measureProto = findByName("REQUIREMENT_NB_VERSIONS")
+		def projProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.NONE)
-		def axe = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def aggproj = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def projection = new QueryProjectionColumn(columnPrototype : projProto, operation : Operation.NONE)
+		def aggregation = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def ordering = mkOrder(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
-		ChartQuery chartquery = new ChartQuery(
-				measures : [measure],
-				axis : [axe]
-				)
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggproj, projection],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
 
 
-		def _q = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery()
+		def _q = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def query = _q.clone(getSession())
 		def res = query.fetch();
 
@@ -89,19 +110,25 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		def filterProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
-		def measure = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
-		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values : ["1"])
-		def axe = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def aggproj = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+		def projection = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
-		ChartQuery chartquery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axe]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values : ["1"])
+
+		def aggregation = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+
+		def ordering= mkOrder(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
 
-		def query = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery().clone(getSession())
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery().clone(getSession())
 		def res = query.fetch();
 
 
@@ -125,31 +152,44 @@ order by requirement.id asc"""
 	// this one demonstrates the "left where join" in subqueries
 	def "should select how many times a test case appears in an iteration"(){
 		given :
-		def measureProto = findByName('TEST_CASE_ITERCOUNT');
-		def axisProto = findByName("TEST_CASE_ID");
+		def projProto = findByName('TEST_CASE_ITERCOUNT');
+		def aggProto = findByName("TEST_CASE_ID");
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
-		def axe = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype :  aggProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.SUM)
+		def aggregation = new QueryAggregationColumn(columnPrototype :  aggProto, operation : Operation.NONE)
+		def ordering = new QueryOrderingColumn(columnPrototype :  aggProto, operation : Operation.NONE)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				axis : [axe]
-				)
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : 	[aggrproj, projection],
+			aggregationColumns : 	[aggregation],
+			orderingColumns: 		[ordering]
+		)
 
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery().clone(getSession())
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery().clone(getSession())
 		def res = query.fetch()
 
 		then :
 		res.collect {it.a}  == [[-3l, 0], [-2l, 1], [-1l, 2]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
+
+				/*
+					2019/05/16, following the refactoring in [TM-282] :
+
+					Appended the alias ' as col_sub_sub' to the s_sum'ed column, which was absent in the previous version,
+					because now it is generated by the engine while before it wasn't.
+
+					It seems that it is the expected behavior after all. I don't know why it was missing in earlier versions.
+					Still, this aliasing is correct and harmless.
+				 */
 				"""select distinct testCase.id, s_sum((select distinct s_count(iteration_sub.id)
 from Iteration iteration_sub
   left join iteration_sub.testPlans as iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.referencedTestCase as testCase_sub
-where testCase = testCase_sub))
+where testCase = testCase_sub)) as col_sub_sub_
 from TestCase testCase
 group by testCase.id
 order by testCase.id asc"""
@@ -163,20 +203,23 @@ order by testCase.id asc"""
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count the call steps per test case "(){
 		given :
-		def measureProto = findByName("TEST_CASE_CALLSTEPCOUNT")
-		def axisProto = findByName("TEST_CASE_ID")
+		def projProto = findByName("TEST_CASE_CALLSTEPCOUNT")
+		def aggrProto = findByName("TEST_CASE_ID")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.SUM)
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				axis : [axis]
-				)
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -184,10 +227,20 @@ order by testCase.id asc"""
 		then :
 		res.collect {it.a} == [[-3l, 0], [-2l,1], [-1l,0] ]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
+
+			/*
+                2019/05/16, following the refactoring in [TM-282] :
+
+                Appended the alias ' as col_sub_sub' to the s_sum'ed column, which was absent in the previous version,
+                because now it is generated by the engine while before it wasn't.
+
+                It seems that it is the expected behavior after all. I don't know why it was missing in earlier versions.
+                Still, this aliasing is correct and harmless.
+             */
 				"""select distinct testCase.id, s_sum((select distinct s_count(testStep_sub.id)
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where testStep_sub.class = ?1 and testCase = testCase_sub))
+where testStep_sub.class = ?1 and testCase = testCase_sub)) as col_sub_sub_
 from TestCase testCase
 group by testCase.id
 order by testCase.id asc"""
@@ -197,23 +250,29 @@ order by testCase.id asc"""
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many test case per requirements have at least 1 call step"(){
 		given :
-		def measureProto = findByName("TEST_CASE_ID")
+		def projProto = findByName("TEST_CASE_ID")
 		def filterProto = findByName("TEST_CASE_CALLSTEPCOUNT")
-		def axisProto = findByName("REQUIREMENT_ID")
+		def aggProto = findByName("REQUIREMENT_ID")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : GREATER, values : ["0"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryAggregationColumn(columnPrototype : aggProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : GREATER, values : ["0"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+				projectionColumns : [aggrproj, projection],
+				filterColumns : [filter],
+				aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
 				)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -223,12 +282,19 @@ order by testCase.id asc"""
 		// is filtered out because of inner join
 		res.collect {it.a}  == [[-3l,1], [-1l, 1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
+
+			/*
+                2019/05/16, following the refactoring in [TM-282] :
+
+                the '(select 1 ' was created as '(select ' : the ' 1' was missing. Why it would work in earlier version
+                is beyond me, but I added the missing ' 1' now the correct behavior.
+             */
 				"""select distinct requirement.id, s_count(testCase.id)
 from Requirement requirement
   inner join requirement.versions as requirementVersion
   inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
   inner join requirementVersionCoverage.verifyingTestCase as testCase
-where exists (select
+where exists (select 1
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
 where testStep_sub.class = ?1 and testCase = testCase_sub
@@ -245,23 +311,29 @@ order by requirement.id asc"""
 	def "should filter on which test cases that have automated scripts"(){
 
 		given :
-		def measureProto = findByName("TEST_CASE_ID")
+		def projProto = findByName("TEST_CASE_ID")
 		def filterProto = findByName("TEST_CASE_HASAUTOSCRIPT")
-		def axisProto = findByName("TEST_CASE_ID")
+		def aggrProto = findByName("TEST_CASE_ID")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -282,23 +354,29 @@ order by testCase.id asc"""
 	def "should filter on which test cases that don't have automated scripts"(){
 
 		given :
-		def measureProto = findByName("TEST_CASE_ID")
+		def projProto = findByName("TEST_CASE_ID")
 		def filterProto = findByName("TEST_CASE_HASAUTOSCRIPT")
-		def axisProto = findByName("TEST_CASE_ID")
+		def aggrProto = findByName("TEST_CASE_ID")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -322,20 +400,25 @@ order by testCase.id asc"""
 	def "should count test cases grouped by whether automated or not"(){
 
 		given :
-		def measureProto = findByName("TEST_CASE_ID")
-		def axisProto = findByName("TEST_CASE_HASAUTOSCRIPT")
+		def projProto = findByName("TEST_CASE_ID")
+		def aggrProto = findByName("TEST_CASE_HASAUTOSCRIPT")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				axis : [axis]
-				)
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
@@ -346,43 +429,81 @@ order by testCase.id asc"""
 		// note : the \n\ bullshit is because eclipse formatter would drop an important
 		// whitespace at the end of the line, hence the trick
 		query.toString().replaceAll(/_\d+/, "_sub") ==
-				"""select distinct case when automatedTest_subcolumn_sub.id is not null then true else false end , s_count(testCase.id)
+
+			/*
+			 *
+			 2019/05/16, following the refactoring in [TM-282] :
+
+			 what the heck, the whole expected query was wrong and had to be fixed too ! Here what I believe happened, based on a quick look at the commit history :
+
+			 1/ until rev 7364 the previous expression was testing the generated query before the column aliasing mechanism (the
+			 'group by' and 'order by' were restating the 'case when' in full, instead of aliasing it). This was implemented in the
+			 tm.service, in a later dev version.
+
+			 However this test would run fine because the integration tests were still running the previous dev version of tm.service,
+			 by the virtue of the same old problem with "mvn version:set", which doesn't upgrade the version of maven module not declared in
+			 the reactor (the <modules> section of the pom.xml at top level). In short the pom of integration-tests was referencing
+			 and testing the wrong version.
+
+
+			 2/ later at revision 7808, someone updated the tested version of tm.service in the pom. The tests then broke. Someone
+			 then __fixed__ the problem by adding @Ignore at the top of the class.
+
+			 And that's how those obsolete code survived its merry way for three years until today. Duh.
+
+
+			*/
+			"""select distinct case when automatedTest_subcolumn_sub.id is not null then true else false end  as col_sub_sub_, s_count(testCase.id)
 from TestCase testCase
   left join testCase.automatedTest as automatedTest_subcolumn_sub
-group by case when automatedTest_subcolumn_sub.id is not null then true else false end \n\
-order by case when automatedTest_subcolumn_sub.id is not null then true else false end  asc"""
+group by col_sub_sub_
+order by col_sub_sub_ asc"""
 	}
-
-
-
 
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many test plans have been executed for each iteration"(){
 		given :
-		def measureProto= findByName('ITEM_TEST_PLAN_ID')
+		def projProto= findByName('ITEM_TEST_PLAN_ID')
 		def filterProto = findByName("ITEM_TEST_PLAN_IS_EXECUTED")
-		def axisProto = findByName('ITERATION_ID')
+		def aggrProto = findByName('ITERATION_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} == [[-12l, 2], [-11l,1]]
-		query.toString().replaceAll(/_\d+/, "_sub") ==
+
+
+		/*
+            2019/05/16, following the refactoring in [TM-282] :
+
+            The where clause in the subquery, which accepts two condition AND'ed together, seems now to put
+            the conditions in random order. For that reason I've put the two versions of the expected query.
+
+    		Sorry, it's ugly.
+         */
+		def actualQuery = query.toString().replaceAll(/_\d+/, "_sub")
+		(actualQuery ==
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
   inner join iteration.testPlans as iterationTestPlanItem
@@ -392,30 +513,52 @@ from IterationTestPlanItem iterationTestPlanItem_sub
 where case when execution_sub.id is not null then true else false end  = ?1 and iterationTestPlanItem = iterationTestPlanItem_sub
 group by iterationTestPlanItem_sub.id)
 group by iteration.id
+order by iteration.id asc""" ||
+
+			actualQuery ==
+			"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
+from Iteration iteration
+  inner join iteration.testPlans as iterationTestPlanItem
+where exists (select 1
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+where iterationTestPlanItem = iterationTestPlanItem_sub and case when execution_sub.id is not null then true else false end  = ?1
+group by iterationTestPlanItem_sub.id)
+group by iteration.id
 order by iteration.id asc"""
+		)
 	}
+
+
 
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many test plans have not been executed for each iteration"(){
 		given :
-		def measureProto= findByName('ITEM_TEST_PLAN_ID')
+		def projProto= findByName('ITEM_TEST_PLAN_ID')
 		def filterProto = findByName("ITEM_TEST_PLAN_IS_EXECUTED")
-		def axisProto = findByName('ITERATION_ID')
+		def aggrProto = findByName('ITERATION_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
-				)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
+
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -424,7 +567,17 @@ order by iteration.id asc"""
 		// alas, the other iteration has no not-executed items so
 		// it is filtered out because of of inner join mechanics
 		res.collect {it.a} == [[-11l, 1]]
-		query.toString().replaceAll(/_\d+/, "_sub") ==
+
+		/*
+			2019/05/16, following the refactoring in [TM-282] :
+
+			The where clause in the subquery, which accepts two condition AND'ed together, seems now to put
+			the conditions in random order. For that reason I've put the two versions of the expected query.
+
+			Sorry, it's ugly.
+		 */
+		def actualQuery = query.toString().replaceAll(/_\d+/, "_sub")
+		(actualQuery ==
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
   inner join iteration.testPlans as iterationTestPlanItem
@@ -434,27 +587,46 @@ from IterationTestPlanItem iterationTestPlanItem_sub
 where case when execution_sub.id is not null then true else false end  = ?1 and iterationTestPlanItem = iterationTestPlanItem_sub
 group by iterationTestPlanItem_sub.id)
 group by iteration.id
+order by iteration.id asc"""	||
+
+		actualQuery ==
+			"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
+from Iteration iteration
+  inner join iteration.testPlans as iterationTestPlanItem
+where exists (select 1
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+where iterationTestPlanItem = iterationTestPlanItem_sub and case when execution_sub.id is not null then true else false end  = ?1
+group by iterationTestPlanItem_sub.id)
+group by iteration.id
 order by iteration.id asc"""
+
+		)
 	}
+
+
 
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many automated executions by item"(){
 		given :
-		def measureProto= findByName('ITEM_TEST_PLAN_AUTOEXCOUNT')
-		def axisProto = findByName('ITEM_TEST_PLAN_ID')
+		def projProto= findByName('ITEM_TEST_PLAN_AUTOEXCOUNT')
+		def aggrProto = findByName('ITEM_TEST_PLAN_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.SUM)
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				axis : [axis]
+		QueryModel queryModel = new QueryModel(
+				projectionColumns : [aggrproj, projection],
+				aggregationColumns : [aggregation],
+				orderingColumns: [ordering]
 				)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -462,34 +634,53 @@ order by iteration.id asc"""
 		then :
 		res.collect {it.a}  == [[-122l, 1], [-121l, 0], [-112l,0], [-111l, 0]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
+			/*
+                2019/05/16, following the refactoring in [TM-282] :
+
+                Appended the alias ' as col_sub_sub' to the s_sum'ed column, which was absent in the previous version,
+                because now it is generated by the engine while before it wasn't.
+
+                It seems that it is the expected behavior after all. I don't know why it was missing in earlier versions.
+                Still, this aliasing is correct and harmless.
+             */
 				"""select distinct iterationTestPlanItem.id, s_sum((select distinct s_count(execution_sub.id)
 from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
   left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
-where automatedExecutionExtender_sub.id is not null and iterationTestPlanItem = iterationTestPlanItem_sub))
+where automatedExecutionExtender_sub.id is not null and iterationTestPlanItem = iterationTestPlanItem_sub)) as col_sub_sub_
 from IterationTestPlanItem iterationTestPlanItem
 group by iterationTestPlanItem.id
 order by iterationTestPlanItem.id asc"""
 
 	}
 
+
+
+
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many manual executions by item"(){
 		given :
-		def measureProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
-		def axisProto = findByName('ITEM_TEST_PLAN_ID')
+		def projProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
+		def aggrProto = findByName('ITEM_TEST_PLAN_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.SUM)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				axis : [axis]
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+
+
+		QueryModel queryModel = new QueryModel(
+				projectionColumns : [aggrproj, projection],
+				aggregationColumns : [aggregation],
+				orderingColumns: [ordering]
 				)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -501,7 +692,7 @@ order by iterationTestPlanItem.id asc"""
 from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
   left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
-where automatedExecutionExtender_sub.id is null and iterationTestPlanItem = iterationTestPlanItem_sub))
+where automatedExecutionExtender_sub.id is null and iterationTestPlanItem = iterationTestPlanItem_sub)) as col_sub_sub_
 from IterationTestPlanItem iterationTestPlanItem
 group by iterationTestPlanItem.id
 order by iterationTestPlanItem.id asc"""
@@ -509,26 +700,34 @@ order by iterationTestPlanItem.id asc"""
 	}
 
 
+
+
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count by iteration how many items have at least 1 manual execution"(){
 		given :
-		def measureProto = findByName('ITEM_TEST_PLAN_ID')
+		def projProto = findByName('ITEM_TEST_PLAN_ID')
 		def filterProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
-		def axisProto = findByName('ITERATION_ID')
+		def aggrProto = findByName('ITERATION_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values :["0"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter],
-				axis : [axis]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values :["0"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -551,28 +750,37 @@ order by iteration.id asc"""
 
 	}
 
+
+
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count by iteration how many items have at least 1 manual execution and where execution label match description"(){
 		given :
-		def measureProto = findByName('ITEM_TEST_PLAN_ID')
+		def projProto = findByName('ITEM_TEST_PLAN_ID')
 		def filterProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
 		def filter2Proto= findByName('EXECUTION_LABEL')
-		def axisProto = findByName('ITERATION_ID')
+		def aggrProto = findByName('ITERATION_ID')
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
-		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values :["0"])
-		def filter2 = new Filter(column : filter2Proto, operation : Operation.LIKE, values :["cp 1 it1%"])
-		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		ChartQuery chartQuery = new ChartQuery(
-				measures : [measure],
-				filters : [filter, filter2],
-				axis : [axis]
-				)
+		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values :["0"])
+		def filter2 = new QueryFilterColumn(columnPrototype : filter2Proto, operation : Operation.LIKE, values :["cp 1 it1%"])
+
+		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [aggrproj, projection],
+			filterColumns : [filter, filter2],
+			aggregationColumns : [aggregation],
+			orderingColumns: [ordering]
+		)
 
 		when :
-		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
 		def clone = query.clone(getSession())
 
 		def res = clone.fetch()
@@ -587,8 +795,8 @@ order by iteration.id asc"""
 	// ********* utilities ***************************
 
 
-	ColumnPrototype findByName(name){
-		getSession().createQuery("from ColumnPrototype where label = '${name}'").uniqueResult();
+	QueryColumnPrototype findByName(name){
+		getSession().createQuery("from QueryColumnPrototype where label = '${name}'").uniqueResult();
 	}
 
 	def ExtendedHibernateQuery from(clz){
@@ -598,8 +806,8 @@ order by iteration.id asc"""
 
 	class ManyQueryPojo {
 		ExtendedHibernateQuery query
-		DetailedChartQuery definition
+		InternalQueryModel definition
 		Set<?> expected
 	}
-	*/
+
 }

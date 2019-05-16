@@ -75,15 +75,15 @@ public class QueryEngineTestUtils {
 	}
 
 
-	public static QueryOrderingColumn mkOrder(ColumnType attrType, DataType datatype, EntityType eType, String attributeName, Order dir){
+	public static QueryOrderingColumn mkOrder(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, Order dir = Order.ASC){
 		def specType = new SpecializedEntityType(entityType : eType)
 		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def order = new QueryOrderingColumn(columnPrototype : proto, order: dir)
+		def order = new QueryOrderingColumn(columnPrototype : proto, operation: operation, order: dir)
 
 		return order
 	}
 
-	
+
 	public static InternalQueryModel createInternalModel(QueryColumnPrototypeInstance... columns){
 		def queryModel = new QueryModel()
 		queryModel.projectionColumns = columns.findAll { it instanceof QueryProjectionColumn }
