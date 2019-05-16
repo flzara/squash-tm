@@ -59,8 +59,8 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 				unlaunchableTest = Object.keys(map).map(function(e) {
 					return map[e]
 				});
-				createSuite(launchableIds).done(function(suite) {
-					startSuite(suite, unlaunchableTest);
+				sendPreview(launchableIds).done(function(preview) {
+					openAutosuiteOverview(preview, unlaunchableTest);
 				});
 			}
 		});
@@ -86,38 +86,43 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 					}).filter(function(value, index, self){
 						return self.indexOf(value) === index;
 					});
-					createSuite(launchableIds).done(function(suite) {
-						startSuite(suite, unlaunchableTest);
+					sendPreview(launchableIds).done(function(preview) {
+						openAutosuiteOverview(preview, unlaunchableTest);
 					});
 				}
 			});
 		}
 	}
 
-	function startSuite(suite, unlaunchableTest) {
-		squashtm.context.autosuiteOverview.start(suite, unlaunchableTest);
+	function openAutosuiteOverview(preview, unlaunchableTest) {
+		squashtm.context.autosuiteOverview.start(preview, unlaunchableTest);
 	}
 
 	/**
 	 * issues create suite ajax request and returns request promise
 	 */
-	function createSuite(itemIds) {
-		var createUrl = $("#auto-exec-btns-panel").data("suites-url") + "/new";
+	function sendPreview(itemIds) {
+		var previewUrl = $("#auto-exec-btns-panel").data("suites-url") + "/preview";
 
-		var data = {};
-		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-		data[ent] = squashtm.page.identity.resid;
+		var context = {
+			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
+			id : squashtm.page.identity.resid
+		};
 
-		if (!!itemIds && itemIds.length > 0) {
-			data.testPlanItemsIds = itemIds;
-		}
+    // set the test plan subset if defined
+		var testPlanSubsetIds = (!!itemIds && itemIds.length > 0) ? itemIds : [];
+
+		var payload = {
+			context : context,
+			testPlanSubsetIds : testPlanSubsetIds
+		};
 
 		return $.ajax({
 			type : "POST",
-			url : createUrl,
+			url : previewUrl,
 			dataType : "json",
-			data : data,
-			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+			data : JSON.stringify(payload),
+			contentType : "application/json"
 		});
 	}
 

@@ -78,6 +78,8 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 
 				this.options.executionRowTemplate = Handlebars.compile($("#exec-info-tpl").html());
 				this.options.executionAutoInfos = $("#executions-auto-infos");
+				this.options.unlaunchableTest = $("#unlaunchable-tests");
+				this.options.unlaunchableTest.hide();
 
 				// progressbar
 				var executionProgressBar = $("#execution-auto-progress-bar");
@@ -209,7 +211,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				this.setState(stage);
 			},
 
-			start: function (preview) {
+			start: function (preview, unlaunchableTest) {
 				this.options.preview = preview;
 				
 				// should the user define manually the slave nodes ?
@@ -218,7 +220,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				} 
 				// else skip directly to execution preparation
 				else {
-					this._showPreparation(preview);
+					this._showPreparation(unlaunchableTest);
 				}
 				
 
@@ -312,7 +314,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 			 * Preparation phase is the phase where the automated suite is under creation.
 			 * It ends when it is created and the processing is running.
 			 */
-			_showPreparation: function () {
+			_showPreparation: function (unlaunchableTest) {
 				
 				this.options.stage = "preparation";
 				this.setState('preparation');
@@ -338,7 +340,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 						$.squash.openMessage(translator.get("popup.title.Info"), translator.get("dialog.execution.auto.overview.error.none"));
 					}
 						
-					self._showProcessing(overview);
+					self._showProcessing(overview, unlaunchableTest);
 
 					// unset the xhr
 					self.options.xhr = null;
@@ -353,10 +355,10 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 			/*
 			 * Processing phase is the phase where the automated suite is created and is now running.
 			 */
-			_showProcessing: function(overview) {
+			_showProcessing: function(overview, unlaunchableTests) {
 				this.options.stage = "processing";
 				this.options.overview = overview;
-				this._repaintProcessing();
+				this._repaintProcessing(unlaunchableTests);
 				this.setState("processing");
 				this.open();
 
@@ -387,7 +389,7 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				});
 			},
 
-			_repaintProcessing: function () {
+			_repaintProcessing: function (unlaunchableTests) {
 				var data = this.options.overview;
 				var executions = data.executions,
 					progress = data.percentage;
@@ -400,6 +402,10 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				// the "table"
 				var htmlRows = this.options.executionRowTemplate({execs: executions});
 				this.options.executionAutoInfos.html(htmlRows);
+				if(unlaunchableTests !== undefined && unlaunchableTests.length !== 0) {
+					this.options.unlaunchableTest.html(translator.get("dialog.execute-auto.overview.unexecutableItem", unlaunchableTests));
+					this.options.unlaunchableTest.show();
+				}
 			}
 		});
 

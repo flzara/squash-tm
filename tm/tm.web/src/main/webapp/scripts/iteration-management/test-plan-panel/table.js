@@ -321,18 +321,18 @@ define(
 					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
 
-					updateTAScript(specification).done(function(map){
-						if (map[tpiId] !== undefined){
+					updateTAScript([data['entity-id']]).done(function(map){
+						if (map[data['entity-id']] !== undefined){
+							table.refresh();
 							$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 						} else {
 							$.ajax({
 								url: url,
 								dataType: 'json',
-						contentType : 'application/json',
+						    contentType : 'application/json',
 								type: 'post',
-						data: JSON.stringify(specification),
-					})
-					.done(function (suite) {
+						    data: JSON.stringify(specification)
+					    }).done(function (suite) {
 								window.squashtm.context.autosuiteOverview.start(suite);
 							});
 						}
@@ -532,8 +532,16 @@ define(
 
 		}
 
-		function updateTAScript(data) {
+		function updateTAScript(itemIds) {
 			var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+			var data = {};
+			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+			data[ent] = squashtm.page.identity.resid;
+
+			if (!!itemIds && itemIds.length > 0) {
+				data.testPlanItemsIds = itemIds;
+			}
 
 			return $.ajax({
 				type : "POST",
