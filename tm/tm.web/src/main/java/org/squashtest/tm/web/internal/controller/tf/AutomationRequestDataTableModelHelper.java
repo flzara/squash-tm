@@ -80,7 +80,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
-		data.put("listScriptConflict",  convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()));
+		data.put("listScriptConflict",  item.getTestCase() != null && item.getTestCase().getAutomationRequest() != null ? convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()) : null);
 		data.put("writable", isWritable(item.getTestCase(), true));
 		data.put("writableAutom", isWritable(item.getTestCase(), false));
 

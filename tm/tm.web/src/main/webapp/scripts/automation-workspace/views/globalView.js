@@ -241,7 +241,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                                                    var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                                                    var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                                                   if (data['script'] !== '-' && data['script']===null && !isGherkin && data['listScriptConflict'].length===1) {
+                                                   if (data['script'] !== '-' && data['script']===null && !isGherkin && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
                                                        cell.editable(url, editable);
                                                        cell.css({ "font-style": "italic" });
 
@@ -276,7 +276,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                                        });
                                                    } else if (isGherkin && data['script'] !== '-' || data['script']!==null) {
                                                        cell.css({ 'color': 'gray', 'font-style': 'italic' });
-                                                   } else if (data['listScriptConflict'].length!==1) {
+                                                   } else if (data['listScriptConflict'] !== null && data['listScriptConflict'].length!==1) {
 																										 /*TM-13: liste script en conflit*/
 																										 cell.css({ 'color': 'gray', 'font-style': 'italic' });
 																										 cell.on('click', '.script-conflict', function(evt){
