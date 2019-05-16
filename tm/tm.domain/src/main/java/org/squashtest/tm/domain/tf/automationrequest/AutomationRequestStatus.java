@@ -31,7 +31,7 @@ public enum AutomationRequestStatus implements Internationalizable, Level {
 	REJECTED(4),                // The automation request is non automatable.
 	AUTOMATED(5),               // The automated test case is executable.
 	READY_TO_TRANSMIT(6),       // The automation request is valid.
-	WORK_IN_PROGRESS(7) ;       // The automation request is to be validate.
+	WORK_IN_PROGRESS(7);       // The automation request is to be validate.
 
 
 	private static final String I18N_KEY_ROOT = "automation-request.request_status.";

@@ -38,7 +38,7 @@
   <changeSet id="tm-1.20.0-TM-13-test-uuid" author="amk" dbms="mysql, postgresql, h2">
     <preConditions>
       <sqlCheck expectedResult="0">
-        SELECT count(*) from TEST_CASE where uuid IS null
+        SELECT count(*) from TEST_CASE where UUID IS NULL
       </sqlCheck>
 
     </preConditions>
