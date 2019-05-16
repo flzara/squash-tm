@@ -57,7 +57,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 			} else {
 				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
 				unlaunchableTest = Object.keys(map).map(function(e) {
-					return map[e]
+					return map[e];
 				});
 				sendPreview(launchableIds).done(function(preview) {
 					openAutosuiteOverview(preview, unlaunchableTest);
@@ -82,7 +82,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 				} else {
 					//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
 					unlaunchableTest = Object.keys(map).map(function(e) {
-						return map[e]
+						return map[e];
 					}).filter(function(value, index, self){
 						return self.indexOf(value) === index;
 					});
