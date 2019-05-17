@@ -283,9 +283,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							var $btn = $(evt.currentTarget);
 							var $row = $btn.parents('tr');
 							var rowmodel = sqtable.fnGetData($row);
+							var title =  translator.get('test-case.automation-btn-conflict') + ":";
+              var msg =  translator.get('test-case.automation-conflict-message');
+
 							var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
 							var listScript = list.replace(',', '');
-							notification.showInfo(listScript);
+							notification.showInfo(title + "\n" + listScript + "\n" + msg);
 
 							evt.stopPropagation();
 
