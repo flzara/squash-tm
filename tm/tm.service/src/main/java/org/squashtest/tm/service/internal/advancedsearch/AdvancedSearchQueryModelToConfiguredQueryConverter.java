@@ -40,12 +40,15 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,14 +58,7 @@ import java.util.stream.Collectors;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
-
-	/**
-	 *
-	 */
-	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = ImmutableMap.of(
-		"","",
-		"",""
-	);
+	private Map<String, String> columnPrototypeMapping = new HashMap<>();
 
 	@Inject
 	private ColumnPrototypeDao columnPrototypeDao;
@@ -71,8 +67,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private List<QueryColumnPrototype> prototypes = new ArrayList<>();
 
-	public AdvancedSearchQueryModelToConfiguredQueryConverter(AdvancedSearchQueryModel advancedSearchQueryModel) {
+	public AdvancedSearchQueryModelToConfiguredQueryConverter(AdvancedSearchQueryModel advancedSearchQueryModel, Map<String, String> columnPrototypeMapping) {
 		this.advancedSearchQueryModel = advancedSearchQueryModel;
+		this.columnPrototypeMapping = columnPrototypeMapping;
 	}
 
 	public ConfiguredQuery convert() {
@@ -133,6 +130,16 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 				break;
 			case CF_TIME_INTERVAL:
 				break;
+			case CF_LIST:
+				break;
+			case CF_TEXT:
+				break;
+			case CF_SINGLE:
+				break;
+			case CF_CHECKBOX:
+				break;
+			case CF_NUMERIC_RANGE:
+				break;
 			case NUMERIC_RANGE:
 				break;
 			case MULTILIST:
@@ -142,6 +149,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			case TEXT:
 				break;
 			case TAGS:
+				queryFilterColumn = createFilterToTags(fieldModel);
 				break;
 			case LIST:
 				break;
@@ -161,8 +169,24 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		String value = singleFieldModel.getValue();
 		filter.addValues(Collections.singletonList(value));
 		filter.setOperation(Operation.EQUALS);
-		String columnLabel = COLUMN_PROTOTYPE_MAPPING.get(singleFieldModel.toString());
+		String columnLabel = columnPrototypeMapping.get(singleFieldModel.toString());
 		filter.setColumnPrototype(getColumnPrototype(columnLabel));
+		return filter;
+	}
+
+	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model) {
+		QueryFilterColumn filter = new QueryFilterColumn();
+		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
+		List<String> tags = fieldModel.getTags();
+		filter.addValues(tags);
+		QueryColumnPrototype queryColumnPrototype = getColumnPrototype(columnPrototypeMapping.get("CUSTOM_FIELD_TAGS"));
+		filter.setColumnPrototype(queryColumnPrototype);
+		filter.setCufId(Long.parseLong(fieldModel.toString()));
+		if(AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
+			filter.setOperation(Operation.IN);
+		} else {
+			//TODO create the good operation
+		}
 		return filter;
 	}
 
@@ -180,7 +204,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		QueryOrderingColumn queryOrderingColumn = new QueryOrderingColumn();
 
 		String property = specifier.getProperty();
-		String columnPrototypeLabel = COLUMN_PROTOTYPE_MAPPING.get(property);
+		String columnPrototypeLabel = columnPrototypeMapping.get(property);
 		QueryColumnPrototype column = getColumnPrototype(columnPrototypeLabel);
 
 		Order order = specifier.isAscending() ? Order.ASC : Order.DESC;

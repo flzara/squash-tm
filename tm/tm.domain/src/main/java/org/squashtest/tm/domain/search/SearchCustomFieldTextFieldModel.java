@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.search;
 
 public class SearchCustomFieldTextFieldModel extends AdvancedSearchTextFieldModel {
-	public SearchCustomFieldTextFieldModel(AdvancedSearchFieldModelType type) {
+	public SearchCustomFieldTextFieldModel() {
 		super(AdvancedSearchFieldModelType.CF_TEXT);
 	}
 }

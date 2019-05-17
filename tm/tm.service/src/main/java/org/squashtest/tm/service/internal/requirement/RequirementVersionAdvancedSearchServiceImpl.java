@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -27,9 +28,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
@@ -40,16 +38,44 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	RequirementVersionAdvancedSearchService {
-	
+
+	private Map<String, String> COLUMN_PROTOTYPE_MAPPING = Stream.of(
+		//TODO create columnPrototype
+		new AbstractMap.SimpleImmutableEntry<>("project-name", ""),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-id", "REQUIREMENT_ID"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-reference", "REQUIREMENT_VERSION_REFERENCE"),
+		//TODO create columnPrototype
+		new AbstractMap.SimpleImmutableEntry<>("requirement-label", ""),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-criticality", "REQUIREMENT_VERSION_CRITICALITY"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-category", "REQUIREMENT_VERSION_CATEGORY"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-status", "REQUIREMENT_VERSION_STATUS"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-milestone-nb", "REQUIREMENT_VERSION_MILCOUNT"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-version", "REQUIREMENT_VERSION_VERS_NUM"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-version-nb", "REQUIREMENT_NB_VERSIONS"),
+		//TODO create columnPrototype
+		new AbstractMap.SimpleImmutableEntry<>("requirement-attachment-nb", ""),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-created-by", "REQUIREMENT_VERSION_CREATED_BY"),
+		new AbstractMap.SimpleImmutableEntry<>("requirement-modified-by", "REQUIREMENT_VERSION_MODIFIED_BY"),
+		//TODO create columnPrototype
+		new AbstractMap.SimpleImmutableEntry<>("links", ""))
+		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+	Map<String, String> articles
+		= ImmutableMap.of("project-name", "My New Article", "requirement-reference", "Second Article"
+		, );
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
 	@PersistenceContext
@@ -100,7 +126,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model,
-																	   Pageable sorting, MessageSource source, Locale locale) {
+																 Pageable sorting, MessageSource source, Locale locale) {
 
 
 		List<RequirementVersion> result = Collections.emptyList();

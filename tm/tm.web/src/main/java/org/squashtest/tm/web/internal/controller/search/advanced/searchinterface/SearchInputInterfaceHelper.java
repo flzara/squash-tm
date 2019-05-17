@@ -232,7 +232,7 @@ public class SearchInputInterfaceHelper {
 	private SingleSelectField convertToDropdownList(CustomFieldModel customField){
 		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel)customField;
 		SingleSelectField selectField = new SingleSelectField();
-		selectField.setCode(Long.toString(singleSelectFieldModel.getId()));
+		selectField.setCode(singleSelectFieldModel.getCode());
 		selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue());
 		selectField.setLabel(singleSelectFieldModel.getLabel());
 		selectField.setName(singleSelectFieldModel.getName());
@@ -253,7 +253,7 @@ public class SearchInputInterfaceHelper {
 	private MultiSelectField convertToMultiSelectField(CustomFieldModel customField){
 		CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel)customField;
 		MultiSelectField multiSelectField = new MultiSelectField();
-		multiSelectField.setCode(Long.toString(multiSelectFieldModel.getId()));
+		multiSelectField.setCode(multiSelectFieldModel.getCode());
 		// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
 		multiSelectField.setLabel(multiSelectFieldModel.getLabel());
 		multiSelectField.setName(multiSelectFieldModel.getName());
@@ -275,7 +275,7 @@ public class SearchInputInterfaceHelper {
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType("CF_TIME_INTERVAL");
 		model.setTitle(customField.getLabel());
-		model.setId(Long.toString(customField.getId()));
+		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);
 		return model;
 	}
@@ -293,7 +293,7 @@ public class SearchInputInterfaceHelper {
 		model.setPossibleValues(possibleValues);
 		model.setInputType("CF_CHECKBOX");
 		model.setTitle(customFieldModel.getLabel());
-		model.setId(Long.toString(customFieldModel.getId()));
+		model.setId(customFieldModel.getCode());
 		model.setIgnoreBridge(true);
 		return model;
 	}
@@ -302,7 +302,7 @@ public class SearchInputInterfaceHelper {
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType("CF_NUMERIC_RANGE");
 		model.setTitle(customField.getLabel());
-		model.setId(Long.toString(customField.getId()));
+		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);
 		return model;
 	}
@@ -311,7 +311,7 @@ public class SearchInputInterfaceHelper {
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType("CF_TEXT");
 		model.setTitle(customField.getLabel());
-		model.setId(Long.toString(customField.getId()));
+		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);
 		return model;
 	}

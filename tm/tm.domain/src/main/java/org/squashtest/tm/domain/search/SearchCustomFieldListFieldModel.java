@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.search;
 
 public class SearchCustomFieldListFieldModel extends AdvancedSearchMultiListFieldModel {
-	public SearchCustomFieldListFieldModel(AdvancedSearchFieldModelType type) {
+	public SearchCustomFieldListFieldModel() {
 		super(AdvancedSearchFieldModelType.CF_LIST);
 	}
 }
