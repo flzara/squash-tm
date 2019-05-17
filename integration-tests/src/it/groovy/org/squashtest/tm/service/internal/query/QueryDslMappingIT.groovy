@@ -45,7 +45,7 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class QueryDslMappingIT extends DbunitDaoSpecification {
 
-/*
+
 	static QTestCase tc = QTestCase.testCase
 	static QTestStep st = QTestStep.testStep
 	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
@@ -89,5 +89,5 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 
 	}
-*/
+
 }

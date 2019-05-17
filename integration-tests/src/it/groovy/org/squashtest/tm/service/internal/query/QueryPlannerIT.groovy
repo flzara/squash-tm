@@ -29,6 +29,8 @@ import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.NaturalJoinStyle
+import org.squashtest.tm.domain.query.QueryStrategy
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QTestCase
 import org.unitils.dbunit.annotation.DataSet
@@ -55,7 +57,7 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.*
 class QueryPlannerIT extends DbunitDaoSpecification {
 
 	// some abreviations
-/*
+
 	static InternalEntityType REQ = REQUIREMENT
 	static InternalEntityType RV = REQUIREMENT_VERSION
 	static InternalEntityType COV = REQUIREMENT_VERSION_COVERAGE
@@ -86,10 +88,10 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
+		InternalQueryModel internalModel = mockInternalModel(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
 
 		and :
-		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(internalModel).createQuery()
 
 
 		when :
@@ -109,10 +111,10 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
+		InternalQueryModel internalModel = mockInternalModel(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
 
 		and :
-		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(internalModel).createQuery()
 
 
 		when :
@@ -133,10 +135,10 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
+		InternalQueryModel internalModel = mockInternalModel(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
 
 		and :
-		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(internalModel).createQuery()
 
 		when :
 		q.select(QTestCase.testCase.id)
@@ -156,9 +158,9 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 	def "should test many possible queries"(){
 
 		expect :
-		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targetEntities)
+		InternalQueryModel internalModel = mockInternalModel(rootEntity : rootEntity, targetEntities : targetEntities)
 
-		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(internalModel).createQuery()
 		q.where(wherePath)
 
 		def joins = q.metadata.getJoins()
@@ -194,5 +196,30 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 
 	}
-*/
+
+
+
+	// *************** test utils *************
+
+	def mockInternalModel(argMap){
+		// create the mock and configure its behavior according to the arg map
+		def model = Mock(InternalQueryModel)
+
+		argMap.each { ppt, value ->
+			model."get${ppt.capitalize()}"() >> value
+		}
+
+		// now provide default behavior for the rest
+		// (if a getter was already mocked, the default behavior below will not apply)
+		model.getJoinStyle() >> NaturalJoinStyle.INNER_JOIN
+		model.getStrategy() >> QueryStrategy.MAIN
+		model.getInlinedColumns() >> []
+		model.getFilterColumns() >> []
+		model.getAggregationColumns() >> []
+		model.getProjectionColumns() >> []
+		model.getOrderingColumns() >> []
+
+		return model
+	}
+
 }
