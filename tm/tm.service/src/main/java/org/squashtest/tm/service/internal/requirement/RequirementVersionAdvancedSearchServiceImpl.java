@@ -42,6 +42,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,30 +53,27 @@ import java.util.stream.Stream;
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	RequirementVersionAdvancedSearchService {
 
-	private Map<String, String> COLUMN_PROTOTYPE_MAPPING = Stream.of(
+	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = new HashMap() {{
 		//TODO create columnPrototype
-		new AbstractMap.SimpleImmutableEntry<>("project-name", ""),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-id", "REQUIREMENT_ID"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-reference", "REQUIREMENT_VERSION_REFERENCE"),
+		put("project-name", "");
+		put("requirement-id", "REQUIREMENT_ID");
+		put("requirement-reference", "REQUIREMENT_VERSION_REFERENCE");
 		//TODO create columnPrototype
-		new AbstractMap.SimpleImmutableEntry<>("requirement-label", ""),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-criticality", "REQUIREMENT_VERSION_CRITICALITY"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-category", "REQUIREMENT_VERSION_CATEGORY"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-status", "REQUIREMENT_VERSION_STATUS"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-milestone-nb", "REQUIREMENT_VERSION_MILCOUNT"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-version", "REQUIREMENT_VERSION_VERS_NUM"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-version-nb", "REQUIREMENT_NB_VERSIONS"),
+		put("requirement-label", "");
+		put("requirement-criticality", "REQUIREMENT_VERSION_CRITICALITY");
+		put("requirement-category", "REQUIREMENT_VERSION_CATEGORY");
+		put("requirement-status", "REQUIREMENT_VERSION_STATUS");
+		put("requirement-milestone-nb", "REQUIREMENT_VERSION_MILCOUNT");
+		put("requirement-version", "REQUIREMENT_VERSION_VERS_NUM");
+		put("requirement-version-nb", "REQUIREMENT_NB_VERSIONS");
 		//TODO create columnPrototype
-		new AbstractMap.SimpleImmutableEntry<>("requirement-attachment-nb", ""),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-created-by", "REQUIREMENT_VERSION_CREATED_BY"),
-		new AbstractMap.SimpleImmutableEntry<>("requirement-modified-by", "REQUIREMENT_VERSION_MODIFIED_BY"),
+		put("requirement-attachment-nb", "");
+		put("requirement-created-by", "REQUIREMENT_VERSION_CREATED_BY");
+		put("requirement-modified-by", "REQUIREMENT_VERSION_MODIFIED_BY");
 		//TODO create columnPrototype
-		new AbstractMap.SimpleImmutableEntry<>("links", ""))
-		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		put("links", "");
+	}};
 
-	Map<String, String> articles
-		= ImmutableMap.of("project-name", "My New Article", "requirement-reference", "Second Article"
-		, );
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
 	@PersistenceContext

@@ -42,12 +42,14 @@ import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +189,27 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		} else {
 			//TODO create the good operation
 		}
+		return filter;
+	}
+
+	private QueryFilterColumn createFilterToTimeInterval(AdvancedSearchFieldModel model) {
+		QueryFilterColumn filter = new QueryFilterColumn();
+
+		AdvancedSearchTimeIntervalFieldModel intervalFieldModel = (AdvancedSearchTimeIntervalFieldModel)model;
+		Date startDate = intervalFieldModel.getStartDate();
+		Date endDate = intervalFieldModel.getEndDate();
+
+		if (startDate != null && endDate != null) {
+			filter.setOperation(Operation.BETWEEN);
+		} else if (startDate != null) {
+			/*filter.setOperation(Operation.);*/
+		} else if (endDate != null) {
+
+		} else {
+			return null;
+		}
+
+
 		return filter;
 	}
 
