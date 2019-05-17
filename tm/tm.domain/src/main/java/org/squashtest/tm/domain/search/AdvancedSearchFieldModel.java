@@ -26,9 +26,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 
 @JsonTypeInfo(
-		use = JsonTypeInfo.Id.NAME,
-		include = JsonTypeInfo.As.PROPERTY,
-		property = "type")
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.PROPERTY,
+	property = "type")
 @JsonSubTypes({
 	@Type(value = AdvancedSearchListFieldModel.class, name = "LIST"),
 	@Type(value = AdvancedSearchMultiListFieldModel.class, name = "MULTILIST"),
@@ -38,7 +38,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	@Type(value = AdvancedSearchNumericRangeFieldModel.class, name = "NUMERIC_RANGE"),
 	@Type(value = AdvancedSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL"),
 	@Type(value = SearchCustomFieldTimeIntervalFieldModel.class, name = "CF_TIME_INTERVAL"),
-	@Type(value = AdvancedSearchTagsFieldModel.class, name = "TAGS")})
+	@Type(value = AdvancedSearchTagsFieldModel.class, name = "TAGS"),
+	@Type(value = SearchCustomFieldCheckBoxFieldModel.class, name = "CF_CHECKBOX"),
+	@Type(value = SearchCustomFieldNumericFieldModel.class, name = "CF_NUMERIC_RANGE"),
+	@Type(value = SearchCustomFieldSingleFieldModel.class, name = "CF_SINGLE"),
+	@Type(value = SearchCustomFieldTextFieldModel.class, name = "CF_TEXT"),
+	@Type(value = SearchCustomFieldListFieldModel.class, name = "CF_LIST")})
 public interface AdvancedSearchFieldModel {
 
 	AdvancedSearchFieldModelType getType();

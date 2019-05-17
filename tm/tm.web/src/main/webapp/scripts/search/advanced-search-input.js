@@ -22,12 +22,12 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	"squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", "./SearchNumericRangeWidget",
 	"./SearchExistsWidget", "./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget", "./SearchCheckboxWidget",
 	"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget", "./SearchComboExistsMultiselectWidget",
-	"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
-	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+	"./SearchCheckboxCustomFieldWidget", "./SearchNumericCustomFieldWidget", "jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
+	"./SearchComboMultiSelectCustomField", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 	"jquery.squash.confirmdialog", "jquery.cookie"], function ($, Backbone, Handlebars, translator, notification, _, projects, storage) {
 
 	var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
-	
+
 	// Prefiling all the request
 	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 		var token = $("meta[name='_csrf']").attr("content");
@@ -78,6 +78,24 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				return fieldValue.call(this, "SINGLE", value.toLowerCase());
 			} else {
 				return fieldValue.call(this, "SINGLE", value);
+
+			}
+		}
+	});
+
+	var searchTextCustomFieldWidget = $.widget("search.searchTextCustomFieldWidget", {
+		options: {
+			ignoreBridge: false
+		},
+
+		_create: function () {
+		},
+
+		fieldvalue: function (value) {
+			if (value) {
+				return fieldValue.call(this, "CF_TEXT", value.toLowerCase());
+			} else {
+				return fieldValue.call(this, "CF_TEXT", value);
 
 			}
 		}
@@ -153,14 +171,11 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 					// compiles the panel template
 					if (panelName == "perimeter") {
 						source = self.$("#toggle-panel-perimeter-template").html();
-					}
-					else if (panelName == "general-information") {
+					} else if (panelName == "general-information") {
 						source = self.$("#toggle-panel-informations-template").html();
-					}
-					else if (panelName == "general-information-fullsize") {
+					} else if (panelName == "general-information-fullsize") {
 						source = self.$("#toggle-panel-informationsfull-template").html();
-					}
-					else {
+					} else {
 						source = self.$("#toggle-panel-template").html();
 					}
 					/* Add another source if specified */
@@ -190,6 +205,9 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 						field = panel.fields[i];
 						var inputType = field.inputType.toLowerCase();
 						switch (inputType) {
+							case "cf_text" :
+								self.makeTextCustomField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								break;
 							case "textfield" :
 								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 								break;
@@ -210,6 +228,12 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 								break;
 							case "multiautocomplete":
 								self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "cf_checkbox":
+								self.makeCheckboxCustomField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "cf_list":
+								self.makeComboMultiselectCustomField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case "combomultiselect":
 								self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
@@ -241,6 +265,9 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 							case "tags":
 								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
+							case "cf_numeric_range":
+								self.makeNumericCustomField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
 							case "numericrange":
 								self.makeNumericRangeField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
@@ -248,15 +275,11 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 								self.makeComboExistsMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 						}
-
 					}
 					// End C
-
 					// End A
 				});
-
 			};
-
 			this._processModel(formBuilder);
 
 
@@ -346,6 +369,15 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 		},
 
+		makeNumericCustomField: function (tableId, fieldId, fieldTitle, enteredValue) {
+			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#numeric-customfield-template", context));
+
+			$fieldDom.searchNumericCustomFieldWidget();
+			$fieldDom.searchNumericCustomFieldWidget("fieldvalue", enteredValue);
+
+		},
+
 		makeExistsField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
@@ -395,6 +427,16 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
+		},
+
+		makeTextCustomField: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+			var context = {
+				"text-customfield-id": fieldId,
+				"text-customfield-title": fieldTitle,
+				fieldValue: !!enteredValue ? enteredValue.value : ""
+			};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#text-customfield-template", context));
+			$fieldDom.searchTextCustomFieldWidget({"ignoreBridge": ignoreBridge});
 		},
 
 		makeTextFieldId: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
@@ -502,6 +544,22 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
 
+		makeCheckboxCustomField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"checkboxcustomfield-id": fieldId, "checkboxcustomfield-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#checkboxcustomfield-template", context));
+			$fieldDom.searchCheckboxCustomFieldWidget();
+			$fieldDom.searchCheckboxCustomFieldWidget("createDom", "F" + fieldId, options);
+			$fieldDom.searchCheckboxCustomFieldWidget("fieldvalue", enteredValue);
+		},
+
+		makeComboMultiselectCustomField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"combomultiselect-customfield-id": fieldId, "combomultiselect-customfield-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#combomultiselect-customfield-template", context));
+			$fieldDom.searchComboMultiSelectCustomFieldWidget();
+			$fieldDom.searchComboMultiSelectCustomFieldWidget("createDom", "F" + fieldId, options);
+			$fieldDom.searchComboMultiSelectCustomFieldWidget("fieldvalue", enteredValue);
+		},
+
 		makeComboExistsMultiselect: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"comboexistsmultiselect-id": fieldId, "comboexistsmultiselect-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#comboexistsmultiselect-template", context));
@@ -563,8 +621,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				});
 				if (ids !== undefined && ids.length > 0) {
 					jsonVariable[key] = {type: "LIST", values: ids};
-				}
-				else {
+				} else {
 					jsonVariable["project.id"] = {type: "LIST", values: []};
 				}
 
@@ -618,7 +675,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			temp.submit();
 			return temp;
 		},
-		
+
 		/* [Issue 7692] : stores the post parameters in the local storage
 		 * it allows for repost when navigating back from a page, ie using
 		 * a GET request.
@@ -629,8 +686,8 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 		 * However the somewhat large data would cause issues (overflowing the 
 		 * max length of the url) so as a workaround a POST was preferred. 
 		 * Maybe using GET + zipped form content could have worked though.
-		 */ 
-		savePostResultParameters: function(searchDomain, searchModel){
+		 */
+		savePostResultParameters: function (searchDomain, searchModel) {
 			storage.set(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain, searchModel);
 		},
 
@@ -650,17 +707,17 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				searchModel: searchModel,
 				_csrf: $("meta[name='_csrf']").attr("content")
 			};
-			
+
 			var searchDomain = $("#searchDomain").text();
 			this.savePostResultParameters(searchDomain, searchModel);
 
 			// create the query string
-			var queryString = "?searchDomain="+searchDomain;
-			
+			var queryString = "?searchDomain=" + searchDomain;
+
 			if (!!$("#associationType").length) {
 				var associationType = $("#associationType").text();
 				var associationId = $("#associationId").text();
-				queryString+= "&associationType="+associationType+"&associationId="+associationId;
+				queryString += "&associationType=" + associationType + "&associationId=" + associationId;
 			}
 
 			// now post

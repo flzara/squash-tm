@@ -22,11 +22,19 @@ package org.squashtest.tm.domain.search;
 
 public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TEXT;
+	private AdvancedSearchFieldModelType type;
 
 	private String value;
 
 	private boolean ignoreBridge = false;
+
+	public AdvancedSearchTextFieldModel() {
+		type = AdvancedSearchFieldModelType.TEXT;
+	}
+
+	public AdvancedSearchTextFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	@Override
 	public boolean isIgnoreBridge() {

@@ -22,13 +22,21 @@ package org.squashtest.tm.domain.search;
 
 public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.NUMERIC_RANGE;
+	private AdvancedSearchFieldModelType type;
 
 	private String minValue;
 
 	private String maxValue;
 
 	private boolean ignoreBridge = false;
+
+	public AdvancedSearchNumericRangeFieldModel() {
+		type = AdvancedSearchFieldModelType.NUMERIC_RANGE;
+	}
+
+	public AdvancedSearchNumericRangeFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	public String getMinValue() {
 		return minValue;

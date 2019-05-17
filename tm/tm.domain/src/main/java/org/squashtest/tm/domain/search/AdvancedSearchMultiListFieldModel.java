@@ -25,7 +25,7 @@ import java.util.List;
 
 public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.MULTILIST;
+	private AdvancedSearchFieldModelType type;
 
 	private List<String> values = new ArrayList<>();
 
@@ -34,6 +34,14 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 	private Integer maxValue;
 
 	private boolean ignoreBridge = false;
+
+	public AdvancedSearchMultiListFieldModel() {
+		type  = AdvancedSearchFieldModelType.MULTILIST;
+	}
+
+	public AdvancedSearchMultiListFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	@Override
 	public AdvancedSearchFieldModelType getType(){

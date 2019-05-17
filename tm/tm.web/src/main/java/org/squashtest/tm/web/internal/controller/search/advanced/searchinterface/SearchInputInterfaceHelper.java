@@ -232,7 +232,7 @@ public class SearchInputInterfaceHelper {
 	private SingleSelectField convertToDropdownList(CustomFieldModel customField){
 		CustomFieldModelFactory.SingleSelectFieldModel singleSelectFieldModel = (CustomFieldModelFactory.SingleSelectFieldModel)customField;
 		SingleSelectField selectField = new SingleSelectField();
-		selectField.setCode(singleSelectFieldModel.getCode());
+		selectField.setCode(Long.toString(singleSelectFieldModel.getId()));
 		selectField.setDefaultValue(singleSelectFieldModel.getDefaultValue());
 		selectField.setLabel(singleSelectFieldModel.getLabel());
 		selectField.setName(singleSelectFieldModel.getName());
@@ -253,7 +253,7 @@ public class SearchInputInterfaceHelper {
 	private MultiSelectField convertToMultiSelectField(CustomFieldModel customField){
 		CustomFieldModelFactory.MultiSelectFieldModel multiSelectFieldModel = (CustomFieldModelFactory.MultiSelectFieldModel)customField;
 		MultiSelectField multiSelectField = new MultiSelectField();
-		multiSelectField.setCode(multiSelectFieldModel.getCode());
+		multiSelectField.setCode(Long.toString(multiSelectFieldModel.getId()));
 		// Sonar: here #getDefaultValue() returns an array. This line is adding a wrong possible option value.
 		multiSelectField.setLabel(multiSelectFieldModel.getLabel());
 		multiSelectField.setName(multiSelectFieldModel.getName());
@@ -275,7 +275,7 @@ public class SearchInputInterfaceHelper {
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType("CF_TIME_INTERVAL");
 		model.setTitle(customField.getLabel());
-		model.setId(customField.getCode());
+		model.setId(Long.toString(customField.getId()));
 		model.setIgnoreBridge(true);
 		return model;
 	}
@@ -291,27 +291,27 @@ public class SearchInputInterfaceHelper {
 				.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.False", locale), "false"));
 
 		model.setPossibleValues(possibleValues);
-		model.setInputType(COMBOMULTISELECT);
+		model.setInputType("CF_CHECKBOX");
 		model.setTitle(customFieldModel.getLabel());
-		model.setId(customFieldModel.getCode());
+		model.setId(Long.toString(customFieldModel.getId()));
 		model.setIgnoreBridge(true);
 		return model;
 	}
 
 	private SearchInputFieldModel createNumericRangeField (CustomFieldModel customField) {
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType(SearchInterfaceDescription.NUMERICRANGE);
+		model.setInputType("CF_NUMERIC_RANGE");
 		model.setTitle(customField.getLabel());
-		model.setId(customField.getCode());
+		model.setId(Long.toString(customField.getId()));
 		model.setIgnoreBridge(true);
 		return model;
 	}
 
 	private SearchInputFieldModel convertToSearchInputFieldModel(CustomFieldModel customField) {
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType(TEXTFIELD);
+		model.setInputType("CF_TEXT");
 		model.setTitle(customField.getLabel());
-		model.setId(customField.getCode());
+		model.setId(Long.toString(customField.getId()));
 		model.setIgnoreBridge(true);
 		return model;
 	}
@@ -323,7 +323,7 @@ public class SearchInputInterfaceHelper {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType(COMBOMULTISELECT);
+		model.setInputType("CF_LIST");
 		model.setTitle(selectField.getLabel());
 		model.setPossibleValues(possibleValues);
 		model.setId(selectField.getCode());

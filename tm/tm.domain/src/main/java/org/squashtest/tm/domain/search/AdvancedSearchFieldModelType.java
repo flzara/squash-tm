@@ -30,6 +30,11 @@ public enum AdvancedSearchFieldModelType {
 	NUMERIC_RANGE,
 	TAGS,
 	MULTILIST,
-	CF_TIME_INTERVAL;
+	CF_TIME_INTERVAL,
+	CF_SINGLE,
+	CF_CHECKBOX,
+	CF_LIST,
+	CF_NUMERIC_RANGE,
+	CF_TEXT;
 	// @formatter:on
 }

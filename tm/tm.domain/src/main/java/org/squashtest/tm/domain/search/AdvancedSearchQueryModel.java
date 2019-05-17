@@ -20,37 +20,49 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
+import org.springframework.data.domain.Pageable;
 
-	private AdvancedSearchFieldModelType type;
+import java.util.HashMap;
+import java.util.Map;
 
-	private String value;
+public class AdvancedSearchQueryModel {
 
-	private boolean ignoreBridge = false;
+	private Pageable pageable;
 
-	public AdvancedSearchSingleFieldModel() {
-		type = AdvancedSearchFieldModelType.SINGLE;
+	private Map<Integer, Object> mDataProp = new HashMap<>();
+
+	private AdvancedSearchModel model;
+
+	public AdvancedSearchQueryModel() {
 	}
 
-	public AdvancedSearchSingleFieldModel(AdvancedSearchFieldModelType type) {
-		this.type = type;
+	public AdvancedSearchQueryModel(Pageable pageable, Map<Integer, Object> mDataProp, AdvancedSearchModel model) {
+		this.pageable = pageable;
+		this.mDataProp = mDataProp;
+		this.model = model;
 	}
 
-	public String getValue() {
-		return value;
+	public Pageable getPageable() {
+		return pageable;
 	}
 
-	@Override
-	public AdvancedSearchFieldModelType getType() {
-		return type;
+	public void setPageable(Pageable pageable) {
+		this.pageable = pageable;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public Map<Integer, Object> getmDataProp() {
+		return mDataProp;
 	}
 
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public void setmDataProp(Map<Integer, Object> mDataProp) {
+		this.mDataProp = mDataProp;
+	}
+
+	public AdvancedSearchModel getModel() {
+		return model;
+	}
+
+	public void setModel(AdvancedSearchModel model) {
+		this.model = model;
 	}
 }

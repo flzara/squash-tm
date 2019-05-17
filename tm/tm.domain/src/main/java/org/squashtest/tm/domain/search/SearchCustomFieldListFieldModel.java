@@ -20,37 +20,8 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
-
-	private AdvancedSearchFieldModelType type;
-
-	private String value;
-
-	private boolean ignoreBridge = false;
-
-	public AdvancedSearchSingleFieldModel() {
-		type = AdvancedSearchFieldModelType.SINGLE;
-	}
-
-	public AdvancedSearchSingleFieldModel(AdvancedSearchFieldModelType type) {
-		this.type = type;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	@Override
-	public AdvancedSearchFieldModelType getType() {
-		return type;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+public class SearchCustomFieldListFieldModel extends AdvancedSearchMultiListFieldModel {
+	public SearchCustomFieldListFieldModel(AdvancedSearchFieldModelType type) {
+		super(AdvancedSearchFieldModelType.CF_LIST);
 	}
 }

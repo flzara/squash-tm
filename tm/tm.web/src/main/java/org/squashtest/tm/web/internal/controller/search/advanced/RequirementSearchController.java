@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -154,6 +155,8 @@ public class RequirementSearchController extends GlobalSearchController {
 		addMilestoneToSearchModel(searchModel);
 
 		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper);
+
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
 
 		Page<RequirementVersion> holder = requirementVersionAdvancedSearchService
 			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
