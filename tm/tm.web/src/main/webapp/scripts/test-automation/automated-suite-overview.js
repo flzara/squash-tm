@@ -176,6 +176,9 @@ define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub"
 				opts.executionAutoInfos.empty();
 				$("#execution-auto-progress-bar").progressbar("value", 0);
 				$("#execution-auto-progress-amount").text(0 + "/" + 0);
+
+				// clean the unlaunchable test list content
+				opts.unlaunchableTest.empty();
 			},
 			
 			_refreshStakeholders : function(){

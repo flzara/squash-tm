@@ -218,15 +218,15 @@
 	//TM-13
 	@NamedQuery(name="IterationTestPlanItem.findAllByIterationIdWithTCAutomated",
 					  	query="select distinct item from Iteration it join it.testPlans item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
-		       			" where it.id = :iterationId and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+		       			" where it.id = :iterationId and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 	@NamedQuery(name="IterationTestPlanItem.findAllByTestSuiteIdWithTCAutomated",
 		query="select distinct item from TestSuite ts join ts.testPlan item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
-			" where ts.id = :testSuiteId and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+			" where ts.id = :testSuiteId and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 	@NamedQuery(name="IterationTestPlanItem.findAllByItemsIdWithTCAutomated",
 		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
-			" where item.id in(:itemsIds) and tc.automatable = 'Y' and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+			" where item.id in(:itemsIds) and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
 
 	// TestSuite
