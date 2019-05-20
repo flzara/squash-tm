@@ -113,7 +113,7 @@
 
   <changeSet id="tm-1.20.0-TM-13-add-conflict-association-ismanual" author="amk">
     <addColumn tableName="AUTOMATION_REQUEST">
-      <column name="CONFLICT_ASSOCIATION" defaultValue="NULL" type="TEXT">
+      <column name="CONFLICT_ASSOCIATION" defaultValue="" type="TEXT">
       </column>
       <column name="IS_MANUAL" type="BOOLEAN" defaultValueBoolean="false">
         <constraints nullable="false" />

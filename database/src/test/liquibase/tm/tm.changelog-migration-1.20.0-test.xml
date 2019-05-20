@@ -53,6 +53,17 @@
     <comment>We check that there are no null value for uuid  </comment>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-13-test-conflict-association" author="amk" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="2">
+        SELECT count(*) from AUTOMATION_REQUEST where conflict_association IS NOT NULL
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that there are no null value for conflict_association  </comment>
+  </changeSet>
+
+
   <changeSet id="tm-1.20.0-TM-13-test-isManual" author="aguilhem" dbms="mysql, postgresql, h2">
     <preConditions>
       <sqlCheck expectedResult="1">
