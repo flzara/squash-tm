@@ -348,11 +348,8 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 	@PersistenceContext
 	private EntityManager em;
 
-
-
-	@Transactional(readOnly = true)
 	@Override
-	public List<Tuple> executeQuery(ConfiguredQuery configuredQuery) {
+	public ExtendedHibernateQuery prepareQuery(ConfiguredQuery configuredQuery) {
 
 		// *********** step 1 : create the query ************************
 
@@ -375,7 +372,16 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 			detachedQuery.limit(page.getPageSize());
 		}
 
-		// ********** step 4 : run the query *********************************
+		return detachedQuery;
+
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Tuple> executeQuery(ConfiguredQuery configuredQuery) {
+
+		ExtendedHibernateQuery detachedQuery = prepareQuery(configuredQuery);
+
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery) detachedQuery.clone(em.unwrap(Session.class));
 
 		try {

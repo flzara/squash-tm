@@ -22,6 +22,7 @@ package org.squashtest.tm.service.query;
 
 import com.querydsl.core.Tuple;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import java.util.List;
 
@@ -40,5 +41,19 @@ public interface QueryProcessingService {
 	 * @return
 	 */
 	List<Tuple> executeQuery(ConfiguredQuery configuredQuery);
+
+	/**
+	 * <p>
+	 * Will build the query according to the specified ConfiguredQuery without executing it :
+	 * the resulting ExtendedHibernateQuery is returned instead.
+	 * </p>
+	 * <p>Note that the query is detached
+	 * (it has no session yet). You will need to clone it and attach to a session before you running it.
+	 * </p>
+	 *
+	 * @param configuredQuery
+	 * @return
+	 */
+	ExtendedHibernateQuery prepareQuery(ConfiguredQuery configuredQuery);
 
 }
