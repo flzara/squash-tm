@@ -159,7 +159,7 @@ public class RequirementSearchController extends GlobalSearchController {
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
 
 		Page<RequirementVersion> holder = requirementVersionAdvancedSearchService
-			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
+			.searchForRequirementVersions(queryModel, paging, getMessageSource(), locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 

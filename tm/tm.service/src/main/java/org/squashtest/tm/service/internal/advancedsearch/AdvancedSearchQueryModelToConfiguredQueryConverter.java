@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import com.google.common.collect.ImmutableMap;
 import com.querydsl.core.types.Order;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -37,28 +36,36 @@ import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchNumericRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
+import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AdvancedSearchQueryModelToConfiguredQueryConverter {
+
+	private static final String SEARCH_BY_MILESTONE = "searchByMilestone";
 
 	private Map<String, String> columnPrototypeMapping = new HashMap<>();
 
@@ -69,9 +76,14 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private List<QueryColumnPrototype> prototypes = new ArrayList<>();
 
-	public AdvancedSearchQueryModelToConfiguredQueryConverter(AdvancedSearchQueryModel advancedSearchQueryModel, Map<String, String> columnPrototypeMapping) {
+	public AdvancedSearchQueryModelToConfiguredQueryConverter configureModel(AdvancedSearchQueryModel advancedSearchQueryModel) {
 		this.advancedSearchQueryModel = advancedSearchQueryModel;
+		return this;
+	}
+
+	public AdvancedSearchQueryModelToConfiguredQueryConverter configureMapping(Map<String, String> columnPrototypeMapping) {
 		this.columnPrototypeMapping = columnPrototypeMapping;
+		return this;
 	}
 
 	public ConfiguredQuery convert() {
@@ -79,7 +91,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		prototypes = columnPrototypeDao.findAll();
 
 		QueryModel query = createBaseQueryModel();
-
 
 
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
@@ -113,12 +124,21 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private List<QueryFilterColumn> extractFilters() {
 		List<QueryFilterColumn> filters = new ArrayList<>();
 
+
 		AdvancedSearchModel model = advancedSearchQueryModel.getModel();
+		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model
+			.getFields().get(SEARCH_BY_MILESTONE);
+		if(searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
+			model.getFields().remove(SEARCH_BY_MILESTONE);
+		}
 		Set<String> keys = model.getFields().keySet();
-		for (String key: keys) {
-		    AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
-		    AdvancedSearchFieldModelType fieldType = fieldModel.getType();
-		    filters.add(getFilterColumn(fieldModel, fieldType, key));
+		for (String key : keys) {
+			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
+			AdvancedSearchFieldModelType fieldType = fieldModel.getType();
+			QueryFilterColumn filter = getFilterColumn(fieldModel, fieldType, key);
+			if (filter != null) {
+				filters.add(filter);
+			}
 		}
 		return filters;
 	}
@@ -126,91 +146,207 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private QueryFilterColumn getFilterColumn(AdvancedSearchFieldModel fieldModel,
 											  AdvancedSearchFieldModelType fieldType, String key) {
 		QueryFilterColumn queryFilterColumn = null;
-
+		String columnLabel = columnPrototypeMapping.get(fieldModel.toString());
 		switch (fieldType) {
 			case TIME_INTERVAL:
+				queryFilterColumn = createFilterToTimeInterval(fieldModel, false, columnLabel);
 				break;
 			case CF_TIME_INTERVAL:
+				queryFilterColumn = createFilterToTimeInterval(fieldModel, true , key);
 				break;
 			case CF_LIST:
-				break;
-			case CF_TEXT:
-				break;
-			case CF_SINGLE:
+				queryFilterColumn = createFilterToList(fieldModel, true, key);
 				break;
 			case CF_CHECKBOX:
 				break;
 			case CF_NUMERIC_RANGE:
+				queryFilterColumn = createFilterToNumeric(fieldModel, true, key);
 				break;
 			case NUMERIC_RANGE:
+				queryFilterColumn = createFilterToNumeric(fieldModel, false, columnLabel);
 				break;
 			case MULTILIST:
+				queryFilterColumn = createFilterToMultiList(fieldModel, columnLabel);
 				break;
 			case RANGE:
+				queryFilterColumn = createFilterToRange(fieldModel, columnLabel);
 				break;
 			case TEXT:
+				queryFilterColumn = createFilterToText(fieldModel);
 				break;
 			case TAGS:
-				queryFilterColumn = createFilterToTags(fieldModel);
+				queryFilterColumn = createFilterToTags(fieldModel, key);
 				break;
 			case LIST:
+				queryFilterColumn = createFilterToList(fieldModel, false, columnLabel);
 				break;
 			case SINGLE:
-				queryFilterColumn = createFilterToSingle(fieldModel);
+				queryFilterColumn = createFilterToSingle(fieldModel, false, columnLabel);
+				break;
+			case CF_SINGLE:
+				queryFilterColumn = createFilterToSingle(fieldModel, true, key);
 				break;
 			default:
 				break;
 		}
+
 		return queryFilterColumn;
 	}
 
-	private QueryFilterColumn createFilterToSingle(AdvancedSearchFieldModel model) {
+	private QueryFilterColumn createFilterToSingle(AdvancedSearchFieldModel model, boolean isCuf, String key) {
 
 		QueryFilterColumn filter = new QueryFilterColumn();
 		AdvancedSearchSingleFieldModel singleFieldModel = (AdvancedSearchSingleFieldModel) model;
 		String value = singleFieldModel.getValue();
+		if ("".equals(value)) {
+			return null;
+		}
 		filter.addValues(Collections.singletonList(value));
 		filter.setOperation(Operation.EQUALS);
-		String columnLabel = columnPrototypeMapping.get(singleFieldModel.toString());
-		filter.setColumnPrototype(getColumnPrototype(columnLabel));
+
+		if (isCuf) {
+			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_SINGLE.name())));
+			filter.setCufId(Long.parseLong(key));
+		} else {
+			filter.setColumnPrototype(getColumnPrototype(key));
+		}
+
 		return filter;
 	}
 
-	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model) {
+	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model, String key) {
 		QueryFilterColumn filter = new QueryFilterColumn();
 		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
 		List<String> tags = fieldModel.getTags();
 		filter.addValues(tags);
-		QueryColumnPrototype queryColumnPrototype = getColumnPrototype(columnPrototypeMapping.get("CUSTOM_FIELD_TAGS"));
+		QueryColumnPrototype queryColumnPrototype = getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.TAGS));
 		filter.setColumnPrototype(queryColumnPrototype);
-		filter.setCufId(Long.parseLong(fieldModel.toString()));
-		if(AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
-			filter.setOperation(Operation.IN);
-		} else {
+		filter.setCufId(Long.parseLong(key));
+		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
 			//TODO create the good operation
+		} else {
+			filter.setOperation(Operation.IN);
 		}
 		return filter;
 	}
 
-	private QueryFilterColumn createFilterToTimeInterval(AdvancedSearchFieldModel model) {
+	private QueryFilterColumn createFilterToTimeInterval(AdvancedSearchFieldModel model, boolean isCuf, String key) {
 		QueryFilterColumn filter = new QueryFilterColumn();
 
-		AdvancedSearchTimeIntervalFieldModel intervalFieldModel = (AdvancedSearchTimeIntervalFieldModel)model;
+		AdvancedSearchTimeIntervalFieldModel intervalFieldModel = (AdvancedSearchTimeIntervalFieldModel) model;
 		Date startDate = intervalFieldModel.getStartDate();
 		Date endDate = intervalFieldModel.getEndDate();
 
 		if (startDate != null && endDate != null) {
 			filter.setOperation(Operation.BETWEEN);
 		} else if (startDate != null) {
-			/*filter.setOperation(Operation.);*/
+			filter.setOperation(Operation.GREATER_EQUAL);
 		} else if (endDate != null) {
+			filter.setOperation(Operation.LOWER_EQUAL);
+		} else {
+			return null;
+		}
+		filter.addValues(Arrays.asList(startDate.toString(), endDate.toString()));
+		if (isCuf) {
+			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_TIME_INTERVAL)));
+			filter.setCufId(Long.parseLong(key));
+		} else {
+			filter.setColumnPrototype(getColumnPrototype(key));
+		}
+		return filter;
+	}
 
+	private QueryFilterColumn createFilterToNumeric(AdvancedSearchFieldModel model, boolean isCuf,
+													String key) {
+		QueryFilterColumn filter = new QueryFilterColumn();
+		AdvancedSearchNumericRangeFieldModel numericRangeFieldModel = (AdvancedSearchNumericRangeFieldModel) model;
+		String minValue = numericRangeFieldModel.getMinValue();
+		String maxValue = numericRangeFieldModel.getMaxValue();
+
+		if (minValue != null && maxValue != null) {
+			filter.setOperation(Operation.BETWEEN);
+		} else if (minValue != null) {
+			filter.setOperation(Operation.GREATER_EQUAL);
+		} else if (maxValue != null) {
+			filter.setOperation(Operation.LOWER_EQUAL);
 		} else {
 			return null;
 		}
 
+		if (isCuf) {
+			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_NUMERIC)));
+			filter.setCufId(Long.parseLong(key));
+		} else {
+			filter.setColumnPrototype(getColumnPrototype(key));
+		}
 
 		return filter;
+	}
+
+	private QueryFilterColumn createFilterToList(AdvancedSearchFieldModel model, boolean isCuf,
+												 String key) {
+		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
+
+		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) model;
+
+		List<String> values = listModel.getValues();
+		if (values == null || values.isEmpty()) {
+			return null;
+		}
+
+		if (isCuf) {
+			queryFilterColumn.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_LIST)));
+			queryFilterColumn.setCufId(Long.parseLong(key));
+		} else {
+			queryFilterColumn.setColumnPrototype(getColumnPrototype(key));
+		}
+		queryFilterColumn.addValues(values);
+		queryFilterColumn.setOperation(Operation.IN);
+
+		return queryFilterColumn;
+	}
+
+	private QueryFilterColumn createFilterToMultiList(AdvancedSearchFieldModel model, String key) {
+		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
+
+		AdvancedSearchMultiListFieldModel listModel = (AdvancedSearchMultiListFieldModel) model;
+
+		List<String> values = listModel.getValues();
+		if (values == null || values.isEmpty()) {
+			return null;
+		}
+		queryFilterColumn.addValues(values);
+
+		queryFilterColumn.setOperation(Operation.IN);
+		queryFilterColumn.setColumnPrototype(getColumnPrototype(key));
+		return queryFilterColumn;
+	}
+
+	private QueryFilterColumn createFilterToRange(AdvancedSearchFieldModel model, String key) {
+
+		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel)model;
+		Integer minValue = rangeField.getMinValue();
+		Integer maxValue = rangeField.getMaxValue();
+		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
+		if (minValue != null && maxValue != null) {
+			queryFilterColumn.setOperation(Operation.BETWEEN);
+			queryFilterColumn.addValues(Arrays.asList(minValue.toString(), maxValue.toString()));
+		} else if (minValue != null) {
+			queryFilterColumn.setOperation(Operation.GREATER_EQUAL);
+			queryFilterColumn.addValues(Collections.singletonList(minValue.toString()));
+		} else if (maxValue != null) {
+			queryFilterColumn.setOperation(Operation.LOWER_EQUAL);
+			queryFilterColumn.addValues(Collections.singletonList(maxValue.toString()));
+		} else {
+			return null;
+		}
+		queryFilterColumn.setColumnPrototype(getColumnPrototype(key));
+
+		return queryFilterColumn;
+	}
+
+	private QueryFilterColumn createFilterToText(AdvancedSearchFieldModel model) {
+		return null;
 	}
 
 	private List<QueryOrderingColumn> extractOrders() {
@@ -227,6 +363,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		QueryOrderingColumn queryOrderingColumn = new QueryOrderingColumn();
 
 		String property = specifier.getProperty();
+		property = formatSortedFieldName(property);
 		String columnPrototypeLabel = columnPrototypeMapping.get(property);
 		QueryColumnPrototype column = getColumnPrototype(columnPrototypeLabel);
 
@@ -237,10 +374,26 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryOrderingColumn;
 	}
 
+	private String formatSortedFieldName(String propertyName) {
+		String result = propertyName;
+		if (propertyName.startsWith("RequirementVersion.")) {
+			result = propertyName.replaceFirst("RequirementVersion.", "");
+		} else if (propertyName.startsWith("Requirement.")) {
+			result = propertyName.replaceFirst("Requirement.", "requirement.");
+		} else if (propertyName.startsWith("Project.")) {
+			result = propertyName.replaceFirst("Project.", "project-");
+		}
+		return result;
+	}
+
 	private QueryColumnPrototype getColumnPrototype(String property) {
-		QueryColumnPrototype column = prototypes.stream()
+		Optional<QueryColumnPrototype> optionalColumn = prototypes.stream()
 			.filter(col -> col.getLabel().equals(property))
-			.findFirst().get();
-		return column;
+			.findFirst();
+		QueryColumnPrototype queryColumnPrototype = null;
+		if (optionalColumn.isPresent()) {
+			queryColumnPrototype = optionalColumn.get();
+		}
+		return queryColumnPrototype;
 	}
 }

@@ -27,6 +27,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +42,7 @@ public interface RequirementVersionAdvancedSearchService {
 	//Querying
 
 
-	Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel searchModel, Pageable paging, MessageSource source, Locale locale);
+	Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel searchModel, Pageable paging, MessageSource source, Locale locale);
 
 	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
 
