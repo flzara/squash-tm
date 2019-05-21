@@ -572,7 +572,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
 	@ResponseBody
 	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflow) {
-		if(!workflowPluginManager.getAutomationWorkflowsCodes().contains(automationWorkflow)) {
+		if(!workflowPluginManager.getAutomationWorkflowsIds().contains(automationWorkflow)) {
 			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
 		}
 		projectManager.changeAutomationWorkflow(projectId, automationWorkflow);

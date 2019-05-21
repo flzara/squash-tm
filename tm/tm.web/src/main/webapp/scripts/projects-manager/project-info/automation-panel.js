@@ -27,8 +27,8 @@
  - availableAutomationWorkflows : the map of automation workflows available
  - chosenAutomationWorkflow : the current automation workflow of the project
  */
-define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
-		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator) {
+define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "app/pubsub", "squashtable", "jquery.squash.formdialog" ],
+		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -189,10 +189,13 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					var self = this;
 					this.changeUrl = conf.tmProjectURL;
 					this.isAdmin = conf.isAdmin;
+					this.projectId = conf.projectId;
 
 					this.automationWorkflows = conf.availableAutomationWorkflows;
 					this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
 					this.initAutomationWorkflowSelect();
+					// TODO: If event 'plugin changed' is triggered, reload combobox
+					pubsub.subscribe('project.plugin.toggled', function() { self.reloadWorkflowsComboBox(self); });
 
 					this.popups = popups;
 					for(var popup in popups){
@@ -223,6 +226,20 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					"click #ta-projects-bind-button" : "openAuthenticationPopup"
 				},
 
+				reloadWorkflowsComboBox: function(self) {
+					self.doFetchWorkflowsMap().then(function(workflowsMap) {
+						self.automationWorkflows = workflowsMap;
+						self.reforgeWorkflowsCombobox();
+						self.initAutomationWorkflowSelect();
+					});
+				},
+				doFetchWorkflowsMap: function() {
+					var projectId = this.projectId;
+					return $.ajax({
+						method: 'GET',
+						url: squashtm.app.contextRoot + 'administration/projects/' + projectId + '/workflows'
+					});
+				},
 				initAutomationWorkflowSelect: function() {
 					var self = this;
 					new SelectJEditable({
@@ -251,6 +268,16 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							value: workflow
 						}
 					});
+				},
+				reforgeWorkflowsCombobox: function() {
+					var self = this;
+					var displayedWorfklow = self.automationWorkflows[self.chosenAutomationWorkflow];
+					if(displayedWorfklow === undefined || displayedWorfklow === null) {
+						displayedWorfklow = self.automationWorkflows['NONE'];
+					}
+					$('#project-workflows-select').remove();
+					var newDiv = $("<div id ='project-workflows-select' style='display: inline'>" + displayedWorfklow + "</div>");
+					$('#project-workflows-select-container').append(newDiv);
 				},
 
 				initTable : function(){

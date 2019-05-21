@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -35,6 +37,7 @@ import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.plugin.PluginValidationException;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
@@ -71,6 +74,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/administration/projects")
@@ -145,8 +149,8 @@ public class ProjectAdministrationController {
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 
-		// available automation workflows
-		Map<String, String> automationWorkflows = workflowPluginManager.getAutomationWorkflowsMap(locale);
+		// Automation workflows
+		Map<String, String> automationWorkflows = getAvailableWorkflows(projectId, locale);
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
@@ -190,6 +194,27 @@ public class ProjectAdministrationController {
 		return mav;
 	}
 
+	/**
+	 *  Get all the available activated AutomationWorkflow Plugins for the given Project.
+	 * @param projectId The Project Id.
+	 * @param locale The Locale (used to translate 'Native' and 'None')
+	 * @return The Map of available activated AutomatioWorkflow Plugins
+	 */
+	private Map<String, String> getAvailableWorkflows(Long projectId, Locale locale) {
+		Collection<String> activePlugins =
+			pluginManager.findEnabledWizards(projectId)
+				.stream().map(WorkspaceWizard::getId).collect(Collectors.toList());
+
+		return workflowPluginManager.getAutomationWorkflowsMapFilteredByIds(activePlugins, locale);
+	}
+
+	@RequestMapping(value = "{projectId}/workflows")
+	@ResponseBody
+	public Map<String, String> createComboDataForWorkflows(
+		@PathVariable(RequestParams.PROJECT_ID) Long projectId, Locale locale) {
+		return getAvailableWorkflows(projectId, locale);
+	}
+
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
 		Map<Long, String> comboDataMap = new HashMap<>();
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
@@ -197,7 +222,6 @@ public class ProjectAdministrationController {
 		}
 		comboDataMap.put(-1L, internationalizationHelper.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale));
 		return comboDataMap;
-
 	}
 
 

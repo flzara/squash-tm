@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "jquery.squash.togglepanel",
+		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "app/pubsub", "jquery.squash.togglepanel",
 		  "jqueryui", "squashtable", "jquery.switchButton"],
 
-		function($, Backbone, _, translator, routing) {
+		function($, Backbone, _, translator, routing, pubsub) {
 
 			translator.load(["label.Enabled", "label.disabled", "label.Configure"]);
 
@@ -123,6 +123,8 @@ define(
 						method = (btn[0].checked) ? 'POST' : 'DELETE';
 
 					$.ajax({url : url, type : method});
+					// TODO: Publish event on Callback
+					pubsub.publish("project.plugin.toggled");
 
 					configureStyle($row, data);
 				});

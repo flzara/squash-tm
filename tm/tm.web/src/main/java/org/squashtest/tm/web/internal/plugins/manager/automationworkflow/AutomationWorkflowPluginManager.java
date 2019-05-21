@@ -27,17 +27,20 @@ import java.util.Map;
 public interface AutomationWorkflowPluginManager {
 
 	/**
-	 * Get the Map of the existing automation workflows.
-	 * @param locale The Locale to which the names are to translate.
-	 * @return A Map of available automation workflows.
-	 * Keys are the codes of the workflows and values are their names.
+	 * Get the Map of the existing automation workflows filtered by a Collection of plugin Ids.
+	 * @param activePluginsIds The Collection of plugin Ids to filter the result Map
+	 * @param locale The Locale to which the plugin names are to translate.
+	 * @return A Map of available automation workflows filtered by the given Ids Collection.
+	 * Keys are the ids of the workflows and values are their names.
+	 * This method is used to get all the activated AutomationWorkflows by giving the list of active plugins for a
+	 * given Project as parameter.
 	 */
-	Map<String, String> getAutomationWorkflowsMap(Locale locale);
+	Map<String, String> getAutomationWorkflowsMapFilteredByIds(Collection<String> activePluginsIds, Locale locale);
 
 	/**
-	 * Get the Collection the existing automation workflows represented by their names.
-	 * @return A Collection of names representing all the available automation workflows.
+	 * Get the Collection the existing automation workflows represented by their ids.
+	 * @return A Collection of ids representing all the available automation workflows.
 	 */
-	Collection<String> getAutomationWorkflowsCodes();
+	Collection<String> getAutomationWorkflowsIds();
 
 }

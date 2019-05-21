@@ -82,7 +82,7 @@
           <f:message key="label.workflow.modification" />
         </label>
       </div>
-      <div class="display-table-cell">
+      <div id="project-workflows-select-container" class="display-table-cell">
         <div id ="project-workflows-select" style="display: inline">
           <c:out value="${availableAutomationWorkflows[chosenAutomationWorkflow]}" />
 
@@ -472,6 +472,7 @@ require(["common"], function() {
       $(function(){
 
         var automationSettings = {
+          projectId: ${project.id},
         	isAdmin: ${isAdmin},
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},

@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.stereotype.Component;
-	import org.squashtest.tm.core.automationworkflow.AutomationWorkflow;
+	import org.squashtest.tm.api.wizard.AutomationWorkflow;
 	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 	import javax.inject.Inject;
@@ -49,23 +49,25 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
 
 	@Override
-	public Map<String, String> getAutomationWorkflowsMap(Locale locale) {
+	public Map<String, String> getAutomationWorkflowsMapFilteredByIds(Collection<String> activePluginsIds, Locale locale) {
 		Map<String, String> result = new LinkedHashMap<>();
 		result.put(NONE, i18nHelper.internationalize(I18N_KEY_NONE, locale));
 		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
 		for(AutomationWorkflow workflow : plugins) {
-			result.put(workflow.getWorkflowName(), workflow.getWorkflowName());
+			if(activePluginsIds.contains(workflow.getId())) {
+				result.put(workflow.getId(), workflow.getWorkflowName());
+			}
 		}
 		return result;
 	}
 
 	@Override
-	public Collection<String> getAutomationWorkflowsCodes() {
+	public Collection<String> getAutomationWorkflowsIds() {
 		List<String> result = new ArrayList<>();
 		result.add(NONE);
 		result.add(NATIVE);
 		for(AutomationWorkflow workflow : plugins) {
-			result.add(workflow.getWorkflowName());
+			result.add(workflow.getId());
 		}
 		return result;
 	}
