@@ -31,11 +31,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				CAMPAIGN_DESCRIPTION: 'label.Description',
 				CAMPAIGN_STATE: 'label.State',
 				CAMPAIGN_PROGRESS_STATUS: 'campaign.progress_status.label',
-				CAMPAIGN_MILESTONE: 'label.Milestones',
-				CAMPAIGN_SCHEDULED_START: 'chart.column.CAMPAIGN_SCHED_START',
-				CAMPAIGN_SCHEDULED_END: 'chart.column.CAMPAIGN_SCHED_END',
-				CAMPAIGN_ACTUAL_START: 'chart.column.CAMPAIGN_ACTUAL_START',
-				CAMPAIGN_ACTUAL_END: 'chart.column.CAMPAIGN_ACTUAL_END'
+				CAMPAIGN_MILESTONE: 'label.Milestone',
+				CAMPAIGN_SCHEDULED_START: 'dialog.label.campaign.scheduled_start.label',
+				CAMPAIGN_SCHEDULED_END: 'dialog.label.campaign.scheduled_end.label',
+				CAMPAIGN_ACTUAL_START: 'dialog.label.campaign.actual_start.label',
+				CAMPAIGN_ACTUAL_END: 'dialog.label.campaign.actual_end.label'
 			}
 		},
 		ITERATION: {
@@ -46,10 +46,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				ITERATION_REFERENCE: 'label.Reference',
 				ITERATION_DESCRIPTION: 'label.Description',
 				ITERATION_STATE: 'label.State',
-				ITERATION_SCHEDULED_START: 'chart.column.CAMPAIGN_SCHED_START',
-				ITERATION_SCHEDULED_END: 'chart.column.CAMPAIGN_SCHED_END',
-				ITERATION_ACTUAL_START: 'chart.column.CAMPAIGN_ACTUAL_START',
-				ITERATION_ACTUAL_END: 'chart.column.CAMPAIGN_ACTUAL_END'
+				ITERATION_SCHEDULED_START: 'dialog.label.campaign.scheduled_start.label',
+				ITERATION_SCHEDULED_END: 'dialog.label.campaign.scheduled_end.label',
+				ITERATION_ACTUAL_START: 'dialog.label.campaign.actual_start.label',
+				ITERATION_ACTUAL_END: 'dialog.label.campaign.actual_end.label'
 			}
 		},
 		TEST_SUITE: {
@@ -86,7 +86,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 			attributes: {
 				EXECUTION_EXECUTION_MODE: 'label.ExecutionMode',
 				EXECUTION_STATUS: 'label.Status',
-				EXECUTION_SUCCESS_RATE: 'shortLabel.SuccessRate',
+				EXECUTION_SUCCESS_RATE: 'iteration.executions.table.column-header.succesPercent.label',
 				EXECUTION_USER: 'label.User',
 				EXECUTION_EXECUTION_DATE: 'iteration.executions.table.column-header.execution-date.label',
 				EXECUTION_COMMENT: 'executions.steps.table.column-header.comment.label'
@@ -103,7 +103,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				EXECUTION_STEP_EXECUTION_DATE: 'iteration.executions.table.column-header.execution-date.label',
 				EXECUTION_STEP_COMMENT: 'executions.steps.table.column-header.comment.label',
 				EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER: 'custom-export.column.LINKED_REQUIREMENTS_COUNT',
-				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.LINKED_REQUIREMENTS_IDS'
+				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS'
 			}
 		},
 		ISSUE: {

@@ -364,7 +364,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	),
 
 	EXECUTION_STEP_LINKED_REQUIREMENTS_IDS(
-		I18nKeys.I18N_KEY_CUSTOM_EXPORT_COLUMN_LINKED_REQUIREMENTS_IDS,
+		"custom-export.column.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS",
 		groupConcatDistinct(REQUIREMENT_VERSION_COVERAGE.as("es_rvc").VERIFIED_REQ_VERSION_ID).separator(", ").as("es_rvc_ids"),
 		EntityType.EXECUTION_STEP),
 
