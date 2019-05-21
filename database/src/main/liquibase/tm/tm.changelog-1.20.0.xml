@@ -202,21 +202,42 @@
     <dropForeignKeyConstraint baseTableName="CHART_FILTER" constraintName="fk_chart_filter_chart_column"/>
     <dropForeignKeyConstraint baseTableName="CHART_MEASURE_COLUMN" constraintName="fk_chart_measure_chart_column"/>
 
+
   </changeSet>
 
-  <changeSet id="tm-1.20.0-TM-282-01" author="bsiri" >
-    <comment>Rename CHART_QUERY and CHART_COLUMN_PROTOTYPE</comment>
+  <changeSet id="tm-1.20.0-TM-282-01b-h2" author="bsiri" dbms="h2, postgresql">
+    <comment>Rename CHART_QUERY and CHART_COLUMN_PROTOTYPE and their primary keys</comment>
+
+    <dropPrimaryKey tableName="CHART_QUERY"/>
+    <dropPrimaryKey tableName="CHART_COLUMN_PROTOTYPE"/>
 
     <renameTable oldTableName="CHART_QUERY" newTableName="QUERY_MODEL"/>
     <renameTable oldTableName="CHART_COLUMN_PROTOTYPE" newTableName="QUERY_COLUMN_PROTOTYPE"/>
 
-    <!--
-      Also rename the ID columns while we're at it. Mysql will not complain since we dropped the foreign keys first.
-    -->
     <renameColumn tableName="QUERY_MODEL" oldColumnName="CHART_QUERY_ID" newColumnName="QUERY_MODEL_ID" columnDataType="BIGINT"/>
-    <renameColumn tableName="QUERY_COLUMN_PROTOTYPE" oldColumnName="CHART_COLUMN_ID" newColumnName="QUERY_COLUMN_ID" columnDataType="BIGINT"/>
+    <renameColumn tableName="QUERY_COLUMN_PROTOTYPE" oldColumnName="CHART_COLUMN_ID" newColumnName="QUERY_COLUMN_ID" columnDataType="BIGINT" />
+
+    <addPrimaryKey tableName="QUERY_MODEL" columnNames="QUERY_MODEL_ID" constraintName="pk_query_model"/>
+    <addPrimaryKey tableName="QUERY_COLUMN_PROTOTYPE" columnNames="QUERY_COLUMN_ID" constraintName="pk_query_column_prototype"/>
 
   </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-282-01b-mysql" author="bsiri" dbms="mysql">
+
+    <comment>Rename CHART_QUERY and CHART_COLUMN_PROTOTYPE and their primary keys</comment>
+
+    <renameTable oldTableName="CHART_QUERY" newTableName="QUERY_MODEL"/>
+    <renameTable oldTableName="CHART_COLUMN_PROTOTYPE" newTableName="QUERY_COLUMN_PROTOTYPE" />
+
+    <renameColumn tableName="QUERY_MODEL" oldColumnName="CHART_QUERY_ID" newColumnName="QUERY_MODEL_ID" columnDataType="BIGINT"/>
+    <renameColumn tableName="QUERY_COLUMN_PROTOTYPE" oldColumnName="CHART_COLUMN_ID" newColumnName="QUERY_COLUMN_ID" columnDataType="BIGINT" />
+
+    <addAutoIncrement tableName="QUERY_MODEL" columnName="QUERY_MODEL_ID" columnDataType="BIGINT"/>
+    <addAutoIncrement tableName="QUERY_COLUMN_PROTOTYPE" columnName="QUERY_COLUMN_ID" columnDataType="BIGINT"/>
+
+  </changeSet>
+
 
 
   <changeSet id="tm-1.20.0-TM-282-02" author="bsiri">
@@ -625,7 +646,7 @@
 
   <changeSet id="tm-1.20.0-TM-282-05b" author="bsiri" dbms="postgresql">
 
-    <comment>For postgresql, we need to explicitly create the index on foreign key columns.</comment>
+    <comment>For postgresql, we need to explicitly create the index on foreign key columns and ensure sequence order.</comment>
 
     <createIndex tableName="QUERY_PROJECTION_COLUMN" indexName="idx_fk_query_projection_query_column">
       <column name="QUERY_COLUMN_ID" type="BIGINT"/>
@@ -652,7 +673,7 @@
 
 
     <createIndex tableName="QUERY_ORDERING_COLUMN" indexName="idx_fk_query_order_query_column">
-      <column name="PROJECTION_COLUMN_ID" type="BIGINT"/>
+      <column name="QUERY_COLUMN_ID" type="BIGINT"/>
     </createIndex>
     <createIndex tableName="QUERY_ORDERING_COLUMN" indexName="idx_fk_query_order_query_model">
       <column name="QUERY_MODEL_ID" type="BIGINT"/>
@@ -673,7 +694,187 @@
       <column name="CHART_DEFINITION_ID" type="BIGINT"/>
     </createIndex>
 
+    <sql>
+      DROP SEQUENCE chart_query_chart_query_id_seq CASCADE;
+      CREATE SEQUENCE query_model_query_model_id_seq INCREMENT BY 1 OWNED BY QUERY_MODEL.QUERY_MODEL_ID;
+      ALTER TABLE QUERY_MODEL ALTER COLUMN QUERY_MODEL_ID SET DEFAULT nextval('query_model_query_model_id_seq');
+      SELECT setval('query_model_query_model_id_seq', (SELECT MAX(QUERY_MODEL_ID) from QUERY_MODEL));
+
+      DROP SEQUENCE chart_column_prototype_chart_column_id_seq CASCADE;
+      CREATE SEQUENCE query_column_prototype_query_column_id_seq INCREMENT BY 1 OWNED BY QUERY_COLUMN_PROTOTYPE.QUERY_COLUMN_ID;
+      ALTER TABLE QUERY_COLUMN_PROTOTYPE ALTER COLUMN QUERY_COLUMN_ID SET DEFAULT nextval('query_column_prototype_query_column_id_seq');
+      SELECT setval('query_column_prototype_query_column_id_seq', (SELECT MAX(QUERY_COLUMN_ID) from QUERY_COLUMN_PROTOTYPE));
+    </sql>
+
   </changeSet>
 
+
+
+  <changeSet id="tm-1.20.0-TM-282-06" author="bsiri">
+    <comment>Inserting now the new columns and querymodels in the database</comment>
+    <comment>For the subqueries we have to use (w)hacky SQL. This is because we need to select-insert from no table,
+    which is supported with specific syntax by each table but aren't compatible together (we would need to
+      'select from dual' in postgresql for example.
+    </comment>
+
+    <sql>
+
+      -- ----------------------------------------------- --
+      -- Inserting first the attribute columns. Some of  --
+      -- them will be used in new query models, declared --
+      -- just after them.                                --
+      -- ----------------------------------------------- --
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS) VALUES
+
+      ('ATTRIBUTE', 'ATTACHMENT_LIST', 'TEST_CASE_ATTLIST', 'TEST_CASE_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'ATTACHMENT_LIST', 'REQUIREMENT_ATTLIST', 'REQUIREMENT_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'ATTACHMENT_LIST', 'CAMPAIGN_ATTLIST', 'CAMPAIGN_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
+
+      ('ATTRIBUTE', 'ATTACHMENT', 'TEST_CASE_ATTACHMENT', 'TEST_CASE_ATTACHMENT_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'ATTACHMENT', 'REQUIREMENT_ATTACHMENT', 'REQUIREMENT_ATTACHMENT_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'ATTACHMENT', 'CAMPAIGN_ATTACHMENT', 'CAMPAIGN_ATTACHMENT_ID', 'id', 'NUMERIC', FALSE),
+
+      ('ATTRIBUTE', 'DATASET', NULL, 'DATASET_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'PARAMETER', NULL, 'PARAMETER_ID', 'id', 'NUMERIC', FALSE),
+
+      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE', 'TEST_CASE_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE', 'TEST_CASE_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'REQUIREMENT_MILESTONE', 'REQUIREMENT_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'REQUIREMENT_MILESTONE', 'REQUIREMENT_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
+
+      ('ATTRIBUTE', 'AUTOMATION_REQUEST', NULL, 'AUTOMATION_REQUEST_ID', 'id', 'NUMERIC', FALSE),
+      ('ATTRIBUTE', 'AUTOMATION_REQUEST', NULL, 'AUTOMATION_REQUEST_STATUS', 'requestStatus', 'NUMERIC', FALSE),
+
+      ('ATTRIBUTE', 'REQUIREMENT_VERSION', NULL, 'REQUIREMENT_VERSION_NAME', 'name', 'STRING', FALSE),
+      ('ATTRIBUTE', 'REQUIREMENT_VERSION', NULL, 'REQUIREMENT_VERSION_DESCRIPTION', 'description', 'STRING', FALSE),
+
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_NAME', 'name', 'STRING', FALSE),
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_DESCRIPTION', 'description', 'STRING', FALSE),
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_KIND', 'KIND', 'ENUM', FALSE),
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_PREQUISITE', 'prerequisite', 'STRING', FALSE),
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_AUTOMATABLE', 'automatable', 'LEVEL_ENUM', FALSE);
+
+
+      -- ----------------------------------------------- --
+      -- Inserting subqueries that implement the         --
+      -- 'CALCULATED' columns defined right after them   --
+      -- ----------------------------------------------- --
+
+
+      -- requirement version attachment count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('REQUIREMENT_VERSION_ATTCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+        select
+          (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+          (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'REQUIREMENT_VERSION_ID'),
+          'NONE', 0
+        from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+        select
+          (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+          (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'REQUIREMENT_ATTACHMENT_ID'),
+          'COUNT', 0
+        from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+        select
+          'CALCULATED', 'REQUIREMENT_VERSION', NULL, 'REQUIREMENT_VERSION_ATTCOUNT', 'count(attachment)', 'NUMERIC', FALSE,
+          (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+        from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+
+      -- test case attachment count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('TEST_CASE_ATTCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+        select
+          (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+          (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'TEST_CASE_ID'),
+          'NONE', 0
+        from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+        select
+          (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+          (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'TEST_CASE_ATTACHMENT_ID'),
+          'COUNT', 0
+        from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+      select
+      'CALCULATED', 'TEST_CASE', NULL, 'TEST_CASE_ATTCOUNT', 'count(attachment)', 'NUMERIC', FALSE,
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+
+      -- test case parameter count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('TEST_CASE_PARAMCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'TEST_CASE_ID'),
+      'NONE', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'PARAMETER_ID'),
+      'COUNT', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+      select
+      'CALCULATED', 'TEST_CASE', NULL, 'TEST_CASE_PARAMCOUNT', 'count(parameter)', 'NUMERIC', FALSE,
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+
+      -- test case parameter count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('TEST_CASE_DATASETCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'TEST_CASE_ID'),
+      'NONE', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'DATASET_ID'),
+      'COUNT', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+      select
+      'CALCULATED', 'TEST_CASE', NULL, 'TEST_CASE_DATASETCOUNT', 'count(dataset)', 'NUMERIC', FALSE,
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+    </sql>
+
+  </changeSet>
 
 </databaseChangeLog>
