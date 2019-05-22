@@ -205,6 +205,6 @@ public interface UserManagerService {
 	 *
 	 * @return the sum
 	 */
-	int countAllActiveUsers();
+	int countAllActiveUsersAssignedToAtLeastOneProject();
 
 }

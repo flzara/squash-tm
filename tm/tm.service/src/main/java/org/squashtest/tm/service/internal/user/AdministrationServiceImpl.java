@@ -555,7 +555,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	public int countAllActiveUsers() {
-		return userDao.countAllByActiveIsTrue();
+	public int countAllActiveUsersAssignedToAtLeastOneProject() {
+		return userDao.countAllActiveUsersAssignedToAtLeastOneProject();
 	}
 }
