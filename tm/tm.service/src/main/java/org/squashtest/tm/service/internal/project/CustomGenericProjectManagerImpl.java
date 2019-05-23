@@ -1116,6 +1116,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void changeAutomationWorkflow(long projectId, String automationWorkflow) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
 		genericProject.setAutomationWorkflowType(automationWorkflow);
+
+		// Since allowAutomationWorkflow still exists, we have to update it consequently
+		boolean active = !automationWorkflow.equals("NONE");
+		changeAutomationWorkflow(projectId, active);
 	}
 
 	@Override

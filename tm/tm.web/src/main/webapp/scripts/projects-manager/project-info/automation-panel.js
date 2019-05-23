@@ -193,8 +193,28 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					this.automationWorkflows = conf.availableAutomationWorkflows;
 					this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
-					this.initAutomationWorkflowSelect();
-					// TODO: If event 'plugin changed' is triggered, reload combobox
+					this.workflowSelector = this.initAutomationWorkflowSelect();
+
+					this.automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
+
+					this.automationWorkflowPopup.on("formdialogconfirm", function() {
+						self.changeAutomationWorkflow(self.workflowSelector.getSelectedOption());
+					});
+					this.automationWorkflowPopup.on("formdialogcancel", function() {
+						self.automationWorkflowPopup.formDialog("close");
+						self.workflowSelector.setValue(self.chosenAutomationWorkflow);
+					});
+
+					this.changeWorkflowDialogAfter = $("#change-workflow-popup-after").formDialog();
+
+					this.changeWorkflowDialogAfter.on("formdialogconfirm", function() {
+						document.location.href=  squashtm.app.contextRoot + "administration/indexes";
+					});
+
+					this.changeWorkflowDialogAfter.on("formdialogcancel", function() {
+						self.changeWorkflowDialogAfter.formDialog("close");
+					});
+
 					pubsub.subscribe('project.plugin.toggled', function() { self.reloadWorkflowsComboBox(self); });
 
 					this.popups = popups;
@@ -230,7 +250,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					self.doFetchWorkflowsMap().then(function(workflowsMap) {
 						self.automationWorkflows = workflowsMap;
 						self.reforgeWorkflowsCombobox();
-						self.initAutomationWorkflowSelect();
+						self.workflowSelector = self.initAutomationWorkflowSelect();
 					});
 				},
 				doFetchWorkflowsMap: function() {
@@ -242,21 +262,57 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 				initAutomationWorkflowSelect: function() {
 					var self = this;
-					new SelectJEditable({
+					return new SelectJEditable({
 						componentId: "project-workflows-select",
 						jeditableSettings: {
 							data: self.automationWorkflows
 						},
 						target: function(value) {
+							// Check if the value changed, otherwise, nothing is to do.
 							if(self.chosenAutomationWorkflow !== value) {
-								self.doChangeAutomationWorkflow(value).error(function(xhr) {
-									WTF.showError(xhr.statusText);
-								});
-								self.chosenAutomationWorkflow = value;
+								// Is workflow inactive or active ?
+								if(!self.isAWorkflow(value)) {
+									// Just change it
+									self.changeAutomationWorkflow(value);
+								} else {
+									// Check TA Scripts
+									self.checkTcGherkinWithTaScript(value);
+								}
 							}
 							return value;
 						}
 					});
+				},
+				isAWorkflow: function(workflow) {
+					return workflow !== 'NONE';
+				},
+				checkTcGherkinWithTaScript: function(workflowType) {
+					var self = this;
+					$.ajax({
+						type: 'GET',
+						url: this.changeUrl,
+						data : {
+							id : "project-automation-workflow"
+						}
+					}).success(function (success) {
+						if (success) {
+							self.automationWorkflowPopup.formDialog("open");
+						} else {
+							self.changeAutomationWorkflow(workflowType);
+						}
+					});
+				},
+				changeAutomationWorkflow: function(workflowType) {
+					var self = this;
+					self.doChangeAutomationWorkflow(workflowType).error(function(xhr) {
+         		self.workflowSelector.setValue(self.chosenAutomationWorkflow);
+         		WTF.showError(xhr.statusText);
+         	}).success(function() {
+         		self.chosenAutomationWorkflow = workflowType;
+         		self.changeWorkflowDialogAfter.formDialog('open');
+         		self.toggleScmPanel(self.isAWorkflow(workflowType));
+         	});
+         	self.automationWorkflowPopup.formDialog("close");
 				},
 				doChangeAutomationWorkflow: function(workflow) {
 					var self = this;
@@ -271,14 +327,23 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 				reforgeWorkflowsCombobox: function() {
 					var self = this;
-					var displayedWorfklow = self.automationWorkflows[self.chosenAutomationWorkflow];
-					if(displayedWorfklow === undefined || displayedWorfklow === null) {
-						displayedWorfklow = self.automationWorkflows['NONE'];
+					var displayedWorkflow = self.automationWorkflows[self.chosenAutomationWorkflow];
+					if(displayedWorkflow === undefined || displayedWorkflow === null) {
+						displayedWorkflow = self.automationWorkflows['NONE'];
 					}
 					$('#project-workflows-select').remove();
-					var newDiv = $("<div id ='project-workflows-select' style='display: inline'>" + displayedWorfklow + "</div>");
+					var newDiv = $("<div id ='project-workflows-select' style='display: inline'>" + displayedWorkflow + "</div>");
 					$('#project-workflows-select-container').append(newDiv);
 				},
+
+				toggleScmPanel: function(shouldShowPanel) {
+          var scmPanel = $('#scm-panel-container');
+          if(shouldShowPanel) {
+            scmPanel.removeClass('not-displayed');
+          } else {
+            scmPanel.addClass('not-displayed');
+          }
+        },
 
 				initTable : function(){
 					var self = this;

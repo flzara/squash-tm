@@ -716,16 +716,11 @@ require(["common"], function() {
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
 		 		configureActivation("EXECUTION");
-		 		configureActivation("WORKFLOW");
 		 		configureActivation("STRUCTURE-IN-SCM-REPO");
 
 		 		$("#toggle-EXECUTION-checkbox").change(function() {
 		 		  toggleIfParameterIsEnabled(toggleExec);
 		 		});
-
-		 		$("#toggle-WORKFLOW-checkbox").change(function() {
-          toggleIfParameterIsEnabled(toggleWorkflow);
-        });
 
         $("#toggle-STRUCTURE-IN-SCM-REPO-checkbox").change(function() {
           toggleStructureInScmRepo();
@@ -758,15 +753,6 @@ require(["common"], function() {
 
 	}
 
-	function toggleWorkflow(){
-  		var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
-  		if (shouldActivate) {
-        checkTcGherkinWithTaScript();
-  		} else {
-				changeAllowAutomationWorkflow(shouldActivate);
-  		}
-  }
-
   function toggleStructureInScmRepo() {
     var activated = $("#toggle-STRUCTURE-IN-SCM-REPO-checkbox").prop('checked');
     $.ajax({
@@ -777,76 +763,6 @@ require(["common"], function() {
     		value : activated
     	}
     });
-  }
-
-  var changeWorkflowDialogAfter = $("#change-workflow-popup-after");
-  changeWorkflowDialogAfter.formDialog();
-
-  changeWorkflowDialogAfter.on("formdialogconfirm", function() {
-    document.location.href=  squashtm.app.contextRoot + "administration/indexes";
-  });
-
-  changeWorkflowDialogAfter.on("formdialogcancel", function() {
-    changeWorkflowDialogAfter.formDialog("close");
-  });
-
-  var automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
-  automationWorkflowPopup.on("formdialogconfirm", function() {
-    changeAllowAutomationWorkflow($("#toggle-WORKFLOW-checkbox").prop('checked'));
-  });
-
-  automationWorkflowPopup.on("formdialogcancel", function() {
-    automationWorkflowPopup.formDialog("close");
-    cancelled = true;
-    $("#toggle-WORKFLOW-checkbox").switchButton({checked: false});
-
-  });
-  var cancelled = false;
-
-  function checkTcGherkinWithTaScript() {
-  var shouldActivate = $("#toggle-WORKFLOW-checkbox").prop('checked');
-    $.ajax({
-      type: 'GET',
-      url: "${projectUrl}",
-      data : {
-        id : "project-automation-workflow"
-      }
-    }).success( function (success) {
-        if (success) {
-          automationWorkflowPopup.formDialog("open");
-        } else {
-          changeAllowAutomationWorkflow(shouldActivate);
-        }
-
-    });
-  }
-
-  function changeAllowAutomationWorkflow(shouldActivate) {
-		$.ajax({
-			type: 'POST',
-			url: "${projectUrl}",
-			data : {
-				id : "project-automation-workflow",
-				value : shouldActivate
-			}
-		}).success( function () {
-    toggleScmPanel(shouldActivate);
-    $("#automation-workflow-popup").formDialog("close");
-    if (!cancelled) {
-      changeWorkflowDialogAfter.formDialog("open");
-    }
-      cancelled = false;
-    });
-
-  }
-
-  function toggleScmPanel(shouldShowPanel) {
-    var scmPanel = $('#scm-panel-container');
-    if(shouldShowPanel) {
-      scmPanel.removeClass('not-displayed');
-    } else {
-      scmPanel.addClass('not-displayed');
-    }
   }
 
 	function refreshTableAndPopup(){

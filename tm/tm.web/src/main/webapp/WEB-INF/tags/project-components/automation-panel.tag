@@ -62,19 +62,6 @@
   <jsp:attribute name="body">
 
   <div id="project-workflow-option-table" class="display-table">
-    <!-- Automation Workflow Toggle -->
-  	<div class="display-table-row">
-  		<div class="display-table-cell">
-  			<label class="display-table-cell" style="vertical-align:bottom">
-  				<f:message key="label.workflow.modification" />
-  			</label>
-  		</div>
-  		<div class="display-table-cell">
-  			<input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${active},
-  				off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
-  		</div>
-  	</div>
-
     <!-- Automation Workflow Menu -->
     <div class="display-table-row">
       <div class="display-table-cell">
@@ -85,7 +72,6 @@
       <div id="project-workflows-select-container" class="display-table-cell">
         <div id ="project-workflows-select" style="display: inline">
           <c:out value="${availableAutomationWorkflows[chosenAutomationWorkflow]}" />
-
         </div>
       </div>
     </div>
