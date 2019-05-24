@@ -43,7 +43,9 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +63,48 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
+
+	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = new HashMap() {{
+		put("executionMode", "");
+		put("executionStatus", "EXECUTION_STATUS");
+		put("lastExecutedBy", "EXECUTION_TESTER_LOGIN");
+		put("lastExecutedOn", "EXECUTION_LASTEXEC");
+		put("milestone.endDate", "CAMPAIGN_MILESTONE_END_DATE");
+		//TODO to create
+		put("milestone.label", "");
+		put("milestone.status", "CAMPAIGN_MILESTONE_STATUS");
+		put("project.id", "CAMPAIGN_PROJECT");
+		put("referencedTestCase.automatable", "TEST_CASE_AUTOMATABLE");
+		put("referencedTestCase.automationRequest.requestStatus", "AUTOMATION_REQUEST_STATUS");
+		put("referencedTestCase.id", "TEST_CASE_ID");
+		put("referencedTestCase.importance", "TEST_CASE_IMPORTANCE");
+		put("referencedTestCase.name", "TEST_CASE_NAME");
+		put("referencedTestCase.reference", "TEST_CASE_REFERENCE");
+		put("user", "ITERATION_TEST_PLAN_ASSIGNED_USER");
+		//TODO to create
+		put("project-name", "");
+		//TODO to create
+		put("campaign-name", "");
+		//TODO to create
+		put("iteration-name", "");
+		put("itpi-id", "ITEM_TEST_PLAN_ID");
+		put("itpi-label", "ITEM_TEST_PLAN_LABEL");
+		//TODO to create
+		put("itpi-mode", "");
+		//TODO to create
+		put("itpi-testsuites", "");
+		put("itpi-status", "ITEM_TEST_PLAN_STATUS");
+		//TODO to create
+		put("itpi-executed-by", "ITEM_TEST_PLAN_TESTER");
+		put("itpi-executed-on", "ITEM_TEST_PLAN_LASTEXECON");
+		//TODO to create
+		put("itpi-datasets", "");
+		put("tc-weight", "TEST_CASE_IMPORTANCE");
+		put("test-case-automatable", "TEST_CASE_AUTOMATABLE");
+	}};
+
+	private static final List<String> PROJECTIONS = Arrays.asList("entity-index", "empty-openinterface2-holder",
+		"empty-opentree-holder");
 
 	@Inject
 	protected ProjectFinder projectFinder;

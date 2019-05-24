@@ -25,11 +25,19 @@ import java.util.List;
 
 public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.LIST;
+	private AdvancedSearchFieldModelType type;
 
 	private List<String> values = new ArrayList<>();
 
 	private boolean ignoreBridge = false;
+
+	public AdvancedSearchListFieldModel() {
+		type = AdvancedSearchFieldModelType.LIST;
+	}
+
+	public AdvancedSearchListFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	@Override
 	public AdvancedSearchFieldModelType getType(){

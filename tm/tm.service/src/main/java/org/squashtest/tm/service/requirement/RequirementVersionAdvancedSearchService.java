@@ -44,7 +44,7 @@ public interface RequirementVersionAdvancedSearchService {
 
 	Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel searchModel, Pageable paging, MessageSource source, Locale locale);
 
-	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
+	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model, Locale locale);
 
 	List<String> findAllUsersWhoCreatedRequirementVersions(List<Long> idList);
 

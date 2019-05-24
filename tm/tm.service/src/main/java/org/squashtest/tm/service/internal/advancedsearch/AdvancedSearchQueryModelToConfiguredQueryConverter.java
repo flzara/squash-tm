@@ -21,11 +21,14 @@
 package org.squashtest.tm.service.internal.advancedsearch;
 
 import com.querydsl.core.types.Order;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -46,8 +49,13 @@ import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
+import org.squashtest.tm.domain.search.SearchCustomFieldCheckBoxFieldModel;
+import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.query.ConfiguredQuery;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -65,12 +73,33 @@ import java.util.stream.Collectors;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchQueryModelToConfiguredQueryConverter.class);
+
 	private static final String SEARCH_BY_MILESTONE = "searchByMilestone";
+
+	private static final String PROJECT_CRITERIA_NAME = "project.id";
+
+	private static final List<String> SEARCH = Arrays.asList("isCurrentVersion", "links", "link-type",
+		"parent", "requirement.children");
+
+	private static final List<String> PROJECTIONS_COUNT_OPERATION = Arrays.asList("test-case-milestone-nb",
+		"test-case-requirement-nb", "test-case-teststep-nb", "test-case-iteration-nb",
+		"test-case-attachment-nb", "requirement-milestone-nb", "requirement-version-nb",
+		"requirement-testcase-nb", "requirement-attachment-nb", "itpi-datasets", "itpi-testsuites");
 
 	private Map<String, String> columnPrototypeMapping = new HashMap<>();
 
 	@Inject
 	private ColumnPrototypeDao columnPrototypeDao;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	private UserAccountService userAccountService;
 
 	private AdvancedSearchQueryModel advancedSearchQueryModel;
 
@@ -92,7 +121,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		QueryModel query = createBaseQueryModel();
 
-
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
 		configuredQuery.setQueryModel(query);
 		configuredQuery.setPaging(advancedSearchQueryModel.getPageable());
@@ -103,6 +131,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		QueryModel query = new QueryModel();
 		query.setStrategy(QueryStrategy.MAIN);
 		query.setJoinStyle(NaturalJoinStyle.INNER_JOIN);
+
+		secureProjectFilter(advancedSearchQueryModel.getModel());
 
 		List<QueryProjectionColumn> projections = extractProjections();
 		query.setProjectionColumns(projections);
@@ -118,6 +148,20 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private List<QueryProjectionColumn> extractProjections() {
 		List<QueryProjectionColumn> projections = new ArrayList<>();
+		Map<Integer, Object> data = advancedSearchQueryModel.getmDataProp();
+		for (Map.Entry<Integer, Object> entry : data.entrySet()) {
+			QueryProjectionColumn projection = new QueryProjectionColumn();
+			projection.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(entry.getValue().toString())));
+
+			Operation operation = Operation.NONE;
+
+			if(PROJECTIONS_COUNT_OPERATION.contains(entry.getValue().toString())) {
+				operation = Operation.COUNT;
+			}
+
+			projection.setOperation(operation);
+			projections.add(projection);
+		}
 		return projections;
 	}
 
@@ -146,7 +190,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private QueryFilterColumn getFilterColumn(AdvancedSearchFieldModel fieldModel,
 											  AdvancedSearchFieldModelType fieldType, String key) {
 		QueryFilterColumn queryFilterColumn = null;
-		String columnLabel = columnPrototypeMapping.get(fieldModel.toString());
+		String columnLabel = columnPrototypeMapping.get(key);
 		switch (fieldType) {
 			case TIME_INTERVAL:
 				queryFilterColumn = createFilterToTimeInterval(fieldModel, false, columnLabel);
@@ -158,6 +202,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 				queryFilterColumn = createFilterToList(fieldModel, true, key);
 				break;
 			case CF_CHECKBOX:
+				queryFilterColumn = createFilterToCheckBox(fieldModel, key);
 				break;
 			case CF_NUMERIC_RANGE:
 				queryFilterColumn = createFilterToNumeric(fieldModel, true, key);
@@ -201,8 +246,14 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if ("".equals(value)) {
 			return null;
 		}
+
+		if(value.contains("*")) {
+			filter.setOperation(Operation.LIKE);
+			value = value.replace("*", "");
+		} else {
+			filter.setOperation(Operation.EQUALS);
+		}
 		filter.addValues(Collections.singletonList(value));
-		filter.setOperation(Operation.EQUALS);
 
 		if (isCuf) {
 			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_SINGLE.name())));
@@ -223,9 +274,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		filter.setColumnPrototype(queryColumnPrototype);
 		filter.setCufId(Long.parseLong(key));
 		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
-			//TODO create the good operation
+			//TODO modify with new operation
+			filter.setOperation(Operation.EQUALS);
 		} else {
-			filter.setOperation(Operation.IN);
+			filter.setOperation(Operation.EQUALS);
 		}
 		return filter;
 	}
@@ -239,16 +291,20 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		if (startDate != null && endDate != null) {
 			filter.setOperation(Operation.BETWEEN);
+			filter.addValues(Arrays.asList(String.valueOf(startDate), String.valueOf(endDate)));
 		} else if (startDate != null) {
 			filter.setOperation(Operation.GREATER_EQUAL);
+			filter.addValues(Collections.singletonList(String.valueOf(startDate)));
 		} else if (endDate != null) {
 			filter.setOperation(Operation.LOWER_EQUAL);
+			filter.addValues(Collections.singletonList(String.valueOf(endDate)));
 		} else {
 			return null;
 		}
-		filter.addValues(Arrays.asList(startDate.toString(), endDate.toString()));
+
 		if (isCuf) {
-			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_TIME_INTERVAL)));
+			String columnPrototypeLabel = columnPrototypeMapping.get(QueryCufLabel.CF_TIME_INTERVAL);
+			filter.setColumnPrototype(getColumnPrototype(columnPrototypeLabel));
 			filter.setCufId(Long.parseLong(key));
 		} else {
 			filter.setColumnPrototype(getColumnPrototype(key));
@@ -306,6 +362,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryFilterColumn;
 	}
 
+	/*
+	*
+	* */
 	private QueryFilterColumn createFilterToMultiList(AdvancedSearchFieldModel model, String key) {
 		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
 
@@ -315,6 +374,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if (values == null || values.isEmpty()) {
 			return null;
 		}
+
+		Integer minValue = listModel.getMinValue();
+		Integer maxValue = listModel.getMaxValue();
+
 		queryFilterColumn.addValues(values);
 
 		queryFilterColumn.setOperation(Operation.IN);
@@ -349,13 +412,24 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return null;
 	}
 
+	private QueryFilterColumn createFilterToCheckBox(AdvancedSearchFieldModel model, String key) {
+		QueryFilterColumn filter = new QueryFilterColumn();
+		SearchCustomFieldCheckBoxFieldModel checkModel = (SearchCustomFieldCheckBoxFieldModel) model;
+		filter.addValues(checkModel.getValues());
+		filter.setOperation(Operation.EQUALS);
+		filter.setCufId(Long.parseLong(key));
+		return filter;
+	}
+
 	private List<QueryOrderingColumn> extractOrders() {
 
 		Pageable pageable = advancedSearchQueryModel.getPageable();
-
+		List<QueryOrderingColumn> orders = new ArrayList<>();
 		Sort sort = pageable.getSort();
-		List<QueryOrderingColumn> orders = sort.stream().map(this::convertToOrder).collect(Collectors.toList());
 
+		if(sort != null) {
+			orders = sort.stream().map(this::convertToOrder).collect(Collectors.toList());
+		}
 		return orders;
 	}
 
@@ -382,6 +456,12 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			result = propertyName.replaceFirst("Requirement.", "requirement.");
 		} else if (propertyName.startsWith("Project.")) {
 			result = propertyName.replaceFirst("Project.", "project-");
+		} else if (propertyName.startsWith("TestCase.")) {
+			result = propertyName.replaceFirst("TestCase.", "");
+		} else if (propertyName.startsWith("AutomationRequest.")) {
+			result = propertyName.replaceFirst("AutomationRequest.", "automationRequest.");
+		} else if (propertyName.startsWith("IterationTestPlanItem.")) {
+			result = propertyName.replaceFirst("IterationTestPlanItem.", "");
 		}
 		return result;
 	}
@@ -395,5 +475,56 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			queryColumnPrototype = optionalColumn.get();
 		}
 		return queryColumnPrototype;
+	}
+
+	private void secureProjectFilter(AdvancedSearchModel model) {
+		// Issue #5079 again
+		// first task is to locate which name has the project criteria because it may differ depending on the interface
+		// (test case, requirement, test-case-through-requirements
+		String key = null;
+		Set<String> keys = model.getFields().keySet();
+		for (String k : keys) {
+			if (k.contains(PROJECT_CRITERIA_NAME)) {
+				key = k;
+				break;
+			}
+		}
+		// if no projectCriteria was set -> nothing to do
+		if (key == null) {
+			return;
+		}
+
+		AdvancedSearchListFieldModel projectCriteria = (AdvancedSearchListFieldModel) model.getFields().get(key);
+
+		List<String> approvedIds;
+		List<String> selectedIds = projectCriteria.getValues();
+
+		// case 1 : no project is selected
+		if (selectedIds == null || selectedIds.isEmpty()) {
+
+			approvedIds = new ArrayList<>();
+			findAllReadablesId().stream().forEach(r -> approvedIds.add(String.valueOf(r)));
+		}
+		// case 2 : some projects were selected
+		else {
+			approvedIds = new ArrayList<>();
+			for (String id : selectedIds) {
+				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", Long.valueOf(id),
+					Project.class.getName())) {
+					approvedIds.add(id);
+				} else {
+					LOGGER.info("AdvancedSearchService : removed element '" + id
+						+ "' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
+				}
+			}
+		}
+
+		projectCriteria.setValues(approvedIds);
+	}
+
+	public List<Long> findAllReadablesId() {
+		UserDto currentUser = userAccountService.findCurrentUserDto();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds(currentUser);
+		return readableProjectIds;
 	}
 }

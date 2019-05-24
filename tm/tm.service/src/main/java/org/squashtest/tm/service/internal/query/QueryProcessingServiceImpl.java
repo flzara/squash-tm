@@ -383,7 +383,6 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 		ExtendedHibernateQuery detachedQuery = prepareQuery(configuredQuery);
 
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery) detachedQuery.clone(em.unwrap(Session.class));
-
 		try {
 			List<Tuple> tuples = finalQuery.fetch();
 

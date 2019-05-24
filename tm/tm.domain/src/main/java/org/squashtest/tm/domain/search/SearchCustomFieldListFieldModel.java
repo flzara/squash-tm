@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class SearchCustomFieldListFieldModel extends AdvancedSearchMultiListFieldModel {
+public class SearchCustomFieldListFieldModel extends AdvancedSearchListFieldModel {
 	public SearchCustomFieldListFieldModel() {
 		super(AdvancedSearchFieldModelType.CF_LIST);
 	}

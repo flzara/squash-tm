@@ -67,6 +67,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		put("requirement-milestone-nb", "REQUIREMENT_VERSION_MILCOUNT");
 		put("requirement-version", "REQUIREMENT_VERSION_VERS_NUM");
 		put("requirement-version-nb", "REQUIREMENT_NB_VERSIONS");
+		put("requirement-testcase-nb", "REQUIREMENT_VERSION_TCCOUNT");
 		put("requirement-attachment-nb", "REQUIREMENT_VERSION_ATTCOUNT");
 		put("requirement-created-by", "REQUIREMENT_VERSION_CREATED_BY");
 		put("requirement-modified-by", "REQUIREMENT_VERSION_MODIFIED_BY");
@@ -98,6 +99,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		put(QueryCufLabel.CF_NUMERIC, "REQUIREMENT_VERSION_CUF_NUMERIC");
 		put(QueryCufLabel.CF_CHECKBOX, "REQUIREMENT_VERSION_CUF_CHECKBOX");
 	}};
+
+	private static final List<String> NO_PROJECTIONS = Arrays.asList("entity-index",
+		"empty-openinterface2-holder", "empty-opentree-holder", "editable", "project-name", "links");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
@@ -133,7 +137,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale) {
+	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model, Locale locale) {
 
 		return new ArrayList<>();
 	}
@@ -144,9 +148,17 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 																 Pageable sorting, MessageSource source, Locale locale) {
 
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
+		Map<Integer, Object> params = model.getmDataProp();
+		Map<Integer, Object> newParams = new HashMap<>();
+	    for(Map.Entry<Integer, Object> entry : params.entrySet()) {
+	    	if (!NO_PROJECTIONS.contains(entry.getValue().toString())) {
+	    		newParams.put(entry.getKey(), entry.getValue());
+			}
+		}
+	    model.setmDataProp(newParams);
 		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(COLUMN_PROTOTYPE_MAPPING).convert();
 		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
-		tuples.size();
+
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
 

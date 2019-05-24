@@ -61,7 +61,8 @@ public enum DataType {
 	EXECUTION_STATUS (EQUALS, IN, COUNT, NONE),
 	LIST(EQUALS, IN, COUNT, NONE),
 	INFO_LIST_ITEM (EQUALS, IN, COUNT, NONE),
-	TAG (EQUALS, IN, COUNT, NONE);
+	TAG (EQUALS, IN, COUNT, NONE),
+	ENUM(EQUALS, IN, COUNT, NONE);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

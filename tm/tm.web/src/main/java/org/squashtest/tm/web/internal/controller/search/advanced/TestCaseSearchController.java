@@ -34,6 +34,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -55,6 +56,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -87,8 +89,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 		.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
 		.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
 		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
-
-
 
 	@Inject
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
@@ -218,8 +218,10 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+
 		Page<TestCase> holder = testCaseAdvancedSearchService
-			.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
+			.searchForTestCasesThroughRequirementModel(queryModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 
@@ -247,8 +249,10 @@ public class TestCaseSearchController extends GlobalSearchController {
 		addMilestoneToSearchModel(searchModel);
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+
 		Page<TestCase> holder =
-				testCaseAdvancedSearchService.searchForTestCases(searchModel, paging, locale);
+				testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 

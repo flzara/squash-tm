@@ -64,7 +64,6 @@ import java.util.Set;
 @Controller
 public class RequirementSearchController extends GlobalSearchController {
 
-
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
