@@ -165,7 +165,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
 	/**
-	 * enables the given plugin for the given workspace of the given project
+	 * disables the given plugin for the given workspace of the given project
 	 */
 	void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
@@ -279,4 +279,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean checkIfTcGherkinHaveTaScript(Long projectId);
 
 	void changeUseTreeStructureInScmRepo(long projectId, boolean activated);
+
+	boolean isProjectUsingWorkflow(long projectId, String workflowType);
 }

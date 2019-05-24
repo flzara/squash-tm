@@ -36,7 +36,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.wizard.exception.AutomationWorkflowInUseException;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -468,6 +470,11 @@ public class GenericProjectController {
 	@ResponseBody
 	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
+		// If plugin Workflow, check if the workflow is used by the project and throw an Exception if so
+		if(AutomationWorkflow.class.isAssignableFrom(plugin.getClass())
+			&& projectManager.isProjectUsingWorkflow(projectId, pluginId)) {
+			throw new AutomationWorkflowInUseException();
+		}
 		projectManager.disablePluginForWorkspace(projectId, plugin.getDisplayWorkspace(), pluginId);
 	}
 

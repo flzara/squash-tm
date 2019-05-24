@@ -1143,4 +1143,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			}
 		}
 	}
+
+	@Override
+	public boolean isProjectUsingWorkflow(long projectId, String workflowType) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		return workflowType.equals(genericProject.getAutomationWorkflowType());
+	}
 }

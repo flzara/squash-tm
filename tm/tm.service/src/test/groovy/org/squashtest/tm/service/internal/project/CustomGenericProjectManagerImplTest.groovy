@@ -741,4 +741,26 @@ class CustomGenericProjectManagerImplTest extends Specification {
 			project.getAutomationWorkflowType() == "Jira"
 			1 * customTestCaseModificationService.createRequestForTestCase(5L, AutomationRequestStatus.AUTOMATED)
 	}
+
+	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow"() {
+		given:
+			Project p = Mock()
+			p.getAutomationWorkflowType() >> "myWorkflow"
+			genericProjectDao.getOne(9L) >> p
+		when:
+			def result = manager.isProjectUsingWorkflow(9L, "myWorkflow")
+		then:
+			result == true
+	}
+
+	def "#isProjectUsingWorkflow(long, String) - Should return false since the project uses another workflow"() {
+		given:
+			Project p = Mock()
+			p.getAutomationWorkflowType() >> "anotherWorkflow"
+			genericProjectDao.getOne(9L) >> p
+		when:
+		def result = manager.isProjectUsingWorkflow(9L, "myWorkflow")
+		then:
+		result == false
+	}
 }

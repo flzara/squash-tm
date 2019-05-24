@@ -122,9 +122,12 @@ define(
 					var url = routing.buildURL('project-plugins', projectId, pluginId),
 						method = (btn[0].checked) ? 'POST' : 'DELETE';
 
-					$.ajax({url : url, type : method});
-					// TODO: Publish event on Callback
-					pubsub.publish("project.plugin.toggled");
+					$.ajax({url : url, type : method}).success(function() {
+						pubsub.publish("project.plugin.toggled");
+					}).error(function() {
+						btn.switchButton("option", "checked", !checked);
+					});
+
 
 					configureStyle($row, data);
 				});
