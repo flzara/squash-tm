@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.domain.search.SearchCustomFieldCheckBoxFieldModel;
@@ -278,7 +279,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		} else {
 			filter.setOperation(Operation.EQUALS);
 		}
-		filter.addValues(Collections.singletonList(value));
+		filter.getValues().add(value);
 
 		if (isCuf) {
 			filter.setColumnPrototype(getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.CF_SINGLE.name())));
@@ -332,10 +333,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			filter.addValues(Arrays.asList(String.valueOf(startDate), String.valueOf(endDate)));
 		} else if (startDate != null) {
 			filter.setOperation(Operation.GREATER_EQUAL);
-			filter.addValues(Collections.singletonList(String.valueOf(startDate)));
+			filter.getValues().add(String.valueOf(startDate));
 		} else if (endDate != null) {
 			filter.setOperation(Operation.LOWER_EQUAL);
-			filter.addValues(Collections.singletonList(String.valueOf(endDate)));
+			filter.getValues().add(String.valueOf(endDate)));
 		} else {
 			return null;
 		}
@@ -366,10 +367,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		if (minValue != null && maxValue != null) {
 			filter.setOperation(Operation.BETWEEN);
+			filter.getValues().addAll(Arrays.asList(minValue, maxValue));
 		} else if (minValue != null) {
 			filter.setOperation(Operation.GREATER_EQUAL);
+			filter.getValues().add(minValue);
 		} else if (maxValue != null) {
 			filter.setOperation(Operation.LOWER_EQUAL);
+			filter.getValues().add(maxValue);
 		} else {
 			return null;
 		}
@@ -449,13 +453,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
 		if (minValue != null && maxValue != null) {
 			queryFilterColumn.setOperation(Operation.BETWEEN);
-			queryFilterColumn.addValues(Arrays.asList(minValue.toString(), maxValue.toString()));
+			queryFilterColumn.getValues().addAll(Arrays.asList(minValue.toString(), maxValue.toString()));
 		} else if (minValue != null) {
 			queryFilterColumn.setOperation(Operation.GREATER_EQUAL);
-			queryFilterColumn.addValues(Collections.singletonList(minValue.toString()));
+			queryFilterColumn.getValues().add(minValue.toString());
 		} else if (maxValue != null) {
 			queryFilterColumn.setOperation(Operation.LOWER_EQUAL);
-			queryFilterColumn.addValues(Collections.singletonList(maxValue.toString()));
+			queryFilterColumn.getValues().add(maxValue.toString());
 		} else {
 			return null;
 		}
@@ -466,7 +470,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	// TODO create the filter for fulltext search
 	private QueryFilterColumn createFilterToText(AdvancedSearchFieldModel model) {
-		return null;
+
+		QueryFilterColumn filter = new QueryFilterColumn();
+
+		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)model;
+		String value = textFieldModel.getValue();
+		filter.getValues().add(value);
+		return filter;
 	}
 
 	/**
