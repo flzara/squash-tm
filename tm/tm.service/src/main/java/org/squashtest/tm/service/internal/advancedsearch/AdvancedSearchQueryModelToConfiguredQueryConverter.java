@@ -249,7 +249,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		if(value.contains("*")) {
 			filter.setOperation(Operation.LIKE);
-			value = value.replace("*", "");
+			value = value.replace("*", "%");
 		} else {
 			filter.setOperation(Operation.EQUALS);
 		}
