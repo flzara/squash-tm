@@ -22,10 +22,15 @@ package org.squashtest.tm.domain.search;
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdvancedSearchQueryModel {
+
+	private static final List<String> PARAMS_NOT_QUERYING = Arrays.asList("entity-index",
+		"empty-openinterface2-holder", "empty-opentree-holder", "editable", "links");
 
 	private Pageable pageable;
 
@@ -51,7 +56,13 @@ public class AdvancedSearchQueryModel {
 	}
 
 	public Map<Integer, Object> getmDataProp() {
-		return mDataProp;
+		Map<Integer, Object> projectionMap = new HashMap<>();
+		for(Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
+			if (!PARAMS_NOT_QUERYING.contains(entry.getValue().toString())) {
+				projectionMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return projectionMap;
 	}
 
 	public void setmDataProp(Map<Integer, Object> mDataProp) {

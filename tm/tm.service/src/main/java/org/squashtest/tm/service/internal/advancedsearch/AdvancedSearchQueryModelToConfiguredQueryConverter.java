@@ -69,6 +69,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield)
+ */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AdvancedSearchQueryModelToConfiguredQueryConverter {
@@ -77,10 +80,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private static final String SEARCH_BY_MILESTONE = "searchByMilestone";
 
-	private static final String PROJECT_CRITERIA_NAME = "project.id";
-
-	private static final List<String> SEARCH = Arrays.asList("isCurrentVersion", "links", "link-type",
-		"parent", "requirement.children");
+	private static final String PROJECT_FILTER_NAME = "project.id";
 
 	private static final List<String> PROJECTIONS_COUNT_OPERATION = Arrays.asList("test-case-milestone-nb",
 		"test-case-requirement-nb", "test-case-teststep-nb", "test-case-iteration-nb",
@@ -117,10 +117,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	public ConfiguredQuery convert() {
 
+		// Find all ColumnPrototypes
 		prototypes = columnPrototypeDao.findAll();
 
+		// Create queryModel
 		QueryModel query = createBaseQueryModel();
 
+		// Configure the Query
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
 		configuredQuery.setQueryModel(query);
 		configuredQuery.setPaging(advancedSearchQueryModel.getPageable());
@@ -132,20 +135,29 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		query.setStrategy(QueryStrategy.MAIN);
 		query.setJoinStyle(NaturalJoinStyle.INNER_JOIN);
 
+		// In the search field, projectids are not always set so we must secure this point on projects that the user can read.
 		secureProjectFilter(advancedSearchQueryModel.getModel());
 
+		// create the projections and add them to the query
 		List<QueryProjectionColumn> projections = extractProjections();
 		query.setProjectionColumns(projections);
 
+		// create the filters
 		List<QueryFilterColumn> filters = extractFilters();
 		query.setFilterColumns(filters);
 
+		// create the ordering
 		List<QueryOrderingColumn> orders = extractOrders();
 		query.setOrderingColumns(orders);
 
 		return query;
 	}
 
+	/**
+	 * Extract the projections from the AdvancedSearchQueryModel. The operator is different if
+	 * we get the value of the property or if we calculate a value.
+	 * @return
+	 */
 	private List<QueryProjectionColumn> extractProjections() {
 		List<QueryProjectionColumn> projections = new ArrayList<>();
 		Map<Integer, Object> data = advancedSearchQueryModel.getmDataProp();
@@ -155,7 +167,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			Operation operation = Operation.NONE;
 
-			if(PROJECTIONS_COUNT_OPERATION.contains(entry.getValue().toString())) {
+			if (PROJECTIONS_COUNT_OPERATION.contains(entry.getValue().toString())) {
 				operation = Operation.COUNT;
 			}
 
@@ -165,14 +177,20 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return projections;
 	}
 
+	/**
+	 * Extract filters from the AdvancedSearchQueryModel.
+	 * If SEARCH_BY_MILESTONE is not null we delete this field because it is not use by the engine.
+	 * The advancedSearchQueryModel contains a AdvancedSearchModel that define search fields.
+	 * These fields are different type so we must treat them differently.
+	 * @return
+	 */
 	private List<QueryFilterColumn> extractFilters() {
 		List<QueryFilterColumn> filters = new ArrayList<>();
-
 
 		AdvancedSearchModel model = advancedSearchQueryModel.getModel();
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model
 			.getFields().get(SEARCH_BY_MILESTONE);
-		if(searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
+		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 			model.getFields().remove(SEARCH_BY_MILESTONE);
 		}
 		Set<String> keys = model.getFields().keySet();
@@ -196,7 +214,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 				queryFilterColumn = createFilterToTimeInterval(fieldModel, false, columnLabel);
 				break;
 			case CF_TIME_INTERVAL:
-				queryFilterColumn = createFilterToTimeInterval(fieldModel, true , key);
+				queryFilterColumn = createFilterToTimeInterval(fieldModel, true, key);
 				break;
 			case CF_LIST:
 				queryFilterColumn = createFilterToList(fieldModel, true, key);
@@ -238,6 +256,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryFilterColumn;
 	}
 
+	/**
+	 * The character '*' is a wildcard.
+	 * @param model
+	 * @param isCuf if field is a CustomField
+	 * @param key Label of the QueryColumnPrototype of id of the CustomField
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToSingle(AdvancedSearchFieldModel model, boolean isCuf, String key) {
 
 		QueryFilterColumn filter = new QueryFilterColumn();
@@ -247,7 +272,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			return null;
 		}
 
-		if(value.contains("*")) {
+		if (value.contains("*")) {
 			filter.setOperation(Operation.LIKE);
 			value = value.replace("*", "%");
 		} else {
@@ -265,16 +290,22 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return filter;
 	}
 
-	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model, String key) {
+	/**
+	 *
+	 * @param model
+	 * @param cufId
+	 * @return
+	 */
+	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model, String cufId) {
 		QueryFilterColumn filter = new QueryFilterColumn();
 		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
 		List<String> tags = fieldModel.getTags();
 		filter.addValues(tags);
 		QueryColumnPrototype queryColumnPrototype = getColumnPrototype(columnPrototypeMapping.get(QueryCufLabel.TAGS));
 		filter.setColumnPrototype(queryColumnPrototype);
-		filter.setCufId(Long.parseLong(key));
+		filter.setCufId(Long.parseLong(cufId));
+		//TODO find the good operator for these cases
 		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
-			//TODO modify with new operation
 			filter.setOperation(Operation.EQUALS);
 		} else {
 			filter.setOperation(Operation.EQUALS);
@@ -282,6 +313,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return filter;
 	}
 
+	/**
+	 * For this case we should change the operator if startDate and/or endDate are null.
+	 * @param model
+	 * @param isCuf if field is a CustomField
+	 * @param key Label of the QueryColumnPrototype of id of the CustomField
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToTimeInterval(AdvancedSearchFieldModel model, boolean isCuf, String key) {
 		QueryFilterColumn filter = new QueryFilterColumn();
 
@@ -312,6 +350,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return filter;
 	}
 
+	/**
+	 * For this case we should change the operator if minValue and/or maxValue are null.
+	 * @param model
+	 * @param isCuf if field is a CustomField
+	 * @param key Label of the QueryColumnPrototype of id of the CustomField
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToNumeric(AdvancedSearchFieldModel model, boolean isCuf,
 													String key) {
 		QueryFilterColumn filter = new QueryFilterColumn();
@@ -339,6 +384,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return filter;
 	}
 
+	/**
+	 *
+	 * @param model
+	 * @param isCuf
+	 * @param key
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToList(AdvancedSearchFieldModel model, boolean isCuf,
 												 String key) {
 		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
@@ -362,9 +414,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryFilterColumn;
 	}
 
-	/*
-	*
-	* */
+	// TODO We can delete this method because the engine can't use fields of this type
 	private QueryFilterColumn createFilterToMultiList(AdvancedSearchFieldModel model, String key) {
 		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
 
@@ -385,9 +435,15 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryFilterColumn;
 	}
 
+	/**
+	 * For this case we should change the operator if minValue and/or maxValue are null.
+	 * @param model
+	 * @param key
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToRange(AdvancedSearchFieldModel model, String key) {
 
-		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel)model;
+		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel) model;
 		Integer minValue = rangeField.getMinValue();
 		Integer maxValue = rangeField.getMaxValue();
 		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
@@ -408,10 +464,17 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return queryFilterColumn;
 	}
 
+	// TODO create the filter for fulltext search
 	private QueryFilterColumn createFilterToText(AdvancedSearchFieldModel model) {
 		return null;
 	}
 
+	/**
+	 * This case configure filter to checkbox CustomField.
+	 * @param model
+	 * @param key
+	 * @return
+	 */
 	private QueryFilterColumn createFilterToCheckBox(AdvancedSearchFieldModel model, String key) {
 		QueryFilterColumn filter = new QueryFilterColumn();
 		SearchCustomFieldCheckBoxFieldModel checkModel = (SearchCustomFieldCheckBoxFieldModel) model;
@@ -427,7 +490,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		List<QueryOrderingColumn> orders = new ArrayList<>();
 		Sort sort = pageable.getSort();
 
-		if(sort != null) {
+		if (sort != null) {
 			orders = sort.stream().map(this::convertToOrder).collect(Collectors.toList());
 		}
 		return orders;
@@ -484,20 +547,20 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		String key = null;
 		Set<String> keys = model.getFields().keySet();
 		for (String k : keys) {
-			if (k.contains(PROJECT_CRITERIA_NAME)) {
+			if (k.contains(PROJECT_FILTER_NAME)) {
 				key = k;
 				break;
 			}
 		}
-		// if no projectCriteria was set -> nothing to do
+		// if no projectFilter was set -> nothing to do
 		if (key == null) {
 			return;
 		}
 
-		AdvancedSearchListFieldModel projectCriteria = (AdvancedSearchListFieldModel) model.getFields().get(key);
+		AdvancedSearchListFieldModel projectFilter = (AdvancedSearchListFieldModel) model.getFields().get(key);
 
 		List<String> approvedIds;
-		List<String> selectedIds = projectCriteria.getValues();
+		List<String> selectedIds = projectFilter.getValues();
 
 		// case 1 : no project is selected
 		if (selectedIds == null || selectedIds.isEmpty()) {
@@ -519,7 +582,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			}
 		}
 
-		projectCriteria.setValues(approvedIds);
+		projectFilter.setValues(approvedIds);
 	}
 
 	public List<Long> findAllReadablesId() {

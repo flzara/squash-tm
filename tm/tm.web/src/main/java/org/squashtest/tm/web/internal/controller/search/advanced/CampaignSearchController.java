@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -61,8 +62,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -221,6 +224,9 @@ public class CampaignSearchController extends GlobalSearchController {
 		addMilestoneToSearchModel(searchModel);
 
 		Pageable paging = SpringPagination.pageable(params, campaignSearchResultMapper);
+
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+
 
 		Page<IterationTestPlanItem> holder =
 			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
