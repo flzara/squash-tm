@@ -88,7 +88,17 @@ public class CustomReportCustomExport implements TreeEntity {
 		CustomReportCustomExport copy = new CustomReportCustomExport();
 		copy.setName(this.name);
 		copy.setProject(this.project);
+		copy.setScope(copyScope());
+		copy.setColumns(copyColumns());
 		return copy;
+	}
+
+	private List<EntityReference> copyScope() {
+		return new ArrayList<>(this.scope);
+	}
+
+	private List<CustomReportCustomExportColumn> copyColumns() {
+		return new ArrayList<>(this.columns);
 	}
 
 	@Override
