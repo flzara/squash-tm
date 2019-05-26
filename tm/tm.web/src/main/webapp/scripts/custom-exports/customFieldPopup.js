@@ -30,7 +30,12 @@
  			this.model = options;
  			this.render();
  			this.$el.confirmDialog({
- 				autoOpen: true
+ 				autoOpen: true,
+ 				// avoiding cross button bug (see ./treePopup)
+ 				open: function (event, ui) {
+        	$("#cuf-popup").prev().children(".ui-dialog-titlebar-close").hide();
+        	$('.ui-dialog :button').blur();
+        }
  			});
  		},
 
