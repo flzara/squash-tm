@@ -27,6 +27,8 @@ import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -61,10 +63,13 @@ import java.util.stream.Stream;
  * attribute name, retrieve by reflection the actual enum type, then retrieve the
  * typed value from the string representation.
  *
- * It works for simple cases (the column is a ATTRIBUTE, that is directly owned by
- * the entity) but more complex case (like for REQUIREMENT_CRITICALITY is actually a
- * nested property delegated to its most recent version, or if the column is a CALCULATED column) it will
- * break (again).
+ * The init process depends on whether the column is of type 'ATTRIBUTE' or 'CALCULATED'.
+ * In the first case the enum class will be retrieved by introspection of the entity type.
+ * Nested attribute paths are supported (separator is dot '.'). For the second case, we
+ * inspect the subquery, locate the {@link org.squashtest.tm.domain.query.QueryProjectionColumn}
+ * and process it. In case the projection column is also a subquery this step is repeated
+ * as many time as necessary.
+ *
  *
  */
 class EnumHelper {
@@ -78,13 +83,7 @@ class EnumHelper {
 			throw new IllegalArgumentException("The EnumHelper can help only with Enums, but received column '"+column.getLabel()+
 												   "' of type '"+column.getDataType()+"'");
 		}
-		// Crash early if attempting to do that with a calculated subquery
-		// In order to do that we would need to analyse the subquery. It's doable,
-		// but not for now.
-		if (column.getColumnType() != ColumnType.ATTRIBUTE){
-			throw new IllegalArgumentException("Sorry but for now the EnumHelper cannot help with column '"+ column.getLabel()
-												   +"' because it is calculated subquery of a custom field");
-		}
+
 
 		initialize(column);
 	}
@@ -99,7 +98,19 @@ class EnumHelper {
 	}
 
 
+	// ****************** private initialization methods ******************
+
 	private void initialize(QueryColumnPrototype proto){
+		ColumnType type = proto.getColumnType();
+		switch(type){
+			case ATTRIBUTE: processAttributeColumn(proto); break;
+			case CALCULATED: processCalculatedColumn(proto); break;
+			default: throw new IllegalArgumentException("The EnumHelper can process columns of type ATTRIBUTE or CALCULATED only, but received a "+type+" instead");
+		}
+	}
+
+
+	private void processAttributeColumn(QueryColumnPrototype proto){
 		// first retrieve the class from the EntityType. We need again to to so in a weird way.
 		Class<?> ownerType = findOwnerType(proto);
 
@@ -110,7 +121,7 @@ class EnumHelper {
 		throwIfNotEnum(fieldClass);
 
 		// now we can reflect on it
-		enumType = (Class<Enum<?>>)fieldClass;
+		enumType = fieldClass;
 	}
 
 
@@ -157,6 +168,20 @@ class EnumHelper {
 		}
 	}
 
+
+
+	private void processCalculatedColumn(QueryColumnPrototype proto){
+		QueryModel subquery = proto.getSubQuery();
+
+		List<QueryProjectionColumn> projections = subquery.getProjectionColumns();
+		if (((List) projections).isEmpty()){
+			throw new RuntimeException("Processing subquery of column "+proto.getLabel()+" which have no projection at all");
+		}
+
+		QueryProjectionColumn projection = projections.get(0);
+
+		initialize(projection.getColumn());
+	}
 
 
 }

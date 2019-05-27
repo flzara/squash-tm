@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.query
 
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.testcase.TestCaseStatus
@@ -37,8 +39,23 @@ import spock.lang.Unroll
 
 class EnumHelperTest extends Specification{
 
+
+	def "should fail when the column is a cuf column"(){
+
+		given:
+		def col = Mock(QueryColumnPrototype) { getColumnType() >> ColumnType.CUF }
+
+		when:
+		new EnumHelper(col)
+
+		then:
+		thrown IllegalArgumentException
+
+	}
+
+
 	@Unroll
-	def "should retrieve enum values"(){
+	def "should retrieve enum values for an ATTRIBUTE column"(){
 
 		when:
 		def helper = new EnumHelper(column)
@@ -58,30 +75,43 @@ class EnumHelperTest extends Specification{
 
 	}
 
-	def "should fail when the column is not an attribute column"(){
+
+
+	def "should retrieve an enum value for a CALCULATED column"(){
 
 		given:
-		def col = Mock(QueryColumnPrototype) { getColumnType() >> ColumnType.CALCULATED }
+
+		def nestedColumn = Mock(QueryProjectionColumn){
+			getColumn() >> Mock(QueryColumnPrototype) {
+				getColumnType() >> ColumnType.ATTRIBUTE
+				getSpecializedType() >> new SpecializedEntityType(TEST_CASE, null)
+				getDataType() >> DataType.LEVEL_ENUM
+				getAttributeName() >> "importance"
+			}
+		}
+
+
+		def testedColumn = Mock(QueryColumnPrototype){
+
+			getDataType() >> DataType.LEVEL_ENUM
+			getColumnType() >> ColumnType.CALCULATED
+
+			getSubQuery() >> Mock(QueryModel){
+				getProjectionColumns() >> [nestedColumn]
+
+			}
+		}
+
+		def value = "HIGH"
+
+		and:
+		def helper = new EnumHelper(testedColumn)
 
 		when:
-		new EnumHelper(col)
+		def result = helper.valueOf(value)
 
 		then:
-		thrown IllegalArgumentException
-
-	}
-
-	def "should fail when the column datatype is not levelenum"(){
-
-		given:
-		def col = Mock(QueryColumnPrototype) { getColumnType() >> ColumnType.ATTRIBUTE; getDataType() >> DataType.STRING }
-
-		when:
-		new EnumHelper(col)
-
-		then:
-		thrown IllegalArgumentException
-
+		result == TestCaseImportance.HIGH
 	}
 
 
@@ -95,6 +125,7 @@ class EnumHelperTest extends Specification{
 			getAttributeName() >> attrName
 		}
 	}
+
 
 
 }
