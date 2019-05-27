@@ -27,6 +27,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.QueryOrderingColumn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,7 +154,7 @@ class ProjectionPlanner {
 		populateClauses(expressions, internalQueryModel.getOrderingColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 		List<OrderSpecifier> orders = new ArrayList<>();
-		populateOrders(orders, expressions);
+		populateOrders(orders, internalQueryModel.getOrderingColumns(), expressions);
 
 		query.orderBy(orders.toArray(new OrderSpecifier[]{}));
 
@@ -195,11 +196,15 @@ class ProjectionPlanner {
 
 	}
 
-	private void populateOrders(List<OrderSpecifier> orders, List<Expression<?>> expressions){
-		for (Expression e : expressions){
-			OrderSpecifier spec = new OrderSpecifier(Order.ASC, e);
+	private void populateOrders(List<OrderSpecifier> orders, List<QueryOrderingColumn> queryOrdering, List<Expression<?>> expressions){
+
+		for (int i=0; i < queryOrdering.size(); i++){
+			QueryOrderingColumn column = queryOrdering.get(i);
+			Expression<?> expr = expressions.get(i);
+			OrderSpecifier spec = new OrderSpecifier(column.getOrder(), expr);
 			orders.add(spec);
 		}
+
 	}
 
 	private String genAlias(int count){

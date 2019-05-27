@@ -56,6 +56,15 @@ class DomainGraphTest extends Specification {
 	static InternalEntityType TATEST = AUTOMATED_TEST
 	static InternalEntityType EXTEND = AUTOMATED_EXECUTION_EXTENDER
 
+	// since 1.20 :
+	static InternalEntityType TC_ALST = TEST_CASE_ATTLIST
+	static InternalEntityType TC_ATT = TEST_CASE_ATTACHMENT
+	static InternalEntityType RV_ALST = REQUIREMENT_VERSION_ATTLIST
+	static InternalEntityType RV_ATT = REQUIREMENT_VERSION_ATTACHMENT
+	static InternalEntityType C_ALST = CAMPAIGN_ATTLIST
+	static InternalEntityType C_ATT = CAMPAIGN_ATTACHMENT
+	static InternalEntityType DS = DATASET
+	static InternalEntityType PRM = PARAMETER
 
 
 	 /*
@@ -165,6 +174,16 @@ class DomainGraphTest extends Specification {
 		checkIsDirectedEdge domain, ITEM_TEST_PLAN, EXECUTION
 		checkIsDirectedEdge domain, EXECUTION, ISS
 
+		// since 1.20 :
+		checkIsDirectedEdge domain, TEST_CASE, TC_ALST
+		checkIsDirectedEdge domain, TC_ALST, TC_ATT
+		checkIsDirectedEdge domain, RV, RV_ALST
+		checkIsDirectedEdge domain, RV_ALST, RV_ATT
+		checkIsDirectedEdge domain, CAMPAIGN, C_ALST
+		checkIsDirectedEdge domain, C_ALST, C_ATT
+		checkIsDirectedEdge domain, TEST_CASE, DS
+		checkIsDirectedEdge domain, TEST_CASE, PRM
+
 
 		// check the resulting tree (remember it has not been trimmed yet)
 		def allroots= plan.getRootNodes()
@@ -173,28 +192,34 @@ class DomainGraphTest extends Specification {
 		def root = allroots[0]
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST, TC_ALST, DS, PRM]);
 		checkTreeHierarchy(plan, TATEST, [])
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
-		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT, RVMIL, CAT ]);
+		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT, RVMIL, CAT, RV_ALST ]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION, US])
 		checkTreeHierarchy(plan, EXECUTION, [ISS, EXTEND])
 		checkTreeHierarchy(plan, EXTEND, [])
 		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
-		checkTreeHierarchy(plan, CAMPAIGN, [CMIL])
+		checkTreeHierarchy(plan, CAMPAIGN, [CMIL, C_ALST])
 		checkTreeHierarchy(plan, TCMIL, [])
 		checkTreeHierarchy(plan, RVMIL, [])
 		checkTreeHierarchy(plan, US, [])
 		checkTreeHierarchy(plan, NAT, [])
 		checkTreeHierarchy(plan, TYP, [])
 		checkTreeHierarchy(plan, CAT, [])
+		checkTreeHierarchy(plan, TC_ALST, [TC_ATT])
+		checkTreeHierarchy(plan, TC_ATT, [])
+		checkTreeHierarchy(plan, RV_ALST, [RV_ATT])
+		checkTreeHierarchy(plan, RV_ATT, [])
+		checkTreeHierarchy(plan, C_ALST, [C_ATT])
+		checkTreeHierarchy(plan, C_ATT, [])
 
 	}
 
 
-	def "should find a query plan for root entity TestCase and other target entities : Requirement, Iteration"(){
+	def "should find a query plan graph seed TestCase and other target entities : Requirement, Iteration"(){
 
 		given :
 		InternalQueryModel internalQueryModel =

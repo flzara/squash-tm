@@ -38,18 +38,26 @@ import java.util.Set;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTACHMENT;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_MILESTONE;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.DATASET;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ISSUE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.PARAMETER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTACHMENT;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTACHMENT;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_NATURE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP;
@@ -112,6 +120,12 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
  *		<li>REQUIREMENT_VERSION_MILESTONE</li>
  *		<li>AUTOMATED_TEST</li>
  *		<li>AUTOMATED_EXECUTION_EXTENDER</li>
+ *		<li>TEST_CASE_ATTLIST</li>
+ *		<li>REQUIREMENT_VERSION_ATTLIST</li>
+ *		<li>CAMPAIGN_ATTLIST</li>
+ *		<li>TEST_CASE_ATTACHMENT</li>
+ *		<li>REQUIREMENT_VERSION_ATTACHMENT</li>
+ *		<li>CAMPAIGN_ATTACHMENT</li>
  *</ul>
  *</p>
  * @author bsiri
@@ -175,7 +189,7 @@ class DomainGraph {
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
 
-		// nodes for "hidden" entities, normally attainable from calculated columns only
+		// nodes for "hidden" entities, typically attainable from calculated columns only
 
 		TraversableEntity teststepNode = new TraversableEntity(TEST_CASE_STEP);
 		TraversableEntity userNode = new TraversableEntity(ITERATION_TEST_PLAN_ASSIGNED_USER);
@@ -188,12 +202,24 @@ class DomainGraph {
 		TraversableEntity autoNode = new TraversableEntity(AUTOMATED_TEST);
 		TraversableEntity extNode = new TraversableEntity(AUTOMATED_EXECUTION_EXTENDER);
 
+		// since 1.20 :
+		TraversableEntity tcAttlistNode = new TraversableEntity(TEST_CASE_ATTLIST);
+		TraversableEntity tcAttachmentNode = new TraversableEntity(TEST_CASE_ATTACHMENT);
+		TraversableEntity rvAttlistNode = new TraversableEntity(REQUIREMENT_VERSION_ATTLIST);
+		TraversableEntity rvAttachmentNode = new TraversableEntity(REQUIREMENT_VERSION_ATTACHMENT);
+		TraversableEntity campAttlistNode = new TraversableEntity(CAMPAIGN_ATTLIST);
+		TraversableEntity campAttachmentNode = new TraversableEntity(CAMPAIGN_ATTACHMENT);
+		TraversableEntity datasetNode = new TraversableEntity(DATASET);
+		TraversableEntity paramNode = new TraversableEntity(PARAMETER);
+
 
 		// add them all
 		nodes.addAll(Arrays.asList(new TraversableEntity[]{
 				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
 				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
-				tctypNode, rvcatNode, tcmilNode, rvmilNode,campmilNode, autoNode, extNode
+				tctypNode, rvcatNode, tcmilNode, rvmilNode,campmilNode, autoNode, extNode,
+				tcAttlistNode, tcAttachmentNode, rvAttlistNode, rvAttachmentNode, campAttlistNode,
+				campAttlistNode, campAttachmentNode, datasetNode, paramNode
 		}));
 
 
@@ -241,6 +267,24 @@ class DomainGraph {
 		addEdge(testcaseNode, autoNode, "automatedTest");
 
 		addEdge(executionNode, extNode, "automatedExecutionExtender");
+
+		// *******  since 1.20 *****
+		addEdge(testcaseNode, datasetNode, "datasets");
+		addEdge(datasetNode, testcaseNode, "testCase");
+
+		addEdge(testcaseNode, paramNode, "parameters");
+		addEdge(paramNode, testcaseNode, "testCase");
+
+		// note : the unmapped reverse relation could be traversable using a JoinType.WHERE (see above for example)
+		// but I won't add them because use-cases of using an attachment-list as a root entity are virtually non-existent.
+		addEdge(testcaseNode, tcAttlistNode, "attachmentList");
+		addEdge(tcAttlistNode, tcAttachmentNode, "attachments");
+
+		addEdge(rversionNode, rvAttlistNode, "attachmentList");
+		addEdge(rvAttlistNode, rvAttachmentNode,"attachments");
+
+		addEdge(campaignNode, campAttlistNode, "attachmentList");
+		addEdge(campAttlistNode, campAttachmentNode,"attachments");
 
 	}
 

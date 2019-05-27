@@ -21,7 +21,12 @@
 package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Param;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.attachment.QAttachment;
+import org.squashtest.tm.domain.attachment.QAttachmentList;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.QIssue;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -45,6 +50,10 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.QAutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.QAutomatedTest;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.QDataset;
+import org.squashtest.tm.domain.testcase.QParameter;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
@@ -194,6 +203,64 @@ enum InternalEntityType {
 			return new QAutomatedExecutionExtender(alias);
 		}
 
+	},
+
+	//*********** new types sinces 1.20 *******************
+
+	TEST_CASE_ATTLIST(AttachmentList.class, new QAttachmentList("testCaseAttachList")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachmentList(alias);
+		}
+	},
+
+	REQUIREMENT_VERSION_ATTLIST(AttachmentList.class, new QAttachmentList("reqversionAttachList")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachmentList(alias);
+		}
+	},
+
+	CAMPAIGN_ATTLIST(AttachmentList.class, new QAttachmentList("campaignAttachList")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachmentList(alias);
+		}
+	},
+
+	TEST_CASE_ATTACHMENT(Attachment.class, new QAttachment("testCaseAttachment")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachment(alias);
+		}
+	},
+
+	REQUIREMENT_VERSION_ATTACHMENT(Attachment.class, new QAttachment("reqversionAttachment")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachment(alias);
+		}
+	},
+
+	CAMPAIGN_ATTACHMENT(Attachment.class, new QAttachment("campaignAttachment")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAttachment(alias);
+		}
+	},
+
+	DATASET(Dataset.class, QDataset.dataset){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QDataset(alias);
+		}
+	},
+
+	PARAMETER(Parameter.class, QParameter.parameter){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QParameter(alias);
+		}
 	};
 
 	// @formatter:on

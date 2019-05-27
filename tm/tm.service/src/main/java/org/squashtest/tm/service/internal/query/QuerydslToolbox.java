@@ -438,14 +438,18 @@ class QuerydslToolbox {
 	 */
 	@SuppressWarnings("unchecked")
 	BooleanExpression createAttributePredicate(QueryFilterColumn filter) {
-		DataType datatype = filter.getDataType();
+
 		Operation operation = filter.getOperation();
+
+		QueryColumnPrototype column = filter.getColumn();
+		DataType datatype = column.getDataType();
+
 
 		// make the expression on which the filter is applied
 		Expression<?> attrExpr = attributePath(filter);
 
 		// convert the operands
-		List<Expression<?>> valExpr = makeOperands(operation, datatype, filter.getValues());
+		List<Expression<?>> valExpr = makeOperands(column, operation, filter.getValues());
 		Expression<?>[] operands = valExpr.toArray(new Expression[valExpr.size()]);
 
 
@@ -487,7 +491,7 @@ class QuerydslToolbox {
 				//ok, it is semantically sloppy. But for now the produced element is what we need :-S
 				Expression<?> subexpr = subtoolbox.createAsSelect(subProjection);
 
-				List<Expression<?>> valExpr = makeOperands(filter.getOperation(), filter.getDataType(), filter.getValues());
+				List<Expression<?>> valExpr = makeOperands(filter.getColumn(), filter.getOperation(), filter.getValues());
 				Expression<?>[] operands = valExpr.toArray(new Expression[valExpr.size()]);
 
 				predicate = createPredicate(filter.getOperation(), subexpr, subProjection.getDataType(), operands);
@@ -513,14 +517,16 @@ class QuerydslToolbox {
      */
 	//TODO make predicate for different data types
 	BooleanExpression createCufPredicate(QueryFilterColumn filter) {
+
 		QueryColumnPrototype columnPrototype = filter.getColumn();
 		DataType dataType = columnPrototype.getDataType();
+
 		Long cufId = filter.getCufId();
 		String alias = getCustomFieldValueStandardTableAlias(columnPrototype, cufId);
 		Operation operation = filter.getOperation();
 
 		// convert the operands
-		List<Expression<?>> valExpr = makeOperands(operation, dataType, filter.getValues());
+		List<Expression<?>> valExpr = makeOperands(columnPrototype, operation, filter.getValues());
 		Expression<?>[] operands = valExpr.toArray(new Expression[valExpr.size()]);
 		Expression<?> attrExpr;
 
@@ -737,9 +743,9 @@ class QuerydslToolbox {
 	}
 
 	List<Expression<?>> createOperands(QueryFilterColumn filter, Operation operation) {
-		DataType type = filter.getDataType();
+		QueryColumnPrototype column = filter.getColumn();
 		List<String> values = filter.getValues();
-		return makeOperands(operation, type, values);
+		return makeOperands(column, operation, values);
 	}
 
 
@@ -771,7 +777,19 @@ class QuerydslToolbox {
 
 	}
 
-	List<Expression<?>> makeOperands(Operation operation, DataType type, List<String> values) {
+	/**
+	 * From the supplied string values, creates the operands of the correct types based on which column
+	 * and which operation.
+	 *
+	 * @param prototype
+	 * @param operation
+	 * @param values
+	 * @return
+	 */
+	List<Expression<?>> makeOperands(QueryColumnPrototype prototype, Operation operation, List<String> values) {
+
+		DataType type = prototype.getDataType();
+
 		try {
 
 			List<Expression<?>> expressions = new ArrayList<>(values.size());
@@ -808,7 +826,8 @@ class QuerydslToolbox {
 						operand = RequirementStatus.valueOf(val);
 						break;
 					case LEVEL_ENUM:
-						operand = LevelEnumHelper.valueOf(val);
+						EnumHelper helper = new EnumHelper(prototype);
+						operand = helper.valueOf(val);
 						break;
 					case BOOLEAN_AS_STRING:
 						operand = val.toLowerCase();

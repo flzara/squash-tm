@@ -409,7 +409,7 @@ order by testCase.id asc"""
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
-		def ordering = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
+		def ordering = new QueryOrderingColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
 		QueryModel queryModel = new QueryModel(
 			projectionColumns : [aggrproj, projection],
