@@ -191,6 +191,11 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
+	public AttachmentList createAttachmentList() {
+		return attachmentListDao.createAttachmentList();
+	}
+
+	@Override
 	public Page<Attachment> findPagedAttachments(long attachmentListId, Pageable pageable) {
 		return attachmentDao.findAllAttachmentsPagined(attachmentListId, pageable);
 	}

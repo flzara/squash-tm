@@ -61,4 +61,11 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.where(req.attachmentList.id.eq(attachmentListId))
 			.fetchOne();
 	}
+
+	@Override
+	public AttachmentList createAttachmentList() {
+		AttachmentList attachmentList = new AttachmentList();
+		entityManager.persist(attachmentList);
+		return attachmentList;
+	}
 }
