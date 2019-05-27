@@ -133,9 +133,11 @@
         <constraints nullable="true" />
       </column>
 
-      <column name="REMOTE_PRIORITY" type="INTEGER" remarks="The remote priority transposed to an integer">
+      <column name="REMOTE_REQUEST_URL" type="VARCHAR(300)" remarks="The Url to the remote request">
         <constraints nullable="true" />
       </column>
+
+
 
     </createTable>
 

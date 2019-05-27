@@ -113,7 +113,7 @@
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
-<c:set var="isRemoteAutomationWorkflowUsed" value="${testCase.project.automationWorkflowType != 'NONE' && testCase.project.automationWorkflowType != 'NATIVE'}"/>
+<c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
 <%---------------------------- Test Case Header ------------------------------%>
 

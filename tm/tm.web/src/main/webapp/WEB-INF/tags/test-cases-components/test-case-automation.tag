@@ -76,47 +76,54 @@
 			</div>
 		</div>
 
-    <c:choose>
-      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
-      <c:when test="${!isRemoteAutomationWorkflowUsed}">
-        <%--== Native Automation Workflow is used ==--%>
-        <div class="display-table-row test-case-automation-request-block">
-          <label class="display-table-cell" for="automation-request-priority">
-            <f:message key="test-case.automation-priority.label"/>
-          </label>
-          <%-- The above tags Must be on the same line, otherwise the editor will add extra spaces... --%>
-          <div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
-        </div>
+    <div class="display-table-row test-case-automation-request-block">
+      <label class="display-table-cell" for="automation-request-priority">
+        <f:message key="test-case.automation-priority.label"/>
+      </label>
+      <%-- The below tags Must be on the same line, otherwise the editor will add extra spaces... --%>
+      <div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
+    </div>
 
-        <div class="display-table-row test-case-automation-request-block">
-          <label class="display-table-cell" for="automation-request-status">
-            <f:message key="test-case.automation-status.label"/>
-          </label>
-          <div class="display-table-cell" id="automation-request-status">
-            <span id="automation-request-status">${ automReqStatusLabel }</span>
-          </div>
-        </div>
-      </c:when>
-      <c:otherwise>
-        <%--== Remote Automation Workflow is used ==--%>
-        <div class="display-table-row test-case-automation-request-block">
-          <label class="display-table-cell" for="remote-automation-request-priority">
-            <f:message key="test-case.automation-priority.label" />
-          </label>
-          <div class="display-table-cell" id="remote-automation-request-priority">
-            <span>${ remoteReqPriorityLabel }</span>
-          </div>
-        </div>
-        <div class="display-table-row test-case-automation-request-block">
-          <label class="display-table-cell" for="remote-automation-request-status">
-            <f:message key="test-case.automation-status.label" />
-          </label>
-          <div class="display-table-cell" id="remote-automation-request-status">
-            <span>${ remoteReqStatusLabel }</span>
-          </div>
-        </div>
-      </c:otherwise>
-		</c:choose>
+    <div class="display-table-row test-case-automation-request-block">
+      <label class="display-table-cell" for="automation-request-status">
+        <f:message key="test-case.automation-status.label"/>
+      </label>
+      <div class="display-table-cell" id="automation-request-status">
+        <span id="automation-request-status">${ automReqStatusLabel }</span>
+      </div>
+    </div>
+
+     <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
+
+     <c:if test="${isRemoteAutomationWorkflowUsed && remoteAutomationRequestExists}">
+       <%--== Remote Automation Workflow is used ==--%>
+
+       <div class="display-table-row test-case-automation-request-block">
+         <label class="display-table-cell" for="remote-automation-request-status">
+           <f:message key="test-case.automation-status.label" />
+         </label>
+         <div class="display-table-cell" id="remote-automation-request-status">
+           <span>${ remoteReqStatusLabel }</span>
+         </div>
+       </div>
+       <div class="display-table-row test-case-automation-request-block">
+         <label class="display-table-cell" for="remote-automation-request-url">
+           <f:message key="label.Url" />
+         </label>
+         <div class="display-table-cell" id="remote-automation-request-url">
+           <span>${ remoteReqUrl }</span>
+         </div>
+       </div>
+       <div class="display-table-row test-case-automation-request-block">
+         <label class="display-table-cell" for="automation-last-transmitted-on">
+           <f:message key="automation.datatable.headers.transmittedon" />
+         </label>
+         <div class="display-table-cell" id="automation-last-transmitted-on">
+           <span>${ automReqLastTransmittedOn }</span>
+         </div>
+       </div>
+
+     </c:if>
 
 	</div>
 	</jsp:attribute>

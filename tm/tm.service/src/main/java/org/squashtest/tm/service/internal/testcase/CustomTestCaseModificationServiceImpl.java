@@ -1300,12 +1300,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		AutomationRequest request = new AutomationRequest();
 
+		// TODO: This will move to "Transmitted" Event
 		// Here a remote request is created only if the workflow is not the native one
-		if(project.getAutomationWorkflowType() != "NATIVE") {
+		/*if(!project.getAutomationWorkflowType().equals("NATIVE")) {
 			RemoteAutomationRequestExtender remoteRequest = new RemoteAutomationRequestExtender();
 			remoteRequest.setAutomationRequest(request);
 			request.setRemoteAutomationRequestExtender(remoteRequest);
-		}
+		}*/
 
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);

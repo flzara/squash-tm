@@ -70,6 +70,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -124,6 +125,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -283,7 +285,6 @@ public class TestCaseModificationController {
 			executionModes.add(ot);
 		}
 
-
 		mav.addObject(TEST_CASE, testCase);
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
@@ -294,14 +295,29 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("automReqStatusComboJson", buildAutomReqStatusComboData(locale));
 		mav.addObject("automReqStatusLabel", formatAutomReqStatus(testCase.getAutomationRequest(), locale));
-		mav.addObject("remoteReqPriorityLabel", formatRemoteReqPriority(testCase.getAutomationRequest(), locale));
-		mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(testCase.getAutomationRequest(), locale));
+
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
 		mav.addObject("milestoneConf", milestoneConf);
+
+		// RemoteAutomationRequestExtender
+		String workflowType = testCase.getProject().getAutomationWorkflowType();
+		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
+
+		AutomationRequest automReq = testCase.getAutomationRequest();
+		if(automReq != null) {
+			boolean remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
+			mav.addObject("remoteAutomationRequestExists", remoteAutomReqExists);
+			if(remoteAutomReqExists) {
+				RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
+				mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
+				mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
+				mav.addObject("automReqLastTransmittedOn", formatRemoteTransmittedDate(automReq, locale));
+			}
+		}
 	}
 
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
@@ -912,19 +928,28 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(AutomationRequestStatus.WORK_IN_PROGRESS, locale);
 	}
 
-	private String formatRemoteReqStatus(AutomationRequest request, Locale locale) {
-		if(request != null && request.getRemoteAutomationRequestExtender() != null && request.getRemoteAutomationRequestExtender().getRemoteRequestStatus() != null) {
-			return request.getRemoteAutomationRequestExtender().getRemoteRequestStatus();
+	private String formatRemoteReqStatus(RemoteAutomationRequestExtender remoteRequest, Locale locale) {
+		if(remoteRequest.getRemoteRequestStatus() != null) {
+			return remoteRequest.getRemoteRequestStatus();
+		} else {
+			return internationalizationHelper.internationalize("squashtm.nodata", locale);
 		}
-		return internationalizationHelper.internationalize("squashtm.nodata", locale);
 	}
 
-	private String formatRemoteReqPriority(AutomationRequest request, Locale locale) {
-		if(request != null && request.getRemoteAutomationRequestExtender() != null && request.getRemoteAutomationRequestExtender().getRemoteRequestPriority() != null) {
-			return request.getRemoteAutomationRequestExtender().getRemoteRequestPriority().toString();
+	private String formatRemoteReqUrl(RemoteAutomationRequestExtender remoteRequest, Locale locale) {
+		if(remoteRequest.getRemoteRequestUrl() != null && !remoteRequest.getRemoteRequestUrl().isEmpty()) {
+			return remoteRequest.getRemoteRequestUrl();
+		} else {
+			return internationalizationHelper.internationalize("squashtm.nodata", locale);
 		}
-		return internationalizationHelper.internationalize("squashtm.nodata", locale);
 	}
 
+	private String formatRemoteTransmittedDate(AutomationRequest automRequest, Locale locale) {
+		if(automRequest.getTransmissionDate() != null) {
+			return automRequest.getTransmissionDate().toString();
+		} else {
+			return internationalizationHelper.internationalize("squashtm.nodata", locale);
+		}
+	}
 
 }

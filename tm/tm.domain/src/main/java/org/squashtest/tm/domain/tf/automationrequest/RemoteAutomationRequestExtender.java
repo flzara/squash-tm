@@ -32,7 +32,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "REMOTE_AUTOMATION_REQUEST_EXTENDER")
@@ -61,8 +63,10 @@ public class RemoteAutomationRequestExtender {
 	@Column(name = "REMOTE_STATUS")
 	private String remoteRequestStatus;
 
-	@Column(name = "REMOTE_PRIORITY")
-	private Integer remoteRequestPriority;
+	@org.hibernate.validator.constraints.URL
+	@Size(min = 0, max = 300)
+	private String remoteRequestUrl;
+
 
 	public Long getId() {
 		return id;
@@ -92,10 +96,10 @@ public class RemoteAutomationRequestExtender {
 		this.remoteRequestStatus = remoteRequestStatus;
 	}
 
-	public Integer getRemoteRequestPriority() {
-		return remoteRequestPriority;
+	public String getRemoteRequestUrl() {
+		return remoteRequestUrl;
 	}
-	public void setRemoteRequestPriority(Integer remoteRequestPriority) {
-		this.remoteRequestPriority = remoteRequestPriority;
+	public void setRemoteRequestUrl(String remoteRequestUrl) {
+		this.remoteRequestUrl = remoteRequestUrl;
 	}
 }
