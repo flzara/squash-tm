@@ -46,6 +46,16 @@ import static org.squashtest.tm.domain.query.Operation.NOT_EQUALS;
 import static org.squashtest.tm.domain.query.Operation.NOT_NULL;
 import static org.squashtest.tm.domain.query.Operation.SUM;
 
+/**
+ * The datatypes of the supported columns.
+ *
+ * As parameters they receive the set of operations that applies to them.
+ *
+ * Only exception : Operation MATCHES for datatype STRING. It's not listed in yet because otherwise it would appear in
+ * the ChartWizard. This is temporary : we can fix the wizard configuration page to filter it out, but we will do so
+ * at a less hurried time.
+ *
+ */
 public enum DataType {
 
 	// @formatter:off

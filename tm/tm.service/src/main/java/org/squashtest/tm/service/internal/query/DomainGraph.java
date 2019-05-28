@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.query;
 
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
 import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
@@ -41,14 +42,17 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAI
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTACHMENT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_MILESTONE;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_PROJECT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.DATASET;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ISSUE;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_SUITE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.PARAMETER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_PROJECT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTACHMENT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTLIST;
@@ -60,6 +64,7 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_NATURE;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_PROJECT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_TYPE;
 
@@ -211,6 +216,10 @@ class DomainGraph {
 		TraversableEntity campAttachmentNode = new TraversableEntity(CAMPAIGN_ATTACHMENT);
 		TraversableEntity datasetNode = new TraversableEntity(DATASET);
 		TraversableEntity paramNode = new TraversableEntity(PARAMETER);
+		TraversableEntity tcProjectNode = new TraversableEntity(TEST_CASE_PROJECT);
+		TraversableEntity reqProjectNode = new TraversableEntity(REQUIREMENT_PROJECT);
+		TraversableEntity campProjectNode = new TraversableEntity(CAMPAIGN_PROJECT);
+		TraversableEntity itemSuiteNode = new TraversableEntity(ITEM_SUITE);
 
 
 		// add them all
@@ -219,7 +228,8 @@ class DomainGraph {
 				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
 				tctypNode, rvcatNode, tcmilNode, rvmilNode,campmilNode, autoNode, extNode,
 				tcAttlistNode, tcAttachmentNode, rvAttlistNode, rvAttachmentNode, campAttlistNode,
-				campAttlistNode, campAttachmentNode, datasetNode, paramNode
+				campAttlistNode, campAttachmentNode, datasetNode, paramNode, tcProjectNode, reqProjectNode,
+															  campProjectNode, itemSuiteNode
 		}));
 
 
@@ -285,6 +295,18 @@ class DomainGraph {
 
 		addEdge(campaignNode, campAttlistNode, "attachmentList");
 		addEdge(campAttlistNode, campAttachmentNode,"attachments");
+
+		addEdge(testcaseNode, tcProjectNode, "project");
+		addEdge(tcProjectNode, testcaseNode, "project", JoinType.WHERE);
+
+		addEdge(requirementNode, reqProjectNode, "project");
+		addEdge(reqProjectNode, requirementNode, "project", JoinType.WHERE);
+
+		addEdge(campaignNode, campProjectNode, "project");
+		addEdge(campProjectNode, campaignNode, "project", JoinType.WHERE);
+
+		addEdge(itemNode, itemSuiteNode, "testSuites");
+		addEdge(itemSuiteNode, itemNode, "testPlan");
 
 	}
 

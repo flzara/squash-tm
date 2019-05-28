@@ -35,6 +35,10 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.QTestSuite;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
@@ -261,7 +265,36 @@ enum InternalEntityType {
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QParameter(alias);
 		}
+	},
+
+	TEST_CASE_PROJECT(Project.class, new QProject("testCaseProject")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QProject(alias);
+		}
+	},
+
+	REQUIREMENT_PROJECT(Project.class, new QProject("requirementProject")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QProject(alias);
+		}
+	},
+
+	CAMPAIGN_PROJECT(Project.class, new QProject("campaignProject")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QProject(alias);
+		}
+	},
+
+	ITEM_SUITE(TestSuite.class, new QTestSuite("itemSuite")){
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QTestSuite(alias);
+		}
 	};
+
 
 	// @formatter:on
 

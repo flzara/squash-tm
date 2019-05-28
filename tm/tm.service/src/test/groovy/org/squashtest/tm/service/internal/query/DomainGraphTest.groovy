@@ -183,6 +183,10 @@ class DomainGraphTest extends Specification {
 		checkIsDirectedEdge domain, C_ALST, C_ATT
 		checkIsDirectedEdge domain, TEST_CASE, DS
 		checkIsDirectedEdge domain, TEST_CASE, PRM
+		checkIsDirectedEdge domain, TEST_CASE, TEST_CASE_PROJECT
+		checkIsDirectedEdge domain, REQUIREMENT, REQUIREMENT_PROJECT
+		checkIsDirectedEdge domain, CAMPAIGN, CAMPAIGN_PROJECT
+		checkIsDirectedEdge domain, ITEM_TEST_PLAN, ITEM_SUITE
 
 
 		// check the resulting tree (remember it has not been trimmed yet)
@@ -192,17 +196,17 @@ class DomainGraphTest extends Specification {
 		def root = allroots[0]
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST, TC_ALST, DS, PRM]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST, TC_ALST, DS, PRM, TEST_CASE_PROJECT]);
 		checkTreeHierarchy(plan, TATEST, [])
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT, RVMIL, CAT, RV_ALST ]);
-		checkTreeHierarchy(plan, REQUIREMENT, [])
-		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION, US])
+		checkTreeHierarchy(plan, REQUIREMENT, [REQUIREMENT_PROJECT])
+		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION, US, ITEM_SUITE])
 		checkTreeHierarchy(plan, EXECUTION, [ISS, EXTEND])
 		checkTreeHierarchy(plan, EXTEND, [])
 		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
-		checkTreeHierarchy(plan, CAMPAIGN, [CMIL, C_ALST])
+		checkTreeHierarchy(plan, CAMPAIGN, [CMIL, C_ALST, CAMPAIGN_PROJECT])
 		checkTreeHierarchy(plan, TCMIL, [])
 		checkTreeHierarchy(plan, RVMIL, [])
 		checkTreeHierarchy(plan, US, [])
@@ -215,6 +219,10 @@ class DomainGraphTest extends Specification {
 		checkTreeHierarchy(plan, RV_ATT, [])
 		checkTreeHierarchy(plan, C_ALST, [C_ATT])
 		checkTreeHierarchy(plan, C_ATT, [])
+		checkTreeHierarchy(plan, TEST_CASE_PROJECT, [])
+		checkTreeHierarchy(plan, REQUIREMENT_PROJECT, [])
+		checkTreeHierarchy(plan, CAMPAIGN_PROJECT, [])
+		checkTreeHierarchy(plan, ITEM_SUITE, [])
 
 	}
 

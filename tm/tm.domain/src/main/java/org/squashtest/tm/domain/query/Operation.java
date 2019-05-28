@@ -31,6 +31,7 @@ public enum Operation {
 	EQUALS,
 	IN,
 	LIKE,
+	MATCHES,
 	MIN,
 	MAX,
 	AVG,

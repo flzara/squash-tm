@@ -714,7 +714,7 @@
     <comment>Inserting now the new columns and querymodels in the database</comment>
     <comment>For the subqueries we have to use (w)hacky SQL. This is because we need to select-insert from no table,
     which is supported with specific syntax by each table but aren't compatible together (we would need to
-      'select from dual' in postgresql for example.
+      'select from dual' in postgresql for example).
     </comment>
 
     <sql>
@@ -727,6 +727,15 @@
 
       INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS) VALUES
 
+      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE', 'TEST_CASE_MILESTONE_LABEL', 'label', 'STRING', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'REQUIREMENT_VERSION_MILESTONE_LABEL', 'label', 'STRING', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_LABEL', 'label', 'STRING', FALSE),
+
+      ('ATTRIBUTE', 'PROJECT', 'TEST_CASE_PROJECT', 'TEST_CASE_PROJECT_NAME', 'name', 'STRING', FALSE),
+      ('ATTRIBUTE', 'PROJECT', 'REQUIREMENT_PROJECT', 'REQUIREMENT_PROJECT_NAME', 'name', 'STRING', FALSE),
+      ('ATTRIBUTE', 'PROJECT', 'CAMPAIGN_PROJECT', 'TEST_CASE_PROJECT_NAME', 'name', 'STRING', FALSE),
+
+
       ('ATTRIBUTE', 'ATTACHMENT_LIST', 'TEST_CASE_ATTLIST', 'TEST_CASE_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
       ('ATTRIBUTE', 'ATTACHMENT_LIST', 'REQUIREMENT_ATTLIST', 'REQUIREMENT_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
       ('ATTRIBUTE', 'ATTACHMENT_LIST', 'CAMPAIGN_ATTLIST', 'CAMPAIGN_ATTLIST_ID', 'id', 'NUMERIC', FALSE),
@@ -738,12 +747,12 @@
       ('ATTRIBUTE', 'DATASET', NULL, 'DATASET_ID', 'id', 'NUMERIC', FALSE),
       ('ATTRIBUTE', 'PARAMETER', NULL, 'PARAMETER_ID', 'id', 'NUMERIC', FALSE),
 
-      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE', 'TEST_CASE_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
-      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE', 'TEST_CASE_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE',   'TEST_CASE_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'TEST_CASE_MILESTONE',   'TEST_CASE_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
       ('ATTRIBUTE', 'MILESTONE', 'REQUIREMENT_MILESTONE', 'REQUIREMENT_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
       ('ATTRIBUTE', 'MILESTONE', 'REQUIREMENT_MILESTONE', 'REQUIREMENT_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
-      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
-      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE',    'CAMPAIGN_MILESTONE_STATUS', 'status', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE',    'CAMPAIGN_MILESTONE_END_DATE', 'endDate', 'DATE', FALSE),
 
       ('ATTRIBUTE', 'AUTOMATION_REQUEST', NULL, 'AUTOMATION_REQUEST_ID', 'id', 'NUMERIC', FALSE),
       ('ATTRIBUTE', 'AUTOMATION_REQUEST', NULL, 'AUTOMATION_REQUEST_STATUS', 'requestStatus', 'NUMERIC', FALSE),
@@ -753,9 +762,19 @@
 
       ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_NAME', 'name', 'STRING', FALSE),
       ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_DESCRIPTION', 'description', 'STRING', FALSE),
-      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_KIND', 'KIND', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_KIND', 'kind', 'LEVEL_ENUM', FALSE),
       ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_PREQUISITE', 'prerequisite', 'STRING', FALSE),
-      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_AUTOMATABLE', 'automatable', 'LEVEL_ENUM', FALSE);
+      ('ATTRIBUTE', 'TEST_CASE', NULL, 'TEST_CASE_AUTOMATABLE', 'automatable', 'LEVEL_ENUM', FALSE),
+
+      ('ATTRIBUTE', 'CAMPAIGN', NULL, 'CAMPAIGN_NAME', 'name', 'STRING', FALSE),
+
+      ('ATTRIBUTE', 'ITERATION', NULL, 'ITERATION_NAME', 'name', 'STRING', FALSE),
+
+      ('ATTRIBUTE', 'TEST_SUITE', 'ITEM_SUITE', 'ITEM_SUITE_ID', 'id', 'NUMERIC', FALSE),
+
+      ('ATTRIBUTE', 'EXECUTION', 'NULL', 'EXECUTION_EXECUTION_MODE', 'executionMode', 'LEVEL_ENUM', FALSE),
+      ('ATTRIBUTE', 'EXECUTION', 'NULL', 'EXECUTION_LAST_EXECUTED_ON', 'lastExecutedOn', 'DATE', FALSE);
+
 
 
       -- ----------------------------------------------- --
@@ -848,7 +867,7 @@
 
 
 
-      -- test case parameter count subquery
+      -- test case dataset count subquery
       -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
 
       INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('TEST_CASE_DATASETCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
@@ -868,11 +887,72 @@
       'COUNT', 0
       from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
 
+
       INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
       select
       'CALCULATED', 'TEST_CASE', NULL, 'TEST_CASE_DATASETCOUNT', 'count(dataset)', 'NUMERIC', FALSE,
       (select max(QUERY_MODEL_ID) from QUERY_MODEL)
       from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      -- item suite count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('ITEM_TEST_PLAN_SUITECOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'ITEM_TEST_PLAN_ID'),
+      'NONE', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'ITEM_SUITE_ID'),
+      'COUNT', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+      select
+      'CALCULATED', 'ITEM_TEST_PLAN', NULL, 'ITEM_TEST_PLAN_SUITECOUNT', 'count(testSuites)', 'NUMERIC', FALSE,
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+
+      -- item dataset count subquery
+      -- the inserts follow the order : query_model, aggregation, projection and finally the query_column_prototype
+
+      INSERT INTO QUERY_MODEL (NAME, STRATEGY, JOIN_STYLE) values ('ITEM_TEST_PLAN_DSCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+
+      INSERT INTO QUERY_AGGREGATION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, AGGREGATION_OPERATION, AGGREGATION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'ITEM_TEST_PLAN_ID'),
+      'NONE', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_PROJECTION_COLUMN(QUERY_MODEL_ID, QUERY_COLUMN_ID, PROJECTION_OPERATION, PROJECTION_RANK)
+      select
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL),
+      (select QUERY_COLUMN_ID from QUERY_COLUMN_PROTOTYPE where label = 'DATASET_ID'),
+      'COUNT', 0
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
+      INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, SUBQUERY_ID)
+      select
+      'CALCULATED', 'ITEM_TEST_PLAN', NULL, 'ITEM_TEST_PLAN_DSCOUNT', 'count(datasets)', 'NUMERIC', FALSE,
+      (select max(QUERY_MODEL_ID) from QUERY_MODEL)
+      from QUERY_COLUMN_PROTOTYPE where query_column_id = 1;
+
+
     </sql>
 
   </changeSet>
