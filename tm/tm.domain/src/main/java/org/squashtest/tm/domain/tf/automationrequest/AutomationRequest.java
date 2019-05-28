@@ -116,6 +116,9 @@ public class AutomationRequest implements Identified {
 	private boolean isManual;
 
 	public String getConflictAssociation() {
+		if(conflictAssociation==null){
+			conflictAssociation = "";
+		}
 		return conflictAssociation;
 	}
 

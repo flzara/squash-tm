@@ -55,7 +55,7 @@
 
   <changeSet id="tm-1.20.0-TM-13-test-conflict-association" author="amk" dbms="mysql, postgresql, h2">
     <preConditions>
-      <sqlCheck expectedResult="2">
+      <sqlCheck expectedResult="0">
         SELECT count(*) from AUTOMATION_REQUEST where conflict_association IS NOT NULL
       </sqlCheck>
 
