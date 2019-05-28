@@ -254,9 +254,12 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void createRequestForTestCase(long testCaseId, AutomationRequestStatus automationRequestStatus);
 
+	void createRemoteRequestForTestCaseIfNotExist(long testCaseId);
+
 	AutomatedTest bindAutomatedTestByAutomationProgrammer(Long testCaseId, String testPath);
 
 	Collection<TestAutomationProjectContent> findAssignableAutomationTestsToAutomationProgramer(long testCaseId);
+
 
 
 }

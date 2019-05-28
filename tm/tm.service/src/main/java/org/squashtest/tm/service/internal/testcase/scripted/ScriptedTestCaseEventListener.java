@@ -113,6 +113,16 @@ public class ScriptedTestCaseEventListener {
 
 		Collection<Long> testCaseIds = findTestCaseIdsByAutomationRequestIds(requestIds);
 
+		LOGGER.debug("creating remote automation requests in bugtracker");
+
+		for(Long tcId : testCaseIds) {
+			// If the request is meant to be managed in a Remote tool - Maybe write a single method here
+			// Here create the RemoteRequests in the remote BugTracker
+
+			// Create the RemoteAutomationRequestExtender for the given TestCase
+			tcService.createRemoteRequestForTestCaseIfNotExist(tcId);
+		}
+
 		LOGGER.debug("committing test cases to their repositories");
 		LOGGER.trace("test case ids : '{}'", testCaseIds);
 
@@ -161,7 +171,7 @@ public class ScriptedTestCaseEventListener {
 		}
 
 		// fix the error here
-		
+
 		return credentials;
 	}
 	/**
@@ -187,7 +197,7 @@ public class ScriptedTestCaseEventListener {
 	 */
 	@Order(100)
 	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED or " +
-																					 "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
+		"#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
 	public void autoBindWhenAvailable(AutomationRequestStatusChangeEvent event){
 
 		LOGGER.debug("request status changed : autobinding test scripts if needed and possible");
@@ -206,7 +216,7 @@ public class ScriptedTestCaseEventListener {
 
 		// group them by Tm Project.
 		Map<Project, List<TestCase>> testCasesByProjects = candidates.stream()
-															   .collect(Collectors.groupingBy(tc -> tc.getProject()));
+			.collect(Collectors.groupingBy(tc -> tc.getProject()));
 
 		for (Map.Entry<Project, List<TestCase>> entry : testCasesByProjects.entrySet()){
 
@@ -305,11 +315,11 @@ public class ScriptedTestCaseEventListener {
 		TestCase tc = tcs.get(0);
 
 		return tc.getProject()
-			   .getTestAutomationProjects()
-			   .stream()
-			   .filter(TestAutomationProject::isCanRunGherkin)
-			   .sorted(Comparator.comparing(TestAutomationProject::getLabel))
-			   .findFirst();
+			.getTestAutomationProjects()
+			.stream()
+			.filter(TestAutomationProject::isCanRunGherkin)
+			.sorted(Comparator.comparing(TestAutomationProject::getLabel))
+			.findFirst();
 	}
 
 	/**
@@ -328,11 +338,11 @@ public class ScriptedTestCaseEventListener {
 		QTestCase testCase = QTestCase.testCase;
 
 		return new JPAQueryFactory(em)
-				   .select(testCase.id)
-					.from(automationRequest)
-					.join(automationRequest.testCase, testCase)
-					.where(automationRequest.id.in(automationRequestIds))
-					.fetch();
+			.select(testCase.id)
+			.from(automationRequest)
+			.join(automationRequest.testCase, testCase)
+			.where(automationRequest.id.in(automationRequestIds))
+			.fetch();
 
 	}
 
@@ -358,18 +368,18 @@ public class ScriptedTestCaseEventListener {
 		QScmRepository scm = QScmRepository.scmRepository;
 
 		return new JPAQueryFactory(em)
-				   .select(testCase)
-				   .from(automationRequest)
-				   .join(automationRequest.testCase, testCase)
-				   .join(testCase.project, project)
-				   .join(project.testAutomationProjects, automationProject)
-				   .join(project.scmRepository, scm) 								// condition 4
-					.where(automationRequest.id.in(automationRequestIds) 			// condition 1
-							   .and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-							   .and(testCase.automatedTest.isNull())				// condition 3
-								.and(automationProject.canRunGherkin.isTrue())		// condition 5
-					)
-					.fetch();
+			.select(testCase)
+			.from(automationRequest)
+			.join(automationRequest.testCase, testCase)
+			.join(testCase.project, project)
+			.join(project.testAutomationProjects, automationProject)
+			.join(project.scmRepository, scm) 								// condition 4
+			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
+				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
+				.and(testCase.automatedTest.isNull())				// condition 3
+				.and(automationProject.canRunGherkin.isTrue())		// condition 5
+			)
+			.fetch();
 
 	}
 

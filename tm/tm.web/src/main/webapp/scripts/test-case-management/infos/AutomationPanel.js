@@ -30,8 +30,18 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					this.updateAutomatableInTree = $.proxy(this._updateAutomatableInTree, this);
 					self.settings = options.settings;
 
-					self.initAutomationRequestBlock();
+					var remoteAutomReqExists = self.settings.remoteAutomationRequestExists;
+					self.initAutomationRequestBlock(remoteAutomReqExists);
 					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
+
+					eventBus.onContextual("test-case.transmitted", function(evt, data) {
+          	// query the newly created AutomationRequest and its potential RemoteAutomationRequestExtender
+          	self.doGetAutomationRequestInfos().success(function(automationRequest) {
+          		// then update the automation panel
+          		self.updateAutomationRequestBlockInfos(automationRequest);
+          		self.initAutomationRequestBlock(automationRequest != null);
+          	});
+          });
 
 					if (self.settings.writable) {
 						this.priorityEditable = new SimpleJEditable({
@@ -46,13 +56,15 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							}
 						});
 
-						this.statusEditable = new SelectJEditable({
-							target : this.settings.urls.testCaseUrl,
-							componentId : "automation-request-status",
-							jeditableSettings : {
-								data : this.settings.automReqStatusComboJson
-							}
-						});
+						if(!remoteAutomReqExists) {
+							this.statusEditable = new SelectJEditable({
+								target : this.settings.urls.testCaseUrl,
+								componentId : "automation-request-status",
+								jeditableSettings : {
+									data : this.settings.automReqStatusComboJson
+								}
+							});
+						}
 
 						$('#transmit-test-case-autom-request-button').on('click', function() {
 							$.ajax({
@@ -63,6 +75,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 									'value': 'TRANSMITTED'
 								}
 							}).success(function() {
+								eventBus.trigger("test-case.transmitted");
 								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 							});
 						});
@@ -84,7 +97,17 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					} else {
 						automatableRadio.attr('disabled', true);
 					}
+				},
 
+				doGetAutomationRequestInfos: function() {
+					var self = this;
+					return $.ajax({
+						method: 'GET',
+						url: self.settings.urls.testCaseUrl + "/automation-request",
+						data: {
+							id: 'automation-request-info'
+						}
+					});
 				},
 
 				_updateAutomatableInTree : function(value){
@@ -94,16 +117,33 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 
 				},
 
-				initAutomationRequestBlock : function() {
-					if ($('input[type=radio][name=test-case-automatable]:checked').val() === 'Y') {
+				initAutomationRequestBlock : function(remoteAutomReqExists) {
+					var isAutomatable = $('input[type=radio][name=test-case-automatable]:checked').val() === 'Y';
+					if (isAutomatable) {
 						$('.test-case-automation-request-block').show();
 					} else {
 						$('.test-case-automation-request-block').hide();
 					}
+					// Display remote-automation-request-block according to existence of the remoteRequest
+					if(isAutomatable && remoteAutomReqExists) {
+						$('.test-case-remote-automation-request-block').show();
+					} else {
+						$('.test-case-remote-automation-request-block').hide();
+					}
 				},
 
-				events : {
-
+				updateAutomationRequestBlockInfos: function(automationRequest) {
+					// status
+					var automReqStatusInput = $("#automation-request-status");
+					automReqStatusInput.editable("disable");
+					automReqStatusInput.removeClass("editable");
+					automReqStatusInput.text(automationRequest.requestStatus);
+					// remoteStatus
+					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
+					// url
+					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					// date transmission
+					$("#automation-last-transmitted-on").text(automationRequest.transmissionDate);
 				}
 
 			});

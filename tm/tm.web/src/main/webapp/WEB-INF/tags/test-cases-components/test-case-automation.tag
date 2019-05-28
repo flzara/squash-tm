@@ -42,6 +42,7 @@
 
 <f:message var="labelAutomation" key="label.automation" />
 <f:message var="transmitLabel" key="automation.label.to_transmit" />
+<f:message var="displayDateFormat" key="squashtm.dateformat" />
 
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
@@ -94,36 +95,32 @@
     </div>
 
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
+     <%--== If remote Automation Workflow is used ==--%>
 
-     <c:if test="${isRemoteAutomationWorkflowUsed && remoteAutomationRequestExists}">
-       <%--== Remote Automation Workflow is used ==--%>
-
-       <div class="display-table-row test-case-automation-request-block">
-         <label class="display-table-cell" for="remote-automation-request-status">
-           <f:message key="test-case.automation-status.label" />
-         </label>
-         <div class="display-table-cell" id="remote-automation-request-status">
-           <span>${ remoteReqStatusLabel }</span>
-         </div>
+     <div class="display-table-row test-case-remote-automation-request-block">
+       <label class="display-table-cell" for="remote-automation-request-status">
+         <f:message key="test-case.automation-status.label" />
+       </label>
+       <div class="display-table-cell" id="remote-automation-request-status">
+         <span>${ remoteReqStatusLabel }</span>
        </div>
-       <div class="display-table-row test-case-automation-request-block">
-         <label class="display-table-cell" for="remote-automation-request-url">
-           <f:message key="label.Url" />
-         </label>
-         <div class="display-table-cell" id="remote-automation-request-url">
-           <span>${ remoteReqUrl }</span>
-         </div>
+     </div>
+     <div class="display-table-row test-case-remote-automation-request-block">
+       <label class="display-table-cell" for="remote-automation-request-url">
+         <f:message key="label.Url" />
+       </label>
+       <div class="display-table-cell" id="remote-automation-request-url">
+         <span>${ remoteReqUrl }</span>
        </div>
-       <div class="display-table-row test-case-automation-request-block">
-         <label class="display-table-cell" for="automation-last-transmitted-on">
-           <f:message key="automation.datatable.headers.transmittedon" />
-         </label>
-         <div class="display-table-cell" id="automation-last-transmitted-on">
-           <span>${ automReqLastTransmittedOn }</span>
-         </div>
+     </div>
+     <div class="display-table-row test-case-remote-automation-request-block">
+       <label class="display-table-cell" for="automation-last-transmitted-on">
+         <f:message key="automation.datatable.headers.transmittedon" />
+       </label>
+       <div class="display-table-cell" id="automation-last-transmitted-on">
+         <span><f:formatDate value="${ automReqLastTransmittedOn }" pattern="${displayDateFormat}" /></span>
        </div>
-
-     </c:if>
+     </div>
 
 	</div>
 	</jsp:attribute>

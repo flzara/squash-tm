@@ -1299,15 +1299,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Project project = testCase.getProject();
 
 		AutomationRequest request = new AutomationRequest();
-
-		// TODO: This will move to "Transmitted" Event
-		// Here a remote request is created only if the workflow is not the native one
-		/*if(!project.getAutomationWorkflowType().equals("NATIVE")) {
-			RemoteAutomationRequestExtender remoteRequest = new RemoteAutomationRequestExtender();
-			remoteRequest.setAutomationRequest(request);
-			request.setRemoteAutomationRequestExtender(remoteRequest);
-		}*/
-
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);
 		request.setProject(project);
@@ -1320,7 +1311,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
+	}
 
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void createRemoteRequestForTestCaseIfNotExist(long testCaseId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		AutomationRequest automationRequest = testCase.getAutomationRequest();
+		// Create the remoteRequest only if does not exist yet
+		if(automationRequest != null && automationRequest.getRemoteAutomationRequestExtender() == null) {
+			RemoteAutomationRequestExtender remoteRequest = new RemoteAutomationRequestExtender();
+			remoteRequest.setAutomationRequest(testCase.getAutomationRequest());
+			testCase.getAutomationRequest().setRemoteAutomationRequestExtender(remoteRequest);
+		}
 	}
 
 }

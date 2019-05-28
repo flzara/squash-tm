@@ -110,6 +110,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonAutomationRequest;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
@@ -125,7 +126,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -307,17 +307,18 @@ public class TestCaseModificationController {
 		String workflowType = testCase.getProject().getAutomationWorkflowType();
 		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
 
+		boolean remoteAutomReqExists = false;
 		AutomationRequest automReq = testCase.getAutomationRequest();
 		if(automReq != null) {
-			boolean remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
-			mav.addObject("remoteAutomationRequestExists", remoteAutomReqExists);
+			remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
 			if(remoteAutomReqExists) {
 				RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
 				mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
 				mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
-				mav.addObject("automReqLastTransmittedOn", formatRemoteTransmittedDate(automReq, locale));
+				mav.addObject("automReqLastTransmittedOn", automReq.getTransmissionDate());
 			}
 		}
+		mav.addObject("remoteAutomationRequestExists", remoteAutomReqExists);
 	}
 
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
@@ -398,6 +399,14 @@ public class TestCaseModificationController {
 	public String changeAutomReqStatus(@RequestParam(VALUE) AutomationRequestStatus status, @PathVariable long testCaseId, Locale locale) {
 		automationRequestModificationService.changeStatus(Collections.singletonList(testCaseId), status);
 		return internationalizationHelper.internationalize(status, locale);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value="/automation-request", params = {"id=automation-request-info"})
+	@ResponseBody
+	public JsonAutomationRequest getAutomationRequestInfo(@PathVariable long testCaseId) {
+		return new JsonAutomationRequest(
+			automationRequestModificationService.findRequestByTestCaseId(testCaseId),
+			internationalizationHelper);
 	}
 
 	@ResponseBody
@@ -943,13 +952,4 @@ public class TestCaseModificationController {
 			return internationalizationHelper.internationalize("squashtm.nodata", locale);
 		}
 	}
-
-	private String formatRemoteTransmittedDate(AutomationRequest automRequest, Locale locale) {
-		if(automRequest.getTransmissionDate() != null) {
-			return automRequest.getTransmissionDate().toString();
-		} else {
-			return internationalizationHelper.internationalize("squashtm.nodata", locale);
-		}
-	}
-
 }
