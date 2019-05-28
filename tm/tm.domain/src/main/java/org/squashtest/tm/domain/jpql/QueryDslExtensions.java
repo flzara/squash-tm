@@ -21,9 +21,13 @@
 package org.squashtest.tm.domain.jpql;
 
 import com.querydsl.core.annotations.QueryDelegate;
+import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.Templates;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import ext.java.lang.QString;
 import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
 
 
@@ -36,6 +40,10 @@ import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
  *
  * @author bsiri
  *
+ *
+ * Note about the "new QString" : the normal way like Expressions.constant, Expressions.stringExpression, ConstantImpl.create etc
+ * would not work because QueryDsl would generate placeholders instead (?1, ?2 etc) that are never valorized at execution time,
+ * thus making Hibernate crash.
  */
 public final class QueryDslExtensions {
 
@@ -59,7 +67,7 @@ public final class QueryDslExtensions {
 
 	@QueryDelegate(String.class)
 	public static StringExpression orderedGroupConcat(StringPath attributeConcat, StringPath attributeOrder){
-		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT, attributeConcat, Expressions.constant("order by"), attributeOrder);
+		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT, attributeConcat, new QString("'order by'"), attributeOrder);
 	}
 
 
@@ -70,7 +78,26 @@ public final class QueryDslExtensions {
 
 	@QueryDelegate(String.class)
 	public static StringExpression orderedGroupConcat(StringPath attributeConcat, StringPath attributeOrder, ConcatOrder order){
-		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT_DIR, attributeConcat, Expressions.constant("order by"), attributeOrder, Expressions.constant(order.toString().toLowerCase()));
+		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT_DIR, attributeConcat, new QString("'order by'"), attributeOrder, new QString("'"+order.toString()+"'".toLowerCase()));
 	}
+
+	/**
+	 * matches. Usage : myStringColumn.s_matches('regex').isTrue() (or false)
+	 *
+	 */
+	@QueryDelegate(String.class)
+	public static BooleanExpression s_matches(StringPath attribute, String regex){
+		return Expressions.booleanOperation(ExtOps.S_MATCHES, attribute, new QString("'"+regex+"'"));
+	}
+
+	/**
+	 * i_matches. Usage : myStringColumn.s_i_matches('regex').isTrue() (or false)
+	 *
+	 */
+	@QueryDelegate(String.class)
+	public static BooleanExpression s_i_matches(StringPath attribute, String regex){
+		return Expressions.booleanOperation(ExtOps.S_I_MATCHES, attribute, new QString("'"+regex+"'"));
+	}
+
 
 }

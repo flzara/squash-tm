@@ -34,7 +34,7 @@ import com.querydsl.core.types.Operator;
  * 	<pre>Expressions.simpleOperation(Long.class, ExAggOps.S_SUM, mySubQueryExpression)</pre>
  * 	<pre>Expressions.simpleOperation(String.class, ExAggOps.ORDERED_GROUP_CONCAT_DIR, attrConcatPath, Expressions.constant('order by'), attrSortPath, Expressions.constant('asc'))</pre>
  *
- *  The usage syntax for GROUP_CONCAT is explained in the various Hibernate dialect extensions.
+ *  The usage syntax for GROUP_CONCAT, S_MATCHES and S_I_MATCHES is explained in the various Hibernate dialect extensions.
  * </p>
  *
  * </p>
@@ -57,6 +57,12 @@ public enum ExtOps implements Operator {
 	GROUP_CONCAT(String.class),
 	ORDERED_GROUP_CONCAT(String.class),
 	ORDERED_GROUP_CONCAT_DIR(String.class),
+
+	// pattern matching
+	// had to be renamed so as to not conflict with the native operator MATCHES,
+	// which is nice too but not exactly what we need
+	S_MATCHES(Boolean.class),
+	S_I_MATCHES(Boolean.class),
 
 	// boolean case when
 	TRUE_IF(Boolean.class),

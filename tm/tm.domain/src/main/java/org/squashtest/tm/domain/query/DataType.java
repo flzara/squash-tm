@@ -51,7 +51,7 @@ import static org.squashtest.tm.domain.query.Operation.SUM;
  *
  * As parameters they receive the set of operations that applies to them.
  *
- * Only exception : Operation MATCHES for datatype STRING. It's not listed in yet because otherwise it would appear in
+ * Only exception : Operation S_MATCHES for datatype STRING. It's not listed in yet because otherwise it would appear in
  * the ChartWizard. This is temporary : we can fix the wizard configuration page to filter it out, but we will do so
  * at a less hurried time.
  *

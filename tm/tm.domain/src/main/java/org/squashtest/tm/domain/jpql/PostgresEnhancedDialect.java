@@ -26,6 +26,7 @@
 package org.squashtest.tm.domain.jpql;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
 import java.util.Map;
@@ -39,8 +40,8 @@ public class PostgresEnhancedDialect extends PostgreSQL9Dialect {
     public PostgresEnhancedDialect(){
         super();
         
-        Map<String, StandardSQLFunction> extensions = HibernateDialectExtensions.getPostgresDialectExtensions();
-        for (Map.Entry<String, StandardSQLFunction> extension : extensions.entrySet()){
+        Map<String, SQLFunction> extensions = HibernateDialectExtensions.getPostgresDialectExtensions();
+        for (Map.Entry<String, SQLFunction> extension : extensions.entrySet()){
             registerFunction(extension.getKey(), extension.getValue());
         }
     }

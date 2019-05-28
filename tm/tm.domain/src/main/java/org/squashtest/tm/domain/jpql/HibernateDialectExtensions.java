@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.domain.jpql;
 
+import org.hibernate.dialect.function.SQLFunction;
+import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.type.BooleanType;
 import org.hibernate.type.DoubleType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
@@ -46,7 +49,19 @@ import java.util.Map;
  * <p>
  * 	This section factory declares a custom function for the support of group_concat - which is not a JPQL standard function.
  * 	The implementation for this custom function depends on the target database. See GroupConcatFunction for h2 and mysql,
- * 	StringAggFunction for Postgre
+ * 	StringAggFunction for Postgresql
+ * </p>
+ *
+ * <p>
+ *     Also supported since 1.20 :
+ *     <b>matches</b>(column, 'regular expression') : test by regular expressions. Examples :
+ *     <ul>
+ *         <li>select matches (column, 'toto.*') from table; => returns true or false</li>
+ *     		<li>select name from TestCase where matches(name, '^TEST_.*') = true; ==> returns the names of all test cases that begins with 'TEST_'.
+ *     			Flip the boolean to false to negate the result.
+ *     		</li>
+ *     </ul>
+ *     <b>i_matches(column, 'regular exprssion) : same things case insensitive
  * </p>
  *
  * <p>
@@ -87,6 +102,9 @@ import java.util.Map;
 public final class HibernateDialectExtensions {
 
 	public static final String FN_NAME_GROUP_CONCAT = "group_concat";
+	public static final String FN_NAME_MATCHES = "matches";
+	public static final String FN_NAME_I_MATCHES = "i_matches";
+
 	public static final String FN_NAME_WEEK = "week";
 
 
@@ -103,36 +121,36 @@ public final class HibernateDialectExtensions {
 
 
 
-	public static enum FnSupport {
-		GROUP_CONCAT,
-		STR_AGG,
-		EXTRACT_WEEK
-	}
 
-        public static Map<String, StandardSQLFunction> getMysqlDialectExtensions(){
-            Map<String, StandardSQLFunction> extensions = getCommonExtensions();
+        public static Map<String, SQLFunction> getMysqlDialectExtensions(){
+            Map<String, SQLFunction> extensions = getCommonExtensions();
             extensions.put(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
+            extensions.put(FN_NAME_MATCHES, new Regexp());
+            extensions.put(FN_NAME_I_MATCHES, new InsensitiveRegexp());
+
             return extensions;
         }
 
-        public static Map<String, StandardSQLFunction> getH2DialectExtensions(){
-            Map<String, StandardSQLFunction> extensions = getCommonExtensions();
+        public static Map<String, SQLFunction> getH2DialectExtensions(){
+            Map<String, SQLFunction> extensions = getCommonExtensions();
             extensions.put(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
+			extensions.put(FN_NAME_MATCHES, new Regexp());
+			extensions.put(FN_NAME_I_MATCHES, new InsensitiveRegexp());
             return extensions;
         }
 
-        public static Map<String, StandardSQLFunction> getPostgresDialectExtensions(){
-            Map<String, StandardSQLFunction> extensions = getCommonExtensions();
+        public static Map<String, SQLFunction> getPostgresDialectExtensions(){
+            Map<String, SQLFunction> extensions = getCommonExtensions();
             extensions.put(FN_NAME_GROUP_CONCAT, new StringAggFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
             extensions.put(FN_NAME_WEEK, new ExtractWeek(FN_NAME_WEEK, IntegerType.INSTANCE));
+            extensions.put(FN_NAME_MATCHES, new TildeStar());
+			extensions.put(FN_NAME_I_MATCHES, new InsensitiveTildeStar());
             return extensions;
         }
 
 
-
-
-        private static Map<String, StandardSQLFunction> getCommonExtensions(){
-            Map<String, StandardSQLFunction> extensions = new HashMap<>();
+        private static Map<String, SQLFunction> getCommonExtensions(){
+            Map<String, SQLFunction> extensions = new HashMap<>();
             extensions.put(FN_NAME_SUM, new StandardSQLFunction("sum"));
             extensions.put(FN_NAME_MIN, new StandardSQLFunction("min"));
             extensions.put(FN_NAME_MAX, new StandardSQLFunction("max"));
@@ -265,5 +283,36 @@ public final class HibernateDialectExtensions {
 
 	}
 
+
+	/**
+	 * Support for operator REGEXP (mysql, h2).
+	 */
+	private static final class Regexp extends SQLFunctionTemplate {
+		public Regexp(){
+			super(BooleanType.INSTANCE, " (?1 regexp ?2) ");
+		}
+	}
+
+	private static final class InsensitiveRegexp extends SQLFunctionTemplate {
+		public InsensitiveRegexp(){
+			super(BooleanType.INSTANCE, " ( LOWER(?1) regexp LOWER(?2)) ");
+		}
+	}
+
+	/**
+	 * Support for tilde-star "~*" operator for postgresql
+	 *
+	 */
+	private static final class TildeStar extends SQLFunctionTemplate{
+		public TildeStar(){
+			super(BooleanType.INSTANCE, " (?1 ~ ?2) ");
+		}
+	}
+
+	private static final class InsensitiveTildeStar extends SQLFunctionTemplate{
+		public InsensitiveTildeStar(){
+			super(BooleanType.INSTANCE, " (?1 ~* ?2) ");
+		}
+	}
 
 }
