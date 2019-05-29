@@ -32,6 +32,7 @@ public class AdvancedSearchQueryModel {
 	private static final List<String> PARAMS_NOT_QUERYING = Arrays.asList("entity-index",
 		"empty-openinterface2-holder", "empty-opentree-holder", "editable", "links");
 
+
 	private Pageable pageable;
 
 	private Map<Integer, Object> mDataProp = new HashMap<>();

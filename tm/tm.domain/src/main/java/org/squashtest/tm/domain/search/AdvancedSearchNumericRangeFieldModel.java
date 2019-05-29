@@ -24,8 +24,8 @@ public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchField
 
 	private AdvancedSearchFieldModelType type;
 
+	// TODO : why in AdvancedSearchTimeIntervalFieldModel the dates are actual Date objects, but here the numeric values are String ?
 	private String minValue;
-
 	private String maxValue;
 
 	private boolean ignoreBridge = false;

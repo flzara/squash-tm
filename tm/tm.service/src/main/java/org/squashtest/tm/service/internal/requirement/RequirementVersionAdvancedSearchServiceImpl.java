@@ -28,15 +28,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
@@ -44,6 +41,7 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.*;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -58,28 +56,13 @@ import java.util.Locale;
 import java.util.Map;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
-public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-	RequirementVersionAdvancedSearchService {
+public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements RequirementVersionAdvancedSearchService {
 
-	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = new HashMap() {{
-		put("project-name", "REQUIREMENT_PROJECT_LABEL"); put("requirement-id", "REQUIREMENT_ID");
-		put("requirement-reference", "REQUIREMENT_VERSION_REFERENCE"); put("requirement-label", "REQUIREMENT_VERSION_NAME");
-		put("requirement-criticality", "REQUIREMENT_VERSION_CRITICALITY"); put("requirement-category", "REQUIREMENT_VERSION_CATEGORY");
-		put("requirement-status", "REQUIREMENT_VERSION_STATUS"); put("requirement-milestone-nb", "REQUIREMENT_VERSION_MILCOUNT");
-		put("requirement-version", "REQUIREMENT_VERSION_VERS_NUM");	put("requirement-version-nb", "REQUIREMENT_NB_VERSIONS");
-		put("requirement-testcase-nb", "REQUIREMENT_VERSION_TCCOUNT"); put("requirement-attachment-nb", "REQUIREMENT_VERSION_ATTCOUNT");
-		put("requirement-created-by", "REQUIREMENT_VERSION_CREATED_BY"); put("requirement-modified-by", "REQUIREMENT_VERSION_MODIFIED_BY");
-		put("attachments", "REQUIREMENT_VERSION_ATTCOUNT");	put("category", "REQUIREMENT_VERSION_CATEGORY");
-		put("createdBy", "REQUIREMENT_VERSION_CREATED_BY");	put("createdOn", "REQUIREMENT_VERSION_CREATED_ON");
-		put("criticality", "REQUIREMENT_VERSION_CRITICALITY"); put("description", "REQUIREMENT_VERSION_DESCRIPTION");
-		put("hasDescription", "REQUIREMENT_VERSION_DESCRIPTION"); put("lastModifiedBy", "REQUIREMENT_VERSION_MODIFIED_BY");
-		put("lastModifiedOn", "REQUIREMENT_VERSION_MODIFIED_ON"); put("link-type", "REQUIREMENT_LINK_LINK_TYPE");
-		put("name", "REQUIREMENT_VERSION_NAME"); put("reference", "REQUIREMENT_VERSION_REFERENCE");
-		put("requirement.id", "REQUIREMENT_ID"); put("requirement.project.id", "REQUIREMENT_PROJECT");
-		put("testcases", "REQUIREMENT_VERSION_TCCOUNT"); put(QueryCufLabel.TAGS, "REQUIREMENT_VERSION_CUF_TAG");
-		put(QueryCufLabel.CF_LIST, "REQUIREMENT_VERSION_CUF_LIST");	put(QueryCufLabel.CF_SINGLE, "REQUIREMENT_VERSION_CUF_TEXT");
-		put(QueryCufLabel.CF_TIME_INTERVAL, "REQUIREMENT_VERSION_CUF_DATE"); put(QueryCufLabel.CF_NUMERIC, "REQUIREMENT_VERSION_CUF_NUMERIC");
-		put(QueryCufLabel.CF_CHECKBOX, "REQUIREMENT_VERSION_CUF_CHECKBOX");	}};
+	/**
+	 * This is initialized in a static block at the end of the class definition
+	 */
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
+
 
 	private static final String IS_CURRENT_VERSION = "isCurrentVersion";
 	private static final String LINKS = "links";
@@ -90,9 +73,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	private static final List<String> PARAMS_NOT_PROJECTIONS = Arrays.asList("entity-index",
 		"empty-openinterface2-holder", "empty-opentree-holder", "editable", "project-name", "links");
-
-	private static final List<String> NOT_QUERYING_FILTERS =  Arrays.asList(IS_CURRENT_VERSION, LINKS, LINK_TYPE,
-		PARENT, REQUIREMENT_CHILDREN);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
@@ -135,13 +115,12 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		Map<String, AdvancedSearchFieldModel> fieldsNotQuerying = collectFieldsNotQuerying(model.getModel());
 
-		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(COLUMN_PROTOTYPE_MAPPING).convert();
+		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(MAPPINGS).convert();
 
 		ExtendedHibernateQuery query = dataFinder.prepareQuery(configuredQuery);
 
-		addFilterOnNotQueryingField(query, fieldsNotQuerying);
+		//addFilterOnNotQueryingField(query);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;
@@ -149,24 +128,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return new PageImpl(result, sorting, countAll);
 	}
 
-	private Map<String, AdvancedSearchFieldModel> collectFieldsNotQuerying(AdvancedSearchModel model) {
-		Map<String, AdvancedSearchFieldModel> modelMap = new HashMap<>();
-		for (String key : NOT_QUERYING_FILTERS) {
-			if (model.getFields().containsKey(key)) {
-				AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
-				modelMap.put(key, fieldModel);
-				model.getFields().remove(key);
-			}
-
-		}
-		return modelMap;
-	}
 
 	/**
 	 * The engine is not able to express some predicates. We must add them to the query.
 	 * @param query
 	 * @param filters
 	 */
+	/*
 	private void addFilterOnNotQueryingField(ExtendedHibernateQuery query, Map<String, AdvancedSearchFieldModel> filters) {
 
 		for (Map.Entry<String, AdvancedSearchFieldModel> fieldModelEntry: filters.entrySet()) {
@@ -207,4 +175,86 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private void addRequirementChildrenFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
 
 	}
+	*/
+
+
+
+	// ******************* column mappings  *******************************************************
+
+
+	static {
+
+		/* **************************************************
+		 *
+		 * 		Input form columns registry
+		 *
+		 *
+		 *****************************************************/
+		MAPPINGS.getFormMapping()
+				.map("requirement.project.id", REQUIREMENT_PROJECT_ID)
+				.map("requirement.id", REQUIREMENT_ID)
+				.map("reference", REQUIREMENT_VERSION_REFERENCE)
+				.map("name", REQUIREMENT_VERSION_NAME)
+				.map("description", REQUIREMENT_VERSION_DESCRIPTION)
+				.map("criticality", REQUIREMENT_VERSION_CRITICALITY)
+				.map("category", REQUIREMENT_VERSION_CATEGORY)
+				.map("status", REQUIREMENT_VERSION_STATUS)
+				.map("milestone.label", REQUIREMENT_VERSION_MILESTONE_LABEL)
+				.map("milestone.status", REQUIREMENT_VERSION_MILESTONE_STATUS)
+				.map("milestone.endDate", REQUIREMENT_VERSION_MILESTONE_END_DATE)
+				.map("testcases", REQUIREMENT_VERSION_TCCOUNT)
+
+
+				.mapHandler("requirement.children", (query, args) -> { String todo = "TODO";})
+				.mapHandler("parent", (query, args) -> { String todo = "TODO";})
+				.mapHandler("link-type", (query, args) -> { String todo = "TODO";});
+
+
+
+
+		/* **************************************************
+		 *
+		 * 		Result Table columns registry
+		 *
+		 *
+		 *****************************************************/
+		MAPPINGS.getResultMapping()
+				.map("project-name", REQUIREMENT_PROJECT_NAME)
+				.map("requirement-id", REQUIREMENT_VERSION_ID)
+				.map("requirement-reference", REQUIREMENT_VERSION_REFERENCE)
+				.map("requirement-label", REQUIREMENT_VERSION_NAME)
+				.map("requirement-criticality", REQUIREMENT_VERSION_CRITICALITY)
+				.map("requirement-category", REQUIREMENT_VERSION_CATEGORY)
+				.map("requirement-status", REQUIREMENT_VERSION_STATUS)
+				.map("requirement-milestone-nb", REQUIREMENT_VERSION_MILCOUNT)
+				.map("requirement-version", REQUIREMENT_VERSION_VERS_NUM)
+				.map("requirement-version-nb", REQUIREMENT_NB_VERSIONS)
+				.map("requirement-testcase-nb", REQUIREMENT_VERSION_TCCOUNT)
+				.map("requirement-attachment-nb", REQUIREMENT_VERSION_ATTCOUNT)
+				.map("requirement-created-by", REQUIREMENT_VERSION_CREATED_BY)
+				.map("requirement-modified-by", REQUIREMENT_VERSION_MODIFIED_BY)
+
+				.mapHandler("link", (query, args) -> { String todo = "TODO";});
+
+
+		/* **************************************************
+		 *
+		 * 		Custom fields columns registry
+		 *
+		 *
+		 *****************************************************/
+		MAPPINGS.getCufMapping()
+				.map(QueryCufLabel.TAGS.toString(), REQUIREMENT_VERSION_CUF_TAG)
+				.map(QueryCufLabel.CF_LIST.toString(), REQUIREMENT_VERSION_CUF_LIST)
+				.map(QueryCufLabel.CF_SINGLE.toString(), REQUIREMENT_VERSION_CUF_TEXT)
+				.map(QueryCufLabel.CF_TIME_INTERVAL.toString(), REQUIREMENT_VERSION_CUF_DATE)
+				.map(QueryCufLabel.CF_NUMERIC.toString(), REQUIREMENT_VERSION_CUF_NUMERIC)
+				.map(QueryCufLabel.CF_CHECKBOX.toString(), REQUIREMENT_VERSION_CUF_CHECKBOX);
+
+	}
+
+
+	
+	
+
 }

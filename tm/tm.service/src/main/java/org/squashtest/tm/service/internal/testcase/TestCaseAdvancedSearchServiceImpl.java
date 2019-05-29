@@ -81,7 +81,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		put("name", "TEST_CASE_NAME");
 		put("nature", "TEST_CASE_NATURE_LABEL");
 		put("parameters","TEST_CASE_PARAMCOUNT");
-		put("prerequisite","TEST_CASE_PREQUISITE");
+		put("prerequisite","TEST_CASE_PREREQUISITE");
 		put("project.id", "TEST_CASE_PROJECT");
 		put("reference", "TEST_CASE_REFERENCE");
 		put("requirements", "TEST_CASE_VERSCOUNT");
