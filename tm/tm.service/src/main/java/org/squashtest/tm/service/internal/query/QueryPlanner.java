@@ -321,6 +321,20 @@ class QueryPlanner {
 		}
 	}
 
+	/*
+	 *	Here the source and destination tables are both added to the from clause (if not present already) as separate
+	 *	branches, then the join is initiated from the opposite side (ie, the dest), whereas a natural join would be
+	 * initiated by the source (join src.joinAttribute attrAlias)
+	 *
+	 *	TODO : Initially the cartesian product + where clause was the only solution to navigate on unmapped relations.
+	 *			However since Hibernate 5.1 the SQL "JOIN on" notation is now supported, for exemple :
+	 *			"select tc from TestCase tc join IterationTestPlanItem item on tc.id = item.referencedTestCase.id"
+	 *
+	 *	And LEFT joins are allowed too ! Note that because the relation is not mapped, we have to specify the properties
+	 * that should be joined (usually the 'id')
+	 *
+	 *	The modification are slights, and the LEFT-WHERE join corner case would be a thing of the past.
+	 */
 	private void addWhereJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String attribute){
 
 		// if both aliases are known, don't do it

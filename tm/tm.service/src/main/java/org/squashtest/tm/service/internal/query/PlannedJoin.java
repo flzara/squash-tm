@@ -32,6 +32,8 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	 * </ul>
 	 * @author bsiri
 	 *
+	 * TODO : see comment on QueryPlanner#addWhereJoin about how we should evolve the WHERE join style
+	 *
 	 */
 	enum JoinType {
 		NATURAL,

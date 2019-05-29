@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.domain.jpql
 
+import ext.java.lang.QString
 import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
 import org.squashtest.tm.domain.testcase.QTestCase;
 
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.lang.Specification;
 
@@ -68,10 +66,10 @@ from TestCase tc"""
 		def projection = q.metadata.projection
 
 		projection.operator == ExtOps.ORDERED_GROUP_CONCAT
-		projection.args as List== [tc.name, Expressions.constant("order by"), tc.reference] as List
+		projection.args as List== [tc.name, new QString("'order by'"), tc.reference] as List
 
 		asString ==
-				"""select group_concat(tc.name,?1,tc.reference)
+				"""select group_concat(tc.name,'order by',tc.reference)
 from TestCase tc"""
 	}
 
@@ -92,10 +90,10 @@ from TestCase tc"""
 		def projection = q.metadata.projection
 
 		projection.operator == ExtOps.ORDERED_GROUP_CONCAT_DIR
-		projection.args as List== [tc.name, Expressions.constant("order by"), tc.reference, Expressions.constant("asc")] as List
+		projection.args as List== [tc.name, new QString("'order by'"), tc.reference, new QString("'ASC'")] as List
 
 		asString ==
-				"""select group_concat(tc.name,?1,tc.reference,?2)
+				"""select group_concat(tc.name,'order by',tc.reference,'ASC')
 from TestCase tc"""
 
 

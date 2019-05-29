@@ -336,7 +336,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			filter.getValues().add(String.valueOf(startDate));
 		} else if (endDate != null) {
 			filter.setOperation(Operation.LOWER_EQUAL);
-			filter.getValues().add(String.valueOf(endDate)));
+			filter.getValues().add(String.valueOf(endDate));
 		} else {
 			return null;
 		}
