@@ -29,8 +29,10 @@ import org.jooq.SelectSelectStep;
 import org.jooq.TableField;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
+import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 
 import javax.inject.Inject;
@@ -83,6 +85,9 @@ import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
 
 @Service
 public class CustomReportCustomExportCSVServiceImpl implements CustomReportCustomExportCSVService {
+
+	@Inject
+	CustomFieldFinderService cufService;
 
 	private static final Map<EntityType, Field> cufJoinColumnMap = new HashMap<>();
 
@@ -159,16 +164,28 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		List<Field<?>> cufFieldList = new ArrayList<>();
 		for(Map.Entry<EntityType, List<Long>> entry : cufMap.entrySet()) {
 			for(Long cufId : entry.getValue()) {
-				// selecting the field type to know what column to select
-				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).FIELD_TYPE);
-				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).VALUE);
-				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).NUMERIC_VALUE);
-				cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).LARGE_VALUE);
-				cufFieldList.add(
-					groupConcatDistinct(CUSTOM_FIELD_VALUE_OPTION.as(buildCufOptionColumnAliasName(entry.getKey(), cufId)).LABEL)
-						.separator(", ")
-						.as(buildAggregateCufColumnAliasName(entry.getKey(), cufId))
-				);
+				// Getting cuf type in order to select the right column
+				InputType cufType = cufService.findById(cufId).getInputType();
+				switch(cufType) {
+					case PLAIN_TEXT:
+					case DATE_PICKER:
+					case CHECKBOX:
+					case DROPDOWN_LIST:
+						cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).VALUE);
+						break;
+					case NUMERIC:
+						cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).NUMERIC_VALUE);
+						break;
+					case RICH_TEXT:
+						cufFieldList.add(CUSTOM_FIELD_VALUE.as(buildCufColumnAliasName(entry.getKey(), cufId)).LARGE_VALUE);
+						break;
+					case TAG:
+						cufFieldList.add(
+							groupConcatDistinct(CUSTOM_FIELD_VALUE_OPTION.as(buildCufOptionColumnAliasName(entry.getKey(), cufId)).LABEL)
+								.separator(", ")
+								.as(buildAggregateCufColumnAliasName(entry.getKey(), cufId))
+						);
+				}
 			}
 		}
 		selectQuery.select(cufFieldList);
@@ -256,8 +273,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 					.on(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_ID.eq(cufJoinColumnMap.get(entityType)))
 					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_TYPE.eq(entityType.toString()))
 					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CF_ID.eq(cufId));
-				joinQuery.leftJoin(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias))
-					.on(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias).CFV_ID.eq(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CFV_ID));
+				if(InputType.TAG.equals(cufService.findById(cufId).getInputType())) {
+					joinQuery.leftJoin(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias))
+						.on(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias).CFV_ID.eq(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CFV_ID));
+				}
 			}
 		}
 		joinQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))

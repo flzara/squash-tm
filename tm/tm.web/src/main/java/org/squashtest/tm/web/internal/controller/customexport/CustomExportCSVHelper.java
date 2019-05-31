@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.customexport;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
@@ -135,32 +136,27 @@ public class CustomExportCSVHelper {
 			value = record.get(columnField);
 		} else {
 			// Custom fields content
-			String cufInputType = record.get(CUSTOM_FIELD_VALUE.as(
-				csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-				.FIELD_TYPE);
-			// cufInputType can be null if the custom_field_value table is joined with a null TEST_SUITE
-			if(cufInputType != null) {
-				switch (cufInputType) {
-					case "TAG":
-						value = record.get(
-							csvService.buildAggregateCufColumnAliasName(label.getEntityType(), column.getCufId()));
-						break;
-					case "RTF":
-						Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
-							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-							.LARGE_VALUE);
-						value = computeRichValue(rawValue);
-						break;
-					case "NUM":
-						value = record.get(CUSTOM_FIELD_VALUE.as(
-							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-							.NUMERIC_VALUE);
-						break;
-					default:
-						value = record.get(CUSTOM_FIELD_VALUE.as(
-							csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
-							.VALUE);
-				}
+			InputType cufInputType = cufService.findById(column.getCufId()).getInputType();
+			switch (cufInputType) {
+				case TAG:
+					value = record.get(
+						csvService.buildAggregateCufColumnAliasName(label.getEntityType(), column.getCufId()));
+					break;
+				case RICH_TEXT:
+					Object rawValue = record.get(CUSTOM_FIELD_VALUE.as(
+						csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+						.LARGE_VALUE);
+					value = computeRichValue(rawValue);
+					break;
+				case NUMERIC:
+					value = record.get(CUSTOM_FIELD_VALUE.as(
+						csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+						.NUMERIC_VALUE);
+					break;
+				default:
+					value = record.get(CUSTOM_FIELD_VALUE.as(
+						csvService.buildCufColumnAliasName(label.getEntityType(), column.getCufId()))
+						.VALUE);
 			}
 		}
 		return value;
