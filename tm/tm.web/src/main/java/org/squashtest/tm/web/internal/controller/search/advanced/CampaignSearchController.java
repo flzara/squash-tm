@@ -225,7 +225,7 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		Pageable paging = SpringPagination.pageable(params, campaignSearchResultMapper);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, campaignSearchResultMapper.getMappedKeys(), searchModel);
 
 
 		Page<IterationTestPlanItem> holder =

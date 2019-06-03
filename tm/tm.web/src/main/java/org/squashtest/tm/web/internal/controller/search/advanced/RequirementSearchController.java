@@ -158,7 +158,7 @@ public class RequirementSearchController extends GlobalSearchController {
 
 		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, requirementSearchResultMapper.getMappedKeys(), searchModel);
 
 		Page<RequirementVersion> holder = requirementVersionAdvancedSearchService
 			.searchForRequirementVersions(queryModel, paging, getMessageSource(), locale);

@@ -220,7 +220,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
 
 		Page<TestCase> holder = testCaseAdvancedSearchService
@@ -252,10 +252,9 @@ public class TestCaseSearchController extends GlobalSearchController {
 		addMilestoneToSearchModel(searchModel);
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, params.getmDataProp(), searchModel);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
-		Page<TestCase> holder =
-				testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
+		Page<TestCase> holder = testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 

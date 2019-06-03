@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -27,7 +29,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.jpql.ExtHQLTemplates;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -55,13 +60,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
+@Transactional(readOnly = true)
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements RequirementVersionAdvancedSearchService {
 
 	/**
 	 * This is initialized in a static block at the end of the class definition
 	 */
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("requirement-id");
 
 
 	private static final String IS_CURRENT_VERSION = "isCurrentVersion";
@@ -113,70 +120,32 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	public Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model,
 																 Pageable sorting, MessageSource source, Locale locale) {
 
+		// prepare the query
+
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
+		converter.configureModel(model).configureMapping(MAPPINGS);
 
-		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(MAPPINGS).convert();
+		HibernateQuery<Long> query = converter.prepare();
 
-		ExtendedHibernateQuery query = dataFinder.prepareQuery(configuredQuery);
+		// round 1 : find our paged requirement version ids
 
-		//addFilterOnNotQueryingField(query);
+		List<Long> ids = query.fetch();
 
-		List<RequirementVersion> result = Collections.emptyList();
-		int countAll = 0;
+		// round 2 : get the total count (remove the paging)
 
-		return new PageImpl(result, sorting, countAll);
+		HibernateQuery<?> noPagingQuery = query.clone(entityManager.unwrap(Session.class));
+		noPagingQuery.limit(Long.MAX_VALUE);
+		noPagingQuery.offset(0);
+		long count = noPagingQuery.fetchCount();
+
+		// round 3 : now get the actual requirement versions
+
+		List<RequirementVersion> result = requirementVersionDao.findAllById(ids);
+
+
+		return new PageImpl(result, sorting, count);
 	}
-
-
-	/**
-	 * The engine is not able to express some predicates. We must add them to the query.
-	 * @param query
-	 * @param filters
-	 */
-	/*
-	private void addFilterOnNotQueryingField(ExtendedHibernateQuery query, Map<String, AdvancedSearchFieldModel> filters) {
-
-		for (Map.Entry<String, AdvancedSearchFieldModel> fieldModelEntry: filters.entrySet()) {
-			AdvancedSearchFieldModel model = fieldModelEntry.getValue();
-			String key = fieldModelEntry.getKey();
-
-			if (key.equals(IS_CURRENT_VERSION)) {
-				addCurrentVersionFilter(query, model);
-			} else if (key.equals(LINKS)) {
-				addLinksFilter(query, model);
-			} else if (key.equals(LINK_TYPE)) {
-				addLinkTypeFilter(query, model);
-			} else if (key.equals(PARENT)) {
-				addParentFilter(query, model);
-			} else if (key.equals(REQUIREMENT_CHILDREN)) {
-				addRequirementChildrenFilter(query, model);
-			}
-
-		}
-	}
-
-	private void addCurrentVersionFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
-
-	}
-
-	private void addLinksFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
-
-	}
-
-	private void addLinkTypeFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
-
-	}
-
-	private void addParentFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
-
-	}
-
-	private void addRequirementChildrenFilter(ExtendedHibernateQuery query, AdvancedSearchFieldModel fieldModel) {
-
-	}
-	*/
-
 
 
 	// ******************* column mappings  *******************************************************
@@ -202,13 +171,14 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 				.map("milestone.label", REQUIREMENT_VERSION_MILESTONE_LABEL)
 				.map("milestone.status", REQUIREMENT_VERSION_MILESTONE_STATUS)
 				.map("milestone.endDate", REQUIREMENT_VERSION_MILESTONE_END_DATE)
-				.map("testcases", REQUIREMENT_VERSION_TCCOUNT)
+				.map("testcases", REQUIREMENT_VERSION_TCCOUNT);
 
 
-				.mapHandler("requirement.children", (query, args) -> { String todo = "TODO";})
-				.mapHandler("parent", (query, args) -> { String todo = "TODO";})
-				.mapHandler("link-type", (query, args) -> { String todo = "TODO";});
-
+			/*	TODOs :
+				.mapHandler("requirement.children", null)
+				.mapHandler("parent", null)
+				.mapHandler("link-type", null);
+			*/
 
 
 
@@ -232,9 +202,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 				.map("requirement-testcase-nb", REQUIREMENT_VERSION_TCCOUNT)
 				.map("requirement-attachment-nb", REQUIREMENT_VERSION_ATTCOUNT)
 				.map("requirement-created-by", REQUIREMENT_VERSION_CREATED_BY)
-				.map("requirement-modified-by", REQUIREMENT_VERSION_MODIFIED_BY)
+				.map("requirement-modified-by", REQUIREMENT_VERSION_MODIFIED_BY);
 
-				.mapHandler("link", (query, args) -> { String todo = "TODO";});
+				/*
+				*TODOs
+				*
+				.mapHandler("link", null);
+			 	*/
 
 
 		/* **************************************************

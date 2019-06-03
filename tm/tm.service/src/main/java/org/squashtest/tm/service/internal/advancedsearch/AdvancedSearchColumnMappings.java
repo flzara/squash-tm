@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * The {@link AdvancedSearchQueryModelToConfiguredQueryConverter} requires such an object that
@@ -47,16 +52,30 @@ import java.util.function.Consumer;
  *
  * Also, sometimes a given key (eg an attribute
  * of the search form or the result table) cannot be mapped to a query column prototype label, because its too specific
- * or complicated for the query engine to use. In this case you still can map it as a QueryCustomizer, in which case
+ * or complicated for the query engine to use. In this case you still can map it as a SpecialHandler, in which case
  * you will need to implement the desired query transformation.
  *
  */
 public final class AdvancedSearchColumnMappings {
 
+	/**
+	 * The key of the attribute 'id' of the searched entity
+	 */
+	final private String idKey;
+
 	final private ColumnMapping formMapping = new ColumnMapping();
 	final private ColumnMapping resultMapping = new ColumnMapping();
 	final private ColumnMapping cufMapping = new ColumnMapping();
 
+
+	public AdvancedSearchColumnMappings(String idKey){
+		this.idKey = idKey;
+
+	}
+
+	public String getIdKey(){
+		return idKey;
+	}
 
 	public ColumnMapping getFormMapping() {
 		return formMapping;
@@ -87,7 +106,7 @@ public final class AdvancedSearchColumnMappings {
 		 * When a given data of the search or result panes cannot be handled
 		 * by a regular column, put your query customization here.
 		 */
-		private Map<String, QueryCustomizer> specialHandlers = new HashMap<>();
+		private Map<String, SpecialHandler> specialHandlers = new HashMap<>();
 
 
 		public ColumnMapping map(String key, String colLabel){
@@ -95,7 +114,7 @@ public final class AdvancedSearchColumnMappings {
 			return this;
 		}
 
-		public ColumnMapping mapHandler(String key, QueryCustomizer customizer){
+		public ColumnMapping mapHandler(String key, SpecialHandler customizer){
 			specialHandlers.put(key, customizer);
 			return this;
 		}
@@ -114,7 +133,7 @@ public final class AdvancedSearchColumnMappings {
 		 * @return
 		 * @throws NoSuchElementException if the key cannot be found
 		 */
-		public String findColumnLabel(String key){
+		public String findColumnPrototypeLabel(String key){
 			String label = mappedColumnLabels.get(key);
 			if (label == null){
 				throw new NoSuchElementException("Search Engine : cannot retrieve column for key '"+key+"'");
@@ -137,8 +156,8 @@ public final class AdvancedSearchColumnMappings {
 		 * @return
 		 * @throws NoSuchElementException if the key cannot be found
 		 */
-		public QueryCustomizer findCustomizer(String key){
-			QueryCustomizer customizer = specialHandlers.get(key);
+		public SpecialHandler findHandler(String key){
+			SpecialHandler customizer = specialHandlers.get(key);
 			if (customizer == null){
 				throw new NoSuchElementException("Search Engine : cannot retrieve query customizer for key '"+key+"'");
 			}
@@ -149,10 +168,33 @@ public final class AdvancedSearchColumnMappings {
 
 
 	/**
-	 * That interface exists because it's more expressive than a mere consumer of query.
-	 * First argument is the query to modify, the second is the list of arguments.
+	 *
 	 */
-	public interface QueryCustomizer extends BiConsumer<ExtendedHibernateQuery<?>, List<Object>> {
+	public final class SpecialHandler {
+		/**
+		 * Returns directly the EntityPath, instead of the column prototype label. The EntityPath should not worry about
+		 * aliasing, and may perfectly returns the attribute path built from a default QBean.
+		 *
+		 * @return
+		 */
+		Supplier<EntityPath<?>> getAttributePath = null;
+
+		/**
+		 * Directly modifies the query to add a filter. The compared values are passed as arguments along with the query.
+		 *
+		 * @param query
+		 * @param args
+		 */
+		BiConsumer<ExtendedHibernateQuery<?>, AdvancedSearchFieldModel> applyFilter = (query, args) -> {};
+
+		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath){
+			this.getAttributePath = getAttributePath;
+		}
+
+		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath, BiConsumer<ExtendedHibernateQuery<?>, AdvancedSearchFieldModel> applyFilter){
+			this.getAttributePath = getAttributePath;
+			this.applyFilter = applyFilter;
+		}
 
 	}
 
