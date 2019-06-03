@@ -168,11 +168,20 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private List<QueryProjectionColumn> extractProjections() {
 
 		List<QueryProjectionColumn> projections = new ArrayList<>();
-		Map<Integer, Object> data = advancedSearchQueryModel.getmDataProp();
+		ColumnMappings resMapping = mappings.getResultMapping();
 
-		for (Map.Entry<Integer, Object> entry : data.entrySet()) {
+		List<String> resultColumns = advancedSearchQueryModel.getSearchResultColumns();
+
+		for (String column : resultColumns) {
 
 			QueryProjectionColumn projection = new QueryProjectionColumn();
+
+
+			// test if this is a mapped or a special handling
+			// be careful to respect the order of selection, specified by resultColumns
+			if (){
+
+			}
 
 			String colLabel = mappings.getResultMapping().findColumnLabel(entry.getValue().toString());
 
@@ -180,9 +189,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			Operation operation = Operation.NONE;
 
-			if (PROJECTIONS_COUNT_OPERATION.contains(entry.getValue().toString())) {
-				operation = Operation.COUNT;
-			}
 
 			projection.setOperation(operation);
 			projections.add(projection);

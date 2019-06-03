@@ -22,10 +22,13 @@ package org.squashtest.tm.domain.search;
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AdvancedSearchQueryModel {
 
@@ -35,16 +38,18 @@ public class AdvancedSearchQueryModel {
 
 	private Pageable pageable;
 
-	private Map<Integer, Object> mDataProp = new HashMap<>();
+	private List<String> searchResultColumns = new ArrayList<>();
 
 	private AdvancedSearchModel model;
 
 	public AdvancedSearchQueryModel() {
 	}
 
-	public AdvancedSearchQueryModel(Pageable pageable, Map<Integer, Object> mDataProp, AdvancedSearchModel model) {
+	public AdvancedSearchQueryModel(Pageable pageable, List<String> searchResultColumns, AdvancedSearchModel model) {
 		this.pageable = pageable;
-		this.mDataProp = mDataProp;
+
+		this.searchResultColumns = searchResultColumns;
+
 		this.model = model;
 	}
 
@@ -56,18 +61,14 @@ public class AdvancedSearchQueryModel {
 		this.pageable = pageable;
 	}
 
-	public Map<Integer, Object> getmDataProp() {
-		Map<Integer, Object> projectionMap = new HashMap<>();
-		for(Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
-			if (!PARAMS_NOT_QUERYING.contains(entry.getValue().toString())) {
-				projectionMap.put(entry.getKey(), entry.getValue());
-			}
-		}
-		return projectionMap;
+	public List<String> getSearchResultColumns() {
+		List<String> columns = new ArrayList<>(searchResultColumns);
+		PARAMS_NOT_QUERYING.forEach(columns::remove);
+		return columns;
 	}
 
-	public void setmDataProp(Map<Integer, Object> mDataProp) {
-		this.mDataProp = mDataProp;
+	public void setSearchResultColumns(List<String> searchResultColumns) {
+		this.searchResultColumns = searchResultColumns;
 	}
 
 	public AdvancedSearchModel getModel() {

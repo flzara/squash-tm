@@ -121,7 +121,7 @@ public final class SpringPagination {
                 orders.add(new Order(direction, attribute));
             }
 
-            sort = new Sort(orders);
+            sort = Sort.by(orders);
         }
         return sort;
     }
