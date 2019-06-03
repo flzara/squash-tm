@@ -25,15 +25,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -52,6 +51,36 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_EXECUTION_MODE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISAUTO;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_DSCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
@@ -64,47 +93,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
 
-	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = new HashMap() {{
-		put("executionMode", "");
-		put("executionStatus", "EXECUTION_STATUS");
-		put("lastExecutedBy", "EXECUTION_TESTER_LOGIN");
-		put("lastExecutedOn", "EXECUTION_LASTEXEC");
-		put("milestone.endDate", "CAMPAIGN_MILESTONE_END_DATE");
-		//TODO to create
-		put("milestone.label", "");
-		put("milestone.status", "CAMPAIGN_MILESTONE_STATUS");
-		put("project.id", "CAMPAIGN_PROJECT");
-		put("referencedTestCase.automatable", "TEST_CASE_AUTOMATABLE");
-		put("referencedTestCase.automationRequest.requestStatus", "AUTOMATION_REQUEST_STATUS");
-		put("referencedTestCase.id", "TEST_CASE_ID");
-		put("referencedTestCase.importance", "TEST_CASE_IMPORTANCE");
-		put("referencedTestCase.name", "TEST_CASE_NAME");
-		put("referencedTestCase.reference", "TEST_CASE_REFERENCE");
-		put("user", "ITERATION_TEST_PLAN_ASSIGNED_USER");
-		//TODO to create
-		put("project-name", "");
-		//TODO to create
-		put("campaign-name", "");
-		//TODO to create
-		put("iteration-name", "");
-		put("itpi-id", "ITEM_TEST_PLAN_ID");
-		put("itpi-label", "ITEM_TEST_PLAN_LABEL");
-		//TODO to create
-		put("itpi-mode", "");
-		//TODO to create
-		put("itpi-testsuites", "");
-		put("itpi-status", "ITEM_TEST_PLAN_STATUS");
-		//TODO to create
-		put("itpi-executed-by", "ITEM_TEST_PLAN_TESTER");
-		put("itpi-executed-on", "ITEM_TEST_PLAN_LASTEXECON");
-		//TODO to create
-		put("itpi-datasets", "");
-		put("tc-weight", "TEST_CASE_IMPORTANCE");
-		put("test-case-automatable", "TEST_CASE_AUTOMATABLE");
-	}};
-
-	private static final List<String> PROJECTIONS = Arrays.asList("entity-index", "empty-openinterface2-holder",
-		"empty-opentree-holder");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
 
 	@Inject
 	protected ProjectFinder projectFinder;
@@ -124,7 +113,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
 
-	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";
+
+	private static final String LAST_EXECUTE_ON_FIELD_NAME = "lastExecutedOn";
 	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
 
 	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
@@ -142,7 +132,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
 		List<Long> partyIds = findPartyIdsCanAccessProject(projectIds);
-		return  findUserLoginsByPartyIds(partyIds);
+		return findUserLoginsByPartyIds(partyIds);
 	}
 
 	/*protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
@@ -189,7 +179,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 																	  Pageable paging, Locale locale) {
 
 
-
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
 		// Please, don't return null there, it will explode everything. It did.
@@ -231,7 +220,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
-			return DSL
+		return DSL
 			.select(CORE_PARTY.PARTY_ID)
 			.from(CORE_PARTY)
 			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
@@ -264,6 +253,52 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		return Stream.concat(usersSolo.stream(), usersInTeam.stream()).distinct()
 			.collect(Collectors.toList());
+	}
+
+	static {
+
+		MAPPINGS.getResultMapping()
+			.map("project-name", CAMPAIGN_PROJECT_NAME)
+			.map("project-id", CAMPAIGN_PROJECT_ID)
+			.map("campaign-name", CAMPAIGN_NAME)
+			.map("iteration-name", ITERATION_NAME)
+			.map("itpi-id", ITEM_TEST_PLAN_ID)
+			.map("itpi-label", ITEM_TEST_PLAN_LABEL)
+			.map("itpi-mode", EXECUTION_EXECUTION_MODE)
+			.map("itpi-isauto", EXECUTION_ISAUTO)
+			.map("itpi-testsuites", ITEM_TEST_PLAN_SUITECOUNT)
+			.map("itpi-status", ITEM_TEST_PLAN_STATUS)
+			.map("is-tc-deleted", ITEM_TEST_PLAN_TC_DELETED)
+			.map("itpi-executed-by", ITEM_TEST_PLAN_TESTER)
+			.map("itpi-executed-on", ITEM_TEST_PLAN_LASTEXECON)
+			.map("itpi-datasets", ITEM_TEST_PLAN_DSCOUNT)
+			.map("tc-weight", TEST_CASE_IMPORTANCE)
+			.map("test-case-automatable", TEST_CASE_AUTOMATABLE);
+
+		MAPPINGS.getFormMapping()
+			.map("executionMode", EXECUTION_EXECUTION_MODE)
+			.map("executionStatus", ITEM_TEST_PLAN_STATUS)
+			.map("lastExecutedBy", ITEM_TEST_PLAN_TESTER)
+			.map("lastExecutedOn", ITEM_TEST_PLAN_LASTEXECON)
+			.map("milestone.endDate", CAMPAIGN_MILESTONE_END_DATE)
+			.map("milestone.label", CAMPAIGN_MILESTONE_LABEL)
+			.map("milestone.status", CAMPAIGN_MILESTONE_STATUS)
+			.map("project.id", CAMPAIGN_PROJECT_ID)
+			.map("referencedTestCase.automatable", TEST_CASE_AUTOMATABLE)
+			.map("referencedTestCase.automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS)
+			.map("referencedTestCase.id", TEST_CASE_ID)
+			.map("referencedTestCase.importance", TEST_CASE_IMPORTANCE)
+			.map("referencedTestCase.name", TEST_CASE_NAME)
+			.map("referencedTestCase.reference", TEST_CASE_REFERENCE)
+			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN);
+
+		MAPPINGS.getCufMapping()
+			.map(QueryCufLabel.TAGS.toString(), ITERATION_CUF_TAG)
+			.map(QueryCufLabel.CF_LIST.toString(), ITERATION_CUF_LIST)
+			.map(QueryCufLabel.CF_SINGLE.toString(), ITERATION_CUF_TEXT)
+			.map(QueryCufLabel.CF_TIME_INTERVAL.toString(), ITERATION_CUF_DATE)
+			.map(QueryCufLabel.CF_NUMERIC.toString(), ITERATION_CUF_NUMERIC)
+			.map(QueryCufLabel.CF_CHECKBOX.toString(), ITERATION_CUF_CHECKBOX);
 	}
 
 }

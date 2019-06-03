@@ -20,30 +20,32 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import com.querydsl.core.Tuple;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeReference;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -56,66 +58,48 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DATASETCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DESCRIPTION;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_EXECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ITERCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_KIND;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NATURE_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PARAMCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PREQUISITE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STEPCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_VERSCOUNT;
+
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
 
-	private static final Map<String, String> COLUMN_PROTOTYPE_MAPPING = new HashMap() {{
-		put("attachments","TEST_CASE_ATTCOUNT");
-		put("callsteps","TEST_CASE_CALLSTEPCOUNT");
-		put("createdBy","TEST_CASE_CREATED_BY");
-		put("createdOn","TEST_CASE_CREATED_ON");
-		put("datasets","TEST_CASE_DATASETCOUNT");
-		put("description","TEST_CASE_DESCRIPTION");
-		put("executions","TEST_CASE_EXECOUNT");
-		put("id","TEST_CASE_ID");
-		put("importance","TEST_CASE_IMPORTANCE");
-		//TODO
-		put("issues","");
-		put("iterations","TEST_CASE_ITERCOUNT");
-		put("kind","TEST_CASE_KIND");
-		put("lastModifiedBy","TEST_CASE_MODIFIED_BY");
-		put("lastModifiedOn","TEST_CASE_MODIFIED_ON");
-		put("milestone.endDate","TEST_CASE_MILESTONE_END_DATE");
-		put("milestone.status","TEST_CASE_MILESTONE_STATUS");
-		put("name", "TEST_CASE_NAME");
-		put("nature", "TEST_CASE_NATURE_LABEL");
-		put("parameters","TEST_CASE_PARAMCOUNT");
-		put("prerequisite","TEST_CASE_PREREQUISITE");
-		put("project.id", "TEST_CASE_PROJECT");
-		put("reference", "TEST_CASE_REFERENCE");
-		put("requirements", "TEST_CASE_VERSCOUNT");
-		put("status", "TEST_CASE_STATUS");
-		put("steps", "TEST_CASE_STEPCOUNT");
-		put("type", "TEST_CASE_TYPE");
-		put("automatable", "TEST_CASE_AUTOMATABLE");
-		put("automationRequest.requestStatus","AUTOMATION_REQUEST_STATUS");
-		put(QueryCufLabel.TAGS, "TEST_CASE_CUF_TAG");
-		put(QueryCufLabel.CF_LIST, "TEST_CASE_CUF_LIST");
-		put(QueryCufLabel.CF_SINGLE, "TEST_CASE_CUF_TEXT");
-		put(QueryCufLabel.CF_TIME_INTERVAL, "TEST_CASE_CUF_DATE");
-		put(QueryCufLabel.CF_NUMERIC, "TEST_CASE_CUF_NUMERIC");
-		put(QueryCufLabel.CF_CHECKBOX, "TEST_CASE_CUF_CHECKBOX");
-		//TODO
-		put("project-name", "");
-		put("test-case-id", "TEST_CASE_ID");
-		put("test-case-ref", "TEST_CASE_REFERENCE");
-		put("test-case-label", "TEST_CASE_NAME");
-		put("test-case-weight", "TEST_CASE_IMPORTANCE");
-		put("test-case-nature", "TEST_CASE_NATURE");
-		put("test-case-type", "TEST_CASE_TYPE");
-		put("test-case-status", "TEST_CASE_STATUS");
-		put("test-case-automatable", "TEST_CASE_AUTOMATABLE");
-		put("test-case-milestone-nb", "TEST_CASE_MILCOUNT");
-		put("test-case-requirement-nb", "TEST_CASE_VERSCOUNT");
-		put("test-case-teststep-nb", "TEST_CASE_STEPCOUNT");
-		put("test-case-iteration-nb", "TEST_CASE_ITERCOUNT");
-		put("test-case-attachment-nb", "TEST_CASE_ATTCOUNT");
-		put("test-case-created-by", "TEST_CASE_CREATED_BY");
-		put("test-case-modified-by", "TEST_CASE_MODIFIED_BY");
-	}};
-	private static final List<String> PROJECTIONS = Arrays.asList("entity-index", "empty-openinterface2-holder",
-		"empty-opentree-holder", "editable", "test-case-weight-auto");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
+
 	@PersistenceContext
 	protected EntityManager entityManager;
 
@@ -140,6 +124,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
+	@Inject
+	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
+
+	@Inject
+	private QueryProcessingServiceImpl dataFinder;
+
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList();
 
 	private static final String FAKE_TC_ID = "-9000";
@@ -158,6 +148,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCase> searchForTestCases(AdvancedSearchQueryModel model, Locale locale) {
+
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
+
+		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(MAPPINGS).convert();
+		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
+
 		return new ArrayList<>();
 
 	}
@@ -185,21 +181,9 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		//[Issue 7901] Only look for test cases user is allowed to read.
 		result.addAll(testCaseDao.findAllByIds(
 			callingTestCaseIds.stream()
-			.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
-			.collect(Collectors.toList())
+				.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
+				.collect(Collectors.toList())
 		));
-		return result;
-	}
-
-	private String formatSortFieldName(String fieldName) {
-		String result = fieldName;
-		if (fieldName.startsWith("TestCase.")) {
-			result = fieldName.replaceFirst("TestCase.", "");
-		} else if (fieldName.startsWith("Project.")) {
-			result = fieldName.replaceFirst("Project.", "project.");
-		} else if (fieldName.startsWith("AutomationRequest.")) {
-			result = fieldName.replaceFirst("AutomationRequest.", "automationRequest.");
-		}
 		return result;
 	}
 
@@ -209,8 +193,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		int countAll=0;
-		return new PageImpl(testcases,sorting, countAll);
+		int countAll = 0;
+		return new PageImpl(testcases, sorting, countAll);
 	}
 
 	@Override
@@ -219,10 +203,73 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		int countAll=0;
+		int countAll = 0;
 
-		return new PageImpl(testcases,sorting, countAll);
+		return new PageImpl(testcases, sorting, countAll);
 	}
 
+	static {
 
+		MAPPINGS.getFormMapping()
+			.map("attachments", TEST_CASE_ATTCOUNT)
+			.map("callsteps", TEST_CASE_CALLSTEPCOUNT)
+			.map("createdBy", TEST_CASE_CREATED_BY)
+			.map("createdOn", TEST_CASE_CREATED_ON)
+			.map("datasets", TEST_CASE_DATASETCOUNT)
+			.map("description", TEST_CASE_DESCRIPTION)
+			.map("executions", TEST_CASE_EXECOUNT)
+			.map("id", TEST_CASE_ID)
+			.map("importance", TEST_CASE_IMPORTANCE)
+			//TODO
+			.map("issues", "")
+			.map("iterations", TEST_CASE_ITERCOUNT)
+			.map("kind", TEST_CASE_KIND)
+			.map("lastModifiedBy", TEST_CASE_MODIFIED_BY)
+			.map("lastModifiedOn", TEST_CASE_MODIFIED_ON)
+			.map("milestone.endDate", TEST_CASE_MILESTONE_END_DATE)
+			.map("milestone.status", TEST_CASE_MILESTONE_STATUS)
+			.map("name", TEST_CASE_NAME)
+			.map("nature", TEST_CASE_NATURE_LABEL)
+			.map("parameters", TEST_CASE_PARAMCOUNT)
+			.map("prerequisite", TEST_CASE_PREQUISITE)
+			.map("project.id", TEST_CASE_PROJECT_ID)
+			.map("reference", TEST_CASE_REFERENCE)
+			.map("requirements", TEST_CASE_VERSCOUNT)
+			.map("status", TEST_CASE_STATUS)
+			.map("steps", TEST_CASE_STEPCOUNT)
+			.map("type", TEST_CASE_TYPE_LABEL)
+			.map("automatable", TEST_CASE_AUTOMATABLE)
+			.map("automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS);
+
+		MAPPINGS.getResultMapping()
+			.map("project-name", TEST_CASE_PROJECT_NAME)
+			.map("test-case-id", TEST_CASE_ID)
+			.map("test-case-ref", TEST_CASE_REFERENCE)
+			.map("test-case-label", TEST_CASE_NAME)
+			.map("test-case-weight", TEST_CASE_IMPORTANCE)
+			.map("test-case-nature", TEST_CASE_NATURE_LABEL)
+			.map("test-case-type", TEST_CASE_TYPE_LABEL)
+			.map("test-case-status", TEST_CASE_STATUS)
+			.map("test-case-automatable", TEST_CASE_AUTOMATABLE)
+			.map("test-case-milestone-nb", TEST_CASE_MILCOUNT)
+			.map("test-case-requirement-nb", TEST_CASE_VERSCOUNT)
+			.map("test-case-teststep-nb", TEST_CASE_STEPCOUNT)
+			.map("test-case-iteration-nb", TEST_CASE_ITERCOUNT)
+			.map("test-case-attachment-nb", TEST_CASE_ATTCOUNT)
+			.map("test-case-created-by", TEST_CASE_CREATED_BY)
+			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY);
+		/* **************************************************
+		 *
+		 * 		Custom fields columns registry
+		 *
+		 *
+		 *****************************************************/
+		MAPPINGS.getCufMapping()
+			.map(QueryCufLabel.TAGS.toString(), TEST_CASE_CUF_TAG)
+			.map(QueryCufLabel.CF_LIST.toString(), TEST_CASE_CUF_LIST)
+			.map(QueryCufLabel.CF_SINGLE.toString(), TEST_CASE_CUF_TEXT)
+			.map(QueryCufLabel.CF_TIME_INTERVAL.toString(), TEST_CASE_CUF_DATE)
+			.map(QueryCufLabel.CF_NUMERIC.toString(), TEST_CASE_CUF_NUMERIC)
+			.map(QueryCufLabel.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX);
+	}
 }
