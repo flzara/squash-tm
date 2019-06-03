@@ -34,6 +34,7 @@ public interface ConfigurationService {
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
 		String ACTIVATED_USER_EXCESS = "activated.user.excess";
 		String PLUGIN_LICENSE_LOCATION = "plugin.license.location";
+		String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
 	}
 
 	void createNewConfiguration(String key, String value);
