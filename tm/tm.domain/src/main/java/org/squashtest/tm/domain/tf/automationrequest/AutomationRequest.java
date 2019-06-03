@@ -117,7 +117,7 @@ public class AutomationRequest implements Identified {
 
 	public String getConflictAssociation() {
 		if(conflictAssociation==null){
-			conflictAssociation = "";
+			return "";
 		}
 		return conflictAssociation;
 	}
