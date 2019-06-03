@@ -26,6 +26,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface CampaignAdvancedSearchService extends AdvancedSearchService {
 
 	List<String> findAllAuthorizedUsersForACampaign(List<Long> idList);
 
-	Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
+	Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchQueryModel searchModel,
 															   Pageable paging, Locale locale);
 
 }

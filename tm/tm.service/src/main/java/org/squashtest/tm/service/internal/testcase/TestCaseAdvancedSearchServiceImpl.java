@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISSUECOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
@@ -130,10 +131,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private QueryProcessingServiceImpl dataFinder;
 
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList();
-
-	private static final String FAKE_TC_ID = "-9000";
-
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases(List<Long> idList) {
 		return projectDao.findUsersWhoCreatedTestCases(idList);
@@ -153,6 +150,9 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(MAPPINGS).convert();
 		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
+
+		int countAll = tuples.size();
+
 
 		return new ArrayList<>();
 
@@ -220,8 +220,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("executions", TEST_CASE_EXECOUNT)
 			.map("id", TEST_CASE_ID)
 			.map("importance", TEST_CASE_IMPORTANCE)
-			//TODO
-			.map("issues", "")
+			.map("issues", EXECUTION_ISSUECOUNT)
 			.map("iterations", TEST_CASE_ITERCOUNT)
 			.map("kind", TEST_CASE_KIND)
 			.map("lastModifiedBy", TEST_CASE_MODIFIED_BY)

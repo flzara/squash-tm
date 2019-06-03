@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import com.querydsl.core.Tuple;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,16 +31,21 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Arrays;
@@ -113,8 +119,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
 
+	@Inject
+	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
 
-	private static final String LAST_EXECUTE_ON_FIELD_NAME = "lastExecutedOn";
+	@Inject
+	private QueryProcessingServiceImpl dataFinder;
+
+
+	/*private static final String LAST_EXECUTE_ON_FIELD_NAME = "lastExecutedOn";
 	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
 
 	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
@@ -122,7 +134,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private static final String CAMPAIGN_ID_FIELD_NAME = "campaign.id";
 	private static final String PROJECT_ID_FIELD_NAME = "project.id";
 
-	private static final String FAKE_ITPI_ID = "-9000";
+	private static final String FAKE_ITPI_ID = "-9000";*/
 
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
@@ -135,64 +147,29 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return findUserLoginsByPartyIds(partyIds);
 	}
 
-	/*protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
-		*//* Creating a copy of the model to keep a model with milestones criteria *//*
-		AdvancedSearchModel modelCopy = model.shallowCopy();
-		*//* Removing these criteria from the main model *//*
-		removeMilestoneSearchFields(model);
-
-
-		*//* Building main Lucene Query with this main model *//*
-		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-		*//* If requested, add milestones criteria with the copied model *//*
-		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
-		}
-
-		if(shouldSearchByAutomationWorkflow(modelCopy)) {
-			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb, modelCopy);
-		}
-		return luceneQuery;
-	}
-
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-
-		*//* Find the milestones ids. *//*
-		List<Long> milestoneIds = findMilestonesIds(modelCopy);
-
-		*//* Find the ItereationTestPlanItems ids. *//*
-		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
-
-		*//* Create the query. *//*
-		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
-	}
-
-	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-		addWorkflowAutomationFilter(modelCopy);
-		Query query = buildLuceneQuery(qb,modelCopy);
-		return qb.bool().must(mainQuery).must(query).createQuery();
-	}*/
-
 	@Override
-	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
+	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchQueryModel searchModel,
 																	  Pageable paging, Locale locale) {
 
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
+		ConfiguredQuery configuredQuery = converter.configureModel(searchModel).configureMapping(MAPPINGS).convert();
+
+		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
+		int tupleSize = tuples.size();
 		List<IterationTestPlanItem> result = Collections.emptyList();
-		int countAll = 0;
-		// Please, don't return null there, it will explode everything. It did.
-		return new PageImpl(result, paging, countAll);
+
+		return new PageImpl(result, paging, tupleSize);
 
 	}
 
-	private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
+	/*private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
 		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME)) &&
 			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME)) &&
 			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME)) &&
 			checkParamNullOrEmpty(fields.get(TEST_SUITE_ID_FIELD_NAME));
-	}
+	}*/
 
 	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field) {
 		if (field == null) {
@@ -206,7 +183,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 
-	private String formatSortFieldName(String fieldName) {
+	/*private String formatSortFieldName(String fieldName) {
 		String result = fieldName;
 		if (fieldName.startsWith("IterationTestPlanItem.")) {
 			result = fieldName.replaceFirst("IterationTestPlanItem.", "");
@@ -216,7 +193,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			result = fieldName.replaceFirst("Campaign.", "campaign.");
 		}
 		return result;
-	}
+	}*/
 
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 

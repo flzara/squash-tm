@@ -61,6 +61,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -227,9 +228,11 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, campaignSearchResultMapper.getMappedKeys(), searchModel);
 
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, resultColumns, searchModel);
+
 
 		Page<IterationTestPlanItem> holder =
-			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
+			campaignAdvancedSearchService.searchForIterationTestPlanItem(queryModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService())
 			.buildDataModel(holder, params.getsEcho());
@@ -252,5 +255,15 @@ public class CampaignSearchController extends GlobalSearchController {
 
 	protected MultiMap mapIdsByType(String[] openedNodes) {
 		return JsTreeHelper.mapIdsByType(openedNodes);
+	}
+
+	private List<String> extractResultColumns(Map<Integer, Object> mDataProp) {
+
+		List<String> resultColumns = new ArrayList<>();
+
+		for (Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
+			resultColumns.add(entry.getValue().toString());
+		}
+		return resultColumns;
 	}
 }

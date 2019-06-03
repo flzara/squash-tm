@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -48,7 +46,6 @@ import org.squashtest.tm.web.internal.controller.search.advanced.tablemodels.Tes
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -56,8 +53,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -221,6 +217,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, resultColumns, searchModel);
 
 
 		Page<TestCase> holder = testCaseAdvancedSearchService
@@ -251,7 +248,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
-
+		List<String> resultColumns = extractResultColumns(params.getmDataProp());
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
 		Page<TestCase> holder = testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
@@ -295,6 +292,16 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@Override
 	protected WorkspaceDisplayService workspaceDisplayService() {
 		return testCaseWorkspaceDisplayService;
+	}
+
+	private List<String> extractResultColumns(Map<Integer, Object> mDataProp) {
+
+		List<String> resultColumns = new ArrayList<>();
+
+		for (Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
+			resultColumns.add(entry.getValue().toString());
+		}
+		return resultColumns;
 	}
 
 
