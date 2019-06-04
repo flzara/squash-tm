@@ -29,7 +29,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeReference;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.QueryCufLabel;
@@ -40,7 +39,6 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceIm
 import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
@@ -50,14 +48,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TupleElement;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -87,7 +81,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_BY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_ON;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NATURE_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NATURE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PARAMCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PREQUISITE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PROJECT_ID;
@@ -95,7 +89,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STEPCOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_VERSCOUNT;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
@@ -204,7 +198,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		HibernateQuery<Tuple> cloneQuery = query.clone(entityManager.unwrap(Session.class));
 		List<Tuple> tuples = cloneQuery.fetch();
 
-		List<Long> testCaseIds = tuples.stream().map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
+		List<Long> testCaseIds = tuples.stream()
+			.map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
 
 		HibernateQuery<?> noPagingQuery = cloneQuery.clone(entityManager.unwrap(Session.class));
 		noPagingQuery.limit(Long.MAX_VALUE);
@@ -236,7 +231,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("milestone.endDate", TEST_CASE_MILESTONE_END_DATE)
 			.map("milestone.status", TEST_CASE_MILESTONE_STATUS)
 			.map("name", TEST_CASE_NAME)
-			.map("nature", TEST_CASE_NATURE_LABEL)
+			.map("nature", TEST_CASE_NATURE)
 			.map("parameters", TEST_CASE_PARAMCOUNT)
 			.map("prerequisite", TEST_CASE_PREQUISITE)
 			.map("project.id", TEST_CASE_PROJECT_ID)
@@ -244,7 +239,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("requirements", TEST_CASE_VERSCOUNT)
 			.map("status", TEST_CASE_STATUS)
 			.map("steps", TEST_CASE_STEPCOUNT)
-			.map("type", TEST_CASE_TYPE_LABEL)
+			.map("type", TEST_CASE_TYPE)
 			.map("automatable", TEST_CASE_AUTOMATABLE)
 			.map("automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS);
 
@@ -254,8 +249,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("test-case-ref", TEST_CASE_REFERENCE)
 			.map("test-case-label", TEST_CASE_NAME)
 			.map("test-case-weight", TEST_CASE_IMPORTANCE)
-			.map("test-case-nature", TEST_CASE_NATURE_LABEL)
-			.map("test-case-type", TEST_CASE_TYPE_LABEL)
+			.map("test-case-nature", TEST_CASE_NATURE)
+			.map("test-case-type", TEST_CASE_TYPE)
 			.map("test-case-status", TEST_CASE_STATUS)
 			.map("test-case-automatable", TEST_CASE_AUTOMATABLE)
 			.map("test-case-milestone-nb", TEST_CASE_MILCOUNT)
