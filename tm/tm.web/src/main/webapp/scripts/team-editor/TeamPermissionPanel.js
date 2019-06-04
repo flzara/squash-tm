@@ -79,12 +79,20 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 			},
 
 			configurePopups: function () {
+				this.configureLicenseInformationDialog();
 				this.configureAddPermissionDialog();
 				this.configureRemovePermissionDialog();
 			},
 
 			configureButtons: function () {
-				this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					this.$("#add-permission-button").on('click', function (){
+						$("#license-information-dialog").confirmDialog('open')
+					});
+				} else {
+					this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+				}
 				this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 			},
 
@@ -203,6 +211,29 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 
 
 				this.addPermissionDialog = addPermissionDialog;
+			},
+
+			configureLicenseInformationDialog: function () {
+				// License information popup
+				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					var userLicenseInformationArray = userLicenseInformation.split("-");
+					var activeUsersCount = userLicenseInformationArray[0];
+					var maxUsersAllowed = userLicenseInformationArray[1];
+					var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+
+					var licenseInformationDialog = $("#license-information-dialog");
+					var message;
+					licenseInformationDialog.confirmDialog();
+					if(allowCreateUsers){
+						message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
+						licenseInformationDialog.on('confirmdialogconfirm', $.proxy(this.openAddPermission, this));
+						licenseInformationDialog.on('confirmdialogcancel', $.proxy(this.openAddPermission, this));
+					} else {
+						message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+					}
+					licenseInformationDialog.find("#information-message").html(message);
+				}
 			}
 		});
 		return TeamPermissionPanel;
