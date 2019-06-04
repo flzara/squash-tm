@@ -75,6 +75,8 @@
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
+<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.grey.css" />
@@ -449,6 +451,24 @@
 			</div>
 
 		</div>
+
+    <c:if test="${ not empty userLicenseInformation}">
+      <f:message var="licenseInformationTitle" key="title.Information" />
+      <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
+
+            <comp:notification-pane type="warning">
+              <jsp:attribute name="htmlcontent">
+                <div class="display-table-cell">
+                  <span id="information-message"></span>
+                </div>
+              </jsp:attribute>
+            </comp:notification-pane>
+
+        <div class="popup-dialog-buttonpane">
+          <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+        </div>
+      </div>
+    </c:if>
 
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
 
@@ -1103,9 +1123,39 @@ require(["common"], function() {
 			permpopup.formDialog('close');
 		});
 
+    // License information popup
+    var userLicenseInformation = "${userLicenseInformation}";
+    if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+      var userLicenseInformationArray = userLicenseInformation.split("-");
+      var activeUsersCount = userLicenseInformationArray[0];
+      var maxUsersAllowed = userLicenseInformationArray[1];
+      var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+
+      var licenseInformationDialog = $("#license-information-dialog");
+      var message;
+      if(allowCreateUsers){
+        message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
+        licenseInformationDialog.confirmDialog().on('confirmdialogconfirm', function () {
+          permpopup.formDialog('open');
+        });
+        licenseInformationDialog.confirmDialog().on('confirmdialogcancel', function () {
+          permpopup.formDialog('open');
+        });
+      } else {
+        licenseInformationDialog.confirmDialog();
+        message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+      }
+      licenseInformationDialog.find("#information-message").html(message);
+    }
+
 		// permission mgt
 		$("#add-permission-button").on('click', function(){
-			permpopup.formDialog('open');
+      if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+        var licenseInformationDialog = $("#license-information-dialog");
+        licenseInformationDialog.confirmDialog('open');
+      } else {
+        permpopup.formDialog('open');
+      }
 		});
 
 		var permremovepopup = $("#remove-permission-dialog");

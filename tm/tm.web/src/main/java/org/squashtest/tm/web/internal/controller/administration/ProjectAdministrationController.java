@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
@@ -107,6 +108,8 @@ public class ProjectAdministrationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
+	@Inject
+	private ConfigurationService configurationService;
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -160,6 +163,9 @@ public class ProjectAdministrationController {
 		// list of templates
 		List<NamedReference> templatesList = templateFinder.findAllReferences();
 
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
@@ -177,6 +183,7 @@ public class ProjectAdministrationController {
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
+		mav.addObject("userLicenseInformation", userLicenseInformation);
 
 		return mav;
 	}
