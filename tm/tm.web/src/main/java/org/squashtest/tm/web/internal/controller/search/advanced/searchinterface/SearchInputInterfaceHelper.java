@@ -276,7 +276,6 @@ public class SearchInputInterfaceHelper {
 		model.setInputType("CF_TIME_INTERVAL");
 		model.setTitle(customField.getLabel());
 		model.setId(String.valueOf(customField.getId()));
-		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -294,7 +293,6 @@ public class SearchInputInterfaceHelper {
 		model.setInputType("CF_CHECKBOX");
 		model.setTitle(customFieldModel.getLabel());
 		model.setId(String.valueOf(customFieldModel.getId()));
-		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -303,7 +301,6 @@ public class SearchInputInterfaceHelper {
 		model.setInputType("CF_NUMERIC_RANGE");
 		model.setTitle(customField.getLabel());
 		model.setId(String.valueOf(customField.getId()));
-		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -312,7 +309,6 @@ public class SearchInputInterfaceHelper {
 		model.setInputType("CF_TEXT");
 		model.setTitle(customField.getLabel());
 		model.setId(String.valueOf(customField.getId()));
-		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -327,7 +323,6 @@ public class SearchInputInterfaceHelper {
 		model.setTitle(selectField.getLabel());
 		model.setPossibleValues(possibleValues);
 		model.setId(selectField.getCode());
-		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -343,7 +338,6 @@ public class SearchInputInterfaceHelper {
 		model.setTitle(multifield.getLabel());
 		model.setPossibleValues(possibleValues);
 		model.setId(multifield.getCode());
-		model.setIgnoreBridge(true);
 		return model;
 
 	}

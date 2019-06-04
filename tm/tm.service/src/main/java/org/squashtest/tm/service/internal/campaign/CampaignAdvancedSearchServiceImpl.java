@@ -99,7 +99,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("itpi-id");
 
 	@Inject
 	protected ProjectFinder projectFinder;
@@ -151,15 +151,10 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchQueryModel searchModel,
 																	  Pageable paging, Locale locale) {
 
-		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		ConfiguredQuery configuredQuery = converter.configureModel(searchModel).configureMapping(MAPPINGS).convert();
-
-		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
-		int tupleSize = tuples.size();
 		List<IterationTestPlanItem> result = Collections.emptyList();
 
-		return new PageImpl(result, paging, tupleSize);
+		return new PageImpl(result, paging, result.size());
 
 	}
 

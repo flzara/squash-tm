@@ -217,8 +217,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, resultColumns, searchModel);
-
 
 		Page<TestCase> holder = testCaseAdvancedSearchService
 			.searchForTestCasesThroughRequirementModel(queryModel, paging, locale);
@@ -248,7 +246,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
-		List<String> resultColumns = extractResultColumns(params.getmDataProp());
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
 		Page<TestCase> holder = testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
@@ -293,17 +290,5 @@ public class TestCaseSearchController extends GlobalSearchController {
 	protected WorkspaceDisplayService workspaceDisplayService() {
 		return testCaseWorkspaceDisplayService;
 	}
-
-	private List<String> extractResultColumns(Map<Integer, Object> mDataProp) {
-
-		List<String> resultColumns = new ArrayList<>();
-
-		for (Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
-			resultColumns.add(entry.getValue().toString());
-		}
-		return resultColumns;
-	}
-
-
 
 }

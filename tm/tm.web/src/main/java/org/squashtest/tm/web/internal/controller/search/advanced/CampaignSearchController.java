@@ -228,9 +228,6 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, campaignSearchResultMapper.getMappedKeys(), searchModel);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, resultColumns, searchModel);
-
-
 		Page<IterationTestPlanItem> holder =
 			campaignAdvancedSearchService.searchForIterationTestPlanItem(queryModel, paging, locale);
 
@@ -257,13 +254,4 @@ public class CampaignSearchController extends GlobalSearchController {
 		return JsTreeHelper.mapIdsByType(openedNodes);
 	}
 
-	private List<String> extractResultColumns(Map<Integer, Object> mDataProp) {
-
-		List<String> resultColumns = new ArrayList<>();
-
-		for (Map.Entry<Integer, Object> entry : mDataProp.entrySet()) {
-			resultColumns.add(entry.getValue().toString());
-		}
-		return resultColumns;
-	}
 }

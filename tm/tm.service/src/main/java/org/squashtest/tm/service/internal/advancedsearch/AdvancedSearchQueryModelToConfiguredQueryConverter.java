@@ -452,6 +452,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		}
 		else{
 			QueryColumnPrototype prototype = lookupColumnPrototypeByFormKey(formAttributeKey);
+			filter.setColumnPrototype(prototype);
 		}
 
 		return filter;

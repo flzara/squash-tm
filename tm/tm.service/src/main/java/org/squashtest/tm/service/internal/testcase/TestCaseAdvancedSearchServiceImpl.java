@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Session;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -48,6 +50,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TupleElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -99,7 +102,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings();
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("test-case-id");
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -145,14 +148,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCase> searchForTestCases(AdvancedSearchQueryModel model, Locale locale) {
-
-		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
-
-		ConfiguredQuery configuredQuery = converter.configureModel(model).configureMapping(MAPPINGS).convert();
-		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
-
-		int countAll = tuples.size();
-
 
 		return new ArrayList<>();
 
@@ -201,11 +196,24 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	public Page<TestCase> searchForTestCases(AdvancedSearchQueryModel model,
 											 Pageable sorting, Locale locale) {
 
-		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		int countAll = 0;
+		converter.configureModel(model).configureMapping(MAPPINGS);
+		HibernateQuery<Tuple> query = converter.prepare();
 
-		return new PageImpl(testcases, sorting, countAll);
+		HibernateQuery<Tuple> cloneQuery = query.clone(entityManager.unwrap(Session.class));
+		List<Tuple> tuples = cloneQuery.fetch();
+
+		List<Long> testCaseIds = tuples.stream().map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
+
+		HibernateQuery<?> noPagingQuery = cloneQuery.clone(entityManager.unwrap(Session.class));
+		noPagingQuery.limit(Long.MAX_VALUE);
+		noPagingQuery.offset(0);
+		long count = noPagingQuery.fetchCount();
+
+		List<TestCase> result = testCaseDao.findAllByIds(testCaseIds);
+
+		return new PageImpl(result, sorting, count);
 	}
 
 	static {
