@@ -42,6 +42,10 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
+import com.querydsl.core.types.dsl.StringPath;
+
+import ext.java.lang.QString;
+
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
@@ -669,6 +673,10 @@ class QuerydslToolbox {
 		else if (datatype == DataType.DATE) {
 			predicate = createDatePredicate(operation, baseExp, operands);
 		}
+		// another special case, for regex
+		else if (operation == Operation.MATCHES){
+			predicate = createMatchPredicate(operation, baseExp, operands);
+		}
 		// normal case
 		else {
 			Operator operator = getOperator(operation);
@@ -741,6 +749,15 @@ class QuerydslToolbox {
 		return result;
 
 	}
+	
+	
+	private BooleanExpression createMatchPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
+		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.S_MATCHES, baseExp, operands[0]);
+		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to 
+		// be compared to something.
+		return matchExpr.isTrue();
+	}
+	
 
 	List<Expression<?>> createOperands(QueryFilterColumn filter, Operation operation) {
 		QueryColumnPrototype column = filter.getColumn();
@@ -926,6 +943,7 @@ class QuerydslToolbox {
 			case NOT_EQUALS:
 				operator = Ops.NE;
 				break;
+				
 			default:
 				throw new IllegalArgumentException("Operation '" + operation + NOT_YET_SUPPORTED);
 		}

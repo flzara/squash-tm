@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -59,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Transactional(readOnly = true)
@@ -120,21 +122,27 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	public Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model,
 																 Pageable sorting, MessageSource source, Locale locale) {
 
+		Session session = entityManager.unwrap(Session.class);
 		// prepare the query
 
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
 
-		HibernateQuery<Long> query = converter.prepare();
+		HibernateQuery<Tuple> query = converter.prepare();
+		
+		// attach a session
+		query = query.clone(session);
+		
 
 		// round 1 : find our paged requirement version ids
 
-		List<Long> ids = query.fetch();
+		List<Tuple> tuples = query.fetch();
+		List<Long> ids = tuples.stream().map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
 
 		// round 2 : get the total count (remove the paging)
 
-		HibernateQuery<?> noPagingQuery = query.clone(entityManager.unwrap(Session.class));
+		HibernateQuery<?> noPagingQuery = query.clone(session);
 		noPagingQuery.limit(Long.MAX_VALUE);
 		noPagingQuery.offset(0);
 		long count = noPagingQuery.fetchCount();

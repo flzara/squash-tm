@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -71,6 +72,9 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMap
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -123,7 +127,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private QueryProcessingService queryService;
 
 
-
 	private AdvancedSearchQueryModel advancedSearchQueryModel;
 
 	private Map<String, QueryColumnPrototype> prototypesByLabel = new HashMap<>();
@@ -160,7 +163,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		// now append the special handlers
 		applyAllSpecialHandlers(hibQuery);
-
+		
 		return hibQuery;
 
 	}
@@ -423,6 +426,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 				throw new RuntimeException("Programming error : FieldType '" + fieldType + "' unknown, couldn't create filter for search form attribute '" + key + "'");
 
 		}
+		
 
 		return queryFilterColumn;
 	}
@@ -606,6 +610,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		filterColumn.addValues(checkModel.getValues());
 		filterColumn.setOperation(Operation.EQUALS);
 	}
+	
+
 
 
 	// ****************************** Order creation **************************
@@ -661,6 +667,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		queryOrderingColumn.setOrder(order);
 		queryOrderingColumn.setColumnPrototype(column);
+		queryOrderingColumn.setOperation(Operation.NONE);
 		return queryOrderingColumn;
 
 	}
@@ -804,9 +811,4 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return DateUtils.formatIso8601Date(date);
 	}
 
-	// this remove the rank indicator which is prefixed in the
-	private String stripLevelEnumRankPrefix(String original){
-		int prefix = original.indexOf('-');
-		return original.substring(prefix);
-	}
 }

@@ -156,7 +156,7 @@ public class RequirementSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper, (String key)-> key);
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, requirementSearchResultMapper.getMappedKeys(), searchModel);
 

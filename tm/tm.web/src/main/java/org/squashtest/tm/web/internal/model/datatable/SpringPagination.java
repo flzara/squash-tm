@@ -71,10 +71,20 @@ public final class SpringPagination {
         PageNumSize pns = createPageNumSize(dtParams);
 
         // 2 - sorting
-        Sort sort = createSort(dtParams, mapper);
+        Sort sort = createSort(dtParams, mapper, (key) -> mapper.getMapping(key));
 
         return PageRequest.of(pns.pagenum, pns.pagesize, sort);
 
+    }
+    
+    public static <KEY> Pageable pageable(DataTableDrawParameters dtParams, DatatableMapper mapper, SortedAttributeNameSupplier<KEY> attrNameSupplier){
+    	// 1 - paging
+        PageNumSize pns = createPageNumSize(dtParams);
+
+        // 2 - sorting
+        Sort sort = createSort(dtParams, mapper, attrNameSupplier);
+
+        return PageRequest.of(pns.pagenum, pns.pagesize, sort);
     }
 
 
@@ -97,7 +107,7 @@ public final class SpringPagination {
         return new PageNumSize(pagenum, pagesize);
     }
 
-    private static Sort createSort(DataTableDrawParameters dtParams, DatatableMapper mapper){
+    private static <KEY> Sort createSort(DataTableDrawParameters dtParams, DatatableMapper mapper, SortedAttributeNameSupplier<KEY> attrNameSupplier){
         Sort sort = null;
         int howMany = dtParams.getiSortingCols();
 
@@ -106,14 +116,14 @@ public final class SpringPagination {
 
             int sortedcol;
             String sorteddir;
-            Object mappingkey;
+            KEY mappingkey;
             String attribute;
 
             for (int i=0; i < howMany; i++){
 
                 sortedcol = dtParams.getiSortCol(i);
-                mappingkey = dtParams.getmDataProp(sortedcol);
-                attribute = mapper.getMapping(mappingkey);
+                mappingkey = (KEY)dtParams.getmDataProp(sortedcol);
+                attribute = attrNameSupplier.getAttributeName(mappingkey);
 
                 sorteddir = dtParams.getsSortDir(i);
                 Direction direction = ("asc".equals(sorteddir)) ? Direction.ASC : Direction.DESC;
@@ -124,6 +134,18 @@ public final class SpringPagination {
             sort = Sort.by(orders);
         }
         return sort;
+    }
+    
+    
+    /**
+     *  SAM that provides with the desired name for the attribute being sorted, given an attribute key 
+     * 
+     * @author bsiri
+     *
+     */
+    //
+    public static interface SortedAttributeNameSupplier<KEY>{
+    	String getAttributeName(KEY attributeKey);
     }
 
     // IGNOREVIOLATIONS:START
