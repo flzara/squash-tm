@@ -1125,7 +1125,7 @@ require(["common"], function() {
 
     // License information popup
     var userLicenseInformation = "${userLicenseInformation}";
-    if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+    if(userLicenseInformation.length !== 0){
       var userLicenseInformationArray = userLicenseInformation.split("-");
       var activeUsersCount = userLicenseInformationArray[0];
       var maxUsersAllowed = userLicenseInformationArray[1];
@@ -1150,7 +1150,7 @@ require(["common"], function() {
 
 		// permission mgt
 		$("#add-permission-button").on('click', function(){
-      if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+      if(userLicenseInformation.length !== 0){
         var licenseInformationDialog = $("#license-information-dialog");
         licenseInformationDialog.confirmDialog('open');
       } else {

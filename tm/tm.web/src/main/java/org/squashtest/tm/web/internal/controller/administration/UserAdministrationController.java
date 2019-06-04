@@ -222,6 +222,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
 		
 		model.addAttribute("usersGroupList", usersGroupList);
 		model.addAttribute("user", user);
@@ -229,6 +232,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
 		model.addAttribute("canManageLocalPassword", canManageLocalPassword);
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
 		
 		
 
