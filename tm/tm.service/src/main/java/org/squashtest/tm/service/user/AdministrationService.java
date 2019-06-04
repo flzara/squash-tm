@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -60,6 +61,8 @@ public interface AdministrationService extends UserManagerService {
 	void modifyWelcomeMessage(String welcomeMessage);
 
 	String findWelcomeMessage();
+
+	Map<String, String> findInformation();
 
 	void modifyLoginMessage(String loginMessage);
 

@@ -24,6 +24,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,13 +68,17 @@ import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+import static org.squashtest.tm.domain.users.UsersGroup.ADMIN;
 
 /**
  *
@@ -111,6 +116,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private ObjectAclService aclService;
 
 	@Inject
+	private MessageSource messageSource;
+
+	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
 
 	@Inject
@@ -125,6 +133,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private EntityManager em;
 
 	private static final String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
+	private static final String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
+	private static final String ACTIVATED_USER_EXCESS = "activated.user.excess";
 	private static final String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 	private static final String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
 	private static final String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
@@ -316,6 +326,49 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
+	public Map<String, String> findInformation() {
+		Map<String, String> result = new HashMap<>();
+		String expiration = configurationService.findConfiguration(PLUGIN_LICENSE_EXPIRATION);
+		String excess = configurationService.findConfiguration(ACTIVATED_USER_EXCESS);
+
+		if (hasInformation(expiration, excess)) {
+			User current = userAccountService.findCurrentUser();
+			boolean isAdmin = ADMIN.equals(current.getGroup().getQualifiedName());
+
+			if (expiration != null && ! expiration.isEmpty()) {
+				String messageDate;
+				Integer expi = Integer.parseInt(expiration);
+				if (expi >= 0 && isAdmin) {
+					messageDate = expi > 30 ? "warning1" : "warning2";
+					result.put("messageDate", messageDate);
+					result.put("dueDate", LocalDate.now().plusDays(expi).toString());
+				} else if (expi < 0) {
+					messageDate = "warning3";
+					result.put("messageDate", messageDate);
+					result.put("dueDate", LocalDate.now().plusDays(expi).toString());
+				}
+			}
+
+			if (excess != null && ! excess.isEmpty() && isAdmin) {
+				String messageUser;
+				String[] excesses = excess.split("-");
+				if (excesses.length == 3) {
+					messageUser = Boolean.valueOf(excesses[2]) ? "warning1" : "warning2";
+					result.put("messageUser", messageUser);
+					result.put("currentUserNb", excesses[0]);
+					result.put("maxUserNb", excesses[1]);
+				}
+			}
+		}
+		return result;
+	}
+
+	private boolean hasInformation(String informationDate, String informationUser) {
+		return (informationDate != null && ! informationDate.isEmpty())
+				|| (informationUser != null && ! informationUser.isEmpty());
+	}
+
+	@Override
 	public String findLoginMessage() {
 		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
@@ -471,7 +524,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		userDao.save(user);
 	}
-	
+
 	@Override
 	public void createUserWithoutCredentials(User user, String usergroupName) {
 		checkLoginAvailability(user.getLogin());
@@ -488,12 +541,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
-		
+
 		if (! adminAuthentService.canModifyUser()) {
 			throw new UnauthorizedPasswordChange(
 					"The authentication service do not allow users to change their passwords using Squash");
 		}
-		
+
 		User user = userDao.getOne(userId);
 
 		if (!adminAuthentService.userExists(user.getLogin())) {

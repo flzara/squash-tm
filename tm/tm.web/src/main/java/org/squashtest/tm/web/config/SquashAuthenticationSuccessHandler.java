@@ -30,7 +30,9 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.user.AdministrationService;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +47,9 @@ public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	private static final String ROLE_TF_AUTOMATION_PROGRAMMER= "ROLE_TF_AUTOMATION_PROGRAMMER";
 	private static final String ROLE_TF_FUNCTIONAL_TESTER ="ROLE_TF_FUNCTIONAL_TESTER";
 	private RequestCache requestCache = new HttpSessionRequestCache();
+
+	@Inject
+	private AdministrationService administrationService;
 
 	public SquashAuthenticationSuccessHandler() {
 		super();
@@ -62,21 +67,23 @@ public class SquashAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		if(isUserProgrammerButNotTester(authorities)) {
-			getRedirectStrategy().sendRedirect(request, response,"/automation-workspace");
-		} 
-		else if(savedRequest != null) {
-			String targetUrl = savedRequest.getRedirectUrl();
+		String targetUrl = "/home-workspace";
+		if (isUserProgrammerButNotTester(authorities)) {
+			targetUrl = "/automation-workspace";
+		} else if (savedRequest != null) {
+			targetUrl = savedRequest.getRedirectUrl();
+		}
+
+		if (administrationService.findInformation().size() != 0)  {
+			getRedirectStrategy().sendRedirect(request, response, "/information?targetUrl=" + targetUrl);
+		} else {
 			getRedirectStrategy().sendRedirect(request, response, targetUrl);
-		} 
-		else {
-			getRedirectStrategy().sendRedirect(request, response,"/home-workspace");
 		}
 	}
 
 	private boolean isUserProgrammerButNotTester(Collection<? extends GrantedAuthority> authorities) {
 		return authorities.stream().anyMatch(auth -> ROLE_TF_AUTOMATION_PROGRAMMER.equals(((GrantedAuthority) auth).getAuthority())) &&
-				(! authorities.stream().anyMatch(auth -> ROLE_TF_FUNCTIONAL_TESTER.equals(((GrantedAuthority) auth).getAuthority())));
+				(authorities.stream().noneMatch(auth -> ROLE_TF_FUNCTIONAL_TESTER.equals(((GrantedAuthority) auth).getAuthority())));
 	}
 
 	@Override
