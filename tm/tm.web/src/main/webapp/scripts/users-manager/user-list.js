@@ -172,7 +172,39 @@ define([ "jquery", "squash.translator",
 		adduserDialog.on('formdialogopen', resetAdd);
 		adduserDialog.on('formdialogaddanother', saveUser(function() { openAdd(); resetAdd(); }));
 
-		$("#add-user-button").on('click', openAdd);
+		// License information popup
+		var userLicenseInformation = settings.userLicenseInformation;
+		if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+			var userLicenseInformationArray = userLicenseInformation.split("-");
+			var activeUsersCount = userLicenseInformationArray[0];
+			var maxUsersAllowed = userLicenseInformationArray[1];
+			var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+
+			var licenseInformationDialog = $("#license-information-dialog");
+			var message;
+			if(allowCreateUsers){
+				message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
+				licenseInformationDialog.confirmDialog().on('confirmdialogconfirm', function () {
+					openAdd();
+				});
+				licenseInformationDialog.confirmDialog().on('confirmdialogcancel', function () {
+					openAdd();
+				});
+			} else {
+				licenseInformationDialog.confirmDialog();
+				message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+			}
+			licenseInformationDialog.find("#information-message").html(message);
+		}
+
+		$("#add-user-button").on('click', function(){
+				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					var licenseInformationDialog = $("#license-information-dialog");
+					licenseInformationDialog.confirmDialog('open');
+				} else {
+					openAdd();
+				}
+		});
 
 		// confirm deletion
 		$("#delete-user-dialog").confirmDialog().on('confirmdialogconfirm', function(){

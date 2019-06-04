@@ -429,6 +429,20 @@ th:title="#{user.account.password.reset.label}">
     </div>
   </div>
 
+  <div id="license-information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-warning-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span id="information-message"></span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" th:value="#{label.Confirm}" />
+    </div>
+  </div>
+
   <script type="text/javascript">
   publish("load.informationContent");
   </script>
