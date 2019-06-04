@@ -102,8 +102,7 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 				fields: {
 					"requirement.id": {
 						type: "LIST",
-						values: "",
-						ignoreBridge: "false"
+						values: ""
 					}
 				}
 			};
@@ -111,7 +110,6 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 			search.fields.isCurrentVersion = {};
 			search.fields.isCurrentVersion.type = "SINGLE";
 			search.fields.isCurrentVersion.value = "1";
-			search.fields.isCurrentVersion.ignoreBridge = "false";
 
 			return search;
 		}

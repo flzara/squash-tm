@@ -73,7 +73,6 @@ define(["jquery", "backbone", "squash.translator", "../dashboard-utils"], functi
 			search.fields.isCurrentVersion = {};
 			search.fields.isCurrentVersion.type = "SINGLE";
 			search.fields.isCurrentVersion.value = "1";
-			search.fields.isCurrentVersion.ignoreBridge = "false";
 
 			search.fields["requirement.id"].values = ids.toString().split(",");
 

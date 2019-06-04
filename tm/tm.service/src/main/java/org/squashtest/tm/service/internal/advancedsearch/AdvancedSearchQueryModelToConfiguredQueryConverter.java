@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.advancedsearch;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Order;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -93,6 +94,15 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchQueryModelToConfiguredQueryConverter.class);
 
 	private static final String PROJECT_FILTER_NAME = "project.id";
+
+	private static final Set<AdvancedSearchFieldModelType> CUSTOM_FIELD_TYPES = Sets.newHashSet(
+		AdvancedSearchFieldModelType.CF_SINGLE,
+		AdvancedSearchFieldModelType.CF_TIME_INTERVAL,
+		AdvancedSearchFieldModelType.CF_LIST,
+		AdvancedSearchFieldModelType.CF_CHECKBOX,
+		AdvancedSearchFieldModelType.TAGS,
+		AdvancedSearchFieldModelType.CF_NUMERIC_RANGE
+	);
 
 
 	private AdvancedSearchColumnMappings mappings;
@@ -203,9 +213,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		QueryProjectionColumn projection = new QueryProjectionColumn();
 
 		String idKey = mappings.getIdKey();
-		String columnLabel = mappings.getResultMapping().findColumnPrototypeLabel(idKey);
 
-		QueryColumnPrototype proto = lookupColumnPrototype(columnLabel);
+		QueryColumnPrototype proto = lookupColumnPrototypeByResultSetKey(idKey);
+
 		projection.setColumnPrototype(proto);
 		projection.setOperation(Operation.NONE);
 
@@ -316,13 +326,12 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		for (String key : processableKeys) {
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
-			AdvancedSearchFieldModelType fieldType = fieldModel.getType();
 
-			QueryFilterColumn filter = createFilterColumn(fieldModel, fieldType, key);
-
-			if (filter != null) {
+			if (fieldModel.isSet()){
+				QueryFilterColumn filter = createFilterColumn(fieldModel, key);
 				filters.add(filter);
 			}
+
 		}
 
 		return filters;
@@ -353,363 +362,248 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-
-
 	private QueryFilterColumn createFilterColumn(AdvancedSearchFieldModel fieldModel,
-												 AdvancedSearchFieldModelType fieldType,
 												 String key) {
 
-		ColumnMapping resultMapping = mappings.getFormMapping();
-
-		QueryFilterColumn queryFilterColumn = null;
-
-		// retrieve the query column label, if the column is mapped.
-		// if not, leave the label as the key itself and the custom field column
-		// will be looked up differently.
-		String columnLabel = null;
-		if (resultMapping.isMappedKey(key)){
-			columnLabel = resultMapping.findColumnPrototypeLabel(key);
+		if (! fieldModel.isSet()){
+			throw new IllegalArgumentException("attempted apply form key '"+key+"' but the field model doesn't hold any value");
 		}
-		else{
-			columnLabel = key;
-		}
+
+		AdvancedSearchFieldModelType fieldType = fieldModel.getType();
+
+		QueryFilterColumn queryFilterColumn = initFilterColumn(key, fieldType);
 
 
 		switch (fieldType) {
-			// regular fields (most of them at least)
+
 			case TIME_INTERVAL:
-				queryFilterColumn = createFilterToTimeInterval(fieldModel, false, columnLabel);
-				break;
-			case NUMERIC_RANGE:
-				queryFilterColumn = createFilterToNumeric(fieldModel, false, columnLabel);
-				break;
-			case MULTILIST:
-				queryFilterColumn = createFilterToMultiList(fieldModel, columnLabel);
-				break;
-			case RANGE:
-				queryFilterColumn = createFilterToRange(fieldModel, columnLabel);
-				break;
-			case TEXT:
-				queryFilterColumn = createFilterToText(fieldModel, key);
-				break;
-			case LIST:
-				queryFilterColumn = createFilterToList(fieldModel, false, columnLabel);
-				break;
-			case SINGLE:
-				queryFilterColumn = createFilterToSingle(fieldModel, false, columnLabel);
+			case CF_TIME_INTERVAL:
+				filterByTimeInterval(queryFilterColumn, fieldModel);
 				break;
 
-			// custom fields
+			case SINGLE:
 			case CF_SINGLE:
-				queryFilterColumn = createFilterToSingle(fieldModel, true, key);
+				filterByPlainText(queryFilterColumn, fieldModel);
 				break;
-			case CF_TIME_INTERVAL:
-				queryFilterColumn = createFilterToTimeInterval(fieldModel, true, key);
-				break;
-			case CF_LIST:
-				queryFilterColumn = createFilterToList(fieldModel, true, key);
-				break;
-			case CF_CHECKBOX:
-				queryFilterColumn = createFilterToCheckBox(fieldModel, key);
-				break;
+
 			case TAGS:
-				queryFilterColumn = createFilterToTags(fieldModel, key);
+				filterByTags(queryFilterColumn, fieldModel);
 				break;
+
+			case NUMERIC_RANGE:
 			case CF_NUMERIC_RANGE:
-				queryFilterColumn = createFilterToNumeric(fieldModel, true, key);
+				filterByNumericRange(queryFilterColumn, fieldModel);
 				break;
+
+			case RANGE:
+				filterByIntegerRange(queryFilterColumn, fieldModel);
+				break;
+
+			case TEXT:
+				filterByFullText(queryFilterColumn, fieldModel);
+				break;
+
+			case CF_CHECKBOX:
+				filterByCheckbox(queryFilterColumn, fieldModel);
+				break;
+
+			case LIST:
+			case CF_LIST:
+				filterByList(queryFilterColumn, fieldModel);
+				break;
+
+
+
+			case MULTILIST:
+				// TODO : indeed that one requires a special handler.
+				throw new UnsupportedOperationException("input type '"+fieldType+"' is not supported yet ");
+
+
 			default:
-				throw new RuntimeException("Programming error : FieldType '"+fieldType+"' unknown f, couldn't create filter for search form attribute '"+key+"'");
+				throw new RuntimeException("Programming error : FieldType '" + fieldType + "' unknown, couldn't create filter for search form attribute '" + key + "'");
 
 		}
 
 		return queryFilterColumn;
 	}
 
+
 	/**
-	 * @param model
-	 * @param isCuf if field is a CustomField
-	 * @param key Label of the QueryColumnPrototype of id of the CustomField
+	 * Creates a QueryColumnFilter for the given form attribute key. The key is implicitly assumed to be
+	 * an attribute of the search form, and is actually mapped to a column prototype (ie is not a specially
+	 * hanlded column). Aside from that either custom fields or regular attributes are accepted.
+	 *
+	 * @param formAttributeKey
+	 * @param type
 	 * @return
 	 */
-	private QueryFilterColumn createFilterToSingle(AdvancedSearchFieldModel model, boolean isCuf, String key) {
+	private QueryFilterColumn initFilterColumn(String formAttributeKey, AdvancedSearchFieldModelType type){
 
 		QueryFilterColumn filter = new QueryFilterColumn();
+
+		boolean isCustomfield = CUSTOM_FIELD_TYPES.contains(type);
+
+		if (isCustomfield){
+			long cufId = Long.parseLong(formAttributeKey);
+			QueryColumnPrototype prototype = lookupColumnPrototypeByCufType(type);
+
+			filter.setColumnPrototype(prototype);
+			filter.setCufId(cufId);
+		}
+		else{
+			QueryColumnPrototype prototype = lookupColumnPrototypeByFormKey(formAttributeKey);
+		}
+
+		return filter;
+
+	}
+
+
+	private void filterByPlainText(QueryFilterColumn filterColumn, AdvancedSearchFieldModel model) {
 
 		AdvancedSearchSingleFieldModel singleFieldModel = (AdvancedSearchSingleFieldModel) model;
 
 		String value = singleFieldModel.getValue();
 
-		if (isBlank(value)) {
-			return null;
-		}
+		filterColumn.setOperation(Operation.MATCHES);
+		filterColumn.getValues().add(value);
 
-		filter.setOperation(Operation.MATCHES);
-		filter.getValues().add(value);
-
-		if (isCuf) {
-
-			String colLabel = lookupCufColumnLabel(QueryCufLabel.CF_SINGLE);
-			filter.setColumnPrototype(lookupColumnPrototype(colLabel));
-			filter.setCufId(Long.parseLong(key));
-
-		}
-		else {
-			filter.setColumnPrototype(lookupColumnPrototype(key));
-		}
-
-		return filter;
 	}
 
-	/**
-	 *
-	 * @param model
-	 * @param cufId
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToTags(AdvancedSearchFieldModel model, String cufId) {
 
-		QueryFilterColumn filter = new QueryFilterColumn();
+	private void filterByTags(QueryFilterColumn filterColumn, AdvancedSearchFieldModel model) {
 
 		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
 		List<String> tags = fieldModel.getTags();
 
-		filter.addValues(tags);
+		filterColumn.addValues(tags);
 
-		String label = lookupCufColumnLabel(QueryCufLabel.TAGS);
-		QueryColumnPrototype queryColumnPrototype = lookupColumnPrototype(label);
-
-		filter.setColumnPrototype(queryColumnPrototype);
-		filter.setCufId(Long.parseLong(cufId));
-
-		//TODO update the engine to handle the 'AND' case
 		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
-			filter.setOperation(Operation.IN);
+			filterColumn.setOperation(Operation.IN);
 		}
 		else {
-			filter.setOperation(Operation.IN);
+			filterColumn.setOperation(Operation.IN);
 		}
 
-		return filter;
 	}
 
-	/**
-	 * For this case we should change the operator if startDate and/or endDate are null.
-	 * @param model
-	 * @param isCuf if field is a CustomField
-	 * @param key Label of the QueryColumnPrototype of id of the CustomField
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToTimeInterval(AdvancedSearchFieldModel model, boolean isCuf, String key) {
 
-		QueryFilterColumn filter = new QueryFilterColumn();
+	private void filterByTimeInterval(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
-		AdvancedSearchTimeIntervalFieldModel intervalFieldModel = (AdvancedSearchTimeIntervalFieldModel) model;
+
+		AdvancedSearchTimeIntervalFieldModel intervalFieldModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 
 		Date startDate = intervalFieldModel.getStartDate();
 		Date endDate = intervalFieldModel.getEndDate();
 
 		if (startDate != null && endDate != null) {
-			filter.setOperation(Operation.BETWEEN);
-			filter.addValues(Arrays.asList(toIso(startDate), toIso(endDate)));
+			filterColumn.setOperation(Operation.BETWEEN);
+			filterColumn.addValues(Arrays.asList(toIso(startDate), toIso(endDate)));
 		}
 		else if (startDate != null) {
-			filter.setOperation(Operation.GREATER_EQUAL);
-			filter.getValues().add(toIso(startDate));
+			filterColumn.setOperation(Operation.GREATER_EQUAL);
+			filterColumn.getValues().add(toIso(startDate));
 		}
 		else if (endDate != null) {
-			filter.setOperation(Operation.LOWER_EQUAL);
-			filter.getValues().add(toIso(endDate));
-		}
-		else {
-			return null;
+			filterColumn.setOperation(Operation.LOWER_EQUAL);
+			filterColumn.getValues().add(toIso(endDate));
 		}
 
-		if (isCuf) {
-
-			String columnPrototypeLabel = lookupCufColumnLabel(QueryCufLabel.CF_TIME_INTERVAL);
-			filter.setColumnPrototype(lookupColumnPrototype(columnPrototypeLabel));
-			filter.setCufId(Long.parseLong(key));
-
-		}
-		else {
-
-			filter.setColumnPrototype(lookupColumnPrototype(key));
-
-		}
-		return filter;
 	}
 
-	/**
-	 * For this case we should change the operator if minValue and/or maxValue are null.
-	 * @param model
-	 * @param isCuf if field is a CustomField
-	 * @param key Label of the QueryColumnPrototype of id of the CustomField
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToNumeric(AdvancedSearchFieldModel model, boolean isCuf,
-													String key) {
-		QueryFilterColumn filter = new QueryFilterColumn();
-		AdvancedSearchNumericRangeFieldModel numericRangeFieldModel = (AdvancedSearchNumericRangeFieldModel) model;
 
-		String minValue = numericRangeFieldModel.getMinValue();
-		String maxValue = numericRangeFieldModel.getMaxValue();
+	private void filterByNumericRange(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
-		if (isBlank(minValue) && isBlank(maxValue)) {
-			filter.setOperation(Operation.BETWEEN);
-			filter.getValues().add(minValue);
-			filter.getValues().add(maxValue);
-		}
-		else if (isBlank(minValue)) {
-			filter.setOperation(Operation.GREATER_EQUAL);
-			filter.getValues().add(minValue);
-		}
-		else if (isBlank(maxValue)) {
-			filter.setOperation(Operation.LOWER_EQUAL);
-			filter.getValues().add(maxValue);
-		}
-		else {
-			return null;
+		AdvancedSearchNumericRangeFieldModel numericRangeFieldModel = (AdvancedSearchNumericRangeFieldModel) fieldModel;
+
+		boolean hasMin = numericRangeFieldModel.hasMinValue();
+		boolean hasMax = numericRangeFieldModel.hasMaxValue();
+
+		List<String> filterParameters = new ArrayList<>();
+
+
+		if (hasMin){
+			double min = numericRangeFieldModel.getLocaleAgnosticMinValue();
+			filterParameters.add(String.valueOf(min));
 		}
 
-		if (isCuf) {
-
-			String label = lookupCufColumnLabel(QueryCufLabel.CF_NUMERIC);
-			filter.setColumnPrototype(lookupColumnPrototype(label));
-			filter.setCufId(Long.parseLong(key));
-
-		} else {
-
-			filter.setColumnPrototype(lookupColumnPrototype(key));
-
+		if (hasMax){
+			double max = numericRangeFieldModel.getLocaleAgnosticMaxValue();
+			filterParameters.add(String.valueOf(max));
 		}
 
-		return filter;
+		Operation operation = (hasMin && hasMax) ?
+								  Operation.BETWEEN :
+							  (hasMin) ?
+								  Operation.GREATER_EQUAL :
+								  Operation.LOWER_EQUAL;
+
+		filterColumn.getValues().addAll(filterParameters);
+		filterColumn.setOperation(operation);
+
 	}
 
-	/**
-	 *
-	 * @param model
-	 * @param isCuf
-	 * @param key
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToList(AdvancedSearchFieldModel model, boolean isCuf,
-												 String key) {
-		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
 
-		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) model;
+	private void filterByList(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel){
+		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 
 		List<String> values = listModel.getValues();
-		if (values == null || values.isEmpty()) {
-			return null;
-		}
 
-		if (isCuf) {
-			String label = lookupCufColumnLabel(QueryCufLabel.CF_LIST);
-			queryFilterColumn.setColumnPrototype(lookupColumnPrototype(label));
-			queryFilterColumn.setCufId(Long.parseLong(key));
-		}
-		else {
-			queryFilterColumn.setColumnPrototype(lookupColumnPrototype(key));
-		}
-
-		queryFilterColumn.addValues(values);
-		queryFilterColumn.setOperation(Operation.IN);
-
-		return queryFilterColumn;
+		filterColumn.addValues(values);
+		filterColumn.setOperation(Operation.IN);
 	}
 
-	// TODO We can delete this method because the engine can't use fields of this type
-	private QueryFilterColumn createFilterToMultiList(AdvancedSearchFieldModel model, String key) {
-		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
 
-		AdvancedSearchMultiListFieldModel listModel = (AdvancedSearchMultiListFieldModel) model;
 
-		List<String> values = listModel.getValues();
-		if (values == null || values.isEmpty()) {
-			return null;
+	private void filterByIntegerRange(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
+
+		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel) fieldModel;
+
+		boolean hasMin = rangeField.hasMinValue();
+		boolean hasMax = rangeField.hasMaxValue();
+
+		List<String> filterParameters = new ArrayList<>();
+
+
+		if (hasMin){
+			int min = rangeField.getMinValue();
+			filterParameters.add(String.valueOf(min));
 		}
 
-
-		queryFilterColumn.addValues(values);
-
-		queryFilterColumn.setOperation(Operation.IN);
-		queryFilterColumn.setColumnPrototype(lookupColumnPrototype(key));
-		return queryFilterColumn;
-	}
-
-	/**
-	 * For this case we should change the operator if minValue and/or maxValue are null.
-	 * @param model
-	 * @param key
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToRange(AdvancedSearchFieldModel model, String key) {
-
-		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel) model;
-
-		Integer minValue = rangeField.getMinValue();
-		Integer maxValue = rangeField.getMaxValue();
-
-		QueryFilterColumn queryFilterColumn = new QueryFilterColumn();
-
-		if (minValue != null && maxValue != null) {
-			queryFilterColumn.setOperation(Operation.BETWEEN);
-			queryFilterColumn.getValues().add(minValue.toString());
-			queryFilterColumn.getValues().add(maxValue.toString());
-		}
-		else if (minValue != null) {
-			queryFilterColumn.setOperation(Operation.GREATER_EQUAL);
-			queryFilterColumn.getValues().add(minValue.toString());
-		}
-		else if (maxValue != null) {
-			queryFilterColumn.setOperation(Operation.LOWER_EQUAL);
-			queryFilterColumn.getValues().add(maxValue.toString());
-		}
-		else {
-			return null;
+		if (hasMax){
+			int max = rangeField.getMaxValue();
+			filterParameters.add(String.valueOf(max));
 		}
 
-		queryFilterColumn.setColumnPrototype(lookupColumnPrototype(key));
+		Operation operation = (hasMin && hasMax) ?
+								  Operation.BETWEEN :
+								  (hasMin) ?
+									  Operation.GREATER_EQUAL :
+									  Operation.LOWER_EQUAL;
 
-		return queryFilterColumn;
+		filterColumn.getValues().addAll(filterParameters);
+		filterColumn.setOperation(operation);
 	}
 
 	// TODO create the filter for fulltext search
-	private QueryFilterColumn createFilterToText(AdvancedSearchFieldModel model, String key) {
+	private void filterByFullText(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
-		QueryFilterColumn filter = new QueryFilterColumn();
+		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)fieldModel;
 
-		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)model;
-
-		// TODO: something better
-		filter.setOperation(Operation.LIKE);
+		// TODO: use the fulltext operator
+		filterColumn.setOperation(Operation.LIKE);
 
 		String value = textFieldModel.getValue();
-		filter.getValues().add("%"+value+"%");
-
-		filter.setColumnPrototype(lookupColumnPrototype(key));
-		return filter;
+		filterColumn.getValues().add("%"+value+"%");
 	}
 
-	/**
-	 * This case configure filter to checkbox CustomField.
-	 * @param model
-	 * @param key
-	 * @return
-	 */
-	private QueryFilterColumn createFilterToCheckBox(AdvancedSearchFieldModel model, String key) {
-		QueryFilterColumn filter = new QueryFilterColumn();
 
-		SearchCustomFieldCheckBoxFieldModel checkModel = (SearchCustomFieldCheckBoxFieldModel) model;
-		filter.addValues(checkModel.getValues());
-		filter.setOperation(Operation.EQUALS);
-		filter.setCufId(Long.parseLong(key));
+	private void filterByCheckbox(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
-		filter.setColumnPrototype(lookupColumnPrototype(key));
+		SearchCustomFieldCheckBoxFieldModel checkModel = (SearchCustomFieldCheckBoxFieldModel) fieldModel;
 
-		return filter;
+		filterColumn.addValues(checkModel.getValues());
+		filterColumn.setOperation(Operation.EQUALS);
 	}
 
 
@@ -757,12 +651,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		QueryOrderingColumn queryOrderingColumn = new QueryOrderingColumn();
 
-		String property = specifier.getProperty();
-		//property = formatSortedFieldName(property);
+		String key = specifier.getProperty();
 
-		String columnPrototypeLabel = mappings.getResultMapping().findColumnPrototypeLabel(property);
 
-		QueryColumnPrototype column = lookupColumnPrototype(columnPrototypeLabel);
+		QueryColumnPrototype column = lookupColumnPrototypeByResultSetKey(key);
 
 		Order order = specifier.isAscending() ? Order.ASC : Order.DESC;
 
@@ -806,10 +698,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 
 	// **************** utility methods **************************************
-
-	private final QueryColumnPrototype lookupColumnPrototype(String columnLabel) {
-		return prototypesByLabel.computeIfAbsent(columnLabel, (label) -> { throw new IllegalArgumentException("column '"+label+"' is unknown (unmapped)"); });
-	}
 
 
 	private void secureProjectFilter(AdvancedSearchModel model) {
@@ -864,11 +752,52 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-
-
-	private String lookupCufColumnLabel(QueryCufLabel cufLabel){
-		return mappings.getCufMapping().findColumnPrototypeLabel(cufLabel.toString());
+	/**
+	 * Retrieves a column prototype for the given form attribute key. It won't work if the
+	 * key doesn't reference an actual column prototype or doesn't belong to the search form.
+	 *
+	 * @param formAttributeKey
+	 * @return
+	 */
+	private QueryColumnPrototype lookupColumnPrototypeByFormKey(String formAttributeKey){
+		return internalLookupColumnPrototypeByKey(mappings.getFormMapping(), formAttributeKey);
 	}
+
+	private QueryColumnPrototype lookupColumnPrototypeByResultSetKey(String rsAttributeKey){
+		return internalLookupColumnPrototypeByKey(mappings.getResultMapping(), rsAttributeKey);
+	}
+
+	private QueryColumnPrototype lookupColumnPrototypeByCufLabel(QueryCufLabel cufLabel){
+		return internalLookupColumnPrototypeByKey(mappings.getCufMapping(), cufLabel.toString());
+	}
+
+	private QueryColumnPrototype lookupColumnPrototypeByCufType(AdvancedSearchFieldModelType cufType){
+		if  (! CUSTOM_FIELD_TYPES.contains(cufType)){
+			throw new IllegalArgumentException("unknown CUF type '"+cufType+"'");
+		}
+		else{
+			return internalLookupColumnPrototypeByKey(mappings.getCufMapping(), cufType.toString());
+		}
+	}
+
+
+
+	private QueryColumnPrototype internalLookupColumnPrototypeByKey(ColumnMapping mapping, String key){
+
+		if (! mapping.isMappedKey(key)){
+			throw new IllegalArgumentException("attribute key '"+key+"' is unmapped");
+		}
+
+		String mappedColumnLabel = mapping.findColumnPrototypeLabel(key);
+
+		return prototypesByLabel.computeIfAbsent(mappedColumnLabel,
+			(label) -> {
+				throw new IllegalArgumentException("column '"+label+"' is unknown (unmapped)");
+			});
+
+	}
+
+
 
 	private final String toIso(Date date){
 		return DateUtils.formatIso8601Date(date);

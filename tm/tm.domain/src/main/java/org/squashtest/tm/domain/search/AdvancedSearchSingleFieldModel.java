@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.domain.search;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type;
 
 	private String value;
-
-	private boolean ignoreBridge = false;
 
 	public AdvancedSearchSingleFieldModel() {
 		type = AdvancedSearchFieldModelType.SINGLE;
@@ -50,7 +50,7 @@ public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 	}
 
 	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public boolean isSet() {
+		return !StringUtils.isBlank(value);
 	}
 }

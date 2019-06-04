@@ -23,7 +23,7 @@ define(["jquery", "jqueryui"], function($){
 	var searchwidget = $.widget("search.searchRadioWidget", {
 		
 		options : {
-			ignoreBridge : false
+	
 		},
 
 		_create : function(){
@@ -38,8 +38,8 @@ define(["jquery", "jqueryui"], function($){
 				
 				if(!!val){
 					return {"type" : "SINGLE",
-					    "value" : val,
-					    "ignoreBridge": this.options.ignoreBridge};
+					    "value" : val
+					};
 				} else {
 					return null;
 				}

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -48,6 +49,14 @@ public interface AdvancedSearchFieldModel {
 
 	AdvancedSearchFieldModelType getType();
 
-	boolean isIgnoreBridge();
+	/**
+	 * Tells whether this search field model holds any data to filter on or if it has been
+	 * left blank.
+	 *
+	 * @return
+	 */
+	@JsonIgnore
+	boolean isSet();
+
 
 }

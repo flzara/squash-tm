@@ -33,8 +33,6 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 
 	private Integer maxValue;
 
-	private boolean ignoreBridge = false;
-
 	public AdvancedSearchMultiListFieldModel() {
 		type  = AdvancedSearchFieldModelType.MULTILIST;
 	}
@@ -73,10 +71,8 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 		this.maxValue = maxValue;
 	}
 
-
 	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public boolean isSet() {
+		return ! (values == null || values.isEmpty() );
 	}
-
 }

@@ -41,8 +41,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			var id = $(this.element).attr("id");
 			return {
 				"type": fieldType,
-				"value": text,
-				"ignoreBridge": this.options.ignoreBridge
+				"value": text
 			};
 		} else {
 			$(this.element.children()[0]).val(value.value);
@@ -52,7 +51,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	// text area widget
 	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
 		options: {
-			ignoreBridge: false
+			
 		},
 
 		_create: function () {
@@ -67,7 +66,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	// text field widget
 	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
 		options: {
-			ignoreBridge: false
+			
 		},
 
 		_create: function () {
@@ -85,7 +84,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 	var searchTextCustomFieldWidget = $.widget("search.searchTextCustomFieldWidget", {
 		options: {
-			ignoreBridge: false
+			
 		},
 
 		_create: function () {
@@ -206,16 +205,16 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 						var inputType = field.inputType.toLowerCase();
 						switch (inputType) {
 							case "cf_text" :
-								self.makeTextCustomField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								self.makeTextCustomField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "textfield" :
-								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								self.makeTextField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "textfieldid" :
-								self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "textfieldreference" :
-								self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "textarea":
 								self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
@@ -260,7 +259,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 								self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case  "radiobutton":
-								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case "tags":
 								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
@@ -341,11 +340,11 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			return this.$("#" + escapedId);
 		},
 
-		makeRadioField: function (tableId, fieldId, fieldTitle, options, enteredValue, ignoreBridge) {
+		makeRadioField: function (tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-radio-id": fieldId, "text-radio-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#radio-button-template", context));
 
-			$fieldDom.searchRadioWidget({"ignoreBridge": ignoreBridge});
+
 			$fieldDom.searchRadioWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchRadioWidget("fieldvalue", enteredValue);
 
@@ -419,44 +418,44 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 		},
 
-		makeTextField: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextField: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
+			$fieldDom.searchTextFieldWidget();
 		},
 
-		makeTextCustomField: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextCustomField: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-customfield-id": fieldId,
 				"text-customfield-title": fieldTitle,
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#text-customfield-template", context));
-			$fieldDom.searchTextCustomFieldWidget({"ignoreBridge": ignoreBridge});
+			$fieldDom.searchTextCustomFieldWidget();
 		},
 
-		makeTextFieldId: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextFieldId: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
+			$fieldDom.searchTextFieldWidget();
 		},
 
-		makeTextFieldReference: function (tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+		makeTextFieldReference: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-field-id": fieldId,
 				"text-field-title": fieldTitle,
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-reference-template", context));
-			$fieldDom.searchTextFieldWidget({"ignoreBridge": ignoreBridge});
+			$fieldDom.searchTextFieldWidget();
 		},
 
 		makeTextArea: function (tableId, fieldId, fieldTitle, enteredValue) {
