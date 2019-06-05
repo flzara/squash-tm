@@ -600,7 +600,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		SearchCustomFieldCheckBoxFieldModel checkModel = (SearchCustomFieldCheckBoxFieldModel) fieldModel;
 
 		filterColumn.addValues(checkModel.getValues());
-		filterColumn.setOperation(Operation.EQUALS);
+		filterColumn.setOperation(Operation.IN);
 	}
 	
 
