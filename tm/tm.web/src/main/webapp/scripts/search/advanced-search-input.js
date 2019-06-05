@@ -92,9 +92,9 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 		fieldvalue: function (value) {
 			if (value) {
-				return fieldValue.call(this, "CF_TEXT", value.toLowerCase());
+				return fieldValue.call(this, "CF_SINGLE", value.toLowerCase());
 			} else {
-				return fieldValue.call(this, "CF_TEXT", value);
+				return fieldValue.call(this, "CF_SINGLE", value);
 
 			}
 		}
@@ -204,7 +204,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 						field = panel.fields[i];
 						var inputType = field.inputType.toLowerCase();
 						switch (inputType) {
-							case "cf_text" :
+							case "cf_single" :
 								self.makeTextCustomField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
 							case "textfield" :

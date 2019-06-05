@@ -64,6 +64,8 @@ import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
+import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.User;
 
@@ -292,6 +294,13 @@ enum InternalEntityType {
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QTestSuite(alias);
+		}
+	},
+
+	AUTOMATION_REQUEST(AutomationRequest.class, new QAutomationRequest("automationRequest")) {
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAutomationRequest(alias);
 		}
 	};
 

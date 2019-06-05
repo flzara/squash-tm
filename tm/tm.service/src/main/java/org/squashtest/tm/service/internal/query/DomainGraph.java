@@ -38,6 +38,7 @@ import java.util.Set;
 
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST;
+import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTACHMENT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTLIST;
@@ -220,6 +221,7 @@ class DomainGraph {
 		TraversableEntity reqProjectNode = new TraversableEntity(REQUIREMENT_PROJECT);
 		TraversableEntity campProjectNode = new TraversableEntity(CAMPAIGN_PROJECT);
 		TraversableEntity itemSuiteNode = new TraversableEntity(ITEM_SUITE);
+		TraversableEntity automationRequestNode = new TraversableEntity(AUTOMATION_REQUEST);
 
 
 		// add them all
@@ -229,7 +231,7 @@ class DomainGraph {
 				tctypNode, rvcatNode, tcmilNode, rvmilNode,campmilNode, autoNode, extNode,
 				tcAttlistNode, tcAttachmentNode, rvAttlistNode, rvAttachmentNode, campAttlistNode,
 				campAttlistNode, campAttachmentNode, datasetNode, paramNode, tcProjectNode, reqProjectNode,
-															  campProjectNode, itemSuiteNode
+															  campProjectNode, itemSuiteNode, automationRequestNode
 		}));
 
 
@@ -307,6 +309,9 @@ class DomainGraph {
 
 		addEdge(itemNode, itemSuiteNode, "testSuites");
 		addEdge(itemSuiteNode, itemNode, "testPlan");
+
+		addEdge(testcaseNode, automationRequestNode, "automationRequest");
+		addEdge(automationRequestNode, testcaseNode, "testCase");
 
 	}
 

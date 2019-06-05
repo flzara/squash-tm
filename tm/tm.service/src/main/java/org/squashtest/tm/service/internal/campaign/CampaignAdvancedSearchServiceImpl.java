@@ -21,39 +21,32 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Session;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,6 +88,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
+@Transactional(readOnly = true)
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
@@ -122,20 +116,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
 
-	@Inject
-	private QueryProcessingServiceImpl dataFinder;
-
-
-	/*private static final String LAST_EXECUTE_ON_FIELD_NAME = "lastExecutedOn";
-	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
-
-	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
-	private static final String ITERATION_ID_FIELD_NAME = "iteration.id";
-	private static final String CAMPAIGN_ID_FIELD_NAME = "campaign.id";
-	private static final String PROJECT_ID_FIELD_NAME = "project.id";
-
-	private static final String FAKE_ITPI_ID = "-9000";*/
-
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
 		return findUsersWhoCanAccessProject(idList);
@@ -150,45 +130,33 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Override
 	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchQueryModel searchModel,
 																	  Pageable paging, Locale locale) {
+		Session session = entityManager.unwrap(Session.class);
 
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		List<IterationTestPlanItem> result = Collections.emptyList();
+		converter.configureModel(searchModel).configureMapping(MAPPINGS);
 
-		return new PageImpl(result, paging, result.size());
+		HibernateQuery<Tuple> query = converter.prepare();
+		query = query.clone(session);
+
+		List<Tuple> tuples = query.fetch();
+
+		List<Long> itpiIds = tuples.stream()
+			.map(tuple -> tuple.get(0, Long.class))
+			.collect(Collectors.toList());
+
+		HibernateQuery<?> noPagingQuery = query.clone(session);
+
+		noPagingQuery.limit(Long.MAX_VALUE);
+		noPagingQuery.offset(0);
+
+		long count = noPagingQuery.fetchCount();
+
+		List<IterationTestPlanItem> result = iterationTestPlanDao.findAllByIdIn(itpiIds);
+
+		return new PageImpl(result, paging, count);
 
 	}
-
-	/*private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
-		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
-		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(TEST_SUITE_ID_FIELD_NAME));
-	}*/
-
-	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field) {
-		if (field == null) {
-			return true;
-		}
-		if (field.getType() != AdvancedSearchFieldModelType.LIST) {
-			return false;
-		}
-		AdvancedSearchListFieldModel listField = (AdvancedSearchListFieldModel) field;
-		return listField.getValues().isEmpty();
-	}
-
-
-	/*private String formatSortFieldName(String fieldName) {
-		String result = fieldName;
-		if (fieldName.startsWith("IterationTestPlanItem.")) {
-			result = fieldName.replaceFirst("IterationTestPlanItem.", "");
-		} else if (fieldName.startsWith("Project.")) {
-			result = fieldName.replaceFirst("Project.", "project.");
-		} else if (fieldName.startsWith("Campaign.")) {
-			result = fieldName.replaceFirst("Campaign.", "campaign.");
-		}
-		return result;
-	}*/
 
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
@@ -265,12 +233,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN);
 
 		MAPPINGS.getCufMapping()
-			.map(QueryCufLabel.TAGS.toString(), ITERATION_CUF_TAG)
-			.map(QueryCufLabel.CF_LIST.toString(), ITERATION_CUF_LIST)
-			.map(QueryCufLabel.CF_SINGLE.toString(), ITERATION_CUF_TEXT)
-			.map(QueryCufLabel.CF_TIME_INTERVAL.toString(), ITERATION_CUF_DATE)
-			.map(QueryCufLabel.CF_NUMERIC.toString(), ITERATION_CUF_NUMERIC)
-			.map(QueryCufLabel.CF_CHECKBOX.toString(), ITERATION_CUF_CHECKBOX);
+			.map(AdvancedSearchFieldModelType.TAGS.toString(), ITERATION_CUF_TAG)
+			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), ITERATION_CUF_LIST)
+			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), ITERATION_CUF_TEXT)
+			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), ITERATION_CUF_DATE)
+			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), ITERATION_CUF_NUMERIC)
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), ITERATION_CUF_CHECKBOX);
 	}
 
 }

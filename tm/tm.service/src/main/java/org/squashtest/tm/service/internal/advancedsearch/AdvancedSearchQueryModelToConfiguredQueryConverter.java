@@ -24,8 +24,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Order;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.slf4j.Logger;
@@ -38,7 +36,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -51,7 +48,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchNumericRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
@@ -59,8 +55,9 @@ import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
-import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.domain.search.SearchCustomFieldCheckBoxFieldModel;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.ColumnMapping;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 import org.squashtest.tm.service.project.ProjectFinder;
@@ -68,13 +65,8 @@ import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.query.QueryProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.ColumnMapping;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -773,10 +765,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private QueryColumnPrototype lookupColumnPrototypeByResultSetKey(String rsAttributeKey){
 		return internalLookupColumnPrototypeByKey(mappings.getResultMapping(), rsAttributeKey);
-	}
-
-	private QueryColumnPrototype lookupColumnPrototypeByCufLabel(QueryCufLabel cufLabel){
-		return internalLookupColumnPrototypeByKey(mappings.getCufMapping(), cufLabel.toString());
 	}
 
 	private QueryColumnPrototype lookupColumnPrototypeByCufType(AdvancedSearchFieldModelType cufType){

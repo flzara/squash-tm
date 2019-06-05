@@ -44,7 +44,7 @@ class SearchInterfaceDescriptionTest extends Specification {
 	Provider internationalizableFormatterProvider = Mock()
 	InternationalizationHelper messageSource = Mock()
 
-	def "should create level combo intermediate model"() {
+	/*def "should create level combo intermediate model"() {
 		given:
 		def expectedKeys = RequirementCriticality.values().collect { it.level + "-" + it.name() } as Set
 
@@ -123,5 +123,5 @@ class SearchInterfaceDescriptionTest extends Specification {
 		bar.value == "bar"
 		bar.code == "B"
 		!bar.selected
-	}
+	}*/
 }

@@ -30,8 +30,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.search.QueryCufLabel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -190,18 +190,21 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	public Page<TestCase> searchForTestCases(AdvancedSearchQueryModel model,
 											 Pageable sorting, Locale locale) {
 
+		Session session = entityManager.unwrap(Session.class);
+
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
 		HibernateQuery<Tuple> query = converter.prepare();
 
-		HibernateQuery<Tuple> cloneQuery = query.clone(entityManager.unwrap(Session.class));
-		List<Tuple> tuples = cloneQuery.fetch();
+		query = query.clone(session);
+		List<Tuple> tuples = query.fetch();
 
 		List<Long> testCaseIds = tuples.stream()
-			.map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
+			.map(tuple -> tuple.get(0, Long.class))
+			.collect(Collectors.toList());
 
-		HibernateQuery<?> noPagingQuery = cloneQuery.clone(entityManager.unwrap(Session.class));
+		HibernateQuery<?> noPagingQuery = query.clone(session);
 		noPagingQuery.limit(Long.MAX_VALUE);
 		noPagingQuery.offset(0);
 		long count = noPagingQuery.fetchCount();
@@ -267,11 +270,11 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		 *
 		 *****************************************************/
 		MAPPINGS.getCufMapping()
-			.map(QueryCufLabel.TAGS.toString(), TEST_CASE_CUF_TAG)
-			.map(QueryCufLabel.CF_LIST.toString(), TEST_CASE_CUF_LIST)
-			.map(QueryCufLabel.CF_SINGLE.toString(), TEST_CASE_CUF_TEXT)
-			.map(QueryCufLabel.CF_TIME_INTERVAL.toString(), TEST_CASE_CUF_DATE)
-			.map(QueryCufLabel.CF_NUMERIC.toString(), TEST_CASE_CUF_NUMERIC)
-			.map(QueryCufLabel.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX);
+			.map(AdvancedSearchFieldModelType.TAGS.toString(), TEST_CASE_CUF_TAG)
+			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), TEST_CASE_CUF_LIST)
+			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), TEST_CASE_CUF_TEXT)
+			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), TEST_CASE_CUF_DATE)
+			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), TEST_CASE_CUF_NUMERIC)
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX);
 	}
 }

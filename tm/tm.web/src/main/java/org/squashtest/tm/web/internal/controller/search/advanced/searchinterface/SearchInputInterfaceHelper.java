@@ -306,7 +306,7 @@ public class SearchInputInterfaceHelper {
 
 	private SearchInputFieldModel convertToSearchInputFieldModel(CustomFieldModel customField) {
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType("CF_TEXT");
+		model.setInputType("CF_SINGLE");
 		model.setTitle(customField.getLabel());
 		model.setId(String.valueOf(customField.getId()));
 		return model;
