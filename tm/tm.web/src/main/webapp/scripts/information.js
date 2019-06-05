@@ -35,13 +35,7 @@ require([ "common" ], function(common) {
 				var information = squashtm.app.information;
 				if (_.size(information) != 0) {
 					dialog.formDialog('open');
-					var message1 = retrieveMessage1(information);
-					var message2 = retrieveMessage2(information);
-					$('#information-message1').text(message1);
-					$('#information-message2').text(message2);
-					if (message1 !== '' && message2 != '') {
-						$('#information-divider').show();
-					}
+					retrieveMessages(information);
 				} else {
 					window.location.href = squashtm.app.contextRoot + 'home-workspace';
 				}
@@ -70,7 +64,19 @@ require([ "common" ], function(common) {
 			return targetUrl;
 		}
 
-		function retrieveMessage1(information) {
+		function retrieveMessages(information) {
+			var messageDate = retrieveMessageDate(information);
+			var messageUser = retrieveMessageUser(information);
+			if (messageDate !== '') { $('#information-message-date').text(messageDate); }
+			if (messageUser !== '') { $('#information-message-user').text(messageUser); }
+			if (messageDate === '' || messageUser === '') {
+				if (messageDate === '') { $('#information-message-date').hide(); }
+				if (messageUser === '') { $('#information-message-user').hide(); }
+				$('#information-divider').hide();
+			}
+		}
+
+		function retrieveMessageDate(information) {
 			var message = '';
 			var messageDate = information.messageDate;
 			if (messageDate != undefined && messageDate !== '') {
@@ -84,7 +90,7 @@ require([ "common" ], function(common) {
 			return dates[2] + '/' + dates[1] + '/' + dates[0];
 		}
 
-		function retrieveMessage2(information) {
+		function retrieveMessageUser(information) {
 			var message = '';
 			var messageUser = information.messageUser;
 			if (messageUser != undefined && messageUser !== '') {

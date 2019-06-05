@@ -79,10 +79,17 @@
       <!-- 		above the stacking context of the contextual content. -->
       <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
     </div>
-    <div id="information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}" style="text-align:justify;">
-      <p><span id="information-message1"></span></p>
-      <p id="information-divider" class="not-displayed" style="border-top:2px solid black;width:50%;margin-left:25%;"></p>
-      <p><span id="information-message2"></span></p>
+    <div id="information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+      <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-warning-signal"></div>
+        </div>
+        <div class="display-table-cell" style="text-align:justify;">
+          <span id="information-message-date"></span>
+          <p id="information-divider" style="border-top:2px solid black;width:50%;margin-left:25%;"></p>
+          <span id="information-message-user"></span>
+        </div>
+      </div>
       <div class="popup-dialog-buttonpane">
         <input class="cancel" type="button" value="cancel" th:value="#{label.Close}" data-def="evt=cancel" />
       </div>
