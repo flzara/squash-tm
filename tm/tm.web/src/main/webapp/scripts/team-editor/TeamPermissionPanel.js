@@ -88,7 +88,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 				var userLicenseInformation = squashtm.app.userLicenseInformation;
 				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
 					this.$("#add-permission-button").on('click', function (){
-						$("#license-information-dialog").confirmDialog('open')
+						$("#license-information-dialog").formDialog('open');
 					});
 				} else {
 					this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
@@ -224,12 +224,23 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 
 					var licenseInformationDialog = $("#license-information-dialog");
 					var message;
-					licenseInformationDialog.confirmDialog();
 					if(allowCreateUsers){
 						message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-						licenseInformationDialog.on('confirmdialogconfirm', $.proxy(this.openAddPermission, this));
-						licenseInformationDialog.on('confirmdialogcancel', $.proxy(this.openAddPermission, this));
+						licenseInformationDialog.formDialog().on('formdialogclose', $.proxy(function () {
+							licenseInformationDialog.formDialog('close');
+							this.openAddPermission();
+						}, this));
+						licenseInformationDialog.formDialog().on('formdialogcancel', $.proxy(function () {
+							licenseInformationDialog.formDialog('close');
+							this.openAddPermission();
+						}, this));
 					} else {
+						licenseInformationDialog.formDialog().on('formdialogclose', function () {
+							licenseInformationDialog.formDialog('close');
+						});
+						licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+							licenseInformationDialog.formDialog('close');
+						});
 						message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
 					}
 					licenseInformationDialog.find("#information-message").html(message);
