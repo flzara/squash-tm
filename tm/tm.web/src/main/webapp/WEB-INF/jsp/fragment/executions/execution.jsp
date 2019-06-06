@@ -293,7 +293,7 @@
 
   <%----------------------------------- Execution -----------------------------------------------%>
    <comp:toggle-panel id="execution-cufs-panel"
-                        titleKey="label.Execution"
+                        titleKey="label.customFieldsManagement"
                         open="${not empty executionCufValues}">
      <jsp:attribute name="body">
      <div id="execution-cufs-table" class="display-table">
