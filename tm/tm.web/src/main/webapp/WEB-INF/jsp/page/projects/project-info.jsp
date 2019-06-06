@@ -455,17 +455,16 @@
     <c:if test="${ not empty userLicenseInformation}">
       <f:message var="licenseInformationTitle" key="title.Information" />
       <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
-
-            <comp:notification-pane type="warning">
-              <jsp:attribute name="htmlcontent">
-                <div class="display-table-cell">
-                  <span id="information-message"></span>
-                </div>
-              </jsp:attribute>
-            </comp:notification-pane>
-
+        <div class="display-table-row">
+          <div class="display-table-cell warning-cell">
+            <div class="generic-warning-signal"></div>
+          </div>
+          <div class="display-table-cell">
+            <span id="information-message"></span>
+          </div>
+        </div>
         <div class="popup-dialog-buttonpane">
-          <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+          <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
         </div>
       </div>
     </c:if>
@@ -1135,14 +1134,21 @@ require(["common"], function() {
       var message;
       if(allowCreateUsers){
         message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-        licenseInformationDialog.confirmDialog().on('confirmdialogconfirm', function () {
+        licenseInformationDialog.formDialog().on('formdialogclose', function () {
+          licenseInformationDialog.formDialog('close');
           permpopup.formDialog('open');
         });
-        licenseInformationDialog.confirmDialog().on('confirmdialogcancel', function () {
+        licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+          licenseInformationDialog.formDialog('close');
           permpopup.formDialog('open');
         });
       } else {
-        licenseInformationDialog.confirmDialog();
+        licenseInformationDialog.formDialog().on('formdialogclose', function () {
+          licenseInformationDialog.formDialog('close');
+        });
+        licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+          licenseInformationDialog.formDialog('close');
+        });
         message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
       }
       licenseInformationDialog.find("#information-message").html(message);
@@ -1152,7 +1158,7 @@ require(["common"], function() {
 		$("#add-permission-button").on('click', function(){
       if(userLicenseInformation.length !== 0){
         var licenseInformationDialog = $("#license-information-dialog");
-        licenseInformationDialog.confirmDialog('open');
+        licenseInformationDialog.formDialog('open');
       } else {
         permpopup.formDialog('open');
       }
