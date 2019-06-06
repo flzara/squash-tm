@@ -34,7 +34,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                     sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/automation-request/validate",
                     "iDisplayLength": 25,
                     "bDeferRender": true,
-                    "aaSorting": [[7, "desc"], [9, "asc"]],
+                    "aaSorting": [[8, "desc"], [9, "asc"]],
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
