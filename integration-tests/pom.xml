@@ -42,6 +42,15 @@
 
     <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+
+
+    <!--
+     this is the argument lines for maven-failsafe-plugin.
+     It is declared this way to make it work with jacoco,
+     see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
+     -->
+    <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+
   </properties>
 
   <dependencyManagement>
@@ -289,10 +298,12 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
-          <!--threadCount>1</threadCount>
-          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine-->
+          <!--threadCount>1</threadCount> -->
 
-          <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+	        <!--
+            Don't configure 'argLine' here ! Please use the <argLine> defined in the <properties> section
+            An explanation will be supplied there
+          -->
 
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
@@ -326,22 +337,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>sonar</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <configuration>
-                <argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.file.path}</argLine>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
 
     <profile>
       <id>h2.windows</id>
