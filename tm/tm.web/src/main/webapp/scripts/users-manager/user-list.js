@@ -184,14 +184,21 @@ define([ "jquery", "squash.translator",
 			var message;
 			if(allowCreateUsers){
 				message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-				licenseInformationDialog.confirmDialog().on('confirmdialogconfirm', function () {
+				licenseInformationDialog.formDialog().on('formdialogclose', function () {
+					licenseInformationDialog.formDialog('close');
 					openAdd();
 				});
-				licenseInformationDialog.confirmDialog().on('confirmdialogcancel', function () {
+				licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+					licenseInformationDialog.formDialog('close');
 					openAdd();
 				});
 			} else {
-				licenseInformationDialog.confirmDialog();
+				licenseInformationDialog.formDialog().on('formdialogclose', function () {
+					licenseInformationDialog.formDialog('close');
+				});
+				licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+					licenseInformationDialog.formDialog('close');
+				});
 				message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
 			}
 			licenseInformationDialog.find("#information-message").html(message);
@@ -200,7 +207,7 @@ define([ "jquery", "squash.translator",
 		$("#add-user-button").on('click', function(){
 				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
 					var licenseInformationDialog = $("#license-information-dialog");
-					licenseInformationDialog.confirmDialog('open');
+					licenseInformationDialog.formDialog('open');
 				} else {
 					openAdd();
 				}

@@ -298,20 +298,19 @@
 
     <c:if test="${ not empty userLicenseInformation}">
       <f:message var="licenseInformationTitle" key="title.Information" />
-      <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
-
-            <comp:notification-pane type="warning">
-              <jsp:attribute name="htmlcontent">
-                <div class="display-table-cell">
-                  <span id="information-message"></span>
-                </div>
-              </jsp:attribute>
-            </comp:notification-pane>
-
-        <div class="popup-dialog-buttonpane">
-          <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+        <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-warning-signal"></div>
+            </div>
+            <div class="display-table-cell">
+              <span id="information-message"></span>
+            </div>
+          </div>
+          <div class="popup-dialog-buttonpane">
+            <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
+          </div>
         </div>
-      </div>
     </c:if>
 
   </jsp:attribute>
