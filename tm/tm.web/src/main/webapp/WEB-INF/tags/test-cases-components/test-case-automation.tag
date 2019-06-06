@@ -92,7 +92,7 @@
 			</div>
 		</div>
 
-		<div class="display-table-row">
+		<div class="display-table-row test-case-automation-request-block">
         <label for="test-case-uuid" class="display-table-cell"><f:message key="test-case.automation-uuid.label" /></label>
         <div class="display-table-cell">
           <span id="test-case-uuid">${uuid}</span>
