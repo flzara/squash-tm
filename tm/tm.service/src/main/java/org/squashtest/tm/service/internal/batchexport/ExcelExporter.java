@@ -158,7 +158,7 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_AUTOMATABLE
 	};
 
-	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
+	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 8, TestCaseSheetColumn.TC_MILESTONE)));
 
 	private static final List<TestCaseSheetColumn> TC_COLUMNS = Arrays.asList(BASIC_TC_COLUMNS);
 
