@@ -70,7 +70,7 @@
 		},
 		{
 			name: "advanced-config-page",
-			include: ["jquery", "squash.translator", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
+			include: ["jquery", "squash.translator", "app/ws/squashtm.workspace", "jquery.switchButton"],
 			exclude: ["common"]
 		},
 		{

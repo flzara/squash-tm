@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
+	require(["jquery", "squash.translator", "app/ws/squashtm.workspace", "jquery.switchButton"],
 			function($, msg) {
 		"use strict";
 				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {

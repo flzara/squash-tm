@@ -34,7 +34,6 @@
     <js>/scripts/campaign-folder-management/**.js</js>
     <js>/scripts/campaign-management/**.js</js>
     <js>/scripts/charts/**.js</js>
-    <js>/scripts/client-manager/**.js</js>
     <js>/scripts/connections-manager/**.js</js>
     <js>/scripts/contextual-content-handlers/**.js</js>
     <js>/scripts/custom-field-binding/**.js</js>
