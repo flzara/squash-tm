@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.Attachment;
 
+import java.util.List;
 import java.util.Set;
 
 public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao {
@@ -44,4 +45,5 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 
 	@Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
 	Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
+
 }

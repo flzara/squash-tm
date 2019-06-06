@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
+import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -41,12 +42,7 @@ import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 /*
  * FIXME !
@@ -77,6 +73,10 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Inject
 	private AttachmentListDao attachmentListDao;
+
+	@Inject
+	private AttachmentContentDao attachmentContentDao;
+
 
 	@Inject
 	private AttachmentRepository attachmentRepository;
@@ -131,6 +131,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
+     /*
 		AttachmentList list = attachmentListDao.getOne(attachmentListId);
 		Attachment attachment = attachmentDao.getOne(attachmentId);
 
@@ -138,13 +139,33 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachmentDao.removeAttachment(attachment.getId());
 
 		getAttachmentRepository().removeContent(attachmentId);
+*/
+
+		Attachment attachment = findAttachment(attachmentId);
+		//save for FileSystemRepository
+		Long attachmentContentId = attachment.getContent().getId();
+
+	//	attachmentDao.removeAttachment(attachment.getId()); // !!! Not compatible TM 362
+		attachmentDao.deleteById(attachment.getId());
+
+		Set <Long> notOrpheanContent = attachmentContentDao.findNotOrpheanAttachmentContent(Collections.singletonList(attachmentContentId));
+		if (!notOrpheanContent.contains(attachmentContentId)) {
+			attachmentContentDao.deleteById(attachmentContentId);
+		}
+		if (attachmentRepository instanceof  FileSystemAttachmentRepository) {
+			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+		}
 
 		reindexBoundEntities(attachmentListId);
 	}
 
 	@Override
 	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException {
+		for (Long attachmentId : attachmentIds) {
+			removeAttachmentFromList(attachmentListId, attachmentId);
+		}
 
+/*
 		Iterator<Attachment> iterAttach = attachmentListDao.getOne(attachmentListId).getAllAttachments().iterator();
 
 		while (iterAttach.hasNext()) {
@@ -165,7 +186,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 				break;
 			}
 		}
-
+*/
 		reindexBoundEntities(attachmentListId);
 
 	}
@@ -194,7 +215,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	/**
 	 * @see org.squashtest.tm.service.attachment.AttachmentManagerService#writeContent(long,
-	 *      OutputStream)
+	 * OutputStream)
 	 */
 	@Override
 	public void writeContent(long attachmentId, OutputStream outStream) throws IOException {
@@ -235,8 +256,40 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void cleanContent(AttachmentHolder attachmentHolder) {
-		if (attachmentHolder != null && attachmentHolder.getAttachmentList()!= null) {
+		if (attachmentHolder != null && attachmentHolder.getAttachmentList() != null) {
 			cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
 		}
 	}
+
+	@Override
+	public Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsListso) {
+		//attachmentDao.
+		return null;
+	}
+
+	@Override
+	public void removeContent(long attachmentListId, long attachmentContentId) {
+		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
+			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+		}
+	}
+
+
+//CJU Cas
+
+//	@Override
+//	public /*Set<Long>*/ Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsLists, HibernateDeletionDao deletionDao) {
+//			//les listes seront supprimées par hibernate, on se contente de suprimer les 'Attachments' et de renvoyer la liste de AttachmentContentID impactés
+//		//return deletionDao.removeAttachmentsLists2(attachmentsLists);
+//		return customAttachmenDao.
+//	}
+
+//	@Override
+//	public void removeContent(long attachmentListId, long attachmentContentId) {
+//		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository"))
+//		//getAttachmentRepository().removeContent(attachmentListId, attachmentContentId);
+//			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+//	}
 }
+
+

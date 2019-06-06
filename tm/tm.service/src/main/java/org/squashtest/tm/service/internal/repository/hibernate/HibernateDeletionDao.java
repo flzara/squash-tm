@@ -62,34 +62,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void removeAttachmentsLists(final List<Long> attachmentListIds) {
-
-		List<Object[]> attachmentContentIds;
-
-		if (attachmentListIds.isEmpty()) {
-			return;
-		}
-
-		// we handle the cascade ourselves to make sure that the deletion is carried properly
-		attachmentContentIds = executeSelectNamedQuery("attachment.getAttachmentAndContentIdsFromList", "listIds",
-				attachmentListIds);
-
-		// due to foreign key constraints and the like, the following
-		// operations
-		// must be carried in that order :
-
-		if (!attachmentContentIds.isEmpty()) {
-
-			Collection<Long> attachIds = CollectionUtils.collect(attachmentContentIds, new CellTableTransformer(0));
-
-			Collection<Long> contentIds = CollectionUtils.collect(attachmentContentIds, new CellTableTransformer(1));
-
-			executeDeleteNamedQuery("attachment.removeAttachments", "attachIds", attachIds);
-			executeDeleteNamedQuery("attachment.removeContents", "contentIds", contentIds);
-		}
-
-		executeDeleteNamedQuery("attachment.deleteAttachmentLists", "listIds", attachmentListIds);
-
-		attachmentManagerService.cleanContent(attachmentListIds);
+		throw new RuntimeException("No more used since TM362 !");
 	}
 
 	private static final class CellTableTransformer implements Transformer {
@@ -119,24 +92,7 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 
 	@Override
 	public void removeAttachmentList(AttachmentList list) {
-
-		if (list == null) {
-			return;
-		}
-
-		//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob]
-		Set<Attachment> attachmentList = list.getAllAttachments();
-
-		for (Attachment attachment : attachmentList) {
-			AttachmentContent content = attachment.getContent();
-			content.setContent(null);
-		}
-
-		flush();
-		//End [Issue 1456]
-
-		attachmentManagerService.cleanContent(Collections.singletonList(list.getId()));
-		removeEntity(list);
+		throw new RuntimeException("No more used since TM362 !");
 	}
 
 	@Override

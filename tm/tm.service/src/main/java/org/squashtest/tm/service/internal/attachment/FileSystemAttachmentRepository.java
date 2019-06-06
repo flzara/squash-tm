@@ -168,4 +168,14 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		path = storageConfigurer.getRepoPath() + path;
 		return StringUtils.appendIfMissing(path, "/");
 	}
+
+	@Override
+	public void removeContent(long attachmentListId, long attachmentContentId)   {
+		String folderPath = findFolderPath(attachmentListId);
+		try {
+			Files.delete(Paths.get(folderPath + attachmentContentId));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

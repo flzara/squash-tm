@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface AttachmentManagerService extends AttachmentFinderService {
 	/**
@@ -40,8 +41,7 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 
 	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException;
 
-	void renameAttachment(long attachmentId, String newName);
-
+	void renameAttachment(long attachmentId, String newName);	
 	/**
 	 * Writes attachment content into the given stream.
 	 * @param attachmentId
@@ -70,4 +70,9 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	void cleanContent(List<Long> attachmentListIds);
 
 	void cleanContent(AttachmentHolder attachmentHolder);
+
+    // TM362
+    Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsListso);
+
+    void removeContent(long attachmentListId, long attachmentContentId);
 }
