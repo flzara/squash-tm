@@ -372,7 +372,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	private void addCopiesOfAttachments(TestCase source) {
 		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
+			Attachment atCopy = tcAttach.shallowCopy();
 			this.getAttachmentList().addAttachment(atCopy);
 		}
 	}

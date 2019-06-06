@@ -320,7 +320,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 		}
 		for (Attachment attach : this.getAttachmentList().getAllAttachments()) {
-			Attachment copyAttach = attach.hardCopy();
+			Attachment copyAttach = attach.shallowCopy();
 			clone.getAttachmentList().addAttachment(copyAttach);
 		}
 

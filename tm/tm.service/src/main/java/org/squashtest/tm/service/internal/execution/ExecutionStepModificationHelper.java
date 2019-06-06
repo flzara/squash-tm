@@ -105,7 +105,7 @@ public class ExecutionStepModificationHelper {
 			execStep.getAttachmentList().getAllAttachments().clear();
 
 			for (Attachment actionStepAttach : step.getAllAttachments()) {
-				Attachment clone = actionStepAttach.hardCopy();
+				Attachment clone = actionStepAttach.shallowCopy();
 				execStep.getAttachmentList().addAttachment(clone);
 			}
 			executionStepDao.persist(execStep);

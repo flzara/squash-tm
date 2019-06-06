@@ -98,7 +98,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 		// copy the attachments
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
-			Attachment clone = tcAttach.hardCopy();
+			Attachment clone = tcAttach.shallowCopy();
 			newTestStep.getAttachmentList().addAttachment(clone);
 		}
 

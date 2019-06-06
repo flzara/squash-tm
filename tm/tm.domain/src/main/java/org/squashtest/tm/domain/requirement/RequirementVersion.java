@@ -313,7 +313,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	private void attachCopiesOfAttachmentsTo(RequirementVersion copy) {
 		for (Attachment attachment : this.getAttachmentList().getAllAttachments()) {
-			copy.getAttachmentList().addAttachment(attachment.hardCopy());
+			copy.getAttachmentList().addAttachment(attachment.shallowCopy());
 		}
 	}
 
