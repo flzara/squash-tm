@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.query;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Param;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -37,15 +36,15 @@ import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.QTestSuite;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.QProject;
-import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.QInfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.QMilestone;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.QProject;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;

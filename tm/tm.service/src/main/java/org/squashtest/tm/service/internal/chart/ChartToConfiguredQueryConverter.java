@@ -316,6 +316,7 @@ class ChartToConfiguredQueryConverter {
 		queryFilter.setColumnPrototype(chartFilter.getColumn());
 		queryFilter.setOperation(chartFilter.getOperation());
 		queryFilter.setCufId(chartFilter.getCufId());
+		queryFilter.getValues().addAll(chartFilter.getValues());
 
 		return queryFilter;
 	}
