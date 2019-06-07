@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
@@ -31,6 +32,7 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class HibernateAttachmentListDao implements AttachmentListDao {
@@ -61,4 +63,5 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.where(req.attachmentList.id.eq(attachmentListId))
 			.fetchOne();
 	}
+
 }

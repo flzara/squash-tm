@@ -57,10 +57,7 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 @Transactional
@@ -269,6 +266,14 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			List<Long> testStepAttachmentIds = 	deletionDao.findTestStepAttachmentListIds(stepIds);
 			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(folderIds);
 
+			// We merge the attachment list ids for
+			// test cases, test step and folder first so that
+			// we can make one only one query against the database.
+			testCaseAttachmentIds.addAll(testStepAttachmentIds);
+			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
+			List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(testCaseAttachmentIds);
+
+
 			List<Long> automationRequestIds = requestDao.getReqIdsByTcIds(tcIds);
 			deletionDao.removeAutomationRequest(automationRequestIds);
 
@@ -283,6 +288,8 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_STEP, stepIds);
 			deletionDao.removeAllSteps(stepIds);
+			attachmentManager.removeAttachmentsAndLists(testStepAttachmentIds);
+
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, tcIds);
 
@@ -291,12 +298,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			deletionDao.removeEntities(allIds);
 
-			// We merge the attachment list ids for
-			// test cases, test step and folder first so that
-			// we can make one only one query against the database.
-			testCaseAttachmentIds.addAll(testStepAttachmentIds);
-			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
-			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
+			//remove All AttachmentContents for FileSystemRepository and orhean in DB
+			attachmentManager.deleteContents(listPairContenIDListID);
+
 
 			report.addRemoved(folderIds, "folder");
 			report.addRemoved(tcIds, "test-case");

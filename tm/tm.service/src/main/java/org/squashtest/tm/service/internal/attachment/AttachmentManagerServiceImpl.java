@@ -145,14 +145,14 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		//save for FileSystemRepository
 		Long attachmentContentId = attachment.getContent().getId();
 
-	//	attachmentDao.removeAttachment(attachment.getId()); // !!! Not compatible TM 362
+		//	attachmentDao.removeAttachment(attachment.getId()); // !!! Not compatible TM 362
 		attachmentDao.deleteById(attachment.getId());
 
-		Set <Long> notOrpheanContent = attachmentContentDao.findNotOrpheanAttachmentContent(Collections.singletonList(attachmentContentId));
+		Set<Long> notOrpheanContent = attachmentContentDao.findNotOrpheanAttachmentContent(Collections.singletonList(attachmentContentId));
 		if (!notOrpheanContent.contains(attachmentContentId)) {
 			attachmentContentDao.deleteById(attachmentContentId);
 		}
-		if (attachmentRepository instanceof  FileSystemAttachmentRepository) {
+		if (attachmentRepository instanceof FileSystemAttachmentRepository) {
 			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
 		}
 
@@ -270,26 +270,71 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public void removeContent(long attachmentListId, long attachmentContentId) {
 		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
-			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+			removeContentFromFileSystem(attachmentListId, attachmentContentId);
 		}
 	}
 
 
-//CJU Cas
+	private void removeContentFromFileSystem(long attachmentListId, long attachmentContentId) {
+		attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+	}
 
-//	@Override
-//	public /*Set<Long>*/ Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsLists, HibernateDeletionDao deletionDao) {
-//			//les listes seront supprimées par hibernate, on se contente de suprimer les 'Attachments' et de renvoyer la liste de AttachmentContentID impactés
-//		//return deletionDao.removeAttachmentsLists2(attachmentsLists);
-//		return customAttachmenDao.
-//	}
+	@Override
+	public List<Long[]> /*List<Object[]> */ getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList) {
+		List<Object[]> rawResult = attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
+		List<Long[]> result = new ArrayList<>();
 
-//	@Override
-//	public void removeContent(long attachmentListId, long attachmentContentId) {
-//		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository"))
-//		//getAttachmentRepository().removeContent(attachmentListId, attachmentContentId);
-//			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
-//	}
+		for (Object[] row:rawResult) {
+			Long[] tab = new Long[2];
+			tab[0] =(Long) row[0];
+			tab[1] =(Long) row[1];
+			result.add(tab);
+		}
+		return result;
+	//return attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
+	}
+
+	@Override
+	public void deleteContents(List<Long[]> contentIdListIdList) {
+		//remove Db Orpheans
+		List<Long> contentIds = new ArrayList<>();
+		//Long[] tab = new Long[2];
+
+		int size = contentIdListIdList.size();
+		for (int i = 0; i < size; i++) {
+			Long[] tab = contentIdListIdList.get(i);
+			contentIds.add(tab[0]);
+		}
+
+		// remove from FileSystem
+		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
+			for (Long[] tab: contentIdListIdList) {
+				removeContentFromFileSystem(tab[1], tab[0]);
+			}
+		}
+
+
+			removeOrpheanAttachmentContents(contentIds);
+//		}
+	}
+
+	private void removeOrpheanAttachmentContents (List<Long> contentIds) {
+//		List<Long> ids = new ArrayList<>();
+//		ids.addAll(contentIds);
+		if (!contentIds.isEmpty()) {
+			Set<Long> notOrpheans = attachmentContentDao.findNotOrpheanAttachmentContent(contentIds);
+			contentIds.removeAll(notOrpheans);
+			if (!contentIds.isEmpty()) {
+				attachmentContentDao.removeOrpheanAttachmentContents(contentIds);
+			}
+		}
+	}
+
+	public void removeAttachmentsAndLists(List<Long> testStepAttachmentIds) {
+		Set<Long> attachmentIds = attachmentDao.findAllAttachmentsFromLists(testStepAttachmentIds);
+		attachmentDao.removeAllAttachments(attachmentIds);
+		attachmentDao.removeAllAttachmentsLists(testStepAttachmentIds);
+	}
 }
 
 

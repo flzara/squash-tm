@@ -24,10 +24,13 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
+import java.util.List;
+
 public interface AttachmentListDao {
 	AttachmentList getOne(Long id);
 
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
 
 	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
+
 }

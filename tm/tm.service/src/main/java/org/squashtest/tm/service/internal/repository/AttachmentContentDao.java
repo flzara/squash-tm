@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
@@ -31,7 +32,14 @@ import java.util.Set;
 public interface AttachmentContentDao extends JpaRepository<AttachmentContent, Long> {
 
 	@Query
-	Set<Long> findNotOrpheanAttachmentContent(@Param("ids") List<Long> AttachmentContentId);
+	Set<Long> findNotOrpheanAttachmentContent(@Param("ids") List<Long> attachmentContentId);
+
+	@Query
+	List<Object[]> getListPairContentIDListIDFromAttachmentLists(@Param("ids") List<Long> attachmentsList);
+
+	@Modifying
+	@Query
+	void removeOrpheanAttachmentContents(@Param("ids") List<Long> attachmentContentIds);
 
 
 }

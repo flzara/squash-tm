@@ -24,11 +24,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -58,6 +60,8 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 implements NodeDeletionHandler<NODE, FOLDER>{
 
 
+	@Inject
+	protected AttachmentManagerService attachmentManager;
 	/**
 	 * The implemention should return which FolderDao to use depending on the end domain object.
 	 *

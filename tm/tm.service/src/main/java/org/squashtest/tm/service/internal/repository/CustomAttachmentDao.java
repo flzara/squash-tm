@@ -25,9 +25,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.squashtest.tm.domain.attachment.Attachment;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,4 +41,6 @@ public interface CustomAttachmentDao {
 	void removeAttachment(Long attachmentId);
         
         void removeAll(List<Attachment> attachments);
+
+
 }

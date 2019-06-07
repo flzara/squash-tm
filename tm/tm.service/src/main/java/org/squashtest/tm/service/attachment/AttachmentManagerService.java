@@ -72,7 +72,13 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	void cleanContent(AttachmentHolder attachmentHolder);
 
     // TM362
-    Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsListso);
+    Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsList);
 
     void removeContent(long attachmentListId, long attachmentContentId);
+
+	List<Long[]>  getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList);
+
+	void deleteContents(List<Long[]> ContentIListId);
+
+	void removeAttachmentsAndLists(List<Long> testStepAttachmentIds);
 }
