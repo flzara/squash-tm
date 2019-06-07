@@ -163,7 +163,7 @@
 						<label ><f:message key="label.Group"/></label>
 						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
 					</div>
-					
+
 					<div class="display-table-row">
 		 				<label><f:message key="message.changeLocalPassword"/></label>
 		 			<c:choose>
@@ -173,7 +173,7 @@
 		 			<c:otherwise>
 		 				<span class="display-table-cell"><f:message key="message.managedPassword"/></span>
 		 			</c:otherwise>
-		 			</c:choose>	
+		 			</c:choose>
 					</div>
         </div>
 			</jsp:attribute>
@@ -248,8 +248,8 @@
 		  <jsp:attribute name="body">
         <div id="user-preferences.bugtracker-management-table" class="display-table">
           <div class="display-table-row">
-            <div class="display-table-cell">
-              <label for="toggle-BUGTRACKER-MODE-checkbox" class="display-table-cell" style="vertical-align:bottom">
+            <div class="display-table-cell" style="vertical-align:middle">
+              <label class="display-table-cell">
                 <f:message key="user-preferences.bugtracker-management.presentation.label"/>
               </label>
             </div>
@@ -271,7 +271,7 @@
         <jsp:attribute name="body">
           <div class="display-table">
             <div class="display-table-row">
-              <div class="display-table-cell" style="vertical-align: bottom;">
+              <div class="display-table-cell" style="vertical-align: middle;">
               <label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
               </div>
               <div class="display-table-cell">
