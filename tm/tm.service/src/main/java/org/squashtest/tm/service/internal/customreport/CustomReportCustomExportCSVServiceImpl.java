@@ -283,10 +283,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 			.groupBy(getGroupByFieldList(queryDepth, fieldList, cufFieldList, entityList))
 
-			.orderBy(getOrderByFieldList(queryDepth))
-
-			.fetch()
-			.iterator();
+			.orderBy(getOrderByFieldList(queryDepth));
 
 		return joinQuery.fetch().iterator();
 	}
