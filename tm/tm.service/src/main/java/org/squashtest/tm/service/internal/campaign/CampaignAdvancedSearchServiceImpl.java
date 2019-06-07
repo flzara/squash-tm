@@ -52,6 +52,7 @@ import java.util.stream.Stream;
 
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_LABEL;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
@@ -221,7 +222,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("lastExecutedBy", ITEM_TEST_PLAN_TESTER)
 			.map("lastExecutedOn", ITEM_TEST_PLAN_LASTEXECON)
 			.map("milestone.endDate", CAMPAIGN_MILESTONE_END_DATE)
-			.map("milestone.label", CAMPAIGN_MILESTONE_LABEL)
+			.map("milestone.label", CAMPAIGN_MILESTONE_ID)
 			.map("milestone.status", CAMPAIGN_MILESTONE_STATUS)
 			.map("project.id", CAMPAIGN_PROJECT_ID)
 			.map("referencedTestCase.automatable", TEST_CASE_AUTOMATABLE)
