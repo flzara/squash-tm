@@ -84,6 +84,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
+import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
@@ -133,7 +134,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private BugTrackerDao bugTrackerDao;
 	@PersistenceContext
 	private EntityManager em;
-
+	@Inject
+	private RemoteSynchronisationDao remoteSynchronisationDao;
 	@Inject
 	private PartyDao partyDao;
 	@Inject
@@ -584,9 +586,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		library.disablePlugin(pluginId);
+	public void disablePluginForWorkspace(long projectId, List<WorkspaceType> workspaces, String pluginId) {
+		for (WorkspaceType workspace : workspaces) {
+			PluginReferencer<?> library = findLibrary(projectId, workspace);
+			library.disablePlugin(pluginId);
+		}
+	}
+
+	@Override
+	public boolean hasProjectRemoteSynchronisation(long projectId) {
+		return remoteSynchronisationDao.findByProjectId(projectId).size() != 0;
 	}
 
 	@Override

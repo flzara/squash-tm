@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 
+import javax.persistence.NamedQuery;
 import java.util.List;
 
 public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronisation,Long> {
@@ -39,4 +40,7 @@ public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronis
 	 */
 	@Query
 	List<RemoteSynchronisation> findWithProjectByServer(@Param("serverId")Long serverId);
+
+	@Query
+	List<RemoteSynchronisation> findByProjectId(@Param("projectId")Long projectId);
 }

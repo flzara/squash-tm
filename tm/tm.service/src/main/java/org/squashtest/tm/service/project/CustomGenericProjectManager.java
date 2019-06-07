@@ -165,9 +165,14 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
 	/**
-	 * enables the given plugin for the given workspace of the given project
+	 * disables the given plugin for the given workspace of the given project
 	 */
-	void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
+	void disablePluginForWorkspace(long projectId, List<WorkspaceType> workspaces, String pluginId);
+
+	/**
+	 * project still has remote synchronisation or not
+	 */
+	boolean hasProjectRemoteSynchronisation(long projectId);
 
 	/**
 	 * Returns the configuration of a given plugin for a given project. Returns an empty map if the plugin is not bound
