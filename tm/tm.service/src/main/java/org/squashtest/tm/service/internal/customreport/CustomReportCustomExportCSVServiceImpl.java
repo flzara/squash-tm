@@ -39,21 +39,15 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_STEP_ISSUES_IDS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ISSUE_EXECUTION_STEP_ISSUES_NUMBER;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LINKED_REQUIREMENTS_IDS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LINKED_REQUIREMENTS_NUMBER;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
@@ -124,7 +118,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 					Collectors.mapping(CustomReportCustomExportColumn::getCufId, Collectors.toList()))
 			);
 		// Fetch data from database
-		return fetchData(customExport.getScope().get(0).getId(), fieldsList, entityList, cufMap);
+		return fetchData(customExport.getScope().get(0).getId(), fieldsList, entityList, cufMap, selectedColumns);
 	}
 
 	/**
@@ -152,7 +146,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	}
 
 	@SuppressWarnings("unchecked")
-	private Iterator<Record> fetchData(long campaignId, Collection<Field<?>> fieldList, List<EntityType> entityList, Map<EntityType, List<Long>> cufMap) {
+	private Iterator<Record> fetchData(long campaignId, Collection<Field<?>> fieldList, List<EntityType> entityList, Map<EntityType, List<Long>> cufMap, List<CustomReportCustomExportColumn> selectedColumns) {
 
 		int queryDepth = getQueryDepth(entityList);
 
@@ -268,12 +262,12 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		for(EntityType entityType : cufMap.keySet()) {
 			for (Long cufId : cufMap.get(entityType)) {
 				String valueColumnAlias = buildCufColumnAliasName(entityType, cufId);
-				String optionColumnAlias = buildCufOptionColumnAliasName(entityType, cufId);
 				joinQuery.leftJoin(CUSTOM_FIELD_VALUE.as(valueColumnAlias))
 					.on(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_ID.eq(cufJoinColumnMap.get(entityType)))
 					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).BOUND_ENTITY_TYPE.eq(entityType.toString()))
 					.and(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CF_ID.eq(cufId));
 				if(InputType.TAG.equals(cufService.findById(cufId).getInputType())) {
+					String optionColumnAlias = buildCufOptionColumnAliasName(entityType, cufId);
 					joinQuery.leftJoin(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias))
 						.on(CUSTOM_FIELD_VALUE_OPTION.as(optionColumnAlias).CFV_ID.eq(CUSTOM_FIELD_VALUE.as(valueColumnAlias).CFV_ID));
 				}
@@ -281,7 +275,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		}
 		joinQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
 
-			.groupBy(getGroupByFieldList(queryDepth, fieldList, cufFieldList, entityList))
+			.groupBy(getGroupByFieldList(queryDepth, fieldList, cufFieldList, entityList, selectedColumns))
 
 			.orderBy(getOrderByFieldList(queryDepth));
 
@@ -305,36 +299,31 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 		return orderByFieldList;
 	}
 
-	private List<Field<?>> getGroupByFieldList(int queryDepth, Collection<Field<?>> simpleFieldList, Collection<Field<?>> cufFieldList, List<EntityType> entityList) {
-		List<Field<?>> groupByFieldList = new ArrayList<>();
+	private Collection<Field<?>> getGroupByFieldList(int queryDepth, Collection<Field<?>> simpleFieldList, Collection<Field<?>> cufFieldList, List<EntityType> entityList, List<CustomReportCustomExportColumn> selectedColumns) {
+		Set<Field<?>> groupByFieldList = new HashSet<>();
+
+		// Add mandatory primary keys to the group by clause
 		groupByFieldList.add(CAMPAIGN.CLN_ID);
 		if(queryDepth > 1) {
 			groupByFieldList.add(ITERATION.ITERATION_ID);
 		}
 		if(queryDepth > 2) {
 			groupByFieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
-			groupByFieldList.add(CORE_USER.LOGIN);
-			groupByFieldList.add(DATASET.NAME);
-//			if (simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
-//				groupByFieldList.add(TEST_SUITE.ID);
-//			}
-			if (isFetchTestSuite(entityList)) {
-				groupByFieldList.add(TEST_SUITE.ID);
-			}
-			groupByFieldList.add(TEST_CASE.TCLN_ID);
-			groupByFieldList.add(PROJECT.NAME);
-//			if(simpleFieldList.contains(TEST_CASE_MILESTONE.getJooqTableField())) {
-//				groupByFieldList.add(MILESTONE.as("tc_milestone").MILESTONE_ID);
-//			}
 		}
 		if(queryDepth > 3) {
 			groupByFieldList.add(EXECUTION.EXECUTION_ID);
 		}
 		if(queryDepth > 4) {
 			groupByFieldList.add(EXECUTION_STEP.EXECUTION_STEP_ID);
-			groupByFieldList.add(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ORDER);
+		}
+		// Add required primary keys to the group by clause according to the selected columns
+		for(CustomReportCustomExportColumn column : selectedColumns) {
+			if(column.getLabel().getJooqTablePkField() != null) {
+				groupByFieldList.add(column.getLabel().getJooqTablePkField());
+			}
 		}
 
+/*
 		groupByFieldList.addAll(
 			simpleFieldList.stream().filter(field ->
 				!field.equals(TEST_CASE_MILESTONE.getJooqTableField()) &&
@@ -348,6 +337,8 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 					!field.equals(ISSUE_EXECUTION_STEP_ISSUES_IDS.getJooqTableField())
 			).collect(Collectors.toList())
 		);
+*/
+
 		groupByFieldList.addAll(
 			cufFieldList.stream().filter(field -> {
 					try {
