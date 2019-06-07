@@ -164,5 +164,11 @@
       ALTER TABLE TEST_CASE MODIFY UUID VARCHAR2(36) NOT NULL;
     </sql>
   </changeSet>
+  <changeSet id="tm-1.20.0-TM-503-clean-campaign-test-plan-item-table" author="aguilhem">
+    <comment>Clean CAMPAIGN_TEST_PLAN_ITEM table from line with null value in CAMPAIGN_ID </comment>
+    <sql>
+      DELETE FROM CAMPAIGN_TEST_PLAN_ITEM WHERE CAMPAIGN_ID IS NULL;
+    </sql>
+  </changeSet>
 
 </databaseChangeLog>

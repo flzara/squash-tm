@@ -28,6 +28,7 @@
 
  <include file="tm.data-1.20.0-TM-220.xml" relativeToChangelogFile="true" />
  <include file="tm.data-1.20.0-TM-13.xml" relativeToChangelogFile="true" />
+ <include file="tm.data-1.20.0-TM-503.xml" relativeToChangelogFile="true" />
 
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.20.0.xml"
@@ -72,5 +73,14 @@
 
     </preConditions>
     <comment>We check that IS_MANUAL value have been changed according to the changeset  </comment>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-503-test" author="agu">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from CAMPAIGN_TEST_PLAN_ITEM where CAMPAIGN_ID IS NULL
+      </sqlCheck>
+    </preConditions>
+    <comment>We check that there are no null value for campaign_id  </comment>
   </changeSet>
 </databaseChangeLog>

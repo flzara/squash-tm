@@ -1,0 +1,6 @@
+insert into CAMPAIGN_TEST_PLAN_ITEM(CTPI_ID, TEST_CASE_ID, CAMPAIGN_ID)
+values
+(-1, -100, NULL),
+(-2, -200, NULL);
+
+
