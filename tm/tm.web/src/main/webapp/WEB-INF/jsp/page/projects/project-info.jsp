@@ -695,9 +695,9 @@ require(["common"], function() {
 
     function sendBugTrackerTag(tags){
       $.ajax({type: 'POST',
-        url: "${projectUrl}",
-        data : {id:"project-bugtracker-project-name",
-          values:tags}
+        url: "${projectUrl}/bugtracker/projectName",
+        data : JSON.stringify(tags),
+        contentType: "application/json"
     });
 	}
 

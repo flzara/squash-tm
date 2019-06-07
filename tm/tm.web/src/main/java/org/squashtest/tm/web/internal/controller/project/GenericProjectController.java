@@ -128,8 +128,6 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{" + RequestParams.PROJECT_ID + "}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private static final String VALUES = "values[]";
-
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
 		.map(LABEL, LABEL)
@@ -261,10 +259,9 @@ public class GenericProjectController {
 		return toReturn;
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {
-		"id=project-bugtracker-project-name", VALUES})
+	@RequestMapping(value = PROJECT_ID_URL + "/bugtracker/projectName", method = RequestMethod.POST)
 	@ResponseBody
-	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
+	public List<String> changeBugtrackerProjectName(@RequestBody List<String> projectBugTrackerNames,
 													@PathVariable long projectId) {
 		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerNames);
 		return projectBugTrackerNames;
