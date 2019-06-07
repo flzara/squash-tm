@@ -344,7 +344,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			var context = {"text-radio-id": fieldId, "text-radio-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#radio-button-template", context));
 
-
+			$fieldDom.searchRadioWidget();
 			$fieldDom.searchRadioWidget("createDom", "F" + fieldId, options);
 			$fieldDom.searchRadioWidget("fieldvalue", enteredValue);
 
