@@ -665,17 +665,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        $.ajax({
-                            url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
-                            method: 'POST',
-                            data: {
-                                "id": "automation-request-status",
-                                "value": "AUTOMATED"
-                            }
-                        }).success(function () {
-                            domtable.refresh();
-                        });
-                        self.trySquashTAScriptAssociation(tcIds);
+                        self.trySquashTAScriptAssociation(tcIds).done(function(map){
+                        	if(Object.keys(map).length === 0){
+														$.ajax({
+															url: squashtm.app.contextRoot + 'automation-requests/' + tcIds,
+															method: 'POST',
+															data: {
+																"id": "automation-request-status",
+																"value": "AUTOMATED"
+															}
+														}).success(function () {
+															domtable.refresh();
+														});
+													} else {
+														notification.showWarning(translator.get("automation.notification.script.none"));
+													}
+												});
                     }
                     self.storage.remove(self.key);
                     self.deselectAll(domtable);

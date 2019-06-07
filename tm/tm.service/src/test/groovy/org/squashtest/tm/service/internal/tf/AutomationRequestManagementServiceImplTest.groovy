@@ -100,7 +100,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		result.containsValue("TestWithUuidNotFound")
 	}
 
-	def "Should find no TA script to associate with test case and not remove previous auto associated script"(){
+	def "Should find no TA script to associate with test case and not remove previous manually associated script"(){
 		given:
 
 		// A TestCase

@@ -675,9 +675,14 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-                        self.updateStatus(domtable, "AUTOMATED");
-                        self.trySquashTAScriptAssociation(tcIds);
-                    }
+											self.trySquashTAScriptAssociation(tcIds).done(function(map){
+												if(Object.keys(map).length === 0){
+													self.updateStatus(domtable, "AUTOMATED");
+												} else {
+													notification.showWarning(translator.get("automation.notification.script.none"));
+												}
+											});
+										}
                 });
 
                 $("#rejected-automation-button").on("click", function () {

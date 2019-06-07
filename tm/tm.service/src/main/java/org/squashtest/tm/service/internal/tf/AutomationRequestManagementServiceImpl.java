@@ -320,7 +320,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	public Map<Long, String> updateTAScript(List<Long> tcIds) {
 		LOGGER.debug("Update TA script of the following test cases: {}", tcIds.toString());
 
-		Map<Long, String> losingTAScriptTestCases = new HashMap<>();
+		Map<Long, String> noTAScriptTestCases = new HashMap<>();
 
 		// 1 - We fetch all the test cases from DB (with project and AutomationProject list)
 		List<TestCase> testCases = testCaseDao.findAllByIdsWithProject(tcIds);
@@ -344,13 +344,13 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 					taProjectContents.stream().filter(tapc -> tapc.getProject().getServer().getId().equals(tc.getProject().getTestAutomationServer().getId())).collect(Collectors.toList());
 
 				// Finally we do the TA script association
-				doTAScriptAssignation(tc, testAutomationProjectContentsFilteredByTestCaseAutomationServer, losingTAScriptTestCases);
+				doTAScriptAssignation(tc, testAutomationProjectContentsFilteredByTestCaseAutomationServer, noTAScriptTestCases);
 			} else {
 				throw new IllegalArgumentException();
 			}
 		});
 
-		return losingTAScriptTestCases;
+		return noTAScriptTestCases;
 	}
 
 	// Method allowed to retrieve distinct element from a list based on multiple attributes.
@@ -360,7 +360,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return t -> seen.add(keyExtractor.apply(t));
 	}
 
-	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents, Map<Long, String> losingTAScriptTestCases){
+	private void doTAScriptAssignation(TestCase testCase, Collection<TestAutomationProjectContent> testAutomationProjectContents, Map<Long, String> noTAScriptTestCases){
 		List<AutomatedTest> assignableAutomatedTestList = extractAssignableAutomatedTestList(testCase, testAutomationProjectContents);
 
 		if(assignableAutomatedTestList.size() > 0){
@@ -368,10 +368,10 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 				addOrEditAutomatedScript(testCase,assignableAutomatedTestList.get(0));
 			}
 			else {
-				manageConflictAssociation(testCase, assignableAutomatedTestList, losingTAScriptTestCases);
+				manageConflictAssociation(testCase, assignableAutomatedTestList, noTAScriptTestCases);
 			}
 		} else {
-			manageNoScript(testCase, losingTAScriptTestCases);
+			manageNoScript(testCase, noTAScriptTestCases);
 		}
 	}
 
@@ -391,9 +391,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 			if (tc.getAutomatedTest() != null) {
 				testCaseModificationService.removeAutomation(tc.getId());
-				losingTAScriptTestCases.put(tc.getId(), tc.getName());
-			}
 
+			}
+			losingTAScriptTestCases.put(tc.getId(), tc.getName());
 			StringJoiner stringJoiner = new StringJoiner("#");
 			automatedTestList.stream().map(AutomatedTest::getFullName).forEach(stringJoiner::add);
 
@@ -413,18 +413,19 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		testCaseModificationService.bindAutomatedTestAutomatically(tc.getId(), trueAutomationProject.getId(), automatedTest.getName());
 	}
 
-	private void manageNoScript(TestCase tc, Map<Long, String> losingTAScriptTestCases){
+	private void manageNoScript(TestCase tc, Map<Long, String> noTAScriptTestCases){
 		LOGGER.debug("No TA script associated with test case {}", tc.getId().toString());
 		if(!tc.getAutomationRequest().isManual()){
 			if (tc.getAutomatedTest()!=null ){
 				testCaseModificationService.removeAutomation(tc.getId());
-				losingTAScriptTestCases.put(tc.getId(), tc.getName());
 			}else if(tc.getAutomationRequest().getConflictAssociation()!=null && !tc.getAutomationRequest().getConflictAssociation().isEmpty()){
 				requestDao.updateConflictAssociation(tc.getId(), "");
 			}
 			requestDao.updateIsManual(tc.getId(), false);
+			noTAScriptTestCases.put(tc.getId(), tc.getName());
+		} else if(tc.getAutomatedTest() == null){
+			noTAScriptTestCases.put(tc.getId(), tc.getName());
 		}
-
 	}
 
 	/*TM-13:update automatic script before execution */
