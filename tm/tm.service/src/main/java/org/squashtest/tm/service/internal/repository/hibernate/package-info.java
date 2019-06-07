@@ -1078,7 +1078,7 @@
 
 	// RemoteSynchronisation
 	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId"),
-	@NamedQuery(name="RemoteSynchronisation.findByProjectId", query="select rs from RemoteSynchronisation rs join where rs.project.id = :projectId"),
+	@NamedQuery(name="RemoteSynchronisation.findByProjectId", query="select rs from RemoteSynchronisation rs where rs.project.id = :projectId"),
 
 	// AutomationRequest
 	@NamedQuery(name="AutomationRequest.updateIsManual", query = "UPDATE AutomationRequest ar SET ar.isManual = :isManual WHERE ar.testCase.id = :testCaseId"),

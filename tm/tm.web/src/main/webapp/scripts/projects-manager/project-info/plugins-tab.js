@@ -122,9 +122,13 @@ define(
 					var url = routing.buildURL('project-plugins', projectId, pluginId),
 						method = (btn[0].checked) ? 'POST' : 'DELETE';
 
-					$.ajax({url : url, type : method});
+					$.ajax({url : url, type : method}).error(function(event) {
+						data['enabled'] = true;
+						configureSwitch($row, data);
+					});
 
 					configureStyle($row, data);
+
 				});
 
 			};
