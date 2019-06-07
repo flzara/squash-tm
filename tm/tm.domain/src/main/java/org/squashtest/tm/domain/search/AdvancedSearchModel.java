@@ -57,10 +57,11 @@ public class AdvancedSearchModel {
 	public Map<String, AdvancedSearchFieldModel> getFields(){
 
 		if (searchByMilestone()){
-			return stripMilestones();
+			//SearchByMilestone isn't a field querying so we should remove it
+			return stripSearchByMilestoneField();
 		}
 		else {
-			return this.fields;
+			return stripMilestones();
 		}
 	}
 
@@ -84,6 +85,12 @@ public class AdvancedSearchModel {
 	private Map<String, AdvancedSearchFieldModel> stripMilestones(){
 		Map<String, AdvancedSearchFieldModel> copy = new HashMap<>(fields);
 		MILESTONE_SEARCH_CRITERIA_KEYS.forEach(copy::remove);
+		return copy;
+	}
+
+	private Map<String, AdvancedSearchFieldModel> stripSearchByMilestoneField() {
+		Map<String, AdvancedSearchFieldModel> copy = new HashMap<>(fields);
+		copy.remove(SEARCH_BY_MILESTONE);
 		return copy;
 	}
 }

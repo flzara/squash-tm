@@ -138,15 +138,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return projectDao.findUsersWhoModifiedTestCases(idList);
 	}
 
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestCase> searchForTestCases(AdvancedSearchQueryModel model, Locale locale) {
-
-		return new ArrayList<>();
-
-	}
-
 	@Override
 	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model, Locale locale) {
 		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
