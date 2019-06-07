@@ -112,6 +112,14 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		return size
 	}
 
-
+	@DataSet("CustomReportCustomExportCSVServiceIT.sandbox.huge.xml")
+	def "getRowsData(CustomReportCustomExport) - Should retrieve many records of a Huge Full Export with no CustomField without Exceptions"() {
+		given:
+		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-10L)
+		when:
+		Iterator<Record> result = customExportService.getRowsData(customExport)
+		then:
+		getIteratorSize(result) == 240
+	}
 
 }
