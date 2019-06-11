@@ -69,16 +69,15 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		Sheet dsSheet = workbook.getSheet(TC_SHEET);
 		Row h = dsSheet.getRow(0);
 		int cIdx = h.getLastCellNum();
+		if (projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+			h.createCell(cIdx++).setCellValue("TC_AUTOMATABLE");
+		}
 		if (milestonesEnabled) {
 			h.createCell(cIdx++).setCellValue(MILESTONE_SEARCH_TC_COLUMNS.getHeader());
 		}
 
 		for (TemplateColumn t : SEARCH_TC_COLUMNS) {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
-		}
-
-		if(projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
-			h.createCell(cIdx++).setCellValue("TC_AUTOMATABLE");
 		}
 	}
 
@@ -89,19 +88,18 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 		int nbSteps = tc.getSteps().size();
 		int nbIteration = iterationFinder.findIterationContainingTestCase(tcm.getId()).size();
 		int cIdxOptional = cIdx;
-		if (milestonesEnabled) {
-			r.createCell(cIdxOptional++).setCellValue(nbMilestone);
-		}
-		r.createCell(cIdxOptional++).setCellValue(nbSteps);
-		r.createCell(cIdxOptional++).setCellValue(nbIteration);
-		if(projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+		if (projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
 			if(tc.getProject().isAllowAutomationWorkflow()) {
 				r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
 			} else {
 				r.createCell(cIdxOptional++).setCellValue("-");
 			}
-
 		}
+		if (milestonesEnabled) {
+			r.createCell(cIdxOptional++).setCellValue(nbMilestone);
+		}
+		r.createCell(cIdxOptional++).setCellValue(nbSteps);
+		r.createCell(cIdxOptional++).setCellValue(nbIteration);
 
 		return cIdxOptional;
 	}
