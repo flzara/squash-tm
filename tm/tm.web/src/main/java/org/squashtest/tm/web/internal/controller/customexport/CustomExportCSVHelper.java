@@ -125,7 +125,11 @@ public class CustomExportCSVHelper {
 		Object value = null;
 		if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
 			// Translate i18n keys of the info list items
-			value = translator.internationalize(String.valueOf(record.get(columnField)), locale);
+			Object i18nKey = record.get(columnField);
+			// This can be null if left joined with no Test Case
+			if(i18nKey != null) {
+				value = translator.internationalize(String.valueOf(i18nKey), locale);
+			}
 		} else if (label.equals(CAMPAIGN_DESCRIPTION) || label.equals(ITERATION_DESCRIPTION) || label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) ||
 			label.equals(TEST_CASE_PREREQUISITE) || label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_COMMENT) || label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
 			// Clean Html content
