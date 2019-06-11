@@ -195,10 +195,12 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<Long> testCaseIds = tuples.stream()
 			.map(tuple -> tuple.get(0, Long.class))
 			.collect(Collectors.toList());
-		HibernateQuery<?> noPagingQuery = query.clone(session);
-		noPagingQuery.limit(Long.MAX_VALUE);
-		noPagingQuery.offset(0);
-		long count = noPagingQuery.fetchCount();
+
+
+		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
+
 		List<TestCase> result = testCaseDao.findAllByIds(testCaseIds);
 
 		// We should sort the result because findallbyids don't conserve the order

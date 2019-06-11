@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
@@ -37,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.squashtest.tm.domain.requirement.QRequirementVersion.requirementVersion;
 
-import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
@@ -62,6 +59,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -185,7 +184,10 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		// round 3 : now get the actual requirement versions
 		List<RequirementVersion> result = requirementVersionDao.findAllById(ids);
 
+		// We should sort the result because findallbyids don't conserve the order
+		Collections.sort(result, Comparator.comparing(version -> result.indexOf(version.getId())));
 		return new PageImpl(result, sorting, count);
+
 	}
 	
 
@@ -196,11 +198,11 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	// tests that the requirement has children by a subquery of the form 'select 1 from where <predicate>'
 	// this form is less performant but has a good isolation from the main query, which makes its robusts
 	// to alteration of the outer query.
-	private static void filterByChildren(ExtendedHibernateQuery<?> query,  AdvancedSearchFieldModel model) {
+	private static void createFilterHaveChildren(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
 
 		AdvancedSearchRangeFieldModel range = (AdvancedSearchRangeFieldModel) model;
 
-		QRequirement parent = new QRequirement("parent");
+		QRequirement parentRequirement = new QRequirement("parentRequirement");
 		QRequirementVersion parentVersion = new QRequirementVersion("parentVersion");
 
 		// This is the column on which we join with the outer query. We already know that the engine will
@@ -210,17 +212,17 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		HibernateQuery<Integer> subquery = new ExtendedHibernateQuery<>()
 												 .select(Expressions.ONE)
-												 .from(parent)
-												 .join(parent.versions, parentVersion)
+												 .from(parentRequirement)
+												 .join(parentRequirement.versions, parentVersion)
 												 .where(parentVersion.id.eq(outerVersion.id))
-													.groupBy(parent.id);
+													.groupBy(parentRequirement.id);
 
 		// now check if we need to verify that at least one relation exist, or at most zero :
 		if (range.hasMaxValue()){
-			subquery.having(parent.children.size().eq(0));
+			subquery.having(parentRequirement.children.size().eq(0));
 		}
 		else{
-			subquery.having(parent.children.size().gt(0));
+			subquery.having(parentRequirement.children.size().gt(0));
 		}
 
 		// append to the superquery
@@ -228,6 +230,42 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 	}
+
+
+	// same remark than for createFilterHaveChildren
+	private static void createFilterHaveParent(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchRangeFieldModel range = (AdvancedSearchRangeFieldModel) model;
+
+		
+		QRequirement parentRequirement = new QRequirement("parentRequirement");
+		QRequirement childRequirement = new QRequirement("childRequirement");
+		QRequirementVersion childVersion = new QRequirementVersion("childVersion");
+
+
+		// This is the column on which we join with the outer query. We already know that the engine will
+		// select the default alias for requirementVersion.
+		QRequirementVersion outerVersion = requirementVersion;
+
+		HibernateQuery<Integer> subquery = new ExtendedHibernateQuery<>()
+												.select(Expressions.ONE)
+												.from(parentRequirement)
+												.join(parentRequirement.children, childRequirement)
+												.join(childRequirement.versions, childVersion)
+												.where(childVersion.id.eq(outerVersion.id));
+
+
+		// now check if we need to verify that at least one relation exist, or at most zero :
+		if (range.hasMaxValue()){
+			query.where(subquery.notExists());
+		}
+		else{
+			query.where(subquery.exists());
+		}
+
+
+	}
+	
 
 	// ******************* column mappings  *******************************************************
 
@@ -256,10 +294,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 				
-				.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::filterByChildren));
-				
+				.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveChildren))				
+				.mapHandler("parent", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveParent));
 				/*
-				.mapHandler("parent", null)
 				.mapHandler("link-type", null);
 				*/
 
