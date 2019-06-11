@@ -64,6 +64,15 @@ public class AdvancedSearchModel {
 			return stripMilestones();
 		}
 	}
+	
+	/**
+	 * Returns a copy of the keyset, that can then be modified without altering the underlying map.
+	 * 
+	 * @return
+	 */
+	public Set<String> getFieldKeys(){
+		return new HashSet<>(getFields().keySet());
+	}
 
 	public AdvancedSearchModel shallowCopy(){
 

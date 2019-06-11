@@ -23,8 +23,12 @@ package org.squashtest.tm.service.internal.advancedsearch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Ops.AggOps;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +38,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryModel;
@@ -71,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,7 +140,44 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return this;
 	}
 
-	public <T> HibernateQuery<T> prepare() {
+	/**
+	 * Returns the list of ids of the entity of interrest. The selected column id is
+	 *  the one specified by mappings.getIdKey().
+	 * 
+	 * The resulting query should be given a session.
+	 * 
+	 * @return
+	 */
+	public <T> HibernateQuery<T> prepareFetchQuery() {
+
+		ExtendedHibernateQuery<T> hibQuery = basePrepareQuery();
+		
+		return hibQuery;
+
+	}
+	
+	/**
+	 * Prepares the query as a count query. It removes the pagination
+	 * and should be invoked using 'selectCount()'.
+	 * 
+	 * @return
+	 */
+
+	
+	public <T> HibernateQuery<T> prepareCountQuery() {
+
+		ExtendedHibernateQuery<T> countQuery = basePrepareQuery();
+		
+		// neutralize the paging 
+		countQuery.limit(Long.MAX_VALUE);
+		countQuery.offset(0);
+
+		return countQuery;
+		
+	}
+	
+	
+	private <T> ExtendedHibernateQuery<T> basePrepareQuery() {
 
 		// Find all ColumnPrototypes
 		prototypesByLabel = columnPrototypeDao.findAll().stream().collect(Collectors.toMap(
@@ -159,6 +203,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return hibQuery;
 
 	}
+	
 
 	// *************** Bulk query creation methods ************************
 
@@ -169,7 +214,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		query.setJoinStyle(NaturalJoinStyle.INNER_JOIN);
 
 		// In the search field, projectids are not always set so we must secure this point on projects that the user can read.
-		secureProjectFilter(advancedSearchQueryModel.getModel());
+		secureProjectFilter();
 
 		// create the select
 		List<QueryProjectionColumn> projections = createMappedProjections();
@@ -178,7 +223,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		// create the filters
 		List<QueryFilterColumn> filters = createMappedFilters();
 		query.setFilterColumns(filters);
-
+		
 		// create the ordering
 		List<QueryOrderingColumn> orders = createMappedOrders();
 		query.setOrderingColumns(orders);
@@ -307,8 +352,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		ColumnMapping formMapping = mappings.getFormMapping();
 
-		AdvancedSearchModel model = advancedSearchQueryModel.getModel();
-		Set<String> processableKeys = model.getFields().keySet();
+		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
+		Set<String> processableKeys = model.getFieldKeys();
 
 
 		/*
@@ -339,11 +384,11 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private void applySpeciallyHandledFilters(ExtendedHibernateQuery<?> query){
 
-		AdvancedSearchModel model = advancedSearchQueryModel.getModel();
+		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
 
 		ColumnMapping formMapping = mappings.getFormMapping();
 
-		Set<String> processableKeys =  model.getFields().keySet();
+		Set<String> processableKeys =  model.getFieldKeys();
 
 		// process only the specially handled filters this time
 		processableKeys.retainAll(formMapping.getSpecialKeys());
@@ -351,7 +396,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		for (String key: processableKeys){
 			SpecialHandler handler = formMapping.findHandler(key);
 			AdvancedSearchFieldModel searchField = model.getFields().get(key);
-			handler.applyFilter.accept(query, searchField);
+			
+			handler.applyFilter.accept(query,  searchField);
 		}
 
 	}
@@ -455,14 +501,14 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	}
 
-
+	// TODO : see if one day we support MATCHES
 	private void filterByPlainText(QueryFilterColumn filterColumn, AdvancedSearchFieldModel model) {
 
 		AdvancedSearchSingleFieldModel singleFieldModel = (AdvancedSearchSingleFieldModel) model;
 
 		String value = singleFieldModel.getValue();
 
-		filterColumn.setOperation(Operation.MATCHES);
+		filterColumn.setOperation(Operation.LIKE);
 		filterColumn.getValues().add(value);
 
 	}
@@ -603,8 +649,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		filterColumn.setOperation(Operation.IN);
 	}
 	
-
-
+	
 
 	// ****************************** Order creation **************************
 
@@ -700,14 +745,16 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	// **************** utility methods **************************************
 
 
-	private void secureProjectFilter(AdvancedSearchModel model) {
+	private void secureProjectFilter() {
+		AdvancedSearchModel formModel = advancedSearchQueryModel.getSearchFormModel();
+		
 		// Issue #5079 again
 		// first task is to locate which name has the project criteria because it may differ depending on the interface
 		// (test case, requirement, test-case-through-requirements
 		String key = null;
-		Set<String> keys = model.getFields().keySet();
+		Set<String> keys = formModel.getFieldKeys();
 		for (String k : keys) {
-			if (k.contains(PROJECT_FILTER_NAME)) {
+			if (k.contains(PROJECT_FILTER_NAME)) { // assess whether the comparison should be 'equals'
 				key = k;
 				break;
 			}
@@ -717,7 +764,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			return;
 		}
 
-		AdvancedSearchListFieldModel projectFilter = (AdvancedSearchListFieldModel) model.getFields().get(key);
+		AdvancedSearchListFieldModel projectFilter = (AdvancedSearchListFieldModel) formModel.getFields().get(key);
 
 		List<String> approvedIds;
 		List<String> selectedIds = projectFilter.getValues();

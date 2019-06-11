@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.advancedsearch;
 
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
@@ -165,36 +166,57 @@ public final class AdvancedSearchColumnMappings {
 		}
 
 	}
+	
 
 
 	/**
-	 *
+	 * 
+	 * Class that allows you to directly specify the QueryDsl bits of the query when no column prototype would do the job.
+	 * 
 	 */
-	public final class SpecialHandler {
+	public static final class SpecialHandler {
 		/**
 		 * Returns directly the EntityPath, instead of the column prototype label. The EntityPath should not worry about
 		 * aliasing, and may perfectly returns the attribute path built from a default QBean.
+		 * 
+		 * That QBean will appear in the select / orderby clause. If the custom handling for the given attribute is not 
+		 * targeted at one of these then returning null is fine. 
 		 *
 		 * @return
 		 */
-		Supplier<EntityPath<?>> getAttributePath = null;
+		Supplier<EntityPath<?>> getAttributePath = () -> null;
 
 		/**
-		 * Directly modifies the query to add a filter. The compared values are passed as arguments along with the query.
+		 * Directly adds the querydsl bits to the query.
 		 *
-		 * @param query
 		 * @param args
 		 */
-		BiConsumer<ExtendedHibernateQuery<?>, AdvancedSearchFieldModel> applyFilter = (query, args) -> {};
+		BiConsumer<ExtendedHibernateQuery, AdvancedSearchFieldModel> applyFilter = (query, args) -> {};
 
-		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath){
+		
+		
+		public SpecialHandler(BiConsumer<ExtendedHibernateQuery, AdvancedSearchFieldModel> applyFilter) {
+			super();
+			this.applyFilter = applyFilter;
+		}
+		
+		
+		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath) {
+			super();
 			this.getAttributePath = getAttributePath;
 		}
 
-		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath, BiConsumer<ExtendedHibernateQuery<?>, AdvancedSearchFieldModel> applyFilter){
+		public SpecialHandler(Supplier<EntityPath<?>> getAttributePath, BiConsumer<ExtendedHibernateQuery, AdvancedSearchFieldModel> applyFilter) {
+			super();
 			this.getAttributePath = getAttributePath;
 			this.applyFilter = applyFilter;
 		}
+		
+		public SpecialHandler(){
+			// why whould you ever use an empty SpecialHandler anyway ?
+		}
+
+
 
 	}
 

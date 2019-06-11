@@ -44,9 +44,9 @@ class SearchInterfaceDescriptionTest extends Specification {
 	Provider internationalizableFormatterProvider = Mock()
 	InternationalizationHelper messageSource = Mock()
 
-	/*def "should create level combo intermediate model"() {
+	def "should create level combo intermediate model"() {
 		given:
-		def expectedKeys = RequirementCriticality.values().collect { it.level + "-" + it.name() } as Set
+		def expectedKeys = RequirementCriticality.values().collect { it.name() } as Set
 
 		and:
 		levelFormatter.formatLabel(_) >> "formatted label"
@@ -67,7 +67,7 @@ class SearchInterfaceDescriptionTest extends Specification {
 	def "should create level combo model"() {
 		given:
 		def sortedCrits = RequirementCriticality.values().sort({a, b -> a.level - b.level})
-		def expectedKeys = sortedCrits.collect { it.level + "-" + it.name() }
+		def expectedKeys = sortedCrits.collect { it.name() }
 		def expectedLabels = sortedCrits.collect { it.name() }
 
 		and:
@@ -123,5 +123,5 @@ class SearchInterfaceDescriptionTest extends Specification {
 		bar.value == "bar"
 		bar.code == "B"
 		!bar.selected
-	}*/
+	}
 }

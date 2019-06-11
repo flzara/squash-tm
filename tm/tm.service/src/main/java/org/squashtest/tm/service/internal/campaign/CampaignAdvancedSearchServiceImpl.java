@@ -137,7 +137,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		converter.configureModel(searchModel).configureMapping(MAPPINGS);
 
-		HibernateQuery<Tuple> query = converter.prepare();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		query = query.clone(session);
 
 		List<Tuple> tuples = query.fetch();
@@ -146,12 +146,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map(tuple -> tuple.get(0, Long.class))
 			.collect(Collectors.toList());
 
-		HibernateQuery<?> noPagingQuery = query.clone(session);
-
-		noPagingQuery.limit(Long.MAX_VALUE);
-		noPagingQuery.offset(0);
-
-		long count = noPagingQuery.fetchCount();
+		
+		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
+		
 
 		List<IterationTestPlanItem> result = iterationTestPlanDao.findAllByIdIn(itpiIds);
 

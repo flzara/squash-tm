@@ -187,7 +187,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
-		HibernateQuery<Tuple> query = converter.prepare();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 
 		query = query.clone(session);
 		List<Tuple> tuples = query.fetch();

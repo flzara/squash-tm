@@ -119,7 +119,6 @@ class SubQueryBuilder extends QueryBuilder {
 	// we must join on the root entity of the subquery with the specified axe
 	private void joinWithOuterquery(){
 
-		List<QueryAggregationColumn> aggregationColumns = internalQueryModel.getAggregationColumns();
 
 		Expression<?> outerQueryJoinPath = subselectProfileJoinExpression;
 		Expression<?> subQueryJoinPath = utils.getQBean(internalQueryModel.getRootEntity());

@@ -21,6 +21,9 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -31,10 +34,21 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.squashtest.tm.domain.requirement.QRequirementVersion.requirementVersion;
+
+import org.squashtest.tm.domain.jpql.ExtOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.QRequirement;
+import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
@@ -78,6 +92,11 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUI
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_TCCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_VERS_NUM;
+
+
+
+
+
 
 
 @Transactional(readOnly = true)
@@ -146,7 +165,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
 
-		HibernateQuery<Tuple> query = converter.prepare();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		
 		// attach a session
 		query = query.clone(session);
@@ -159,19 +178,56 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		// round 2 : get the total count (remove the paging)
 
-		HibernateQuery<?> noPagingQuery = query.clone(session);
-		noPagingQuery.limit(Long.MAX_VALUE);
-		noPagingQuery.offset(0);
-		long count = noPagingQuery.fetchCount();
+		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
 
 		// round 3 : now get the actual requirement versions
-
 		List<RequirementVersion> result = requirementVersionDao.findAllById(ids);
-
 
 		return new PageImpl(result, sorting, count);
 	}
+	
 
+	
+	// ******************* special handling *******************************************************
+	
+
+	// tests that the requirement has children by a subquery of the form 'select 1 from where <predicate>'
+	// this form is less performant but has a good isolation from the main query, which makes its robusts
+	// to alteration of the outer query.
+	private static void filterByChildren(ExtendedHibernateQuery<?> query,  AdvancedSearchFieldModel model) {
+
+		AdvancedSearchRangeFieldModel range = (AdvancedSearchRangeFieldModel) model;
+
+		QRequirement parent = new QRequirement("parent");
+		QRequirementVersion parentVersion = new QRequirementVersion("parentVersion");
+
+		// This is the column on which we join with the outer query. We already know that the engine will
+		// select the default alias for requirementVersion.
+		QRequirementVersion outerVersion = requirementVersion;
+
+
+		HibernateQuery<Integer> subquery = new ExtendedHibernateQuery<>()
+												 .select(Expressions.ONE)
+												 .from(parent)
+												 .join(parent.versions, parentVersion)
+												 .where(parentVersion.id.eq(outerVersion.id))
+													.groupBy(parent.id);
+
+		// now check if we need to verify that at least one relation exist, or at most zero :
+		if (range.hasMaxValue()){
+			subquery.having(parent.children.size().eq(0));
+		}
+		else{
+			subquery.having(parent.children.size().gt(0));
+		}
+
+		// append to the superquery
+		query.where(subquery.exists());
+
+
+	}
 
 	// ******************* column mappings  *******************************************************
 
@@ -196,14 +252,16 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 				.map("milestone.label", REQUIREMENT_VERSION_MILESTONE_LABEL)
 				.map("milestone.status", REQUIREMENT_VERSION_MILESTONE_STATUS)
 				.map("milestone.endDate", REQUIREMENT_VERSION_MILESTONE_END_DATE)
-				.map("testcases", REQUIREMENT_VERSION_TCCOUNT);
+				.map("testcases", REQUIREMENT_VERSION_TCCOUNT)
 
 
-			/*	TODOs :
-				.mapHandler("requirement.children", null)
+				
+				.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::filterByChildren));
+				
+				/*
 				.mapHandler("parent", null)
 				.mapHandler("link-type", null);
-			*/
+				*/
 
 
 

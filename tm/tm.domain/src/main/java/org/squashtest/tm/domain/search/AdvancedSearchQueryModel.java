@@ -38,19 +38,19 @@ public class AdvancedSearchQueryModel {
 
 	private Pageable pageable;
 
-	private List<String> searchResultColumns = new ArrayList<>();
+	private List<String> searchResultKeys = new ArrayList<>();
 
-	private AdvancedSearchModel model;
+	private AdvancedSearchModel searchFormModel;
 
 	public AdvancedSearchQueryModel() {
 	}
 
-	public AdvancedSearchQueryModel(Pageable pageable, List<String> searchResultColumns, AdvancedSearchModel model) {
+	public AdvancedSearchQueryModel(Pageable pageable, List<String> searchResultKeys, AdvancedSearchModel model) {
 		this.pageable = pageable;
 
-		this.searchResultColumns = searchResultColumns;
+		this.searchResultKeys = searchResultKeys;
 
-		this.model = model;
+		this.searchFormModel = model;
 	}
 
 	public Pageable getPageable() {
@@ -61,21 +61,26 @@ public class AdvancedSearchQueryModel {
 		this.pageable = pageable;
 	}
 
-	public List<String> getSearchResultColumns() {
-		List<String> columns = new ArrayList<>(searchResultColumns);
+	public List<String> getSearchResultKeys() {
+		List<String> columns = new ArrayList<>(searchResultKeys);
 		PARAMS_NOT_QUERYING.forEach(columns::remove);
 		return columns;
 	}
 
-	public void setSearchResultColumns(List<String> searchResultColumns) {
-		this.searchResultColumns = searchResultColumns;
+	public void setSearchResultKeys(List<String> searchResultKeys) {
+		this.searchResultKeys = searchResultKeys;
 	}
 
-	public AdvancedSearchModel getModel() {
-		return model;
+	public AdvancedSearchModel getSearchFormModel() {
+		return searchFormModel;
 	}
+	
+	public Set<String> getSearchFormKeys(){
+		return new HashSet<>(searchFormModel.getFieldKeys());
+	}
+	
 
 	public void setModel(AdvancedSearchModel model) {
-		this.model = model;
+		this.searchFormModel = model;
 	}
 }
