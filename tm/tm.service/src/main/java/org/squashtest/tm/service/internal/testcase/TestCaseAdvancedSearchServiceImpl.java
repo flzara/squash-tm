@@ -49,9 +49,12 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,6 +80,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_KIND;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_BY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_ON;
@@ -124,9 +128,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
-
-	@Inject
-	private QueryProcessingServiceImpl dataFinder;
 
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases(List<Long> idList) {
@@ -194,14 +195,15 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<Long> testCaseIds = tuples.stream()
 			.map(tuple -> tuple.get(0, Long.class))
 			.collect(Collectors.toList());
-
 		HibernateQuery<?> noPagingQuery = query.clone(session);
 		noPagingQuery.limit(Long.MAX_VALUE);
 		noPagingQuery.offset(0);
 		long count = noPagingQuery.fetchCount();
-
 		List<TestCase> result = testCaseDao.findAllByIds(testCaseIds);
 
+		// We should sort the result because findallbyids don't conserve the order
+		//TODO : fix it
+		Collections.sort(result, Comparator.comparing(item -> testCaseIds.indexOf(item.getId())));
 		return new PageImpl(result, sorting, count);
 	}
 
@@ -222,6 +224,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("kind", TEST_CASE_KIND)
 			.map("lastModifiedBy", TEST_CASE_MODIFIED_BY)
 			.map("lastModifiedOn", TEST_CASE_MODIFIED_ON)
+			.map("milestone.label", TEST_CASE_MILESTONE_ID)
 			.map("milestone.endDate", TEST_CASE_MILESTONE_END_DATE)
 			.map("milestone.status", TEST_CASE_MILESTONE_STATUS)
 			.map("name", TEST_CASE_NAME)
@@ -254,12 +257,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("test-case-attachment-nb", TEST_CASE_ATTCOUNT)
 			.map("test-case-created-by", TEST_CASE_CREATED_BY)
 			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY);
-		/* **************************************************
-		 *
-		 * 		Custom fields columns registry
-		 *
-		 *
-		 *****************************************************/
+
 		MAPPINGS.getCufMapping()
 			.map(AdvancedSearchFieldModelType.TAGS.toString(), TEST_CASE_CUF_TAG)
 			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), TEST_CASE_CUF_LIST)
