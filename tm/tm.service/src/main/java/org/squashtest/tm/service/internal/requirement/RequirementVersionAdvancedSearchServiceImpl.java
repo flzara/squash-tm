@@ -105,7 +105,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	/**
 	 * This is initialized in a static block at the end of the class definition
 	 */
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("requirement-id");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(requirementVersion);
 
 
 	private static final String IS_CURRENT_VERSION = "isCurrentVersion";
@@ -164,29 +164,18 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
 
-		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		
-		// attach a session
-		query = query.clone(session);
-		
-
-		// round 1 : find our paged requirement version ids
-
-		List<Tuple> tuples = query.fetch();
-		List<Long> ids = tuples.stream().map(tuple -> tuple.get(0, Long.class)).collect(Collectors.toList());
+		// round 1 : find our paged requirement versions
+		HibernateQuery<RequirementVersion> query = converter.prepareFetchQuery();
+		query = query.clone(session);		
+		List<RequirementVersion> versions = query.fetch();
 
 		// round 2 : get the total count (remove the paging)
-
 		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 
-		// round 3 : now get the actual requirement versions
-		List<RequirementVersion> result = requirementVersionDao.findAllById(ids);
-
-		// We should sort the result because findallbyids don't conserve the order
-		Collections.sort(result, Comparator.comparing(version -> result.indexOf(version.getId())));
-		return new PageImpl(result, sorting, count);
+		return new PageImpl(versions, sorting, count);
 
 	}
 	

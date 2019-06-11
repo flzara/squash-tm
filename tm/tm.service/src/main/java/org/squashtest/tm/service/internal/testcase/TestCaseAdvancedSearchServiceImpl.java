@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.testcase.QTestCase;
+import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -100,7 +102,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("test-case-id");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(QTestCase.testCase);
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -178,6 +180,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return new PageImpl(testcases, sorting, countAll);
 	}
 
+	
 	@Override
 	public Page<TestCase> searchForTestCases(AdvancedSearchQueryModel model,
 											 Pageable sorting, Locale locale) {
@@ -187,26 +190,19 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
 		converter.configureModel(model).configureMapping(MAPPINGS);
-		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 
+		// round 1 : fetch the test cases
+		HibernateQuery<TestCase> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-		List<Tuple> tuples = query.fetch();
-
-		List<Long> testCaseIds = tuples.stream()
-			.map(tuple -> tuple.get(0, Long.class))
-			.collect(Collectors.toList());
+		List<TestCase> testCases = query.fetch();
 
 
+		// round 2 : count the total
 		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 
-		List<TestCase> result = testCaseDao.findAllByIds(testCaseIds);
-
-		// We should sort the result because findallbyids don't conserve the order
-		//TODO : fix it
-		Collections.sort(result, Comparator.comparing(item -> testCaseIds.indexOf(item.getId())));
-		return new PageImpl(result, sorting, count);
+		return new PageImpl(testCases, sorting, count);
 	}
 
 	static {

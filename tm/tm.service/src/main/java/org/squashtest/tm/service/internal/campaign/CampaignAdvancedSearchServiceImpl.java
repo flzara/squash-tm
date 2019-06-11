@@ -30,6 +30,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
@@ -94,7 +96,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("itpi-id");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(iterationTestPlanItem);
 
 	@Inject
 	protected ProjectFinder projectFinder;
@@ -137,24 +139,19 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		converter.configureModel(searchModel).configureMapping(MAPPINGS);
 
-		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+		// round 1 : fetch the entities
+		HibernateQuery<IterationTestPlanItem> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-
-		List<Tuple> tuples = query.fetch();
-
-		List<Long> itpiIds = tuples.stream()
-			.map(tuple -> tuple.get(0, Long.class))
-			.collect(Collectors.toList());
+		List<IterationTestPlanItem> items = query.fetch();
 
 		
+		// round 2 : count the total results
 		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 		
 
-		List<IterationTestPlanItem> result = iterationTestPlanDao.findAllByIdIn(itpiIds);
-
-		return new PageImpl(result, paging, count);
+		return new PageImpl(items, paging, count);
 
 	}
 

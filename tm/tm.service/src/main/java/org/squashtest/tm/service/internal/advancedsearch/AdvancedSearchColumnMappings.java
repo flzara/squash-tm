@@ -60,22 +60,22 @@ import java.util.function.Supplier;
 public final class AdvancedSearchColumnMappings {
 
 	/**
-	 * The key of the attribute 'id' of the searched entity
+	 * The EntityPath of the rootEntity 
 	 */
-	final private String idKey;
+	final private EntityPath<?> rootEntity;
 
 	final private ColumnMapping formMapping = new ColumnMapping();
 	final private ColumnMapping resultMapping = new ColumnMapping();
 	final private ColumnMapping cufMapping = new ColumnMapping();
 
 
-	public AdvancedSearchColumnMappings(String idKey){
-		this.idKey = idKey;
+	public AdvancedSearchColumnMappings(EntityPath<?> rootEntity){
+		this.rootEntity = rootEntity;
 
 	}
 
-	public String getIdKey(){
-		return idKey;
+	public EntityPath<?> getRootEntity(){
+		return rootEntity;
 	}
 
 	public ColumnMapping getFormMapping() {

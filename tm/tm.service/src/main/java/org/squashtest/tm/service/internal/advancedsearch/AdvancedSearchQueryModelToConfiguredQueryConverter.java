@@ -20,16 +20,17 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Ops.AggOps;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -38,12 +39,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
-import org.squashtest.tm.domain.query.QueryAggregationColumn;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryModel;
@@ -72,16 +71,12 @@ import org.squashtest.tm.service.query.QueryProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield).
@@ -141,8 +136,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 	/**
-	 * Returns the list of ids of the entity of interrest. The selected column id is
-	 *  the one specified by mappings.getIdKey().
+	 * Returns the list entities of interest. The entity of interest is the entity 
+	 * that owns mapping#getIdKey()
+	 * 
 	 * 
 	 * The resulting query should be given a session.
 	 * 
@@ -217,8 +213,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		secureProjectFilter();
 
 		// create the select
+		/*
 		List<QueryProjectionColumn> projections = createMappedProjections();
 		query.setProjectionColumns(projections);
+		*/
 
 		// create the filters
 		List<QueryFilterColumn> filters = createMappedFilters();
@@ -234,20 +232,27 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private void applyAllSpecialHandlers(ExtendedHibernateQuery<?> query){
 
+		applyProjection(query);
 		applySpeciallyHandledFilters(query);
-		applySpeciallyHandlerOrders(query);
+		applySpeciallyHandledOrders(query);
 
 	}
 
 	// ********************** Projection creations ***********************************
 
+	private void applyProjection(ExtendedHibernateQuery<?> query){
+		EntityPath<?> rootEntity = mappings.getRootEntity();
+		query.select(rootEntity);
+	}
+	
 
 	/**
 	 *	Create the query column projections for the mapped attribute, ie where an attribute of the desired result set
 	 * can actually be mapped to a QueryColumnPrototype.
 	 *
-	 * For now we simplify the problem and only project on the entity id.
+	 * For now we simplify the problem and only project on the root entity.
 	 */
+	/*
 	private List<QueryProjectionColumn> createMappedProjections() {
 
 		QueryProjectionColumn projection = new QueryProjectionColumn();
@@ -262,7 +267,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		return ImmutableList.of(projection);
 
 	}
-
+*/
 
 
 	/*
@@ -672,7 +677,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-	private void applySpeciallyHandlerOrders(ExtendedHibernateQuery<?> query){
+	private void applySpeciallyHandledOrders(ExtendedHibernateQuery<?> query){
 
 		// TODO : add the order by clauses in the correct order, which might be difficult,
 		// see #applySpeciallyHandledProjections
