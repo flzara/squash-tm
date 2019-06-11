@@ -215,9 +215,10 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 		for (Pair<Execution, Issue> pair : pairs) {
 			Issue ish = pair.right;
 			RemoteIssue remote = remoteById.get(ish.getRemoteIssueId());
-
-			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
-			ownerships.put(pair, ownership);
+			if (remote != null){
+				IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
+				ownerships.put(pair, ownership);
+			}
 		}
 
 		return ownerships;
