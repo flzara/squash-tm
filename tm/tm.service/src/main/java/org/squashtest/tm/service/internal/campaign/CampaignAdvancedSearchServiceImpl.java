@@ -20,48 +20,16 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import org.hibernate.Session;
-import org.jooq.DSLContext;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
-import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.user.UserAccountService;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_LABEL;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_NAME;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_EXECUTION_MODE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISAUTO;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_DSCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
@@ -91,12 +59,44 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.jooq.DSLContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.user.UserAccountService;
+
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+
 @Transactional(readOnly = true)
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("ITEM_TEST_PLAN_ENTITY");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(ITEM_TEST_PLAN_ENTITY);
 
 	@Inject
 	protected ProjectFinder projectFinder;

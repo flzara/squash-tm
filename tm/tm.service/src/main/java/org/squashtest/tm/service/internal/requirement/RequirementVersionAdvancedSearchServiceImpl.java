@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_NB_VERSIONS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_ID;
@@ -101,14 +102,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	/**
 	 * This is initialized in a static block at the end of the class definition
 	 */
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("REQUIREMENT_VERSION_ENTITY");
-
-
-	private static final String IS_CURRENT_VERSION = "isCurrentVersion";
-	private static final String LINKS = "links";
-	private static final String LINK_TYPE = "link-type";
-	private static final String PARENT = "parent";
-	private static final String REQUIREMENT_CHILDREN = "requirement.children";
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(REQUIREMENT_VERSION_ENTITY);
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);

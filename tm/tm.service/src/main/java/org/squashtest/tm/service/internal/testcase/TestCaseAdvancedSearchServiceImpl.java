@@ -20,48 +20,9 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import org.hibernate.Session;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.testcase.QTestCase;
-import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
-import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISSUECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
@@ -98,11 +59,47 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_VERSCOUNT;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("TEST_CASE_ENTITY");
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(TEST_CASE_ENTITY);
 
 	@PersistenceContext
 	protected EntityManager entityManager;
