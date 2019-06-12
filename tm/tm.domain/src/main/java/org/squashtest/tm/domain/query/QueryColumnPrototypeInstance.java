@@ -35,5 +35,9 @@ public interface QueryColumnPrototypeInstance {
 	Operation getOperation();
 
 	Long getCufId();
+	
+	default boolean representsEntityItself(){
+		return getColumn().representsEntityItself();
+	}
 
 }

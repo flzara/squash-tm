@@ -21,6 +21,34 @@
 package org.squashtest.tm.service.internal.query;
 
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.jpql.ExtOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryFilterColumn;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
+import org.squashtest.tm.domain.query.QueryStrategy;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+
 import com.querydsl.core.JoinExpression;
 import com.querydsl.core.types.Constant;
 import com.querydsl.core.types.Expression;
@@ -42,37 +70,6 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
-import com.querydsl.core.types.dsl.StringPath;
-
-import ext.java.lang.QString;
-
-import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.jpql.ExtOps;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.query.ColumnType;
-import org.squashtest.tm.domain.query.DataType;
-import org.squashtest.tm.domain.query.Operation;
-import org.squashtest.tm.domain.query.QueryColumnPrototype;
-import org.squashtest.tm.domain.query.QueryFilterColumn;
-import org.squashtest.tm.domain.query.QueryModel;
-import org.squashtest.tm.domain.query.QueryProjectionColumn;
-import org.squashtest.tm.domain.query.QueryStrategy;
-import org.squashtest.tm.domain.query.SpecializedEntityType;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 class QuerydslToolbox {
 
@@ -227,7 +224,7 @@ class QuerydslToolbox {
 	 *
 	 * Indeed :
 	 *
-	 * - if the column is an ATTRIBUTE, per construction the data is scalar (therefore no aggregate)
+	 * - if the column is an ATTRIBUTE | ENTITY, per construction the data is scalar (therefore no aggregate)
 	 * - if the column is a calculated of subquery, the filter will be handled from within the subquery, then
 	 * 	the whole subquery will be converted to a where clause for the outerquery. see #createAsPredicate()
 	 * to see how it's done.
@@ -265,6 +262,7 @@ class QuerydslToolbox {
 		QueryColumnPrototype proto = col.getColumn();
 
 		switch (proto.getColumnType()) {
+			case ENTITY:	
 			case ATTRIBUTE:
 				selectElement = createAttributeSelect(col);
 				break;
@@ -296,6 +294,7 @@ class QuerydslToolbox {
 		QueryColumnPrototype proto = filter.getColumn();
 
 		switch (proto.getColumnType()) {
+			case ENTITY:
 			case ATTRIBUTE:
 				predicate = createAttributePredicate(filter);
 				break;
@@ -343,6 +342,7 @@ class QuerydslToolbox {
 
 	/**
 	 * Creates an expression fit for a "select" clause,  for columns of ColumnType = ATTRIBUTE
+	 * or ColumnType = ENTITY
 	 *
 	 */
 	Expression<?> createAttributeSelect(QueryColumnPrototypeInstance column) {
@@ -437,7 +437,7 @@ class QuerydslToolbox {
 
 
 	/**
-	 * Creates an expression fit for a "where" clause,  for columns of ColumnType = ATTRIBUTE
+	 * Creates an expression fit for a "where" clause,  for columns of ColumnType = ATTRIBUTE | ENTITY
 	 *
 	 */
 	@SuppressWarnings("unchecked")
@@ -773,10 +773,14 @@ class QuerydslToolbox {
 	private PathBuilder makePath(Class<?> srcClass, String srcAlias, Class<?> attributeClass, String attributeAlias) {
 		return new PathBuilder<>(srcClass, srcAlias).get(attributeAlias, attributeClass);
 	}
-
+	
+	@SuppressWarnings("rawtypes")
+	private PathBuilder makePath(Class<?> srcClass, String srcAlias) {
+		return new PathBuilder<>(srcClass, srcAlias);
+	}
 
 	/*
-	 * should be invoked only on columns of AttributeType = ATTRIBUTE
+	 * should be invoked only on columns of ColumnType = ATTRIBUTE | ENTITY
 	 *
 	 */
 	private PathBuilder attributePath(QueryColumnPrototypeInstance column) {
@@ -784,14 +788,22 @@ class QuerydslToolbox {
 		QueryColumnPrototype prototype = column.getColumn();
 
 		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
-
+		
+		Class<?> clazz = type.getEntityClass();
 		String alias = getQName(type);
-		Class<?> clazz = type.getClass();
-		String attribute = prototype.getAttributeName();
-		Class<?> attributeType = classFromDatatype(prototype.getDataType());
+		
+		// if the column represents the entity itself
+		if (prototype.representsEntityItself()){
+			return makePath(clazz, alias);
+		}
+		// if the column is an attribute
+		else{			
+			String attribute = prototype.getAttributeName();
+			Class<?> attributeType = classFromDatatype(prototype.getDataType());
 
-		return makePath(clazz, alias, attributeType, attribute);
-
+			return makePath(clazz, alias, attributeType, attribute);
+		}
+		
 	}
 
 	/**

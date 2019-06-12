@@ -71,8 +71,21 @@ public class QueryColumnPrototype {
 	@Enumerated(EnumType.STRING)
 	private DataType dataType;
 
+	/**
+	 * The name of the attribute referenced by the column. In some instance it may be null, 
+	 * in which case the column represents the entity itself (also the columnType is {@link ColumnType#ENTITY},
+	 *  the DataType is {@link DataType#ENTITY} and business is false).
+	 * 
+	 */
 	private String attributeName;
 
+	/**
+	 * Says whether This is open for public use or if it is for internal purposes only. A column
+	 * open to public use will be listed in user interfaces (eg the chart wizard) for user-defined 
+	 * query creation. A column for internal purposes is meant to be manipulated by Squash-TM and 
+	 * the query engine only.  
+	 * 
+	 */
 	private boolean business = true;
 
 	public QueryColumnPrototype() {
@@ -137,5 +150,9 @@ public class QueryColumnPrototype {
 
 	public EntityType getEntityType() {
 		return specializedType.getEntityType();
+	}
+	
+	public boolean representsEntityItself(){
+		return columnType == ColumnType.ENTITY;
 	}
 }

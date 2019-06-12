@@ -209,12 +209,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		// In the search field, projectids are not always set so we must secure this point on projects that the user can read.
 		secureProjectFilter();
 
-		// create the select
-		/*
-		List<QueryProjectionColumn> projections = createMappedProjections();
-		query.setProjectionColumns(projections);
-		*/
-
 		// create the filters
 		List<QueryFilterColumn> filters = createMappedFilters();
 		query.setFilterColumns(filters);
@@ -230,6 +224,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private void applyAllSpecialHandlers(ExtendedHibernateQuery<?> query){
 
 		applyProjection(query);
+		
 		applySpeciallyHandledFilters(query);
 		applySpeciallyHandledOrders(query);
 

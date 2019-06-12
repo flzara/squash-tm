@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.query;
 
 public enum ColumnType {
 	// @formatter:off
+	ENTITY,
 	CUF,
 	ATTRIBUTE,
 	CALCULATED;
