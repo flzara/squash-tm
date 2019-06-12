@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -509,7 +510,12 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		String value = singleFieldModel.getValue();
 
-		filterColumn.setOperation(Operation.LIKE);
+		if(filterColumn.getDataType().equals(DataType.NUMERIC)) {
+			filterColumn.setOperation(Operation.EQUALS);
+		} else {
+			filterColumn.setOperation(Operation.LIKE);
+		}
+
 		filterColumn.getValues().add(value);
 
 	}
