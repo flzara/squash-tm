@@ -420,7 +420,9 @@
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
-
+      <div id="information-block">
+        <span></span>
+      </div>
 			<div data-def="state=normal" class="display-table">
 				<div class="display-table-row">
 					<span class="display-table-cell"> <f:message key="party.label" /></span>
@@ -1132,17 +1134,7 @@ require(["common"], function() {
 
       var licenseInformationDialog = $("#license-information-dialog");
       var message;
-      if(allowCreateUsers){
-        message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-        licenseInformationDialog.formDialog().on('formdialogclose', function () {
-          licenseInformationDialog.formDialog('close');
-          permpopup.formDialog('open');
-        });
-        licenseInformationDialog.formDialog().on('formdialogcancel', function () {
-          licenseInformationDialog.formDialog('close');
-          permpopup.formDialog('open');
-        });
-      } else {
+      if(!allowCreateUsers){
         licenseInformationDialog.formDialog().on('formdialogclose', function () {
           licenseInformationDialog.formDialog('close');
         });
@@ -1150,17 +1142,25 @@ require(["common"], function() {
           licenseInformationDialog.formDialog('close');
         });
         message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+        licenseInformationDialog.find("#information-message").html(message);
+      } else {
+        var informationBlock = $("#information-block");
+        informationBlock.css("visibility", "visible");
+        informationBlock.find("span").html(translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount));
       }
-      licenseInformationDialog.find("#information-message").html(message);
     }
 
 		// permission mgt
 		$("#add-permission-button").on('click', function(){
       if(userLicenseInformation.length !== 0){
-        var licenseInformationDialog = $("#license-information-dialog");
-        licenseInformationDialog.formDialog('open');
-      } else {
-        permpopup.formDialog('open');
+        var userLicenseInformationArray = userLicenseInformation.split("-");
+        var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+        if(allowCreateUsers) {
+          permpopup.formDialog('open');
+        } else {
+          licenseInformationDialog.formDialog('open');
+        }
+
       }
 		});
 

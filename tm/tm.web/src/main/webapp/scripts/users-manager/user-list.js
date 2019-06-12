@@ -182,17 +182,7 @@ define([ "jquery", "squash.translator",
 
 			var licenseInformationDialog = $("#license-information-dialog");
 			var message;
-			if(allowCreateUsers){
-				message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-				licenseInformationDialog.formDialog().on('formdialogclose', function () {
-					licenseInformationDialog.formDialog('close');
-					openAdd();
-				});
-				licenseInformationDialog.formDialog().on('formdialogcancel', function () {
-					licenseInformationDialog.formDialog('close');
-					openAdd();
-				});
-			} else {
+			if(!allowCreateUsers){
 				licenseInformationDialog.formDialog().on('formdialogclose', function () {
 					licenseInformationDialog.formDialog('close');
 				});
@@ -200,17 +190,26 @@ define([ "jquery", "squash.translator",
 					licenseInformationDialog.formDialog('close');
 				});
 				message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+				licenseInformationDialog.find("#information-message").html(message);
+			} else {
+				var informationBlock = $("#information-block");
+				informationBlock.css("visibility", "visible");
+				informationBlock.find("span").html(translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount));
 			}
-			licenseInformationDialog.find("#information-message").html(message);
 		}
 
 		$("#add-user-button").on('click', function(){
-				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+			if(userLicenseInformation.length !== 0){
+				var userLicenseInformationArray = userLicenseInformation.split("-");
+				var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+				if(allowCreateUsers) {
+					openAdd();
+				} else {
 					var licenseInformationDialog = $("#license-information-dialog");
 					licenseInformationDialog.formDialog('open');
-				} else {
-					openAdd();
 				}
+
+			}
 		});
 
 		// confirm deletion

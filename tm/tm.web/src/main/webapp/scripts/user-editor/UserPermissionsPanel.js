@@ -80,6 +80,15 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 			configureButtons: function () {
 				var userLicenseInformation = squashtm.app.userLicenseInformation;
 				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					var userLicenseInformationArray = userLicenseInformation.split("-");
+					var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+					if(allowCreateUsers) {
+						this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+					} else {
+						this.$("#add-permission-button").on('click', function (){
+							$("#license-information-dialog").formDialog('open');
+						});
+					}
 					this.$("#add-permission-button").on('click', function (){
 						$("#license-information-dialog").formDialog('open');
 					});
@@ -224,17 +233,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 
 					var licenseInformationDialog = $("#license-information-dialog");
 					var message;
-					if(allowCreateUsers){
-						message = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
-						licenseInformationDialog.formDialog().on('formdialogclose', $.proxy(function () {
-							licenseInformationDialog.formDialog('close');
-							this.openAddPermission();
-						}, this));
-						licenseInformationDialog.formDialog().on('formdialogcancel', $.proxy(function () {
-							licenseInformationDialog.formDialog('close');
-							this.openAddPermission();
-						}, this));
-					} else {
+					if(!allowCreateUsers){
 						licenseInformationDialog.formDialog().on('formdialogclose', function () {
 							licenseInformationDialog.formDialog('close');
 						});
@@ -242,8 +241,12 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 							licenseInformationDialog.formDialog('close');
 						});
 						message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+						licenseInformationDialog.find("#information-message").html(message);
+					} else {
+						var informationBlock = $("#information-block");
+						informationBlock.css("visibility", "visible");
+						informationBlock.find("span").html(translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount));
 					}
-					licenseInformationDialog.find("#information-message").html(message);
 				}
 			}
 		});

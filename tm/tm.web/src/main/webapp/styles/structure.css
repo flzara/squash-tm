@@ -2124,3 +2124,14 @@ button.tf:hover {
 
 	opacity: 0;
 }
+
+/**** ADD PERMISSION DIALOG ****/
+#add-permission-dialog #information-block, #add-user-dialog #information-block {
+	visibility: hidden;
+}
+
+#add-permission-dialog #information-block span, #add-user-dialog #information-block span {
+	color: red;
+	font-style: italic;
+	text-align: justify;
+}

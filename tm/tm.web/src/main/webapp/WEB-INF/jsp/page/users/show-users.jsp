@@ -184,7 +184,9 @@
 
         <f:message var="adduserTitle" key="title.AddUser"/>
         <div id="add-user-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
-
+          <div id="information-block">
+            <span></span>
+          </div>
         <table id="add-user-table">
           <tr>
             <td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
