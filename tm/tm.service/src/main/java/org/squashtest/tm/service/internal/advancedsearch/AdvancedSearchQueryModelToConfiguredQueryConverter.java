@@ -20,11 +20,21 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import com.google.common.collect.Sets;
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -35,6 +45,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
@@ -42,6 +53,7 @@ import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.QueryOrderingColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
@@ -65,15 +77,12 @@ import org.squashtest.tm.service.query.QueryProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.Sets;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield).
@@ -133,17 +142,18 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 	/**
-	 * Returns the list entities of interest. The entity of interest is the entity 
-	 * that owns mapping#getIdKey()
+	 * Returns the query that will list the entities of interest. 
+	 * The result is returned as a Tuple, the first element of which are the entities (the rest of 
+	 * the tuple exists for technical purposes, see documentation of {@link #createMappedProjections()}).
 	 * 
 	 * 
-	 * The resulting query should be given a session.
+	 * Note that the query needs to be given a session.
 	 * 
 	 * @return
 	 */
-	public <T> HibernateQuery<T> prepareFetchQuery() {
+	public HibernateQuery<Tuple> prepareFetchQuery() {
 
-		ExtendedHibernateQuery<T> hibQuery = basePrepareQuery();
+		ExtendedHibernateQuery<Tuple> hibQuery = basePrepareQuery();
 		
 		return hibQuery;
 
@@ -151,15 +161,16 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	
 	/**
 	 * Prepares the query as a count query. It removes the pagination
-	 * and should be invoked using 'selectCount()'.
+	 * and should be invoked using 'selectCount()'. The query requires to be 
+	 * given a session.
 	 * 
 	 * @return
 	 */
 
 	
-	public <T> HibernateQuery<T> prepareCountQuery() {
+	public HibernateQuery<Tuple> prepareCountQuery() {
 
-		ExtendedHibernateQuery<T> countQuery = basePrepareQuery();
+		ExtendedHibernateQuery<Tuple> countQuery = basePrepareQuery();
 		
 		// neutralize the paging 
 		countQuery.limit(Long.MAX_VALUE);
@@ -170,7 +181,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 	
 	
-	private <T> ExtendedHibernateQuery<T> basePrepareQuery() {
+	private ExtendedHibernateQuery<Tuple> basePrepareQuery() {
 
 		// Find all ColumnPrototypes
 		prototypesByLabel = columnPrototypeDao.findAll().stream().collect(Collectors.toMap(
@@ -178,6 +189,22 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			col -> col
 		));
 
+		
+		// first pass : create the ConfiguredQuery
+		ConfiguredQuery configuredQuery = createConfiguredQuery();
+
+		// generate the ExtendedHibernateQuery
+		ExtendedHibernateQuery<Tuple> hibQuery = queryService.prepareQuery(configuredQuery);
+
+		// second pass : now process the special handlers
+		applyAllSpecialHandlers(hibQuery);
+		
+		return hibQuery;
+
+	}
+	
+	private ConfiguredQuery createConfiguredQuery(){
+		
 		// Create queryModel
 		QueryModel query = createBaseQueryModel();
 
@@ -185,16 +212,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
 		configuredQuery.setQueryModel(query);
 		configuredQuery.setPaging(advancedSearchQueryModel.getPageable());
-
-
-		// generate the ExtendedHibernateQuery
-		ExtendedHibernateQuery<T> hibQuery = queryService.prepareQuery(configuredQuery);
-
-		// now append the special handlers
-		applyAllSpecialHandlers(hibQuery);
 		
-		return hibQuery;
-
+		return configuredQuery;
 	}
 	
 
@@ -208,6 +227,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		// In the search field, projectids are not always set so we must secure this point on projects that the user can read.
 		secureProjectFilter();
+		
+		// create the projections
+		List<QueryProjectionColumn> projections = createMappedProjections();
+		query.setProjectionColumns(projections);
 
 		// create the filters
 		List<QueryFilterColumn> filters = createMappedFilters();
@@ -221,117 +244,124 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-	private void applyAllSpecialHandlers(ExtendedHibernateQuery<?> query){
+	private void applyAllSpecialHandlers(ExtendedHibernateQuery<Tuple> query){
 
-		applyProjection(query);
-		
-		applySpeciallyHandledFilters(query);
-		applySpeciallyHandledOrders(query);
+		applySpecialProjectionHandlers(query);
+		applySpecialFilterHandlers(query);
+		applySpecialOrderHandlers(query);
 
 	}
 
 	// ********************** Projection creations ***********************************
-
-	private void applyProjection(ExtendedHibernateQuery<?> query){
-		EntityPath<?> rootEntity = mappings.getRootEntity();
-		query.select(rootEntity);
-	}
 	
 
 	/**
-	 *	Create the query column projections for the mapped attribute, ie where an attribute of the desired result set
+	 * <p>
+	 * Create the query column projections for the mapped attribute, ie where an attribute of the desired result set
 	 * can actually be mapped to a QueryColumnPrototype.
+	 *	</p>
 	 *
-	 * For now we simplify the problem and only project on the root entity.
+	 * <p>
+	 * 	The tuple created this way is organized as follow :
+	 * 	<ol>
+	 * 		<li>The first item of the tuple is the root entity itself, as referenced by its label {@link AdvancedSearchColumnMappings#getRootEntityColumnLabel()}. This is the expected returned result</li>
+	 * 		<li>
+	 * 			The next items are any columns that appear in the 'order by' clause that happen to be a calculated column (ie a subquery). 
+	 * 			This trick allows them to receive an alias in the 'select' clause, which can then be re-used in the 'order by' clause. 
+	 * 			Otherwise we would have to declare the subquery in the 'order by' clause, which is not supported by JPA (or at least Hibernate). 
+	 * 		</li>
+	 * 		<li>
+	 * 			In case no subquery columns were appended, a surrogate constant '1' will be selected instead to ensure that
+	 * 			the final result set will be a Tuple. Indeed a selection of only one unique column would not be cast as a 1-Tuple, 
+	 * 			and consumers would have to check for the result type.
+	 * 		 </li>
+	 * 	</ol>
+	 * </p>
 	 */
-	/*
-	private List<QueryProjectionColumn> createMappedProjections() {
-
-		QueryProjectionColumn projection = new QueryProjectionColumn();
-
-		String idKey = mappings.getIdKey();
-
-		QueryColumnPrototype proto = lookupColumnPrototypeByResultSetKey(idKey);
-
-		projection.setColumnPrototype(proto);
-		projection.setOperation(Operation.NONE);
-
-		return ImmutableList.of(projection);
-
-	}
-*/
-
-
-	/*
-		ON HOLD :
-		that method is suspended : indeed for now the projection returns an entity, not tuples.
-		Delete before release if that method was not needed after all.
 
 	private List<QueryProjectionColumn> createMappedProjections() {
-
-		ColumnMapping resultMappings = mappings.getResultMapping();
-
-		// the keys to be processed, ie only those that exist as a "mappedKey"
-		List<String> processableKeys = advancedSearchQueryModel.getSearchResultColumns();
-		processableKeys.retainAll(resultMappings.getMappedKeys());
-
-
+		
 		List<QueryProjectionColumn> projections = new ArrayList<>();
+		
+		// first round : enqueue the column for the root entity
+		String rootColLabel = mappings.getRootEntityColumnLabel();		
+		QueryColumnPrototype rootProto = lookupColumnPrototypeByColumnLabel(rootColLabel);
 
-
-		// now build the columns
-		for (String key : processableKeys) {
-
-			QueryProjectionColumn projection = new QueryProjectionColumn();
-
-			String colLabel = resultMappings.findColumnPrototypeLabel(key);
-
-			projection.setColumnPrototype(lookupColumnPrototype(colLabel));
-
-			Operation operation = Operation.NONE;
-
-			projection.setOperation(operation);
-			projections.add(projection);
+		QueryProjectionColumn entityProjection = toProjectionColumn(rootProto);		
+		projections.add(entityProjection);
+		
+		
+		// second round : find all columns that would enter the sort-by clause and happens
+		// to be subqueries (see javadoc above)
+		List<QueryColumnPrototype> subqueriesPrototypes = locateSortBySubqueryColumnPrototype();
+		
+		// if the subqueries are empty, create an extra dummy column anyway
+		if (subqueriesPrototypes.isEmpty()){
+			QueryProjectionColumn dummy = createDummyProjection(entityProjection);
+			projections.add(dummy);
 		}
-
-
-		return projections;
-	}
-	*/
-
-	/**
-	 * For the expected result keys, apply the missing select clauses
-	 *
-	 */
-	/*
-		ON HOLD :
-		that method is suspended : indeed for now the projection returns an entity, not tuples.
-		Delete before release if that method was not needed after all.
-
-	private void applySpeciallyHandledProjections(ExtendedHibernateQuery<?> query){
-
-
-		// TODO : the trick here will be to add the select clauses at the expected position,
-		// which might not be possible using the public query builder API. Hmm.
-
-		ColumnMapping resultMappings = mappings.getResultMapping();
-
-		// the keys to be processed, ie only those that exist as a "specialHandlers"
-		List<String> processableKeys = advancedSearchQueryModel.getSearchResultColumns();
-		processableKeys.retainAll(resultMappings.getSpecialKeys());
-
-
-		// now build the columns
-		for (String key: processableKeys){
-			SpecialHandler handler = resultMappings.findHandler(key);
-
-			EntityPath<?> attributePath = handler.getAttributePath.get();
-
-			query.select(attributePath);
+		// else append the projections
+		else{
+			List<QueryProjectionColumn> subqueryProjections 
+				= subqueriesPrototypes
+						.stream()
+						.map(this::toProjectionColumn)
+						.collect(toList());
+			
+			projections.addAll(subqueryProjections);
 		}
+		
+		return Collections.unmodifiableList(projections);
 
 	}
-	*/
+	
+	private List<QueryColumnPrototype> locateSortBySubqueryColumnPrototype(){
+		ColumnMapping resultMapping = mappings.getResultMapping();
+		Optional<Sort> maybeSort = extractSort();
+		
+		if (maybeSort.isPresent()){
+			Sort sort = maybeSort.get();
+			return sort.stream()
+					// retain only the result set keys that maps to a column prototype
+					.filter(order -> resultMapping.isMappedKey(order.getProperty()))
+					// resolve the column prototype
+					.map(order -> lookupColumnPrototypeByResultSetKey(order.getProperty()))
+					// retain only the column that happen to be subqueries
+					.filter(column -> column.getColumnType() == ColumnType.CALCULATED)
+					.collect(toList());
+		}
+		else{
+			return Collections.emptyList();
+		}
+		
+	}
+	
+	private QueryProjectionColumn toProjectionColumn(QueryColumnPrototype proto){
+		QueryProjectionColumn column = new QueryProjectionColumn();
+		column.setColumnPrototype(proto);
+		column.setOperation(Operation.NONE);
+		
+		return column;
+	}
+	
+	private QueryProjectionColumn createDummyProjection(QueryProjectionColumn rootProjection){
+		
+		QueryColumnPrototype rootProto = rootProjection.getColumn();
+		String rootProtoLabel = rootProto.getLabel();
+		
+		// XXX that is a ugly hack
+		String dummyLabel = rootProtoLabel.replace("_ENTITY", "_ID");
+		QueryColumnPrototype dummyProto = lookupColumnPrototypeByColumnLabel(dummyLabel);
+		
+		return toProjectionColumn(dummyProto);
+		
+	}
+	
+	private void applySpecialProjectionHandlers(ExtendedHibernateQuery<Tuple> query){
+		// for now, it's a no-op
+	}
+
+
 
 	// ********************** Filters creation  ***********************************
 
@@ -379,7 +409,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 * Once the query is available, we can apply special handlers for filters
 	 */
 
-	private void applySpeciallyHandledFilters(ExtendedHibernateQuery<?> query){
+	private void applySpecialFilterHandlers(ExtendedHibernateQuery<?> query){
 
 		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
 
@@ -659,32 +689,31 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private List<QueryOrderingColumn> createMappedOrders() {
 
 		ColumnMapping resultMapping = mappings.getResultMapping();
-
-		Pageable pageable = advancedSearchQueryModel.getPageable();
 		List<QueryOrderingColumn> orders = new ArrayList<>();
-		Sort sort = pageable.getSort();
 
-		if (sort != null) {
+		Optional<Sort> maybeSort = extractSort();
+
+		if (maybeSort.isPresent()) {
+			Sort sort = maybeSort.get();
 			orders = sort.stream()
 						 .filter( order -> resultMapping.isMappedKey(order.getProperty()))
 						 .map(this::convertToOrder)
-						 .collect(Collectors.toList());
+						 .collect(toList());
 		}
 		return orders;
 	}
 
 
-	private void applySpeciallyHandledOrders(ExtendedHibernateQuery<?> query){
+	private void applySpecialOrderHandlers(ExtendedHibernateQuery<?> query){
 
 		// TODO : add the order by clauses in the correct order, which might be difficult,
 		// see #applySpeciallyHandledProjections
-
 		ColumnMapping resultMapping = mappings.getResultMapping();
 
-		Pageable pageable = advancedSearchQueryModel.getPageable();
-		Sort sort = pageable.getSort();
+		Optional<Sort> maybeSort = extractSort();
 
-		if (sort != null) {
+		if (maybeSort.isPresent()) {
+			Sort sort = maybeSort.get();
 			sort.stream()
 				 .filter( order -> resultMapping.isSpecialKey(order.getProperty()))
 				 .forEach(order -> applySpecialOrder(order, query));
@@ -722,26 +751,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		query.orderBy(new OrderSpecifier(order, attributePath));
 
 	}
-
-/*
-	private String formatSortedFieldName(String propertyName) {
-		String result = propertyName;
-		if (propertyName.startsWith("RequirementVersion.")) {
-			result = propertyName.replaceFirst("RequirementVersion.", "");
-		} else if (propertyName.startsWith("Requirement.")) {
-			result = propertyName.replaceFirst("Requirement.", "requirement.");
-		} else if (propertyName.startsWith("Project.")) {
-			result = propertyName.replaceFirst("Project.", "project-");
-		} else if (propertyName.startsWith("TestCase.")) {
-			result = propertyName.replaceFirst("TestCase.", "");
-		} else if (propertyName.startsWith("AutomationRequest.")) {
-			result = propertyName.replaceFirst("AutomationRequest.", "automationRequest.");
-		} else if (propertyName.startsWith("IterationTestPlanItem.")) {
-			result = propertyName.replaceFirst("IterationTestPlanItem.", "");
-		}
-		return result;
-	}
-*/
 
 
 	// **************** utility methods **************************************
@@ -826,7 +835,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-
 	private QueryColumnPrototype internalLookupColumnPrototypeByKey(ColumnMapping mapping, String key){
 
 		if (! mapping.isMappedKey(key)){
@@ -835,13 +843,31 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		String mappedColumnLabel = mapping.findColumnPrototypeLabel(key);
 
+		return lookupColumnPrototypeByColumnLabel(mappedColumnLabel);
+		
+	}
+	
+
+	private QueryColumnPrototype lookupColumnPrototypeByColumnLabel(String mappedColumnLabel){
 		return prototypesByLabel.computeIfAbsent(mappedColumnLabel,
-			(label) -> {
-				throw new IllegalArgumentException("column '"+label+"' is unknown (unmapped)");
-			});
+				(label) -> {
+					throw new IllegalArgumentException("column '"+label+"' is unknown (unmapped)");
+				});
 
 	}
 
+
+	private Optional<Sort> extractSort(){
+		Sort sort = null;
+		Pageable pageable = advancedSearchQueryModel.getPageable();
+		
+		if (pageable != null){
+			sort = pageable.getSort();
+		}
+		
+		return Optional.ofNullable(sort);
+	}
+	
 
 
 	private final String toIso(Date date){

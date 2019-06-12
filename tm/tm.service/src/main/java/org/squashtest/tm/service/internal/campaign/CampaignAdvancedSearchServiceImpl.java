@@ -96,7 +96,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(iterationTestPlanItem);
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("ITEM_TEST_PLAN_ENTITY");
 
 	@Inject
 	protected ProjectFinder projectFinder;
@@ -140,13 +140,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		converter.configureModel(searchModel).configureMapping(MAPPINGS);
 
 		// round 1 : fetch the entities
-		HibernateQuery<IterationTestPlanItem> query = converter.prepareFetchQuery();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-		List<IterationTestPlanItem> items = query.fetch();
+		List<Tuple> tuples = query.fetch();
+		List<IterationTestPlanItem> items = tuples.stream().map(tuple -> tuple.get(0, IterationTestPlanItem.class)).collect(Collectors.toList());
 
 		
 		// round 2 : count the total results
-		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 		

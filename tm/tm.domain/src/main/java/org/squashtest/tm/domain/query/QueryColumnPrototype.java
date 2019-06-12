@@ -72,9 +72,9 @@ public class QueryColumnPrototype {
 	private DataType dataType;
 
 	/**
-	 * The name of the attribute referenced by the column. In some instance it may be null, 
-	 * in which case the column represents the entity itself (also the columnType is {@link ColumnType#ENTITY},
-	 *  the DataType is {@link DataType#ENTITY} and business is false).
+	 * The name of the attribute referenced by the column. 
+	 * When the column represents the entity itself (columnType is {@link ColumnType#ENTITY}), 
+	 * the attributeName has no meaning.
 	 * 
 	 */
 	private String attributeName;

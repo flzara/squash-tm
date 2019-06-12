@@ -47,6 +47,7 @@ class HQLExtensionsIT extends DbunitDaoSpecification{
 			'TEST_CASE_STEP_ID',
 			'TEST_CASE_NATURE_ID',
 			'TEST_CASE_TYPE_ID',
+			'TEST_CASE_PROJECT_ID',
 			'TEST_CASE_MILESTONE_ID',
 			'TEST_CASE_ATTLIST_ID',
 			'TEST_CASE_ATTACHMENT_ID'
@@ -83,6 +84,7 @@ class HQLExtensionsIT extends DbunitDaoSpecification{
 			'TEST_CASE_STEP_ID',
 			'TEST_CASE_NATURE_ID',
 			'TEST_CASE_TYPE_ID',
+			'TEST_CASE_PROJECT_ID',
 			'TEST_CASE_MILESTONE_ID',
 			'TEST_CASE_ATTLIST_ID',
 			'TEST_CASE_ATTACHMENT_ID'

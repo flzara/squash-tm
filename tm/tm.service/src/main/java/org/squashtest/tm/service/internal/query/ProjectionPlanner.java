@@ -20,17 +20,20 @@
  */
 package org.squashtest.tm.service.internal.query;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryOrderingColumn;
+
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.query.QueryOrderingColumn;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -73,19 +76,25 @@ import java.util.List;
  */
 class ProjectionPlanner {
 
+	// configured properties
 	private InternalQueryModel internalQueryModel;
 
 	private ExtendedHibernateQuery<?> query;
 
 	private QuerydslToolbox utils;
+	
+	
+	// state properties
+	private AliasIndex aliasIndex = new AliasIndex();
 
-	// see comment on that hack above
-	private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
 
+	/*
+	 * The documentation for that enum will be given in the context of use, see #populateClauses()
+	 */
 	private enum SubqueryAliasStrategy{
 		NONE,
 		APPEND_ALIAS,
-		REPLACE_BY_ALIAS;
+		REPLACE_BY_ALIAS_IF_POSSIBLE;
 	}
 
 	ProjectionPlanner(InternalQueryModel internalQueryModel, ExtendedHibernateQuery<?> query){
@@ -141,7 +150,7 @@ class ProjectionPlanner {
 	private void addGroupBy(){
 		List<Expression<?>> groupBy = new ArrayList<>();
 
-		populateClauses(groupBy, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(groupBy, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE);
 
 		query.groupBy(groupBy.toArray(new Expression[]{}));
 	}
@@ -151,7 +160,7 @@ class ProjectionPlanner {
 
 		List<Expression<?>> expressions = new ArrayList<>();
 
-		populateClauses(expressions, internalQueryModel.getOrderingColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
+		populateClauses(expressions, internalQueryModel.getOrderingColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE);
 
 		List<OrderSpecifier> orders = new ArrayList<>();
 		populateOrders(orders, internalQueryModel.getOrderingColumns(), expressions);
@@ -163,7 +172,6 @@ class ProjectionPlanner {
 
 	private void populateClauses(List<Expression<?>> toPopulate, List<? extends QueryColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
 
-		int count = 0;
 		for (QueryColumnPrototypeInstance col : columns){
 
 			Expression<?> expr = null;
@@ -172,26 +180,52 @@ class ProjectionPlanner {
 			if (! utils.isSubquery(col)){
 				expr = utils.createAsSelect(col);
 			}
+			//subquery columns
 			else{
-				String alias = genAlias(count);
 				switch(aliasStrategy){
+				
+				/*
+				 * APPEND_ALIAS : we always want an alias. Either retrieve it or generate a new one. 
+				 * The column is then appended to the query and aliased.
+				 */
 				case APPEND_ALIAS :
+					String alias = aliasIndex.getOrGenerateAlias(col);
 					expr = utils.createAsSelect(col);
 					expr = Expressions.as(expr, alias);
 					break;
-				case REPLACE_BY_ALIAS :
-					expr = Expressions.stringPath(alias);
-					break;
+					
+				/*
+				 * NONE : we never want an alias. The column is appended but no alias is given.
+				 */
 				case NONE :
 					expr = utils.createAsSelect(col);
 					break;
+				
+				/*
+				 * REPLACE_BY_ALIAS_IF_POSSIBLE : if an alias exist for that column reuse it (replace 
+				 * the column expression by the alias), else append the column without alias.
+				 */
+				case REPLACE_BY_ALIAS_IF_POSSIBLE :
+					
+					Optional<String> maybeAlias =  aliasIndex.getMaybeAlias(col);
+					
+					if (maybeAlias.isPresent()){
+						expr = Expressions.stringPath(maybeAlias.get());
+					}
+					else{
+						expr = utils.createAsSelect(col);
+					}
+					
+					
+					break;
+					
+					
 				default:
 					break;
 				}
 			}
 
 			toPopulate.add(expr);
-			count++;
 		}
 
 	}
@@ -207,8 +241,40 @@ class ProjectionPlanner {
 
 	}
 
-	private String genAlias(int count){
-		return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(count));
+
+
+	
+	/*
+	 * Aliases management. It helps us keeping aliases consistent across select, groupBy and sortBy clauses. 
+	 */
+	private static final class AliasIndex{
+		// see comment on that hack at the top of the class
+		private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
+		
+		private Map<Long, String> aliasByPrototypeId = new HashMap<>();
+		private int counter = 0;
+		
+		// returns the alias if found, generating it if needed
+		private String getOrGenerateAlias(QueryColumnPrototypeInstance instance){
+			
+			Long protoId = instance.getColumn().getId();			
+			return aliasByPrototypeId.computeIfAbsent(protoId, (id) -> generate());
+			
+		}
+		
+		// return the alias as an Optional, which may be empty if it wasn't defined yet.
+		private Optional<String> getMaybeAlias(QueryColumnPrototypeInstance instance){
+			Long protoId = instance.getColumn().getId(); 
+			return Optional.ofNullable(aliasByPrototypeId.get(protoId));
+		}
+		
+		// internal usage only
+		private String generate(){
+			return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(counter++));
+		}
+		
+		
+		
 	}
 
 }

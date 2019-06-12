@@ -78,7 +78,7 @@ public enum DataType {
 	ENUM(EQUALS, IN, COUNT, NONE),
 
 	// type ENTITY means that columns of that datatype represent the entity itself rather than one of its attributes.
-	ENTITY;
+	ENTITY(EQUALS, IN, COUNT, NONE);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

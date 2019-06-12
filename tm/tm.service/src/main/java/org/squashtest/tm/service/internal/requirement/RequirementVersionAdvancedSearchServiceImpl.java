@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_NB_VERSIONS;
@@ -99,7 +101,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	/**
 	 * This is initialized in a static block at the end of the class definition
 	 */
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(requirementVersion);
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("REQUIREMENT_VERSION_ENTITY");
 
 
 	private static final String IS_CURRENT_VERSION = "isCurrentVersion";
@@ -109,9 +111,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private static final String REQUIREMENT_CHILDREN = "requirement.children";
 
 
-	private static final List<String> PARAMS_NOT_PROJECTIONS = Arrays.asList("entity-index",
-		"empty-openinterface2-holder", "empty-opentree-holder", "editable", "project-name", "links");
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionAdvancedSearchServiceImpl.class);
 
 	@PersistenceContext
@@ -120,8 +119,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Inject
 	private ProjectDao projectDao;
 
-	@Inject
-	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
 	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
@@ -160,12 +157,15 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 		// round 1 : find our paged requirement versions
-		HibernateQuery<RequirementVersion> query = converter.prepareFetchQuery();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-		List<RequirementVersion> versions = query.fetch();
+		List<Tuple> tuples = query.fetch();
+		List<RequirementVersion> versions = tuples.stream()
+													.map(tuple -> tuple.get(0, RequirementVersion.class))
+													.collect(Collectors.toList()); 
 
 		// round 2 : get the total count (remove the paging)
-		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 

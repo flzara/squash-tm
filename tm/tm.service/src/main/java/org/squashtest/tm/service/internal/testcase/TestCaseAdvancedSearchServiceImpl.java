@@ -102,7 +102,7 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
 
-	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(QTestCase.testCase);
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings("TEST_CASE_ENTITY");
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -192,13 +192,15 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		converter.configureModel(model).configureMapping(MAPPINGS);
 
 		// round 1 : fetch the test cases
-		HibernateQuery<TestCase> query = converter.prepareFetchQuery();
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-		List<TestCase> testCases = query.fetch();
+		
+		List<Tuple> tuples = query.fetch();
+		List<TestCase> testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
 
 
 		// round 2 : count the total
-		HibernateQuery<Long> countQuery = converter.prepareCountQuery();
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
 

@@ -20,22 +20,17 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+
+import com.querydsl.core.types.EntityPath;
 
 /**
  * The {@link AdvancedSearchQueryModelToConfiguredQueryConverter} requires such an object that
@@ -60,22 +55,22 @@ import java.util.function.Supplier;
 public final class AdvancedSearchColumnMappings {
 
 	/**
-	 * The EntityPath of the rootEntity 
+	 * The label of the column prototype of the root entity
 	 */
-	final private EntityPath<?> rootEntity;
+	final private String rootEntityColumnLabel;
 
 	final private ColumnMapping formMapping = new ColumnMapping();
 	final private ColumnMapping resultMapping = new ColumnMapping();
 	final private ColumnMapping cufMapping = new ColumnMapping();
 
 
-	public AdvancedSearchColumnMappings(EntityPath<?> rootEntity){
-		this.rootEntity = rootEntity;
+	public AdvancedSearchColumnMappings(String rootEntityColumnLabel){
+		this.rootEntityColumnLabel = rootEntityColumnLabel;
 
 	}
 
-	public EntityPath<?> getRootEntity(){
-		return rootEntity;
+	public String getRootEntityColumnLabel(){
+		return rootEntityColumnLabel;
 	}
 
 	public ColumnMapping getFormMapping() {
