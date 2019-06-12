@@ -41,12 +41,14 @@ import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.QRequirementVersionLink;
 import org.squashtest.tm.domain.requirement.QRequirementVersionLinkType;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -290,6 +292,30 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		}
 
 	}
+
+	private static void createFilterCurrentVersion(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		QRequirementVersion outerVersion = requirementVersion;
+		QRequirement parent = new QRequirement("parent");
+		QRequirementVersion initVersion = new QRequirementVersion("initVersion");
+		QRequirementVersion maxVersion = new QRequirementVersion("maxVersion");
+
+		HibernateQuery<?> subquery = new ExtendedHibernateQuery<>()
+			.select(Expressions.ONE)
+			.from(initVersion)
+			.where(initVersion.id.eq(outerVersion.id).and(
+				initVersion.id.in(new ExtendedHibernateQuery<>().select(maxVersion.id.max())
+					.from(maxVersion)
+					.join(maxVersion.requirement, parent)
+				.where(maxVersion.status.ne(RequirementStatus.OBSOLETE)).groupBy(parent.id))
+			));
+
+
+
+		query.where(subquery.exists());
+
+
+	}
 	
 
 	// ******************* column mappings  *******************************************************
@@ -321,7 +347,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 				
 				.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveChildren))				
 				.mapHandler("parent", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveParent))
-				.mapHandler("link-type", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveLinkType));
+				.mapHandler("link-type", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveLinkType))
+				.mapHandler("isCurrentVersion", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterCurrentVersion));
 
 
 
