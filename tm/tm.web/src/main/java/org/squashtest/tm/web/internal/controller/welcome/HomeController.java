@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.AdministrationService;
@@ -70,6 +71,9 @@ public class HomeController {
 
 	@Inject
 	private CustomReportDashboardService customReportDashboardService;
+
+	@Inject
+	private ConfigurationService configurationService;
 
 
 	@Inject
@@ -106,6 +110,12 @@ public class HomeController {
 		model.addObject("executionStatus",
 			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		model.addObject("userLicenseInformation", userLicenseInformation);
+		model.addObject("dateLicenseInformation", dateLicenseInformation);
 
 		return model;
 	}
