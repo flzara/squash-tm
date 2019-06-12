@@ -23,12 +23,8 @@ package org.squashtest.tm.service.internal.advancedsearch;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -76,7 +72,6 @@ import com.google.common.collect.Sets;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield).

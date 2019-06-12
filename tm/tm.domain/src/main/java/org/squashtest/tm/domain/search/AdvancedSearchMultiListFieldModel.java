@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,5 +77,15 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 	@Override
 	public boolean isSet() {
 		return ! (values == null || values.isEmpty() );
+	}
+
+	@JsonIgnore
+	public boolean hasMinValue(){
+		return minValue != null;
+	}
+
+	@JsonIgnore
+	public boolean hasMaxValue(){
+		return maxValue != null;
 	}
 }

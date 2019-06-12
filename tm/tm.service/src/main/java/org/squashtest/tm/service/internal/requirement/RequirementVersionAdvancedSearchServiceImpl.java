@@ -39,9 +39,12 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.requirement.QRequirementVersionLink;
+import org.squashtest.tm.domain.requirement.QRequirementVersionLinkType;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
@@ -254,6 +257,39 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 	}
+
+	private static void createFilterHaveLinkType(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+		AdvancedSearchMultiListFieldModel fieldModel = (AdvancedSearchMultiListFieldModel)model;
+
+		QRequirementVersion outerVersion = requirementVersion;
+		QRequirementVersion reqVersionInit = new QRequirementVersion("reqVersionInit");
+		QRequirementVersionLink versionLink = new QRequirementVersionLink("versionLink");
+		QRequirementVersionLinkType versionType = new QRequirementVersionLinkType("versionType");
+
+		List<String> values = fieldModel.getValues();
+		HibernateQuery<Integer> subquery = new ExtendedHibernateQuery<>().select(Expressions.ONE)
+			.from(reqVersionInit)
+			.join(reqVersionInit.requirementVersionLinks, versionLink)
+			.join(versionLink.linkType, versionType)
+			.where(
+				reqVersionInit.id.eq(outerVersion.id)
+					.and(
+						(versionLink.linkDirection.isFalse().and(versionType.role2Code.in(values))
+						.or(versionLink.linkDirection.isTrue().and(versionType.role1Code.in(values))
+						)
+					)
+				)
+			);
+
+
+
+		if(fieldModel.hasMaxValue()) {
+			query.where(subquery.notExists());
+		} else {
+			query.where(subquery.exists());
+		}
+
+	}
 	
 
 	// ******************* column mappings  *******************************************************
@@ -284,10 +320,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 				
 				.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveChildren))				
-				.mapHandler("parent", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveParent));
-				/*
-				.mapHandler("link-type", null);
-				*/
+				.mapHandler("parent", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveParent))
+				.mapHandler("link-type", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveLinkType));
+
 
 
 
