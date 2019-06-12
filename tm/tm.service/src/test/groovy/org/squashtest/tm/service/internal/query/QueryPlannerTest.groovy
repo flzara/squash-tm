@@ -21,18 +21,13 @@ package org.squashtest.tm.service.internal.query
  */
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory
 import org.squashtest.tm.domain.query.NaturalJoinStyle
 import org.squashtest.tm.domain.query.QueryAggregationColumn
 import org.squashtest.tm.domain.query.QueryFilterColumn
 import org.squashtest.tm.domain.query.QueryModel
 import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.query.QueryStrategy
-import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -40,10 +35,14 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
 import static org.squashtest.tm.domain.query.DataType.*;
 import static org.squashtest.tm.domain.query.ColumnType.*;
 import static org.squashtest.tm.domain.query.Operation.*;
+import static org.squashtest.tm.domain.testcase.QTestCase.testCase
+import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem
 
 
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
@@ -75,7 +74,7 @@ class QueryPlannerTest extends Specification {
 				)
 
 		when :
-		planner.addNaturalJoin(r,v,"versions")
+		planner.addMappedJoin(r,v,"versions")
 
 		then :
 		1 * tools.makePath(r, v, "versions") >> Mock(PathBuilder)
@@ -107,7 +106,7 @@ class QueryPlannerTest extends Specification {
 				)
 
 		when :
-		planner.addNaturalJoin(r,v,"versions")
+		planner.addMappedJoin(r,v,"versions")
 
 		then :
 		1 * tools.makePath(r, v, "versions") >> Mock(PathBuilder)
@@ -139,7 +138,7 @@ class QueryPlannerTest extends Specification {
 				)
 
 		when :
-		planner.addNaturalJoin(r,v,"versions")
+		planner.addMappedJoin(r,v,"versions")
 
 		then :
 		0 * tools.makePath(r, v, "versions")
@@ -147,7 +146,7 @@ class QueryPlannerTest extends Specification {
 	}
 
 
-	def "should add a where join, if the join doesn't exist yet"(){
+	def "should add an unmapped inner join, if the join doesn't exist yet"(){
 
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
@@ -169,17 +168,57 @@ class QueryPlannerTest extends Specification {
 				internalQueryModel : cquery
 				)
 
+		and:
+		def joinPath = new PathBuilder(IterationTestPlanItem.class, "iterationTestPlanItem").get('referencedTestCase', TestCase.class)
+
 		when :
-		planner.addWhereJoin(tc, itp,"referencedTestCase")
+		planner.addUnmappedJoin(tc, itp,"referencedTestCase")
 
 		then :
-		1 * tools.makePath(itp, tc, "referencedTestCase") >> new PathBuilder(IterationTestPlanItem.class, "iterationTestPlanItem").get('referencedTestCase', TestCase.class)
-		1 * hquery.where(_ as Predicate)
+		1 * tools.makePath(itp, tc, "referencedTestCase") >> joinPath
+		1 * hquery.innerJoin(iterationTestPlanItem) >> hquery
+		1 * hquery.on(iterationTestPlanItem.referencedTestCase.eq(testCase))
+
+	}
+
+	def "should add an unmapped left join, if the join doesn't exist yet"(){
+
+		given :
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
+
+		InternalQueryModel cquery = mockInternalModel(
+			rootEntity : TEST_CASE,
+			targetEntities : [TEST_CASE, ITEM_TEST_PLAN],
+			joinStyle: NaturalJoinStyle.LEFT_JOIN
+		)
+
+		QuerydslToolbox tools = Mock(QuerydslToolbox)
+
+		def aliases = ['testCase'] as Set
+
+		and :
+		QueryPlanner planner = new QueryPlanner(
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
+
+		and:
+		def joinPath = new PathBuilder(IterationTestPlanItem.class, "iterationTestPlanItem").get('referencedTestCase', TestCase.class)
+
+		when :
+		planner.addUnmappedJoin(tc, itp,"referencedTestCase")
+
+		then :
+		1 * tools.makePath(itp, tc, "referencedTestCase") >> joinPath
+		1 * hquery.leftJoin(iterationTestPlanItem) >> hquery
+		1 * hquery.on(iterationTestPlanItem.referencedTestCase.eq(testCase))
 
 	}
 
 
-	def "should not add a where join, if the join doesn't exist yet"(){
+	def "should not add an unmapped join, if the join aleady exists"(){
 
 		given :
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
@@ -202,7 +241,7 @@ class QueryPlannerTest extends Specification {
 				)
 
 		when :
-		planner.addWhereJoin(tc, itp,"referencedTestCase")
+		planner.addUnmappedJoin(tc, itp,"referencedTestCase")
 
 		then :
 		0 * tools.makePath(itp, tc, "referencedTestCase")
@@ -236,7 +275,7 @@ from TestCase testCase
 
 
 
-	def "should create a query plan that uses 'inner-'where join"(){
+	def "should create a query plan that uses inner unmapped join"(){
 
 		given:
 		InternalQueryModel cquery = mockInternalModel(
@@ -256,22 +295,75 @@ from TestCase testCase
 		// test that the builder still seeded the graph from the test case
 		planner.graphSeed == TEST_CASE
 
-		// the query cannot inner join from testcase to item, so the query plan is instead using cartesian-product + where clause
+		// the query cannot navigate from testcase to item, so it uses the join().on() form
 		res.toString() == """select testCase.id
-from TestCase testCase, IterationTestPlanItem iterationTestPlanItem
-  inner join iterationTestPlanItem.iteration as iteration
-where iterationTestPlanItem.referencedTestCase = testCase"""
+from TestCase testCase
+  inner join IterationTestPlanItem iterationTestPlanItem with iterationTestPlanItem.referencedTestCase = testCase
+  inner join iterationTestPlanItem.iteration as iteration"""
 
 
 	}
 
-	def "should create a (degraded) query plan with an alternate graph seed because the nominal graph would have a left-where join in it"(){
+	def "should reckon that all required target entities are reachable with the given query plan"(){
 
 		given:
 		InternalQueryModel cquery = mockInternalModel(
-			rootEntity : TEST_CASE,
-			// joining from testcase to iteration item requires a "where" join, because the relation testCase -> item is not mapped
-			targetEntities : [TEST_CASE, ITEM_TEST_PLAN],
+			targetEntities : [TEST_CASE_STEP, TEST_CASE]
+		)
+
+		and :
+		QueryPlan plan = Mock(){
+			collectKeys() >> [TEST_CASE_STEP, TEST_CASE]
+		}
+
+		and:
+		QueryPlanner planner = new QueryPlanner(cquery)
+
+		when:
+		def res = planner.isEveryEntityReachable(plan)
+
+		then:
+		res == true
+	}
+
+	@Unroll("should reckon that #neg all required entities are reachable with the given query plan")
+	def "should reckon that all required target entities are reachable with the given query plan, or not"(){
+
+		given:
+		InternalQueryModel cquery = mockInternalModel(
+			targetEntities : targets
+		)
+
+		and :
+		QueryPlan plan = Mock(){
+			collectKeys() >> planned
+		}
+
+		and:
+		QueryPlanner planner = new QueryPlanner(cquery)
+
+		when:
+		def res = planner.isEveryEntityReachable(plan)
+
+		then:
+		res == expected
+
+		where:
+
+		targets							|	planned													|	neg		|	expected
+		[TEST_CASE, CAMPAIGN]			|	[TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN]		|	""		|	true
+		[TEST_CASE_STEP, TEST_CASE]		|	[TEST_CASE_STEP]										|	"not"	|	false
+	}
+
+
+
+	def "should create a (degraded) query plan with an alternate graph seed because the nominal graph wouldn't include all the target entities"(){
+
+		given:
+		InternalQueryModel cquery = mockInternalModel(
+			rootEntity : TEST_CASE_STEP,
+			// as of now the domain graph is not aware of any way to nagivate from a test step to a test case (unidirectional edge)
+			targetEntities : [TEST_CASE_STEP, TEST_CASE],
 			// also here we require a left join
 			joinStyle: NaturalJoinStyle.LEFT_JOIN
 		)
@@ -282,14 +374,14 @@ where iterationTestPlanItem.referencedTestCase = testCase"""
 		res.select(tc.id)
 
 		then :
-		// test that the builder reversed the test plan, seeding from the item instead of test case
-		planner.graphSeed == ITEM_TEST_PLAN
+		// test that, after the initial attempt with TEST_CASE_STEP as a graph seed failed, the builder tried with TEST_CASE
+		planner.graphSeed == TEST_CASE
 
 		// the query was reversed (it initially selects from the item instead of the test case)
 		// (it is also incorrect, because the left join is in the wrong direction)
 		res.toString() == """select testCase.id
-from IterationTestPlanItem iterationTestPlanItem
-  left join iterationTestPlanItem.referencedTestCase as testCase"""
+from TestCase testCase
+  left join testCase.steps as testStep"""
 
 	}
 
@@ -331,44 +423,6 @@ from Requirement requirement
   inner join requirementVersion.category as reqversionCategory_sub"""
 	}
 
-	def "should not append twice a subquery to a main query"(){
-
-		given :
-		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : REQUIREMENT_VERSION,
-				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
-				)
-
-		ExtendedHibernateQuery mainq =
-				new ExtendedHibernateQuery().from(r)
-				.innerJoin(r.versions, v)
-				.innerJoin(v.requirementVersionCoverages, cov)
-				.innerJoin(cov.verifyingTestCase, tc)
-				.select(r.id)
-
-		and :
-
-		QuerydslToolbox tools = new QuerydslToolbox("sub")
-
-		QueryPlanner planner =
-				new QueryPlanner(cquery, tools)
-				.appendToQuery(mainq)
-				.joinRootEntityOn(v)
-
-		when :
-		planner.modifyQuery()
-		planner.modifyQuery()
-
-
-		then :
-		mainq.toString() ==
-				"""select requirement.id
-from Requirement requirement
-  inner join requirement.versions as requirementVersion
-  inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
-  inner join requirementVersionCoverage.verifyingTestCase as testCase
-  inner join requirementVersion.category as reqversionCategory_sub"""
-	}
 
 
 	def "should build a main query and also add inlined subqueries"(){

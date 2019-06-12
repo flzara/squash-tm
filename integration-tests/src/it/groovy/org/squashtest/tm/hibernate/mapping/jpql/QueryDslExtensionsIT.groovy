@@ -24,7 +24,11 @@ import org.hibernate.Session
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.jpql.ExtOps
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.project.QProject
 import org.squashtest.tm.domain.query.QQueryColumnPrototype
+import org.squashtest.tm.domain.query.QQueryFilterColumn
+import org.squashtest.tm.domain.query.QQueryProjectionColumn
+import org.squashtest.tm.domain.requirement.QRequirement
 
 
 /*
@@ -100,19 +104,22 @@ class QueryDslExtensionsIT extends DbunitDaoSpecification{
 	}
 
 
-	def "group concat"(){
+	def "function 'orderedGroupConcat' should return data as a single string with everything concatenated"(){
 
 		given:
-		def query = createQuery().from(proto).select(proto.label.orderedGroupConcat(proto.label, ExtOps.ConcatOrder.DESC))
+		def query = createQuery().from(proto)
+			.where(proto.label.s_i_matches('^TEST_CASE_[MT].*ID$').isTrue())
+			.select(proto.label.orderedGroupConcat(proto.label, ExtOps.ConcatOrder.DESC))
 
 
 		when:
-		println(query.toString())
+		def result = query.fetch()
 
 		then:
-		println(query.fetch())
+		result[0] == "TEST_CASE_TYPE_ID,TEST_CASE_MILESTONE_ID"
 
 
 	}
+
 
 }

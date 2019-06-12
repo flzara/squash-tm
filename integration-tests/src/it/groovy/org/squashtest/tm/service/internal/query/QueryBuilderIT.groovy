@@ -149,7 +149,7 @@ order by requirement.id asc"""
 	}
 
 	@DataSet("QueryPlanner.dataset.xml")
-	// this one demonstrates the "left where join" in subqueries
+	// this one demonstrates the "join().on()" in subqueries
 	def "should select how many times a test case appears in an iteration"(){
 		given :
 		def projProto = findByName('TEST_CASE_ITERCOUNT');
@@ -186,9 +186,9 @@ order by requirement.id asc"""
 					Still, this aliasing is correct and harmless.
 				 */
 				"""select distinct testCase.id, s_sum((select distinct s_count(iteration_sub.id)
-from Iteration iteration_sub
-  left join iteration_sub.testPlans as iterationTestPlanItem_sub
-  left join iterationTestPlanItem_sub.referencedTestCase as testCase_sub
+from TestCase testCase_sub
+  left join IterationTestPlanItem iterationTestPlanItem_sub with iterationTestPlanItem_sub.referencedTestCase = testCase_sub
+  left join iterationTestPlanItem_sub.iteration as iteration_sub
 where testCase = testCase_sub)) as col_sub_sub_
 from TestCase testCase
 group by testCase.id

@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.query;
 
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.PathBuilder;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
@@ -38,18 +37,19 @@ import org.squashtest.tm.domain.customfield.QTagsValue;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.ColumnType;
-import org.squashtest.tm.domain.query.NaturalJoinStyle;
+import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.PathBuilder;
 
 /**
  * <p>
@@ -232,16 +232,13 @@ class QueryPlanner {
 		else{
 			// well, we've exhausted all our seeds...
 			// see #createQueryPlan about why.
-			throw new RuntimeException("Could not find a suitable seed for generating the query plan : there is no way to generate " +
-										   "a query that would not require a left outer join on an unmapped attribute (something that " +
-										   "Hibernate doesn't support)." );
+			throw new RuntimeException("The query cannot be generated : could not find a query plan that would join together all the targeted entities" );
 		}
 	}
 
 	/*
 	 * Here we look for a valid QueryPlan. A QueryPlan is valid if
-	 * there is no "left where" joins in it, see #hasLeftWhereJoin
-	 * for an explanation of it.
+	 * all target entities can be reached.
 	 *
 	 * The method succeeds if such plan is found, and fails if
 	 * all seeds were exhausted (see #nextSeed above)
@@ -259,7 +256,7 @@ class QueryPlanner {
 		}
 		// the stop condition is that the dreaded corner case
 		// is not met.
-		while(hasLeftWhereJoin(plan));
+		while(! isEveryEntityReachable(plan));
 
 		return plan;
 
@@ -288,11 +285,11 @@ class QueryPlanner {
 		EntityPathBase<?> dest = utils.getQBean(joininfo.getDest());
 		String attribute = joininfo.getAttribute();
 
-		if (joininfo.getType() == JoinType.NATURAL){
-			addNaturalJoin(src, dest, attribute);
+		if (joininfo.getType() == JoinType.MAPPED){
+			addMappedJoin(src, dest, attribute);
 		}
 		else{
-			addWhereJoin(src, dest, attribute);
+			addUnmappedJoin(src, dest, attribute);
 		}
 
 		registerAlias(src);
@@ -300,13 +297,21 @@ class QueryPlanner {
 	}
 
 
+	/**
+	 * Creates a join by joining on a mapped relation. The join is of the form :
+	 *  .(inner|left)join(src.attribute, dest)
+	 *
+	 * @param src
+	 * @param dest
+	 * @param srcNavigableAttribute
+	 */
 	@SuppressWarnings("rawtypes")
-	private void addNaturalJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String attribute){
+	private void addMappedJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String srcNavigableAttribute){
 
 		// check first that such join doesn't exist yet
 		if (! isKnown(dest)){
 
-			PathBuilder join = utils.makePath(src, dest, attribute);
+			PathBuilder join = utils.makePath(src, dest, srcNavigableAttribute);
 
 			switch(internalQueryModel.getJoinStyle()){
 			case INNER_JOIN :
@@ -322,41 +327,30 @@ class QueryPlanner {
 	}
 
 	/*
-	 *	Here the source and destination tables are both added to the from clause (if not present already) as separate
-	 *	branches, then the join is initiated from the opposite side (ie, the dest), whereas a natural join would be
-	 * initiated by the source (join src.joinAttribute attrAlias)
+	 *	Will create a join of the form .(inner|left)join(dest).on(dest.attribute.eq(src)). It is used
+	 *	when the relation between the source and destination has no JPA mapping.
 	 *
-	 *	TODO : Initially the cartesian product + where clause was the only solution to navigate on unmapped relations.
-	 *			However since Hibernate 5.1 the SQL "JOIN on" notation is now supported, for exemple :
-	 *			"select tc from TestCase tc join IterationTestPlanItem item on tc.id = item.referencedTestCase.id"
-	 *
-	 *	And LEFT joins are allowed too ! Note that because the relation is not mapped, we have to specify the properties
-	 * that should be joined (usually the 'id')
-	 *
-	 *	The modification are slights, and the LEFT-WHERE join corner case would be a thing of the past.
+	 * Note that contrary to the "mapped" join, the navigable destination attribute is owned by the destination
+	 * (ie it holds the "foreign key").
 	 */
-	private void addWhereJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String attribute){
+	private void addUnmappedJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String destNavigableAttribute){
 
-		// if both aliases are known, don't do it
-		if (isKnown(src) && isKnown(dest)){
-			return;
-		}
-
-		// else, add the missing entity(ies)
-		if (! isKnown(src)){
-			query.from(src);
-		}
-
+		// check first that such join doesn't exist yet
 		if (! isKnown(dest)){
-			query.from(dest);
+
+			PathBuilder join = utils.makePath(dest, src, destNavigableAttribute);
+
+			switch(internalQueryModel.getJoinStyle()){
+				case INNER_JOIN :
+					query.innerJoin(dest).on(join.eq(src));
+					break;
+				case LEFT_JOIN :
+					query.leftJoin(dest).on(join.eq(src));
+					break;
+				default:
+					break;
+			}
 		}
-
-		// remember that the join is made from the dest to the source in this case
-		PathBuilder<?> destForeignKey = utils.makePath(dest, src, attribute);
-
-		Predicate condition = Expressions.booleanOperation(Ops.EQ, destForeignKey, src);
-
-		query.where(condition);
 	}
 
 	private void appendCufJoins() {
@@ -472,6 +466,9 @@ class QueryPlanner {
 			case TEST_CASE:
 				bindableEntity = BindableEntity.TEST_CASE;
 				break;
+			case TEST_CASE_STEP:
+				bindableEntity = BindableEntity.TEST_STEP;
+				break;
 			case REQUIREMENT_VERSION:
 				bindableEntity = BindableEntity.REQUIREMENT_VERSION;
 				break;
@@ -480,6 +477,9 @@ class QueryPlanner {
 				break;
 			case ITERATION:
 				bindableEntity = BindableEntity.ITERATION;
+				break;
+			case TEST_SUITE:
+				bindableEntity = BindableEntity.TEST_SUITE;
 				break;
 			case EXECUTION:
 				bindableEntity = BindableEntity.EXECUTION;
@@ -492,31 +492,17 @@ class QueryPlanner {
 
 
 	/*
-	 * Detects whether the given plan contains a "left where join", which is impossible to
-	 * actually implement.
-	 *
-	 * A "left where join" is when we need to left-outer join on an unmapped attributes,
-	 * which is impossible to express in JPA. The 'where' part comes from the workaround
-	 * when attempting to join on unmapped relations : since natural join is impossible
-	 * we resort to the cartesian product + where clause.
+	 * Detects that the query plan contains all the entities we need to 
+	 * reach.
 	 */
-	private boolean hasLeftWhereJoin(QueryPlan plan){
+	private boolean isEveryEntityReachable(QueryPlan plan){
 
-		boolean hasLeftJoin;
-		boolean hasWhereJoin = false;
+		Set<InternalEntityType> targetEntities = internalQueryModel.getTargetEntities();
+		
+		List<InternalEntityType> planedEntities = plan.collectKeys();
+		
+		return planedEntities.containsAll(targetEntities);
 
-		// condition 1
-		hasLeftJoin = internalQueryModel.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
-
-		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
-			PlannedJoin join = iter.next();
-			if (join.getType() == JoinType.WHERE){
-				hasWhereJoin =true;
-				break;
-			}
-		}
-
-		return hasLeftJoin && hasWhereJoin;
 	}
 
 	private boolean isKnown(EntityPathBase<?> path){

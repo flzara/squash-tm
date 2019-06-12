@@ -27,8 +27,8 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	/**
 	 * Describe how the two entities should be joined.
 	 * <ul>
-	 * 	<li>Natural : uses an inner join over the attribute, nothing special about it</li>
-	 * 	<li>Reversed Where : should be used when a natural join is not possible (because the relation is not mapped). </li>
+	 * 	<li>MAPPED : navigates over the attribute (because the relation is mapped), nothing special about it</li>
+	 * 	<li>UNMAPPED : should be used when navigation isn't possible (because the relation is not mapped). In this case the join uses the .join(other_entity).on(srcId, destId) form.</li>
 	 * </ul>
 	 * @author bsiri
 	 *
@@ -36,18 +36,18 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	 *
 	 */
 	enum JoinType {
-		NATURAL,
-		WHERE
+		MAPPED,
+		UNMAPPED
 	}
 
 	/**
 	 * Name of the attribute of the source entity when the join type is NATURAL,
-	 * or name of the foreign key of the dest entity when the join type is WHERE
+	 * or name of the foreign key of the dest entity when the join type is UNMAPPED
 	 */
 	private String attribute;
 
 	// Note : this attribute is not part of the computation of Equals
-	private JoinType type = JoinType.NATURAL;
+	private JoinType type = JoinType.MAPPED;
 
 
 	public PlannedJoin(InternalEntityType a1, InternalEntityType a2, String attribute) {

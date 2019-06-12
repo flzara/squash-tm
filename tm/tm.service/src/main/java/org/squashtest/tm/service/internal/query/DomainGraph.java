@@ -21,21 +21,6 @@
 package org.squashtest.tm.service.internal.query;
 
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.query.NaturalJoinStyle;
-import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
-import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST;
@@ -68,6 +53,20 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_PROJECT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_TYPE;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
+import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
 
 /**
  * <p>
@@ -250,7 +249,7 @@ class DomainGraph {
 		addEdge(issueNode, executionNode, "execution");
 
 		addEdge(itemNode, testcaseNode, "referencedTestCase");
-		addEdge(testcaseNode, itemNode,  "referencedTestCase", JoinType.WHERE);
+		addEdge(testcaseNode, itemNode,  "referencedTestCase", JoinType.UNMAPPED);
 
 		addEdge(testcaseNode, reqcoverageNode, "requirementVersionCoverages");
 		addEdge(reqcoverageNode, testcaseNode, "verifyingTestCase");
@@ -287,7 +286,7 @@ class DomainGraph {
 		addEdge(testcaseNode, paramNode, "parameters");
 		addEdge(paramNode, testcaseNode, "testCase");
 
-		// note : the unmapped reverse relation could be traversable using a JoinType.WHERE (see above for example)
+		// note : the unmapped reverse relation could be traversable using a JoinType.UNMAPPED (see above for example)
 		// but I won't add them because use-cases of using an attachment-list as a root entity are virtually non-existent.
 		addEdge(testcaseNode, tcAttlistNode, "attachmentList");
 		addEdge(tcAttlistNode, tcAttachmentNode, "attachments");
@@ -299,13 +298,13 @@ class DomainGraph {
 		addEdge(campAttlistNode, campAttachmentNode,"attachments");
 
 		addEdge(testcaseNode, tcProjectNode, "project");
-		addEdge(tcProjectNode, testcaseNode, "project", JoinType.WHERE);
+		addEdge(tcProjectNode, testcaseNode, "project", JoinType.UNMAPPED);
 
 		addEdge(requirementNode, reqProjectNode, "project");
-		addEdge(reqProjectNode, requirementNode, "project", JoinType.WHERE);
+		addEdge(reqProjectNode, requirementNode, "project", JoinType.UNMAPPED);
 
 		addEdge(campaignNode, campProjectNode, "project");
-		addEdge(campProjectNode, campaignNode, "project", JoinType.WHERE);
+		addEdge(campProjectNode, campaignNode, "project", JoinType.UNMAPPED);
 
 		addEdge(itemNode, itemSuiteNode, "testSuites");
 		addEdge(itemSuiteNode, itemNode, "testPlan");

@@ -188,9 +188,12 @@ public final class HibernateDialectExtensions {
 	 *
 	 *  <ul>
 	 *  	<li>group_concat(<it>col identifier</it>) : will concatenate as expected over the column identifier.</li>
-	 *  	<li>group_concat(<it>col identifier 1</it>, 'order by', <it>col identifier 2</it>, ['asc|desc']) : will send this to the target db as 'group_concat(id1 order by id2 [asc|desc])'
+	 *  	<li>group_concat(<it>col identifier 1</it>, 'order by', <it>col identifier 2</it> , ['asc|desc'], [sep]) : will send this to the target db as 'group_concat(id1 order by id2 [asc|desc] separator sep)'
 	 *  </ul>
 	 *
+	 *  <p>
+	 *      : group_concat(tc.label, 'order by', tc.id, 'desc', '|') -> concatenate
+	 *  </p>
 	 *
 	 *
 	 *
