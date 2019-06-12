@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
-
+import com.google.common.collect.Sets;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -43,7 +41,6 @@ import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.QueryOrderingColumn;
-import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
@@ -67,11 +64,15 @@ import org.squashtest.tm.service.query.QueryProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield).
