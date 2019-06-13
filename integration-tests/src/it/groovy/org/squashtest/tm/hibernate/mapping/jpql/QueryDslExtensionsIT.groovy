@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.query.QQueryColumnPrototype
 import org.squashtest.tm.domain.query.QQueryFilterColumn
 import org.squashtest.tm.domain.query.QQueryProjectionColumn
 import org.squashtest.tm.domain.requirement.QRequirement
+import spock.lang.Ignore
 
 
 /*
@@ -66,6 +67,7 @@ class QueryDslExtensionsIT extends DbunitDaoSpecification{
 
 	}
 
+	@Ignore("This feature is eventually not used")
 	def "function 's_matches' should retrieve nothing because of case sensitivity"(){
 
 		given:

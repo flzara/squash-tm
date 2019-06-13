@@ -23,6 +23,7 @@ package org.squashtest.tm.hibernate.mapping.jpql
 import org.squashtest.it.basespecs.DatasourceDependantSpecification
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.testcase.Dataset
+import spock.lang.Ignore
 
 /**
  * No dataset, we'll use the content of QUERY_COLUMN_PROTOTYPE as example for our tests
@@ -55,6 +56,7 @@ class HQLExtensionsIT extends DbunitDaoSpecification{
 
 	}
 
+	@Ignore("This feature is eventually not used")
 	def "function 'matches' should retrieve nothing because of case sensitivity"(){
 
 		given:
