@@ -133,8 +133,22 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model, Locale locale) {
+		Session session = entityManager.unwrap(Session.class);
+		// prepare the query
 
-		return new ArrayList<>();
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
+
+		converter.configureModel(model).configureMapping(MAPPINGS);
+
+
+		// round 1 : find our paged requirement versions
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+		query = query.clone(session);
+		List<Tuple> tuples = query.fetch();
+		List<RequirementVersion> versions = tuples.stream()
+			.map(tuple -> tuple.get(0, RequirementVersion.class))
+			.collect(Collectors.toList());
+		return versions;
 	}
 
 	@SuppressWarnings("unchecked")
