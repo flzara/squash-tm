@@ -165,6 +165,15 @@
                 </div>
 				</script>
 
+              <script id="text-customfield-template" type="text/x-handlebars-template">
+                <div class="display-search-table-row">
+                  <label for="{{text-customfield-id}}" class="display-search-table-cell">{{text-customfield-title}}</label>
+                  <div id="{{text-customfield-id}}" class="search-input" style="display: inline;">
+                    <input type="text" data-widgetname="TextCustomField" data-fieldid="F{{text-customfield-id}}" value="{{fieldValue}}" class="search-input" />
+                  </div>
+                </div>
+              </script>
+
               <script id="textfield-id-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
                   	<label for="{{text-field-id}}" class="display-search-table-cell" >{{text-field-title}}</label>
@@ -328,6 +337,21 @@
           </div>
         </script>
 
+              <script id="numeric-customfield-template" type="text/x-handlebars-template">
+                <div class="display-search-table-row">
+                  <div id="{{text-range-id}}" class="search-input" style="display:inline">
+                    <div class="search-line" data-widgetname="NumericCustomField">
+                      <input type="checkbox"></input>
+                      <span>{{text-range-title}}</span>
+                      <span th:text="#{search.testcase.between.label}"></span>
+                      <input class="small-search-input" type="text"></input>
+                      <span th:text="#{search.testcase.and.label}"></span>
+                      <input class="small-search-input" type="text"></input>
+                    </div>
+                  </div>
+                </div>
+              </script>
+
               <script id="exists-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
@@ -383,6 +407,29 @@
 					</div>
                 </div>
 			</script>
+
+              <script id="combomultiselect-customfield-template" type="text/x-handlebars-template">
+                <div class="display-search-table-row">
+                  <label for="{{combomultiselect-customfield-id}}" class="display-search-table-cell" style="vertical-align: top;">{{combomultiselect-customfield-title}}</label>
+                  <div id="{{combomultiselect-customfield-id}}" class="search-input" style="display: inline;">
+                    <div class="search-line" data-widgetname="ComboMultiSelectCustomField" >
+                      <input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
+                      <select multiple="multiple" class="shorter-search-input"></select>
+                    </div>
+                  </div>
+                </div>
+              </script>
+              <script id="checkboxcustomfield-template" type="text/x-handlebars-template">
+                <div class="display-search-table-row">
+                  <label for="{{checkboxcustomfield-id}}" class="display-search-table-cell" style="vertical-align: top;">{{checkboxcustomfield-title}}</label>
+                  <div id="{{checkboxcustomfield-id}}" class="search-input" style="display: inline;">
+                    <div class="search-line" data-widgetname="CheckboxCustomField" >
+                      <input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
+                      <select multiple="multiple" class="shorter-search-input"></select>
+                    </div>
+                  </div>
+                </div>
+              </script>
               <script id="tags-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<label for="{{tags-id}}" class="display-search-table-cell">{{tags-title}}</label>

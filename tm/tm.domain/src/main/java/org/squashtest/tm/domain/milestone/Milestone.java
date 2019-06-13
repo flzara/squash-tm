@@ -23,9 +23,6 @@ package org.squashtest.tm.domain.milestone;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.SortableField;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -35,7 +32,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 
@@ -70,7 +66,6 @@ import java.util.Set;
 @Auditable
 @Entity
 @Table(name = "MILESTONE")
-@Indexed
 public class Milestone implements Identified {
 
 	private static final String MILESTONE_ID = "MILESTONE_ID";
@@ -79,7 +74,6 @@ public class Milestone implements Identified {
 	@Column(name = MILESTONE_ID)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_milestone_id_seq")
 	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq", allocationSize = 1)
-	@SortableField
 	private Long id;
 
 	@Lob
@@ -92,12 +86,10 @@ public class Milestone implements Identified {
 	private String label;
 
 	@Enumerated(EnumType.STRING)
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneStatus status;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "M_RANGE")
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneRange range;
 
 	@NotNull

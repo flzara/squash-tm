@@ -20,43 +20,37 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.user.UserAccountService;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_EXECUTION_MODE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISAUTO;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ENTITY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_DSCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
@@ -65,9 +59,44 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.jooq.DSLContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.user.UserAccountService;
+
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+
+@Transactional(readOnly = true)
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	CampaignAdvancedSearchService {
+
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(ITEM_TEST_PLAN_ENTITY);
 
 	@Inject
 	protected ProjectFinder projectFinder;
@@ -87,30 +116,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	protected ProjectsPermissionManagementService permissionService;
 
-	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{
-		new SortField("project.name", SortField.Type.STRING, false),
-		new SortField("campaign-name", SortField.Type.STRING, false),
-		new SortField("iteration-name", SortField.Type.STRING, false),
-		new SortField("itpi-id", SortField.Type.STRING, false),
-		new SortField("itpi-label", SortField.Type.STRING, false),
-		new SortField("itpi-mode", SortField.Type.STRING, false),
-		new SortField("itpi-status", SortField.Type.STRING, false),
-		new SortField("itpi-executed-by", SortField.Type.STRING, false),
-		new SortField("itpi-executed-on", SortField.Type.LONG, false),
-		new SortField("itpi-datasets", SortField.Type.STRING, false),
-		new SortField("referencedTestCase.importance", SortField.Type.STRING, false),
-		new SortField("referencedTestCase.automatable", SortField.Type.STRING, false)};
-
-
-	private static final String LAST_EXECUTE_ON_FIELD_NAME ="lastExecutedOn";
-	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList(LAST_EXECUTE_ON_FIELD_NAME);
-
-	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
-	private static final String ITERATION_ID_FIELD_NAME = "iteration.id";
-	private static final String CAMPAIGN_ID_FIELD_NAME = "campaign.id";
-	private static final String PROJECT_ID_FIELD_NAME = "project.id";
-
-	private static final String FAKE_ITPI_ID = "-9000";
+	@Inject
+	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
 
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign(List<Long> idList) {
@@ -120,139 +127,38 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
 		List<Long> partyIds = findPartyIdsCanAccessProject(projectIds);
-		return  findUserLoginsByPartyIds(partyIds);
-	}
-
-	protected Query searchIterationTestPlanItemQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
-		/* Creating a copy of the model to keep a model with milestones criteria */
-		AdvancedSearchModel modelCopy = model.shallowCopy();
-		/* Removing these criteria from the main model */
-		removeMilestoneSearchFields(model);
-
-
-		/* Building main Lucene Query with this main model */
-		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-		/* If requested, add milestones criteria with the copied model */
-		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
-		}
-
-		if(shouldSearchByAutomationWorkflow(modelCopy)) {
-			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb, modelCopy);
-		}
-		return luceneQuery;
-	}
-
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-
-		/* Find the milestones ids. */
-		List<Long> milestoneIds = findMilestonesIds(modelCopy);
-
-		/* Find the ItereationTestPlanItems ids. */
-		List<Long> lItpiIds = iterationTestPlanDao.findAllForMilestones(milestoneIds);
-
-		/* Create the query. */
-		return fakeIdToFindNoResultViaLuceneForCreatingQuery(lItpiIds,  qb,  mainQuery,  FAKE_ITPI_ID);
-	}
-
-	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-		addWorkflowAutomationFilter(modelCopy);
-		Query query = buildLuceneQuery(qb,modelCopy);
-		return qb.bool().must(mainQuery).must(query).createQuery();
+		return findUserLoginsByPartyIds(partyIds);
 	}
 
 	@Override
-	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-																							 PagingAndMultiSorting paging, Locale locale) {
+	public Page<IterationTestPlanItem> searchForIterationTestPlanItem(AdvancedSearchQueryModel searchModel,
+																	  Pageable paging, Locale locale) {
+		Session session = entityManager.unwrap(Session.class);
 
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
+		converter.configureModel(searchModel).configureMapping(MAPPINGS);
 
-		Query luceneQuery = searchIterationTestPlanItemQuery(searchModel, ftSession);
+		// round 1 : fetch the entities
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+		query = query.clone(session);
+		List<Tuple> tuples = query.fetch();
+		List<IterationTestPlanItem> items = tuples.stream().map(tuple -> tuple.get(0, IterationTestPlanItem.class)).collect(Collectors.toList());
 
-		List<IterationTestPlanItem> result = Collections.emptyList();
-		int countAll = 0;
+		
+		// round 2 : count the total results
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
+		
 
-		if (!checkSearchModelPerimeterIsEmpty(searchModel) && luceneQuery != null) {
-			Sort sort = getExecutionSort(paging);
+		return new PageImpl(items, paging, count);
 
-			FullTextQuery fullTextQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class).setSort(sort);
-
-			countAll = fullTextQuery.getResultSize();
-			
-			result = fullTextQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).getResultList();
-		}
-
-		// Please, don't return null there, it will explode everything. It did.
-		return new PagingBackedPagedCollectionHolder<>(paging, countAll, result);
-
-	}
-
-	private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
-		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
-		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME)) &&
-			checkParamNullOrEmpty(fields.get(TEST_SUITE_ID_FIELD_NAME));
-	}
-
-	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field) {
-		if (field == null) {
-			return true;
-		}
-		if (field.getType() != AdvancedSearchFieldModelType.LIST) {
-			return false;
-		}
-		AdvancedSearchListFieldModel listField = (AdvancedSearchListFieldModel) field;
-		return listField.getValues().isEmpty();
-	}
-
-	private Sort getExecutionSort(PagingAndMultiSorting multisorting) {
-
-
-		List<Sorting> sortings = multisorting.getSortings();
-
-		if (sortings == null || sortings.isEmpty()) {
-			return new Sort(DEFAULT_SORT_EXECUTION);
-		}
-
-		boolean isReverse = true;
-		SortField[] sortFieldArray = new SortField[sortings.size()];
-
-		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
-				isReverse = false;
-			}
-
-			String fieldName = sortings.get(i).getSortedAttribute();
-			fieldName = formatSortFieldName(fieldName);
-
-			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
-			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
-			}
-		}
-
-		return new Sort(sortFieldArray);
-	}
-
-	private String formatSortFieldName(String fieldName) {
-		String result = fieldName;
-		if (fieldName.startsWith("IterationTestPlanItem.")) {
-			result = fieldName.replaceFirst("IterationTestPlanItem.", "");
-		} else if (fieldName.startsWith("Project.")) {
-			result = fieldName.replaceFirst("Project.", "project.");
-		} else if (fieldName.startsWith("Campaign.")) {
-			result = fieldName.replaceFirst("Campaign.", "campaign.");
-		}
-		return result;
 	}
 
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
-			return DSL
+		return DSL
 			.select(CORE_PARTY.PARTY_ID)
 			.from(CORE_PARTY)
 			.join(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID.eq(CORE_PARTY.PARTY_ID))
@@ -285,6 +191,52 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		return Stream.concat(usersSolo.stream(), usersInTeam.stream()).distinct()
 			.collect(Collectors.toList());
+	}
+
+	static {
+
+		MAPPINGS.getResultMapping()
+			.map("project-name", CAMPAIGN_PROJECT_NAME)
+			.map("project-id", CAMPAIGN_PROJECT_ID)
+			.map("campaign-name", CAMPAIGN_NAME)
+			.map("iteration-name", ITERATION_NAME)
+			.map("itpi-id", ITEM_TEST_PLAN_ID)
+			.map("itpi-label", ITEM_TEST_PLAN_LABEL)
+			.map("itpi-mode", EXECUTION_EXECUTION_MODE)
+			.map("itpi-isauto", EXECUTION_ISAUTO)
+			.map("itpi-testsuites", ITEM_TEST_PLAN_SUITECOUNT)
+			.map("itpi-status", ITEM_TEST_PLAN_STATUS)
+			.map("is-tc-deleted", ITEM_TEST_PLAN_TC_DELETED)
+			.map("itpi-executed-by", ITEM_TEST_PLAN_TESTER)
+			.map("itpi-executed-on", ITEM_TEST_PLAN_LASTEXECON)
+			.map("itpi-datasets", ITEM_TEST_PLAN_DSCOUNT)
+			.map("tc-weight", TEST_CASE_IMPORTANCE)
+			.map("test-case-automatable", TEST_CASE_AUTOMATABLE);
+
+		MAPPINGS.getFormMapping()
+			.map("executionMode", EXECUTION_EXECUTION_MODE)
+			.map("executionStatus", ITEM_TEST_PLAN_STATUS)
+			.map("lastExecutedBy", ITEM_TEST_PLAN_TESTER)
+			.map("lastExecutedOn", ITEM_TEST_PLAN_LASTEXECON)
+			.map("milestone.endDate", CAMPAIGN_MILESTONE_END_DATE)
+			.map("milestone.label", CAMPAIGN_MILESTONE_ID)
+			.map("milestone.status", CAMPAIGN_MILESTONE_STATUS)
+			.map("project.id", CAMPAIGN_PROJECT_ID)
+			.map("referencedTestCase.automatable", TEST_CASE_AUTOMATABLE)
+			.map("referencedTestCase.automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS)
+			.map("referencedTestCase.id", TEST_CASE_ID)
+			.map("referencedTestCase.importance", TEST_CASE_IMPORTANCE)
+			.map("referencedTestCase.name", TEST_CASE_NAME)
+			.map("referencedTestCase.reference", TEST_CASE_REFERENCE)
+			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN);
+
+		MAPPINGS.getCufMapping()
+			.map(AdvancedSearchFieldModelType.TAGS.toString(), ITERATION_CUF_TAG)
+			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), ITERATION_CUF_LIST)
+			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), ITERATION_CUF_TEXT)
+			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), ITERATION_CUF_DATE)
+			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), ITERATION_CUF_NUMERIC)
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), ITERATION_CUF_CHECKBOX);
 	}
 
 }

@@ -21,6 +21,11 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -34,12 +39,11 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 @Table(name = "CHART_MEASURE_COLUMN")
-public class MeasureColumn implements ColumnPrototypeInstance {
-
+public class MeasureColumn implements QueryColumnPrototypeInstance {
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
-	private ColumnPrototype column;
+	private QueryColumnPrototype column;
 
 	@NotBlank
 	@Size(min = 0, max = 30)
@@ -51,21 +55,35 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 
 	private Long cufId;
 
-	@Override
-	public ColumnPrototype getColumn() {
-		return column;
-	}
-
-	public void setColumn(ColumnPrototype column) {
-		this.column = column;
-	}
-
 	public String getLabel() {
 		return label;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return column.getEntityType();
+	}
+
+	@Override
+	public Long getCufId() {
+		return cufId;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
+	}
+
+	@Override
+	public QueryColumnPrototype getColumn() {
+		return column;
+	}
+
+	public void setColumn(QueryColumnPrototype column) {
+		this.column = column;
 	}
 
 	@Override
@@ -78,27 +96,13 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	}
 
 	@Override
-	public EntityType getEntityType() {
-		return column.getEntityType();
-	}
-
-	@Override
-	public SpecializedEntityType getSpecializedType(){
+	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return getColumn().getDataType();
-	}
-
-	@Override
-	public Long getCufId() {
-		return cufId;
-	}
-
-	public void setCufId(Long cufId) {
-		this.cufId = cufId;
+		return column.getDataType();
 	}
 
 	public MeasureColumn createCopy(){

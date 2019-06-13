@@ -20,12 +20,20 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.google.common.collect.Sets;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class AdvancedSearchModel {
 
+	private static final String SEARCH_BY_MILESTONE = "searchByMilestone";
+	private static final Set<String> MILESTONE_SEARCH_CRITERIA_KEYS = Sets.newHashSet(SEARCH_BY_MILESTONE, "milestone.label", "milestone.status", "milestone.endDate");
+
 	private Map<String, AdvancedSearchFieldModel> fields = new HashMap<>();
+
 
 	public AdvancedSearchModel(){
 		super();
@@ -40,8 +48,30 @@ public class AdvancedSearchModel {
 		fields.put(fieldName, value);
 	}
 
+	/**
+	 * Returns the form fields. If no search on the milestones is required, the corresponding
+	 * criteria will be filtered out.
+	 *
+	 * @return
+	 */
 	public Map<String, AdvancedSearchFieldModel> getFields(){
-		return this.fields;
+
+		if (searchByMilestone()){
+			//SearchByMilestone isn't a field querying so we should remove it
+			return stripSearchByMilestoneField();
+		}
+		else {
+			return stripMilestones();
+		}
+	}
+	
+	/**
+	 * Returns a copy of the keyset, that can then be modified without altering the underlying map.
+	 * 
+	 * @return
+	 */
+	public Set<String> getFieldKeys(){
+		return new HashSet<>(getFields().keySet());
 	}
 
 	public AdvancedSearchModel shallowCopy(){
@@ -50,5 +80,26 @@ public class AdvancedSearchModel {
 
 		return new AdvancedSearchModel(copyfields);
 
+	}
+
+	private boolean searchByMilestone(){
+		AdvancedSearchFieldModel byMilestone = fields.get(SEARCH_BY_MILESTONE);
+		if (byMilestone != null){
+			AdvancedSearchSingleFieldModel milestoneField = (AdvancedSearchSingleFieldModel) byMilestone;
+			return milestoneField.getValue().equals("true");
+		}
+		return false;
+	}
+
+	private Map<String, AdvancedSearchFieldModel> stripMilestones(){
+		Map<String, AdvancedSearchFieldModel> copy = new HashMap<>(fields);
+		MILESTONE_SEARCH_CRITERIA_KEYS.forEach(copy::remove);
+		return copy;
+	}
+
+	private Map<String, AdvancedSearchFieldModel> stripSearchByMilestoneField() {
+		Map<String, AdvancedSearchFieldModel> copy = new HashMap<>(fields);
+		copy.remove(SEARCH_BY_MILESTONE);
+		return copy;
 	}
 }

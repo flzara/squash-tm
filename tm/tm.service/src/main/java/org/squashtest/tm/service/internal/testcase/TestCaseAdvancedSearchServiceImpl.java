@@ -20,28 +20,71 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISSUECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ENTITY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DATASETCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DESCRIPTION;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_EXECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ITERCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_KIND;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_MODIFIED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NATURE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PARAMCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PREQUISITE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STEPCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_VERSCOUNT;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -49,22 +92,14 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 	TestCaseAdvancedSearchService {
+
+	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(TEST_CASE_ENTITY);
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -90,22 +125,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
-		new SortField("project.name", SortField.Type.STRING, false),
-		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
-		new SortField("label", SortField.Type.STRING, false),new SortField("createdBy", SortField.Type.STRING,false),
-		new SortField("lastModifiedBy",  SortField.Type.STRING, false),new SortField("id",  SortField.Type.STRING, false),
-		new SortField("requirements",  SortField.Type.STRING, false),new SortField("steps",  SortField.Type.STRING, false),
-		new SortField("attachments",  SortField.Type.STRING, false),
-		new SortField("iterations",  SortField.Type.STRING, false),
-		new SortField("automatable", SortField.Type.STRING, false),
-		new SortField("automationRequest.requestStatus", SortField.Type.STRING, false)
-
-	};
-
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList();
-
-	private static final String FAKE_TC_ID = "-9000";
+	@Inject
+	private Provider<AdvancedSearchQueryModelToConfiguredQueryConverter> converterProvider;
 
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases(List<Long> idList) {
@@ -117,70 +138,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return projectDao.findUsersWhoModifiedTestCases(idList);
 	}
 
-
-	/*
-	 * That implementation is special because we cannot process the milestones as usual. Indeed, we need the test cases that belongs both directly and indirectly to the
-	 * milestone. That's why we use the method noMilestoneLuceneQuery.
-	 *
-	 * (non-Javadoc)
-	 * @see org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService#searchForTestCases(org.squashtest.tm.domain.search.AdvancedSearchModel, java.util.Locale)
-	 */
-	/*
-	 * TODO :
-	 *
-	 * This method is basically an override of "buildLuceneQuery" defined in the superclass -> thus we could rename it accordingly.
-	 * However in method "searchForTestCasesThroughRequirementModel" we must use the super implementation of "buildLuceneQuery" -> thus renaming
-	 * "searchTestCaseQuery" to "buildLuceneQuery" could lead to ambiguity.
-	 *
-	 * I don't know what to do about it.
-	 */
-	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem) {
-
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
-
-		/*
-		 * we must not include the milestone criteria yet because
-		 * it'll be the subject of a separate query.
-		 *
-		 * Let's save the search model and create a milestone-stripped
-		 * version of it
-		 */
-
-		AdvancedSearchModel modelCopy = model.shallowCopy();
-		removeMilestoneSearchFields(model);
-
-		// create the main query (search test cases, no milestones)
-		Query luceneQuery = buildCoreLuceneQuery(qb, model);
-		// now add the test-cases specific milestones criteria
-		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy);
-		}
-
-		if(shouldSearchByAutomationWorkflow(modelCopy)) {
-			luceneQuery = addAllowAutomationWorkflow(luceneQuery,qb,modelCopy);
-		}
-
-		return luceneQuery;
-
-	}
-
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale) {
-
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-
-		Query luceneQuery = searchTestCasesQuery(model, ftem);
-
-		FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class);
-
-		return hibQuery.getResultList();
-
-	}
-
-	@Override
-	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale) {
+	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model, Locale locale) {
 		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
 		List<TestCase> result = new ArrayList<>();
 		Set<TestCase> testCases = new HashSet<>();
@@ -202,139 +161,106 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		//[Issue 7901] Only look for test cases user is allowed to read.
 		result.addAll(testCaseDao.findAllByIds(
 			callingTestCaseIds.stream()
-			.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
-			.collect(Collectors.toList())
+				.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
+				.collect(Collectors.toList())
 		));
 		return result;
 	}
 
-	private Sort getTestCaseSort(PagingAndMultiSorting multisorting) {
-
-		Locale locale = LocaleContextHolder.getLocale();
-
-		List<Sorting> sortings = multisorting.getSortings();
-
-		if (sortings == null || sortings.isEmpty()) {
-			return new Sort(DEFAULT_SORT_TESTCASES);
-		}
-
-		boolean isReverse = true;
-		SortField[] sortFieldArray = new SortField[sortings.size()];
-
-		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
-				isReverse = false;
-			}
-
-			String fieldName = sortings.get(i).getSortedAttribute();
-			fieldName = formatSortFieldName(fieldName);
-
-			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
-			} else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
-					locale), isReverse);
-			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
-			}
-		}
-
-		return new Sort(sortFieldArray);
-	}
-
-	private String formatSortFieldName(String fieldName) {
-		String result = fieldName;
-		if (fieldName.startsWith("TestCase.")) {
-			result = fieldName.replaceFirst("TestCase.", "");
-		} else if (fieldName.startsWith("Project.")) {
-			result = fieldName.replaceFirst("Project.", "project.");
-		} else if (fieldName.startsWith("AutomationRequest.")) {
-			result = fieldName.replaceFirst("AutomationRequest.", "automationRequest.");
-		}
-		return result;
-	}
-
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model,
-		PagingAndMultiSorting sorting, Locale locale) {
+	public Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model,
+																	Pageable sorting, Locale locale) {
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-
-		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
-
-		Query luceneQuery = super.buildLuceneQuery(qb, testcases);
-
-		return fetchPagedResults(ftem, luceneQuery, sorting);
-	}
-
-	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model,
-		PagingAndMultiSorting sorting, Locale locale) {
-
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-
-		Query luceneQuery = searchTestCasesQuery(model, ftem);
-
-		return fetchPagedResults(ftem, luceneQuery, sorting);
-	}
-
-	private PagedCollectionHolder<List<TestCase>> fetchPagedResults(FullTextEntityManager ftem, Query luceneQuery, PagingAndMultiSorting sorting) {
-		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
-		if (luceneQuery != null) {
-			Sort sort = getTestCaseSort(sorting);
-			FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
-
-			countAll = hibQuery.getResultSize();
-
-			if (!sorting.shouldDisplayAll()){
-				hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize());
-			}
-
-			result = hibQuery.getResultList();
-		}
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
+		return new PageImpl(testcases, sorting, countAll);
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
+	
+	@Override
+	public Page<TestCase> searchForTestCases(AdvancedSearchQueryModel model,
+											 Pageable sorting, Locale locale) {
 
-		// find the milestones
-		addMilestoneFilter(modelCopy);
+		Session session = entityManager.unwrap(Session.class);
 
-		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		// now find the test cases
-		Collection<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
+		converter.configureModel(model).configureMapping(MAPPINGS);
+
+		// round 1 : fetch the test cases
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+		query = query.clone(session);
+		
+		List<Tuple> tuples = query.fetch();
+		List<TestCase> testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
 
 
-		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
-		List<String> testcaseIds = new ArrayList<>(lTestcaseIds.size());
-		for (Long l : lTestcaseIds) {
-			testcaseIds.add(l.toString());
-		}
+		// round 2 : count the total
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
 
-		//if no tc are found then use fake id so the lucene query will not find anything
-
-		if (testcaseIds.isEmpty()) {
-			testcaseIds.add(FAKE_TC_ID);
-		}
-
-		// finally, add a criteria that restrict the test case ids
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", testcaseIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
-
+		return new PageImpl(testCases, sorting, count);
 	}
 
-	public Query addAllowAutomationWorkflow(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy) {
-		addWorkflowAutomationFilter(modelCopy);
-		Query query = buildLuceneQuery(qb,modelCopy);
-		return qb.bool().must(mainQuery).must(query).createQuery();
-	}
+	static {
 
+		MAPPINGS.getFormMapping()
+			.map("attachments", TEST_CASE_ATTCOUNT)
+			.map("callsteps", TEST_CASE_CALLSTEPCOUNT)
+			.map("createdBy", TEST_CASE_CREATED_BY)
+			.map("createdOn", TEST_CASE_CREATED_ON)
+			.map("datasets", TEST_CASE_DATASETCOUNT)
+			.map("description", TEST_CASE_DESCRIPTION)
+			.map("executions", TEST_CASE_EXECOUNT)
+			.map("id", TEST_CASE_ID)
+			.map("importance", TEST_CASE_IMPORTANCE)
+			.map("issues", EXECUTION_ISSUECOUNT)
+			.map("iterations", TEST_CASE_ITERCOUNT)
+			.map("kind", TEST_CASE_KIND)
+			.map("lastModifiedBy", TEST_CASE_MODIFIED_BY)
+			.map("lastModifiedOn", TEST_CASE_MODIFIED_ON)
+			.map("milestone.label", TEST_CASE_MILESTONE_ID)
+			.map("milestone.endDate", TEST_CASE_MILESTONE_END_DATE)
+			.map("milestone.status", TEST_CASE_MILESTONE_STATUS)
+			.map("name", TEST_CASE_NAME)
+			.map("nature", TEST_CASE_NATURE)
+			.map("parameters", TEST_CASE_PARAMCOUNT)
+			.map("prerequisite", TEST_CASE_PREQUISITE)
+			.map("project.id", TEST_CASE_PROJECT_ID)
+			.map("reference", TEST_CASE_REFERENCE)
+			.map("requirements", TEST_CASE_VERSCOUNT)
+			.map("status", TEST_CASE_STATUS)
+			.map("steps", TEST_CASE_STEPCOUNT)
+			.map("type", TEST_CASE_TYPE)
+			.map("automatable", TEST_CASE_AUTOMATABLE)
+			.map("automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS);
+
+		MAPPINGS.getResultMapping()
+			.map("project-name", TEST_CASE_PROJECT_NAME)
+			.map("test-case-id", TEST_CASE_ID)
+			.map("test-case-ref", TEST_CASE_REFERENCE)
+			.map("test-case-label", TEST_CASE_NAME)
+			.map("test-case-weight", TEST_CASE_IMPORTANCE)
+			.map("test-case-nature", TEST_CASE_NATURE)
+			.map("test-case-type", TEST_CASE_TYPE)
+			.map("test-case-status", TEST_CASE_STATUS)
+			.map("test-case-automatable", TEST_CASE_AUTOMATABLE)
+			.map("test-case-milestone-nb", TEST_CASE_MILCOUNT)
+			.map("test-case-requirement-nb", TEST_CASE_VERSCOUNT)
+			.map("test-case-teststep-nb", TEST_CASE_STEPCOUNT)
+			.map("test-case-iteration-nb", TEST_CASE_ITERCOUNT)
+			.map("test-case-attachment-nb", TEST_CASE_ATTCOUNT)
+			.map("test-case-created-by", TEST_CASE_CREATED_BY)
+			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY);
+
+		MAPPINGS.getCufMapping()
+			.map(AdvancedSearchFieldModelType.TAGS.toString(), TEST_CASE_CUF_TAG)
+			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), TEST_CASE_CUF_LIST)
+			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), TEST_CASE_CUF_TEXT)
+			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), TEST_CASE_CUF_DATE)
+			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), TEST_CASE_CUF_NUMERIC)
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX);
+	}
 }

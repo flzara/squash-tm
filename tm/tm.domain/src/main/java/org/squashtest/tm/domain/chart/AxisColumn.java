@@ -21,6 +21,11 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -34,7 +39,7 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 @Table(name = "CHART_AXIS_COLUMN")
-public class AxisColumn implements ColumnPrototypeInstance{
+public class AxisColumn implements QueryColumnPrototypeInstance {
 
 
 	@NotBlank
@@ -43,7 +48,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
-	private ColumnPrototype column;
+	private QueryColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name ="AXIS_OPERATION")
@@ -60,11 +65,11 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	}
 
 	@Override
-	public ColumnPrototype getColumn() {
+	public QueryColumnPrototype getColumn() {
 		return column;
 	}
 
-	public void setColumn(ColumnPrototype column) {
+	public void setColumn(QueryColumnPrototype column) {
 		this.column = column;
 	}
 
@@ -83,13 +88,13 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	}
 
 	@Override
-	public SpecializedEntityType getSpecializedType(){
+	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return getColumn().getDataType();
+		return column.getDataType();
 	}
 
 	@Override

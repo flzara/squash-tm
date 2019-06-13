@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -30,12 +33,12 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 
 	public DefaultDatatableMapper() {
 		super();
-		mappings = new HashMap<>();
+		mappings = new LinkedHashMap<>();
 	}
 
 	public DefaultDatatableMapper(int initialCapacity) {
 		super();
-		mappings = new HashMap<>(initialCapacity);
+		mappings = new LinkedHashMap<>(initialCapacity);
 	}
 
 	
@@ -67,6 +70,15 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		} else {
 			throw new NoSuchElementException("column '"+key+"' is not mapped");
 		}
+	}
+
+	/**
+	 * Returns the mapped attributes, in the order of registration
+	 *
+	 * @return
+	 */
+	public List<KEY> getMappedKeys(){
+		return new ArrayList<KEY>(mappings.keySet());
 	}
 	
 }

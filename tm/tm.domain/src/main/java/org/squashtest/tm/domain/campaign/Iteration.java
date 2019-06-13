@@ -23,11 +23,6 @@ package org.squashtest.tm.domain.campaign;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
@@ -46,7 +41,6 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -107,8 +101,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private String name;
 
 	@NotNull
@@ -118,8 +110,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ITERATION_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private IterationStatus status = IterationStatus.PLANNED;
 
 	@Embedded @Valid

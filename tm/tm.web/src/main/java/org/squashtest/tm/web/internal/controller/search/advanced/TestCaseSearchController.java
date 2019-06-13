@@ -21,17 +21,18 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -45,16 +46,18 @@ import org.squashtest.tm.web.internal.controller.search.advanced.tablemodels.Tes
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -84,8 +87,6 @@ public class TestCaseSearchController extends GlobalSearchController {
 		.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
 		.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
 		.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
-
-
 
 	@Inject
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
@@ -213,10 +214,12 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService
-			.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
+
+		Page<TestCase> holder = testCaseAdvancedSearchService
+			.searchForTestCasesThroughRequirementModel(queryModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 
@@ -242,10 +245,10 @@ public class TestCaseSearchController extends GlobalSearchController {
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
 		addMilestoneToSearchModel(searchModel);
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper, (String key) -> key);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
-		PagedCollectionHolder<List<TestCase>> holder =
-				testCaseAdvancedSearchService.searchForTestCases(searchModel, paging, locale);
+		Page<TestCase> holder = testCaseAdvancedSearchService.searchForTestCases(queryModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 
@@ -287,7 +290,5 @@ public class TestCaseSearchController extends GlobalSearchController {
 	protected WorkspaceDisplayService workspaceDisplayService() {
 		return testCaseWorkspaceDisplayService;
 	}
-
-
 
 }

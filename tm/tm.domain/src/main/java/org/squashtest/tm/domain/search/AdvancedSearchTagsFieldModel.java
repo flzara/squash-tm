@@ -30,7 +30,6 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 	}
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TAGS;
-	private boolean ignoreBridge = false;
 
 	private List<String> tags = new ArrayList<>();
 	private Operation operation;
@@ -40,10 +39,6 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 		return type;
 	}
 
-	@Override
-	public boolean isIgnoreBridge() {
-		return ignoreBridge;
-	}
 
 	public List<String> getTags() {
 		return tags;
@@ -61,6 +56,8 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 		this.operation = operation;
 	}
 
-
-
+	@Override
+	public boolean isSet() {
+		return ! tags.isEmpty();
+	}
 }

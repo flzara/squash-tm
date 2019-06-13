@@ -26,6 +26,7 @@
 package org.squashtest.tm.domain.jpql;
 
 import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
 import java.util.Map;
@@ -40,8 +41,8 @@ public class H2EnhancedDialect extends H2Dialect{
     public H2EnhancedDialect() {
         super();
         
-        Map<String, StandardSQLFunction> extensions = HibernateDialectExtensions.getH2DialectExtensions();
-        for (Entry<String, StandardSQLFunction> extension : extensions.entrySet()){
+        Map<String, SQLFunction> extensions = HibernateDialectExtensions.getH2DialectExtensions();
+        for (Entry<String, SQLFunction> extension : extensions.entrySet()){
             registerFunction(extension.getKey(), extension.getValue());
         }
         

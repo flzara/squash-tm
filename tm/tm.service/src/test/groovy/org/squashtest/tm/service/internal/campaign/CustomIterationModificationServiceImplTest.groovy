@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.infolist.UserListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.execution.ExecutionModificationService
@@ -57,7 +57,6 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock();
 
 	IterationTestPlanManagerService iterationTestPlanManager = Mock()
-	IndexationService indexationService = Mock()
 
 	ExecutionModificationService executionModificationService = Mock();
 
@@ -77,7 +76,6 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.testCaseCyclicCallChecker = cyclicCallChecker
 		service.customFieldValueService = customFieldService
 		service.denormalizedFieldValueService = denormalizedFieldValueService
-		service.indexationService = indexationService
 		service.executionModificationService = executionModificationService
 		service.scriptedTestCaseExecutionHelper = scriptedTestCaseExecutionHelper
 		service.attachmentManagerService = attachmentManagerService

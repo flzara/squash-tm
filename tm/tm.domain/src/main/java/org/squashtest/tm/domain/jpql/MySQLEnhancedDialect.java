@@ -26,6 +26,7 @@
 package org.squashtest.tm.domain.jpql;
 
 import org.hibernate.dialect.MySQLDialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
 import java.util.Map;
@@ -40,8 +41,8 @@ public class MySQLEnhancedDialect extends MySQLDialect{
     public MySQLEnhancedDialect() {
         super();
         
-        Map<String, StandardSQLFunction> extensions = HibernateDialectExtensions.getMysqlDialectExtensions();
-        for (Entry<String, StandardSQLFunction> extension : extensions.entrySet()){
+        Map<String, SQLFunction> extensions = HibernateDialectExtensions.getMysqlDialectExtensions();
+        for (Entry<String, SQLFunction> extension : extensions.entrySet()){
             registerFunction(extension.getKey(), extension.getValue());
         }
         

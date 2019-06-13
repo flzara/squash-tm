@@ -36,7 +36,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
@@ -88,9 +87,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private PermissionEvaluationService permissionService;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -220,14 +216,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		deleteCustomFieldValues(allValues);
 		entityManager.flush();
 		entityManager.clear();
-
-		if (entityIdByType.containsKey(BindableEntity.TEST_CASE)) {
-			indexationService.batchReindexTc(entityIdByType.get(BindableEntity.TEST_CASE));
-		}
-
-		if (entityIdByType.containsKey(BindableEntity.REQUIREMENT_VERSION)) {
-			indexationService.batchReindexReqVersion(entityIdByType.get(BindableEntity.REQUIREMENT_VERSION));
-		}
 	}
 
 	@Override
@@ -267,14 +255,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
 		}
-
-		if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
-			indexationService.reindexTestCase(entity.getBoundEntityId());
-		}
-		if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
-			indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -325,13 +305,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				value.setBoundEntity(entity);
 				customFieldValueDao.save(value);
 
-			}
-
-			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
-				indexationService.reindexTestCase(entity.getBoundEntityId());
-			}
-			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
-				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 			}
 		}
 
@@ -422,13 +395,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 		newValue.setValueFor(changedValue);
-
-		if (BindableEntity.TEST_CASE == boundEntity.getBoundEntityType()) {
-			indexationService.reindexTestCase(boundEntity.getId());
-		}
-		if (BindableEntity.REQUIREMENT_VERSION == boundEntity.getBoundEntityType()) {
-			indexationService.reindexRequirementVersion(boundEntity.getId());
-		}
 	}
 
 	// This method is just here to use the @CacheResult annotation

@@ -22,16 +22,6 @@ package org.squashtest.tm.domain.campaign;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Persister;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.NumericField;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
@@ -39,8 +29,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
-import org.squashtest.tm.domain.search.NotGMTDateBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -85,13 +73,9 @@ import java.util.Set;
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")
 })
 @Entity
-@Indexed
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
 @Persister(impl=IterationTestPlanItemPersister.class)
-@ClassBridges({
-	@ClassBridge(name = "referencedTestCase.*", analyze = Analyze.NO, store = Store.YES, impl=IterationItemBundleClassBridge.class),
-})
 public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
@@ -115,37 +99,19 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
-	/**
-	 FIXME it seems this field isn't really used after all
-         please use getTestCase.getName() instead
-         better yet, ditch the attribute and column if one day
-     */
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private String label = "";
 
-	@FieldBridge(impl = UserLoginBridgeAdaptor.class)
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@ManyToOne
-	@SortableField
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
 	@Column(insertable = false)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl= NotGMTDateBridge.class))
-	@SortableField
-	@NumericField
 	private Date lastExecutedOn;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -161,15 +127,12 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
 	private final List<Execution> executions = new ArrayList<>();
 
-
-	@IndexedEmbedded(includeEmbeddedObjectId = true, depth=1)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
-	@IndexedEmbedded(includeEmbeddedObjectId=true)
 	private List<TestSuite> testSuites = new ArrayList<>();
 
 	public IterationTestPlanItem() {
@@ -403,7 +366,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		return copy;
 	}
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	public Project getProject() {
 		if (iteration != null) {
 			return iteration.getProject();
@@ -529,9 +491,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		return null;
 	}
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	public TestCaseExecutionMode getExecutionMode() {
 		Execution latest = getLatestExecution();
 
@@ -596,12 +555,10 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		execution.notifyAddedTo(this);
 	}
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true, depth = 1)
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true, depth = 1)
 	public Set<Milestone> getMilestones() {
 		return getIteration().getCampaign().getMilestones();
 	}

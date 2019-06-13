@@ -21,10 +21,6 @@
 package org.squashtest.tm.domain.campaign;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -34,7 +30,6 @@ import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 
@@ -99,8 +94,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "CAMPAIGN_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private CampaignStatus status = CampaignStatus.UNDEFINED;
 
 	public Campaign() {

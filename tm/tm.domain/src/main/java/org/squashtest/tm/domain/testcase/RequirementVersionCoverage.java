@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.testcase;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.search.annotations.DocumentId;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -69,7 +68,6 @@ public class RequirementVersionCoverage implements Identified {
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_coverage_requirement_version_coverage_i_seq")
 	@SequenceGenerator(name = "requirement_version_coverage_requirement_version_coverage_i_seq", sequenceName = "requirement_version_coverage_requirement_version_coverage_i_seq", allocationSize = 1)
-	@DocumentId
 	private Long id;
 
 	@NotNull

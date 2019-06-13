@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,6 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -69,7 +67,6 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -182,9 +179,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private AttachmentManagerService attachmentManagerService;
 
 	@Inject
@@ -218,12 +212,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} name from '{}' to '{}' ", testCase.getId(), testCase.getName(), newName);
 
 		testCaseManagementService.renameNode(testCaseId, newName);
-
-		LOGGER.trace("reindexing");
-		// [Issue 6337] sorry ma, they forced me to
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 
@@ -236,12 +224,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} reference from '{}' to '{}' ", testCase.getId(), testCase.getReference(), reference);
 
 		testCase.setReference(reference);
-
-		LOGGER.trace("reindexing");
-		// [Issue 6337] sorry ma, they forced me to
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 	@Override
@@ -250,19 +232,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		LOGGER.debug("changing test case #{} importance from '{}' to '{}' ", testCase.getId(), testCase.getImportance(), importance);
 		testCase.setImportance(importance);
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
-	}
-
-	private void reindexItpisReferencingTestCase(TestCase testCase) {
-		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
-		List<Long> itpiIds = new ArrayList();
-		for (IterationTestPlanItem itpi : itpis) {
-			itpiIds.add(itpi.getId());
-		}
-		LOGGER.trace("reindexing");
-		indexationService.batchReindexItpi(itpiIds);
 	}
 
 	@Override
@@ -1143,8 +1112,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				createRequestForTestCase(testCaseId, null);
 			}
 		}
-		reindexItpisReferencingTestCase(tc);
-		indexationService.reindexTestCase(testCaseId);
 		return tc.getProject().isAllowAutomationWorkflow();
 	}
 

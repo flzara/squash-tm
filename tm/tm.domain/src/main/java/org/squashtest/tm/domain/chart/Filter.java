@@ -21,6 +21,11 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -40,7 +45,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "CHART_FILTER")
-public class Filter implements ColumnPrototypeInstance {
+public class Filter implements QueryColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "FILTER_ID")
@@ -50,7 +55,7 @@ public class Filter implements ColumnPrototypeInstance {
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
-	private ColumnPrototype column;
+	private QueryColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "FILTER_OPERATION")
@@ -64,21 +69,21 @@ public class Filter implements ColumnPrototypeInstance {
 	private Long cufId;
 
 	@Override
+	public QueryColumnPrototype getColumn() {
+		return column;
+	}
+
+	public void setColumn(QueryColumnPrototype column) {
+		this.column = column;
+	}
+
+	@Override
 	public Operation getOperation() {
 		return operation;
 	}
 
 	public void setOperation(Operation operation) {
 		this.operation = operation;
-	}
-
-	@Override
-	public ColumnPrototype getColumn() {
-		return column;
-	}
-
-	public void setColumn(ColumnPrototype column) {
-		this.column = column;
 	}
 
 	public List<String> getValues() {
@@ -95,13 +100,13 @@ public class Filter implements ColumnPrototypeInstance {
 	}
 
 	@Override
-	public SpecializedEntityType getSpecializedType(){
+	public SpecializedEntityType getSpecializedType() {
 		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return getColumn().getDataType();
+		return column.getDataType();
 	}
 
 	@Override
@@ -112,7 +117,6 @@ public class Filter implements ColumnPrototypeInstance {
 	public void setCufId(Long cufId) {
 		this.cufId = cufId;
 	}
-
 
 	public Filter createCopy(){
 		Filter copy = new Filter();

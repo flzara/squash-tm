@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.project;
 
-import org.hibernate.search.annotations.Indexed;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 
 import javax.persistence.DiscriminatorValue;
@@ -29,7 +28,6 @@ import javax.persistence.Entity;
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 
 @Entity
-@Indexed
 @DiscriminatorValue(PROJECT_TYPE)
 public class Project extends GenericProject  {
 

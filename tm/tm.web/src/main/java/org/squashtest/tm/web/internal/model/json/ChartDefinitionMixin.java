@@ -44,8 +44,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.Project;
@@ -73,6 +76,14 @@ public abstract class ChartDefinitionMixin {
 	@JsonIgnore
 	public abstract Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
 
+	@JsonDeserialize(contentAs = Filter.class)
+	private List<Filter> filters;
+
+	@JsonDeserialize(contentAs = AxisColumn.class)
+	private List<AxisColumn> axis;
+
+	@JsonDeserialize(contentAs = MeasureColumn.class)
+	private List<MeasureColumn> measures;
 
 
 }

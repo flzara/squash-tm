@@ -56,7 +56,6 @@ import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -145,8 +144,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private RequirementDao requirementDao;
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
-	@Inject
-	private IndexationService indexationService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -407,8 +404,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		createCustomFieldValues(child.getCurrentVersion());
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
-		indexationService.reindexRequirementVersion(parent.getCurrentVersion().getId());
-		indexationService.reindexRequirementVersions(child.getRequirementVersions());
 		milestoneService.bindRequirementVersionToMilestones(child.getCurrentVersion().getId(), milestoneIds);
 
 		return child;
@@ -425,9 +420,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 		replaceAllInfoListReferences(newRequirement);
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
-
-		indexationService.reindexRequirementVersions(parent.getRequirementVersions());
-		indexationService.reindexRequirementVersions(newRequirement.getRequirementVersions());
 		milestoneService.bindRequirementVersionToMilestones(newRequirement.getCurrentVersion().getId(), milestoneIds);
 
 		return newRequirement;

@@ -46,7 +46,6 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -139,9 +138,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@Inject
 	private IterationStatisticsService statisticsService;
@@ -412,7 +408,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		if (execution.getReferencedTestCase().isScripted()) {
 			createExecutionStepsForScriptedTestCase(execution);
 		}
-		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 	}
 
 	//This method is responsible for create execution steps by parsing the script

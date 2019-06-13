@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.MULTILIST;
+	private AdvancedSearchFieldModelType type;
 
 	private List<String> values = new ArrayList<>();
 
@@ -33,7 +36,13 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 
 	private Integer maxValue;
 
-	private boolean ignoreBridge = false;
+	public AdvancedSearchMultiListFieldModel() {
+		type  = AdvancedSearchFieldModelType.MULTILIST;
+	}
+
+	public AdvancedSearchMultiListFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	@Override
 	public AdvancedSearchFieldModelType getType(){
@@ -65,10 +74,18 @@ public class AdvancedSearchMultiListFieldModel implements AdvancedSearchFieldMod
 		this.maxValue = maxValue;
 	}
 
-
 	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public boolean isSet() {
+		return ! (values == null || values.isEmpty() );
 	}
 
+	@JsonIgnore
+	public boolean hasMinValue(){
+		return minValue != null;
+	}
+
+	@JsonIgnore
+	public boolean hasMaxValue(){
+		return maxValue != null;
+	}
 }

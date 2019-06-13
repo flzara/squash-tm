@@ -109,6 +109,16 @@
 </select>
 {{/equal}}
 
+  {{#equal dataType "REQUIREMENT_STATUS"}}
+  <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 151px;">
+    {{#each  (lookup data.levelEnums label)}}
+    <option value="{{this.name}}">
+      {{this.level}} - {{i18n this.i18nkey}}
+    </option>
+    {{/each}}
+  </select>
+  {{/equal}}
+
 {{#equal dataType "INFO_LIST_ITEM"}}
 <span id="info-list-filter-container-{{id}}" name="{{label}}"/>
 {{/equal}}

@@ -47,7 +47,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -142,9 +141,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
@@ -484,7 +480,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 
 		return execution;
 	}

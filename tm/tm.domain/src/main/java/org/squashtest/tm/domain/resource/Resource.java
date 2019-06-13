@@ -21,22 +21,11 @@
 package org.squashtest.tm.domain.resource;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Fields;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.SortableFields;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.search.StringFieldBridge;
-import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -73,34 +62,10 @@ public abstract class Resource implements AttachmentHolder, Identified {
 
 	@NotBlank
 	@Size(max = Sizes.NAME_MAX)
-	@SortableFields({
-		@SortableField(forField = "label"),
-		@SortableField(forField = "labelUpperCased")
-	})
-	@Fields({
-		@Field,
-		@Field(name = "label", analyze = Analyze.NO, store = Store.YES,bridge = @FieldBridge(impl = StringFieldBridge.class)),
-		@Field(
-			name = "labelUpperCased",
-			analyze = Analyze.NO,
-			store = Store.YES,
-			bridge = @FieldBridge(impl = UpperCasedStringBridge.class)
-		),
-	})
 	private String name;
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Fields({
-		@Field(analyzer = @Analyzer(definition = "htmlStrip"),index= Index.YES,name = "description",store = Store.YES),
-		@Field(
-			name = "hasDescription",
-			analyze = Analyze.NO,
-			store = Store.YES,
-			bridge = @FieldBridge(impl = RequirementVersionDescriptionBridge.class)
-		),
-
-	})
 	private String description;
 
 	@NotNull

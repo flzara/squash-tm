@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
@@ -80,9 +79,6 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private AttachmentListDao attachmentListDao;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private AttachmentRepository attachmentRepository;
 
 	@Override
@@ -108,15 +104,11 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private void reindexBoundEntities(long attachmentListId) {
 		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
 		if (testCase != null) {
-			indexationService.reindexTestCase(testCase.getId());
 			return; // lists can't be shared, don't bother looking up requirement
 		}
 
 		RequirementVersion requirementVersion = attachmentListDao
 			.findAssociatedRequirementVersionIfExists(attachmentListId);
-		if (requirementVersion != null) {
-			indexationService.reindexRequirementVersion(requirementVersion.getId());
-		}
 	}
 
 	private AttachmentRepository getAttachmentRepository() {

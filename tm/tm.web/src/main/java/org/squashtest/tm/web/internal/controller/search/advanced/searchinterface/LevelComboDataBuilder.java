@@ -33,12 +33,11 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  * @see OptionListBuilder
  */
 class LevelComboDataBuilder<T extends Enum<?> & Level, B extends LevelComboDataBuilder<T, B>> extends EnumJeditableComboDataBuilder<T, B> {
-	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder#itemKey(java.lang.Enum)
+	
+	/*
+	 * TM-282: as it stands now, prefixing the enum value with the rank is undesirable nor needed. I need to ascertain first that it is indeed
+	 * not needed anymore before deleting this class before it is used in quite a number of places, and in very smelly places, and I don't want to 
+	 * undergo the job yet.
 	 */
-	@Override
-	protected String itemKey(T item) {
-		return item.getLevel() + "-" + item.name();
-	}
 
 }

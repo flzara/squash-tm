@@ -21,15 +21,13 @@
 package org.squashtest.tm.service.requirement
 
 import org.hibernate.Session
-import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.requirement.CustomRequirementVersionManagerServiceImpl
-import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService
 import spock.lang.Specification
 
 import javax.persistence.EntityManager
@@ -40,14 +38,12 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 	EntityManager em = Mock()
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
-	IndexationService indexationService = Mock()
 	LinkedRequirementVersionManagerService requirementLinkService = Mock()
 	AttachmentManagerService attachmentManagerService = Mock()
 
 	def setup() {
 		service.requirementVersionDao = requirementVersionDao
 		service.em = em
-		service.indexationService = indexationService;
 
 		em.unwrap(_) >> currentSession
 		service.customFieldValueService = customFieldService

@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
@@ -57,9 +56,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-
-	@Inject
-	private IndexationService indexationService;
 
 	@Inject
 	private ExecutionStepModificationHelper executionStepModifHelper;
@@ -120,9 +116,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	public void deleteExecution(Execution execution) {
 		TestCase testCase = execution.getReferencedTestCase();
 		deletionHandler.deleteExecution(execution);
-		if (testCase != null) {
-			indexationService.reindexTestCase(testCase.getId());
-		}
 	}
 
 	@Override

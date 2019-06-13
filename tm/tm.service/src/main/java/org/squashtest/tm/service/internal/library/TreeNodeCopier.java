@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
@@ -472,8 +470,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	 */
 	private void flush() {
 		entityManager.flush();
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
-		ftem.flushToIndexes();
 	}
 
 	private void copyAttachments(AttachmentHolder attachmentHolder){

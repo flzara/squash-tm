@@ -21,15 +21,6 @@
 package org.squashtest.tm.domain.requirement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -39,13 +30,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.domain.search.AnalyzableCUFBridge;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
-import org.squashtest.tm.domain.search.InfoListItemBridge;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
-import org.squashtest.tm.domain.search.NotAnalyzableCUFBridge;
-import org.squashtest.tm.domain.search.RequirementLinkListBridge;
-import org.squashtest.tm.domain.search.StringFieldBridge;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
@@ -84,17 +68,8 @@ import java.util.Set;
  *
  */
 @Entity
-@Indexed
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
-@ClassBridges({
-	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
-	@ClassBridge(name = "links", store = Store.YES, analyze = Analyze.NO, impl = RequirementLinkListBridge.class),
-	@ClassBridge(name = "analyzed_cufs", store = Store.YES, impl = AnalyzableCUFBridge.class),
-	@ClassBridge(name = "not_analyzed_cufs", store = Store.YES, analyze = Analyze.NO, impl = NotAnalyzableCUFBridge.class),
-	@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-	@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class)
-})
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	public static final int MAX_REF_SIZE = 50;
@@ -105,59 +80,37 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
-	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = CollectionSizeBridge.class)
-	@SortableField(forField = "testcases")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>();
 
 	/***
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
-	@NotNull
-	@Field(name = "reference",analyze = Analyze.NO,store = Store.YES,bridge = @FieldBridge(impl = StringFieldBridge.class))
-	@Size(min = 0, max = MAX_REF_SIZE)
-	@SortableField
+	@NotNull@Size(min = 0, max = MAX_REF_SIZE)
 	private String reference = "";
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "CATEGORY")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = InfoListItemBridge.class)
-	@SortableField
 	private InfoListItem category;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUIREMENT_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "REQUIREMENT_ID")
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Requirement requirement;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@SortableField
 	private int versionNumber = 1;
 
-
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
-	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
-	@SortableField
 	private Set<Milestone> milestones = new HashSet<>();
 
 	@Transient
