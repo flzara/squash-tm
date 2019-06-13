@@ -54,11 +54,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -433,10 +429,14 @@ RequirementNodeDeletionHandler {
 		OperationReport report = new OperationReport();
 
 		if (!folderIds.isEmpty()) {
+			List<Long> attachmentsLists = attachmentManager.getAttachmentsListsFromRequirementFolders(folderIds);
+			List<Long[]> pairContentIdListId = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
 			deletionDao.removeEntities(folderIds);
 			report.addRemoved(folderIds, "folder");
 
 			deletionDao.flush();
+			//delete AttachmentsContents
+			attachmentManager.deleteContents(pairContentIdListId);
 		}
 
 		return report;
@@ -540,7 +540,11 @@ RequirementNodeDeletionHandler {
 
 			// save the attachment list ids for later reference. We cannot rely on the cascade here
 			// because the requirement deletion is made by HQL, which doesn't honor the cascades
-			List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
+
+		//DORIGINE 	List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
+		//OK mais pas utile..	List<Long[]> listPairContenIDListID = attachmentManager.getListPairContentIDListIDForRequirementVersions(versionIds);
+			List<Long> attachmentListIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
+			List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentListIds);
 
 			// remove the changelog
 			deletionDao.deleteRequirementVersionAuditEvents(versionIds);
@@ -552,9 +556,13 @@ RequirementNodeDeletionHandler {
 
 			// remove the elements now
 			deletionDao.deleteVersions(versionIds);
-			deletionDao.removeAttachmentsLists(versionsAttachmentIds);
+			//remove Attachments
+			attachmentManager.removeAttachmentsAndLists(attachmentListIds);
 
 			deletionDao.flush();
+
+			// deletionDao.removeAttachmentsLists(versionsAttachmentIds);  //exception ne plus utiliser ...
+			attachmentManager.deleteContents(listPairContenIDListID);
 
 		}
 

@@ -33,6 +33,7 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class HibernateAttachmentListDao implements AttachmentListDao {
@@ -54,7 +55,7 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.fetchOne();
 	}
 
-	@Override
+
 	public RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId) {
 		final QRequirementVersion req = QRequirementVersion.requirementVersion;
 
@@ -64,4 +65,7 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.fetchOne();
 	}
 
+//	@Override
+//	List<Long> findAttachmentsListsFromRequirementFolder(List<Long> requirementLibraryNodeIds)
+//	}
 }

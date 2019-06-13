@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -506,7 +507,15 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Override
 	public void deleteExecution(Execution execution) {
-		deleteExecSteps(execution);
+		List<Long[]> pairContentIDListIDSteps  = deleteExecSteps(execution);
+		List<Long[]> pairContentIDListIDExec = attachmentManager.getListIDbyContentIdForAttachmentLists(Collections.singletonList(execution.getAttachmentList().getId()));
+		//Merge all lists of attachments
+		if (!pairContentIDListIDExec.isEmpty()) {
+			pairContentIDListIDSteps.addAll(pairContentIDListIDExec);
+		}
+
+
+
 
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
 		testPlanItem.removeExecution(execution);
@@ -519,8 +528,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
-		attachmentManagerService.cleanContent(execution);
-		deletionDao.removeEntity(execution);
+
+		deletionDao.removeEntity(execution); // cascade list, Attachment?
+		//attachmentManager.removeAttachmentsAndLists(pairContenIDListIDSteps);
+		attachmentManagerService.deleteContents(pairContentIDListIDSteps);
 	}
 
 	/*
@@ -615,7 +626,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * - remote the custom fields,
 	 * - remove themselves.
 	 */
-	public void deleteExecSteps(Execution execution) {
+	public /*List<List<Long>> */ List<Long[]> deleteExecSteps(Execution execution) {
 
 		/*
 		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -,
@@ -629,17 +640,20 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		 */
 
 		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
-		execution.getSteps().clear();
 
+		execution.getSteps().clear();
+		List<Long[]> pairContenIDListID = attachmentManager.getListPairContentIDListIDForExecutionSteps(steps);
+//		List<Long> attachmentLists = new ArrayList<>();
 		// now we can delete them
 		for (ExecutionStep step : steps) {
-
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
-			attachmentManagerService.cleanContent(step);
+			//CJU
+		//	attachmentManagerService.cleanContent(step);
 			deletionDao.removeEntity(step);
 		}
 
+		return pairContenIDListID;
 	}
 
 	private void deleteAutomatedExecutionExtender(Execution execution) {

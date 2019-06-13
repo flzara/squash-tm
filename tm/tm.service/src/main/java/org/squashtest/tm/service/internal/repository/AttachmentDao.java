@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import java.util.List;
 import java.util.Set;
@@ -54,8 +55,19 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 	@Query("delete Attachment at where at.id in (:ids)")
 	void removeAllAttachments(@Param("ids") Set<Long> attachments);
 
+
 	@Modifying
 	@Query("delete AttachmentList al where al.id in (:ids)")
 	void removeAllAttachmentsLists(@Param("ids") List<Long> attachmentLists);
 
+	@Query("select ListAttachment.id from RequirementFolder RequirementFolder inner join RequirementFolder.resource Resource" +
+		" inner join Resource.attachmentList ListAttachment where RequirementFolder.id in (:ids)")
+	List<Long> findAttachmentsListsFromRequirementFolder(@Param("ids") List<Long> requirementLibraryNodeIds);
+
+	@Query("select Attachment.content.id, v.attachmentList.id from RequirementVersion v inner join  v.attachmentList.attachments Attachment where v.id in (:ids)")
+	List<Object[]> getListPairContentIDListIDForRequirementVersions(@Param("ids") List<Long> requirementVersionIds);
+
+//	@Query("select Attachment.content.id, exec.attachmentList.id from ExecutionStep exec inner join  exec.attachmentList.attachments Attachment where exec.id in (:ids)")
+	@Query("select Attachment.content.id, Attachment.attachmentList.id from ExecutionStep exec inner join  exec.attachmentList attachmentList inner join attachmentList.attachments Attachment where exec.id in (:ids)")
+	List<Object[]> getListPairContentIDListIDForExecutionSteps(@Param("ids") List<Long> executionStepsIds);
 }

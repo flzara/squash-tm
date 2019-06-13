@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.deletion;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
@@ -298,7 +299,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			deletionDao.removeEntities(allIds);
 
-			//remove All AttachmentContents for FileSystemRepository and orhean in DB
+			//remove All AttachmentContents for FileSystemRepository and orphean in DB
 			attachmentManager.deleteContents(listPairContenIDListID);
 
 
@@ -463,8 +464,12 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	}
 
 	private void deleteActionStep(ActionTestStep step) {
-		deletionDao.removeAttachmentList(step.getAttachmentList());
-		deletionDao.removeEntity(step);
+		AttachmentList attachmentList = step.getAttachmentList();
+		//save ListId, contentID for FileSystem Repository
+		List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(Collections.singletonList(attachmentList.getId()));
+		deletionDao.removeEntity(step); //Cascade AttachmentList -> include AttachmentList and Attachments
+		//attachmentManager.removeAttachmentsAndLists(Collections.singletonList(attachmentList.getId()));
+		attachmentManager.deleteContents(listPairContenIDListID);
 	}
 
 	private void deleteCallStep(CallTestStep step) {

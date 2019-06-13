@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -281,24 +282,25 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public List<Long[]> /*List<Object[]> */ getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList) {
-		List<Object[]> rawResult = attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
-		List<Long[]> result = new ArrayList<>();
+		return convertToTableOfLongDim2(attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList));
+//		List<Object[]> rawResult = attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
+//		List<Long[]> result = new ArrayList<>();
+//
+//		for (Object[] row:rawResult) {
+//			Long[] tab = new Long[2];
+//			tab[0] =(Long) row[0]; //contentID
+//			tab[1] =(Long) row[1]; //listID
+//			result.add(tab);
+//		}
+//		return result;
 
-		for (Object[] row:rawResult) {
-			Long[] tab = new Long[2];
-			tab[0] =(Long) row[0];
-			tab[1] =(Long) row[1];
-			result.add(tab);
-		}
-		return result;
-	//return attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
 	}
 
 	@Override
 	public void deleteContents(List<Long[]> contentIdListIdList) {
-		//remove Db Orpheans
+
 		List<Long> contentIds = new ArrayList<>();
-		//Long[] tab = new Long[2];
+
 
 		int size = contentIdListIdList.size();
 		for (int i = 0; i < size; i++) {
@@ -306,17 +308,33 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 			contentIds.add(tab[0]);
 		}
 
+		//remove Db Orpheans
+		removeOrpheanAttachmentContents(contentIds);
+
 		// remove from FileSystem
 		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
 			for (Long[] tab: contentIdListIdList) {
 				removeContentFromFileSystem(tab[1], tab[0]);
 			}
 		}
-
-
-			removeOrpheanAttachmentContents(contentIds);
-//		}
 	}
+
+
+//	@Override
+//	public void deleteContents2(List<List<Long>> contentIdListIdList) {
+//
+//		List<Long> contentIds = contentIdListIdList.get(0);
+//
+//		//remove Db Orpheans
+//		removeOrpheanAttachmentContents(contentIds);
+//
+//		// remove from FileSystem
+//		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
+//			for (Long[] tab: contentIdListIdList) {
+//				removeContentFromFileSystem(tab[1], tab[0]);
+//			}
+//		}
+//	}
 
 	private void removeOrpheanAttachmentContents (List<Long> contentIds) {
 //		List<Long> ids = new ArrayList<>();
@@ -330,11 +348,83 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		}
 	}
 
-	public void removeAttachmentsAndLists(List<Long> testStepAttachmentIds) {
-		Set<Long> attachmentIds = attachmentDao.findAllAttachmentsFromLists(testStepAttachmentIds);
-		attachmentDao.removeAllAttachments(attachmentIds);
-		attachmentDao.removeAllAttachmentsLists(testStepAttachmentIds);
+	@Override
+	public void removeAttachmentsAndLists(List<Long> attachmentListIds) {
+		if (!attachmentListIds.isEmpty()) {
+			Set<Long> attachmentIds = attachmentDao.findAllAttachmentsFromLists(attachmentListIds);
+			if (!attachmentIds.isEmpty()) {
+				attachmentDao.removeAllAttachments(attachmentIds);
+			}
+			attachmentDao.removeAllAttachmentsLists(attachmentListIds);
+		}
 	}
+
+//	@Override // A utiliser pour remplacer removeAttachmentsAndLists qui fait 3 appel DB
+//	public void removeAllAttachmentsFromLists(List<Long> attachmentListIds) {
+//		if (!attachmentListIds.isEmpty()) {
+//			attachmentDao.removeAllAttachmentsFromLists(attachmentListIds);
+//			attachmentDao.removeAllAttachmentsLists(attachmentListIds);
+//		}
+//	}
+
+	@Override
+	public List<Long> getAttachmentsListsFromRequirementFolders(List<Long> requirementLibraryNodeIds) {
+		return attachmentDao.findAttachmentsListsFromRequirementFolder(requirementLibraryNodeIds);
+	}
+
+	@Override
+	public List<Long[]> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds) {
+		return convertToTableOfLongDim2(attachmentDao.getListPairContentIDListIDForRequirementVersions(requirementVersionIds));
+//		List<Object[]> rawResult =  attachmentDao.getListPairContentIDListIDForRequirementVersions(requirementVersionIds);
+//		List<Long[]> result = new ArrayList<>();
+//
+//		for (Object[] row:rawResult) {
+//			Long[] tab = new Long[2];
+//			tab[0] =(Long) row[0]; //contentID
+//			tab[1] =(Long) row[1]; //listID
+//			result.add(tab);
+//		}
+//		return result;
+
+	}
+
+	@Override
+	public /*List<List<Long>>*/List<Long[]> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps) {
+		List<Long> executionStepsIds = new ArrayList<>();
+		for(ExecutionStep executionStep:executionSteps) {
+			executionStepsIds.add(executionStep.getId());
+		}
+		return convertToTableOfLongDim2(attachmentDao.getListPairContentIDListIDForExecutionSteps(executionStepsIds));
+	}
+
+	private  List<Long[]> convertToTableOfLongDim2(List<Object[]>  rawResult) {
+		List<Long[]> result = new ArrayList<>();
+
+		for (Object[] row:rawResult) {
+			Long[] tab = new Long[2];
+			tab[0] =(Long) row[0]; //contentID
+			tab[1] =(Long) row[1]; //listID
+			result.add(tab);
+		}
+		//return Collections.unmodifiableList(result);
+		return result;
+	}
+
+	//not used
+	private  List<List<Long>> convertToListof2ListofLong(List<Object[]>  rawResult) {
+		List<Long> contentIDs = new ArrayList<>();
+		List<Long> attachmentListIDs = new ArrayList<>();
+		List<List<Long>> result = new ArrayList<>();
+		for (Object[] row:rawResult) {
+			contentIDs.add((Long) row[0]);
+			attachmentListIDs.add((Long) row[1]);
+		}
+		result.add(contentIDs);
+		result.add(attachmentListIDs);
+		return Collections.unmodifiableList(result);
+	}
+
+
 }
 
 
