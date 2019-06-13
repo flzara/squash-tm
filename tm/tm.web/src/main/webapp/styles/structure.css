@@ -2125,7 +2125,7 @@ button.tf:hover {
 	opacity: 0;
 }
 
-/**** ADD PERMISSION DIALOG ****/
+/**** LICENSE INFORMATION BLOCK ****/
 #add-permission-dialog #information-block, #add-user-dialog #information-block {
 	visibility: hidden;
 }
@@ -2134,4 +2134,18 @@ button.tf:hover {
 	color: red;
 	font-style: italic;
 	text-align: justify;
+}
+
+#home-workspace #information-block {
+	width: 98%;
+}
+
+#home-workspace #information-block-wrapper {
+	margin: auto;
+	margin-top: 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 80%;
+	border: 1px solid red;
+	color: red;
 }
