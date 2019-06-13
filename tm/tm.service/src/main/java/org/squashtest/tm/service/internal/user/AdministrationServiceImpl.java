@@ -334,30 +334,36 @@ public class AdministrationServiceImpl implements AdministrationService {
 		if (hasInformation(expiration, excess)) {
 			User current = userAccountService.findCurrentUser();
 			boolean isAdmin = ADMIN.equals(current.getGroup().getQualifiedName());
-
-			if (expiration != null && ! expiration.isEmpty()) {
-				String messageDate;
-				Integer expi = Integer.parseInt(expiration);
-				if (expi >= 0 && isAdmin) {
-					messageDate = expi > 30 ? "warning1" : "warning2";
-					result.put("messageDate", messageDate);
-					result.put("dueDate", LocalDate.now().plusDays(expi).toString());
-				} else if (expi < 0) {
-					messageDate = "warning3";
-					result.put("messageDate", messageDate);
-					result.put("dueDate", LocalDate.now().plusDays(expi).toString());
+			if (isAdmin) {
+				if (expiration != null && !expiration.isEmpty()) {
+					result = retrieveInformationDate(result, expiration);
+				}
+				if (excess != null && !excess.isEmpty()) {
+					result = retrieveInformationUser(result, excess);
 				}
 			}
+		}
+		return result;
+	}
 
-			if (excess != null && ! excess.isEmpty() && isAdmin) {
-				String messageUser;
-				String[] excesses = excess.split("-");
-				if (excesses.length == 3) {
-					messageUser = Boolean.valueOf(excesses[2]) ? "warning1" : "warning2";
-					result.put("messageUser", messageUser);
-					result.put("currentUserNb", excesses[0]);
-					result.put("maxUserNb", excesses[1]);
-				}
+	private Map<String, String> retrieveInformationDate(Map<String, String> result, String expiration) {
+		String messageDate;
+		Integer expi = Integer.parseInt(expiration);
+		if (expi < 0) {
+			messageDate = "warning3";
+			result.put("messageDate", messageDate);
+			result.put("dueDate", LocalDate.now().plusDays(expi).toString());
+		}
+		return result;
+	}
+
+	private Map<String, String> retrieveInformationUser(Map<String, String> result, String excess) {
+		String[] excesses = excess.split("-");
+		if (excesses.length == 3) {
+			if (! Boolean.valueOf(excesses[2])) {
+				result.put("messageUser", "warning2");
+				result.put("currentUserNb", excesses[0]);
+				result.put("maxUserNb", excesses[1]);
 			}
 		}
 		return result;

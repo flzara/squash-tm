@@ -67,8 +67,8 @@ require([ "common" ], function(common) {
 		function retrieveMessages(information) {
 			var messageDate = retrieveMessageDate(information);
 			var messageUser = retrieveMessageUser(information);
-			if (messageDate !== '') { $('#information-message-date').text(messageDate); }
-			if (messageUser !== '') { $('#information-message-user').text(messageUser); }
+			if (messageDate !== '') { $('#information-message-date').html(messageDate); }
+			if (messageUser !== '') { $('#information-message-user').html(messageUser); }
 			if (messageDate === '' || messageUser === '') {
 				if (messageDate === '') { $('#information-message-date').hide(); }
 				if (messageUser === '') { $('#information-message-user').hide(); }
