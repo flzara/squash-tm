@@ -57,6 +57,7 @@ import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_AUTHORITY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_MEMBER;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
 public class UserDaoImpl implements CustomUserDao {
@@ -193,8 +194,7 @@ public class UserDaoImpl implements CustomUserDao {
 
 	@Override
 	public int countAllActiveUsersAssignedToAtLeastOneProject(){
-
-		return DSL.select(count(CORE_USER.PARTY_ID))
+		return DSL.selectDistinct(count(CORE_USER.PARTY_ID)).from(CORE_USER).where(CORE_USER.PARTY_ID.in(DSL.select(CORE_USER.PARTY_ID)
 			.from(CORE_USER)
 			.innerJoin(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_USER.PARTY_ID))
 			.innerJoin(CORE_GROUP_AUTHORITY).on(CORE_GROUP_AUTHORITY.GROUP_ID.eq(CORE_GROUP_MEMBER.GROUP_ID))
@@ -209,7 +209,25 @@ public class UserDaoImpl implements CustomUserDao {
 						.and(ACL_CLASS.CLASSNAME.in("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"))
 					)
 				)
-			).fetchOne(0, Integer.class);
+			).union(
+				DSL.selectDistinct(CORE_USER.PARTY_ID).from(CORE_TEAM_MEMBER)
+					.innerJoin(CORE_USER).on(CORE_TEAM_MEMBER.USER_ID.eq(CORE_USER.PARTY_ID))
+					.innerJoin(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_TEAM_MEMBER.USER_ID))
+					.innerJoin(CORE_GROUP_AUTHORITY).on(CORE_GROUP_AUTHORITY.GROUP_ID.eq(CORE_GROUP_MEMBER.GROUP_ID))
+					.where(CORE_USER.ACTIVE.eq(true))
+					.and(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_ADMIN)
+						.or(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_TM_USER)
+							.andExists(
+								DSL.selectOne().from(ACL_OBJECT_IDENTITY)
+									.innerJoin(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
+									.innerJoin(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID.eq(ACL_OBJECT_IDENTITY.ID))
+									.where(CORE_TEAM_MEMBER.TEAM_ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID))
+									.and(ACL_CLASS.CLASSNAME.in("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"))
+							)
+						)
+					)
+			))).fetchOne(0, Integer.class);
+
 	}
 
 }
