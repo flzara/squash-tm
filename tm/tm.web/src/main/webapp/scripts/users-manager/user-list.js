@@ -199,7 +199,7 @@ define([ "jquery", "squash.translator",
 		}
 
 		$("#add-user-button").on('click', function(){
-			if(userLicenseInformation.length !== 0){
+			if(userLicenseInformation != null && userLicenseInformation.length !== 0){
 				var userLicenseInformationArray = userLicenseInformation.split("-");
 				var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
 				if(allowCreateUsers) {
@@ -208,7 +208,8 @@ define([ "jquery", "squash.translator",
 					var licenseInformationDialog = $("#license-information-dialog");
 					licenseInformationDialog.formDialog('open');
 				}
-
+			} else {
+				openAdd();
 			}
 		});
 
