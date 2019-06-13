@@ -45,6 +45,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_DESCRIPTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LABEL;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
@@ -277,7 +279,14 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			if(column.getLabel().getJooqTablePkField() != null) {
 				groupByFieldList.add(column.getLabel().getJooqTablePkField());
 			}
+			// Some corner cases:
+			// if TEST_CASE_LABEL or TEST_CASE_DESCRIPTION are requested but no TEST_CASE columns are,
+			// and since they are linked to TEST_CASE_LIBRARY_NODE table, we must add TEST_CASE_ID in the Group By
+			if(TEST_CASE_LABEL.equals(column.getLabel()) || TEST_CASE_DESCRIPTION.equals(column.getLabel())) {
+				groupByFieldList.add(TEST_CASE.TCLN_ID);
+			}
 		}
+
 
 		return groupByFieldList;
 	}
