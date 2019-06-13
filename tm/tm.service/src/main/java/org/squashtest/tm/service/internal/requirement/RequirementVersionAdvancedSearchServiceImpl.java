@@ -20,9 +20,46 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_NB_VERSIONS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ATTCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CATEGORY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CREATED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CREATED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CRITICALITY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_DESCRIPTION;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ENTITY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MODIFIED_BY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MODIFIED_ON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_REFERENCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_TCCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_VERS_NUM;
+import static org.squashtest.tm.domain.requirement.QRequirementVersion.requirementVersion;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,49 +87,11 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryMode
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ENTITY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_NB_VERSIONS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ATTCOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CATEGORY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CREATED_BY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CREATED_ON;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CRITICALITY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_CHECKBOX;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_LIST;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_NUMERIC;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_TAG;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_CUF_TEXT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_DESCRIPTION;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILCOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_END_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MILESTONE_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MODIFIED_BY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_MODIFIED_ON;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_REFERENCE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_TCCOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_VERS_NUM;
-import static org.squashtest.tm.domain.requirement.QRequirementVersion.requirementVersion;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 @Transactional(readOnly = true)

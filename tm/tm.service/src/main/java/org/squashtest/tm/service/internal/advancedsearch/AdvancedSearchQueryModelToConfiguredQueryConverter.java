@@ -266,14 +266,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 * 	<ol>
 	 * 		<li>The first item of the tuple is the root entity itself, as referenced by its label {@link AdvancedSearchColumnMappings#getRootEntityColumnLabel()}. This is the expected returned result</li>
 	 * 		<li>
-	 * 			The next items are any columns that appear in the 'order by' clause that happen to be a calculated column (ie a subquery). 
-	 * 			This trick allows them to receive an alias in the 'select' clause, which can then be re-used in the 'order by' clause. 
-	 * 			Otherwise we would have to declare the subquery in the 'order by' clause, which is not supported by JPA (or at least Hibernate). 
-	 * 		</li>
-	 * 		<li>
-	 * 			In case no subquery columns were appended, a surrogate constant '1' will be selected instead to ensure that
-	 * 			the final result set will be a Tuple. Indeed a selection of only one unique column would not be cast as a 1-Tuple, 
-	 * 			and consumers would have to check for the result type.
+	 * 			The next items are any all the columns expected by the sort by clause (required by PostGre).
+	 * 			In case the 'sort by' clause is empty and no sorted-on columns was appended, a dummy column will be selected instead to ensure that
+	 * 			the final result set will be a Tuple anyway.
 	 * 		 </li>
 	 * 	</ol>
 	 * </p>
@@ -289,52 +284,53 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		QueryProjectionColumn entityProjection = toProjectionColumn(rootProto);		
 		projections.add(entityProjection);
-		
-		
-		// second round : find all columns that would enter the sort-by clause and happens
-		// to be subqueries (see javadoc above)
-		List<QueryColumnPrototype> subqueriesPrototypes = locateSortBySubqueryColumnPrototype();
-		
-		// if the subqueries are empty, create an extra dummy column anyway
-		if (subqueriesPrototypes.isEmpty()){
+
+		// second round : add the sorted-on columns
+		List<QueryColumnPrototype> sortByPrototypes = locatePrototypesOfMappedOrderColumns();
+
+		// if empty, add a surrogate column
+		if (sortByPrototypes.isEmpty()){
 			QueryProjectionColumn dummy = createDummyProjection(entityProjection);
 			projections.add(dummy);
 		}
-		// else append the projections
+		// else append the columns as desired
 		else{
-			List<QueryProjectionColumn> subqueryProjections 
-				= subqueriesPrototypes
-						.stream()
-						.map(this::toProjectionColumn)
-						.collect(toList());
-			
-			projections.addAll(subqueryProjections);
+			List<QueryProjectionColumn> sortedProjections
+				= sortByPrototypes.stream()
+									.map(this::toProjectionColumn)
+									.collect(toList());
+
+			projections.addAll(sortedProjections);
 		}
+
 		
 		return Collections.unmodifiableList(projections);
 
 	}
-	
-	private List<QueryColumnPrototype> locateSortBySubqueryColumnPrototype(){
+
+
+	private List<QueryColumnPrototype> locatePrototypesOfMappedOrderColumns(){
+
 		ColumnMapping resultMapping = mappings.getResultMapping();
 		Optional<Sort> maybeSort = extractSort();
-		
+
 		if (maybeSort.isPresent()){
 			Sort sort = maybeSort.get();
 			return sort.stream()
-					// retain only the result set keys that maps to a column prototype
-					.filter(order -> resultMapping.isMappedKey(order.getProperty()))
-					// resolve the column prototype
-					.map(order -> lookupColumnPrototypeByResultSetKey(order.getProperty()))
-					// retain only the column that happen to be subqueries
-					.filter(column -> column.getColumnType() == ColumnType.CALCULATED)
-					.collect(toList());
+					   // retain only the result set keys that maps to a column prototype
+					   .filter(order -> resultMapping.isMappedKey(order.getProperty()))
+					   // resolve the column prototype
+					   .map(order -> lookupColumnPrototypeByResultSetKey(order.getProperty()))
+					   .collect(toList());
 		}
 		else{
 			return Collections.emptyList();
 		}
-		
+
+
+
 	}
+
 	
 	private QueryProjectionColumn toProjectionColumn(QueryColumnPrototype proto){
 		QueryProjectionColumn column = new QueryProjectionColumn();
