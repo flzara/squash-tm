@@ -31,6 +31,7 @@
 
 
 <c:url var="testCaseUrl" value="/requirements/${ testStep.testCase.id }"/>
+<c:set var="rootctxt" value="${pageContext.servletContext.contextPath}"/>
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title"
                            highlightedWorkspace="test-case"
@@ -151,7 +152,7 @@
 
   <jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back"/>
-		<input type="button" class="button" value="${ backButtonLabel }" onClick="history.back();"/>
+		<input type="button" class="button" value="${ backButtonLabel }" onClick="window.location.href = '${rootctxt}/test-case-workspace/';"/>
 	</jsp:attribute>
 
   <jsp:attribute name="tablePane">

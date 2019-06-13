@@ -55,14 +55,14 @@ class IterationTestPlanDaoIT extends DbunitDaoSpecification {
 	@DataSet("IterationTestPlanItemDao.items with tc automated and not automated.xml")
 	def "should find all items with test case automated by idIteration"(){
 		when:
-		def res = dao.findAllByIterationIdWithTCAutomated(-110)
+		def res = dao.findAllByIterationIdWithTCAutomated(-110).sort()
 		then:
 		res*.id == [ -114L, -111L]
 	}
 	@DataSet("IterationTestPlanItemDao.items with tc automated and not automated.xml")
 	def "should find all items with test case automated by items"(){
 		when:
-		def res = dao.findAllByItemsIdWithTCAutomated([-111L, -112L, -113L, -114L])
+		def res = dao.findAllByItemsIdWithTCAutomated([-111L, -112L, -113L, -114L]).sort()
 		then:
 		res*.id == [ -114L, -111L]
 	}
