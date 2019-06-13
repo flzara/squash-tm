@@ -1,4 +1,8 @@
 package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.service.internal.query.DomainGraph
+import org.squashtest.tm.service.internal.query.InternalEntityType
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -20,16 +24,10 @@ package org.squashtest.tm.service.internal.query
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import org.squashtest.tm.service.internal.query.InternalEntityType;
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
-import org.squashtest.tm.service.internal.query.InternalQueryModel;
-import org.squashtest.tm.service.internal.query.DomainGraph;
-import org.squashtest.tm.service.internal.query.QueryPlan;
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*
 
 class DomainGraphTest extends Specification {
 

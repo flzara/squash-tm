@@ -50,7 +50,6 @@ import org.squashtest.tm.web.internal.model.json.AutomatedSuitePreviewMixin;
 import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
 import org.squashtest.tm.web.internal.model.json.BugTrackerMixin;
 import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
-import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
 import org.squashtest.tm.web.internal.model.json.ColumnPrototypeMixin;
 import org.squashtest.tm.web.internal.model.json.CustomFieldValueModelMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;

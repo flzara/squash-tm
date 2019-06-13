@@ -44,7 +44,7 @@ import spock.lang.Unroll
 
 import javax.persistence.EntityManager
 
-import static org.squashtest.tm.service.internal.chart.engine.ScopePlanner.JoinableColumns.*
+import static org.squashtest.tm.service.internal.query.ScopePlanner.JoinableColumns.*
 
 class ScopePlannerTest extends Specification {
 

@@ -21,12 +21,9 @@ package org.squashtest.tm.service.internal.query
  */
 
 import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan
-import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
 import spock.lang.Specification
 import spock.lang.Unroll
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
+import static org.squashtest.tm.service.internal.query.InternalEntityType.*
 
 class QueryPlanTest extends Specification {
 

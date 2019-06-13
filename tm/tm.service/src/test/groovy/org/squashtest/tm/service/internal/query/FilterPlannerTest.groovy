@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.query.SpecializedEntityType
 
 
 
-import org.squashtest.tm.domain.chart.SpecializedEntityType
 import spock.lang.Specification
 
 @Ignore

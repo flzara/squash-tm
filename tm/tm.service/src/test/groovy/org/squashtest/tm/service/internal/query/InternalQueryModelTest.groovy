@@ -1,4 +1,7 @@
 package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.domain.EntityType
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -19,25 +22,15 @@ package org.squashtest.tm.service.internal.query
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.query.ColumnType
-import org.squashtest.tm.domain.query.QueryAggregationColumn
-import org.squashtest.tm.domain.query.QueryColumnPrototype
-import org.squashtest.tm.domain.query.QueryFilterColumn
-import org.squashtest.tm.domain.query.QueryModel
-import org.squashtest.tm.domain.query.QueryOrderingColumn
-import org.squashtest.tm.domain.query.QueryProjectionColumn
-import org.squashtest.tm.domain.query.QueryStrategy;
-import org.squashtest.tm.domain.query.SpecializedEntityType
+
+import org.squashtest.tm.domain.query.*
 import org.squashtest.tm.service.query.ConfiguredQuery
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.query.ColumnType.*;
-import static org.squashtest.tm.domain.query.QueryStrategy.*;
+import static org.squashtest.tm.domain.query.ColumnType.*
+import static org.squashtest.tm.domain.query.QueryStrategy.*
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*
-
-import static org.squashtest.tm.domain.chart.ColumnType.*
-import static org.squashtest.tm.domain.chart.QueryStrategy.*
 
 class InternalQueryModelTest extends Specification{
 

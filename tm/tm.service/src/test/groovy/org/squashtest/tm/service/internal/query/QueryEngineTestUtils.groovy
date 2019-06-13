@@ -21,14 +21,16 @@
 
 package org.squashtest.tm.service.internal.query
 
-import org.squashtest.tm.domain.query.ColumnType
-import org.squashtest.tm.domain.query.DataType
-import org.squashtest.tm.domain.query.Operation
-import org.squashtest.tm.domain.query.QueryAggregationColumn
-import org.squashtest.tm.domain.query.QueryColumnPrototype
-import org.squashtest.tm.domain.query.QueryFilterColumn
-import org.squashtest.tm.domain.query.QueryProjectionColumn
-import org.squashtest.tm.domain.query.SpecializedEntityType
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.bugtracker.QIssue
+import org.squashtest.tm.domain.campaign.QCampaign
+import org.squashtest.tm.domain.campaign.QIteration
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
+import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.query.*
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.requirement.QRequirementVersion
+import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
 import spock.lang.Specification
 

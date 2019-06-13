@@ -20,7 +20,7 @@ package org.squashtest.tm.service.internal.query
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.querydsl.core.types.Predicate
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.query.NaturalJoinStyle
 import org.squashtest.tm.domain.query.QueryAggregationColumn
@@ -29,10 +29,14 @@ import org.squashtest.tm.domain.query.QueryModel
 import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.query.QueryStrategy
 import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.testcase.TestCase;
+
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
 import static org.squashtest.tm.domain.query.DataType.*;
 import static org.squashtest.tm.domain.query.ColumnType.*;
@@ -40,12 +44,8 @@ import static org.squashtest.tm.domain.query.Operation.*;
 import static org.squashtest.tm.domain.testcase.QTestCase.testCase
 import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem
 
+
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
-import static org.squashtest.tm.domain.chart.DataType.*
-import static org.squashtest.tm.domain.chart.Operation.COUNT
-import static org.squashtest.tm.domain.chart.Operation.NONE
-import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
 
 class QueryPlannerTest extends Specification {
 
@@ -67,11 +67,11 @@ class QueryPlannerTest extends Specification {
 
 		and :
 		QueryPlanner planner = new QueryPlanner(
-				aliases : aliases,
-				utils : tools,
-				query : hquery,
-				internalQueryModel : cquery
-				)
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
 
 		when :
 		planner.addMappedJoin(r,v,"versions")
@@ -88,10 +88,10 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
-				joinStyle : NaturalJoinStyle.LEFT_JOIN
-				)
+			rootEntity : REQUIREMENT,
+			targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
+			joinStyle : NaturalJoinStyle.LEFT_JOIN
+		)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
 
@@ -99,11 +99,11 @@ class QueryPlannerTest extends Specification {
 
 		and :
 		QueryPlanner planner = new QueryPlanner(
-				aliases : aliases,
-				utils : tools,
-				query : hquery,
-				internalQueryModel : cquery
-				)
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
 
 		when :
 		planner.addMappedJoin(r,v,"versions")
@@ -120,10 +120,10 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : REQUIREMENT,
-				targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
-				joinStyle : NaturalJoinStyle.INNER_JOIN
-				)
+			rootEntity : REQUIREMENT,
+			targetEntities : [REQUIREMENT, REQUIREMENT_VERSION],
+			joinStyle : NaturalJoinStyle.INNER_JOIN
+		)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
 
@@ -131,11 +131,11 @@ class QueryPlannerTest extends Specification {
 
 		and :
 		QueryPlanner planner = new QueryPlanner(
-				aliases : aliases,
-				utils : tools,
-				query : hquery,
-				internalQueryModel : cquery
-				)
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
 
 		when :
 		planner.addMappedJoin(r,v,"versions")
@@ -152,9 +152,9 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
-				)
+			rootEntity : TEST_CASE,
+			targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
+		)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
 
@@ -162,11 +162,11 @@ class QueryPlannerTest extends Specification {
 
 		and :
 		QueryPlanner planner = new QueryPlanner(
-				aliases : aliases,
-				utils : tools,
-				query : hquery,
-				internalQueryModel : cquery
-				)
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
 
 		and:
 		def joinPath = new PathBuilder(IterationTestPlanItem.class, "iterationTestPlanItem").get('referencedTestCase', TestCase.class)
@@ -224,9 +224,9 @@ class QueryPlannerTest extends Specification {
 		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
-				)
+			rootEntity : TEST_CASE,
+			targetEntities : [TEST_CASE, ITEM_TEST_PLAN]
+		)
 
 		QuerydslToolbox tools = Mock(QuerydslToolbox)
 
@@ -234,11 +234,11 @@ class QueryPlannerTest extends Specification {
 
 		and :
 		QueryPlanner planner = new QueryPlanner(
-				aliases : aliases,
-				utils : tools,
-				query : hquery,
-				internalQueryModel : cquery
-				)
+			aliases : aliases,
+			utils : tools,
+			query : hquery,
+			internalQueryModel : cquery
+		)
 
 		when :
 		planner.addUnmappedJoin(tc, itp,"referencedTestCase")
@@ -254,9 +254,9 @@ class QueryPlannerTest extends Specification {
 
 		given :
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : TEST_CASE,
-				targetEntities : [TEST_CASE, REQUIREMENT]
-				)
+			rootEntity : TEST_CASE,
+			targetEntities : [TEST_CASE, REQUIREMENT]
+		)
 
 		QueryPlanner planner = new QueryPlanner(cquery)
 
@@ -266,7 +266,7 @@ class QueryPlannerTest extends Specification {
 
 		then :
 		res.toString() ==
-				"""select requirement.id
+			"""select requirement.id
 from TestCase testCase
   inner join testCase.requirementVersionCoverages as requirementVersionCoverage
   inner join requirementVersionCoverage.verifiedRequirementVersion as requirementVersion
@@ -390,12 +390,12 @@ from TestCase testCase
 
 		given :
 		InternalQueryModel cquery = mockInternalModel(
-				rootEntity : REQUIREMENT_VERSION,
-				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
-				)
+			rootEntity : REQUIREMENT_VERSION,
+			targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
+		)
 
 		ExtendedHibernateQuery mainq =
-				new ExtendedHibernateQuery().from(r)
+			new ExtendedHibernateQuery().from(r)
 				.innerJoin(r.versions, v)
 				.innerJoin(v.requirementVersionCoverages, cov)
 				.innerJoin(cov.verifyingTestCase, tc)
@@ -406,7 +406,7 @@ from TestCase testCase
 		QuerydslToolbox tools = new QuerydslToolbox("sub")
 
 		QueryPlanner planner =
-				new QueryPlanner(cquery, tools)
+			new QueryPlanner(cquery, tools)
 				.appendToQuery(mainq)
 				.joinRootEntityOn(v)
 
@@ -415,7 +415,7 @@ from TestCase testCase
 
 		then :
 		mainq.toString() ==
-				"""select requirement.id
+			"""select requirement.id
 from Requirement requirement
   inner join requirement.versions as requirementVersion
   inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
@@ -435,11 +435,11 @@ from Requirement requirement
 		QueryAggregationColumn aggReqversion = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "id")
 
 		QueryModel categQuery = new QueryModel(
-				projectionColumns : [selectCateg],
-				aggregationColumns : [aggReqversion],
-				strategy : QueryStrategy.INLINED,
-				joinStyle : NaturalJoinStyle.INNER_JOIN
-				)
+			projectionColumns : [selectCateg],
+			aggregationColumns : [aggReqversion],
+			strategy : QueryStrategy.INLINED,
+			joinStyle : NaturalJoinStyle.INNER_JOIN
+		)
 
 		and : "the second subquery"
 
@@ -449,11 +449,11 @@ from Requirement requirement
 		QueryAggregationColumn aggTC = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
 
 		QueryModel tcmilesQuery = new QueryModel(
-				projectionColumns : [selectMiles],
-				aggregationColumns : [aggTC],
-				strategy : QueryStrategy.INLINED,
-				joinStyle : NaturalJoinStyle.LEFT_JOIN
-				)
+			projectionColumns : [selectMiles],
+			aggregationColumns : [aggTC],
+			strategy : QueryStrategy.INLINED,
+			joinStyle : NaturalJoinStyle.LEFT_JOIN
+		)
 
 		and : "the main internalQueryModel"
 
@@ -468,10 +468,10 @@ from Requirement requirement
 		QueryAggregationColumn tcid = mkAggr(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
 
 		QueryModel mainquery = new QueryModel(
-				projectionColumns : [ inlinedTCMiles	],
-				filterColumns : [inlinedCateg],
-				aggregationColumns : [tcid]
-				)
+			projectionColumns : [ inlinedTCMiles	],
+			filterColumns : [inlinedCateg],
+			aggregationColumns : [tcid]
+		)
 
 		when :
 		def internalModel = new InternalQueryModel(new ConfiguredQuery(mainquery))
@@ -481,7 +481,7 @@ from Requirement requirement
 
 		then :
 		res.toString() ==
-				"""select testCase.id
+			"""select testCase.id
 from TestCase testCase
   inner join testCase.requirementVersionCoverages as requirementVersionCoverage
   inner join requirementVersionCoverage.verifiedRequirementVersion as requirementVersion

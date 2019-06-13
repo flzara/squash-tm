@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.requirement
 
 import org.hibernate.Session
+import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 

@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.servers.AuthenticationStatus
-
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.servers.CredentialsProvider
