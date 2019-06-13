@@ -36,7 +36,7 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 import java.util.Collection;
 import java.util.List;
 
-public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Long> {
+public interface CustomFieldValueDao extends JpaRepository<CustomFieldValue, Long>, CustomCustomFieldValueDao {
 	final class CustomFieldValuesPair {
 
 		private CustomFieldValue original;

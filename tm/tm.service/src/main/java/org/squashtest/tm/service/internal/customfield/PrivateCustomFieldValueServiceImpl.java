@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -455,6 +457,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 	}
 
+	@Override
+	public Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(long campaignId, Map<EntityType, List<Long>> cufIdsMapByEntityType) {
+		return customFieldValueDao.getCufValuesMapByEntityReference(campaignId, cufIdsMapByEntityType);
+	}
 
 	// *********************** private convenience methods ********************
 

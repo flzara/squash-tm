@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
@@ -82,6 +83,8 @@ public class CustomExportController {
 	private JsonProjectBuilder jsonProjectBuilder;
 	@Inject
 	private CustomFieldFinderService cufService;
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
 	@Inject
 	private CustomFieldBindingFinderService cufBindingService;
 	@Inject
@@ -143,7 +146,7 @@ public class CustomExportController {
 	private File createCustomExportFile(CustomReportCustomExport customExport, Locale locale) {
 		File file;
 		PrintWriter writer = null;
-		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService,cufService, i18nHelper, locale);
+		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService,cufService, cufValueService, i18nHelper, locale);
 
 		try {
 			file = File.createTempFile("custom-export", "tmp");
