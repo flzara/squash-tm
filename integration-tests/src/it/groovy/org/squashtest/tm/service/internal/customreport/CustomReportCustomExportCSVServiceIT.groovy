@@ -95,6 +95,15 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		getIteratorSize(result) == 26
 	}
 
+	def "getRowsData(CustomReportCustomExport) - Should retrieve some records of a Custom Export with only ExecutionStep data with no CustomField"() {
+		given:
+		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-9L)
+		when:
+		Iterator<Record> result = customExportService.getRowsData(customExport)
+		then:
+		getIteratorSize(result) == 26
+	}
+
 	def "getRowsData(CustomReportCustomExport) - Should retrieve many records of a Full Export with no CustomField"() {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-2L)
