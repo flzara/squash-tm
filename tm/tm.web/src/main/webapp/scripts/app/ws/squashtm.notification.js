@@ -212,7 +212,6 @@ define(["jquery", "app/lnf/Forms", "squash.translator", "jquery.squash.messagedi
 		}
 
 		if(finalMessage.length > 0){
-			var informationContent = informationNotificationArea.find("#information-content");
 			informationNotificationArea.append(finalMessage);
 			informationNotificationArea.show();
 		}
