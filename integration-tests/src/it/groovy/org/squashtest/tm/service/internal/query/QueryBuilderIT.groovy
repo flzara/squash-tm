@@ -47,6 +47,7 @@ import javax.persistence.Query
 
 @NotThreadSafe
 @UnitilsSupport
+@Ignore
 class QueryBuilderIT extends DbunitDaoSpecification {
 
 	// fix the requirementVersion - requirement relation

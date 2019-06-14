@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.domain.query.Operation
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.testcase.TestCaseImportance
+import spock.lang.Ignore
 import spock.lang.Unroll
 
 import static org.squashtest.tm.domain.query.ColumnType.*
@@ -50,6 +51,7 @@ import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
+@Ignore
 class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	// fix the requirementVersion - requirement relation

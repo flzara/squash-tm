@@ -26,11 +26,17 @@ public interface QueryColumnPrototypeInstance {
 
 	QueryColumnPrototype getColumn();
 
-	EntityType getEntityType();
+	default EntityType getEntityType(){
+		return getColumn().getEntityType();
+	}
 
-	SpecializedEntityType getSpecializedType();
+	default SpecializedEntityType getSpecializedType(){
+		return getColumn().getSpecializedType();
+	}
 
-	DataType getDataType();
+	default DataType getDataType(){
+		return getColumn().getDataType();
+	}
 
 	Operation getOperation();
 

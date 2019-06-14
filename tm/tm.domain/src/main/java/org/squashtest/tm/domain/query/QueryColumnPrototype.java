@@ -133,7 +133,20 @@ public class QueryColumnPrototype {
 	}
 
 	public DataType getDataType() {
-		return dataType;
+		// XXX this hack attempts to "fix" the fact that
+		// REQUIREMENT_STATUS and EXECUTION_STATUS are actuall LEVEL_ENUM
+		// but were created for historical reasons by are now obsolete
+		DataType actualDataType;
+		switch(dataType){
+			case REQUIREMENT_STATUS:
+			case EXECUTION_STATUS:
+				actualDataType = DataType.LEVEL_ENUM;
+				break;
+			default:
+				actualDataType = dataType;
+
+		}
+		return actualDataType;
 	}
 
 	public boolean isBusiness() {

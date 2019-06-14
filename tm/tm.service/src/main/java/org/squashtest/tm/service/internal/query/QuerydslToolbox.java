@@ -939,11 +939,7 @@ class QuerydslToolbox {
 						operand = DateUtils.parseIso8601Date(val);
 						break;
 					case EXECUTION_STATUS:
-						operand = ExecutionStatus.valueOf(val);
-						break;
 					case REQUIREMENT_STATUS:
-						operand = RequirementStatus.valueOf(val);
-						break;
 					case LEVEL_ENUM:
 						EnumHelper helper = new EnumHelper(prototype);
 						operand = helper.valueOf(val);
