@@ -764,13 +764,8 @@ class QuerydslToolbox {
 
 	private BooleanExpression createFullTextPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.FULLTEXT, baseExp, operands[0]);
-		/*NumberExpression expresion = Expressions.numberOperation(Double.class, ExtOps.FULLTEXT, baseExp, operands[0]);
 
-		Expressions.asBoolean(expresion.gt(0)).isTrue();*/
 		return matchExpr.isTrue();
-		/*NumberExpression expresion = Expressions.numberOperation(Double.class, ExtOps.FULLTEXT, baseExp, operands[0]);
-
-		return expresion.gt(0);*/
 	}
 	
 
