@@ -72,16 +72,17 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 
 		 function initUserMessage() {
 			var userLicenseInformation = squashtm.app.userLicenseInformation;
-			var userLicenseInformationArray = userLicenseInformation.split("-");
-			var activeUsersCount = userLicenseInformationArray[0];
-			var maxUsersAllowed = userLicenseInformationArray[1];
-			var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
-
-			var userMessage;
-			if (!allowCreateUsers){
-				userMessage = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
-			} else {
-				userMessage = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
+			 var userMessage;
+			if(userLicenseInformation !== null && userLicenseInformation !== ''){
+				var userLicenseInformationArray = userLicenseInformation.split("-");
+				var activeUsersCount = userLicenseInformationArray[0];
+				var maxUsersAllowed = userLicenseInformationArray[1];
+				var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+				if (!allowCreateUsers){
+					userMessage = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+				} else {
+					userMessage = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
+				}
 			}
 
 			return userMessage;

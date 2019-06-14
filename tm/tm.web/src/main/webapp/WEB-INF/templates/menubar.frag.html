@@ -132,7 +132,7 @@
       <span th:text="#{squashtm.processing}">En cours...</span>
     </div>
     <div id="information-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed" style="padding-right: 5px"
-         th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || dateLicenseInformation != null)}
+         th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || (dateLicenseInformation != null && dateLicenseInformation < 30))}
              or ${userLicenseInformation != null && userLicenseInformation.contains('false')} or ${dateLicenseInformation != null && dateLicenseInformation < 0}">
       <span class="ui-icon ui-icon-alert icon"></span> &nbsp;
     </div>
