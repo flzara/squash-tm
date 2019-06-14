@@ -27,13 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.attachment.AttachmentList;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -405,17 +399,35 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
+		List<Long> attachmentsLists = new ArrayList<>();
 
 		//prepare the operation report:
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
 
-		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
+		List<Campaign> campaigns = campaignDao.findAllByIds(separatedIds[1]);
+		List<CampaignFolder> folders = folderDao.findAllByIds(separatedIds[0]);
+
+		//saving {contentId, ListId} of campaigns for FileSystem repository and Content to really remove
+		for (Campaign campaign:campaigns)
+		{
+			attachmentsLists.add(campaign.getAttachmentList().getId());
+		}
+		//saving {contentId, ListId} of folders
+		for (CampaignFolder folder:folders)
+		{
+			attachmentsLists.add(folder.getAttachmentList().getId());
+		}
+		//merge folders and Campaigns
+		List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
 
 		//empty of those campaigns
 		deleteCampaignContent(campaigns);
 
 		// now we can delete the folders as well
 		deletionDao.removeEntities(ids);
+
+		//remove Content from FileSystem and remove orpheans AttachmentContent from BD
+		attachmentManager.deleteContents(listPairContenIDListID);
 
 		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
@@ -489,7 +501,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
-
+		List<Long[]> pairContentIDListIDS = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.getTestSuites().clear();
@@ -498,11 +510,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(testSuite);
 
-			attachmentManagerService.cleanContent(testSuite);
+
+			pairContentIDListIDS.addAll(
+				attachmentManagerService.getListIDbyContentIdForAttachmentLists(Collections.singletonList(testSuite.getAttachmentList().getId())));
 			deletionDao.removeEntity(testSuite);
 		}
-
 		deletionDao.flush();
+		attachmentManagerService.deleteContents(pairContentIDListIDS);
 	}
 
 	@Override
@@ -571,6 +585,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * - remove itself from repository.
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
+		List<Long[]> pairContentIDListIDSteps = new ArrayList<>();
 		for (Iteration iteration : iterations) {
 
 			Collection<TestSuite> suites = new ArrayList<>(iteration.getTestSuites());
@@ -583,9 +598,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
-			attachmentManagerService.cleanContent(iteration);
+			pairContentIDListIDSteps.addAll(
+				attachmentManager.getListIDbyContentIdForAttachmentLists(
+					Collections.singletonList(iteration.getAttachmentList().getId())));
 			deletionDao.removeEntity(iteration);
 		}
+		attachmentManager.deleteContents(pairContentIDListIDSteps);
 	}
 
 	/*

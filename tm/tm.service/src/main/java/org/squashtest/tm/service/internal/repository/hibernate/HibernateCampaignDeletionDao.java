@@ -56,15 +56,12 @@ implements CampaignDeletionDao {
 
 				removeEntityFromParentFolderIfExists(entityId, node);
 
-
 				if(node != null){
-					attachmentManagerService.cleanContent(node);
+					//attachmentManagerService.cleanContent(node);
 					entityManager().remove(node);
 					entityManager().flush();
 				}
 			}
-
-
 		}
 	}
 

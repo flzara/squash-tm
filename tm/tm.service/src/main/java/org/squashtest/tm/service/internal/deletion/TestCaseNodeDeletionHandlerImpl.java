@@ -468,7 +468,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		//save ListId, contentID for FileSystem Repository
 		List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(Collections.singletonList(attachmentList.getId()));
 		deletionDao.removeEntity(step); //Cascade AttachmentList -> include AttachmentList and Attachments
-		//attachmentManager.removeAttachmentsAndLists(Collections.singletonList(attachmentList.getId()));
+		attachmentManager.removeAttachmentsAndLists(Collections.singletonList(attachmentList.getId()));
 		attachmentManager.deleteContents(listPairContenIDListID);
 	}
 

@@ -149,14 +149,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		//	attachmentDao.removeAttachment(attachment.getId()); // !!! Not compatible TM 362
 		attachmentDao.deleteById(attachment.getId());
 
-		Set<Long> notOrpheanContent = attachmentContentDao.findNotOrpheanAttachmentContent(Collections.singletonList(attachmentContentId));
-		if (!notOrpheanContent.contains(attachmentContentId)) {
-			attachmentContentDao.deleteById(attachmentContentId);
-		}
-		if (attachmentRepository instanceof FileSystemAttachmentRepository) {
-			attachmentRepository.removeContent(attachmentListId, attachmentContentId);
-		}
-
+		deleteContents(constructList(attachmentContentId, attachmentListId));
 		reindexBoundEntities(attachmentListId);
 	}
 
@@ -411,20 +404,27 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	//not used
-	private  List<List<Long>> convertToListof2ListofLong(List<Object[]>  rawResult) {
-		List<Long> contentIDs = new ArrayList<>();
-		List<Long> attachmentListIDs = new ArrayList<>();
-		List<List<Long>> result = new ArrayList<>();
-		for (Object[] row:rawResult) {
-			contentIDs.add((Long) row[0]);
-			attachmentListIDs.add((Long) row[1]);
-		}
-		result.add(contentIDs);
-		result.add(attachmentListIDs);
-		return Collections.unmodifiableList(result);
+//	private  List<List<Long>> convertToListof2ListofLong(List<Object[]>  rawResult) {
+//		List<Long> contentIDs = new ArrayList<>();
+//		List<Long> attachmentListIDs = new ArrayList<>();mvn instal
+//		List<List<Long>> result = new ArrayList<>();
+//		for (Object[] row:rawResult) {
+//			contentIDs.add((Long) row[0]);
+//			attachmentListIDs.add((Long) row[1]);
+//		}
+//		result.add(contentIDs);
+//		result.add(attachmentListIDs);
+//		return Collections.unmodifiableList(result);
+//	}
+
+	private List<Long[]> constructList(Long contentID, Long ListId) {
+		List<Long[]> result = new ArrayList<>();
+		Long[] tab = new Long[2];
+		tab[0] = contentID;
+		tab[1] = ListId;
+		result.add(tab);
+		return result;
 	}
-
-
 }
 
 
