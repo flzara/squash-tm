@@ -24,6 +24,7 @@ import org.springframework.ui.Model
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService
+import org.squashtest.tm.service.configuration.ConfigurationService
 import org.squashtest.tm.service.infolist.InfoListModelService
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.testcase.TestCaseWorkspaceDisplayService
@@ -58,6 +59,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	InfoListModelService infoListModelService = Mock()
 	WorkspaceHelperService workspaceHelperService = Mock()
 	BugTrackerFinderService bugTrackerFinderService = Mock()
+	ConfigurationService configurationService = Mock()
 
 
 	def setup() {
@@ -75,6 +77,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		controller.infoListModelService = infoListModelService
 		controller.workspaceHelperService = workspaceHelperService
 		controller.bugTrackerFinderService = bugTrackerFinderService
+		controller.configurationService = configurationService
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
 		}

@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.infolist.InfoListModelService;
 import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
@@ -157,6 +158,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	private InfoListModelService infoListModelService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
+	public void setConfigurationService(ConfigurationService configurationService){
+		this.configurationService = configurationService;
+	}
+
 	public void setInfoListModelService(InfoListModelService infoListModelService) {
 		this.infoListModelService = infoListModelService;
 	}
@@ -225,6 +233,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, projectIds));
 		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(projectIds));
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 
 		return getWorkspaceViewName();
 	}

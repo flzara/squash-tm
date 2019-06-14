@@ -60,13 +60,14 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 		 }
 
 		 function getExpirationDate(daysRemaining){
-         	var currentDate = new Date();
-         	var expirationDate = currentDate + daysRemaining;
-			return expirationDate.toLocaleDateString(undefined, {
-				day: '2-digit',
-				month: '2-digit',
-				year: 'numeric'
-				})
+			 var currentDate = new Date();
+			 var expirationDate = new Date();
+			 expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining));
+			 return expirationDate.toLocaleDateString(undefined, {
+				 day: '2-digit',
+				 month: '2-digit',
+				 year: 'numeric'
+			 });
 		 }
 
 		 function initUserMessage() {

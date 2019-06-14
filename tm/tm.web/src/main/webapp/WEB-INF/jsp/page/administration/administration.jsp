@@ -65,7 +65,7 @@
   <jsp:attribute name="informationContent">
     <div id="admin-pane">
       <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
-      <c:if test="${(isAdmin and (not empty userLicenseInformation or not empty dateLicenseInformation)) or (not empty userLicenseInformation and userLicenseInformation.contains('true')) or (not empty dateLicenseInformation and dateLicenseInformation > 0)}">
+      <c:if test="${(isAdmin and (not empty userLicenseInformation or not empty dateLicenseInformation)) or (not empty userLicenseInformation and userLicenseInformation.contains('false')) or (not empty dateLicenseInformation and dateLicenseInformation < 0)}">
       <div id="information-block">
         <div id="information-block-wrapper" class="ui-widget ui-widget-content ui-corner-all">
           <div class="display-table-row">

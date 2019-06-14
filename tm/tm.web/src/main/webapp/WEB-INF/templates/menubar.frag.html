@@ -131,6 +131,11 @@
       <div class="small-loading"></div>
       <span th:text="#{squashtm.processing}">En cours...</span>
     </div>
+    <div id="information-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed" style="padding-right: 5px"
+         th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || dateLicenseInformation != null)}
+             or ${userLicenseInformation != null && userLicenseInformation.contains('false')} or ${dateLicenseInformation != null && dateLicenseInformation < 0}">
+      <span class="ui-icon ui-icon-alert icon"></span> &nbsp;
+    </div>
     <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
       <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;
       (<a id="show-generic-error-details" th:class="'cursor-pointer'" class="cursor-pointer" th:text="#{error.generic.button.details.label}">Details</a>)

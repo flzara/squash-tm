@@ -115,7 +115,7 @@ public class HomeController {
 		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
 
 		model.addObject("userLicenseInformation", userLicenseInformation);
-		model.addObject("dateLicenseInformation", dateLicenseInformation);
+		model.addObject("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 
 		return model;
 	}

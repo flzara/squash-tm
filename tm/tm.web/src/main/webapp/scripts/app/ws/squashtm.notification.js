@@ -34,6 +34,7 @@ define(["jquery", "app/lnf/Forms", "squash.translator", "jquery.squash.messagedi
 			$("#generic-error-dialog").messageDialog();
 			$("#generic-warning-dialog").messageDialog();
 			$("#generic-info-dialog").messageDialog();
+			initNotification();
 		}
 	}
 
@@ -191,6 +192,61 @@ define(["jquery", "app/lnf/Forms", "squash.translator", "jquery.squash.messagedi
 	function showXhrInDialog(xhr) {
 		var msg = this.getErrorMessage(xhr);
 		this.showError(msg);
+	}
+
+	function initNotification(){
+		var informationNotificationArea = $("#information-notification-area");
+		var dateMessage = initDateNotificationMessage();
+		var userMessage = initUserNotificationMessage();
+
+		var finalMessage = '';
+		if (dateMessage != null){
+			finalMessage += dateMessage;
+		}
+		if (userMessage != null){
+			if (finalMessage.length > 0){
+				finalMessage+= '-'+userMessage;
+			} else {
+				finalMessage += userMessage;
+			}
+		}
+
+		if(finalMessage.length > 0){
+			var informationContent = informationNotificationArea.find("#information-content");
+			informationNotificationArea.append(finalMessage);
+			informationNotificationArea.show();
+		}
+	}
+
+	function initDateNotificationMessage() {
+		var dateMessage;
+
+		var dateLicenseInformation = window.squashtm.app.dateLicenseInformation;
+
+		if(dateLicenseInformation !== null && dateLicenseInformation !== ''){
+			var daysRemaining = parseInt(dateLicenseInformation);
+			if(daysRemaining < 0) {
+				dateMessage = translator.get("information.expirationDate.warning.short2");
+			} else {
+				dateMessage = translator.get("information.expirationDate.warning.short1");
+			}
+		}
+		return dateMessage;
+	}
+
+	function initUserNotificationMessage() {
+		var userLicenseInformation = window.squashtm.app.userLicenseInformation;
+		var userMessage;
+		if(userLicenseInformation != null && userLicenseInformation !== ''){
+			var userLicenseInformationArray = userLicenseInformation.split("-");
+			var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+			if (!allowCreateUsers){
+				userMessage = translator.get("information.userExcess.warning.short2");
+			} else {
+				userMessage = translator.get("information.userExcess.warning.short1");
+			}
+		}
+		return userMessage;
 	}
 
 	squashtm.notification = {

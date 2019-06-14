@@ -54,7 +54,7 @@ public class AdministrationController {
 		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
 
 		mav.addObject("userLicenseInformation", userLicenseInformation);
-		mav.addObject("dateLicenseInformation", dateLicenseInformation);
+		mav.addObject("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 		return mav;
 	}
 
