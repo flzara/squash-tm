@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.jooq.Record
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
+import java.util.Set
+import org.squashtest.tm.domain.EntityType
 
 import javax.inject.Inject
 
@@ -41,11 +43,13 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 	@Inject
 	CustomReportLibraryNodeService customReportLibraryNodeService
 
+	Set<EntityType> emptyCufEntitySet = new HashSet<>()
+
 	def "getRowsData(CustomReportCustomExport) - Should retrieve data of a Custom Export with only Campaign related columns with no CustomField"() {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-3L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 1
 	}
@@ -54,7 +58,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-4L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 2
 	}
@@ -63,7 +67,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 			def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-5L)
 		when:
-			Iterator<Record> result = customExportService.getRowsData(customExport)
+			Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 			getIteratorSize(result) == 12
 	}
@@ -72,7 +76,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-6L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 10
 	}
@@ -81,7 +85,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-7L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 12
 	}
@@ -90,7 +94,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-8L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 26
 	}
@@ -99,7 +103,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-9L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 26
 	}
@@ -108,7 +112,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-2L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 30
 	}
@@ -126,7 +130,7 @@ class CustomReportCustomExportCSVServiceIT extends DbunitServiceSpecification {
 		given:
 		def customExport = customReportLibraryNodeService.findCustomExportByNodeId(-10L)
 		when:
-		Iterator<Record> result = customExportService.getRowsData(customExport)
+		Iterator<Record> result = customExportService.getRowsData(customExport, emptyCufEntitySet)
 		then:
 		getIteratorSize(result) == 240
 	}

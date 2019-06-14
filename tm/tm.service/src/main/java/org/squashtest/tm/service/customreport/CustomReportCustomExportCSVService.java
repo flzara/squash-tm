@@ -25,14 +25,11 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 
 import java.util.Iterator;
+import java.util.Set;
 
 public interface CustomReportCustomExportCSVService {
 
-	Iterator<Record> getRowsData(CustomReportCustomExport customExport);
-
-	String buildCufColumnAliasName(EntityType entityType, long cufId);
-
-	String buildAggregateCufColumnAliasName(EntityType entityType, long cufId);
+	Iterator<Record> getRowsData(CustomReportCustomExport customExport, Set<EntityType> customFieldsEntityTypes);
 
 	Object computeCampaignProgressRate(CustomReportCustomExport customExport);
 }

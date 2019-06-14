@@ -39,24 +39,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_PROGRESS_STATUS;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_COMMENT;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_ACTION;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_COMMENT;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_RESULT;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.ITERATION_DESCRIPTION;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_NATURE;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_PREREQUISITE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_TYPE;
-import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_SUITE_DESCRIPTION;
-import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
-import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
-import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
-import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
-import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
-import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
 
 public class CustomExportCSVHelper {
 
@@ -73,6 +58,7 @@ public class CustomExportCSVHelper {
 	private InternationalizationHelper translator;
 	private Locale locale;
 
+
 	public CustomExportCSVHelper(CustomReportCustomExportCSVService csvService, CustomFieldFinderService cufService, CustomFieldValueFinderService cufValueService, InternationalizationHelper translator, Locale locale) {
 		this.csvService = csvService;
 		this.cufService = cufService;
@@ -81,35 +67,79 @@ public class CustomExportCSVHelper {
 		this.locale = locale;
 	}
 
+	/**
+	 * Build the String which will compose the headers of the export csv file.
+	 * @param customExport The CustomReportCustomExport that is to be exported
+	 * @return A String representing the headers to print in the export csv file.
+	 */
 	public String getInternationalizedHeaders(CustomReportCustomExport customExport) {
 		StringBuilder builder = new StringBuilder();
 		for(CustomReportCustomExportColumn column : customExport.getColumns()) {
-			CustomExportColumnLabel columnLabel = column.getLabel();
-			String headerLabel;
-			if(column.getCufId() == null) {
-				headerLabel = translator.internationalize(columnLabel.getI18nKey(), locale);
-			} else {
-				headerLabel = cufService.findById(column.getCufId()).getLabel();
-			}
-			// A column ' CAMPAIGN_LABEL ' will be written ' "CAMPAIGN_LABEL"; ' in the .csv file
+			// Ex: The column ' Label ' of a Campaign will be written ' "CPG - Label"; ' in the .csv file
 			builder.append(ESCAPED_QUOTE)
-				.append(buildHeaderName(columnLabel.getShortenedEntityType(), headerLabel))
+				.append(buildInternationalizedHeaderLabel(column))
 				.append(ESCAPED_QUOTE)
 				.append(SEPARATOR);
 		}
 		builder.append(CARRIAGE_RETURN);
 		return builder.toString();
 	}
-
-	private String buildHeaderName(String entityPrefix, String columnLabel) {
-		return entityPrefix + SPACE_DASH_SPACE + columnLabel;
+	/**
+	 * Build the internationalized header label of a given CustomReportCustomExportColumn. The header label is
+	 * composed of a prefix specific to the Entity, concatenated with the internationalized column name.
+	 * @param column The CustomReportCustomExportColumn
+	 * @return The internationalized header label of the given CustomReportCustomExportColumn
+	 */
+	private String buildInternationalizedHeaderLabel(CustomReportCustomExportColumn column) {
+		CustomExportColumnLabel columnLabel = column.getLabel();
+		String internationalizedHeaderName = getInternationalizedHeaderName(column);
+		return columnLabel.getShortenedEntityType() + SPACE_DASH_SPACE + internationalizedHeaderName;
+	}
+	/**
+	 * Given a CustomReportCustomExportColumn, get its translated header name. If the columns corresponds to a
+	 * CustomField, the CustomField name is given without translation.
+	 * @param column The CustomReportCustomExportColumn
+	 * @return The translated name of the given CustomReportCustomExportColumn
+	 */
+	private String getInternationalizedHeaderName(CustomReportCustomExportColumn column) {
+		if(column.getCufId() == null) {
+			return translator.internationalize(column.getLabel().getI18nKey(), locale);
+		} else {
+			return cufService.findById(column.getCufId()).getLabel();
+		}
 	}
 
+
+	/**
+	 * Build the String which will compose the data of the export csv file.
+	 * @param customExport The CustomReportCustomExport than is to be exported
+	 * @return A String representing the data to print in the export csv file
+	 */
 	public String getWritableRowsData(CustomReportCustomExport customExport) {
-		Iterator<Record> rowsData = csvService.getRowsData(customExport);
+		// Extract the Map of requested Cuf ids by EntityType
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap = extractEntityTypeToCufIdsMap(customExport);
+		// Main request
+		Iterator<Record> rowsData = csvService.getRowsData(customExport, entityTypeToCufIdsListMap.keySet());
+		// Side request for complex aggregate columns
 		Object campaignSuccessRate = csvService.computeCampaignProgressRate(customExport);
-		Map<EntityReference, Map<Long, Object>> cufValuesMapByEntityReference = getCufValueMapByEntityRef(customExport);
+		// Side request for all the CustomFieldValues
+		Map<EntityReference, Map<Long, Object>> cufValuesMapByEntityReference = getEntityRefToCufValuesMapMap(customExport, entityTypeToCufIdsListMap);
 		return buildResultString(rowsData, customExport.getColumns(), cufValuesMapByEntityReference, campaignSuccessRate);
+	}
+
+	/**
+	 * Extract the Map of all requested CustomField ids by EntityType.
+	 * @param customExport The CustomExport
+	 * @return A Map of all requested CustomField ids by EntityType
+	 */
+	private Map<EntityType, List<Long>> extractEntityTypeToCufIdsMap(CustomReportCustomExport customExport) {
+		// Extract Cuf ids Map group by EntityTypes
+		return customExport.getColumns()
+			.stream()
+			.filter(column -> column.getCufId() != null)
+			.collect(
+				Collectors.groupingBy(column->column.getLabel().getEntityType(),
+					Collectors.mapping(CustomReportCustomExportColumn::getCufId, Collectors.toList())));
 	}
 
 	/**
@@ -119,28 +149,29 @@ public class CustomExportCSVHelper {
 	 * @return A Map<EntityReference, Map<Long, Object>> where the second Map gives CustomFieldValues
 	 * mapped by CustomField ids.
 	 */
-	private Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(CustomReportCustomExport customExport) {
-		List<CustomReportCustomExportColumn> selectedColumns = customExport.getColumns();
-		// Extract Cuf Map group by EntityTypes
-		Map<EntityType, List<Long>> cufIdsMapByEntityType = selectedColumns.stream()
-			.filter(column -> column.getCufId() != null)
-			.collect(
-				Collectors.groupingBy(column->column.getLabel().getEntityType(),
-					Collectors.mapping(CustomReportCustomExportColumn::getCufId, Collectors.toList())));
+	private Map<EntityReference, Map<Long, Object>> getEntityRefToCufValuesMapMap(CustomReportCustomExport customExport, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
 		// If no CustomFields were requested, nothing else is to do
-		if(cufIdsMapByEntityType.isEmpty()) {
+		if(entityTypeToCufIdsListMap.isEmpty()) {
 			return null;
 		}
 		EntityReference campaign = customExport.getScope().get(0);
-		Long campaignId = campaign.getId();
-		return cufValueService.getCufValueMapByEntityRef(campaignId, cufIdsMapByEntityType);
+		return cufValueService.getCufValueMapByEntityRef(campaign.getId(), entityTypeToCufIdsListMap);
 	}
 
-	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignSuccessRate) {
+	/**
+	 * Given all the data fetched previously in the process, build the String which will compose the data of the export
+	 * csv file.
+	 * @param resultSet The result of the main request containing all the fetched data
+	 * @param selectedColumns The selected columns of the CustomExport
+	 * @param cufMap The CustomFieldValues Map
+	 * @param campaignProgressRate The scope Campaign progress rate
+	 * @return
+	 */
+	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignProgressRate) {
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
-					Object value = computeOutputValue(record, column, cufMap, campaignSuccessRate);
+					Object value = computeOutputValue(record, column, cufMap, campaignProgressRate);
 					// Append the value
 					if(value != null) {
 						dataBuilder.append(ESCAPED_QUOTE)
@@ -157,6 +188,7 @@ public class CustomExportCSVHelper {
 		return dataBuilder.toString();
 	}
 
+
 	/**
 	 * Get the value corresponding to the given CustomReportCustomExportColumn among the given Record.
 	 * @param record The Record, representing a Row of fetched data
@@ -171,12 +203,11 @@ public class CustomExportCSVHelper {
 		if(label.equals(TEST_CASE_NATURE) || label.equals(TEST_CASE_TYPE)) {
 			// Translate i18n keys of the info list items
 			Object i18nKey = record.get(columnField);
-			// This can be null if left joined with no Test Case
+			// This can be null if left joined with non-existent entity
 			if(i18nKey != null) {
 				value = translator.internationalize(String.valueOf(i18nKey), locale);
 			}
-		} else if (label.equals(CAMPAIGN_DESCRIPTION) || label.equals(ITERATION_DESCRIPTION) || label.equals(TEST_SUITE_DESCRIPTION) || label.equals(TEST_CASE_DESCRIPTION) ||
-			label.equals(TEST_CASE_PREREQUISITE) || label.equals(EXECUTION_COMMENT)|| label.equals(EXECUTION_STEP_COMMENT) || label.equals(EXECUTION_STEP_ACTION) || label.equals(EXECUTION_STEP_RESULT)) {
+		} else if (CustomExportColumnLabel.getRichTextFieldsSet().contains(label)) {
 			// Clean Html content
 			Object rawValue = record.get(columnField);
 			value = computeRichValue(rawValue);
@@ -189,29 +220,7 @@ public class CustomExportCSVHelper {
 			// Custom fields content
 			long cufId = column.getCufId();
 			EntityType entityType = label.getEntityType();
-			Long entityId;
-			switch(entityType) {
-				case CAMPAIGN:
-					entityId = record.get(CAMPAIGN.CLN_ID);
-					break;
-				case ITERATION:
-					entityId = record.get(ITERATION.ITERATION_ID);
-					break;
-				case TEST_SUITE:
-					entityId = record.get(TEST_SUITE.ID);
-					break;
-				case TEST_CASE:
-					entityId = record.get(TEST_CASE.TCLN_ID);
-					break;
-				case EXECUTION:
-					entityId = record.get(EXECUTION.EXECUTION_ID);
-					break;
-				case EXECUTION_STEP:
-					entityId = record.get(EXECUTION_STEP.EXECUTION_STEP_ID);
-					break;
-				default:
-					throw new RuntimeException("Unknown EntityType : " + entityType);
-			}
+			Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
 			// entityId can be null if left joined with a non-existent entity
 			if(entityId != null) {
 				EntityReference entityReference = new EntityReference(entityType, entityId);
@@ -222,6 +231,11 @@ public class CustomExportCSVHelper {
 		return value;
 	}
 
+	/**
+	 * Format output value for a rich text.
+	 * @param rawValue The raw value
+	 * @return The cleaned output value of the given rich value.
+	 */
 	private String computeRichValue(Object rawValue) {
 		if(rawValue == null) {
 			return null;
@@ -230,7 +244,11 @@ public class CustomExportCSVHelper {
 			return  removeCarriageReturnsAndReplaceDoubleQuotes(htmlFreeValue);
 		}
 	}
-
+	/**
+	 * Remove all the carriage returns of the given text. And replace all double quotes by simple ones.
+	 * @param text The text.
+	 * @return The cleaned text.
+	 */
 	private String removeCarriageReturnsAndReplaceDoubleQuotes(String text) {
 		return text
 			.replaceAll("\r\n", "")

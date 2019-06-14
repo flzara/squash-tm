@@ -21,13 +21,18 @@
 package org.squashtest.tm.domain.customreport;
 
 import org.jooq.Field;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.jooq.domain.Tables;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jooq.impl.DSL.concat;
 import static org.jooq.impl.DSL.count;
@@ -308,7 +313,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.TEST_CASE),
 
 	TEST_CASE_LINKED_REQUIREMENTS_NUMBER(
-			I18nKeys.I18N_KEY_LINKED_REQUIREMENTS_NUMBER,
+		I18nKeys.I18N_KEY_LINKED_REQUIREMENTS_NUMBER,
 		countDistinct(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFIED_REQ_VERSION_ID).as("tc_rvc_number"),
 		null,
 		EntityType.TEST_CASE
@@ -506,6 +511,45 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		return ShortenedNames.getShortenedEntityType(entityType);
 	}
 
+	public static Set<CustomExportColumnLabel> getRichTextFieldsSet() {
+		return RICH_TEXT_FIELDS_SET;
+	}
+
+	public static Map<EntityType, TableField<?, Long>> getEntityTypeToIdTableFieldMap() {
+		return ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP;
+	}
+
+	private static final Map<EntityType, TableField<?, Long>> ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP;
+
+	// Initialize unmodifiable ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP
+	static {
+		Map<EntityType, TableField<?, Long>> initialMap = new HashMap<>();
+		initialMap.put(EntityType.CAMPAIGN, CAMPAIGN.CLN_ID);
+		initialMap.put(EntityType.ITERATION, Tables.ITERATION.ITERATION_ID);
+		initialMap.put(EntityType.TEST_SUITE, Tables.TEST_SUITE.ID);
+		initialMap.put(EntityType.TEST_CASE, TEST_CASE.TCLN_ID);
+		initialMap.put(EntityType.EXECUTION, EXECUTION.EXECUTION_ID);
+		initialMap.put(EntityType.EXECUTION_STEP, EXECUTION_STEP.EXECUTION_STEP_ID);
+		ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP = Collections.unmodifiableMap(initialMap);
+	}
+
+	private static final Set<CustomExportColumnLabel> RICH_TEXT_FIELDS_SET;
+
+	// Initialize unmodifiable RICH_TEXT_FIELDS_SET
+	static {
+		Set<CustomExportColumnLabel> initialSet = new HashSet<>();
+		initialSet.add(CAMPAIGN_DESCRIPTION);
+		initialSet.add(ITERATION_DESCRIPTION);
+		initialSet.add(TEST_SUITE_DESCRIPTION);
+		initialSet.add(TEST_CASE_DESCRIPTION);
+		initialSet.add(TEST_CASE_PREREQUISITE);
+		initialSet.add(EXECUTION_COMMENT);
+		initialSet.add(EXECUTION_STEP_COMMENT);
+		initialSet.add(EXECUTION_STEP_ACTION);
+		initialSet.add(EXECUTION_STEP_RESULT);
+		RICH_TEXT_FIELDS_SET = Collections.unmodifiableSet(initialSet);
+	}
+
 	private static final class I18nKeys {
 		private static final String I18N_KEY_ACTUAL_END = "dialog.label.campaign.actual_end.label";
 		private static final String I18N_KEY_ACTUAL_START = "dialog.label.campaign.actual_start.label";
@@ -596,7 +640,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 		private final static Field EXECUTION_SUCCESS_RATE = concat(
 			DSL.round(FIELD_EXECUTION_STEP_SUCCESS_COUNT.div(nullif(FIELD_EXECUTION_STEP_TOTAL_COUNT, 0)).mul(100L), 2)
-			.cast(SQLDataType.VARCHAR(5)),
+				.cast(SQLDataType.VARCHAR(5)),
 			val(" "),
 			val("%"));
 	}
