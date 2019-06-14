@@ -114,24 +114,24 @@
 
       <!-- now check that those record point to chart_definition -->
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_AXIS_COLUMN where chart_definition_id = -1;
+        select count(*) from CHART_AXIS_COLUMN where chart_definition_id = 1;
       </sqlCheck>
 
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_FILTER where chart_definition_id = -1;
+        select count(*) from CHART_FILTER where chart_definition_id = 1;
       </sqlCheck>
 
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = -1;
+        select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = 1;
       </sqlCheck>
 
       <sqlCheck expectedResult="0">
-        select count(*) from QUERY_MODEL where query_model_id = -22;
+        select count(*) from QUERY_MODEL where query_model_id = 22;
       </sqlCheck>
 
     </preConditions>
   </changeSet>
-  
+
   <changeSet id="tm-1.20.0-TM-13-test-uuid" author="amk" dbms="mysql, postgresql, h2">
     <preConditions>
       <sqlCheck expectedResult="0">
