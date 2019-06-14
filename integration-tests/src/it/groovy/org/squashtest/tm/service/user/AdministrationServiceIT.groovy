@@ -109,4 +109,15 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		2     | 4        | "id"     | ASCENDING  |     false     | ""    |["THREE", "FIVE", "SIX", "SEVEN"]
 	}
 
+	@DataSet("AdministrationServiceIT.should count all active users assigned to at least one project.xml")
+	def "should count all active users assigned to at least one project"() {
+		given: "the dataset"
+
+		when:
+		def res = service.countAllActiveUsersAssignedToAtLeastOneProject()
+
+		then:
+		res == 5
+	}
+
 }
