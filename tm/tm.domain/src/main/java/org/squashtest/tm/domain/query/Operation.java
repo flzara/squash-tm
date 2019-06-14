@@ -43,6 +43,7 @@ public enum Operation {
 	BY_DAY,
 	BY_WEEK,
 	BY_MONTH,
-	BY_YEAR;
+	BY_YEAR,
+	FULLTEXT;
 	// @formatter:on
 }

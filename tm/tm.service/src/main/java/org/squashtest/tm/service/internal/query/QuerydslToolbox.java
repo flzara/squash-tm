@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.querydsl.core.types.dsl.NumberExpression;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -677,6 +678,9 @@ class QuerydslToolbox {
 		else if (operation == Operation.MATCHES){
 			predicate = createMatchPredicate(operation, baseExp, operands);
 		}
+		else if (operation == Operation.FULLTEXT) {
+			predicate = createFullTextPredicate(operation, baseExp, operands);
+		}
 		// normal case
 		else {
 			Operator operator = getOperator(operation);
@@ -756,6 +760,17 @@ class QuerydslToolbox {
 		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to 
 		// be compared to something.
 		return matchExpr.isTrue();
+	}
+
+	private BooleanExpression createFullTextPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
+		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.FULLTEXT, baseExp, operands[0]);
+		/*NumberExpression expresion = Expressions.numberOperation(Double.class, ExtOps.FULLTEXT, baseExp, operands[0]);
+
+		Expressions.asBoolean(expresion.gt(0)).isTrue();*/
+		return matchExpr.isTrue();
+		/*NumberExpression expresion = Expressions.numberOperation(Double.class, ExtOps.FULLTEXT, baseExp, operands[0]);
+
+		return expresion.gt(0);*/
 	}
 	
 
@@ -840,6 +855,7 @@ class QuerydslToolbox {
 					case STRING:
 					case TAG:
 					case DATE_AS_STRING:
+					case TEXT:
 						operand = val;
 						break;
 					case NUMERIC:
@@ -955,6 +971,9 @@ class QuerydslToolbox {
 			case NOT_EQUALS:
 				operator = Ops.NE;
 				break;
+			case FULLTEXT:
+				operator = ExtOps.FULLTEXT;
+				break;
 				
 			default:
 				throw new IllegalArgumentException("Operation '" + operation + NOT_YET_SUPPORTED);
@@ -978,6 +997,7 @@ class QuerydslToolbox {
 			case DATE:
 				result = Date.class;
 				break;
+			case TEXT:
 			case STRING:
 				result = String.class;
 				break;

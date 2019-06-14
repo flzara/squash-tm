@@ -656,16 +656,18 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		filterColumn.setOperation(operation);
 	}
 
-	// TODO create the filter for fulltext search
+	// TODO create the filter for fulltext_search search
 	private void filterByFullText(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
 		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)fieldModel;
 
-		// TODO: use the fulltext operator
-		filterColumn.setOperation(Operation.LIKE);
+		filterColumn.setOperation(Operation.FULLTEXT);
 
 		String value = textFieldModel.getValue();
-		filterColumn.getValues().add("%"+value+"%");
+
+		value = value.replace(" ", " | ");
+
+		filterColumn.getValues().add(value);
 	}
 
 

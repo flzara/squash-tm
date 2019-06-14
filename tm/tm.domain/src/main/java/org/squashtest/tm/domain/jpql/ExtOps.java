@@ -68,7 +68,10 @@ public enum ExtOps implements Operator {
 	TRUE_IF(Boolean.class),
 
 	// by_day date operator
-	YEAR_MONTH_DAY(Integer.class);
+	YEAR_MONTH_DAY(Integer.class),
+
+	//Fulltext operator
+	FULLTEXT(Boolean.class);
 
 	private final Class<?> type;
 

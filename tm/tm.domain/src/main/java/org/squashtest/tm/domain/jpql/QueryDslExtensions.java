@@ -25,6 +25,7 @@ import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Templates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import ext.java.lang.QString;
@@ -97,6 +98,11 @@ public final class QueryDslExtensions {
 	@QueryDelegate(String.class)
 	public static BooleanExpression s_i_matches(StringPath attribute, String regex){
 		return Expressions.booleanOperation(ExtOps.S_I_MATCHES, attribute, new QString("'"+regex+"'"));
+	}
+
+	@QueryDelegate(String.class)
+	public static BooleanExpression fulltext_search(StringPath attribute, String value){
+		return Expressions.booleanOperation(ExtOps.FULLTEXT, attribute, new QString("'"+value+"'"));
 	}
 
 
