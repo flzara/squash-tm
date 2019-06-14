@@ -57,11 +57,11 @@
     <!-- checks that all new entries into QUERY_X_COLUMNS are available -->
 
     <preConditions>
-      <sqlCheck expectedResult="21">
+      <sqlCheck expectedResult="27">
         select count(*) from QUERY_PROJECTION_COLUMN where PROJECTION_RANK = 0;
       </sqlCheck>
 
-      <sqlCheck expectedResult="21">
+      <sqlCheck expectedResult="27">
         select count(*) from QUERY_AGGREGATION_COLUMN;
       </sqlCheck>
 
