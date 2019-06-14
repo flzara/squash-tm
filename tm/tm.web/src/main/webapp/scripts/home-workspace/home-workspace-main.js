@@ -38,6 +38,7 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 				if(userMessage != null){
 					appendMessage(userMessage);
 				}
+				informationBlock.show();
 			}
 		 }
 

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.users
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.domain.users.UsersGroup
+import org.squashtest.tm.exception.NotAllowedByLicenseException
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException
 import org.squashtest.tm.service.configuration.ConfigurationService
 import org.squashtest.tm.service.feature.FeatureManager
@@ -126,6 +127,18 @@ class AdministrationServiceImplTest extends Specification {
 
 		then:
 		thrown LoginAlreadyExistsException
+	}
+
+	def "should fail to create existing user from principal because of license"() {
+		given:
+		userDao.findUserByLogin("chris.jericho") >> Mock(User)
+		configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS) >> "19-10-false"
+
+		when:
+		service.createUserFromLogin("chris.jericho")
+
+		then:
+		thrown NotAllowedByLicenseException
 	}
 
 	def "should create user"() {

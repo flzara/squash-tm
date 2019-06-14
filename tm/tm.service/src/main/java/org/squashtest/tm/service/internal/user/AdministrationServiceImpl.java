@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.NotAllowedByLicenseException;
 import org.squashtest.tm.exception.user.ActiveUserDeleteException;
 import org.squashtest.tm.exception.user.ChartOwnerDeleteException;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
@@ -210,10 +211,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addUser(User user, long groupId, String password) {
-		// FIXME : check the auth login is available when time has come
-		createUserWithoutCredentials(user, groupId);
-		adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			// FIXME : check the auth login is available when time has come
+			createUserWithoutCredentials(user, groupId);
+			adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
 	}
 
 	@Override
@@ -506,15 +512,21 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public User createUserFromLogin(@NotNull String login) throws LoginAlreadyExistsException {
-		String loginTrim = login.trim();
-		checkLoginAvailability(loginTrim);
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			String loginTrim = login.trim();
+			checkLoginAvailability(loginTrim);
 
-		User user = User.createFromLogin(loginTrim);
-		UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
-		user.setGroup(defaultGroup);
+			User user = User.createFromLogin(loginTrim);
+			UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
+			user.setGroup(defaultGroup);
 
-		userDao.save(user);
-		return user;
+			userDao.save(user);
+			return user;
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
+		return null;
 	}
 
 	/**
@@ -578,11 +590,16 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public User createAdministrator(User user, String password) throws LoginAlreadyExistsException {
-		UsersGroup admin = groupDao.findByQualifiedName(UsersGroup.ADMIN);
-		user.normalize();
-		addUser(user, admin.getId(), password);
-
-		return user;
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			UsersGroup admin = groupDao.findByQualifiedName(UsersGroup.ADMIN);
+			user.normalize();
+			addUser(user, admin.getId(), password);
+			return user;
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
+		return null;
 	}
 
 	@Override

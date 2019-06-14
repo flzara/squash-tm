@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.user
 
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.domain.users.UsersGroup
+import org.squashtest.tm.service.configuration.ConfigurationService
 import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.internal.repository.UsersGroupDao
@@ -38,6 +39,7 @@ class AdministrationServiceImplTest extends Specification {
 	AdministratorAuthenticationService adminService = Mock()
 	FeatureManager features  = Mock()
 	ObjectAclService aclService = Mock()
+	ConfigurationService configurationService = Mock()
 
 	def setup(){
 		service.userDao = userDao
@@ -45,6 +47,7 @@ class AdministrationServiceImplTest extends Specification {
 		service.adminAuthentService = adminService
 		service.features = features
 		service.aclService = aclService
+		service.configurationService = configurationService
 
 		features.isEnabled(_) >> false
 	}

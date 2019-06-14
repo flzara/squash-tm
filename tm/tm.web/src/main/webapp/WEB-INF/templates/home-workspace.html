@@ -99,7 +99,7 @@
         <div class="unsnap"></div>
       </div>
 
-      <div id="information-block" th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || dateLicenseInformation != null)}
+      <div id="information-block" class="not-displayed" th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || dateLicenseInformation != null)}
                                          or ${userLicenseInformation != null && userLicenseInformation.contains('false')} or ${dateLicenseInformation != null && dateLicenseInformation < 0}">
         <div id="information-block-wrapper" class="ui-widget ui-widget-content ui-corner-all">
           <div class="display-table-row">
