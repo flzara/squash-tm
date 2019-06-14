@@ -24,7 +24,14 @@ import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.PathBuilder
 import com.querydsl.jpa.hibernate.HibernateQuery
+import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.DataType
+import org.squashtest.tm.domain.query.Operation
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryOrderingColumn
+import org.squashtest.tm.domain.query.SpecializedEntityType
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -123,6 +130,27 @@ class QuerydslToolboxTest extends Specification{
 		pathBuilder.toString().equals("TEST_CASE_CUF_TAG.label");
 	}
 
+
+	def "should create an expression suitable for sorting on a level num"(){
+		given:
+			def column = Mock(QueryOrderingColumn){
+				getColumn() >> Mock(QueryColumnPrototype){
+					getColumnType() >> ColumnType.ATTRIBUTE
+					representsEntityItself() >> false
+					getAttributeName() >> "importance"
+					getDataType() >> DataType.LEVEL_ENUM
+					getSpecializedType() >> new SpecializedEntityType(EntityType.TEST_CASE, null)
+				}
+				getSpecializedType() >> new SpecializedEntityType(EntityType.TEST_CASE, null)
+				getOperation() >> Operation.NONE
+			}
+
+		when:
+		def resultExpr = utils.createAsCaseWhen(column)
+
+		then:
+		resultExpr.toString() == "case when testCase.importance = VERY_HIGH then 1 when testCase.importance = HIGH then 2 when testCase.importance = MEDIUM then 3 when testCase.importance = LOW then 4 else -1000 end"
+	}
 
 
 }

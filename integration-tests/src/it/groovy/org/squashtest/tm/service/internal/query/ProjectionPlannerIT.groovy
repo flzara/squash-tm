@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.query.ColumnType
 import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.domain.query.Operation
 import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import spock.lang.Unroll
 
 import static org.squashtest.tm.domain.query.ColumnType.*
@@ -135,6 +136,41 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		def formatedRes = res.collect{ it.a } as Set
 		formatedRes == [ [201510, 3] , [201511, 2]] as Set
 
+
+	}
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should sort test cases by importance assuming level_num sort rules"(){
+
+		given : "query"
+		ExtendedHibernateQuery query = new ExtendedHibernateQuery()
+		QTestCase testCase = QTestCase.testCase
+
+		query.from(testCase)
+
+		and : "definition"
+
+		InternalQueryModel definition = createInternalModel(
+			mkProj(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id"),
+			mkProj(ATTRIBUTE, LEVEL_ENUM, NONE, TEST_CASE, "importance"),
+
+			mkOrder(ATTRIBUTE, LEVEL_ENUM, NONE, TEST_CASE, "importance", Order.ASC)
+		)
+
+		when :
+		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
+		planner.modifyQuery()
+
+		ExtendedHibernateQuery concrete = query.clone(getSession())
+		def res = concrete.fetch()
+
+		then :
+		def sortedRes = res.collect{ it.a}
+		sortedRes == [
+						[-2, TestCaseImportance.VERY_HIGH],
+					  	[-3, TestCaseImportance.HIGH],
+					  	[-1, TestCaseImportance.LOW]
+					]
 
 	}
 

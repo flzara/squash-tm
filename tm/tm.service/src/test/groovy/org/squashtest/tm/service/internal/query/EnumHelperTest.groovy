@@ -114,6 +114,25 @@ class EnumHelperTest extends Specification{
 		result == TestCaseImportance.HIGH
 	}
 
+	def "should map the level enums by level"(){
+
+		given:
+		def col = proto(TEST_CASE, "importance")
+		def helper = new EnumHelper(col);
+
+		when:
+		def result = helper.getLevelMap()
+
+		then:
+		result == [
+			(TestCaseImportance.VERY_HIGH) : 1,
+			(TestCaseImportance.HIGH) : 2,
+			(TestCaseImportance.MEDIUM) : 3,
+			(TestCaseImportance.LOW) : 4
+		]
+
+
+	}
 
 
 	def proto(entityType, attrName){

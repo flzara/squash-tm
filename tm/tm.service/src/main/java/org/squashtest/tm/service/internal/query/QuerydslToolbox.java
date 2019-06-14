@@ -27,9 +27,11 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -256,6 +258,12 @@ class QuerydslToolbox {
 	// ***************************** high level API ***********************
 
 
+	/**
+	 * Turns the given column into an expression suitable for the 'select' clause.
+	 *
+	 * @param col
+	 * @return
+	 */
 	Expression<?> createAsSelect(QueryColumnPrototypeInstance col) {
 
 		Expression<?> selectElement;
@@ -316,6 +324,38 @@ class QuerydslToolbox {
 	}
 
 
+	/**
+	 * Turns the column into an expression suitable for a groupBy clause.
+	 *
+	 * @param col
+	 * @return
+	 */
+	Expression<?> createAsGroupBy(QueryColumnPrototypeInstance col){
+		// for now it's totally equivalent to #createAsSelect
+		return createAsSelect(col);
+	}
+
+
+	/**
+	 * Turns the column into an expression suitable for a sortBy clause. Note that raw column expression alone is created; the consumer must appends the sort direction.
+	 * Note that when the column datatype is LEVEL_ENUM, the result will be equivalent to
+	 * #createAsCaseWhen
+	 *
+	 * @param col
+	 * @return
+	 */
+	Expression<?> createAsSortBy(QueryColumnPrototypeInstance col){
+		// level enum require a 'case when' construct
+		// that will help to sort them by rank instead of
+		// lexicographically.
+		if (col.getDataType() == DataType.LEVEL_ENUM){
+			return createAsCaseWhen(col);
+		}
+		// for the other columns the sortBy column expression is the same than for the select expression
+		else{
+			return createAsSelect(col);
+		}
+	}
 
 
 	// ********************* low level API *********************
@@ -775,6 +815,45 @@ class QuerydslToolbox {
 		return makeOperands(column, operation, values);
 	}
 
+
+	/**
+	 * Creates a Case-When construct with the given column. The column must have
+	 * a DataType of LEVEL_ENUM or an IllegalArgumentException will be thrown.
+	 *
+	 * @param col
+	 * @return
+	 */
+	Expression<?> createAsCaseWhen(QueryColumnPrototypeInstance col){
+
+		// guard
+		if (col.getDataType() != DataType.LEVEL_ENUM){
+			throw new IllegalArgumentException("Attempted to create a CaseWhen construct on a non LEVEL_ENUM column");
+		}
+
+		CaseBuilder.Cases cases = null;
+
+		Expression<?> colExpr = createAsSelect(col);
+
+		EnumHelper helper = new EnumHelper(col.getColumn());
+		Map<Level, Integer> levels = helper.getLevelMap();
+
+		for (Map.Entry<Level, Integer> entry : levels.entrySet()){
+			Level enumValue = entry.getKey();
+			Integer level = entry.getValue();
+			Predicate predicate = Expressions.predicate(Ops.EQ, colExpr, Expressions.constant(enumValue));
+
+			if (cases == null){
+				cases = new CaseBuilder().when(predicate).then(level);
+			}
+			else{
+				cases = cases.when(predicate).then(level);
+			}
+
+		}
+
+		return cases.otherwise(-1000);
+
+	}
 
 	// ******************************* private stuffs *********************
 

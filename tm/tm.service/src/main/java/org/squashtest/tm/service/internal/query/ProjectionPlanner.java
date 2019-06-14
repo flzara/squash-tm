@@ -25,10 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-import org.squashtest.tm.domain.query.QueryOrderingColumn;
 
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
@@ -44,8 +45,7 @@ import com.querydsl.core.types.dsl.Expressions;
  * <p>
  * 	Depending on the chosen profile, the projection will be :
  * 	<ul>
- * 		<li>REGULAR_QUERY : the full projection will be applied (that is, axis then measures)</li>
- * 		<li>SUBSELECT_QUERY : only the measures will be projected - the axis only value is implicit because the outer query will drive it</li>
+ * 		<li>REGULAR_QUERY and SUBSELCT_QUERY : projection are applied normally</li>
  * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not,
  * 			the outer  query can then test with 'exists (subquery)'  </li>
  * 	</ul>
@@ -53,7 +53,7 @@ import com.querydsl.core.types.dsl.Expressions;
  *
  * <h3>Hacked section, pay attention</h3>
  * <p>
- * 	Last detail, about grouping on subqueries (which happens when a subquery is defined as axis). The Hibernate HQL parser wont allow
+ * 	Last detail, about grouping on subqueries (which happens when a subquery is defined as a projection column). The Hibernate HQL parser wont allow
  * 	group by/ order by on subqueries because it doesn't allow AST nodes of type query at that position. However it will allow column aliases.
  * 	So when this situation arise we have to give :
  * 		<ul>
@@ -66,8 +66,8 @@ import com.querydsl.core.types.dsl.Expressions;
  * the 'group by' clause are inconsistent. A query is not supposed to be expressed that way in the first place. So we have to guess what
  * the alias will be, and follow the pattern col_0_0, col_0_1. This is highly dependent on Hibernate implementation and might break
  * any day.
- * 	<b>Gotcha #3 : </b> it's safer to specify aliases for subqueries only because hibernate would generate more meaningful aliases when
- * the aliases column is a regular column, thoses aliases wouldn't follow the generic pattern col_x_y.
+ * 	<b>Gotcha #3 : </b> Because the use of a .distinct() in the select, we have problems when we also need to sort on level_enums. See
+ * 	comment on {@link #addProjections()} on that matter.
  * </p>
  *
  *
@@ -91,7 +91,7 @@ class ProjectionPlanner {
 	/*
 	 * The documentation for that enum will be given in the context of use, see #populateClauses()
 	 */
-	private enum SubqueryAliasStrategy{
+	private enum AliasStrategy {
 		NONE,
 		APPEND_ALIAS,
 		REPLACE_BY_ALIAS_IF_POSSIBLE;
@@ -118,11 +118,46 @@ class ProjectionPlanner {
 		addSortBy();
 	}
 
+
+
+	/**
+	 * <p>
+		Convert the projection columns to expressions and add them to the select clause.
+		</p>
+		 <p>
+			The expression is fetched with .distinct(), which eliminates possible duplicates,
+			eg when the filter's where clauses cause the same projection columns to be found
+			multiple times.
+		 </p>
+	 <p>
+		There is however a corner case when sorting on a level enum column when using
+		distinct() (when there is no .distinct() the problem wouldn't arise) :
+		 <ol>
+			<li>because it is a sorted column it must appear in the projection,</li>
+			<li>because it is a level enum we need to use a case-when construct to sort it.</li>
+		 </ol>
+	 </p>
+	 <p>
+		The second point would turn the actual enum data into the level we used to sort it,
+		which make the result set incorrect. To reconcile both requirements we have to
+		include such columns twice : once with the actual data and once again as the case-when
+		construct.
+	 </p>
+
+	 <p>
+	 	Remember that, when that situation happens :
+	 	<ul>
+	 		<li>if level enum columns appear in the group by clause, the case-when form of that column must also be grouped on</li>
+	 		<li>if a level enum column appear in the sort by clause (the very reason why we have that problem), only the case-when column should be sorted.</li>
+	 	</ul>
+	 </p>
+	 */
 	private void addProjections(){
 
 		QueryProfile profile = internalQueryModel.getQueryProfile();
 
-		List<Expression<?>> selection = new ArrayList<>();
+		List<Expression<?>> projections;
+		List<Expression<?>> levelEnumSortableProjections;
 
 		switch(profile){
 
@@ -130,27 +165,48 @@ class ProjectionPlanner {
 		case SUBWHERE_QUERY :
 			// that one is special : it's always 'select 1'
 			Expression<?> select1 = Expressions.constant(1);
-			selection.add(select1);
+			projections =  new ArrayList<>(1);
+			projections.add(select1);
 			break;
 
 		// for the rest no problem
 		default:
-			populateClauses(selection, internalQueryModel.getProjectionColumns(), SubqueryAliasStrategy.APPEND_ALIAS);
+			// convert all our columns into selectable expressions
+			projections =
+				internalQueryModel.getProjectionColumns()
+					.stream()
+					.map(column -> convertToExpression(column, AliasStrategy.APPEND_ALIAS, utils::createAsSelect))
+					.collect(Collectors.toList());
+
+
+			// additional mission, if any column with datatype LEVEL_ENUM is present,
+			// include it again using the case-when form, and alias it.
+			levelEnumSortableProjections =
+				internalQueryModel.getOrderingColumns()
+				.stream()
+				.map(column -> convertToExpression(column, AliasStrategy.APPEND_ALIAS, utils::createAsCaseWhen))
+				.collect(Collectors.toList());
+
+			projections.addAll(levelEnumSortableProjections);
+
 			break;
 		}
 
 
 		// now stuff the query
-		query.select(Projections.tuple(selection.toArray(new Expression[]{}))).distinct();
+		query.select(Projections.tuple(toArray(projections))).distinct();
 
 	}
 
 
-
 	private void addGroupBy(){
-		List<Expression<?>> groupBy = new ArrayList<>();
+		List<Expression<?>> groupBy =
+			internalQueryModel.getAggregationColumns()
+				.stream()
+				.map(column -> convertToExpression(column, AliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE, utils::createAsGroupBy))
+				.collect(Collectors.toList());
 
-		populateClauses(groupBy, internalQueryModel.getAggregationColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE);
+
 
 		query.groupBy(groupBy.toArray(new Expression[]{}));
 	}
@@ -158,91 +214,109 @@ class ProjectionPlanner {
 
 	private void addSortBy(){
 
-		List<Expression<?>> expressions = new ArrayList<>();
-
-		populateClauses(expressions, internalQueryModel.getOrderingColumns(), SubqueryAliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE);
-
-		List<OrderSpecifier> orders = new ArrayList<>();
-		populateOrders(orders, internalQueryModel.getOrderingColumns(), expressions);
+		List<OrderSpecifier<?>> orders =
+			internalQueryModel.getOrderingColumns()
+				.stream()
+				.map(column -> {
+					Expression<?> expression = convertToExpression(column, AliasStrategy.REPLACE_BY_ALIAS_IF_POSSIBLE, utils::createAsSortBy);
+					return new OrderSpecifier(column.getOrder(), expression);
+				})
+				.collect(Collectors.toList());
 
 		query.orderBy(orders.toArray(new OrderSpecifier[]{}));
 
 	}
 
 
-	private void populateClauses(List<Expression<?>> toPopulate, List<? extends QueryColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
 
-		for (QueryColumnPrototypeInstance col : columns){
+	// ******************** Column to Expression conversion *********************************************
 
-			Expression<?> expr = null;
+	/**
+	 * <p>
+	 * 		Turns a column into its querydsl expression counterpart and returns it.
+	 *
+	 * </p>
+	 *
+	 * <p>
+	 *     	The expression is created by the function parameter columnToExpressionConverter in most cases. However the
+	 *     	final result depends on the AliasStrategy :
+	 * </p>
+	 *
+	 * <ul>
+	 *     <li>
+	 *         	APPEND_ALIAS : we always want an alias. Either retrieve it or generate a new one.
+	 * 			The column is converted to an expression and aliased.
+	 * 		</li>
+	 *     <li>
+	 *         	NONE : we never want an alias. The column converted to an Expression but no alias is given.
+	 *     </li>
+	 *     <li>
+	 *			REPLACE_BY_ALIAS_IF_POSSIBLE : if an alias exist for that column reuse it (replace
+	 * 			the column expression by the alias), otherwise the column expression is returned as is.
+	 *		</li>
+	 * </ul>
+	 *
+	 * @param column
+	 * @param aliasStrategy
+	 * @param columnToExpressionConverter
+	 * @param <C>
+	 */
+	private <C extends QueryColumnPrototypeInstance>
+	Expression<?> convertToExpression(C column,
+									  AliasStrategy aliasStrategy,
+									  Function<QueryColumnPrototypeInstance, Expression> columnToExpressionConverter){
 
-			// regular column
-			if (! utils.isSubquery(col)){
-				expr = utils.createAsSelect(col);
-			}
-			//subquery columns
-			else{
-				switch(aliasStrategy){
-				
-				/*
-				 * APPEND_ALIAS : we always want an alias. Either retrieve it or generate a new one. 
-				 * The column is then appended to the query and aliased.
-				 */
-				case APPEND_ALIAS :
-					String alias = aliasIndex.getOrGenerateAlias(col);
-					expr = utils.createAsSelect(col);
-					expr = Expressions.as(expr, alias);
-					break;
-					
-				/*
-				 * NONE : we never want an alias. The column is appended but no alias is given.
-				 */
-				case NONE :
-					expr = utils.createAsSelect(col);
-					break;
-				
-				/*
-				 * REPLACE_BY_ALIAS_IF_POSSIBLE : if an alias exist for that column reuse it (replace 
-				 * the column expression by the alias), else append the column without alias.
-				 */
-				case REPLACE_BY_ALIAS_IF_POSSIBLE :
-					
-					Optional<String> maybeAlias =  aliasIndex.getMaybeAlias(col);
-					
-					if (maybeAlias.isPresent()){
-						expr = Expressions.stringPath(maybeAlias.get());
-					}
-					else{
-						expr = utils.createAsSelect(col);
-					}
-					
-					
-					break;
-					
-					
-				default:
-					break;
+		Expression<?> expr = null;
+
+		// regular column
+		switch(aliasStrategy){
+
+			case APPEND_ALIAS :
+				String alias = aliasIndex.generateAlias(column);
+
+				expr = columnToExpressionConverter.apply(column);
+				expr = Expressions.as(expr, alias);
+
+				break;
+
+
+			case NONE :
+				expr = columnToExpressionConverter.apply(column);
+				break;
+
+
+			case REPLACE_BY_ALIAS_IF_POSSIBLE :
+
+				Optional<String> maybeAlias =  aliasIndex.getMaybeAlias(column);
+
+				if (maybeAlias.isPresent()){
+					expr = Expressions.stringPath(maybeAlias.get());
 				}
-			}
+				else{
+					expr = columnToExpressionConverter.apply(column);
+				}
 
-			toPopulate.add(expr);
+
+				break;
+
+
+			default:
+				break;
 		}
+
+
+		return expr;
 
 	}
 
-	private void populateOrders(List<OrderSpecifier> orders, List<QueryOrderingColumn> queryOrdering, List<Expression<?>> expressions){
+	// *********************************** other utils ******************************************************
 
-		for (int i=0; i < queryOrdering.size(); i++){
-			QueryOrderingColumn column = queryOrdering.get(i);
-			Expression<?> expr = expressions.get(i);
-			OrderSpecifier spec = new OrderSpecifier(column.getOrder(), expr);
-			orders.add(spec);
-		}
-
+	private final Expression[] toArray(List<Expression<?>> expressions){
+		return expressions.toArray(new Expression[]{});
 	}
 
 
-
+	// *********************************** internal classes *************************************************
 	
 	/*
 	 * Aliases management. It helps us keeping aliases consistent across select, groupBy and sortBy clauses. 
@@ -254,11 +328,14 @@ class ProjectionPlanner {
 		private Map<Long, String> aliasByPrototypeId = new HashMap<>();
 		private int counter = 0;
 		
-		// returns the alias if found, generating it if needed
-		private String getOrGenerateAlias(QueryColumnPrototypeInstance instance){
+		// generates an alias and registers it. If the column already had an
+		// alias, it is overridden with the new one.
+		private String generateAlias(QueryColumnPrototypeInstance instance){
 			
-			Long protoId = instance.getColumn().getId();			
-			return aliasByPrototypeId.computeIfAbsent(protoId, (id) -> generate());
+			Long protoId = instance.getColumn().getId();
+			String value = generate();
+			aliasByPrototypeId.put(protoId, value);
+			return value;
 			
 		}
 		

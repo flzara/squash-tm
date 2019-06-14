@@ -40,11 +40,14 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,12 +92,26 @@ class EnumHelper {
 	}
 
 
-
-
 	<E extends Enum<E>> E valueOf(String value) {
 		// might throw if the value is wrong but it's fine, no recovery is possible anyway
 		// plus, it manipulates only data we have 100% control of.
 		return Enum.valueOf((Class<E>)enumType, value);
+	}
+
+
+	Map<Level, Integer> getLevelMap(){
+		Map<Level, Integer> result = new LinkedHashMap<>();
+
+		List<Level> sortedLevels = Arrays.stream(enumType.getEnumConstants())
+									   .map(e -> (Level)e)
+									   .sorted(Comparator.comparing(Level::getLevel))
+									   .collect(Collectors.toList());
+
+		for (Level l : sortedLevels){
+			result.put(l, l.getLevel());
+		}
+
+		return result;
 	}
 
 

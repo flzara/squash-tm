@@ -14,6 +14,13 @@
     run it explicitely</description>
 
   <properties>
+
+    <!--
+     this is the argument lines for maven-failsafe-plugin.
+     It is declared this way to make it work with jacoco,
+     see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
+     -->
+    <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
     <database.drivername>org.h2.Driver</database.drivername>
@@ -42,14 +49,6 @@
 
     <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
-
-
-    <!--
-     this is the argument lines for maven-failsafe-plugin.
-     It is declared this way to make it work with jacoco,
-     see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
-     -->
-    <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
 
   </properties>
 
@@ -300,7 +299,7 @@
         <configuration>
           <!--threadCount>1</threadCount> -->
 
-	        <!--
+          <!--
             Don't configure 'argLine' here ! Please use the <argLine> defined in the <properties> section
             An explanation will be supplied there
           -->
