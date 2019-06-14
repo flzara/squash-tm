@@ -26,7 +26,6 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
@@ -209,15 +208,6 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 		then:
 		testCase2.attachmentList.hasAttachments()
-	}
-
-	def "should create attachment list"(){
-
-		when:
-		AttachmentList result = attachService.createAttachmentList()
-
-		then:
-		result.getId() != null
 	}
 
 
