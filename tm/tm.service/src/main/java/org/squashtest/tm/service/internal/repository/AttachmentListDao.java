@@ -30,6 +30,4 @@ public interface AttachmentListDao {
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
 
 	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
-
-	AttachmentList createAttachmentList();
 }

@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.tm.domain.attachment.AttachmentList;
 
 import java.util.Set;
 
@@ -39,7 +38,5 @@ public interface AttachmentFinderService {
 	Set<Attachment> findAttachments(Long attachmentListId);
 
 	String findAttachmentShortName(Long attachmentId);
-
-	AttachmentList createAttachmentList();
 
 }

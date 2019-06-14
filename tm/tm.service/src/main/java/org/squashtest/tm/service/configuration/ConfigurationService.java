@@ -33,7 +33,6 @@ public interface ConfigurationService {
 		String UPLOAD_EXTENSIONS_WHITELIST = "uploadfilter.fileExtensions.whitelist";
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
 		String ACTIVATED_USER_EXCESS = "activated.user.excess";
-		String PLUGIN_LICENSE_LOCATION = "plugin.license.location";
 		String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
 	}
 
