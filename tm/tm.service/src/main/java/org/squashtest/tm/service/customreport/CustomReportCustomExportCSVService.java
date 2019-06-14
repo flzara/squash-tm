@@ -33,4 +33,6 @@ public interface CustomReportCustomExportCSVService {
 	String buildCufColumnAliasName(EntityType entityType, long cufId);
 
 	String buildAggregateCufColumnAliasName(EntityType entityType, long cufId);
+
+	Object computeCampaignProgressRate(CustomReportCustomExport customExport);
 }

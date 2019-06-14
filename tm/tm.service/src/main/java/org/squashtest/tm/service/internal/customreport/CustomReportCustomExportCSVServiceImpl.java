@@ -26,10 +26,12 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSelectStep;
+import org.jooq.impl.SQLDataType;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
+import org.squashtest.tm.jooq.domain.tables.Iteration;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 
@@ -44,6 +46,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.jooq.impl.DSL.concat;
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.nullif;
+import static org.jooq.impl.DSL.val;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_MILESTONE;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_DESCRIPTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_LABEL;
@@ -303,5 +309,52 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	@Override
 	public String buildAggregateCufColumnAliasName(EntityType entityType, long cufId) {
 		return entityType.toString() + "_aggregate_cuf_" + cufId;
+	}
+
+	@Override
+	public Object computeCampaignProgressRate(CustomReportCustomExport customExport) {
+		long campaignId = customExport.getScope().get(0).getId();
+		return getCampaignProgressRateData(campaignId);
+	}
+
+	private Field getItpiDoneCountField(long campaignId) {
+		return org.jooq.impl.DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+			.from(CAMPAIGN.as("campaign_itpi_done"))
+			.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.as("campaign_itpi_done").CLN_ID))
+			.leftJoin(Iteration.ITERATION).on(Iteration.ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(Iteration.ITERATION.ITERATION_ID))
+			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.where(CAMPAIGN.as("campaign_itpi_done").CLN_ID.eq(campaignId))
+			.and(ITERATION_TEST_PLAN_ITEM.EXECUTION_STATUS.in("SETTLED", "UNTESTABLE", "BLOCKED", "FAILURE", "SUCCESS"))
+			.asField();
+	}
+
+	private Field getItpiTotalCountField(long campaignId) {
+		return org.jooq.impl.DSL.select(count(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID).cast(SQLDataType.DOUBLE))
+			.from(CAMPAIGN.as("campaign_itpi_total"))
+			.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.as("campaign_itpi_total").CLN_ID))
+			.leftJoin(Iteration.ITERATION).on(Iteration.ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(Iteration.ITERATION.ITERATION_ID))
+			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.where(CAMPAIGN.as("campaign_itpi_total").CLN_ID.eq(campaignId))
+			.asField();
+	}
+
+	private Field getCampaignProgressStatusField(long campaignId) {
+		return concat(
+			org.jooq.impl.DSL.round(
+				getItpiDoneCountField(campaignId)
+					.div(
+						nullif(getItpiTotalCountField(campaignId), 0)).mul(100L), 2)
+				.cast(SQLDataType.VARCHAR(5)),
+			val(" "),
+			val("%"));
+	}
+
+	private Object getCampaignProgressRateData(long campaignId) {
+		return DSL
+			.select(getCampaignProgressStatusField(campaignId))
+			.fetchOne(getCampaignProgressStatusField(campaignId));
+
 	}
 }

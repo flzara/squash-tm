@@ -93,7 +93,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	CAMPAIGN_PROGRESS_STATUS(
 		I18nKeys.I18N_KEY_PROGRESS_STATUS,
-		Fields.CAMPAIGN_PROGRESS_STATUS,
+		null,
 		null,
 		EntityType.CAMPAIGN),
 

@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_DESCRIPTION;
+import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.CAMPAIGN_PROGRESS_STATUS;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_COMMENT;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_ACTION;
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.EXECUTION_STEP_COMMENT;
@@ -106,8 +107,9 @@ public class CustomExportCSVHelper {
 
 	public String getWritableRowsData(CustomReportCustomExport customExport) {
 		Iterator<Record> rowsData = csvService.getRowsData(customExport);
+		Object campaignSuccessRate = csvService.computeCampaignProgressRate(customExport);
 		Map<EntityReference, Map<Long, Object>> cufValuesMapByEntityReference = getCufValueMapByEntityRef(customExport);
-		return buildResultString(rowsData, customExport.getColumns(), cufValuesMapByEntityReference);
+		return buildResultString(rowsData, customExport.getColumns(), cufValuesMapByEntityReference, campaignSuccessRate);
 	}
 
 	/**
@@ -134,11 +136,11 @@ public class CustomExportCSVHelper {
 		return cufValueService.getCufValueMapByEntityRef(campaignId, cufIdsMapByEntityType);
 	}
 
-	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns, Map<EntityReference, Map<Long, Object>> cufMap) {
+	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignSuccessRate) {
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
-					Object value = computeOutputValue(record, column, cufMap);
+					Object value = computeOutputValue(record, column, cufMap, campaignSuccessRate);
 					// Append the value
 					if(value != null) {
 						dataBuilder.append(ESCAPED_QUOTE)
@@ -162,7 +164,7 @@ public class CustomExportCSVHelper {
 	 * @param cufMap The Map containing the CustomFieldValues
 	 * @return The value corresponding to the given column among the given Record
 	 */
-	private Object computeOutputValue(Record record, CustomReportCustomExportColumn column, Map<EntityReference, Map<Long, Object>> cufMap) {
+	private Object computeOutputValue(Record record, CustomReportCustomExportColumn column, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignSuccessRate) {
 		CustomExportColumnLabel label = column.getLabel();
 		Field columnField = label.getJooqTableField();
 		Object value = null;
@@ -178,6 +180,8 @@ public class CustomExportCSVHelper {
 			// Clean Html content
 			Object rawValue = record.get(columnField);
 			value = computeRichValue(rawValue);
+		} else if(label.equals(CAMPAIGN_PROGRESS_STATUS)) {
+			value = campaignSuccessRate;
 		} else if (columnField != null) {
 			// Standard content
 			value = record.get(columnField);
