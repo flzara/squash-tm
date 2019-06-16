@@ -106,7 +106,8 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				var selectedPerimeterSpan = $('#selected-perimeter');
 
 				if(scope) {
-					selectedPerimeterSpan.text(scope[0].name);
+					var campaignName = scope[0].name;
+					selectedPerimeterSpan.text(StringUtil.unescape(campaignName));
 				} else {
 					selectedPerimeterSpan.text(translator.get('wizard.perimeter.msg.perimeter.choose'));
 				}
