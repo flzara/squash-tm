@@ -301,7 +301,7 @@ public class RequirementExcelExporter {
 		if(StringUtils.isBlank(html)){
 			return "";
 		}
-		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+		return html.replaceAll("(?s)<[^>]*>(<[^>]*>)*", "");
 	}
 
 	public File print() {
