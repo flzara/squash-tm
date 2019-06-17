@@ -80,21 +80,38 @@ require([ "common" ], function(common) {
 			var message = '';
 			var messageDate = information.messageDate;
 			if (messageDate != undefined && messageDate !== '') {
-				message += translator.get('information.expirationDate.' + messageDate).replace('{0}', formateDueDate(information.dueDate));
+				message += translator.get('information.expirationDate.' + messageDate, getExpirationDate(information.daysRemaining), getExpirationDatePlus2Months(information.daysRemaining));
 			}
 			return message;
 		}
 
-		function formateDueDate(date) {
-			var dates = date.split('-');
-			return dates[2] + '/' + dates[1] + '/' + dates[0];
+		function getExpirationDate(daysRemaining){
+			var currentDate = new Date();
+			var expirationDate = new Date();
+			expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining));
+			return expirationDate.toLocaleDateString(undefined, {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric'
+			});
+		}
+
+		function getExpirationDatePlus2Months(daysRemaining){
+			var currentDate = new Date();
+			var expirationDate = new Date();
+			expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining) + 61);
+			return expirationDate.toLocaleDateString(undefined, {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric'
+			});
 		}
 
 		function retrieveMessageUser(information) {
 			var message = '';
 			var messageUser = information.messageUser;
 			if (messageUser != undefined && messageUser !== '') {
-				message = translator.get('information.userExcess.' + messageUser).replace('{0}', information.maxUserNb).replace('{1}', information.currentUserNb);
+				message = translator.get('information.userExcess.' + messageUser, information.maxUserNb, information.currentUserNb);
 			}
 			return message;
 		}

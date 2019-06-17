@@ -358,7 +358,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		if (expi < 0) {
 			messageDate = "warning3";
 			result.put("messageDate", messageDate);
-			result.put("dueDate", LocalDate.now().plusDays(expi).toString());
+			result.put("daysRemaining", expi.toString());
 		}
 		return result;
 	}

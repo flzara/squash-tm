@@ -50,9 +50,9 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 			if(dateLicenseInformation !== null && dateLicenseInformation !== ''){
 				var daysRemaining = parseInt(dateLicenseInformation);
 				if(daysRemaining < 0) {
-					dateMessage = translator.get("information.expirationDate.warning3", getExpirationDate(daysRemaining));
+					dateMessage = translator.get("information.expirationDate.warning3", getExpirationDate(daysRemaining), getExpirationDatePlus2Months(daysRemaining));
 				} else if (daysRemaining < 30){
-					dateMessage = translator.get("information.expirationDate.warning2", getExpirationDate(daysRemaining));
+					dateMessage = translator.get("information.expirationDate.warning2", getExpirationDate(daysRemaining), getExpirationDatePlus2Months(daysRemaining));
 				} else if (daysRemaining < 61){
 					dateMessage = translator.get("information.expirationDate.warning1", getExpirationDate(daysRemaining));
 				}
@@ -70,6 +70,17 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 				 year: 'numeric'
 			 });
 		 }
+
+			function getExpirationDatePlus2Months(daysRemaining){
+				var currentDate = new Date();
+				var expirationDate = new Date();
+				expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining) + 61);
+				return expirationDate.toLocaleDateString(undefined, {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric'
+				});
+			}
 
 		 function initUserMessage() {
 			var userLicenseInformation = squashtm.app.userLicenseInformation;
