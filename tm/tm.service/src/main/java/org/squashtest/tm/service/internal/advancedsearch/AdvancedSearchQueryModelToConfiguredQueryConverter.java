@@ -661,13 +661,11 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)fieldModel;
 
-		filterColumn.setOperation(Operation.FULLTEXT);
+		filterColumn.setOperation(Operation.LIKE);
 
 		String value = textFieldModel.getValue();
 
-		value = value.replace(" ", " | ");
-
-		filterColumn.getValues().add(value);
+		filterColumn.getValues().add("%" + value + "%");
 	}
 
 

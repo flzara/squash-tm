@@ -1090,30 +1090,4 @@
 
   </changeSet>
 
-  <changeSet id="create_index_fulltext_mysql" author="abo" dbms="mysql">
-    <comment>Create fulltext index on specific columns to search on it</comment>
-    <sql>
-      CREATE FULLTEXT INDEX resource_description_fulltext_idx ON RESOURCE(DESCRIPTION);
-      CREATE FULLTEXT INDEX tcln_description_fulltext_idx ON TEST_CASE_LIBRARY_NODE(DESCRIPTION);
-      CREATE FULLTEXT INDEX tc_prerequisite_fulltext_idx ON TEST_CASE(PREREQUISITE);
-    </sql>
-  </changeSet>
-
-  <changeSet id="create_index_fulltext_mysql" author="abo" dbms="postgresql">
-    <comment>Create fulltext index on specific columns to search on it</comment>
-    <sql>
-      CREATE INDEX resource_description_fulltext_idx ON RESOURCE USING GIN(to_tsvector('simple',DESCRIPTION));
-      CREATE INDEX tcln_description_fulltext_idx ON TEST_CASE_LIBRARY_NODE USING GIN(to_tsvector('simple',DESCRIPTION));
-      CREATE INDEX tc_prerequisite_fulltext_idx ON TEST_CASE USING GIN(to_tsvector('simple',PREREQUISITE));
-    </sql>
-  </changeSet>
-
-  <changeSet id="update_datatype_to_fulltext_search" author="abo" dbms="postgresql, mysql">
-
-    <sql>
-      UPDATE QUERY_COLUMN_PROTOTYPE SET DATA_TYPE = 'TEXT' WHERE LABEL IN ('TEST_CASE_DESCRIPTION', 'REQUIREMENT_VERSION_DESCRIPTION', 'TEST_CASE_PREQUISITE')
-    </sql>
-
-  </changeSet>
-
 </databaseChangeLog>
