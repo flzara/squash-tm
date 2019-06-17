@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /*
  * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)
@@ -321,7 +322,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		setTestCaseSteps(pseudoTestCase, testCase);
 
-		setTestCaseUuid(pseudoTestCase, testCase);
+		setTestCaseUuid(pseudoTestCase, testCase, summary);
 
 		return testCase;
 	}
@@ -432,10 +433,16 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		testCase.setDescription(desc);
 	}
 
-	private void setTestCaseUuid(PseudoTestCase pseudoTestCase, TestCase testCase) {
+	private void setTestCaseUuid(PseudoTestCase pseudoTestCase, TestCase testCase, ImportSummaryImpl summary) {
+		Pattern uuidPattern = Pattern.compile("[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}");
 		String uuid = pseudoTestCase.getUuid();
 		if (StringUtils.isBlank(uuid)){
 			uuid = UUID.randomUUID().toString();
+		} else if (!uuidPattern.matcher(uuid).matches()){
+			summary.incrFailures();
+			throw new IllegalArgumentException("The value: " + uuid + " for column TC_UUID does not match the regular" +
+				" expression [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]" +
+				"{4}-[0-9a-fA-F]{12}");
 		}
 		testCase.setUuid(uuid);
 	}
