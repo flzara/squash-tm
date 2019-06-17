@@ -51,5 +51,5 @@ public interface CustomUserDao {
 
 	Long findUserId(String login);
 
-
+	int countAllActiveUsersAssignedToAtLeastOneProject();
 }

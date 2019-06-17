@@ -79,12 +79,29 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 			},
 
 			configurePopups: function () {
+				this.configureLicenseInformationDialog();
 				this.configureAddPermissionDialog();
 				this.configureRemovePermissionDialog();
 			},
 
 			configureButtons: function () {
-				this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					var userLicenseInformationArray = userLicenseInformation.split("-");
+					var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+					if(allowCreateUsers) {
+						this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+					} else {
+						this.$("#add-permission-button").on('click', function (){
+							$("#license-information-dialog").formDialog('open');
+						});
+					}
+					this.$("#add-permission-button").on('click', function (){
+						$("#license-information-dialog").formDialog('open');
+					});
+				} else {
+					this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+				}
 				this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 			},
 
@@ -203,6 +220,34 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 
 
 				this.addPermissionDialog = addPermissionDialog;
+			},
+
+			configureLicenseInformationDialog: function () {
+				// License information popup
+				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+					var userLicenseInformationArray = userLicenseInformation.split("-");
+					var activeUsersCount = userLicenseInformationArray[0];
+					var maxUsersAllowed = userLicenseInformationArray[1];
+					var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+
+					var licenseInformationDialog = $("#license-information-dialog");
+					var message;
+					if(!allowCreateUsers){
+						licenseInformationDialog.formDialog().on('formdialogclose', function () {
+							licenseInformationDialog.formDialog('close');
+						});
+						licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+							licenseInformationDialog.formDialog('close');
+						});
+						message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+						licenseInformationDialog.find("#information-message").html(message);
+					} else {
+						var informationBlock = $("#information-block");
+						informationBlock.css("visibility", "visible");
+						informationBlock.find("span").html(translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount));
+					}
+				}
 			}
 		});
 		return TeamPermissionPanel;

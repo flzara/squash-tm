@@ -42,7 +42,9 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.NotAllowedByLicenseException;
 import org.squashtest.tm.security.acls.PermissionGroup;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -74,6 +76,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Inject
 	private PartyDao partyDao;
+
+	@Inject
+	private ConfigurationService configurationService;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -226,27 +231,31 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public void addNewPermissionToProject(long partyId, long projectId, String permissionName) {
-		ObjectIdentity projectRef = createProjectIdentity(projectId);
-		Party party = partyDao.getOne(partyId);
-		aclService.addNewResponsibility(party.getId(), projectRef, permissionName);
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			ObjectIdentity projectRef = createProjectIdentity(projectId);
+			Party party = partyDao.getOne(partyId);
+			aclService.addNewResponsibility(party.getId(), projectRef, permissionName);
 
-		GenericProject project = genericProjectFinder.getOne(projectId);
+			GenericProject project = genericProjectFinder.getOne(projectId);
 
-		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
-		aclService.addNewResponsibility(party.getId(), rlibraryRef, permissionName);
+			ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), rlibraryRef, permissionName);
 
-		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
-		aclService.addNewResponsibility(party.getId(), tclibraryRef, permissionName);
+			ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), tclibraryRef, permissionName);
 
-		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
-		aclService.addNewResponsibility(party.getId(), clibraryRef, permissionName);
+			ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), clibraryRef, permissionName);
 
-		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
-		aclService.addNewResponsibility(party.getId(), crlibraryRef, permissionName);
+			ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), crlibraryRef, permissionName);
 
-		ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
-		aclService.addNewResponsibility(party.getId(), arlibraryRef, permissionName);
-
+			ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), arlibraryRef, permissionName);
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
 	}
 
 	@Override

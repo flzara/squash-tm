@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.AdministrationStatistics;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.user.AdministrationService;
 
 import javax.inject.Inject;
@@ -35,6 +36,9 @@ public class AdministrationController {
 	@Inject
 	private AdministrationService administrationService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	@Value("${info.app.version}")
     private String sqTMversion;
 
@@ -44,6 +48,13 @@ public class AdministrationController {
 		ModelAndView mav = new ModelAndView("page/administration/administration");
 		mav.addObject("adminStats", adminStat);
 		mav.addObject("sqTMversion", sqTMversion);
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		mav.addObject("userLicenseInformation", userLicenseInformation);
+		mav.addObject("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 		return mav;
 	}
 

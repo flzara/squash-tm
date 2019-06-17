@@ -75,6 +75,8 @@
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
+<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.grey.css" />
@@ -418,7 +420,9 @@
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
-
+      <div id="information-block">
+        <span></span>
+      </div>
 			<div data-def="state=normal" class="display-table">
 				<div class="display-table-row">
 					<span class="display-table-cell"> <f:message key="party.label" /></span>
@@ -449,6 +453,23 @@
 			</div>
 
 		</div>
+
+    <c:if test="${ not empty userLicenseInformation}">
+      <f:message var="licenseInformationTitle" key="title.Information" />
+      <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
+        <div class="display-table-row">
+          <div class="display-table-cell warning-cell">
+            <div class="generic-warning-signal"></div>
+          </div>
+          <div class="display-table-cell">
+            <span id="information-message"></span>
+          </div>
+        </div>
+        <div class="popup-dialog-buttonpane">
+          <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
+        </div>
+      </div>
+    </c:if>
 
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
 
@@ -1092,9 +1113,45 @@ require(["common"], function() {
 			permpopup.formDialog('close');
 		});
 
+    // License information popup
+    var userLicenseInformation = "${userLicenseInformation}";
+    if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+      var userLicenseInformationArray = userLicenseInformation.split("-");
+      var activeUsersCount = userLicenseInformationArray[0];
+      var maxUsersAllowed = userLicenseInformationArray[1];
+      var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+
+      var licenseInformationDialog = $("#license-information-dialog");
+      var message;
+      if(!allowCreateUsers){
+        licenseInformationDialog.formDialog().on('formdialogclose', function () {
+          licenseInformationDialog.formDialog('close');
+        });
+        licenseInformationDialog.formDialog().on('formdialogcancel', function () {
+          licenseInformationDialog.formDialog('close');
+        });
+        message = translator.get("information.userExcess.warning2", maxUsersAllowed, activeUsersCount);
+        licenseInformationDialog.find("#information-message").html(message);
+      } else {
+        var informationBlock = $("#information-block");
+        informationBlock.css("visibility", "visible");
+        informationBlock.find("span").html(translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount));
+      }
+    }
+
 		// permission mgt
 		$("#add-permission-button").on('click', function(){
-			permpopup.formDialog('open');
+      if(userLicenseInformation != null && userLicenseInformation.length !== 0){
+        var userLicenseInformationArray = userLicenseInformation.split("-");
+        var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
+        if(allowCreateUsers) {
+          permpopup.formDialog('open');
+        } else {
+          licenseInformationDialog.formDialog('open');
+        }
+      } else {
+        permpopup.formDialog('open');
+      }
 		});
 
 		var permremovepopup = $("#remove-permission-dialog");

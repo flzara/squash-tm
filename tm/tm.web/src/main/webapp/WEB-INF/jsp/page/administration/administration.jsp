@@ -40,8 +40,17 @@
 <c:url var="configUrl"                value="/administration/config" />
 <c:url var="logfileUrl"               value="/administration/log-file" />
 
+<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+<c:set var="dateLicenseInformation"   value="${dateLicenseInformation}" />
+<script src="<c:url value='/scripts/require-min.js' />" data-main="scripts/administration"></script>
 <layout:info-page-layout titleKey="label.administration">
+
   <jsp:attribute name="head">
+    <script type="text/javascript">
+      var squashtm = squashtm || {};
+      squashtm.app.userLicenseInformation = "${userLicenseInformation}";
+      squashtm.app.dateLicenseInformation = "${dateLicenseInformation}";
+    </script>
     <comp:sq-css name="squash.grey.css" />
     <comp:sq-css name="squash.core.override.css" />
   </jsp:attribute>
@@ -54,6 +63,19 @@
 
   <jsp:attribute name="informationContent">
     <div id="admin-pane">
+      <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
+      <c:if test="${(isAdmin and (not empty userLicenseInformation or not empty dateLicenseInformation)) or (not empty userLicenseInformation and userLicenseInformation.contains('false')) or (not empty dateLicenseInformation and dateLicenseInformation < 0)}">
+      <div id="information-block">
+        <div id="information-block-wrapper" class="ui-widget ui-widget-content ui-corner-all">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-warning-signal"></div>
+            </div>
+            <div id="information-block-content" class="display-table-cell"></div>
+          </div>
+        </div>
+      </div>
+      </c:if>
       <div id="admin-link-pane">
 
         <sec:authorize access=" hasRole('ROLE_ADMIN')">

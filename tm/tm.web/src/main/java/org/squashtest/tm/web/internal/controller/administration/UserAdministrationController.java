@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.users.ConnectionLog;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.connectionhistory.ConnectionLogFinderService;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.user.AdministrationService;
@@ -104,6 +105,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10).map("user-id", "id")
 		.map("user-active", "active").map("user-login", "login").map("user-group", "group")
 		.map("user-firstname", "firstName").map("user-lastname", "lastName").map("user-email", "email")
@@ -141,6 +145,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
 		mav.addObject("canManageLocalPassword", canManageLocalPassword);
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		mav.addObject("userLicenseInformation", userLicenseInformation);
 		
 		return mav;
 	}
@@ -214,6 +222,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
 		
 		model.addAttribute("usersGroupList", usersGroupList);
 		model.addAttribute("user", user);
@@ -221,6 +232,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
 		model.addAttribute("canManageLocalPassword", canManageLocalPassword);
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
 		
 		
 

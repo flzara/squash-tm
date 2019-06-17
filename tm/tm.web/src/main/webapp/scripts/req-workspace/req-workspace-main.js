@@ -21,7 +21,7 @@
 define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer',
         'app/ws/squashtm.toggleworkspace',
         'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
-		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu, storage) {
+		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu) {
 
 
 	function initResizer(){

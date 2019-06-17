@@ -83,7 +83,8 @@
         removeTeamField : /*[[ #{label.removeTeam} ]]*/ "remove team"
       }
 
-    }
+    },
+    userLicenseInformation: /*[[${userLicenseInformation}]]*/
   };
 </script>
 <script data-main="../../scripts/user-page.js" th:attr="data-main=@{/scripts/user-page.js}"
@@ -391,6 +392,9 @@ th:title="#{user.account.password.reset.label}">
 
   <div id="add-permission-dialog" class="not-displayed popup-dialog" title="AddPermission"
     th:title="#{title.AddPermission}">
+    <div id="information-block">
+      <span></span>
+    </div>
     <div  data-def="state=main">
       <table id="add-permission-dialog-table">
         <tr>
@@ -426,6 +430,20 @@ th:title="#{user.account.password.reset.label}">
       <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=main" />
       <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=main" />
       <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, state=main no-more-projects" />
+    </div>
+  </div>
+
+  <div id="license-information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-warning-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span id="information-message"></span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input class="cancel" type="button" th:value="#{label.Close}" data-def="evt=cancel"/>
     </div>
   </div>
 

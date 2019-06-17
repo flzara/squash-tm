@@ -2124,3 +2124,43 @@ button.tf:hover {
 
 	opacity: 0;
 }
+
+/**** LICENSE INFORMATION BLOCK ****/
+#add-permission-dialog #information-block, #add-user-dialog #information-block {
+	visibility: hidden;
+}
+
+#add-permission-dialog #information-block span, #add-user-dialog #information-block span {
+	color: red;
+	font-style: italic;
+	text-align: justify;
+}
+
+#home-workspace #information-block {
+	width: 98%;
+}
+
+#admin-pane #information-block {
+	display: block;
+	float: left;
+}
+
+#home-workspace #information-block-wrapper {
+	margin: auto;
+	margin-top: 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 80%;
+	border: 1px solid red;
+	color: red;
+}
+
+#admin-pane #information-block-wrapper {
+	margin: auto;
+	margin-top: 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 150%;
+	border: 1px solid red;
+	color: red;
+}

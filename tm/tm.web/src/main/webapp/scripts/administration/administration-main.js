@@ -18,18 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./home-main-view', 'jquery', 'squash.translator'],
-    function (MainView, $, translator) {
-        "use strict";
+define(['jquery', 'squash.translator'],
+	function ($, translator) {
+		"use strict";
 
-         function init() {
-					  initInformationBlock();
-         		new MainView();
-         }
+		function init() {
+			initInformationBlock();
+		}
 
-         function initInformationBlock(){
-         	 var informationBlock = $("#information-block");
-         	 if (informationBlock != null){
+		function initInformationBlock(){
+			var informationBlock = $("#information-block");
+			if (informationBlock != null){
 				var dateMessage = initDateMessage();
 				var userMessage = initUserMessage();
 				if(dateMessage != null){
@@ -38,14 +37,13 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 				if(userMessage != null){
 					appendMessage(userMessage);
 				}
-				informationBlock.show();
 			}
-		 }
+		}
 
-		 function initDateMessage() {
-         	var dateMessage;
+		function initDateMessage() {
+			var dateMessage;
 
-			var dateLicenseInformation = squashtm.app.dateLicenseInformation;
+			var dateLicenseInformation = window.squashtm.app.dateLicenseInformation;
 
 			if(dateLicenseInformation !== null && dateLicenseInformation !== ''){
 				var daysRemaining = parseInt(dateLicenseInformation);
@@ -58,34 +56,34 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 				}
 			}
 			return dateMessage;
-		 }
+		}
 
-		 function getExpirationDate(daysRemaining){
-			 var currentDate = new Date();
-			 var expirationDate = new Date();
-			 expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining));
-			 return expirationDate.toLocaleDateString(undefined, {
-				 day: '2-digit',
-				 month: '2-digit',
-				 year: 'numeric'
-			 });
-		 }
+		function getExpirationDate(daysRemaining){
+			var currentDate = new Date();
+			var expirationDate = new Date();
+			expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining));
+			return expirationDate.toLocaleDateString(undefined, {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric'
+			});
+		}
 
-			function getExpirationDatePlus2Months(daysRemaining){
-				var currentDate = new Date();
-				var expirationDate = new Date();
-				expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining) + 61);
-				return expirationDate.toLocaleDateString(undefined, {
-					day: '2-digit',
-					month: '2-digit',
-					year: 'numeric'
-				});
-			}
+		function getExpirationDatePlus2Months(daysRemaining){
+			var currentDate = new Date();
+			var expirationDate = new Date();
+			expirationDate.setDate(currentDate.getDate() + parseInt(daysRemaining) + 61);
+			return expirationDate.toLocaleDateString(undefined, {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric'
+			});
+		}
 
-		 function initUserMessage() {
-			var userLicenseInformation = squashtm.app.userLicenseInformation;
-			 var userMessage;
-			if(userLicenseInformation !== null && userLicenseInformation !== ''){
+		function initUserMessage() {
+			var userLicenseInformation = window.squashtm.app.userLicenseInformation;
+			var userMessage;
+			if(userLicenseInformation != null && userLicenseInformation !== ''){
 				var userLicenseInformationArray = userLicenseInformation.split("-");
 				var activeUsersCount = userLicenseInformationArray[0];
 				var maxUsersAllowed = userLicenseInformationArray[1];
@@ -96,18 +94,17 @@ define(['./home-main-view', 'jquery', 'squash.translator'],
 					userMessage = translator.get("information.userExcess.warning1", maxUsersAllowed, activeUsersCount);
 				}
 			}
-
 			return userMessage;
-		 }
+		}
 
-		 function appendMessage(message){
-         	var informationBlockContent = $("#information-block-content");
-         	var element = document.createElement("p");
-         	element.innerHTML = message;
-         	informationBlockContent.append(element);
-		 }
+		function appendMessage(message){
+			var informationBlockContent = $("#information-block-content");
+			var element = document.createElement("p");
+			element.innerHTML = message;
+			informationBlockContent.append(element);
+		}
 
-         return {
-             init : init
-         };
-    });
+		return {
+			init : init
+		};
+	});

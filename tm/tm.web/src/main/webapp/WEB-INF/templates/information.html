@@ -35,9 +35,10 @@
     sq:css="squash.core.css" />
   <link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
     th:href="@{/images/favicon.ico}" />
-  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css"
-    sq:css="squash.green.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
+    sq:css="squash.grey.css" />
   <!-- rich jeditable header -->
+
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
@@ -48,17 +49,9 @@
       locale: /*[[#{squashtm.locale}]]*/ 'fr',
       contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
 
-      automationWorkspaceConf: {
+      informationConf: {
       },
-      testerTransmitted: /*[[${testerTransmitted}]]*/{},
-      testerValidate: /*[[${testerValidate}]]*/{},
-      testerGlobalView: /*[[${testerGlobalView}]]*/{},
-      assignableUsersGlobalView: /*[[${assignableUsersGlobalView}]]*/{},
-      tcKinds: /*[[${tcKinds}]]*/{},
-      autoReqStatusesValidateView: /*[[${autoReqStatusesValidateView}]]*/{},
-      autoReqStatusesGlobalView: /*[[${autoReqStatusesGlobalView}]]*/{},
-      userLicenseInformation: /*[[${userLicenseInformation}]]*/,
-      dateLicenseInformation: /*[[${dateLicenseInformation}]]*/
+      information: /*[[${information}]]*/ || {}
     };
 
     squashtm.workspace = squashtm.workspace || {};
@@ -67,16 +60,16 @@
     /* ]]> */
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/information.js" th:attr="data-main=@{/scripts/information.js}"
+          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 
-  <script data-main="../../scripts/automation-tester-workspace.js" th:attr="data-main=@{/scripts/automation-tester-workspace.js}"
-    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 
 <body>
-  <div id="navigation" th:include="navbar.frag :: navbar('automation')">NAVBAR</div>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
   <div id="workspace">
     <div id="workspace-title" class="noprint">
-      <div class="snap-right" style="margin-top:5px;">
+      <div class="snap-right">
         <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
         <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
       </div>
@@ -86,60 +79,24 @@
       <!-- 		above the stacking context of the contextual content. -->
       <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
     </div>
-    <div class="ui-widget-header ui-corner-all ui-state-default fragment-header tf-automation-subtitle-header">
-      <h2><span th:text="#{workspace.automation.tester.header.subtitle}">Espace automatisation - Vue testeur
-          fonctionnel</span>
-        <span class="icon-helper" style="float: right" id="icon-workflow"></span>
-      </h2>
-    </div>
-
-    <div id="tf-automation-tabs">
-
-      <!--  ------------------ main tab panel --------------------------------- -->
-      <ul>
-        <li id="tf-transmitted-tab">
-          <a href="#transmitted" th:text="#{automation.label.transmitted}">A transmettre</a>
-        </li>
-        <li id="tf-validate-tab">
-          <a href="#validate" th:text="#{automation.label.validate}">A valider pour automatisation</a>
-        </li>
-        <li id="tf-global-tab">
-          <a href="#global" th:text="#{automation.label.globale_view}">Vue globale</a>
-        </li>
-      </ul>
-    </div>
-    <div id="tf-automation-content">
-      <div id="contextual-content-wrapper">
-        <!--empty -->
+    <div id="information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+      <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-warning-signal"></div>
+        </div>
+        <div class="display-table-cell" style="text-align:justify;">
+          <span id="information-message-date"></span>
+          <p id="information-divider" style="border-top:2px solid black;width:50%;margin-left:25%;"></p>
+          <span id="information-message-user"></span>
+        </div>
       </div>
-    </div>
-
-  </div>
-
-  <div style="display: none;">
-    <div id="workflow-popup" class="popup-dialog" th:title="#{dialog.automation.workflow}">
-
-      <div id="workflow-img">
-
-      </div>
-
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Close}" id="close-automation-workflow" />
+        <input class="cancel" type="button" value="cancel" th:value="#{label.Close}" data-def="evt=cancel" />
       </div>
-
     </div>
   </div>
-
-
-  <!-- BACKBONE VIEWS TEMPLATES -->
-  <script id="tpl-show-transmitted" type="text/x-handlebars-template" th:inline="text" th:include="automation-tester/transmitted.html :: automation-transmitted-view" />
-
-  <script id="tpl-show-global" type="text/x-handlebars-template"
-        th:inline="text"
-        th:include="automation-tester/global.html :: automation-global-view"/>
-
-<script id="tpl-show-validate" type="text/x-handlebars-template"
-        th:inline="text"
-        th:include="automation-tester/validate.html :: automation-validate-view"/>
+  <script type="text/javascript">
+  publish("load.informationContent");
+  </script>
 </body>
 </html>
