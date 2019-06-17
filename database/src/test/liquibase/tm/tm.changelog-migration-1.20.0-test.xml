@@ -34,6 +34,8 @@
   <!-- tests for charts migration for TM 282 -->
   <include file="tm.data-1.20.0-TM-282.xml" relativeToChangelogFile="true" />
 
+
+
   <!-- ========================================INCLUDE CHANGELOG================================================ -->
   <include file="../../../main/liquibase/tm/tm.changelog-1.20.0.xml"
            relativeToChangelogFile="true" />
@@ -114,19 +116,15 @@
 
       <!-- now check that those record point to chart_definition -->
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_AXIS_COLUMN where chart_definition_id = 1;
+        select count(*) from CHART_AXIS_COLUMN where chart_definition_id = -1;
       </sqlCheck>
 
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_FILTER where chart_definition_id = 1;
+        select count(*) from CHART_FILTER where chart_definition_id = -1;
       </sqlCheck>
 
       <sqlCheck expectedResult="1">
-        select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = 1;
-      </sqlCheck>
-
-      <sqlCheck expectedResult="0">
-        select count(*) from QUERY_MODEL where query_model_id = 22;
+        select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = -1;
       </sqlCheck>
 
     </preConditions>
@@ -171,4 +169,5 @@
     </preConditions>
     <comment>We check that there are no null value for campaign_id  </comment>
   </changeSet>
+
 </databaseChangeLog>
