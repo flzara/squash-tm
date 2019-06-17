@@ -193,10 +193,10 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 		when :
 		attachService.removeAttachmentFromList(attachListId, id)
-		session.flush()
+		em.flush()
 
+		
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
-
 		then :
 		attached.size()==0
 

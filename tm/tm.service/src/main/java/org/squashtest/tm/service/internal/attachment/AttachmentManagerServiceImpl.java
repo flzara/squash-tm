@@ -132,21 +132,10 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
-     /*
-		AttachmentList list = attachmentListDao.getOne(attachmentListId);
-		Attachment attachment = attachmentDao.getOne(attachmentId);
-
-		list.removeAttachment(attachment);
-		attachmentDao.removeAttachment(attachment.getId());
-
-		getAttachmentRepository().removeContent(attachmentId);
-*/
-
 		Attachment attachment = findAttachment(attachmentId);
 		//save for FileSystemRepository
 		Long attachmentContentId = attachment.getContent().getId();
 
-		//	attachmentDao.removeAttachment(attachment.getId()); // !!! Not compatible TM 362
 		attachmentDao.deleteById(attachment.getId());
 
 		deleteContents(constructList(attachmentContentId, attachmentListId));
@@ -158,31 +147,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		for (Long attachmentId : attachmentIds) {
 			removeAttachmentFromList(attachmentListId, attachmentId);
 		}
-
-/*
-		Iterator<Attachment> iterAttach = attachmentListDao.getOne(attachmentListId).getAllAttachments().iterator();
-
-		while (iterAttach.hasNext()) {
-			Attachment att = iterAttach.next();
-			ListIterator<Long> iterIds = attachmentIds.listIterator();
-
-			while (iterIds.hasNext()) {
-				Long id = iterIds.next();
-				if (id.equals(att.getId())) {
-					iterAttach.remove();
-					iterIds.remove();
-					getAttachmentRepository().removeContent(att.getId());
-					attachmentDao.removeAttachment(att.getId());
-					break;
-				}
-			}
-			if (attachmentIds.isEmpty()) {
-				break;
-			}
-		}
-*/
 		reindexBoundEntities(attachmentListId);
-
 	}
 
 	@Override
@@ -256,9 +221,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsListso) {
-		//attachmentDao.
-		return null;
+	public Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsList) {
+		throw new RuntimeException("AttachmentManagerServiceImpl::removeAttachmentsFromLists  deprecated method. Do not used!");
 	}
 
 	@Override
@@ -274,26 +238,13 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public List<Long[]> /*List<Object[]> */ getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList) {
+	public List<Long[]> getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList) {
 		return convertToTableOfLongDim2(attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList));
-//		List<Object[]> rawResult = attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
-//		List<Long[]> result = new ArrayList<>();
-//
-//		for (Object[] row:rawResult) {
-//			Long[] tab = new Long[2];
-//			tab[0] =(Long) row[0]; //contentID
-//			tab[1] =(Long) row[1]; //listID
-//			result.add(tab);
-//		}
-//		return result;
-
 	}
 
 	@Override
 	public void deleteContents(List<Long[]> contentIdListIdList) {
-
 		List<Long> contentIds = new ArrayList<>();
-
 
 		int size = contentIdListIdList.size();
 		for (int i = 0; i < size; i++) {
@@ -312,26 +263,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		}
 	}
 
-
-//	@Override
-//	public void deleteContents2(List<List<Long>> contentIdListIdList) {
-//
-//		List<Long> contentIds = contentIdListIdList.get(0);
-//
-//		//remove Db Orpheans
-//		removeOrpheanAttachmentContents(contentIds);
-//
-//		// remove from FileSystem
-//		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
-//			for (Long[] tab: contentIdListIdList) {
-//				removeContentFromFileSystem(tab[1], tab[0]);
-//			}
-//		}
-//	}
-
 	private void removeOrpheanAttachmentContents (List<Long> contentIds) {
-//		List<Long> ids = new ArrayList<>();
-//		ids.addAll(contentIds);
 		if (!contentIds.isEmpty()) {
 			Set<Long> notOrpheans = attachmentContentDao.findNotOrpheanAttachmentContent(contentIds);
 			contentIds.removeAll(notOrpheans);
@@ -352,14 +284,6 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		}
 	}
 
-//	@Override // A utiliser pour remplacer removeAttachmentsAndLists qui fait 3 appel DB
-//	public void removeAllAttachmentsFromLists(List<Long> attachmentListIds) {
-//		if (!attachmentListIds.isEmpty()) {
-//			attachmentDao.removeAllAttachmentsFromLists(attachmentListIds);
-//			attachmentDao.removeAllAttachmentsLists(attachmentListIds);
-//		}
-//	}
-
 	@Override
 	public List<Long> getAttachmentsListsFromRequirementFolders(List<Long> requirementLibraryNodeIds) {
 		return attachmentDao.findAttachmentsListsFromRequirementFolder(requirementLibraryNodeIds);
@@ -368,21 +292,10 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Override
 	public List<Long[]> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds) {
 		return convertToTableOfLongDim2(attachmentDao.getListPairContentIDListIDForRequirementVersions(requirementVersionIds));
-//		List<Object[]> rawResult =  attachmentDao.getListPairContentIDListIDForRequirementVersions(requirementVersionIds);
-//		List<Long[]> result = new ArrayList<>();
-//
-//		for (Object[] row:rawResult) {
-//			Long[] tab = new Long[2];
-//			tab[0] =(Long) row[0]; //contentID
-//			tab[1] =(Long) row[1]; //listID
-//			result.add(tab);
-//		}
-//		return result;
-
 	}
 
 	@Override
-	public /*List<List<Long>>*/List<Long[]> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps) {
+	public List<Long[]> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps) {
 		List<Long> executionStepsIds = new ArrayList<>();
 		for(ExecutionStep executionStep:executionSteps) {
 			executionStepsIds.add(executionStep.getId());
@@ -399,23 +312,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 			tab[1] =(Long) row[1]; //listID
 			result.add(tab);
 		}
-		//return Collections.unmodifiableList(result);
 		return result;
 	}
-
-	//not used
-//	private  List<List<Long>> convertToListof2ListofLong(List<Object[]>  rawResult) {
-//		List<Long> contentIDs = new ArrayList<>();
-//		List<Long> attachmentListIDs = new ArrayList<>();mvn instal
-//		List<List<Long>> result = new ArrayList<>();
-//		for (Object[] row:rawResult) {
-//			contentIDs.add((Long) row[0]);
-//			attachmentListIDs.add((Long) row[1]);
-//		}
-//		result.add(contentIDs);
-//		result.add(attachmentListIDs);
-//		return Collections.unmodifiableList(result);
-//	}
 
 	private List<Long[]> constructList(Long contentID, Long ListId) {
 		List<Long[]> result = new ArrayList<>();

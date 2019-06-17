@@ -435,7 +435,6 @@ RequirementNodeDeletionHandler {
 			report.addRemoved(folderIds, "folder");
 
 			deletionDao.flush();
-			//delete AttachmentsContents
 			attachmentManager.deleteContents(pairContentIdListId);
 		}
 
@@ -541,8 +540,6 @@ RequirementNodeDeletionHandler {
 			// save the attachment list ids for later reference. We cannot rely on the cascade here
 			// because the requirement deletion is made by HQL, which doesn't honor the cascades
 
-		//DORIGINE 	List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
-		//OK mais pas utile..	List<Long[]> listPairContenIDListID = attachmentManager.getListPairContentIDListIDForRequirementVersions(versionIds);
 			List<Long> attachmentListIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
 			List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentListIds);
 
@@ -561,7 +558,6 @@ RequirementNodeDeletionHandler {
 
 			deletionDao.flush();
 
-			// deletionDao.removeAttachmentsLists(versionsAttachmentIds);  //exception ne plus utiliser ...
 			attachmentManager.deleteContents(listPairContenIDListID);
 
 		}

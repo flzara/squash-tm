@@ -41,6 +41,5 @@ public interface AttachmentRepository {
 
 	void deleteContent(List<Long> attachmentListIds);
 
-	//CJU
 	void removeContent(long attachmentListId, long attachmentContentId);
 }

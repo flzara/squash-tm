@@ -658,16 +658,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		 */
 
 		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
-
 		execution.getSteps().clear();
+		//saving path Content for FileSystem Repository
 		List<Long[]> pairContenIDListID = attachmentManager.getListPairContentIDListIDForExecutionSteps(steps);
-//		List<Long> attachmentLists = new ArrayList<>();
 		// now we can delete them
 		for (ExecutionStep step : steps) {
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
-			//CJU
-		//	attachmentManagerService.cleanContent(step);
 			deletionDao.removeEntity(step);
 		}
 

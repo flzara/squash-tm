@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface AttachmentManagerService extends AttachmentFinderService {
 	/**
@@ -84,18 +83,11 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	void deleteContents(List<Long[]> ContentIListId);
 
 	void removeAttachmentsAndLists(List<Long> AttachmentListIds);
-//	List<List<Long>> removeAttachmentsAndListsForAttachmentLists (List<Long> AttachmentListIds);
-	//void removeAllAttachmentsFromLists(List<Long> AttachmentListIds);
-
-
-	//RequirementLibraryNode node = entityManager().getReference(RequirementLibraryNode.class, entityId);
 
 	List<Long> getAttachmentsListsFromRequirementFolders(List<Long> requirementLibraryNodeIds);
 
 	List<Long[]> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds);
 
-	List<Long[]> /*List<List<Long>>*/ getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps);
-
-
+	List<Long[]> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps);
 
 }
