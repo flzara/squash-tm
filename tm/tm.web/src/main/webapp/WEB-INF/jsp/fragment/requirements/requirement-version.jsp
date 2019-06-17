@@ -79,6 +79,7 @@ that page won't be editable if
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
 	<c:set var="writable" value="${ requirementVersion.modifiable }"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
+  <c:set var="status_editable" value="${ requirementVersion.status.allowsStatusUpdate }"/>
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirementVersion }">
 	<c:set var="deletable" value="${true}"/>
@@ -89,8 +90,6 @@ that page won't be editable if
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-
-<c:set var="status_editable" value="${ moreThanReadOnly and requirementVersion.status.allowsStatusUpdate }"/>
 
 </c:if>
 
