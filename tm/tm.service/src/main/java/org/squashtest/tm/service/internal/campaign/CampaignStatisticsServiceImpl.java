@@ -47,6 +47,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -380,19 +381,18 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 		 * IterationTestInventoryStatistics in the result list, then we populate them.
 		 */
 		CampaignTestInventoryStatistics newStatistics = new CampaignTestInventoryStatistics();
-		Long currentId = null;
 
 		List<CampaignTestInventoryStatistics> result = new LinkedList<>();
-
+		List<Long> ids = new ArrayList<>();
 		for (Object[] tuple : res) {
 			Long id = (Long) tuple[0];
 
-			if (!id.equals(currentId)) {
+			if (!ids.contains(id)) {
 				String name = (String) tuple[1];
 				newStatistics = new CampaignTestInventoryStatistics();
 				newStatistics.setCampaignName(name);
 				result.add(newStatistics);
-				currentId = id;
+				ids.add(id);
 			}
 
 			ExecutionStatus status = (ExecutionStatus) tuple[2];
