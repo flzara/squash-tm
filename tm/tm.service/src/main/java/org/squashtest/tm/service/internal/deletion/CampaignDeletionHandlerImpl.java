@@ -644,7 +644,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * - remote the custom fields,
 	 * - remove themselves.
 	 */
-	public /*List<List<Long>> */ List<Long[]> deleteExecSteps(Execution execution) {
+	public List<Long[]> deleteExecSteps(Execution execution) {
 
 		/*
 		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -,
@@ -660,7 +660,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
 		execution.getSteps().clear();
 		//saving path Content for FileSystem Repository
-		List<Long[]> pairContenIDListID = attachmentManager.getListPairContentIDListIDForExecutionSteps(steps);
+		List<Long[]> pairContentIDListID = null;
+		if (!steps.isEmpty()) {
+			pairContentIDListID = attachmentManager.getListPairContentIDListIDForExecutionSteps(steps);
+		}
+		else {
+			pairContentIDListID = new ArrayList<>();
+		}
+
 		// now we can delete them
 		for (ExecutionStep step : steps) {
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
@@ -668,7 +675,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deletionDao.removeEntity(step);
 		}
 
-		return pairContenIDListID;
+		return pairContentIDListID;
 	}
 
 	private void deleteAutomatedExecutionExtender(Execution execution) {
