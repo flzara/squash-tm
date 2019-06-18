@@ -50,7 +50,8 @@ public class QueryEngineTestUtils {
 
 	public static QueryProjectionColumn mkProj(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def label = genLabel(specType, attributeName)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName, label:label)
 		def meas = new QueryProjectionColumn(columnPrototype : proto, operation : operation)
 
 		return meas
@@ -59,7 +60,8 @@ public class QueryEngineTestUtils {
 
 	public static QueryAggregationColumn mkAggr(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def label = genLabel(specType, attributeName)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName, label: label)
 		def axe = new QueryAggregationColumn(columnPrototype : proto, operation : operation)
 
 		return axe
@@ -68,7 +70,8 @@ public class QueryEngineTestUtils {
 
 	public static QueryFilterColumn mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def label = genLabel(specType, attributeName)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName, label:label)
 		def filter = new QueryFilterColumn(columnPrototype : proto, operation : operation, values : values)
 
 		return filter
@@ -77,7 +80,8 @@ public class QueryEngineTestUtils {
 
 	public static QueryOrderingColumn mkOrder(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, Order dir = Order.ASC){
 		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def label = genLabel(specType, attributeName)
+		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName, label:label)
 		def order = new QueryOrderingColumn(columnPrototype : proto, operation: operation, order: dir)
 
 		return order
@@ -93,6 +97,10 @@ public class QueryEngineTestUtils {
 
 		return new InternalQueryModel(new ConfiguredQuery(queryModel))
 
+	}
+
+	public static genLabel(specType, attribute){
+		return "${specType.entityType}.${attribute}"
 	}
 
 }

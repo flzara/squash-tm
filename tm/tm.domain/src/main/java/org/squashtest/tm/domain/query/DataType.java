@@ -95,5 +95,27 @@ public enum DataType {
 	public Set<Operation> getOperations() {
 		return EnumSet.copyOf(operations);
 	}
+	
+	
+	/**
+	 * Returns true if this instance of DataType is congruent to a LEVEL_ENUM. It currently includes the DataTypes : 
+	 * REQUIREMENT_STATUS, EXECUTION_STATUS and LEVEL_ENUM.
+	 * 
+	 * @return
+	 */
+	public boolean isAssignableToLevelEnum(){
+		boolean isAssignable = false;
+		switch(this){
+		case REQUIREMENT_STATUS:
+		case EXECUTION_STATUS:
+		case LEVEL_ENUM:
+			isAssignable = true;
+			break;
+		default:
+			isAssignable = false;
+			break;
+		}
+		return isAssignable;
+	}
 
 }

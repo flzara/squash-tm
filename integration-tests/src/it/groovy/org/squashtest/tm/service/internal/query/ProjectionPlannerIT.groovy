@@ -51,7 +51,6 @@ import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-@Ignore
 class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	// fix the requirementVersion - requirement relation
@@ -169,9 +168,9 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		then :
 		def sortedRes = res.collect{ it.a}
 		sortedRes == [
-						[-2, TestCaseImportance.VERY_HIGH],
-					  	[-3, TestCaseImportance.HIGH],
-					  	[-1, TestCaseImportance.LOW]
+						[-2, TestCaseImportance.VERY_HIGH, 1],
+					  	[-3, TestCaseImportance.HIGH, 2],
+					  	[-1, TestCaseImportance.LOW, 4]
 					]
 
 	}

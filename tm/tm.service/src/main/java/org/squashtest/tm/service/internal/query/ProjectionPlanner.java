@@ -22,22 +22,15 @@ package org.squashtest.tm.service.internal.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.squashtest.tm.domain.EntityType;
+import org.hibernate.sql.Alias;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.query.DataType;
-import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryAggregationColumn;
-import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 
 import com.querydsl.core.types.Expression;
@@ -46,7 +39,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import org.squashtest.tm.domain.query.QueryOrderingColumn;
 import org.squashtest.tm.domain.query.QueryProjectionColumn;
-import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 /**
  * <p>
@@ -79,7 +71,7 @@ import org.squashtest.tm.domain.query.SpecializedEntityType;
  * the alias will be, and follow the pattern col_0_0, col_0_1. This is highly dependent on Hibernate implementation and might break
  * any day.
  * 	<b>Gotcha #3 : </b> Because the use of a .distinct() in the select, we have problems when we also need to sort on level_enums. See
- * 	comment on {@link #addProjections()} on that matter.
+ * 	comment on {@link ColumnAliasing} on that matter.
  * </p>
  *
  *
@@ -90,28 +82,13 @@ class ProjectionPlanner {
 
 	// configured properties
 	private InternalQueryModel internalQueryModel;
-
 	private ExtendedHibernateQuery<?> query;
-
 	private QuerydslToolbox utils;
 	
 	
-	// state properties
-	//private AliasIndex aliasIndex = new AliasIndex();
-
+	// internal state properties
 	private ColumnAliasing columnAliasing;
 
-
-	/*
-	 * The documentation for that enum will be given in the context of use, see #populateClauses()
-	 */
-	/*
-	private enum AliasStrategy {
-		NONE,
-		APPEND_ALIAS,
-		REPLACE_BY_ALIAS_IF_POSSIBLE;
-	}
-	*/
 
 	ProjectionPlanner(InternalQueryModel internalQueryModel, ExtendedHibernateQuery<?> query){
 		super();
@@ -140,16 +117,93 @@ class ProjectionPlanner {
 	}
 
 
+	private void addProjections(){
+
+		QueryProfile profile = internalQueryModel.getQueryProfile();
+
+		List<Expression<?>> projections;
+
+		switch(profile){
+
+		// The case of the SubWhere query is special
+		case SUBWHERE_QUERY :
+			// that one is special : it's always 'select 1'
+			Expression<?> select1 = Expressions.constant(1);
+			projections =  new ArrayList<>(1);
+			projections.add(select1);
+			break;
+
+		// for the rest no problem
+		default:
+			// convert all our columns into selectable expressions. The column is rendered and given an alias, 
+			// the alias can then be refered to in the groupBy and sortBy clauses.
+			projections =
+				columnAliasing.getProjectedColumns()
+					.stream()
+					.map(AliasedColumn::renderAsAliasedSelect)
+					.collect(Collectors.toList());
+
+			break;
+		}
+
+		// now stuff the query
+		query.select(Projections.tuple(toArray(projections))).distinct();
+
+	}
+
+
+	private void addGroupBy(){
+		List<Expression<?>> groupBy =
+			columnAliasing.getGroupedColumns().stream().map(AliasedColumn::renderAsAliasElseAsColumn).collect(Collectors.toList());
+
+
+		query.groupBy(groupBy.toArray(new Expression[]{}));
+	}
+
+
+	private void addSortBy(){
+
+		Iterator<AliasedColumn> aliasIterator = columnAliasing.getSortedColumns().iterator();
+
+		List<OrderSpecifier<?>> orders =
+			internalQueryModel.getOrderingColumns()
+				.stream()
+				.map(column -> {
+					AliasedColumn aliasedColumn = aliasIterator.next();
+					Expression<?> expression = aliasedColumn.renderAsAliasElseAsColumn();
+					return new OrderSpecifier(column.getOrder(), expression);
+				})
+				.collect(Collectors.toList());
+
+		query.orderBy(orders.toArray(new OrderSpecifier[]{}));
+
+	}
+
+	// *********************************** other utils ******************************************************
+
+	private final Expression[] toArray(List<Expression<?>> expressions){
+		return expressions.toArray(new Expression[]{});
+	}
+
+
+	// *********************************** internal classes *************************************************
+
 
 	/**
 	 * <p>
-		Convert the projection columns to expressions and add them to the select clause.
-		</p>
-		 <p>
-			The expression is fetched with .distinct(), which eliminates possible duplicates,
-			eg when the filter's where clauses cause the same projection columns to be found
-			multiple times.
-		 </p>
+	 * The purpose of this class is to address a problem with select distinct that is 
+	 * sorted on columns with datatable LEVEL_ENUM (see below), by detecting the potentially
+	 * problematic situation and resolving the actual projections, aggregation and sorting 
+	 * required for this query. ProjectionPlanner consumes the result of this pre-processing
+	 * in order to generate the QueryDsl clauses.   
+	 * </p>
+	 * 
+	 <p>
+		In the context of a generated query the expression is fetched with .distinct(). 
+		It has the desirable effect of eliminating possible duplicates, which can occur 
+		eg when the filter's where clauses cause the same projection columns to be found
+		multiple times.
+	 </p>
 	 <p>
 		There is however a corner case when sorting on a level enum column when using
 		distinct() (when there is no .distinct() the problem wouldn't arise) :
@@ -158,6 +212,7 @@ class ProjectionPlanner {
 			<li>because it is a level enum we need to use a case-when construct to sort it.</li>
 		 </ol>
 	 </p>
+	 
 	 <p>
 		The second point would turn the actual enum data into the level we used to sort it,
 		which make the result set incorrect. To reconcile both requirements we have to
@@ -173,239 +228,41 @@ class ProjectionPlanner {
 	 	</ul>
 	 </p>
 	 */
-	private void addProjections(){
-
-		QueryProfile profile = internalQueryModel.getQueryProfile();
-
-		List<Expression<?>> projections;
-		List<Expression<?>> levelEnumSortableProjections;
-
-		switch(profile){
-
-		// The case of the SubWhere query is special
-		case SUBWHERE_QUERY :
-			// that one is special : it's always 'select 1'
-			Expression<?> select1 = Expressions.constant(1);
-			projections =  new ArrayList<>(1);
-			projections.add(select1);
-			break;
-
-		// for the rest no problem
-		default:
-			// convert all our columns into selectable expressions
-			projections =
-				columnAliasing.getProjectedColumns()
-					.stream()
-					.map(ProjectedColumn::renderAsSelect)
-					.collect(Collectors.toList());
-
-
-
-
-
-			break;
-		}
-
-		// now stuff the query
-		query.select(Projections.tuple(toArray(projections))).distinct();
-
-	}
-
-
-	private void addGroupBy(){
-		List<Expression<?>> groupBy =
-			columnAliasing.getGroupByAliases().stream().map(Expressions::stringPath).collect(Collectors.toList());
-
-
-		query.groupBy(groupBy.toArray(new Expression[]{}));
-	}
-
-
-	private void addSortBy(){
-
-		Iterator<String> aliasIterator = columnAliasing.getSortByAliases().iterator();
-
-		List<OrderSpecifier<?>> orders =
-			internalQueryModel.getOrderingColumns()
-				.stream()
-				.map(column -> {
-					String alias = aliasIterator.next();
-					Expression<?> expression = Expressions.stringPath(alias);
-					return new OrderSpecifier(column.getOrder(), expression);
-				})
-				.collect(Collectors.toList());
-
-		query.orderBy(orders.toArray(new OrderSpecifier[]{}));
-
-	}
-
-
-
-	// ******************** Column to Expression conversion *********************************************
-
-
-
-
-	/**
-	 * <p>
-	 * 		Turns a column into its querydsl expression counterpart and returns it.
-	 *
-	 * </p>
-	 *
-	 * <p>
-	 *     	The expression is created by the function parameter columnToExpressionConverter in most cases. However the
-	 *     	final result depends on the AliasStrategy :
-	 * </p>
-	 *
-	 * <ul>
-	 *     <li>
-	 *         	APPEND_ALIAS : we always want an alias. Either retrieve it or generate a new one.
-	 * 			The column is converted to an expression and aliased.
-	 * 		</li>
-	 *     <li>
-	 *         	NONE : we never want an alias. The column converted to an Expression but no alias is given.
-	 *     </li>
-	 *     <li>
-	 *			REPLACE_BY_ALIAS_IF_POSSIBLE : if an alias exist for that column reuse it (replace
-	 * 			the column expression by the alias), otherwise the column expression is returned as is.
-	 *		</li>
-	 * </ul>
-	 *
-	 *
-	 */
-	/*
-	private <C extends QueryColumnPrototypeInstance>
-	Expression<?> convertToExpression(C column,
-									  AliasStrategy aliasStrategy,
-									  Function<QueryColumnPrototypeInstance, Expression> columnToExpressionConverter){
-
-		Expression<?> expr = null;
-
-		// regular column
-		switch(aliasStrategy){
-
-			case APPEND_ALIAS :
-				String alias = aliasIndex.generateAlias(column);
-
-				expr = columnToExpressionConverter.apply(column);
-				expr = Expressions.as(expr, alias);
-
-				break;
-
-
-			case NONE :
-				expr = columnToExpressionConverter.apply(column);
-				break;
-
-
-			case REPLACE_BY_ALIAS_IF_POSSIBLE :
-
-				Optional<String> maybeAlias =  aliasIndex.getMaybeAlias(column);
-
-				if (maybeAlias.isPresent()){
-					expr = Expressions.stringPath(maybeAlias.get());
-				}
-				else{
-					expr = columnToExpressionConverter.apply(column);
-				}
-
-
-				break;
-
-
-			default:
-				break;
-		}
-
-
-		return expr;
-
-	}
-*/
-	// *********************************** other utils ******************************************************
-
-	private final Expression[] toArray(List<Expression<?>> expressions){
-		return expressions.toArray(new Expression[]{});
-	}
-
-
-	// *********************************** internal classes *************************************************
-	
-	/*
-	 * Aliases management. It helps us keeping aliases consistent across select, groupBy and sortBy clauses. 
-	 */
-	/*
-	private static final class AliasIndex{
-		// see comment on that hack at the top of the class
-		private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
-		
-		private Map<Long, String> aliasByPrototypeId = new HashMap<>();
-		private int counter = 0;
-		
-		// generates an alias and registers it. If the column already had an
-		// alias, it is overridden with the new one.
-		private String generateAlias(QueryColumnPrototypeInstance instance){
-			
-			Long protoId = instance.getColumn().getId();
-			String value = generate();
-			aliasByPrototypeId.put(protoId, value);
-			return value;
-			
-		}
-		
-		// return the alias as an Optional, which may be empty if it wasn't defined yet.
-		private Optional<String> getMaybeAlias(QueryColumnPrototypeInstance instance){
-			Long protoId = instance.getColumn().getId(); 
-			return Optional.ofNullable(aliasByPrototypeId.get(protoId));
-		}
-		
-		// internal usage only
-		private String generate(){
-			return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(counter++));
-		}
-		
-		
-		
-	}
-*/
-
-	/**
-	 * This internal class accounts for the possible mess occurring
-	 * when a level_enum column appears in the group by or sort by clause
-	 * (see {@link #addProjections()})
-	 *
-	 */
 	private static final class ColumnAliasing{
 
 
 		// see comment on that hack at the top of the class
-		private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
-		private static final String SUFFIX = "_sortkey";
+		private QuerydslToolbox utils;
+
+		// the template is of the form : <hibernate alias template><optional subquery discriminator slug
+		private static final String HIBERNATE_STYLE_ALIAS_TEMPLATE = "col_%d_0_%s";
 		private int counter = 0;
 
 		private Map<String, String> aliasByColumnLabel = new HashMap<>();
-		private Map<String, String> extraAliasByColumnLabel = new HashMap();
+		private Map<String, String> extraAliasByColumnLabel = new HashMap<>();
 
 
 		// output properties
-		private List<ProjectedColumn> projectedColumns;
+		private List<AliasedColumn> projectedColumns;
 
-		private List<String> groupByAliases;
+		private List<AliasedColumn> groupedColumns;
 
-		private List<String> sortByAliases;
+		private List<AliasedColumn> sortedColumns;
 
 
 
 		private ColumnAliasing(QuerydslToolbox utils, InternalQueryModel queryModel) {
 
+			this.utils = utils;
+
 			// plan the projections. Takes into account the level_enum columns in the groupBy or sortBy clauses
-			planProjections(utils, queryModel);
+			planProjections(queryModel);
 
 			// plan the aliases for the group by
-			planGroupBy(utils, queryModel);
+			planGroupBy(queryModel);
 
 			// plan the aliases for the sort by
-			planSortBy(utils, queryModel);
+			planSortBy(queryModel);
 
 		}
 
@@ -413,7 +270,7 @@ class ProjectionPlanner {
 		// plan all the projections.
 		// also, if any level_enum column exists in the groupby/sortby clause,
 		// adds it again as a sortable case-when
-		private final void planProjections(QuerydslToolbox utils, InternalQueryModel queryModel) {
+		private final void planProjections(InternalQueryModel queryModel) {
 
 
 			projectedColumns = new ArrayList<>();
@@ -421,7 +278,7 @@ class ProjectionPlanner {
 			// first, add the regular projection columns
 			for (QueryProjectionColumn column : queryModel.getProjectionColumns()){
 				String alias = registerNewRegularAlias(column);
-				ProjectedColumn projected =  new ProjectedColumn(column, alias, utils::createAsSelect);
+				AliasedColumn projected =  new AliasedColumn(column, alias, utils::createAsSelect);
 				projectedColumns.add(projected);
 			}
 
@@ -430,50 +287,57 @@ class ProjectionPlanner {
 
 			for (QueryColumnPrototypeInstance column : otherLevelEnumColumns){
 				String extraAlias = registerNewExtraProjectionAlias(column);
-				ProjectedColumn projected = new ProjectedColumn(column, extraAlias, utils::createAsCaseWhen);
+				AliasedColumn projected = new AliasedColumn(column, extraAlias, utils::createAsCaseWhen);
 				projectedColumns.add(projected);
 			}
 
 		}
 
-		// here we want to include the aliases of all the groupby columns.
-		// if a column has a level enum, we also want to check if it has a corresponding extra column
+		// Here we want to include the aliases of all the groupby columns.
+		// If a column needs to be grouped on but does not appear in the select clause (this is legal in "select 1" subqueries),
+		// the column will be grouped on anyway by using the column expression without alias.
+		// If a column has a level enum, we also want to check if it has a corresponding extra column
 		// we should group on too.
-		private final void planGroupBy(QuerydslToolbox utils, InternalQueryModel queryModel) {
+		private final void planGroupBy(InternalQueryModel queryModel) {
 
-			groupByAliases = new ArrayList<>();
+			groupedColumns = new ArrayList<>();
 
 			for (QueryAggregationColumn column : queryModel.getAggregationColumns()){
 
+				// regular columns first.
 				String alias = retrieveRegularAlias(column);
+				groupedColumns.add(new AliasedColumn(column, alias, utils::createAsGroupBy));
+
+				// handle the possible extra column that goes with it
 				String extraAlias = retrieveExtraProjectionAlias(column);
 
-				groupByAliases.add(alias);
-
 				if (isLevelEnum(column) && extraAlias != null) {
-					groupByAliases.add(extraAlias);
+					groupedColumns.add(new AliasedColumn(column, extraAlias, utils::createAsGroupBy));
 				}
 			}
 		}
 
 
-		// here we collect the aliases of the columns we must sort on.
-		// if a level_enum column is present, we must use the alias of the corresponding extra column instead.
-		private final void planSortBy(QuerydslToolbox utils, InternalQueryModel queryModel) {
-			sortByAliases = new ArrayList<>();
+		// Here we collect the aliases of the columns we must sort on.
+		// Contrary on the columns in the groupby clause, a column of the sortby clause must be part of the projection too, so they always have an alias
+		// If a level_enum column is present, we must use the alias of the corresponding extra column instead.
+		private final void planSortBy(InternalQueryModel queryModel) {
+			sortedColumns = new ArrayList<>();
 
 			for (QueryOrderingColumn column : queryModel.getOrderingColumns()){
 
+				String effectiveAlias = null;
+
 				// if level enum, sort on the extra column instead
 				if (isLevelEnum(column)){
-					String extraAlias = retrieveExtraProjectionAlias(column);
-					sortByAliases.add(extraAlias);
+					effectiveAlias = retrieveExtraProjectionAlias(column);
 				}
-				// else use the regular alias
+				// else use the regular column alias instead
 				else{
-					String regularAlias = retrieveRegularAlias(column);
-					sortByAliases.add(regularAlias);
+					effectiveAlias = retrieveRegularAlias(column);
 				}
+
+				sortedColumns.add(new AliasedColumn(column, effectiveAlias, utils::createAsSortBy));
 			}
 
 		}
@@ -481,28 +345,6 @@ class ProjectionPlanner {
 
 		// ************** utils **************************
 
-
-		// find all columns of type level_enum in the groupby or sortby clauses
-		/*
-		private List<QueryColumnPrototypeInstance> findGroupByOrOrderBylevelEnumColumns(InternalQueryModel queryModel){
-
-			List<QueryColumnPrototypeInstance> extraInstances = findExtraProjections(queryModel.getAggregationColumns());
-			extraInstances.addAll(findExtraProjections(queryModel.getOrderingColumns()));
-
-			// remove the duplicates, by book-keeping the column
-			Set<Long> uniqueIds = new HashSet<>();
-
-			return extraInstances.stream().filter( column -> {
-				Long colId = column.getColumn().getId();
-				if (uniqueIds.contains(colId)){
-					return false;
-				}
-				else{
-					uniqueIds.add(colId);
-					return true;
-				}
-			}).collect(Collectors.toList());
-		}*/
 
 
 		private List<QueryColumnPrototypeInstance> findSortByLevelEnum(InternalQueryModel queryModel){
@@ -512,24 +354,21 @@ class ProjectionPlanner {
 					.collect(Collectors.toList());
 		}
 
-		private List<QueryColumnPrototypeInstance> findExtraProjections(List<? extends QueryColumnPrototypeInstance> instances){
-			return instances.stream().filter(this::isLevelEnum).collect(Collectors.toList());
-		}
 
 		private boolean isLevelEnum(QueryColumnPrototypeInstance column){
-			return column.getDataType() == DataType.LEVEL_ENUM;
+			return column.getDataType().isAssignableToLevelEnum();
 		}
 
-		public List<ProjectedColumn> getProjectedColumns() {
+		public List<AliasedColumn> getProjectedColumns() {
 			return projectedColumns;
 		}
 
-		public List<String> getGroupByAliases() {
-			return groupByAliases;
+		public List<AliasedColumn> getGroupedColumns() {
+			return groupedColumns;
 		}
 
-		public List<String> getSortByAliases() {
-			return sortByAliases;
+		public List<AliasedColumn> getSortedColumns() {
+			return sortedColumns;
 		}
 
 		// *************** Alias management **************************
@@ -562,20 +401,23 @@ class ProjectionPlanner {
 		}
 
 
-
 		// internal usage only
 		private String generate(){
-			return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(counter++));
+			int cnt = counter++;
+			String ctxt = utils.getSubContext();
+			// check for nullity
+			ctxt = (ctxt != null) ? ctxt : "";
+
+			String alias = String.format(HIBERNATE_STYLE_ALIAS_TEMPLATE, cnt, ctxt);
+
+			return alias;
 		}
-
-
-
 
 
 	}
 
 
-	private static final class ProjectedColumn{
+	private static final class AliasedColumn {
 
 		private QueryColumnPrototypeInstance columnInstance;
 
@@ -584,26 +426,28 @@ class ProjectionPlanner {
 		private Function<QueryColumnPrototypeInstance, Expression<?>> renderingFunction;
 
 
-		public ProjectedColumn(QueryColumnPrototypeInstance columnInstance, String alias, Function<QueryColumnPrototypeInstance, Expression<?>> renderingFunction) {
+		public AliasedColumn(QueryColumnPrototypeInstance columnInstance, String alias, Function<QueryColumnPrototypeInstance, Expression<?>> renderingFunction) {
 			this.columnInstance = columnInstance;
 			this.alias = alias;
 			this.renderingFunction = renderingFunction;
 		}
 
 
-		public Expression<?> renderAsSelect(){
+		public Expression<?> renderAsAliasedSelect(){
 			Expression<?> rendered = renderingFunction.apply(columnInstance);
 			Expression<?> renderedAliased = Expressions.as(rendered, alias);
 			return renderedAliased;
 		}
 
-		public QueryColumnPrototypeInstance getColumnInstance() {
-			return columnInstance;
+		public Expression<?> renderAsAliasElseAsColumn(){
+			if (alias != null){
+				return Expressions.stringPath(alias);
+			}
+			else{
+				return renderingFunction.apply(columnInstance);
+			}
 		}
 
-		public String getAlias() {
-			return alias;
-		}
 	}
 
 }

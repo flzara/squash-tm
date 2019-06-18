@@ -278,7 +278,7 @@ class TupleProcessor {
 
 	// note : all the values here should match the types handled in #initializeTupleSorter()
 	private boolean isResortableType(DataType type){
-		return type == DataType.EXECUTION_STATUS || type == DataType.LEVEL_ENUM || type == DataType.BOOLEAN || type == DataType.EXISTENCE;
+		return type.isAssignableToLevelEnum() || type == DataType.BOOLEAN || type == DataType.EXISTENCE;
 	}
 
 	private boolean isResortRequired(){

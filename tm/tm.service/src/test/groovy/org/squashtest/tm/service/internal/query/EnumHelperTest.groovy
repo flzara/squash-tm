@@ -40,19 +40,6 @@ import spock.lang.Unroll
 class EnumHelperTest extends Specification{
 
 
-	def "should fail when the column is a cuf column"(){
-
-		given:
-		def col = Mock(QueryColumnPrototype) { getColumnType() >> ColumnType.CUF }
-
-		when:
-		new EnumHelper(col)
-
-		then:
-		thrown IllegalArgumentException
-
-	}
-
 
 	@Unroll
 	def "should retrieve enum values for an ATTRIBUTE column"(){

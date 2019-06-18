@@ -131,8 +131,7 @@ class QuerydslToolboxTest extends Specification{
 		pathBuilder.toString().equals("TEST_CASE_CUF_TAG.label");
 	}
 
-	/*
-	@Ignore
+
 	def "should create an expression suitable for sorting on a level num"(){
 		given:
 			def column = Mock(QueryOrderingColumn){
@@ -145,6 +144,7 @@ class QuerydslToolboxTest extends Specification{
 				}
 				getSpecializedType() >> new SpecializedEntityType(EntityType.TEST_CASE, null)
 				getOperation() >> Operation.NONE
+				getDataType() >> DataType.LEVEL_ENUM
 			}
 
 		when:
@@ -153,6 +153,6 @@ class QuerydslToolboxTest extends Specification{
 		then:
 		resultExpr.toString() == "case when testCase.importance = VERY_HIGH then 1 when testCase.importance = HIGH then 2 when testCase.importance = MEDIUM then 3 when testCase.importance = LOW then 4 else -1000 end"
 	}
-*/
+
 
 }

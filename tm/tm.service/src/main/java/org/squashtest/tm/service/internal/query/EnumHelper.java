@@ -82,7 +82,7 @@ class EnumHelper {
 
 	EnumHelper(QueryColumnPrototype column) {
 		// crash early if the datatype is not an enum
-		if (column.getDataType() != DataType.LEVEL_ENUM){
+		if (! column.getDataType().isAssignableToLevelEnum()){
 			throw new IllegalArgumentException("The EnumHelper can help only with Enums, but received column '"+column.getLabel()+
 												   "' of type '"+column.getDataType()+"'");
 		}
@@ -178,7 +178,7 @@ class EnumHelper {
 
 	private void throwIfNotEnum(Class<?> possibleEnum){
 		if (! possibleEnum.isEnum()){
-			// no need to provide much context, we already have checked that the column datatype is 'LEVEL_ENUM'
+			// no need to provide much context, we already have checked that the column datatype is assignable to LEVEL_ENUM
 			// at this point. Error could only happen due to database content error, which are all static referential
 			// data.
 			throw new IllegalArgumentException("class '"+possibleEnum+"' is not an enum type");

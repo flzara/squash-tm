@@ -348,7 +348,7 @@ class QuerydslToolbox {
 		// level enum require a 'case when' construct
 		// that will help to sort them by rank instead of
 		// lexicographically.
-		if (col.getDataType() == DataType.LEVEL_ENUM){
+		if (col.getDataType().isAssignableToLevelEnum()){
 			return createAsCaseWhen(col);
 		}
 		// for the other columns the sortBy column expression is the same than for the select expression
@@ -826,7 +826,7 @@ class QuerydslToolbox {
 	Expression<?> createAsCaseWhen(QueryColumnPrototypeInstance col){
 
 		// guard
-		if (col.getDataType() != DataType.LEVEL_ENUM){
+		if (! col.getDataType().isAssignableToLevelEnum()){
 			throw new IllegalArgumentException("Attempted to create a CaseWhen construct on a non LEVEL_ENUM column");
 		}
 
