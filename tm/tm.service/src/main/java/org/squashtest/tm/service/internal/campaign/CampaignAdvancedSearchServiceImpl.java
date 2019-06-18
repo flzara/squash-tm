@@ -20,55 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_EXECUTION_MODE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISAUTO;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ENTITY;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_DSCOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECON;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_CHECKBOX;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_LIST;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_NUMERIC;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TAG;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TEXT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
-import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
-import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
-import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
-import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Page;
@@ -88,8 +41,56 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_PROJECT_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_EXECUTION_MODE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISAUTO;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_SUITE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_DSCOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ENTITY;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECON;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TAG;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TEXT;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_NAME;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_REFERENCE;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_GROUP_PERMISSION;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
 @Transactional(readOnly = true)
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
@@ -145,12 +146,12 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<Tuple> tuples = query.fetch();
 		List<IterationTestPlanItem> items = tuples.stream().map(tuple -> tuple.get(0, IterationTestPlanItem.class)).collect(Collectors.toList());
 
-		
+
 		// round 2 : count the total results
 		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
 		countQuery = countQuery.clone(session);
 		long count = countQuery.fetchCount();
-		
+
 
 		return new PageImpl(items, paging, count);
 
@@ -228,7 +229,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("referencedTestCase.importance", TEST_CASE_IMPORTANCE)
 			.map("referencedTestCase.name", TEST_CASE_NAME)
 			.map("referencedTestCase.reference", TEST_CASE_REFERENCE)
-			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN);
+			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN)
+			.map("campaign.id", CAMPAIGN_ID)
+			.map("iteration.id", ITERATION_ID)
+			.map("testSuites.id", ITEM_SUITE_ID);
+
 
 		MAPPINGS.getCufMapping()
 			.map(AdvancedSearchFieldModelType.TAGS.toString(), ITERATION_CUF_TAG)
