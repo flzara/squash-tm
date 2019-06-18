@@ -40,10 +40,14 @@
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${false}"/>
+<c:set var="deletable" value="${false}"/>
 
 <c:if test="${not milestoneConf.locked}">
   <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
     <c:set var="editable" value="${ true }"/>
+  </authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ execution }">
+    <c:set var="deletable" value="${ true }"/>
   </authz:authorized>
 </c:if>
 
@@ -81,7 +85,8 @@
           statuses: ${json:serialize(statuses)}
         },
         permissions: {
-          editable: ${editable}
+          editable: ${editable},
+          deletable: ${deletable}
         },
         urls: {
           attachmentsURL: "${attachmentsUrl}"
