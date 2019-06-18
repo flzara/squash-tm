@@ -35,7 +35,7 @@ import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanAndUnescapeHTML;
+import static org.squashtest.tm.web.internal.util.HTMLCleanupUtils.cleanHtml;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.MATCH_ANY_TAG;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.NO_TAG_PREFIX;
 import static org.squashtest.tm.web.thymeleaf.processor.attr.Constants.REMOVE_PSEUDO_ATTRIBUTE_WHEN_PROCESSED;
@@ -101,8 +101,10 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractAttributeTagPro
 		/*[Issue 7478] Use of cleanAndUnescapeHTML method instead of cleanHtml because of non html markup reading in
 		test-step display during step modification at execution.
 		Doesn't seem to break other use of sq:unsafe-html tag...
+		Edit TM-490: break display of test case description in execution preview.
+		Return to the use of cleanHTML doesn't seem to break test-step display during step modification at execution no more...
 		 */
-		final String htmlString = html == null ? "" : cleanAndUnescapeHTML(html.toString());
+		final String htmlString = html == null ? "" : cleanHtml(html.toString());
 
 
 		final TemplateModel parsed = configuration.getTemplateManager().parseString(
