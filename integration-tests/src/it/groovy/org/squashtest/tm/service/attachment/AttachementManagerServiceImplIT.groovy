@@ -22,10 +22,12 @@ package org.squashtest.tm.service.attachment
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
+import org.hibernate.FlushMode
 import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.attachment.AttachmentContent
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
@@ -175,19 +177,29 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	def "should remove an attachment"(){
-		given :
+
+		given:
 		File source = sourceFile()
 		RawAttachment raw = rawAttachment(source, "image.jpg")
 		Long id = attachService.addAttachment(attachListId, raw)
+
+		// force the insertion of the attachment in the DB
 		session.flush()
+
+		// Hibernate doesn't manage the state of the managed Attachment entity we just created : it
+		// wouldn't flush-before-select for unknown reasons. The solution accepted here is to clear the
+		// session and force Hibernate to reset its book keeping.
+		session.clear()
 
 		when :
 		attachService.removeAttachmentFromList(attachListId, id)
 		session.flush()
+
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
 
 		then :
 		attached.size()==0
+
 	}
 
 	def "should correctly tell if a test case have attachments or not"(){
@@ -210,5 +222,27 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		testCase2.attachmentList.hasAttachments()
 	}
 
+	//[TM-362] shallowCopy of AttachmentContent instead of hardCopy on copy/past TM's item (TestCase, Requirement, execution and so)
+//	@DataSet("AttachmentManagerServiceImplIT.shallow copy Attachments.xml")
+//	 def "attachments shallowopy.deletion"(){
+//
+//		given:
+//		//dataset ctrl
+//
+//		when :
+//		attachService.removeAttachmentFromList(attachListId, id)
+//		em.flush()
+//
+//
+//		then :
+//		Set<Attachment> attached = attachService.findAttachments(attachListId)
+//		attached.size()==0
+//		Attachment attachment;
+//		attachment.getContent().content
+//		attachService.writeContentattachmentId, outStream)
+//
+//	}
+
+//	def checkDataSetBeforeTest
 
 }
