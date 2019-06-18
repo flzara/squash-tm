@@ -88,6 +88,8 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 
 		suiteDao.findAllById(_) >> ts
 		def ids = [1L, 2L, 5L]
+		attachmentManagerService.getListIDbyContentIdForAttachmentLists(_) >> new ArrayList<>()
+
 		when :
 		def result = handler.deleteSuites(ids, false)
 		then :
@@ -104,6 +106,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		ts.each {it.getTestPlan() >> itpi}
 
 		suiteDao.findAllById(_) >> ts
+		attachmentManagerService.getListIDbyContentIdForAttachmentLists(_) >> new ArrayList<>()
 		def ids = [1L, 2L, 3L, 4L, 5L]
 		when :
 		def result = handler.deleteSuites(ids, true)
@@ -120,6 +123,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		ts.each {it.getTestPlan() >> itpi}
 
 		suiteDao.findAllById(_) >> ts
+		attachmentManagerService.getListIDbyContentIdForAttachmentLists(_) >> new ArrayList<>()
 		def ids = [1L, 3L, 4L, 5L]
 		when :
 		def result = handler.deleteSuites(ids, true)
@@ -136,6 +140,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 	def createTestSuite = {id -> TestSuite ts = Mock(TestSuite)
 		ts.getId() >> id
 		ts.getAttachmentList() >> []
+		ts.getAttachmentList().getId() >> 0
 		ts.getIteration() >> []
 		return ts}
 
