@@ -27,13 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.query.QueryProcessingService;
@@ -46,104 +42,37 @@ import java.util.List;
 
 
 /**
- * <p>This is the class that will find the data matching the criteria supplied as a {@link ChartDefinition}, using the Querydsl engine.</p>
+ * <p>This is the class that will find the data matching the criteria supplied as a {@link ConfiguredQuery}, that in turn will be turnde into a Querydsl query.</p>
  *
  * <h1>What is this ?</h1>
  *
- * <p>A ChartDefinition defines what you need to formulate the query :
+ * <p>A {@link ConfiguredQuery} is made of  :
  *
  * <ul>
- * <li>What data you want to find (the {@link MeasureColumn}s)</li>
- * <li>On what basis you want them (the {@link AxisColumn}s)</li>
- * <li>How specific you need the data to be (the {@link Filter}s)</li>
+ * <li>a {@link org.squashtest.tm.domain.query.QueryModel}, that define the query per-se, </li>
+ * <li>a Paging, that slices your data in digestible quantities</li>
+ * <li>a Scope, that restrict the data that should be fetched according to the user permissions and preference.< </li>
  * </ul>
+ *
+ * Aside from this query description, the ConfiguredQuery let you defined if the result set should be limited in size (the paging)
+ * or scope (the scope).
  * </p>
  *
  * <p>Based on this specification the {@link QueryProcessingServiceImpl} will design the query plan and run it. The rest of this javadoc
  * is a technical documentation of its internal processes.</p>
  *
  *
- * <h1>Column prototypes</h1>
- *
- * <p>
- * The main java type that define a column is {@link org.squashtest.tm.domain.query.QueryColumnPrototype}. All available columns are statically defined in the database.
- * When a column is included in a chart it will assume the role of a Measure, Axis or Column ({@link QueryColumnPrototypeInstance}).
- * </p>
- *
- * <h1>Column types</h1>
- *
- * <p>
- * A column represent a logical attribute of an entity. Attributes are said logical because they may or may not directly relate
- * to a database column : they represent a business information in a broader sense, which will be reconstructed from other raw data when necessary.
- * Please note that the column type thus refer to its natural or artificial nature (like 'label' or 'number of executions last month'), as
- * opposed to the underlying data type (eg 'integer' or 'date').
- * </p>
- *
- * <p>
- * An exception to this are the custom field columns, which have a different semantic : a custom field column here is "custom field of type X" of an entity.
- * An example for instance is "a custom field of type date of a TestCase". Here the column doesn't hold the name of the attribute, as opposed to the other columns described
- * above. This discrepancy of the model stems from the need of having a unmodifiable set of {@link org.squashtest.tm.domain.query.QueryColumnPrototype}, statically defined in the database as referential data.
- * This requirement is incompatible with the custom fields, which are essentially dynamic. The alternative would have been to manage (CRUD-like) a moving set of column
- * prototypes that reflect the state of the custom fields.
- * </p>
- *
- * <p>
- * You can check a column type by looking at {@link org.squashtest.tm.domain.query.QueryColumnPrototype#getColumnType()} :
- * </p>
- *
- * <ul>
- * <li>{@link ColumnType#ATTRIBUTE} : represents a normal attribute - eg it maps directly to a database column</li>
- * <li>{@link ColumnType#CALCULATED} : represents a derived attribute, that results from one or more database columns that may span over several tables </li>
- * <li>{@link ColumnType#CUF} : represents a custom field, here a special case of calculated column. See above for details.
- * </ul>
- *
- * <p>
- * The column type has technical implications on the final shape of the query that will be generated. Read on to know more on how these "logical" columns are processed
- * and tied into the query.
- * </p>
- *
- * <h1>Column roles</h1>
- *
- * <p>Here we explain how these roles will be used in a query :</p>
- *
- * <h3>Filters</h3>
- *
- * <p>
- * In a query they naturally fit the role of a where clause. On a technical level they can become where clause or something more complex (see above).
- * </p>
- *
- * <h3>AxisColumns</h3>
- *
- * <p>
- * These columns will be grouped on (in the group by clause). They also appear in the select clause and should of course not
- * be subject to any aggregation function. In the select clause, they will appear first, and keep the same order as in the list defined in the ChartDefinition.
- * </p>
- *
- * <h3>MeasureColumn</h3>
- *
- * <p>
- * These columns appear in the select clause and will be subject to an aggregation method (count, sum etc). The aggregation is specified in the MeasureColumn.
- * They appear in the select clause after the axis columns, and keep the same order as in the list defined in the ChartDefinition.
- * </p>
- *
- * <p>
- * Most of the time no specific attribute will be specified : in this case the measure column defaults to the id of the entity.
- * For instance consider a measure which aggregation is 'count'. If the user is interested to know how many test cases match the given filters,
- * the aggregation should be made on the test case ids. However if the user picked something more specific - like the test case labels -, the semantics
- * becomes how many different labels exist within the test cases that match the filter.
- * </p>
- *
- *
  * <h1>Query plan</h1>
  *
  * <p>
- * The global query is composed of one main query and several optional subqueries depending on the filters.
+ * The global query is composed of one main query and several optional subqueries depending on the columns (namely the
+ * CALCULATED columns).
  * </p>
  *
  * <h3>Domain</h3>
  *
  * <p>
- * The total domain covered by any possible ChartDefinition is the following : </br></br>
+ * The total queryable domain is the following : </br></br>
  *
  * <table>
  * <tr>
@@ -178,9 +107,10 @@ import java.util.List;
  *
  * </p>
  *
- * <p>Following the ChartDefinition a main query will be generated, that will cover a
- * a subset of this domain (or entirely). The specifics of its construction depend on the "Root entity", "Target entities" and
- * "Support entities", those concepts are defined below. </p>
+ * <p>The ConfiguredQuery will be derived into a query, that will cover a
+ * a subset of this domain (or entirely) using joins. The subqueries are generated the same way, and then related to the main query.
+ * The specifics of the query plan construction  depend on the "Seed entity", "Target entities" and "Support entities",
+ * those concepts are defined below. </p>
  *
  * <h3>Main query</h3>
  *
@@ -189,11 +119,17 @@ import java.util.List;
  * The main building blocks that defines the main query are the following :
  *
  * <ul>
- * <li><b>Root Entity</b> : This is the entity from which the query plan begins the entity traversal. The root entity is the
- * entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity (ie the first in the axis list).</li>
- * <li><b>Target Entities</b> : entities to which apply at least one of the MeasureColumns, AxisColumns, Filters, or Scope (see <b>Scope and ACLs</b>)</li>
+ * <li><b>Seed Entity</b> : This is the entity from which the query plan begins the entity traversal. If the seed entity
+ * is not adequate (eg there is no way to find a query plan that joins over all the entities we need), another seed entity
+ * will be tried, and again until a valid query plan is found. Initially the seed entity is set as the entity referenced by
+ * the first Aggregation columns, if there are no aggregation columns the entity referenced by the first projection column
+ * will be picked instead.
+ * </li>
+ * <li><b>Target Entities</b> : entities referenced by all the Projections/Aggregation/Filter/Order columns, and by
+ * the Scope (see <b>Scope and ACLs</b>). This includes the Seed Entity.
+ * </li>
  * <li><b>Support Entities</b> : entities that aren't Target entities but must be joined on in order to join together all
- * the Target entities. For example if a ChartDefinition defines Execution as Root entity and Campaign as a TargetEntity,
+ * the Target entities. For example if a ConfiguredQuery defines Execution as Seed Entity and Campaign as a TargetEntity,
  * then IterationTestPlanItem and Iteration are Support entities.
  * </li>
  * </ul>
@@ -201,13 +137,15 @@ import java.util.List;
  *
  * <p>
  * The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
- * Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).
+ * Support Entities, starting with the Seed Entity. The query plan of the main query usually contains only inner joins
+ * (either natural join or a JPA join().on() ), but left joins are allowed (see {@link org.squashtest.tm.domain.query.NaturalJoinStyle})
  * </p>
  *
  * <p>
  * <b>Clarification about the Scope and the Main Query (custom scopes only, TM 1.14):</b>
- * As of TM 1.14 the Scope is now included in order to force a natural joins on the scoped entity. Indeed, when the user defines a query on which the
- * scoped entity is neither used in a Filter, Axis or Measure, the resulting data is void because the Root Entity or Support entities are indeed out of the scope.
+ * As of TM 1.14 the Scope is now included in order to force a natural joins on the scoped entity. Indeed, when the user
+ * defines a query on which the entities that define the scope aren't part of the query itself, the resulting data is
+ * void because the Seed Entity or Support Entities are indeed out of the scope.
  * This decision is only half satisfactory : the definitive solution would be to actually reify and handle a Domain on which the query should innerjoin on,
  * but for now this trick will avoid the main problem (ie the case of empty resultset). See more with tickets #6260 and #6275
  * </p>
@@ -216,8 +154,8 @@ import java.util.List;
  * <h3>Select clause generation</h3>
  *
  * <p>
- * The select clause must of course contain the MeasureColumns with their appropriate aggregation function (like count(distinct ), avg(distinct ) etc).
- * For technical reasons they must also include the AxisColumns, because theses are the column on which a row is grouped by.
+ * The select is built according to the Projection columns. The Projection columns should of course include the data that
+ * the user wishes to retrieve, but should also include all the columns that are part of the Order by clause.
  * </p>
  *
  * <h3>Filter application</h3>
@@ -225,13 +163,16 @@ import java.util.List;
  * <p>
  * Filters are restriction applied on the tuples returned by the main query.
  * Each filter is a combination of a column, a comparison operator, and
- * one/several operands. They are translated in the appropriate Querydsl expression,
- * bound together by appropriate logic operators then inserted in the main query.
+ * one/several operands (the values against which the comparison is to be made).
+ * They are translated in the appropriate Querydsl expression, bound together by appropriate logic operators
+ * then inserted in the main query.
+ * For now the operands are all values : an operand cannot be a column nor a subquery.
  * </p>
  *
  * <p>
  * Most of the time they are handled as plain "where" clauses, but in some cases
- * a subquery is required. Filters are processed as follow :
+ * a subquery is required. Subqueries in a filter clause are eg "subquery that count the number of test steps for this test case> 3".
+ * Filters are processed as follow :
  *
  * <ol>
  * <li>Filters are first grouped by their Target Entity</li>
@@ -267,7 +208,8 @@ import java.util.List;
  * <h4>Inlined where clause strategy</h4>
  *
  * <p>
- * In the simplest cases the filters will be inlined in the main query, if the column is of type {@link ColumnType#ATTRIBUTE}
+ * In the simplest cases the filters will be inlined in the main query, if the column is of type {@link ColumnType#ATTRIBUTE}.
+ * This is your plain "where attribute = value" clause.
  * </p>
  *
  * <h4>Subquery strategy</h4>
@@ -286,9 +228,9 @@ import java.util.List;
  *
  * <p>
  * Subqueries have them own Query plan, and are joined with the main query as follow : the Target entity of the outer (main) query
- * of the calculated column will join on the Root entity of the subquery (usually its axis). Entities are joined on their ids.
- * We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in
- * practice a clause
+ * of the calculated column will join on the Root entity of the subquery (usually its first aggreated entity, as explained above).
+ * Entities are joined on their ids. We choose to use correlated subqueries (joining them as described above) even when an
+ * uncorrelated query would do fine, because in practice a clause
  * <pre> where exists (select 1 from ... where ... and inner_col = outer_col) </pre>
  * will outperform
  * <pre> where entity.id in (select id from .... where ...) </pre>
@@ -298,33 +240,38 @@ import java.util.List;
  * <h3>Grouping</h3>
  *
  * <p>
- * Data will be grouped on each {@link AxisColumn} in the given order. Special care is given for columns of
+ * Data will be grouped on each {@link org.squashtest.tm.domain.query.QueryAggregationColumn}, in the given order.
+ * They are related to the Projection columns in the sense that if one of them define an aggregation operation (eg count(),
+ * sum() etc), all the other columns should be aggregated on too.
+ * </p>
+ * <p>
+ * Special care is given for columns of
  * type {@link DataType#DATE} : indeed the desired level of aggregation may be day, month etc. For instance one would never
  * want to group together every month of December across the years. For this reason data grouped by Day will
  * actually grouped by (year,month,day). Same goes for grouping by month, which actually mean grouping by (year,month).
  * </p>
  *
+ * <h3>Ordering</h3>
+ *
+ * <p>
+ *     The ordering - the sort by clause - is defined by the {@link org.squashtest.tm.domain.query.QueryOrderingColumn} of the
+ *     ConfiguredQuery. Remember that a column that appear in the order clause must also appear in the projection clause.
+ * </p>
+ *
  * <h1>Result </h1>
  *
  * <p>
- * The result will be an array of array of Object. Each row represents a tuple of (x+y) cells, where x = card(AxisColumn)
- * and y = card(MeasureColumn). The first batch of cells are those of the AxisColumns, the second batch are those of the
- * MeasureColumns.
- * </p>
- *
- * <p>
- * Note : a more appropriate representation would be one serie per MeasureColumn, with each tuple made of the x axis cells
- * and 1 measure cell. However we prefer to remain agnostic on how the resultset will be interpreted : series might not
- * be the preferred way to consume the data after all.
+ * 	The result will be a list of {@link Tuple}, shaped according to the projection clause. Note that in some cases the tuple may
+ * 	be larger than expected, if extra projection columns had to be appended for technical reasons (see {@link ProjectionPlanner}).
  * </p>
  *
  * <h1>Scope and ACLs</h1>
  *
  * <p>
- * Additionally, another special filter will be processed : the Scope, ie the subset of RootEntity on which
- * the chart query will be applied to. At runtime it is refined into an Effective Scope, which is the conjunction of :
+ * Additionally, another special filter will be processed : the Scope, ie a further restriction on which instances of entities
+ * the query can return data from. At query execution time it is refined into an Effective Scope, which is the conjunction of :
  * <ul>
- * <li>the content of the projects/folders/nodes selected by the user <b>who designed</b> the ChartDefinition (the scope part)</li>
+ * <li>the content of the projects/folders/nodes selected by the user <b>who designed</b> the ConfiguredQuery (the scope part)</li>
  * <li>the nodes that can actually be READ by the user <b>who is running</b> the QueryProcessingServiceImpl (the acl part)</li>
  * </ul>
  *
@@ -332,7 +279,8 @@ import java.util.List;
  * </p>
  *
  * <p>
- * The Effective Scope will be computed then added to the query after is has been generated. See {@link ScopePlanner} for details on what is going on.
+ * The Effective Scope will be computed then added to the query after is has been generated. See {@link ScopePlanner}
+ * for details on what is going on.
  * </p>
  *
  * @author bsiri

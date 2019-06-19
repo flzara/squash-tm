@@ -47,9 +47,9 @@ import org.squashtest.tm.domain.query.QueryProjectionColumn;
  * </p>
  *
  * <p>
- * 	Depending on the chosen profile, the projection will be :
+ * 	Depending on the {@link QueryProfile} of the query, the projection will be :
  * 	<ul>
- * 		<li>REGULAR_QUERY and SUBSELCT_QUERY : projection are applied normally</li>
+ * 		<li>REGULAR_QUERY and SUBSELECT_QUERY : projection are applied normally</li>
  * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not,
  * 			the outer  query can then test with 'exists (subquery)'  </li>
  * 	</ul>

@@ -53,14 +53,16 @@ import com.querydsl.core.types.dsl.PathBuilder;
 
 /**
  * <p>
- * 	This class will plan which table must be joined together and return the result as a ExtendedHibernateQuery.
- * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
- * 	is available a where clause will be used.
+ * 	Given a {@link QueryPlan}, this class will resolve which tables must be joined together and return the result as a ExtendedHibernateQuery.
+ * 	Whenever possible the natural joins will be used (there is a navigable JPA mapping from the source entity to the
+ * 	destination entity); when no navigable mapping is available a join().on() construct is used instead.
+ * 	This is decided according to the {@link JoinType} of each {@link PlannedJoin} of the {@link QueryPlan#joinIterator()}.
  * </p>
  *
  * <p>
  * 	For the main query, the entities are all aliased with the camel case version of the class name. Explicitly : testCase, requirementVersion etc.
- *  If there are any inlined subqueries, the relevant entities will also be joined and attached to the main query via their respective root entity.
+ *  If there are any inlined subqueries, the relevant entities will also be joined and attached to the main query via
+ *  their respective Seed Entity.
  *  To do so a new instance of QueryPlanner will be created and invoked in "append mode" using a subquery.
  *  The extra entities joined that way will be aliased with a deterministic suffix that depend on the ColumnPrototype id that stands for the
  *  inlined subquery.

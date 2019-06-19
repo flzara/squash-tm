@@ -25,11 +25,11 @@ package org.squashtest.tm.domain.query;
  */
 public enum NaturalJoinStyle {
 	/*
- * Use inner joins when a natural join is possible
- */
+ 	* The entities are joined on using an inner join.
+ 	*/
 	INNER_JOIN,
 	/*
-     * Use left outer join when natural join is possible
+     * The entities are joined on using a left outer join.
      */
 	LEFT_JOIN;
 }

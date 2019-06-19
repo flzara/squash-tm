@@ -156,10 +156,10 @@ class DomainGraph {
 	/*
 	 * The creation of a query plan is a two step process :
 	 *
-	 * 1/ transform the undirected domain graph in a directed graph (a tree), radiating from the node representing the root entity,
+	 * 1/ transform the undirected domain graph in a directed graph (a tree), radiating from the node representing the seed entity,
 	 * 2/ on the result, prune the leaves until a target entity node is encountered
 	 *
-	 * The result is a tree with the root entity as root node, and by walking it top-down one will find
+	 * The result is a tree with the seed entity as root node, and by walking it top-down one will find
 	 * which entities are traversed from which (indicating which join should be made).
 	 *
 	 */
