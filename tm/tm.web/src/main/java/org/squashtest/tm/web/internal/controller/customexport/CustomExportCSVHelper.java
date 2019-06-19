@@ -241,19 +241,16 @@ public class CustomExportCSVHelper {
 			return null;
 		} else {
 			String htmlFreeValue = HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(rawValue)));
-			return  removeCarriageReturnsAndReplaceDoubleQuotes(htmlFreeValue);
+			return  replaceDoubleQuotes(htmlFreeValue);
 		}
 	}
 	/**
-	 * Remove all the carriage returns of the given text. And replace all double quotes by simple ones.
+	 * Replace all double quotes by simple ones.
 	 * @param text The text.
-	 * @return The cleaned text.
+	 * @return The text which double quotes were replaced by simple ones.
 	 */
-	private String removeCarriageReturnsAndReplaceDoubleQuotes(String text) {
-		return text
-			.replaceAll("\r\n", "")
-			.replaceAll("\n", "")
-			.replaceAll("\"", "\'");
+	private String replaceDoubleQuotes(String text) {
+		return text.replaceAll("\"", "\'");
 	}
 
 }
