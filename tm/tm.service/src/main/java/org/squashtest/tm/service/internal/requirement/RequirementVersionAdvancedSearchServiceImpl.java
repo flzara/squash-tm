@@ -308,6 +308,34 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	}
 
+	private static void createFilterHasDescription(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchRangeFieldModel rangeFieldModel = (AdvancedSearchRangeFieldModel) model;
+
+		Integer minValue = rangeFieldModel.getMinValue();
+
+		QRequirementVersion outerVersion = requirementVersion;
+		QRequirementVersion initVersion = new QRequirementVersion("initVersion");
+
+		HibernateQuery<?> subquery;
+
+		if (minValue == null) {
+			subquery = new ExtendedHibernateQuery<>()
+				.select(Expressions.ONE)
+				.from(initVersion)
+				.where(initVersion.id.eq(outerVersion.id).and(initVersion.description.isEmpty()));
+		} else {
+			subquery = new ExtendedHibernateQuery<>()
+				.select(Expressions.ONE)
+				.from(initVersion)
+				.where(initVersion.id.eq(outerVersion.id).and(initVersion.description.isNotEmpty()));
+		}
+
+		query.where(subquery.exists());
+
+
+	}
+
 
 	// ******************* column mappings  *******************************************************
 
@@ -336,14 +364,14 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			.map("createdBy", REQUIREMENT_VERSION_CREATED_BY)
 			.map("attachments", REQUIREMENT_VERSION_ATTCOUNT)
 			.map("createdOn", REQUIREMENT_VERSION_CREATED_ON)
-			.map("hasDescription", REQUIREMENT_VERSION_DESCRIPTION)
 			.map("lastModifiedBy", REQUIREMENT_VERSION_MODIFIED_BY)
 			.map("lastModifiedOn", REQUIREMENT_VERSION_MODIFIED_ON)
 
 			.mapHandler("requirement.children", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveChildren))
 			.mapHandler("parent", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveParent))
 			.mapHandler("link-type", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHaveLinkType))
-			.mapHandler("isCurrentVersion", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterCurrentVersion));
+			.mapHandler("isCurrentVersion", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterCurrentVersion))
+			.mapHandler("hasDescription", new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterHasDescription));
 
 
 
