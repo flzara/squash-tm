@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/traitment",
-                    "aaSorting": [[7, 'desc'], [8, 'asc'], [10, 'desc']],
+                    "aaSorting": [[8, 'desc'], [9, 'asc'], [10, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
