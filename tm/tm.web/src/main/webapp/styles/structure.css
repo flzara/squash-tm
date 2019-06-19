@@ -1386,7 +1386,7 @@ div.information-panel p {
 	 color: #888888;
 }
 #admin-link-pane{
-    margin-top: 10%;
+    margin-top: 5%;
     display: block;
     text-align: center;
      font-size: 1.5em;
@@ -1397,7 +1397,7 @@ div.information-panel p {
 
 #admin-link-pane a {
 	display: inline-block;
-    width: 18%;
+    width: 25%;
     position:relative;
     margin-top: 50px;
 }
