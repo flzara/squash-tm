@@ -534,7 +534,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if(filterColumn.getDataType().equals(DataType.NUMERIC)) {
 			filterColumn.setOperation(Operation.EQUALS);
 		} else {
+			if(value.contains("*")) {
+				value = value.replace("*", "%");
+			} else {
+				value = "%" + value + "%";
+			}
 			filterColumn.setOperation(Operation.LIKE);
+
 		}
 
 		filterColumn.getValues().add(value);
