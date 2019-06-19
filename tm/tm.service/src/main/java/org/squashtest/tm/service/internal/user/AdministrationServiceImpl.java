@@ -69,7 +69,6 @@ import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -247,6 +246,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.activateUser(userId);
 		User user = userDao.getOne(userId);
 		adminAuthentService.activateAccount(user.getLogin());
+		// TM-547
+		aclService.updateDerivedPermissions(userId);
+
 		aclService.refreshAcls();
 	}
 
