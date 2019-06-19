@@ -63,6 +63,6 @@ public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchField
 
 	@Override
 	public boolean isSet() {
-		return startDate != null & endDate != null;
+		return startDate != null || endDate != null;
 	}
 }
