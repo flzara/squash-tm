@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -88,7 +89,6 @@ class ProjectionPlanner {
 	
 	// internal state properties
 	private ColumnAliasing columnAliasing;
-
 
 	ProjectionPlanner(InternalQueryModel internalQueryModel, ExtendedHibernateQuery<?> query){
 		super();
@@ -165,7 +165,7 @@ class ProjectionPlanner {
 
 		Iterator<AliasedColumn> aliasIterator = columnAliasing.getSortedColumns().iterator();
 
-		List<OrderSpecifier<?>> orders =
+		List<OrderSpecifier> orders =
 			internalQueryModel.getOrderingColumns()
 				.stream()
 				.map(column -> {
@@ -264,6 +264,11 @@ class ProjectionPlanner {
 			// plan the aliases for the sort by
 			planSortBy(queryModel);
 
+		}
+
+		// empty constructor for testing purposes
+		private ColumnAliasing(){
+			super();
 		}
 
 
@@ -417,7 +422,7 @@ class ProjectionPlanner {
 	}
 
 
-	private static final class AliasedColumn {
+	private static final class AliasedColumn{
 
 		private QueryColumnPrototypeInstance columnInstance;
 
