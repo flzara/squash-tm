@@ -119,15 +119,17 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 		int queryDepth = getQueryDepth(fullEntityList);
 
+		boolean isTestSuiteRequested = fullEntityList.contains(EntityType.TEST_SUITE);
+
 		SelectSelectStep selectQuery = DSL.select(fieldList);
 
-		SelectJoinStep fromQuery = buildFromClauseOfMainQuery(fieldList, fullEntityList, queryDepth, selectQuery);
+		SelectJoinStep fromQuery = buildFromClauseOfMainQuery(fieldList, isTestSuiteRequested, queryDepth, selectQuery);
 
 		fromQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
 
 			.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
 
-			.orderBy(buildOrderByFieldList(queryDepth));
+			.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
 
 		return fromQuery.fetch().iterator();
 	}
@@ -135,12 +137,12 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	/**
 	 * Build the From clause of the main Query.
 	 * @param fieldList The List of all the requested Fields in the Query
-	 * @param fullEntityList The List of all the Entities which at least 1 attribute was selected in the CustomExport
+	 * @param isTestSuiteRequested Whether Test Suites are requested in the Query
 	 * @param queryDepth The depth of the Query
 	 * @param selectQuery The previously built Select clause of the Query
 	 * @return The From clause of the Query
 	 */
-	private SelectJoinStep buildFromClauseOfMainQuery(Collection<Field<?>> fieldList, List<EntityType> fullEntityList, int queryDepth, SelectSelectStep selectQuery) {
+	private SelectJoinStep buildFromClauseOfMainQuery(Collection<Field<?>> fieldList, boolean isTestSuiteRequested, int queryDepth, SelectSelectStep selectQuery) {
 		SelectJoinStep fromQuery = selectQuery.from(CAMPAIGN);
 
 		fromQuery.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_LIBRARY_NODE.CLN_ID.eq(CAMPAIGN.CLN_ID));
@@ -176,7 +178,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				.leftJoin(INFO_LIST_ITEM.as("type_nature")).on(INFO_LIST_ITEM.as("type_nature").ITEM_ID.eq(TEST_CASE.TC_NATURE))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
-			if (fullEntityList.contains(EntityType.TEST_SUITE)) {
+			if (isTestSuiteRequested) {
 				// only if TEST_SUITE attributes were selected
 				fromQuery.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 					.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID));
@@ -229,14 +231,18 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	/**
 	 * Build the List of Fields that compose the Order By clause of the Query.
 	 * @param queryDepth The depth of the Query
+	 * @param isTestSuiteRequested Whether Test Suites are requested in the Query
 	 * @return The List of Fields composing the Order By clause of the Query
 	 */
-	private List<Field<?>> buildOrderByFieldList(int queryDepth) {
+	private List<Field<?>> buildOrderByFieldList(int queryDepth, boolean isTestSuiteRequested) {
 		List<Field<?>> orderByFieldList = new ArrayList<>();
 		if(queryDepth > 1) {
 			orderByFieldList.add(ITERATION.ITERATION_ID);
 		}
 		if(queryDepth > 2) {
+			if(isTestSuiteRequested) {
+				orderByFieldList.add(TEST_SUITE.ID);
+			}
 			orderByFieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
 		}
 		if(queryDepth > 3) {
