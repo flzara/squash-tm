@@ -57,6 +57,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+
 /**
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
@@ -97,7 +99,16 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	private ExecutionDao executionDao;
 
 	private List<? extends Pair<? extends IssueDetector, Issue>> findExecutionIssuePairs(Execution execution, PagingAndSorting sorter) {
-		return issueDao.findAllDeclaredExecutionIssuePairsByExecution(execution, sorter);
+		//return issueDao.findAllDeclaredExecutionIssuePairsByExecution(execution, sorter);
+		List<Pair<Execution, Issue>> listTmpExecutionIssuePairs = issueDao.findAllDeclaredExecutionIssuePairsByExecution(execution, sorter);
+
+		// TM-301:verifier si le bugtracker du projet de l'execution et le m$eme que celui de l issue
+		List<Pair<Execution, Issue>>listExecutionIssuePairs = listTmpExecutionIssuePairs.stream()
+			//.filter(tmpExcIssue->!(tmpExcIssue.left.getProject().equals(projectOfThisTC) && !tmpExcIssue.right.getBugtracker().equals(btProjectOfThisTc)))
+			.filter(tmpExcIssue->(tmpExcIssue.left.getProject().getBugtrackerBinding().getBugtracker().equals(tmpExcIssue.right.getBugtracker())))
+			.collect(Collectors.toList());
+
+		return listExecutionIssuePairs;
 	}
 
 	private BugTracker findBugTracker(Execution execution) {
@@ -150,7 +161,16 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	}
 
 	private List<Pair<ExecutionStep, Issue>> findExecutionStepIssuePairs(Execution execution, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionStepIssuePairsByExecution(execution, sorter);
+		//return issueDao.findAllExecutionStepIssuePairsByExecution(execution, sorter);
+		List<Pair<ExecutionStep, Issue>> listTmpExecutionStepIssuePairs = issueDao.findAllExecutionStepIssuePairsByExecution(execution, sorter);
+
+		// TM-301:verifier si le bugtracker du projet de l'execution et le m$eme que celui de l issue
+		List<Pair<ExecutionStep, Issue>>listExecutionStepIssuePairs = listTmpExecutionStepIssuePairs.stream()
+				.filter(tmpExcIssue->(tmpExcIssue.left.getProject().getBugtrackerBinding().getBugtracker().equals(tmpExcIssue.right.getBugtracker())))
+			.collect(Collectors.toList());
+
+		return listExecutionStepIssuePairs;
+
 	}
 
 	/**

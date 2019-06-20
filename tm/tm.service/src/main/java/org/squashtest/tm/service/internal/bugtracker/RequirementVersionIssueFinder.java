@@ -66,7 +66,16 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 			versions.add(currentReqVer);
 		}
 
-		List<RequirementIssueSupport> executionIssuePairsByRequirementVersions = issueDao.findAllExecutionIssuePairsByRequirementVersions(versions, sorter);
+		//List<RequirementIssueSupport> executionIssuePairsByRequirementVersions = issueDao.findAllExecutionIssuePairsByRequirementVersions(versions, sorter);
+
+		 List<RequirementIssueSupport> TmpExecutionIssuePairsByRequirementVersions = issueDao.findAllExecutionIssuePairsByRequirementVersions(versions, sorter);
+
+		// TM-301:verifier si le bugtracker du projet de l'execution et le m$eme que celui de l issue
+		List<RequirementIssueSupport> executionIssuePairsByRequirementVersions = TmpExecutionIssuePairsByRequirementVersions.stream()
+									.filter(tmpExcIssueReq->(tmpExcIssueReq.getExecution().getProject().getBugtrackerBinding().getBugtracker().equals(tmpExcIssueReq.getIssue().getBugtracker())))
+									.collect(Collectors.toList());
+
+
 		for (RequirementIssueSupport support : executionIssuePairsByRequirementVersions) {
 			Pair<Execution, Issue> pair = new Pair<>(support.getExecution(), support.getIssue());
 			IssueOwnership<RemoteIssueDecorator> issueOwnership = findRemoteIssues(Arrays.asList(pair)).get(0);
