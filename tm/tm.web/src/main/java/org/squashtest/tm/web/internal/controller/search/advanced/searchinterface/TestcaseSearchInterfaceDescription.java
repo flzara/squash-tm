@@ -136,7 +136,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addCssClass("search-icon-associations");
 
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements", getMessageSource()
-				.internationalize("search.testcase.association.requirement.label", locale), RANGE);
+				.internationalize("search.testcase.association.requirement.label", locale), NUMERICRANGE);
 		panel.addField(requirementsField);
 
 		SearchInputFieldModel iterationsField = new SearchInputFieldModel("iterations", getMessageSource()
@@ -159,7 +159,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.optionKey(NONE).build());
 
 		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues", getMessageSource().internationalize(
-				"search.testcase.association.issue.label", locale), RANGE);
+				"search.testcase.association.issue.label", locale), NUMERICRANGE);
 		panel.addField(issuesField);
 
 		return panel;
@@ -183,7 +183,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addCssClass("search-icon-content");
 
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", getMessageSource().internationalize(
-				"search.testcase.content.teststep.label", locale), RANGE);
+				"search.testcase.content.teststep.label", locale), NUMERICRANGE);
 		panel.addField(teststepField);
 
 		SearchInputFieldModel parameterField = new SearchInputFieldModel("parameters", getMessageSource()
