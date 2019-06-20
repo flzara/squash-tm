@@ -30,6 +30,11 @@ define(["jquery", "jqueryui"], function($){
 		fieldvalue : function(value){
 			if(!value){
 				var text = $(this.element.children()[0]).val();
+				var id = $(this.element).attr("id");
+				var max = $(this.element.children()[0]).find("option").length;
+				if (text && text.length === max && !id.startsWith("milestone")){
+					text = [];
+				}
 				return {"type" : "LIST", "values" : text};
 			} else { // no longer used afaik
 				$("option", $(this.element.children()[0])).removeAttr("selected");
