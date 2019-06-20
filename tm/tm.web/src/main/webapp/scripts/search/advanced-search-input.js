@@ -114,24 +114,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 			// templates are no longer needed
 			this.templates = {};
-
-			prefillPermiterPanel = function () {
-				var panel = $('#perimeter-panel-id');
-				var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
-				var place = "toSelect" + location.search;
-				var toselect = JSON.parse($.cookie(place));
-				options.children().each(function () {
-					if (toselect !== null) {
-						if (this.selected) {
-							if (toselect.indexOf(Number(this.value) )=== -1) {
-								this.selected = false;
-							}
-						}
-					}
-				});
-
-			};
-			prefillPermiterPanel();
+			
 			resizePerimeter = function (event) {
 				var sizeWithPadding = $('#perimeter-panel-id').css('width');
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
@@ -284,6 +267,23 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 		},
 
+		prefillPermiterPanel: function () {
+			var panel = $('#perimeter-panel-id');
+			var options = $($($($(panel.children()[0]).children()[0]).children()[0]).children()[0]);
+			var place = "toSelect" + location.search;
+			var toselect = JSON.parse($.cookie(place));
+			options.children().each(function () {
+				if (toselect !== null) {
+					if (this.selected) {
+						if (toselect.indexOf(Number(this.value) )=== -1) {
+							this.selected = false;
+						}
+					}
+				}
+			});
+
+		},
+
 		_processModel: function (formBuilder) {
 			if (!!squashtm.app.searchFormModel) {
 
@@ -291,6 +291,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 				// last detail, we must also hook the project selector with the nature an type selectors
 				var self = this;
+				self.prefillPermiterPanel();
 				$("#perimeter-multiple-custom").on('change', function () {
 					self._updateAvailableInfolists();
 				});
