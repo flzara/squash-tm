@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
@@ -310,6 +311,7 @@ public class QueryProcessingServiceImpl implements QueryProcessingService {
 		ScopePlanner scopePlanner = scopePlannerProvider.get();
 		scopePlanner.setQueryModel(internalQueryModel);
 		scopePlanner.setHibernateQuery(detachedQuery);
+		scopePlanner.setScope((List<EntityReference>) internalQueryModel.getScope());
 		scopePlanner.appendScope();
 
 		// ********** step 3 : add paging ************************************

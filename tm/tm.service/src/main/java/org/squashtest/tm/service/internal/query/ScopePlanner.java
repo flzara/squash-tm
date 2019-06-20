@@ -751,7 +751,7 @@ class ScopePlanner {
 
 
 		QueryColumnPrototype findColumnPrototype(String colName) {
-			Query q = getSession().createQuery("select p from ColumnPrototype p where p.label = :label");
+			Query q = getSession().createQuery("select p from QueryColumnPrototype p where p.label = :label");
 			q.setParameter("label", colName);
 			return (QueryColumnPrototype) q.uniqueResult();
 		}

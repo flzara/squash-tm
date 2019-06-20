@@ -378,11 +378,23 @@ class ProjectionPlanner {
 
 		// *************** Alias management **************************
 
-		private String registerNewRegularAlias(QueryColumnPrototypeInstance instance){
-			String label = instance.getColumn().getLabel();
-			String alias = generate();
+		// XXX : in case a column was already registered, it won't be registered twice
+		// the engine doesn't support columns appearing twice in a clause (in particular
+		// the projection clause)
+		// By design it's not supposed to happen, with one exception : a PieChart may
+		// select an id and count on it too. It means nothing but spec is the spec.
+		// In that situation, we return null : the column has no alias and it's fine.
+		// If the projection columns are iterated on in the correct order we should be fine.
 
-			aliasByColumnLabel.put(label, alias);
+		// XXX2 : another way to "fix" it would be to include the operation in the key,
+		// in fact this would be more powerful
+		private String registerNewRegularAlias(QueryColumnPrototypeInstance instance){
+			String alias = null;
+			String label = instance.getColumn().getLabel();
+			if (! aliasByColumnLabel.containsKey(label)) {
+				alias = generate();
+				aliasByColumnLabel.put(label, alias);
+			}
 			return alias;
 		}
 
@@ -438,10 +450,13 @@ class ProjectionPlanner {
 		}
 
 
+		// about the nullcheck : see comment on #registerNewRegularAlias
 		public Expression<?> renderAsAliasedSelect(){
 			Expression<?> rendered = renderingFunction.apply(columnInstance);
-			Expression<?> renderedAliased = Expressions.as(rendered, alias);
-			return renderedAliased;
+			if (alias != null) {
+				rendered = Expressions.as(rendered, alias);
+			}
+			return rendered;
 		}
 
 		public Expression<?> renderAsAliasElseAsColumn(){
