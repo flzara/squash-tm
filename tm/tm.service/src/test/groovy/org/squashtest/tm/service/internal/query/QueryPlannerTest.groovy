@@ -511,8 +511,8 @@ from TestCase testCase
 
 		then :
 		res.toString() == """select testCase.id
-from TestCase testCase, CustomFieldValue null_12
-where null_12.boundEntityType = ?1 and null_12.boundEntityId = testCase.id and null_12.cufId = ?2""";
+from TestCase testCase, CustomFieldValue TEST_CASE.value_12
+where TEST_CASE.value_12.boundEntityType = ?1 and TEST_CASE.value_12.boundEntityId = testCase.id and TEST_CASE.value_12.cufId = ?2""";
 	}
 
 
