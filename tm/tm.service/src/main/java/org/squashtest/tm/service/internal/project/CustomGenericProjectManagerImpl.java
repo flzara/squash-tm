@@ -960,6 +960,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	private void copyAutomationWorkflowSettings(GenericProject target, GenericProject source) {
+		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
+	}
+
 	private void copyBugtrackerSettings(GenericProject target, GenericProject source) {
 		if (source.isBugtrackerConnected()) {
 			changeBugTracker(target, source.getBugtrackerBinding().getBugtracker());
@@ -1021,6 +1025,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		if (params.isCopyAutomatedProjects()) {
 			copyTestAutomationSettings(target, source);
+			copyAutomationWorkflowSettings(target, source);
 		}
 		if (params.isCopyInfolists()) {
 			copyInfolists(target, source);
@@ -1052,6 +1057,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if(target.getBugtrackerBinding() == null) {
 			copyBugtrackerSettings(target, source);
 		}
+		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
 		if(target.getTestAutomationServer() == null) {
 			copyTestAutomationSettings(target, source);
 		}
@@ -1101,20 +1107,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void changeAutomationWorkflow(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
 
+		genericProject.setAllowAutomationWorkflow(active);
 
-		if(!genericProject.isBoundToTemplate()) {
-			genericProject.setAllowAutomationWorkflow(active);
-
-			if (active) {
-				List<Long> tcIds = testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(projectId);
-				createAutomationRequestForTc(tcIds);
-			}
-			/* If project is a Template, propagate on all the bound projects. */
-			if (ProjectHelper.isTemplate(genericProject)) {
-				templateDao.propagateAllowAutomationWorkflow(projectId, active);
-			}
-		} else {
-			throw new LockedParameterException();
+		if (active) {
+			List<Long> tcIds = testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(projectId);
+			createAutomationRequestForTc(tcIds);
+		}
+		/* If project is a Template, propagate on all the bound projects. */
+		if (ProjectHelper.isTemplate(genericProject)) {
+			templateDao.propagateAllowAutomationWorkflow(projectId, active);
 		}
 	}
 

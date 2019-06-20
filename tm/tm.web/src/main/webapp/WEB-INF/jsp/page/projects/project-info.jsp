@@ -745,7 +745,7 @@ require(["common"], function() {
 		 		});
 
 		 		$("#toggle-WORKFLOW-checkbox").change(function() {
-          toggleIfParameterIsEnabled(toggleWorkflow);
+          toggleWorkflow();
         });
 
         $("#toggle-STRUCTURE-IN-SCM-REPO-checkbox").change(function() {
