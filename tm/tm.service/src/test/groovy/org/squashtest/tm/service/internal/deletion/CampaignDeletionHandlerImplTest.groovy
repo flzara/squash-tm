@@ -150,5 +150,4 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		itpi.getExecutions() >> []
 		return itpi}
 
-
 }

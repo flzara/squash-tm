@@ -23,6 +23,8 @@ package org.squashtest.tm.service.attachment
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.hibernate.FlushMode
+import org.hibernate.Query
+import org.hibernate.type.LongType
 import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
@@ -42,61 +44,67 @@ import javax.inject.Inject
 @DataSet
 class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
-	@Inject	TestCaseModificationService service
+	@Inject
+	TestCaseModificationService service
 
-	@Inject TestCaseLibraryNavigationService navService
+	@Inject
+	TestCaseLibraryNavigationService navService
 
-	@Inject AttachmentManagerService attachService;
+	@Inject
+	AttachmentManagerService attachService;
 
-	@Inject GenericProjectManagerService genericProjectManager
+	@Inject
+	GenericProjectManagerService genericProjectManager
 
 	// IDs : see dataset
-	int folderId = -1;
-	int testCaseId=-2;
-	int attachListId = -3;
+	int folderId = -241; //folder b 1PJ no duplicate
+	int testCaseId =-240; //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
+	int testCaseIdWithoutAttachment = -245 //TC 2 AttachmentList 919
+	int attachListId = -898; //of test folder a, no attachment
 
 
+	def "should create an AttachmentList along with a TestCase"() {
+		given:
 
-	def "should create an AttachmentList along with a TestCase"(){
-		given :
 
-
-		when :
+		when:
 		def attachListId = service.findById(testCaseId).attachmentList.id;
 		def attachList = service.findById(testCaseId).getAttachmentList();
 
-		then :
+		then:
 		attachList != null
 		attachList.id == attachListId;
 	}
 
 
-	def "should add a new attachment and retrieve it"(){
-		given :
+	def "should add a new attachment and retrieve it"() {
+		given:
 		ClassPathResource res = new ClassPathResource("/org/squashtest/tm/service/attachment/attachment.jpg")
 		File source = res.getFile()
 		FileInputStream fis = new FileInputStream(source)
 
 		RawAttachment raw = new RawAttachment() {
-					String getName() {
-						"attachment.jpg"
-					}
-					InputStream getStream() {
-						fis
-					}
-					long getSizeInBytes() {
-						source.length()
-					}
-				}
+			String getName() {
+				"attachment.jpg"
+			}
+
+			InputStream getStream() {
+				fis
+			}
+
+			long getSizeInBytes() {
+				source.length()
+			}
+		}
 
 
-		when :
+		when:
 		Long id = attachService.addAttachment(attachListId, raw)
 		session.flush()
 
-		Attachment attach =  session.load(Attachment, id)
+		Attachment attach = session.load(Attachment, id)
 
-		then : "attachment correctly created"
+		then: "attachment correctly created"
 		attach.name == "attachment.jpg"
 		attach.type == "jpg"
 
@@ -115,22 +123,24 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	RawAttachment rawAttachment(file, name) {
 		new RawAttachment() {
-					FileInputStream fis = new FileInputStream(file)
+			FileInputStream fis = new FileInputStream(file)
 
-					String getName() {
-						name
-					}
-					InputStream getStream() {
-						fis
-					}
-					long getSizeInBytes() {
-						file.length()
-					}
-				}
+			String getName() {
+				name
+			}
+
+			InputStream getStream() {
+				fis
+			}
+
+			long getSizeInBytes() {
+				file.length()
+			}
+		}
 	}
 
-	def "should add and retrieve a lot of attachment headers"(){
-		given :
+	def "should add and retrieve a lot of attachment headers"() {
+		given:
 		File source = sourceFile()
 
 		def raws = []
@@ -138,7 +148,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		raws << rawAttachment(source, "att2.jpg")
 		raws << rawAttachment(source, "att3.jpg")
 
-		when :
+		when:
 		List<Long> ids = []
 
 		raws.each {
@@ -150,8 +160,8 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
 
-		then :
-		attached*.id.containsAll (ids);
+		then:
+		attached*.id.containsAll(ids);
 		attached*.name.containsAll([
 			"att1.jpg",
 			"att2.jpg",
@@ -167,16 +177,15 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	}
 
 
-
-	byte[] randomBytes(int howMany){
-		byte [] result = new byte[howMany];
-		for (int i=0;i<howMany;i++){
-			result[i]=Math.round(Math.random()*255);
+	byte[] randomBytes(int howMany) {
+		byte[] result = new byte[howMany];
+		for (int i = 0; i < howMany; i++) {
+			result[i] = Math.round(Math.random() * 255);
 		}
 		return result;
 	}
 
-	def "should remove an attachment"(){
+	def "should remove an attachment"() {
 
 		given:
 		File source = sourceFile()
@@ -191,20 +200,20 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		// session and force Hibernate to reset its book keeping.
 		session.clear()
 
-		when :
+		when:
 		attachService.removeAttachmentFromList(attachListId, id)
 		em.flush()
 
-		
+
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
-		then :
-		attached.size()==0
+		then:
+		attached.size() == 0
 
 	}
 
-	def "should correctly tell if a test case have attachments or not"(){
-		when :
-		TestCase testCase = service.findById(testCaseId);
+	def "should correctly tell if a test case have attachments or not"() {
+		when:
+		TestCase testCase = service.findById(testCaseIdWithoutAttachment);
 
 		then:
 		!testCase.attachmentList.hasAttachments()
@@ -214,35 +223,56 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		RawAttachment raw = rawAttachment(source, "image.jpg")
 
 		when:
-		attachService.addAttachment(attachListId, raw);
+		attachService.addAttachment(attachListId, raw)
 		session.flush()
-		TestCase testCase2 = service.findById(testCaseId);
+		TestCase testCase2 = service.findById(testCaseId)
 
 		then:
 		testCase2.attachmentList.hasAttachments()
 	}
 
 	//[TM-362] shallowCopy of AttachmentContent instead of hardCopy on copy/past TM's item (TestCase, Requirement, execution and so)
-//	@DataSet("AttachmentManagerServiceImplIT.shallow copy Attachments.xml")
-//	 def "attachments shallowopy.deletion"(){
+//	 def "attachments shallowCopy.deletion"(){
 //
 //		given:
-//		//dataset ctrl
-//
+//		checkDataSetBeforeTest()
+//		def attachListId = -907
+//		def id = -2
 //		when :
 //		attachService.removeAttachmentFromList(attachListId, id)
 //		em.flush()
 //
-//
 //		then :
 //		Set<Attachment> attached = attachService.findAttachments(attachListId)
-//		attached.size()==0
-//		Attachment attachment;
-//		attachment.getContent().content
-//		attachService.writeContentattachmentId, outStream)
+//		attached.size()==1
+////		//check content really exist
+////		Attachment attachment;
+////		attachment.getContent().content
+////		attachService.writeContentattachmentId, outStream)
 //
 //	}
+//
+//	def checkDataSetBeforeTest() {
+//		def ids = new ArrayList(Arrays.asList(-898,-889,-907,-910))
+//		List<Attachment> attachments = executeSelectSQLQuery(
+//			"select * from Attachment where attachment_list_id in (:ids)"
+//			,"ids", ids)
+//    }
 
-//	def checkDataSetBeforeTest
+//	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids) {
+//		if (!ids.isEmpty()) {
+//			Query query = getSession().createSQLQuery(queryString)
+//			query.setParameterList(paramName, ids, LongType.INSTANCE)
+//			return query.list()
+//		} else {
+//			return Collections.emptyList()
+//		}
+//	}
+//
+//	protected Long executeSelectCountSQLQuery(String queryString, String paramName, Collection<Long> ids) {
+//			Query query = getSession().createSQLQuery(queryString)
+//			query.setParameterList(paramName, ids, LongType.INSTANCE)
+//			return query.getSingleResult()
+//	}
 
 }
