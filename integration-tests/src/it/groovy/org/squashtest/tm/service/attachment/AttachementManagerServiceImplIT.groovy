@@ -57,7 +57,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	GenericProjectManagerService genericProjectManager
 
 	// IDs : see dataset
-	int folderId = -241; //folder b 1PJ no duplicate
+	int folderId = -241; //folder b 1 PJ not duplicate
 	int testCaseId =-240; //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
 	int testCaseIdWithoutAttachment = -245 //TC 2 AttachmentList 919
 	int attachListId = -898; //of test folder a, no attachment

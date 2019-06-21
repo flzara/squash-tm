@@ -67,7 +67,8 @@ public class Attachment implements Identified {
 
 	// Before TM-362 -> @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	// Since TM-362. NO more cascadeType.REMOVE (many attachments for a single attachmentcontent) !
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE /*, CascadeType.REMOVE */, CascadeType.DETACH })
+	//Since TM-362. No more CascadeType.DETACH too. See Jira
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE /*, CascadeType.REMOVE , CascadeType.DETACH */})
 	@JoinColumn(name = "CONTENT_ID")
 	private AttachmentContent content;
 

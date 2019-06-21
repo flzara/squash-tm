@@ -180,7 +180,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		// loop on all following generations
 		while (!nextLayer.isEmpty()) {
 
-			removeProcessedNodesFromCache();
+		removeProcessedNodesFromCache();
 
 			shiftToNextLayer();
 
@@ -433,7 +433,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	 */
 	private void removeProcessedNodesFromCache() {
 
-		// if we cont flush and then evict, some entities might not be persisted
+		// if we don't flush and then evict, some entities might not be persisted
 		em.flush();
 		Collection<TreeNode> nextNodes = new HashSet<>();
 		for (NodePairing nextPairing : nextLayer) {

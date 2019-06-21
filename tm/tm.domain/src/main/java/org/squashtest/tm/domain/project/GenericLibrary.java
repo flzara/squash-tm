@@ -46,7 +46,7 @@ import java.util.List;
  */
 @MappedSuperclass
 public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE> {
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 

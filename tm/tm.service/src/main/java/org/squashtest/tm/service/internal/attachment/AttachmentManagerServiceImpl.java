@@ -200,7 +200,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void copyAttachments(AttachmentHolder attachmentHolder) {
+	public void copyContentsOnExternalRepository(AttachmentHolder attachmentHolder) {
 		em.flush();
 		AttachmentList attachmentList = attachmentHolder.getAttachmentList();
 		for (Attachment attachment : attachmentList.getAllAttachments()) {

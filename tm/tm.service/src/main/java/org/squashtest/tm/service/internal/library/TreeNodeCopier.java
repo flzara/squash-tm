@@ -183,7 +183,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao, Sizes.NAME_MAX);
-		copyAttachments(copyFolder);
+		copyContentsOnExternalRepository (copyFolder);
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		Campaign copyCampaign = source.createCopy();
 		persistCopy(copyCampaign, campaignDao, Sizes.NAME_MAX);
 		copyCustomFields(source, copyCampaign);
-		copyAttachments(copyCampaign);
+		copyContentsOnExternalRepository (copyCampaign);
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		persitIteration(copyIteration);
 		copyIterationTestSuites(source, copyIteration);
 		copyCustomFields(source, copyIteration);
-		copyAttachments(copyIteration);
+		copyContentsOnExternalRepository (copyIteration);
 		this.okToGoDeeper = false;
 	}
 
@@ -223,7 +223,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		persistCopy(copyTestSuite, testSuiteDao, TestSuite.MAX_NAME_SIZE);
 		copyCustomFields(source, copyTestSuite);
 		copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);
-		copyAttachments(copyTestSuite);
+		copyContentsOnExternalRepository (copyTestSuite);
 	}
 
 	private void copyTestSuiteTestPlanToDestinationIteration(TestSuite source, TestSuite copy) {
@@ -248,7 +248,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionLinks(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
-		copyAttachments(copyRequirement.getCurrentVersion());
+		copyContentsOnExternalRepository (copyRequirement.getCurrentVersion());
 		//copy custom fields and requirement-version coverages for older versions
 		for (Entry<RequirementVersion, RequirementVersion> previousVersionCopyBySource : previousVersionsCopiesBySources
 			.entrySet()) {
@@ -259,7 +259,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			copyRequirementVersionCoverages(sourceVersion, copyVersion);
 			copyRequirementVersionLinks(sourceVersion, copyVersion);
 			copyCustomFields(sourceVersion, copyVersion);
-			copyAttachments(copyVersion);
+			copyContentsOnExternalRepository (copyVersion);
 		}
 
 		batchRequirement++;
@@ -276,9 +276,9 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		persistTestCase(copyTestCase);
 		copyCustomFields(source, copyTestCase);
 		copyRequirementVersionCoverage(source, copyTestCase);
-		copyAttachments(copyTestCase);
+		copyContentsOnExternalRepository (copyTestCase);
 
-		copyTestCase.getActionSteps().forEach(this::copyAttachments);
+		copyTestCase.getActionSteps().forEach(this::copyContentsOnExternalRepository );
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
@@ -472,8 +472,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		entityManager.flush();
 	}
 
-	private void copyAttachments(AttachmentHolder attachmentHolder){
-		attachmentManagerService.copyAttachments(attachmentHolder);
+	private void copyContentsOnExternalRepository (AttachmentHolder attachmentHolder){
+		attachmentManagerService.copyContentsOnExternalRepository(attachmentHolder);
 	}
 
 	@Override
