@@ -141,15 +141,5 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 		movedTcIds.add(testCase.getId());
 	}
 
-	@Override
-	public List<Long> getRequirementVersionToIndex() {
-		return movedReqVersionIds;
-
-	}
-
-	@Override
-	public List<Long> getTestCaseToIndex() {
-		return movedTcIds;
-	}
 
 }

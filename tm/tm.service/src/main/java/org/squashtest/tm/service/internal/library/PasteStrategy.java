@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>
@@ -113,8 +112,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private List<NODE> outputList;
 	private Collection<NodePairing> nextLayer;
 	private Collection<NodePairing> sourceLayer;
-	private Set<Long> tcIdsToIndex = new HashSet<>();
-	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
 	private boolean isReqMother = false;
 
 	// ******************* initialization *****************************
@@ -256,8 +253,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 		}
 
-		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
 
@@ -289,8 +284,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				}
 			}
 		}
-		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
+
 	}
 
 	private NODE transform(NODE srcNode, NodeContainer<TreeNode> destination, ReqToTestCaseConfiguration configuration) {
@@ -369,8 +363,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 		}
 
-		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
 	}
 
 
@@ -395,8 +387,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				}
 			}
 		}
-		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
+
 	}
 
 	private PasteOperation createNextLayerOperation() {

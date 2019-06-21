@@ -125,11 +125,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	private NodeContainer<? extends TreeNode> destination;
 
-
-	private List<Long> tcIdsToIndex = new ArrayList<>();
-	private List<Long> reqVersionIdsToIndex = new ArrayList<>();
-
-
 	private TreeNode copy;
 	private boolean okToGoDeeper = true;
 	private boolean projectChanged = true;
@@ -430,7 +425,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	private void copyRequirementVersionCoverages(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
 		List<RequirementVersionCoverage> copies = sourceVersion.createRequirementVersionCoveragesForCopy(copyVersion);
-		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
 	}
 
@@ -439,16 +433,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		requirementVersionLinkDao.addLinks(copies);
 	}
 
-	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
-		for (RequirementVersionCoverage covCpy : copies) {
-			tcIdsToIndex.add(covCpy.getVerifyingTestCase().getId());
-			reqVersionIdsToIndex.add(covCpy.getVerifiedRequirementVersion().getId());
-		}
-	}
-
 	private void copyRequirementVersionCoverage(TestCase source, TestCase copyTestCase) {
 		List<RequirementVersionCoverage> copies = source.createRequirementVersionCoveragesForCopy(copyTestCase);
-		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
 	}
 
@@ -476,14 +462,5 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		attachmentManagerService.copyAttachments(attachmentHolder);
 	}
 
-	@Override
-	public List<Long> getRequirementVersionToIndex() {
-		return reqVersionIdsToIndex;
-	}
-
-	@Override
-	public List<Long> getTestCaseToIndex() {
-		return tcIdsToIndex;
-	}
 
 }

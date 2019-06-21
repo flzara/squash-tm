@@ -345,14 +345,5 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	}
 
-	@Override
-	public List<Long> getRequirementVersionToIndex() {
-		return movedReqVersionIds;
-	}
-
-	@Override
-	public List<Long> getTestCaseToIndex() {
-		return movedTcIds;
-	}
 
 }
