@@ -151,11 +151,22 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 					"to store such credentials for human users"
 			);
 		}
-		username = UserContextHolder.getUsername();
 
 		storeContent(serverId, username, credentials, ContentType.CRED);
 	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
+	public void storeCurrentUserCredentials(long serverId, ManageableCredentials credentials) {
+		if (! credentials.allowsUserLevelStorage()){
+			throw new IllegalArgumentException(
+				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
+					"to store such credentials for human users"
+			);
+		}
+	 	String	username = UserContextHolder.getUsername();
+		storeContent(serverId, username, credentials, ContentType.CRED);
+	}
 
 
 	@Override

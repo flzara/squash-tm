@@ -65,6 +65,8 @@ public interface StoredCredentialsManager {
 	 */
 	void storeUserCredentials(long serverId, String username, ManageableCredentials credentials);
 
+	void storeCurrentUserCredentials(long serverId, ManageableCredentials credentials);
+
 	/**
 	 * Returns the stored credentials associated to a server for the given user, or null if none is defined.
 	 *

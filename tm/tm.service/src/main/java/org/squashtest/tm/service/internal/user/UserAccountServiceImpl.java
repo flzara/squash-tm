@@ -323,8 +323,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	private void storeContent(long serverId, ManageableCredentials content, StoredCredentials.ContentType contentType){
 
-		storedCredentialsManager.storeUserCredentials(serverId, null, content);
-
+		storedCredentialsManager.storeCurrentUserCredentials(serverId, content);
 	}
 
 	@Override
