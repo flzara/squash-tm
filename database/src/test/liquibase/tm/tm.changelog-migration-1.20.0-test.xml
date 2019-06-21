@@ -130,6 +130,20 @@
     </preConditions>
   </changeSet>
 
+  <changeSet id="tm-1.20.0-TM-282-test3" author="jprioux">
+
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        select count(*) from CORE_CONFIG where str_key in (
+          'lastindexing.campaign.date', 'lastindexing.campaign.version',
+          'lastindexing.requirement.date', 'lastindexing.requirement.version',
+          'lastindexing.testcase.date', 'lastindexing.testcase.version'
+        );
+      </sqlCheck>
+
+    </preConditions>
+  </changeSet>
+
   <changeSet id="tm-1.20.0-TM-13-test-uuid" author="amk" dbms="mysql, postgresql, h2">
     <preConditions>
       <sqlCheck expectedResult="0">

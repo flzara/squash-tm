@@ -78,7 +78,7 @@
       </column>
     </addColumn>
   </changeSet>
-   
+
   <changeSet id="tm-1.20.0-TM-220-add-missing-role-automation" author="agu">
     <comment>Add missing automation role following changeset tm-1.19.0-SQTM-510-add-roles-automation</comment>
     <sql>
@@ -317,16 +317,16 @@
     <addAutoIncrement tableName="QUERY_COLUMN_PROTOTYPE" columnName="QUERY_COLUMN_ID" columnDataType="BIGINT"/>
 
   </changeSet>
-  
+
   <changeSet id="tm-1.20.0-TM-282-01c" author="bsiri">
   	<comment>
-  		Adding unique constraint on QUERY_COLUMN_PROTOTYPE.LABEL since its likely to act as 
+  		Adding unique constraint on QUERY_COLUMN_PROTOTYPE.LABEL since its likely to act as
   		a surrogate primary key.
   	</comment>
-  	
+
   	<addNotNullConstraint tableName="QUERY_COLUMN_PROTOTYPE" columnName="LABEL" columnDataType="java.sql.Types.VARCHAR(255)"/>
   	<addUniqueConstraint tableName="QUERY_COLUMN_PROTOTYPE" columnNames="LABEL"/>
-  
+
   </changeSet>
 
 
@@ -824,7 +824,7 @@
       -- ----------------------------------------------- --
 
       INSERT INTO QUERY_COLUMN_PROTOTYPE (COLUMN_TYPE, ENTITY_TYPE, ENTITY_ROLE, LABEL, ATTRIBUTE_NAME, DATA_TYPE, BUSINESS) VALUES
-      
+
       ('ENTITY', 'REQUIREMENT', NULL, 'REQUIREMENT_ENTITY', NULL, 'ENTITY', FALSE),
       ('ENTITY', 'REQUIREMENT_VERSION', NULL, 'REQUIREMENT_VERSION_ENTITY', NULL, 'ENTITY', FALSE),
       ('ENTITY', 'TEST_CASE', NULL, 'TEST_CASE_ENTITY', NULL, 'ENTITY', FALSE),
@@ -856,7 +856,7 @@
       ('ENTITY', 'PROJECT', 'CAMPAIGN_PROJECT', 'CAMPAIGN_PROJECT_ENTITY', NULL, 'ENTITY', FALSE),
       ('ENTITY', 'TEST_SUITE', 'ITEM_SUITE', 'ITEM_SUITE_ENTITY', NULL, 'ENTITY', FALSE),
       ('ENTITY', 'AUTOMATION_REQUEST', NULL, 'AUTOMATION_REQUEST_ENTITY', NULL, 'ENTITY', FALSE),
-      
+
 
       ('ATTRIBUTE', 'MILESTONE', 'CAMPAIGN_MILESTONE', 'CAMPAIGN_MILESTONE_LABEL', 'label', 'STRING', FALSE),
 
@@ -1112,6 +1112,18 @@
 
     <sql>
       UPDATE QUERY_COLUMN_PROTOTYPE SET DATA_TYPE = 'TEXT' WHERE LABEL IN ('TEST_CASE_DESCRIPTION', 'REQUIREMENT_VERSION_DESCRIPTION', 'TEST_CASE_PREQUISITE')
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-282-delete-lastindexing-properties" author="jprioux">
+    <comment>Delete all lastindexing properties from core config</comment>
+    <sql>
+      DELETE FROM CORE_CONFIG WHERE STR_KEY IN (
+        'lastindexing.campaign.date', 'lastindexing.campaign.version',
+        'lastindexing.requirement.date', 'lastindexing.requirement.version',
+        'lastindexing.testcase.date', 'lastindexing.testcase.version'
+      );
     </sql>
 
   </changeSet>
