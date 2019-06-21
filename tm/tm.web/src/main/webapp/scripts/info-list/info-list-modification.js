@@ -27,7 +27,6 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 
 	translator.load([
 	"dialog.delete.info-list.used.message",
-	"dialog.info-list.warning.reindex.before",
 	"dialog.delete.info-list.unused.message"]);
 
 	var infoListModificationView = Backbone.View.extend({
@@ -70,11 +69,9 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 			}).done(function(data) {
 				if (data === true){
 					message.text(translator.get("dialog.delete.info-list.used.message"));
-					reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
 				}
 				else {
 					message.text(translator.get("dialog.delete.info-list.unused.message"));
-					reindexWarn.text("");
 				}
 
 			});

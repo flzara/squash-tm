@@ -252,22 +252,6 @@
 </div>
 
 <%-- ================================================
-	Indexation Popup
-================================================ --%>
-<f:message var="automationWorkflowChange" key="dialog.project.automation-workflow-change.title" />
-<div id="change-workflow-popup" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index"><f:message key="dialog.info-list.warning.reindex.before"/></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-    <input type="button"  value="${confirmLabel}" data-def="mainbtn,evt=confirm" />
-    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-  </div>
-
-</div>
-
-<%-- ================================================
 	Add Project Popup.
 ================================================= --%>
 
