@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.servers;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.StoredCredentials;
 
 /**
  * <p>
@@ -63,7 +65,6 @@ public interface StoredCredentialsManager {
 	 */
 	void storeUserCredentials(long serverId, String username, ManageableCredentials credentials);
 
-
 	/**
 	 * Returns the stored credentials associated to a server for the given user, or null if none is defined.
 	 *
@@ -75,6 +76,17 @@ public interface StoredCredentialsManager {
 	 * @throws MissingEncryptionKeyException if if no secret key was configured
 	 */
 	ManageableCredentials findUserCredentials(long serverId, String username);
+
+	/**
+	 * Returns the stored credentials associated to a server for the current user, or null if none is defined.
+	 *
+	 * @param serverId
+	 * @return the credentials or null if none are defined
+	 * @throws EncryptionKeyChangedException if credentials exist but cannot be loaded because they were encrypted with
+	 * 			a different key
+	 * @throws MissingEncryptionKeyException if if no secret key was configured
+	 */
+	ManageableCredentials findCurrentUserCredentials(long serverId);
 
 
 	/**

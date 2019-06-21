@@ -260,14 +260,10 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			}
 
 
-			// use the credentials if present, or try fallback
+			// use the credentials if present
 			if (maybeCredentials.isPresent()){
 				LOGGER.debug("BugTrackerAutoconnectCallback : found credentials from the provider");
 				credentials = maybeCredentials.get();
-			}
-			else if (canTryUsingEvent(server)){
-				LOGGER.debug("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
-				credentials = buildFromAuthenticationEvent();
 			}
 
 			return credentials;
@@ -281,19 +277,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 
 
-		// for now we assume that only String credentials are suitable (as passwords),
-		// and the server is set to auth policy USER
-		private boolean canTryUsingEvent(BugTracker server){
-			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER && 
-					server.getAuthenticationProtocol() == AuthenticationProtocol.BASIC_AUTH &&
-					springsecCredentials instanceof String);
-		}
 
-		// for now we assume that BasicAuthentication is what we need
-		// the cast is safe thanks to canTryUsingEvent
-		private Credentials buildFromAuthenticationEvent(){
-			return new BasicAuthenticationCredentials(user, (String)springsecCredentials);
-		}
 
 
 		private void warnIfCredentialsOfWrongType(Credentials credentials, AuthenticationProtocol protocol){

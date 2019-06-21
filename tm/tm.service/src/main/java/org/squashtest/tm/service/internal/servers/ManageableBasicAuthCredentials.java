@@ -53,6 +53,10 @@ public class ManageableBasicAuthCredentials extends BasicAuthenticationCredentia
 		return true;
 	}
 
+	@Override
+	public boolean allowsUserLevelStorage() {
+		return true;
+	}
 
 	private boolean isValid(){
 		return ! StringUtils.isBlank(getUsername());

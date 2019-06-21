@@ -24,6 +24,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -36,6 +37,13 @@
 <f:message var="bindMilestoneDialogTitle" key="message.PickAMilestone"/>
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
+<f:message var="saveLabel" key="label.save"/>
+<f:message var="removeLabel" key="label.Remove"/>
+<f:message var="testLabel" key="label.test"/>
+<f:message var="saveMsg" key="label.savecredentials"/>
+<f:message var="tokenLabel" key="label.Password"/>
+<f:message var="revokeTokenLabel" key="label.revoke.token"/>
+
 
 <c:url var="userAccountUrl" value="/user-account/update" />
 
@@ -260,6 +268,52 @@
             </div>
           </div>
         </div>
+
+<div>
+        <br/>
+        <c:set var="map" value="${bugtrackerCredentialsMap}"/>
+          <c:forEach items="${bugtrackerCredentialsMap}" var="bugtracker">
+            <div style="display:inline-flex;padding: 15px;">
+ <div class="display-table container-credential std-border std-border-radius" style="padding:5px; width: 200px; height: 190px " ; data-bugtrackerid="${bugtracker.key.id}">
+          <div class="display-table-cell" style="line-height:22px;" >
+
+                <c:choose>
+                <c:when test="${bugtracker.key.authenticationProtocol == 'BASIC_AUTH'}">
+                  <div align="center"><span style="font-weight: bold"> ${ bugtracker.key.name } </span><br/> <label>(${bugtracker.key.url})</label> </div>
+                  <div align="center"><span style="padding-right: 70px;">  <label style="padding-right: 51px"><f:message key="label.Login"/></label></span>
+                <br/> <input type="text" class="user-login" value="${map[bugtracker.key].username}" data-bind="username"></div>
+              <br/>
+                  <div align="center"><label  style="padding-right: 41px"> <f:message key="label.token.password"/></label> <br/>
+                  <input type="password" class="user-mp" value="${(map[bugtracker.key].password)}" data-bind="password"> </div><br/>
+
+          <div align="center">    <input type="button" class="test-credentials-btn sq-btn"  value="${testLabel}" data-bugtrackerid="${bugtracker.key.id}" data-bind="${bugtracker.key.authenticationProtocol}" />
+            <input type="button" class="credentials-btn sq-btn"  value="${saveLabel}" data-bugtrackerid="${bugtracker.key.id}"/> </div>
+          </div>
+
+
+
+   </c:when>
+
+
+    <c:when test="${bugtracker.key.authenticationProtocol =='OAUTH_1A'}">
+
+      <div  class="display-table-cell" align="center" style="height: 206px">
+
+        <span style="font-weight: bold"> ${ bugtracker.key.name } </span> <br/> <label>(${bugtracker.key.url})</label> <br/><br/>
+        <input type="button" class="remove-btn sq-btn " value="${revokeTokenLabel}" data-bugtrackerid="${bugtracker.key.id}"/>
+       </div>
+      </div>
+      </div>
+    </c:when>
+
+   </c:choose>
+ </div>
+   </div>
+
+
+          </c:forEach>
+          </div>
+        </div>
      	</jsp:attribute>
    	</comp:toggle-panel>
 
@@ -369,5 +423,72 @@
 
 				});
   		});
+              $(".credentials-btn").on('click', function (saveCred) {
+                var btn = saveCred.currentTarget;
+                var bugtrackerId =btn.attributes["data-bugtrackerid"].value;
+                var jquerybtn = $(btn);
+                var container = jquerybtn.parents(".container-credential");
+                var loginInput = container.find(".user-login").val();
+                var mpInput = container.find(".user-mp").val();
+
+                  $.ajax({
+                    url: "user-account/bugtracker/"+bugtrackerId+"/credentials",
+                    method: "POST",
+                    data: {
+                      username: loginInput,
+                      password: mpInput
+                    },
+                  }).success(function () {
+                    squashtm.notification.showInfo(<f:message key="label.savecredentials"/>)
+                  });
+              });
+
+    $(".remove-btn").on('click', function (remove) {
+                var btn = remove.currentTarget;
+                var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
+
+                $.ajax({
+                  url:"user-account/bugtracker/"+bugtrackerId+"/credentials",
+                  method: "DELETE"
+                  }).success((function () {
+                    squashtm.notification.showInfo(<f:message key="label.revoke.token.success"/>)
+                  }))
+
+
+    });
+
+    $(".test-credentials-btn").on('click', function (testCred) {
+      var btn = testCred.currentTarget;
+      var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
+      var prot = btn.attributes["data-bind"].value;
+      var jquerybtn = $(btn);
+      var container = jquerybtn.parents(".container-credential");
+      var loginInput = container.find(".user-login").val();
+      var mpInput = container.find(".user-mp").val();
+
+
+      $.ajax({
+        url:"user-account/bugtracker/"+bugtrackerId+"/credentials/validator",
+        method: "POST",
+        data: {
+          username: loginInput,
+          password: mpInput,
+          type: prot,
+        }
+
+      })
+       .fail(function () {
+         squashtm.notification.showWarning(<f:message key="label.connexion.failed"/>)
+       }).success(function () {
+          squashtm.notification.showInfo(<f:message key="label.connexion.success"/>)
+        })
+    });
+
+
   });
+
 </script>
+
+
+
+

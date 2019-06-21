@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.servers
 
+import org.junit.Ignore
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
@@ -140,21 +141,6 @@ class CredentialsProviderImplTest extends Specification{
 
 
 	// ***************** user cache usage **********************************
-
-	def "should cache the credentials because the credentials are cacheable and server auth policy is set to 'users'"(){
-
-		given:
-		ThirdPartyServer server = server(AuthenticationPolicy.USER)
-
-		def credentials = cachableCreds()
-
-		when:
-		provider.cacheCredentials(server, credentials)
-
-		then:
-		provider.getCredentialsFromCache(server) != null
-
-	}
 
 	def "should not cache the credentials despite cachability because the server auth policy is set to 'app level'"(){
 
@@ -288,7 +274,7 @@ class CredentialsProviderImplTest extends Specification{
 	// ******************* scaffolding **************
 
 	def cache(server, credentials){
-		provider.threadedCache.get().cacheIfAllowed(server, credentials)
+		provider.threadedCache.get().cache.put(server.getId(), credentials)
 	}
 
 	def storeForUser(serverId, credentials){
@@ -334,5 +320,6 @@ class CredentialsProviderImplTest extends Specification{
 			})
 		)
 	}
+
 
 }

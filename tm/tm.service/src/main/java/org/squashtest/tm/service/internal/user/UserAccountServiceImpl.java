@@ -27,31 +27,45 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.Credentials;
+import org.squashtest.tm.domain.servers.StoredCredentials;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.servers.StoredCredentialsManagerImpl;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.servers.*;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
@@ -87,6 +101,22 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Inject
 	private TeamDao teamDao;
+
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	private BugTrackerFinderService bugTrackerFinder;
+
+	@Inject
+	private StoredCredentialsManager storedCredentialsManager;
+
+	@Inject
+	private BugTrackerDao bugTrackerDao;
+
+	@Inject
+	private BugTrackersService bugTrackerService;
+
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -220,6 +250,26 @@ public class UserAccountServiceImpl implements UserAccountService {
 		user.setLastConnectedOn(new Date());
 	}
 
+	@Override
+	public List<BugTracker> findAllUserBugTracker() {
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
+		return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
+	}
+
+	@Override
+	public void saveCurrentUserCredentials(long serverId, ManageableCredentials credentials) {
+		if (!credentials.allowsUserLevelStorage()){
+			throw new IllegalArgumentException(
+				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
+					"to store such credentials as application-level credentials"
+			);
+		}
+		   storeContent(serverId, credentials, StoredCredentials.ContentType.CRED);
+
+	}
+
+
 	/* ******************* admin only *********** */
 
 	@Override
@@ -270,4 +320,32 @@ public class UserAccountServiceImpl implements UserAccountService {
 		}
 	}
 
+
+	private void storeContent(long serverId, ManageableCredentials content, StoredCredentials.ContentType contentType){
+
+		storedCredentialsManager.storeUserCredentials(serverId, null, content);
+
+	}
+
+	@Override
+	public void testCurrentUserCredentials(long bugtrackerId, ManageableCredentials credentials) {
+
+		BugTracker bt = bugTrackerDao.getOne(bugtrackerId);
+		Credentials usableCredentials = credentials.build(storedCredentialsManager, bt, null);
+
+		if (usableCredentials == null){
+			throw new BugTrackerNoCredentialsException("credentials could not be built, either because the credentials themselves "
+				+ "are not suitable, or because the protocol configuration is incomplete/invalid", null);
+		}
+
+		bugTrackerService.testCredentials(bt, usableCredentials);
+	}
+
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteCurrentUserCredentials(long serverId) {
+		storedCredentialsManager.deleteServerAuthConfiguration(serverId);
+
+	}
 }

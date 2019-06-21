@@ -88,67 +88,6 @@ class BugTrackerAutoconnectCallbackTest extends Specification{
 
 	}
 
-	def "the authentication event is usable for fallback credentials"(){
-
-		given:
-			BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER)
-
-		when:
-			def res = auto.canTryUsingEvent bt
-
-		then:
-			res == true
-
-	}
-
-	def "the authentication event is not usable for fallback because of auth policy"(){
-
-		given:
-		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.APP_LEVEL, authenticationProtocol: AuthenticationProtocol.BASIC_AUTH)
-
-		when:
-		def res = auto.canTryUsingEvent bt
-
-		then:
-		res == false
-
-	}
-
-
-	def "the authentication event is not usable for fallback because of auth protocol"(){
-
-		given:
-		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER, authenticationProtocol: AuthenticationProtocol.OAUTH_1A)
-
-		when:
-		def res = auto.canTryUsingEvent bt
-
-		then:
-		res == false
-
-	}
-
-	def "the authentication event is not usable for fallback because evt credentials are not suitable"(){
-
-		given:
-		BugTracker bt = new BugTracker(authenticationPolicy: AuthenticationPolicy.USER, authenticationProtocol: AuthenticationProtocol.BASIC_AUTH)
-		auto.springsecCredentials = new Object()
-
-		when:
-		def res = auto.canTryUsingEvent bt
-
-		then:
-		res == false
-
-	}
-
-	def "create credentials from the auth event"(){
-
-		expect:
-		auto.buildFromAuthenticationEvent().username == "bob" &&
-		auto.buildFromAuthenticationEvent().password == "eventpassword" as char[]
-
-	}
 
 
 	def "should retrieve the credentials from the authentication provider (personal credentials)"(){
@@ -182,21 +121,6 @@ class BugTrackerAutoconnectCallbackTest extends Specification{
 		res == creds
 	}
 
-	def "should retrieve the credentials using fallback"(){
-
-		given :
-		BugTracker bt = new BugTracker(authenticationPolicy:  AuthenticationPolicy.USER)
-		credentialsProvider.getCredentials(bt) >> Optional.empty()
-
-		when:
-		def res = auto.fetchCredentialsOrNull(bt)
-
-		then:
-		res.username == "bob"
-		res.password == "eventpassword" as char[]
-
-
-	}
 
 
 	def "attempts authentication on the given server"(){
@@ -210,18 +134,14 @@ class BugTrackerAutoconnectCallbackTest extends Specification{
 		)
 
 		and:
-		credentialsProvider.getCredentials(_) >> Optional.empty()
+		def creds = new BasicAuthenticationCredentials("bob", "managedpassword")
+		credentialsProvider.getCredentials(_) >> Optional.of(creds)
 
 		when :
 		auto.attemptAuthentication bt
 
 		then :
-		1 * bugTrackersLocalService.validateCredentials(bt, { credentials ->
-			credentials instanceof BasicAuthenticationCredentials &&
-				credentials.username == "bob" &&
-				credentials.password == "eventpassword" as char[]
-
-		}, true);
+		1 * bugTrackersLocalService.validateCredentials(bt, creds, true);
 
 	}
 
