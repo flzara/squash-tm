@@ -41,7 +41,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				this.configureDeleteInfoListItemPopup();
 				this.configureChangeLabelPopup();
 				this.configureChangeCodePopup();
-				this.configureReindexPopup();
 				this.$("#add-info-list-item-button").on("click", this.openAddItemPopup);
 			},
 
@@ -257,7 +256,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					} else {
 
 						var message = $("#delete-info-list-item-warning");
-						var reindexWarn = $("#delete-info-list-item-warning-reindex");
 						$.ajax({
 							type: 'GET',
 							url: routing.buildURL('info-list-item.isUsed', id)
@@ -265,7 +263,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 							if (isUsed === true) {
 								message.text(translator.get("dialog.delete.info-list-item.used.message"));
-								reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
 							} else {
 								message.text(translator.get("dialog.delete.info-list-item.unused.message"));
 							}
@@ -278,24 +275,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				});
 			},
 
-			configureReindexPopup: function () {
-				var self = this;
-				var reindexPopup = $("#reindex-popup");
-				this.reindexPopup = reindexPopup.formDialog();
-
-				reindexPopup.on('formdialogcancel', function () {
-					self.reindexPopup.formDialog('close');
-				});
-
-				reindexPopup.on('formdialogconfirm', function () {
-				document.location.href = squashtm.app.contextRoot + "administration/indexes";
-				});
-			},
-
-			openReindexPopup: function () {
-				var self = this;
-				self.reindexPopup.formDialog('open');
-			},
 			configureDeleteInfoListItemPopup: function () {
 				var self = this;
 
@@ -323,9 +302,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					url: routing.buildURL("info-list-item.delete", self.config.data.infoList.id, id)
 				}).done(function (data) {
 					self.optionsTable._fnAjaxUpdate();
-					if (isUsed) {
-						self.openReindexPopup();
-					}
 					self.DeleteInfoListItemPopup.formDialog('close');
 				});
 			},
@@ -338,7 +314,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				var data = self.optionsTable.fnGetData(row);
 				var id = data['entity-id'];
 				var value = $(codeCell).text();
-				var reindexWarn = $("#change-code-reindex-warn");
 
 				//clean previous error message in popup
 				Forms.input($("#change-code-popup-info-list-item-code")).clearState();
@@ -347,13 +322,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					type: 'GET',
 					url: routing.buildURL('info-list-item.isUsed', id)
 				}).done(function (isUsed) {
-
-					if (isUsed === true) {
-						reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
-					} else {
-						reindexWarn.text("");
-					}
-
 					self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val(id);
 					self.ChangeCodePopup.formDialog("open");
 					self.ChangeCodePopup.data('isUsed', isUsed);
@@ -417,9 +385,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 							url: routing.buildURL("info-list-item.info", id)
 						}).done(function () {
 							self.optionsTable._fnAjaxUpdate();
-							if (isUsed) {
-								self.openReindexPopup();
-							}
 							self.ChangeCodePopup.formDialog('close');
 						});
 					}
