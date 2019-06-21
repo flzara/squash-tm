@@ -132,11 +132,6 @@
 			exclude: ["common"]
 		},
 		{
-			name: "index-manager",
-			include: ["app/ws/squashtm.workspace", "search/index-administration-view"],
-			exclude: ["common"]
-		},
-		{
 			name: "info-list-manager",
 			include: ["app/pubsub", "backbone.wreqr", "moment", "./info-list-manager/InfoListsTable", "./info-list-manager/NewInfoListPanel",
 				"./info-list-manager/InfoListModel", "app/ws/squashtm.workspace"
