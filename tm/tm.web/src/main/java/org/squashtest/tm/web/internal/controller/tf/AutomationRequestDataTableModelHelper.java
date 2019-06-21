@@ -83,6 +83,7 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put("listScriptConflict",  item.getTestCase() != null && item.getTestCase().getAutomationRequest() != null ? convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()) : null);
 		data.put("writable", isWritable(item.getTestCase(), true));
 		data.put("writableAutom", isWritable(item.getTestCase(), false));
+		data.put("isManual", item.isManual());
 
 		return data;
 	}

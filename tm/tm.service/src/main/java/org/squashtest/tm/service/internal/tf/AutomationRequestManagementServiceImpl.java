@@ -399,6 +399,10 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 		requestDao.updateIsManual(tc.getId(), false);
 
+		if(tc.getAutomationRequest().getConflictAssociation()!=null && !tc.getAutomationRequest().getConflictAssociation().isEmpty()){
+			requestDao.updateConflictAssociation(tc.getId(), "");
+		}
+
 		testCaseModificationService.bindAutomatedTestAutomatically(tc.getId(), trueAutomationProject.getId(), automatedTest.getName());
 	}
 

@@ -240,7 +240,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                        if (data['script'] !== '-' && !isGherkin && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
+                        if (data['script'] !== '-' && data['isManual'] && !isGherkin && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -679,6 +679,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 												if(Object.keys(map).length === 0){
 													self.updateStatus(domtable, "AUTOMATED");
 												} else {
+													domtable.refresh();
 													notification.showWarning(translator.get("automation.notification.script.none"));
 												}
 											});
