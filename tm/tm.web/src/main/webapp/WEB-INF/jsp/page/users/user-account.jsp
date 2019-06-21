@@ -284,7 +284,7 @@
                 <br/> <input type="text" class="user-login" value="${map[bugtracker.key].username}" data-bind="username"></div>
               <br/>
                   <div align="center"><label  style="padding-right: 41px"> <f:message key="label.token.password"/></label> <br/>
-                  <input type="password" class="user-mp" value="${(map[bugtracker.key].password)}" data-bind="password"> </div><br/>
+                  <input type="password" class="user-mp" value="${fn.join(map[bugtracker.key].password)}" data-bind="password"> </div><br/>
 
           <div align="center">    <input type="button" class="test-credentials-btn sq-btn"  value="${testLabel}" data-bugtrackerid="${bugtracker.key.id}" data-bind="${bugtracker.key.authenticationProtocol}" />
             <input type="button" class="credentials-btn sq-btn"  value="${saveLabel}" data-bugtrackerid="${bugtracker.key.id}"/> </div>
