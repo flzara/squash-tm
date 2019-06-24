@@ -54,6 +54,7 @@ import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -114,7 +115,7 @@ public class CustomExportController {
 
 	@ResponseBody
 	@RequestMapping(value = "/new/{parentNodeId}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
-	public String createNewCustomExport(@RequestBody CustomReportCustomExport customExport, @PathVariable("parentNodeId") long parentNodeId) {
+	public String createNewCustomExport(@RequestBody @Valid CustomReportCustomExport customExport, @PathVariable("parentNodeId") long parentNodeId) {
 		CustomReportLibraryNode newNode = reportLibraryNodeService.createNewNode(parentNodeId, customExport);
 		return String.valueOf(newNode.getId());
 	}
