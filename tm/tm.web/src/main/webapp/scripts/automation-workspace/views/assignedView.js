@@ -443,12 +443,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     });
                 };
 
-                var reset = function () {
-                    if (testAutomationTree.jstree('get_selected').length > 0) {
-                        testAutomationTree.jstree('get_selected').deselect();
-                    }
-                };
-
                 // ****************** transaction ************
 
 
@@ -482,12 +476,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 dialog.on("formdialogopen", function () {
-                    if (dialog.data('model-cache') === undefined) {
-                        dialog.initAjax = initDialogCache();
-                    } else {
-                        reset();
-                    }
-
+									dialog.initAjax = initDialogCache();
                 });
 
                 dialog.on('formdialogclose', function () {
