@@ -39,6 +39,7 @@ import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -102,6 +103,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			.filter(column -> column.getLabel().getJooqTableField() != null)
 			.map(column -> column.getLabel().getJooqTableField())
 			.collect(Collectors.toList());
+
 		// We need to include the Entity id field in the List if at least one CustomField is requested for this Entity
 		for(EntityType entityType : cufEntityList) {
 			Field entityIdTableField = CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType);
@@ -255,13 +257,13 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	}
 
 	/**
-	 * Build th List of Fields that compose the Group By clause of the Query.
+	 * Build the Set of Fields that compose the Group By clause of the Query.
 	 * @param queryDepth The depth of the Query
 	 * @param selectedColumns All the selected columns in the CustomExport
-	 * @return The List of Fields composing the Group By clause of the Query
+	 * @return The Set of Fields composing the Group By clause of the Query
 	 */
-	private List<Field<?>> buildGroupByFieldList(int queryDepth, List<CustomReportCustomExportColumn> selectedColumns) {
-		List<Field<?>> groupByFieldList = new ArrayList<>();
+	private Set<Field<?>> buildGroupByFieldList(int queryDepth, List<CustomReportCustomExportColumn> selectedColumns) {
+		Set<Field<?>> groupByFieldList = new HashSet<>();
 		// Add mandatory primary keys to the group by clause
 		groupByFieldList.add(CAMPAIGN.CLN_ID);
 		if(queryDepth > 1) {

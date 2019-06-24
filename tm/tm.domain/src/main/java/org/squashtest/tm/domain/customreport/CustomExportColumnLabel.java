@@ -235,7 +235,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	TEST_SUITE_CUF(
 		null,
 		null,
-		null,
+		TEST_SUITE.ID,
 		EntityType.TEST_SUITE
 	),
 

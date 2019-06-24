@@ -76,10 +76,16 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 	@Override
 	public Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(long campaignId, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
-		// Fetch all the Entities involved in the Campaign
+		// Fetch all the Entities involved in the Campaign which cuf were requested
 		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(campaignId, entityTypeToCufIdsListMap.keySet());
+		if(allRequestedEntitiesInCampaign.isEmpty()) {
+			return null;
+		}
+		// Build cuf Query
 		SelectSelectStep query = buildCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
+		// Execute the cuf Query
 		Iterator<Record> queryResult = query.fetch().iterator();
+		// Build the resulting map
 		return buildResultMapFromQueryResult(queryResult);
 	}
 
