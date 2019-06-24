@@ -134,11 +134,7 @@
 
     <preConditions>
       <sqlCheck expectedResult="0">
-        select count(*) from CORE_CONFIG where str_key in (
-          'lastindexing.campaign.date', 'lastindexing.campaign.version',
-          'lastindexing.requirement.date', 'lastindexing.requirement.version',
-          'lastindexing.testcase.date', 'lastindexing.testcase.version'
-        );
+        select count(*) from CORE_CONFIG where str_key like 'lastindexing.%';
       </sqlCheck>
 
     </preConditions>

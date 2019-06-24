@@ -1119,11 +1119,7 @@
   <changeSet id="tm-1.20.0-TM-282-delete-lastindexing-properties" author="jprioux">
     <comment>Delete all lastindexing properties from core config</comment>
     <sql>
-      DELETE FROM CORE_CONFIG WHERE STR_KEY IN (
-        'lastindexing.campaign.date', 'lastindexing.campaign.version',
-        'lastindexing.requirement.date', 'lastindexing.requirement.version',
-        'lastindexing.testcase.date', 'lastindexing.testcase.version'
-      );
+      DELETE FROM CORE_CONFIG WHERE STR_KEY LIKE 'lastindexing.%';
     </sql>
 
   </changeSet>
