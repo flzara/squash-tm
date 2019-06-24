@@ -225,7 +225,11 @@ public class CustomExportCSVHelper {
 			if(entityId != null) {
 				EntityReference entityReference = new EntityReference(entityType, entityId);
 				Map<Long, Object> cufValuesMap = cufMap.get(entityReference);
-				value = cufValuesMap.get(cufId);
+				// this map can be null if the entityReference exists but can't have cuf
+				// it happens for ExecutionSteps from gherkin TestCase executions
+				if(cufValuesMap != null) {
+					value = cufValuesMap.get(cufId);
+				}
 			}
 		}
 		return value;
