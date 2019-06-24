@@ -476,7 +476,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 dialog.on("formdialogopen", function () {
-									dialog.initAjax = initDialogCache();
+					dialog.initAjax = initDialogCache();
                 });
 
                 dialog.on('formdialogclose', function () {
