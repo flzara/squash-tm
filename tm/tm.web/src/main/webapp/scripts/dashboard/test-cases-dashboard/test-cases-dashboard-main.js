@@ -100,19 +100,19 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 			search.fields.status.type = "LIST";
 			switch (pointIndex) {
 				case 0:
-					search.fields.status.values = ["1-WORK_IN_PROGRESS"];
+					search.fields.status.values = ["WORK_IN_PROGRESS"];
 					break;
 				case 1:
-					search.fields.status.values = ["2-UNDER_REVIEW"];
+					search.fields.status.values = ["UNDER_REVIEW"];
 					break;
 				case 2:
-					search.fields.status.values = ["3-APPROVED"];
+					search.fields.status.values = ["APPROVED"];
 					break;
 				case 3:
-					search.fields.status.values = ["5-TO_BE_UPDATED"];
+					search.fields.status.values = ["TO_BE_UPDATED"];
 					break;
 				case 4:
-					search.fields.status.values = ["4-OBSOLETE"];
+					search.fields.status.values = ["OBSOLETE"];
 					break;
 			}
 		}
@@ -122,16 +122,16 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 			search.fields.importance.type = "LIST";
 			switch (pointIndex) {
 				case 0:
-					search.fields.importance.values = ["4-LOW"];
+					search.fields.importance.values = ["LOW"];
 					break;
 				case 1:
-					search.fields.importance.values = ["3-MEDIUM"];
+					search.fields.importance.values = ["MEDIUM"];
 					break;
 				case 2:
-					search.fields.importance.values = ["2-HIGH"];
+					search.fields.importance.values = ["HIGH"];
 					break;
 				case 3:
-					search.fields.importance.values = ["1-VERY_HIGH"];
+					search.fields.importance.values = ["VERY_HIGH"];
 					break;
 			}
 		}
