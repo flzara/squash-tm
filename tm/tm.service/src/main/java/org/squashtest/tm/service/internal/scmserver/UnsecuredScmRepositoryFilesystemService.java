@@ -207,7 +207,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	private String buildTestCaseStandardRelativePath(String foldersPath, TestCase testCase) {
 		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
 		String standardName = strategy.createFilenameFor(testCase);
-		foldersPath = foldersPath.isEmpty() ? "" : foldersPath + "/";
 		return foldersPath + standardName;
 	}
 
@@ -220,7 +219,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	private String buildTestCaseBackUpRelativePath(String foldersPath, TestCase testCase) {
 		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
 		String standardName = strategy.backupFilenameFor(testCase);
-		foldersPath = foldersPath.isEmpty() ? "" : foldersPath + "/";
 		return foldersPath + standardName;
 	}
 
@@ -228,7 +226,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * Given a Test Case, compute its corresponding file's folders path.
 	 * The folders path is the relative path from the working directory but not containing the name of the file,
 	 * so it only contains the folders.
-	 * Ex: A test case in 'Project_2/main_folder/sub_folder/test_case_7' will compute the path 'main_folder/sub_folder'
+	 * Ex: A test case in 'Project_2/main_folder/sub_folder/test_case_7' will compute the path 'main_folder/sub_folder/'
 	 * Ex: A test case in the root of a library will compute an empty string
 	 * @param testCase The Test Case which path is to compute
 	 * @return The folders path of the given Test Case
@@ -263,11 +261,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @throws IOException
 	 */
 	private File createTestNominal(ScmRepository scm, TestCase testCase) throws IOException{
-		ScriptToFileStrategy strategy = strategyFor(testCase.getKind());
-
-		String filename = strategy.createFilenameFor(testCase);
-
-		return doCreateTestFile(scm, filename);
+		String foldersPath = getFoldersPath(testCase);
+		String fileRelativePath = buildTestCaseStandardRelativePath(foldersPath, testCase);
+		return doCreateTestFile(scm, fileRelativePath);
 	}
 
 	/**
@@ -279,11 +275,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @throws IOException
 	 */
 	public File createTestBackup(ScmRepository scm, TestCase testCase) throws IOException{
-		ScriptToFileStrategy strategy = strategyFor(testCase.getKind());
-
-		String filename = strategy.backupFilenameFor(testCase);
-
-		return doCreateTestFile(scm, filename);
+		String foldersPath = getFoldersPath(testCase);
+		String fileRelativePath = buildTestCaseBackUpRelativePath(foldersPath, testCase);
+		return doCreateTestFile(scm, fileRelativePath);
 	}
 
 
@@ -295,22 +289,18 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @return
 	 */
 	private File doCreateTestFile(ScmRepository scm, String filename) throws IOException{
-
 		File workfolder = scm.getWorkingFolder();
-
 		File newFile = new File(workfolder, filename);
-
 		if (newFile.exists()){
 			LOGGER.warn("retrieved physical file '{}' while in the file creation routine... it should have been detected earlier. This is an abnormal situation. " +
 					"Anyway, this file ",
 				newFile.getAbsolutePath());
 		}
 		else{
+			tryCreateFolders(newFile.getParentFile());
 			newFile.createNewFile();
 			LOGGER.trace("new file created : '{}'", newFile.getAbsolutePath());
 		}
-
-
 		return newFile;
 
 	}
