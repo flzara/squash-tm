@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "require", "squash.translator", "./campaign-progression-view", "./test-inventory-table",
-		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "../basic-objects/success-rate-view",  
+		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "../basic-objects/success-rate-view",
 		"../SuperMasterView", "../dashboard-utils" ],
 		function(require, translator, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
 				SuperMasterView, utils) {
@@ -144,16 +144,16 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				switch (importance){
 				case 0 :
-					importanceValues = [ "1-VERY_HIGH" ];
+					importanceValues = [ "VERY_HIGH" ];
 				break;
 				case 1 :
-					importanceValues = [ "2-HIGH" ];
+					importanceValues = [ "HIGH" ];
 				break;
 				case 2 :
-					importanceValues = [ "3-MEDIUM" ];
+					importanceValues = [ "MEDIUM" ];
 				break;
 				case 3 :
-					importanceValues = [ "4-LOW" ];
+					importanceValues = [ "LOW" ];
 				break;
 				}
 
@@ -161,15 +161,15 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				switch (status){
 
 				case 0 :
-					statusValues = [ "3-SUCCESS","4-WARNING", "10-SETTLED"];
+					statusValues = [ "SUCCESS","WARNING", "SETTLED"];
 					break;
 
 				case 1 :
-					statusValues = [ "5-FAILURE", "7-ERROR"];
+					statusValues = [ "FAILURE", "ERROR"];
 					break;
 
 				case 2 :
-					statusValues = ["6-BLOCKED","8-NOT_RUN","9-UNTESTABLE","9-NOT_FOUND"];
+					statusValues = ["BLOCKED","NOT_RUN","UNTESTABLE","NOT_FOUND"];
 					break;
 
 				}
@@ -186,28 +186,28 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				switch (pointIndex) {
 				case 0:
-					values = [ "1-READY" ];
+					values = [ "READY" ];
 					break;
 				case 1:
-					values = [ "2-RUNNING" ];
+					values = [ "RUNNING" ];
 					break;
 				case 2:
-					values = [ "3-SUCCESS"];
+					values = [ "SUCCESS"];
 					break;
 				case 3:
-					values = [ "10-SETTLED" ];
+					values = [ "SETTLED" ];
 					break;
 
 				case 4:
-					values = [ "5-FAILURE"];
+					values = [ "FAILURE"];
 					break;
 
 				case 5:
-					values = [ "6-BLOCKED" ];
+					values = [ "BLOCKED" ];
 					break;
 
 				case 6:
-					values = [ "9-UNTESTABLE" ];
+					values = [ "UNTESTABLE" ];
 					break;
 
 				}
@@ -220,23 +220,23 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				search.fields.executionStatus = {};
 				search.fields.executionStatus.type  = "LIST";
-				search.fields.executionStatus.values = ["1-READY","2-RUNNING"];
+				search.fields.executionStatus.values = ["READY","RUNNING"];
 
 				var type = "LIST";
 				var values;
 
 				switch (pointIndex) {
 				case 0:
-					values = [ "4-LOW" ];
+					values = [ "LOW" ];
 					break;
 				case 1:
-					values = [ "3-MEDIUM" ];
+					values = [ "MEDIUM" ];
 					break;
 				case 2:
-					values = [ "2-HIGH" ];
+					values = [ "HIGH" ];
 					break;
 				case 3:
-					values = [ "1-VERY_HIGH" ];
+					values = [ "VERY_HIGH" ];
 					break;
 				}
 				search.fields['referencedTestCase.importance'] = {type : type, values : values};
