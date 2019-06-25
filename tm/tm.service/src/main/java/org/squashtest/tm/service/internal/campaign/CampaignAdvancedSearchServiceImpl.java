@@ -229,6 +229,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("lastExecutedOn", ITEM_TEST_PLAN_LASTEXECON)
 			.map("milestone.endDate", CAMPAIGN_MILESTONE_END_DATE)
 			.map("milestone.label", CAMPAIGN_MILESTONE_ID)
+			.map("milestones.id", CAMPAIGN_MILESTONE_ID)
 			.map("milestone.status", CAMPAIGN_MILESTONE_STATUS)
 			.map("project.id", CAMPAIGN_PROJECT_ID)
 			.map("referencedTestCase.automatable", TEST_CASE_AUTOMATABLE)

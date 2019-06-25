@@ -264,6 +264,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("lastModifiedBy", TEST_CASE_MODIFIED_BY)
 			.map("lastModifiedOn", TEST_CASE_MODIFIED_ON)
 			.map("milestone.label", TEST_CASE_MILESTONE_ID)
+			.map("milestones.id", TEST_CASE_MILESTONE_ID)
 			.map("milestone.endDate", TEST_CASE_MILESTONE_END_DATE)
 			.map("milestone.status", TEST_CASE_MILESTONE_STATUS)
 			.map("name", TEST_CASE_NAME)

@@ -397,6 +397,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			.map("category", REQUIREMENT_VERSION_CATEGORY)
 			.map("status", REQUIREMENT_VERSION_STATUS)
 			.map("milestone.label", REQUIREMENT_VERSION_MILESTONE_ID)
+			.map("milestones.id", REQUIREMENT_VERSION_MILESTONE_ID)
 			.map("milestone.status", REQUIREMENT_VERSION_MILESTONE_STATUS)
 			.map("milestone.endDate", REQUIREMENT_VERSION_MILESTONE_END_DATE)
 			.map("testcases", REQUIREMENT_VERSION_TCCOUNT)
