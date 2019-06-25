@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
 import org.jooq.DSLContext;
@@ -30,8 +31,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.QCampaign;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.QTagsValue;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -51,6 +60,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_CHECKBOX;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_DATE;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_LIST;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_NUMERIC;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_TEXT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
@@ -70,12 +84,6 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_CHECKBOX;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_LIST;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_NUMERIC;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TAG;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_CUF_TEXT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
@@ -235,13 +243,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("testSuites.id", ITEM_SUITE_ID);
 
 
-		MAPPINGS.getCufMapping()
-			.map(AdvancedSearchFieldModelType.TAGS.toString(), ITERATION_CUF_TAG)
-			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), ITERATION_CUF_LIST)
-			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), ITERATION_CUF_TEXT)
-			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), ITERATION_CUF_DATE)
-			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), ITERATION_CUF_NUMERIC)
-			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), ITERATION_CUF_CHECKBOX);
 	}
 
 }

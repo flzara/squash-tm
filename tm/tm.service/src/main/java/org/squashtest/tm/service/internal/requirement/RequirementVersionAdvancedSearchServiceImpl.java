@@ -20,6 +20,51 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.QTagsValue;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.QRequirement;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.requirement.QRequirementVersionLink;
+import org.squashtest.tm.domain.requirement.QRequirementVersionLinkType;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_NB_VERSIONS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_PROJECT_ID;
@@ -50,48 +95,6 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUI
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_TCCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.REQUIREMENT_VERSION_VERS_NUM;
 import static org.squashtest.tm.domain.requirement.QRequirementVersion.requirementVersion;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.requirement.QRequirement;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
-import org.squashtest.tm.domain.requirement.QRequirementVersionLink;
-import org.squashtest.tm.domain.requirement.QRequirementVersionLinkType;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchMultiListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings.SpecialHandler;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.query.QueryProcessingServiceImpl;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
-
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 @Transactional(readOnly = true)
@@ -168,8 +171,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		query = query.clone(session);
 		List<Tuple> tuples = query.fetch();
 		List<RequirementVersion> versions = tuples.stream()
-													.map(tuple -> tuple.get(0, RequirementVersion.class))
-													.collect(Collectors.toList()); 
+			.map(tuple -> tuple.get(0, RequirementVersion.class))
+			.collect(Collectors.toList());
 
 		// round 2 : get the total count (remove the paging)
 		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
@@ -336,6 +339,42 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	}
 
+	private static void createFilterTags(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
+
+		List<String> tags = fieldModel.getTags();
+
+		QCustomFieldValue cfv = new QCustomFieldValue("cfv");
+		QCustomFieldValueOption cfvo = new QCustomFieldValueOption("cfvo");
+
+		QRequirementVersion outerRequirementVersion = requirementVersion;
+
+		QRequirementVersion initRequirementVersion = new QRequirementVersion("initRequirementVersion");
+		QTagsValue tagsValue = new QTagsValue("tagsValue");
+
+		HibernateQuery<Integer> subquery;
+
+		long size = tags.size();
+
+		subquery = new ExtendedHibernateQuery<>().select(Expressions.ONE)
+			.from(initRequirementVersion)
+			.join(cfv).on(initRequirementVersion.id.eq(cfv.boundEntityId))
+			.join(tagsValue).on(cfv.id.eq(tagsValue._super.id))
+			.join(tagsValue.selectedOptions, cfvo)
+			.where(cfv.boundEntityType.eq(BindableEntity.REQUIREMENT_VERSION)
+				.and(initRequirementVersion.id.eq(outerRequirementVersion.id))
+				.and(cfvo.label.in(tags)));
+
+		if (fieldModel.getOperation().equals(AdvancedSearchTagsFieldModel.Operation.AND)) {
+
+			subquery = subquery.groupBy(initRequirementVersion.id)
+				.having(cfvo.label.count().eq(size));
+
+		}
+		query.where(subquery.exists());
+	}
+
 
 	// ******************* column mappings  *******************************************************
 
@@ -417,7 +456,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), REQUIREMENT_VERSION_CUF_TEXT)
 			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), REQUIREMENT_VERSION_CUF_DATE)
 			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), REQUIREMENT_VERSION_CUF_NUMERIC)
-			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), REQUIREMENT_VERSION_CUF_CHECKBOX);
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), REQUIREMENT_VERSION_CUF_CHECKBOX)
+			.mapHandler(AdvancedSearchFieldModelType.TAGS.toString(), new SpecialHandler(RequirementVersionAdvancedSearchServiceImpl::createFilterTags));
 
 	}
 

@@ -248,6 +248,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		applySpecialProjectionHandlers(query);
 		applySpecialFilterHandlers(query);
+		applySpecialFilterTagsHandler(query);
 		applySpecialOrderHandlers(query);
 
 	}
@@ -390,7 +391,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
 
-			if (fieldModel.isSet()){
+			if (fieldModel.isSet() && !fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)){
 				QueryFilterColumn filter = createFilterColumn(fieldModel, key);
 				filters.add(filter);
 			}
@@ -404,7 +405,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	/*
 	 * Once the query is available, we can apply special handlers for filters
 	 */
-
 	private void applySpecialFilterHandlers(ExtendedHibernateQuery<?> query){
 
 		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
@@ -423,6 +423,29 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			handler.applyFilter.accept(query,  searchField);
 		}
 
+	}
+
+	/*
+	 * Once the query is available, we can apply special handlers for tags filters
+	 */
+	private void applySpecialFilterTagsHandler(ExtendedHibernateQuery<?> query) {
+
+		ColumnMapping cufMapping = mappings.getCufMapping();
+
+		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
+		Set<String> processableKeys = model.getFieldKeys();
+
+		// now process
+		for (String key : processableKeys) {
+
+			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
+
+			if (fieldModel.isSet() && fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)){
+				SpecialHandler handler = cufMapping.findHandler(AdvancedSearchFieldModelType.TAGS.toString());
+				handler.applyFilter.accept(query,  fieldModel);
+			}
+
+		}
 	}
 
 

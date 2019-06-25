@@ -56,26 +56,26 @@ import static org.squashtest.tm.domain.query.Operation.SUM;
  * the ChartWizard. We can fix the wizard configuration page to filter it out, but we will do so
  * at a less hurried time.
  * 	</li>
- * 	
+ *
  * </ul>
  *
  */
 public enum DataType {
 
 	// @formatter:off
-	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE, NOT_EQUALS),
-	STRING (EQUALS, LIKE, COUNT, NONE),
-	DATE (BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR, NOT_EQUALS),
-	DATE_AS_STRING (BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, BY_DAY, BY_MONTH, BY_YEAR, NOT_EQUALS),
+	NUMERIC(AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE, NOT_EQUALS),
+	STRING(EQUALS, LIKE, COUNT, NONE),
+	DATE(BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR, NOT_EQUALS),
+	DATE_AS_STRING(BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, BY_DAY, BY_MONTH, BY_YEAR, NOT_EQUALS),
 	EXISTENCE(NOT_NULL, IS_NULL),
 	BOOLEAN(EQUALS, COUNT, NONE),
 	BOOLEAN_AS_STRING(EQUALS, COUNT, NONE),
 	LEVEL_ENUM(EQUALS, IN, COUNT, NONE),
-	REQUIREMENT_STATUS (EQUALS, IN, COUNT, NONE),
-	EXECUTION_STATUS (EQUALS, IN, COUNT, NONE),
+	REQUIREMENT_STATUS(EQUALS, IN, COUNT, NONE),
+	EXECUTION_STATUS(EQUALS, IN, COUNT, NONE),
 	LIST(EQUALS, IN, COUNT, NONE),
-	INFO_LIST_ITEM (EQUALS, IN, COUNT, NONE),
-	TAG (EQUALS, IN, COUNT, NONE),
+	INFO_LIST_ITEM(EQUALS, IN, COUNT, NONE),
+	TAG(EQUALS, IN, COUNT, NONE),
 	ENUM(EQUALS, IN, COUNT, NONE),
 
 	// type ENTITY means that columns of that datatype represent the entity itself rather than one of its attributes.
@@ -95,25 +95,25 @@ public enum DataType {
 	public Set<Operation> getOperations() {
 		return EnumSet.copyOf(operations);
 	}
-	
-	
+
+
 	/**
 	 * Returns true if this instance of DataType is congruent to a LEVEL_ENUM. It currently includes the DataTypes : 
 	 * REQUIREMENT_STATUS, EXECUTION_STATUS and LEVEL_ENUM.
-	 * 
+	 *
 	 * @return
 	 */
-	public boolean isAssignableToLevelEnum(){
+	public boolean isAssignableToLevelEnum() {
 		boolean isAssignable = false;
-		switch(this){
-		case REQUIREMENT_STATUS:
-		case EXECUTION_STATUS:
-		case LEVEL_ENUM:
-			isAssignable = true;
-			break;
-		default:
-			isAssignable = false;
-			break;
+		switch (this) {
+			case REQUIREMENT_STATUS:
+			case EXECUTION_STATUS:
+			case LEVEL_ENUM:
+				isAssignable = true;
+				break;
+			default:
+				isAssignable = false;
+				break;
 		}
 		return isAssignable;
 	}

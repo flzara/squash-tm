@@ -20,9 +20,51 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.hibernate.Session;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.QCustomFieldValue;
+import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.QTagsValue;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISSUECOUNT;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
@@ -32,10 +74,10 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_DATE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_LIST;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_NUMERIC;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TAG;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_TEXT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DATASETCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_DESCRIPTION;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_EXECOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_IMPORTANCE;
@@ -58,42 +100,6 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_STEPCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_TYPE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_VERSCOUNT;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
-import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
-import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -177,7 +183,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return new PageImpl(testcases, sorting, countAll);
 	}
 
-	
+
 	@Override
 	public Page<TestCase> searchForTestCases(AdvancedSearchQueryModel model,
 											 Pageable sorting, Locale locale) {
@@ -191,7 +197,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		// round 1 : fetch the test cases
 		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
 		query = query.clone(session);
-		
+
 		List<Tuple> tuples = query.fetch();
 		List<TestCase> testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
 
@@ -202,6 +208,42 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		long count = countQuery.fetchCount();
 
 		return new PageImpl(testCases, sorting, count);
+	}
+
+	private static void createFilterTags(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
+
+		List<String> tags = fieldModel.getTags();
+
+		QCustomFieldValue cfv = new QCustomFieldValue("cfv");
+		QCustomFieldValueOption cfvo = new QCustomFieldValueOption("cfvo");
+
+		QTestCase outerTestCase = QTestCase.testCase;
+
+		QTestCase initTestCase = new QTestCase("initTestCase");
+		QTagsValue tagsValue = new QTagsValue("tagsValue");
+
+		HibernateQuery<Integer> subquery;
+
+		long size = tags.size();
+
+		subquery = new ExtendedHibernateQuery<>().select(Expressions.ONE)
+			.from(initTestCase)
+			.join(cfv).on(initTestCase.id.eq(cfv.boundEntityId))
+			.join(tagsValue).on(cfv.id.eq(tagsValue._super.id))
+			.join(tagsValue.selectedOptions, cfvo)
+			.where(cfv.boundEntityType.eq(BindableEntity.TEST_CASE)
+				.and(initTestCase.id.eq(outerTestCase.id))
+				.and(cfvo.label.in(tags)));
+
+		if (fieldModel.getOperation().equals(AdvancedSearchTagsFieldModel.Operation.AND)) {
+
+			subquery = subquery.groupBy(initTestCase.id)
+				.having(cfvo.label.count().eq(size));
+
+		}
+		query.where(subquery.exists());
 	}
 
 	static {
@@ -256,11 +298,11 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY);
 
 		MAPPINGS.getCufMapping()
-			.map(AdvancedSearchFieldModelType.TAGS.toString(), TEST_CASE_CUF_TAG)
 			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), TEST_CASE_CUF_LIST)
 			.map(AdvancedSearchFieldModelType.CF_SINGLE.toString(), TEST_CASE_CUF_TEXT)
 			.map(AdvancedSearchFieldModelType.CF_TIME_INTERVAL.toString(), TEST_CASE_CUF_DATE)
 			.map(AdvancedSearchFieldModelType.CF_NUMERIC_RANGE.toString(), TEST_CASE_CUF_NUMERIC)
-			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX);
+			.map(AdvancedSearchFieldModelType.CF_CHECKBOX.toString(), TEST_CASE_CUF_CHECKBOX)
+			.mapHandler(AdvancedSearchFieldModelType.TAGS.toString(), new AdvancedSearchColumnMappings.SpecialHandler(TestCaseAdvancedSearchServiceImpl::createFilterTags));
 	}
 }
