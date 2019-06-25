@@ -381,7 +381,7 @@
     <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executionUrl}'"/>
   </c:if>
   <f:message var="executionComment" key="execution.description.panel.title"/>
-  <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="false">
+  <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="true">
 		<jsp:attribute name="body">
 		<div id="execution-description" ${descrRicheditAttributes} >${ execution.description }</div>
 	</jsp:attribute>
