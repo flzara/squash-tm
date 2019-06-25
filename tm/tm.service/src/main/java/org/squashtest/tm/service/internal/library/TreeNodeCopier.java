@@ -313,6 +313,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			TestSuite testSuiteCopy = testSuitePastableCopyEntry.getKey();
 			iterationTestPlanManager.addTestSuite(iterationCopy, testSuiteCopy);
 			bindTestPlanOfCopiedTestSuite(iterationCopy, testSuitePastableCopyEntry, testSuiteCopy);
+			copyContentsOnExternalRepository (testSuiteCopy);
 		}
 	}
 

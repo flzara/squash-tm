@@ -256,7 +256,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		removeOrpheanAttachmentContents(contentIds);
 
 		// remove from FileSystem
-		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
+
+		if (attachmentRepository.getClass().getSimpleName().contains("FileSystemAttachmentRepository")) {
 			for (Long[] tab: contentIdListIdList) {
 				removeContentFromFileSystem(tab[1], tab[0]);
 			}

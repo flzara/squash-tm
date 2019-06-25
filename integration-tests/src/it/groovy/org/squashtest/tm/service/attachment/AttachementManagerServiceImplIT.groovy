@@ -58,7 +58,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	// IDs : see dataset
 	int folderId = -241; //folder b 1 PJ not duplicate
-	int testCaseId =-240; //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
+	int testCaseId = -240; //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
 	int testCaseIdWithoutAttachment = -245 //TC 2 AttachmentList 919
 	int attachListId = -898; //of test folder a, no attachment
 
@@ -231,48 +231,141 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		testCase2.attachmentList.hasAttachments()
 	}
 
-	//[TM-362] shallowCopy of AttachmentContent instead of hardCopy on copy/past TM's item (TestCase, Requirement, execution and so)
-//	 def "attachments shallowCopy.deletion"(){
-//
-//		given:
-//		checkDataSetBeforeTest()
-//		def attachListId = -907
-//		def id = -2
-//		when :
+	//**********************************************************************************************************************************************
+	//  TESTS FOR [TM-362] =>   shallowCopy of AttachmentContent instead of hardCopy on copy/past TM's item (TestCase, Requirement, execution and so)
+	//**********************************************************************************************************************************************
+
+	def "attachments shallowCopy: add a PJ to a TestCase with 3 steps and copy it "() {
+
+		//"TC 3 classique" : ID=-249 (AttList = -929) , 3 steps 179,180,181 -  1PJ on step 179 List = 930
+		given:
+		def testCase = -249L
+		def testCaseAttachList = -929L
+		def step1 = -179L
+		def step2 = -180L
+		def step3 = -181L
+		def step1AttchList = -930L
+		def step2AttchList = -931L
+		def step3AttchList = -932L
+		def attachIdStep1
+		//PJ of step
+//		def pjNameStep =
+
+		//1°) checking Dataset
+		when:
+		def tcAttachList = executeSelectSQLQuery(
+			"select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE WHERE TCLN_ID = " + testCase)
+
+		//steps
+		List<long[]> result = executeSelectSQLQuery(
+			"select TEST_STEP_ID, ATTACHMENT_LIST_ID from action_test_step inner join test_case_steps ON TEST_CASE_STEPS.STEP_ID = ACTION_TEST_STEP.TEST_STEP_ID where TEST_CASE_ID = "
+				+ testCase + "ORDER BY 1 DESC") //negative numbers
+
+		then:
+		areOrheanContents() == false
+		tcAttachList.size == 1
+		tcAttachList[0] == testCaseAttachList
+		//Dataset expected  3 steps
+		result.size() == 3
+		result[0][0] == step1
+		result[1][0] == step2
+		result[2][0] == step3
+
+		result[0][1] == step1AttchList
+		result[1][1] == step2AttchList
+		result[2][1] == step3AttchList
+
+
+		when:
+//		def String attLists = testCaseAttachList + "," + step1AttchList + "," + step2AttchList + "," + step3AttchList
+//		List<Attachment> attachments = executeSelectSQLQuery(
+//			"select * from Attachment where attachment_list_id in ("+attLists +")")
+
+//		List<Long> attchLists = new ArrayList<>()
+//		attchLists.add((Long)testCaseAttachList)
+//		attchLists.add((Long)step1AttchList)
+//		attchLists.add((Long)step2AttchList)
+//		attchLists.add((Long)step3AttchList)
+
+		List<Long> attchLists = new ArrayList<>()
+		attchLists.add(testCaseAttachList)
+		attchLists.add(step1AttchList)
+		attchLists.add(step2AttchList)
+		attchLists.add(step3AttchList)
+
+
+//		attchLists.add(-1)
+//		attchLists.add(-2)
+//		attchLists.add(-3)
+		List<Attachment> attachments = getAttachmentsFromLists(attchLists)
+//		  executeSelectNamedQuery("SELECT attachment from Attachment where content.id in (:ids)", "ids", attchLists)
+
+		then:
+		//expected only 1 PJ on step1
+		1 == 2
+		attachments.size() == 1
+		attachments.get(0).attachmentList == step1AttchList
+		attachments.get(0).getId() == -179
+		attachments.get(0).name == "new6.txt"
+
+
 //		attachService.removeAttachmentFromList(attachListId, id)
 //		em.flush()
+//		attachments.size() == 1
 //
 //		then :
 //		Set<Attachment> attached = attachService.findAttachments(attachListId)
 //		attached.size()==1
-////		//check content really exist
-////		Attachment attachment;
-////		attachment.getContent().content
-////		attachService.writeContentattachmentId, outStream)
-//
-//	}
-//
-//	def checkDataSetBeforeTest() {
-//		def ids = new ArrayList(Arrays.asList(-898,-889,-907,-910))
-//		List<Attachment> attachments = executeSelectSQLQuery(
-//			"select * from Attachment where attachment_list_id in (:ids)"
-//			,"ids", ids)
-//    }
+//		//check content really existattachments
+//		Attachment attachment;
+//		attachment.getContent().content
+//		attachService.writeContentattachmentId, outStream)
 
-//	protected <R> List<R> executeSelectSQLQuery(String queryString, String paramName, Collection<Long> ids) {
-//		if (!ids.isEmpty()) {
-//			Query query = getSession().createSQLQuery(queryString)
-//			query.setParameterList(paramName, ids, LongType.INSTANCE)
-//			return query.list()
-//		} else {
-//			return Collections.emptyList()
-//		}
-//	}
+	}
+//
+
+	//**************************************************************
+	//                              UTILS
+	//**************************************************************
+
+	protected <R> List<R> executeSelectSQLQuery(String queryString) {
+		Query query = getSession().createSQLQuery(queryString)
+		return query.list()
+	}
 //
 //	protected Long executeSelectCountSQLQuery(String queryString, String paramName, Collection<Long> ids) {
 //			Query query = getSession().createSQLQuery(queryString)
 //			query.setParameterList(paramName, ids, LongType.INSTANCE)
 //			return query.getSingleResult()
 //	}
+
+	protected boolean areOrheanContents() {
+		def result = executeSelectSQLQuery(
+			"SELECT attachment.attachment_id, attachment_content.ATTACHMENT_CONTENT_ID " +
+				"from attachment_content left join attachment on attachment_content.ATTACHMENT_CONTENT_ID = attachment.CONTENT_ID where attachment.attachment_id is null")
+		return !result.isEmpty()
+	}
+
+
+	protected <R> List<R> executeSelectQuery(String stQuery, String paramName, Collection<Long> ids) {
+		if (!ids.isEmpty()) {
+			Query query = getSession().createQuery(stQuery)
+//			query.setParameterList(paramName, ids, LongType.INSTANCE)
+			query.setParameterList(paramName, ids)
+			return query.list()
+		} else {
+			return Collections.emptyList()
+		}
+	}
+
+	protected List<Attachment> getAttachmentsFromLists(Collection<Long> attchLists) {
+		return executeSelectQuery("select attach from Attachment attach where attach.attachmentList.id in (:ids)", "ids", attchLists)
+
+	}
+
+	//non testé ...
+	protected List<Attachment> getAttachemntsFoAttachmentContent(Long contentID) {
+		return executeSelectQuery("SELECT attachment from Attachment where attachment.content.id =id", "id", contentID)
+	}
 
 }
