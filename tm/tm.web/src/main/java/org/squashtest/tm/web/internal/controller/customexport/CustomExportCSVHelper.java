@@ -228,9 +228,12 @@ public class CustomExportCSVHelper {
 				// this map can be null if the entityReference exists but can't have cuf
 				// it happens for ExecutionSteps from gherkin TestCase executions
 				if(cufValuesMap != null) {
-					value = cufValuesMap.get(cufId);
+					value = computeRichValue(cufValuesMap.get(cufId));
 				}
 			}
+		}
+		if(value != null && CustomExportColumnLabel.getCustomizableTextFieldsSet().contains(label)) {
+			value = replaceDoubleQuotes(value.toString());
 		}
 		return value;
 	}
@@ -244,8 +247,7 @@ public class CustomExportCSVHelper {
 		if(rawValue == null) {
 			return null;
 		} else {
-			String htmlFreeValue = HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(rawValue)));
-			return  replaceDoubleQuotes(htmlFreeValue);
+			return HTMLCleanupUtils.htmlToText(HTMLCleanupUtils.cleanHtml(String.valueOf(rawValue)));
 		}
 	}
 	/**

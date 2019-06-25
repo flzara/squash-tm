@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.jooq.domain.Tables;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -519,11 +520,31 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		return ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP;
 	}
 
+	public static Set<CustomExportColumnLabel> getCustomizableTextFieldsSet() {
+		return CUSTOMIZABLE_TEXT_FIELDS_SET;
+	}
+
+	private static final Set<CustomExportColumnLabel> CUSTOMIZABLE_TEXT_FIELDS_SET;
+
+	// Initialize unmodifiable CUSTOMIZABLE_TEXT_FIELDS_SET
+	static {
+		Set<CustomExportColumnLabel> initialSet = new HashSet<>();
+		initialSet.addAll(Arrays.asList(
+			CAMPAIGN_LABEL,CAMPAIGN_REFERENCE, CAMPAIGN_DESCRIPTION, CAMPAIGN_MILESTONE, CAMPAIGN_CUF,
+			ITERATION_LABEL, ITERATION_REFERENCE, ITERATION_DESCRIPTION, ITERATION_CUF,
+			TEST_SUITE_LABEL, TEST_SUITE_DESCRIPTION, TEST_SUITE_CUF,
+			TEST_CASE_PROJECT, TEST_CASE_MILESTONE, TEST_CASE_LABEL, TEST_CASE_REFERENCE, TEST_CASE_DESCRIPTION,
+			TEST_CASE_NATURE, TEST_CASE_TYPE, TEST_CASE_DATASET, TEST_CASE_PREREQUISITE, TEST_CASE_CUF,
+			EXECUTION_USER, EXECUTION_COMMENT, EXECUTION_CUF,
+			EXECUTION_STEP_ACTION, EXECUTION_STEP_RESULT, EXECUTION_STEP_USER, EXECUTION_STEP_COMMENT, EXECUTION_STEP_CUF));
+		CUSTOMIZABLE_TEXT_FIELDS_SET = Collections.unmodifiableSet(initialSet);
+	}
+
 	private static final Map<EntityType, TableField<?, Long>> ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP;
 
 	// Initialize unmodifiable ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP
 	static {
-		Map<EntityType, TableField<?, Long>> initialMap = new HashMap<>();
+		Map<EntityType, TableField<?, Long>> initialMap = new HashMap<>(6);
 		initialMap.put(EntityType.CAMPAIGN, CAMPAIGN.CLN_ID);
 		initialMap.put(EntityType.ITERATION, Tables.ITERATION.ITERATION_ID);
 		initialMap.put(EntityType.TEST_SUITE, Tables.TEST_SUITE.ID);
@@ -537,7 +558,7 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	// Initialize unmodifiable RICH_TEXT_FIELDS_SET
 	static {
-		Set<CustomExportColumnLabel> initialSet = new HashSet<>();
+		Set<CustomExportColumnLabel> initialSet = new HashSet<>(9);
 		initialSet.add(CAMPAIGN_DESCRIPTION);
 		initialSet.add(ITERATION_DESCRIPTION);
 		initialSet.add(TEST_SUITE_DESCRIPTION);
@@ -647,16 +668,19 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	private static final class ShortenedNames {
 
-		private static final Map<EntityType, String> ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP = new HashMap<>(7);
+		private static final Map<EntityType, String> ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP;
 
+		// Initialize unmodifiable ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP
 		static {
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.CAMPAIGN, "CPG");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.ITERATION, "IT");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.TEST_SUITE, "SUI");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.TEST_CASE, "TC");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.EXECUTION, "EXEC");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.EXECUTION_STEP, "EXEC_STEP");
-			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP.put(EntityType.ISSUE, "BUG");
+			Map<EntityType, String> initialMap = new HashMap<>(7);
+			initialMap.put(EntityType.CAMPAIGN, "CPG");
+			initialMap.put(EntityType.ITERATION, "IT");
+			initialMap.put(EntityType.TEST_SUITE, "SUI");
+			initialMap.put(EntityType.TEST_CASE, "TC");
+			initialMap.put(EntityType.EXECUTION, "EXEC");
+			initialMap.put(EntityType.EXECUTION_STEP, "EXEC_STEP");
+			initialMap.put(EntityType.ISSUE, "BUG");
+			ENTITY_TYPE_TO_SHORTEN_ENTITY_NAME_MAP = Collections.unmodifiableMap(initialMap);
 		}
 
 		private static String getShortenedEntityType(EntityType entityType) {
