@@ -51,7 +51,7 @@ define(['jquery', 'squash.translator'],
 					dateMessage = translator.get("information.expirationDate.warning3", getExpirationDate(daysRemaining), getExpirationDatePlus2Months(daysRemaining));
 				} else if (daysRemaining < 30){
 					dateMessage = translator.get("information.expirationDate.warning2", getExpirationDate(daysRemaining), getExpirationDatePlus2Months(daysRemaining));
-				} else if (daysRemaining < 61){
+				} else if (daysRemaining <= 61){
 					dateMessage = translator.get("information.expirationDate.warning1", getExpirationDate(daysRemaining));
 				}
 			}
