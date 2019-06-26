@@ -37,6 +37,7 @@
     <js>/scripts/charts/**.js</js>
     <js>/scripts/connections-manager/**.js</js>
     <js>/scripts/contextual-content-handlers/**.js</js>
+    <js>/scripts/custom-exports/**.js</js>
     <js>/scripts/custom-field-binding/**.js</js>
     <js>/scripts/custom-field-editor/**.js</js>
     <js>/scripts/custom-field-manager/**.js</js>
@@ -81,11 +82,13 @@
     <js>/scripts/test-step-editor/**.js</js>
     <js>/scripts/test-suite/**.js</js>
     <js>/scripts/test-suite-management/**.js</js>
+    <js>/scripts/third-party-server/**.js</js>
     <js>/scripts/tree/**.js</js>
     <js>/scripts/user-account/**.js</js>
     <js>/scripts/user-editor/**.js</js>
     <js>/scripts/users-manager/**.js</js>
     <js>/scripts/verified-requirements/**.js</js>
+    <js>/scripts/verifying-test-cases/**.js</js>
     <js>/scripts/workspace/**.js</js>
     <js>/scripts/advanced-config-page.js</js>
     <js>/scripts/colour-utils.js</js>
@@ -97,6 +100,7 @@
     <js>/scripts/execution-helper.js</js>
     <js>/scripts/execution-page</js>
     <js>/scripts/execution-preview-page.js</js>
+    <js>/scripts/information.js</js>
     <js>/scripts/iteration-page.js</js>
     <js>/scripts/linked-requirement-version-manager.js</js>
     <js>/scripts/milestone-manager.js</js>
