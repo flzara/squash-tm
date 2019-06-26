@@ -33,7 +33,7 @@ require([ "common" ], function(common) {
 
 				var targetUrl = retrieveTargetUrl();
 				var information = squashtm.app.information;
-				if (_.size(information) != 0) {
+				if (_.size(information) !== 0) {
 					dialog.formDialog('open');
 					retrieveMessages(information);
 				} else {
@@ -79,7 +79,7 @@ require([ "common" ], function(common) {
 		function retrieveMessageDate(information) {
 			var message = '';
 			var messageDate = information.messageDate;
-			if (messageDate != undefined && messageDate !== '') {
+			if (messageDate !== undefined && messageDate !== '') {
 				message += translator.get('information.expirationDate.' + messageDate, getExpirationDate(information.daysRemaining), getExpirationDatePlus2Months(information.daysRemaining));
 			}
 			return message;
@@ -110,7 +110,7 @@ require([ "common" ], function(common) {
 		function retrieveMessageUser(information) {
 			var message = '';
 			var messageUser = information.messageUser;
-			if (messageUser != undefined && messageUser !== '') {
+			if (messageUser !== undefined && messageUser !== '') {
 				message = translator.get('information.userExcess.' + messageUser, information.maxUserNb, information.currentUserNb);
 			}
 			return message;

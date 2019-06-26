@@ -52,7 +52,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				// Attributes
 				_.each(selectedAttributes, function(attr) {
 						$('#' + attr).prop('checked', true);
-				})
+				});
 				// Show Cuf attributes
 				_.each(selectedCufAttributes, function(cufAttrId) {
 					self.showCufCheckBox(cufAttrId);

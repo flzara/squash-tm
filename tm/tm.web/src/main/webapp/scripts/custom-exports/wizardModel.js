@@ -221,7 +221,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				return {
 					label: splitAttr[0],
 					cufId: splitAttr[1]
-				}
+				};
 			});
 		}
 

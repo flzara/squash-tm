@@ -71,7 +71,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 					}).done(function (newCustomExportId) {
 						var nodeToSelect = "CustomExport-" + newCustomExportId;
 						$.cookie("jstree_select", nodeToSelect, {path: cookiePath});
-						window.location.href = router.buildURL("custom-report.custom-export.redirect", newCustomExportId)
+						window.location.href = router.buildURL("custom-report.custom-export.redirect", newCustomExportId);
 					});
 			},
 
