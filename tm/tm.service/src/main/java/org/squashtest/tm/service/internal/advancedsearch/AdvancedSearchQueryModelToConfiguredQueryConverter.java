@@ -42,6 +42,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
@@ -699,7 +700,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			value = "%" + value + "%";
 		}
 
-		filterColumn.getValues().add(value);
+		filterColumn.getValues().add(HtmlUtils.htmlEscape(value));
 	}
 
 
