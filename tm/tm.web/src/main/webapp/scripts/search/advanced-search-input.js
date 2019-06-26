@@ -51,7 +51,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	// text area widget
 	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
 		options: {
-			
+
 		},
 
 		_create: function () {
@@ -66,7 +66,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	// text field widget
 	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
 		options: {
-			
+
 		},
 
 		_create: function () {
@@ -84,7 +84,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 	var searchTextCustomFieldWidget = $.widget("search.searchTextCustomFieldWidget", {
 		options: {
-			
+
 		},
 
 		_create: function () {
@@ -114,7 +114,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 			// templates are no longer needed
 			this.templates = {};
-			
+
 			resizePerimeter = function (event) {
 				var sizeWithPadding = $('#perimeter-panel-id').css('width');
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
@@ -273,7 +273,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			var place = "toSelect" + location.search;
 			var toselect = JSON.parse($.cookie(place));
 			options.children().each(function () {
-				if (toselect !== null) {
+				if (toselect !== null && toselect.length !== 0) {
 					if (this.selected) {
 						if (toselect.indexOf(Number(this.value) )=== -1) {
 							this.selected = false;
@@ -679,12 +679,12 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 		/* [Issue 7692] : stores the post parameters in the local storage
 		 * it allows for repost when navigating back from a page, ie using
 		 * a GET request.
-		 * 
-		 * Note that historically the search form was posted as part of the 
-		 * query string, and thus the form was always contained in the backurl 
+		 *
+		 * Note that historically the search form was posted as part of the
+		 * query string, and thus the form was always contained in the backurl
 		 * and GET would always resent (it was also more semantically satisfying).
-		 * However the somewhat large data would cause issues (overflowing the 
-		 * max length of the url) so as a workaround a POST was preferred. 
+		 * However the somewhat large data would cause issues (overflowing the
+		 * max length of the url) so as a workaround a POST was preferred.
 		 * Maybe using GET + zipped form content could have worked though.
 		 */
 		savePostResultParameters: function (searchDomain, searchModel) {
