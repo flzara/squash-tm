@@ -29,17 +29,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.QCustomFieldValue;
 import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.QTagsValue;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
@@ -145,42 +148,40 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	@Override
-	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model, Locale locale) {
-		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
-		List<TestCase> result = new ArrayList<>();
-		Set<TestCase> testCases = new HashSet<>();
-		// Get testcases from found requirements
-		for (RequirementVersion requirement : requirements) {
-			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement
-				.getId());
-			testCases.addAll(verifiedTestCases);
-		}
-
-		// Get calling testcases
-		Set<Long> callingTestCaseIds = new HashSet<>();
-		for (TestCase testcase : testCases) {
-			callingTestCaseIds.addAll(testCaseCallTreeFinder.getTestCaseCallers(testcase.getId()));
-		}
-		// add callees ids
-		callingTestCaseIds.addAll(IdentifiedUtil.extractIds(testCases));
-		// get all test cases
-		//[Issue 7901] Only look for test cases user is allowed to read.
-		result.addAll(testCaseDao.findAllByIds(
-			callingTestCaseIds.stream()
-				.filter(testCaseId -> permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", testCaseId, TestCase.class.getName()))
-				.collect(Collectors.toList())
-		));
-		return result;
-	}
-
-	@Override
 	public Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model,
 																	Pageable sorting, Locale locale) {
 
-		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
+		Set<Long> testcases = getTcIdsThroughRequirementVersion(model, locale);
 
-		int countAll = 0;
-		return new PageImpl(testcases, sorting, countAll);
+		Session session = entityManager.unwrap(Session.class);
+
+		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
+
+		List<String> keys = new ArrayList<>();
+
+		AdvancedSearchModel searchModel = new AdvancedSearchModel();
+		AdvancedSearchFieldModel searchFieldModel = new AdvancedSearchListFieldModel();
+
+		List<String> tcIds = testcases.stream().map(aLong -> aLong.toString()).collect(Collectors.toList());
+		((AdvancedSearchListFieldModel) searchFieldModel).getValues().addAll(tcIds);
+
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(sorting, keys, searchModel);
+		queryModel.getSearchFormModel().addField("id", searchFieldModel);
+		queryModel.getSearchResultKeys().addAll(model.getSearchResultKeys());
+		converter.configureModel(queryModel).configureMapping(MAPPINGS);
+
+		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+		query = query.clone(session);
+
+		List<Tuple> tuples = query.fetch();
+		List<TestCase> testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
+
+		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
+		countQuery = countQuery.clone(session);
+		long count = countQuery.fetchCount();
+
+
+		return new PageImpl(testCases, sorting, count);
 	}
 
 
@@ -246,6 +247,39 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		query.where(subquery.exists());
 	}
 
+	private Set<Long> getTcIdsThroughRequirementVersion(AdvancedSearchQueryModel model, Locale locale) {
+		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
+
+		List<Long> reqIds = requirements.stream().map(requirementVersion -> requirementVersion.getId()).collect(Collectors.toList());
+		QTestCase testCase = new QTestCase("testCase");
+		QRequirementVersionCoverage requirementVersionCoverage = new QRequirementVersionCoverage("requirementVersionCoverage");
+		QRequirementVersion requirementVersion = new QRequirementVersion("requirementVersion");
+
+		Session session = entityManager.unwrap(Session.class);
+		HibernateQuery<Long> query = new ExtendedHibernateQuery<>()
+			.select(testCase.id)
+			.from(testCase)
+			.join(testCase.requirementVersionCoverages, requirementVersionCoverage)
+			.join(requirementVersionCoverage.verifiedRequirementVersion, requirementVersion)
+			.where(requirementVersion.id.in(reqIds));
+
+		query = query.clone(session);
+
+		List<Long> tcIds = query.fetch();
+
+		// Get calling testcases
+		Set<Long> callingTestCaseIds = new HashSet<>();
+
+		for (Long id : tcIds) {
+			callingTestCaseIds.addAll(testCaseCallTreeFinder.getTestCaseCallers(id));
+		}
+		// add callees ids
+		callingTestCaseIds.addAll(tcIds);
+
+		return callingTestCaseIds;
+
+	}
+
 	static {
 
 		MAPPINGS.getFormMapping()
@@ -296,7 +330,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("test-case-iteration-nb", TEST_CASE_ITERCOUNT)
 			.map("test-case-attachment-nb", TEST_CASE_ATTCOUNT)
 			.map("test-case-created-by", TEST_CASE_CREATED_BY)
-			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY);
+			.map("test-case-modified-by", TEST_CASE_MODIFIED_BY)
+			.map("labelUpperCased", TEST_CASE_NAME);
 
 		MAPPINGS.getCufMapping()
 			.map(AdvancedSearchFieldModelType.CF_LIST.toString(), TEST_CASE_CUF_LIST)

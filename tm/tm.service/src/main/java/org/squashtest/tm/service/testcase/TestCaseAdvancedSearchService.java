@@ -41,8 +41,6 @@ public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
 	Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model, Pageable sorting, Locale locale);
 
-	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model, Locale locale);
-
 	List<String> findAllUsersWhoModifiedTestCases(List<Long> idList);
 
 	List<String> findAllUsersWhoCreatedTestCases(List<Long> idList);

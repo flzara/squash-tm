@@ -214,7 +214,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, testCaseSearchResultMapper, (String key) -> key);
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, testCaseSearchResultMapper.getMappedKeys(), searchModel);
 
