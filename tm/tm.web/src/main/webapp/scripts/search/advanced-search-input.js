@@ -82,6 +82,24 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 		}
 	});
 
+	var searchNumericFieldWidget = $.widget("search.searchNumericFieldWidget", {
+		options: {
+
+		},
+
+		_create: function () {
+		},
+
+		fieldvalue: function (value) {
+			if (typeof +value == "number") {
+				return fieldValue.call(this, "SINGLE", value);
+			} else {
+				return fieldValue.call(this, "SINGLE", "");
+
+			}
+		}
+	});
+
 	var searchTextCustomFieldWidget = $.widget("search.searchTextCustomFieldWidget", {
 		options: {
 
@@ -446,7 +464,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
-			$fieldDom.searchTextFieldWidget();
+			$fieldDom.searchNumericFieldWidget();
 		},
 
 		makeTextFieldReference: function (tableId, fieldId, fieldTitle, enteredValue) {
