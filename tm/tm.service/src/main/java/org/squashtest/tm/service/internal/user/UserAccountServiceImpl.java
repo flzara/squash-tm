@@ -329,8 +329,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void testCurrentUserCredentials(long bugtrackerId, ManageableCredentials credentials) {
 
+		String currentLogin = userContextService.getUsername();
+
 		BugTracker bt = bugTrackerDao.getOne(bugtrackerId);
-		Credentials usableCredentials = credentials.build(storedCredentialsManager, bt, null);
+
+		Credentials usableCredentials = credentials.build(storedCredentialsManager, bt, currentLogin);
 
 		if (usableCredentials == null){
 			throw new BugTrackerNoCredentialsException("credentials could not be built, either because the credentials themselves "

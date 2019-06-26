@@ -24,11 +24,13 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.servers.AuthenticationProtocol
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.service.bugtracker.BugTrackersService
+import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl
 import org.squashtest.tm.service.internal.repository.BugTrackerDao
 import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials
-import org.squashtest.tm.service.internal.servers.UserOAuth1aToken
+import org.squashtest.tm.service.security.UserContextService
 import org.squashtest.tm.service.servers.ManageableCredentials
 import spock.lang.Specification
 
@@ -38,11 +40,14 @@ class UserAccountServiceImplTest extends Specification {
 
 	BugTrackersService bugTrackerService = Mock()
 	BugTrackerDao bugTrackerDao = Mock()
+	UserContextService userContextService = Mock()
+	BugTrackersLocalServiceImpl bugTrackersLocalService = Mock()
 
 	def setup(){
 
 		service.bugTrackerService = bugTrackerService
 		service.bugTrackerDao = bugTrackerDao
+		service.userContextService = userContextService
 	}
 
 
@@ -63,7 +68,6 @@ class UserAccountServiceImplTest extends Specification {
 		notThrown(Exception)
 	}
 
-//A verifier
 
 	def "the test of user butracker credentials fails when the credentials doesn't exist"(){
 
@@ -73,7 +77,7 @@ class UserAccountServiceImplTest extends Specification {
 
 		and: "the credentials"
 		ManageableCredentials mc = Mock()
-		mc == null
+		mc.build(_,bt,_) >> null
 
 		when:
 		service.testCurrentUserCredentials(10, mc)
@@ -84,48 +88,56 @@ class UserAccountServiceImplTest extends Specification {
 	}
 
 
-/*
 	def "the test of user bugtracker credentials fails when the credentials exist, have the right protocol but are rejected by the bugtracker"(){
 
 		given:
+		BugTracker bt = Mock()
+		bt.getAuthenticationProtocol()>> AuthenticationProtocol.BASIC_AUTH
+		bugTrackerDao.getOne(_) >> bt
 
-		bugTrackerService.testCredentials(_) >> { throw new BugTrackerNoCredentialsException("oh noooz")  }
 
+		and: "the credentials"
+
+		Credentials builtCredentials = new BasicAuthenticationCredentials("bob", "bobpwd" as char[])
+		ManageableBasicAuthCredentials mba = Mock()
+		mba.build(_,bt,"toto") >> builtCredentials
+
+		and:
+		bugTrackerService.testCredentials(bt,builtCredentials) >> { throw new BugTrackerNoCredentialsException("oh noooz")  }
 
 		when:
+		service.testCurrentUserCredentials(10,mba)
 
 		then:
 		thrown BugTrackerNoCredentialsException
-
 	}
 
- */
-/*
 
 	def "the test of user bugtracker credentials fails when the credentials exist, but have the wrong protocol"(){
 
-		given: "the bugtracker"
-		def bt1 = Mock(BugTracker){
-			getAuthenticationProtocol() >> AuthenticationProtocol.BASIC_AUTH
-		}
+		given: "the bugtrackers"
+		BugTracker bt1 = Mock()
+		bt1.getAuthenticationProtocol() >> AuthenticationProtocol.OAUTH_1A
+		bugTrackerDao.getOne(_) >> bt1
 
-		def bt2 = Mock(BugTracker){
-			getAuthenticationProtocol() >> AuthenticationProtocol.OAUTH_1A
-		}
 
-		and: "the credentials"
-		def cred1 = new ManageableBasicAuthCredentials("Bob", "bob")
-		def cred2 = new UserOAuth1aToken("123", "ABC")
+		and:"the credentials"
 
+		Credentials builtCredentials = new BasicAuthenticationCredentials("bob", "bobpwd" as char[])
+
+		ManageableBasicAuthCredentials cred1 = Mock()
+		cred1.build(_,bt1,_) >> builtCredentials
+
+		and: "the bugtracker service must throw the UnsupportedAuthenticationModeException"
+		bugTrackerService.testCredentials(bt1, builtCredentials) >> { throw new UnsupportedAuthenticationModeException("fail !") }
 
 		when:
+		service.testCurrentUserCredentials(10,cred1)
 
 		then:
 		thrown UnsupportedAuthenticationModeException
 
 	}
-*/
-
 
 
 }
