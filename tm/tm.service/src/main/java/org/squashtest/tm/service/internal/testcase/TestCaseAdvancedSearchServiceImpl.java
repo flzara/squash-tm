@@ -151,6 +151,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	public Page<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchQueryModel model,
 																	Pageable sorting, Locale locale) {
 
+		model.setPageable(null);
 		Set<Long> testcases = getTcIdsThroughRequirementVersion(model, locale);
 
 		Session session = entityManager.unwrap(Session.class);
