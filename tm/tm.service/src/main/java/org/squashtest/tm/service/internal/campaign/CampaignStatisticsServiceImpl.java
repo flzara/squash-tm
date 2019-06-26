@@ -381,18 +381,19 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService 
 		 * IterationTestInventoryStatistics in the result list, then we populate them.
 		 */
 		CampaignTestInventoryStatistics newStatistics = new CampaignTestInventoryStatistics();
+		Long currentId = null;
 
 		List<CampaignTestInventoryStatistics> result = new LinkedList<>();
-		List<Long> ids = new ArrayList<>();
+
 		for (Object[] tuple : res) {
 			Long id = (Long) tuple[0];
 
-			if (!ids.contains(id)) {
+			if (!id.equals(currentId)) {
 				String name = (String) tuple[1];
 				newStatistics = new CampaignTestInventoryStatistics();
 				newStatistics.setCampaignName(name);
 				result.add(newStatistics);
-				ids.add(id);
+				currentId = id;
 			}
 
 			ExecutionStatus status = (ExecutionStatus) tuple[2];

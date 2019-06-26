@@ -833,7 +833,7 @@
 	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by name"),
 
 	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, case trim(c.reference) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end as name, itp.executionStatus as status, count(tc) as num "
-			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name"),
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name, campid"),
 
 	//Iteration Statistics
 
