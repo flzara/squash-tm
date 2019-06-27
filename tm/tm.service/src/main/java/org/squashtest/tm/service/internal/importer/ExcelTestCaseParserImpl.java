@@ -439,7 +439,6 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		if (StringUtils.isBlank(uuid)){
 			uuid = UUID.randomUUID().toString();
 		} else if (!uuidPattern.matcher(uuid).matches()){
-			summary.incrFailures();
 			throw new IllegalArgumentException("The value: " + uuid + " for column TC_UUID does not match the regular" +
 				" expression [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]" +
 				"{4}-[0-9a-fA-F]{12}");
