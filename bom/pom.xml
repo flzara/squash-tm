@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.20.0.RC2-SNAPSHOT</version>
+    <version>1.21.0.sb216-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm-bom</artifactId>
@@ -37,8 +37,24 @@
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
 
+    <!-- 
+    	SB 2.1.6 would normally pull hibernate 5.3.10. However a bug in QueryDsl is still waiting to be resolved : 
+    	https://github.com/querydsl/querydsl/issues/2326. Until then we should forego Hibernate updates. 
+    	
+    	Note that the previous upgrade lead to a different bug : https://github.com/querydsl/querydsl/issues/1917
+    	We fixed this in-house, see org.squashtest.tm.domain.jpql.FixedSessionHolders. That particular bug is 
+    	resolved for Hibernate 5.3.10. When we can finally upgrade, that class can be removed too.
+    	
+    	Also, in this very pom remove the version for the dependency-management of hibernate-entitymanager.
+    	Also, when we can ready Hibernate 5.4.10, see Javassist override 
+     -->
+    <hibernate-core.version>5.2.17.Final</hibernate-core.version>
+
     <!-- Spring Boot version 2.0.3 implies Jackson 2.9.6 -->
     <jackson.version>2.9.6</jackson.version>
+
+    <!-- javassist version override because of https://github.com/jboss-javassist/javassist/issues/194 -->
+    <javassist.version>3.25.0-GA</javassist.version>
     <javax.cache-api.version>1.1.0</javax.cache-api.version>
     <javax.inject.version>1</javax.inject.version>
     <jaxb.version>2.3.1</jaxb.version>
@@ -52,7 +68,7 @@
     <spock.version>1.2-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.14.RELEASE</spring-security-oauth2.version>
 
-    <!-- Spring Boot version 2.0.3.RELEASE implies Spring Sec version 5.0.6.RELEASE-->
+    <!-- Spring Boot version 2.1.6.RELEASE implies Spring Sec version 5.0.6.RELEASE-->
     <spring-security.version>5.0.6.RELEASE</spring-security.version>
 
     <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
@@ -184,8 +200,24 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
+        <!-- see comment on hibernate-core.version -->
+        <version>${hibernate-core.version}</version>
         <!-- here our transaction api will be javax.transaction-api instead -->
         <exclusions>
+          <exclusion>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <!-- see comment on hibernate-core.version -->
+        <version>${hibernate-core.version}</version>
+        <exclusions>
+          <!-- our transaction api is the official transaction api -->
           <exclusion>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.2_spec</artifactId>
@@ -323,6 +355,17 @@
 
         </exclusions>
 
+      </dependency>
+
+      <dependency>
+        <!-- 
+      		Version override because of https://github.com/jboss-javassist/javassist/issues/194. 
+      		Initially pulled by Hibernate. The fix for the issue above is available for version 3.24.0-GA+, 
+      		which means we can remove this version override when we can upgrade to Hibernate 5.4.10 (5.3 won't cut it yet)
+      	-->
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
       </dependency>
 
       <dependency>
