@@ -341,7 +341,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		testSuiteCopy.setDescription(getDescription());
 
 		for (Attachment attach : this.getAttachmentList().getAllAttachments()) {
-			Attachment copyAttach = attach.hardCopy();
+			Attachment copyAttach = attach.shallowCopy();
 			testSuiteCopy.getAttachmentList().addAttachment(copyAttach);
 		}
 

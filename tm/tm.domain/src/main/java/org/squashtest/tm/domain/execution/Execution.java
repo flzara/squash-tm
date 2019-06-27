@@ -319,7 +319,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	private void populateAttachments() {
 		for (Attachment tcAttach : referencedTestCase.getAllAttachments()) {
-			Attachment clone = tcAttach.hardCopy();
+			Attachment clone = tcAttach.shallowCopy();
 			attachmentList.addAttachment(clone);
 		}
 	}

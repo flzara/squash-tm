@@ -395,9 +395,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// we can now copy attachment contents of test case and test step,
 		// witch is a NOOP in database attachment mode (blob copy handled by Hibernate)
 		// but will actually do the blob copy in file system attachment mode
-		attachmentManagerService.copyAttachments(execution);
+		attachmentManagerService.copyContentsOnExternalRepository(execution);
 		for (ExecutionStep executionStep : execution.getSteps()) {
-			attachmentManagerService.copyAttachments(executionStep);
+			attachmentManagerService.copyContentsOnExternalRepository(executionStep);
 		}
 		return execution;
 	}

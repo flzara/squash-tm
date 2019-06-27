@@ -132,7 +132,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 
 	private void addCopiesOfAttachments(Folder<NODE> source, Folder<NODE> destination) {
 		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
+			Attachment atCopy = tcAttach.shallowCopy();
 			destination.getAttachmentList().addAttachment(atCopy);
 		}
 	}

@@ -20,20 +20,26 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.attachment.AttachmentList;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.domain.attachment.AttachmentContent;
 
 import java.util.List;
 import java.util.Set;
 
-public interface AttachmentListDao {
-	AttachmentList getOne(Long id);
+public interface AttachmentContentDao extends JpaRepository<AttachmentContent, Long> {
 
-	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
+	@Query
+	Set<Long> findNotOrpheanAttachmentContent(@Param("ids") List<Long> attachmentContentId);
 
-	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
+	@Query
+	List<Object[]> getListPairContentIDListIDFromAttachmentLists(@Param("ids") List<Long> attachmentsList);
 
+	@Modifying
+	@Query
+	void removeOrpheanAttachmentContents(@Param("ids") List<Long> attachmentContentIds);
 
 
 }

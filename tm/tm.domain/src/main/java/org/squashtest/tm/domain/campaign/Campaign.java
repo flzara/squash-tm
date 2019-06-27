@@ -304,7 +304,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		copy.setActualEndAuto(this.isActualEndAuto());
 		copy.setActualStartAuto(this.isActualStartAuto());
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
+			Attachment atCopy = tcAttach.shallowCopy();
 			copy.getAttachmentList().addAttachment(atCopy);
 		}
 

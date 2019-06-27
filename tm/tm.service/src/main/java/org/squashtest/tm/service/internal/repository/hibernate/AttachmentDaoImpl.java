@@ -38,10 +38,12 @@ public class AttachmentDaoImpl implements CustomAttachmentDao {
 		Attachment attachment = entityManager.find(Attachment.class, attachmentId);
 
 	//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob in lobs.db]
-        AttachmentContent content = attachment.getContent();
-        content.setContent(null);
 
-		entityManager.flush();
+		   AttachmentContent content = attachment.getContent();
+           content.setContent(null);
+
+		   entityManager.flush();
+
 	//End [Issue 1456]
 
 		entityManager.remove(attachment);

@@ -65,7 +65,10 @@ public class Attachment implements Identified {
         @Column(name = "SIZE")
 	private Long contentSize = 0L;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
+	// Before TM-362 -> @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
+	// Since TM-362. NO more cascadeType.REMOVE (many attachments for a single attachmentcontent) !
+	//Since TM-362. No more CascadeType.DETACH too. See Jira
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE /*, CascadeType.REMOVE , CascadeType.DETACH */})
 	@JoinColumn(name = "CONTENT_ID")
 	private AttachmentContent content;
 
@@ -208,9 +211,31 @@ public class Attachment implements Identified {
 	}
 
 	/**
+	 * will perform a shallow copy of this Attachment. All attributes will be duplicated, except for the content.
+	 * TM-362 replace hardCopy
+	 *
+	 */
+	public Attachment shallowCopy() {
+		Attachment clone = new Attachment();
+
+		clone.setName(this.getName());
+		clone.setSize(this.getSize());
+		clone.setType(this.getType());
+		clone.setAddedOn(new Date());
+		clone.setAttachmentToCopyId(this.getId());
+		if (this.getContent() != null) {
+			clone.setContent(this.getContent());
+		}
+
+		return clone;
+	}
+
+	/**
 	 * will perform a deep copy of this Attachment. All attributes will be duplicated including the content.
 	 *
 	 * Note : the properties 'id' and 'addedOn' won't be duplicated and will be automatically set by the system.
+	 *
+	 * TM-362 no more used
 	 *
 	 */
 	public Attachment hardCopy() {

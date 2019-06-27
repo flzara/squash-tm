@@ -55,7 +55,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@Type(type="org.hibernate.type.TextType")
 	private String expectedResult = "";
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
@@ -98,7 +98,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 		// copy the attachments
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {
-			Attachment clone = tcAttach.hardCopy();
+			Attachment clone = tcAttach.shallowCopy();
 			newTestStep.getAttachmentList().addAttachment(clone);
 		}
 

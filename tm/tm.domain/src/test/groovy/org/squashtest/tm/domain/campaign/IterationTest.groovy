@@ -105,7 +105,8 @@ class IterationTest extends Specification {
 		given:
 		Attachment attach = Mock(Attachment)
 		Attachment attachCopy = new Attachment()
-		attach.hardCopy() >> attachCopy
+		//shallowCopy since TM-362: attach.hardCopy() >> attachCopy
+		attach.shallowCopy() >> attachCopy
 		copySource.getAttachmentList().addAttachment(attach)
 
 		when:

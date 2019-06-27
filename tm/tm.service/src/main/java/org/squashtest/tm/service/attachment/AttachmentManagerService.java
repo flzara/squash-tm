@@ -23,10 +23,13 @@ package org.squashtest.tm.service.attachment;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface AttachmentManagerService extends AttachmentFinderService {
 	/**
@@ -40,8 +43,7 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 
 	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException;
 
-	void renameAttachment(long attachmentId, String newName);
-
+	void renameAttachment(long attachmentId, String newName);	
 	/**
 	 * Writes attachment content into the given stream.
 	 * @param attachmentId
@@ -59,7 +61,7 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	 */
 	void copyContent(Attachment attachment);
 
-	void copyAttachments(AttachmentHolder attachmentHolder);
+	void copyContentsOnExternalRepository(AttachmentHolder attachmentHolder);
 
 	/**
 	 * Remove the EXTERNAL content of an list of {@link AttachmentList}. It DO NOT REMOVE DATA FROM DATABASE
@@ -70,4 +72,22 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	void cleanContent(List<Long> attachmentListIds);
 
 	void cleanContent(AttachmentHolder attachmentHolder);
+
+    // TM362
+    Map<Long, Long> removeAttachmentsFromLists(List<Long> attachmentsList);
+
+    void removeContent(long attachmentListId, long attachmentContentId);
+
+	List<Long[]>  getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList);
+
+	void deleteContents(List<Long[]> ContentIListId);
+
+	void removeAttachmentsAndLists(List<Long> AttachmentListIds);
+
+	List<Long> getAttachmentsListsFromRequirementFolders(List<Long> requirementLibraryNodeIds);
+
+	List<Long[]> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds);
+
+	List<Long[]> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps);
+
 }

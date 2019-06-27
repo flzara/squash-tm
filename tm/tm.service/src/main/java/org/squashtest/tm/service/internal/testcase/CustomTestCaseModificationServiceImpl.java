@@ -506,7 +506,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStepVisitor visitor = new TestStepVisitor() {
 			@Override
 			public void visit(ActionTestStep visited) {
-				attachmentManagerService.copyAttachments(visited);
+				attachmentManagerService.copyContentsOnExternalRepository(visited);
 			}
 
 			@Override
