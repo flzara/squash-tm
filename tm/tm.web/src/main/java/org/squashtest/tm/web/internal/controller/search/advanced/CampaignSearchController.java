@@ -224,7 +224,7 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		Pageable paging = SpringPagination.pageable(params, campaignSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, campaignSearchResultMapper, (String key)-> key);
 
 		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, campaignSearchResultMapper.getMappedKeys(), searchModel);
 
