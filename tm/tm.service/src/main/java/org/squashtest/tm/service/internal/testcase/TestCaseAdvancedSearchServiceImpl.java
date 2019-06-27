@@ -41,9 +41,13 @@ import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.testcase.QActionTestStep;
+import org.squashtest.tm.domain.testcase.QCallTestStep;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -281,11 +285,45 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	}
 
+	private static void createCallStepsFilter(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchRangeFieldModel rangeField = (AdvancedSearchRangeFieldModel) model;
+
+		boolean hasMin = rangeField.hasMinValue();
+		boolean hasMax = rangeField.hasMaxValue();
+
+		QTestCase outerTestCase = QTestCase.testCase;
+		QTestCase initTestCase = new QTestCase("initTestCase");
+		QTestStep testStep = new QTestStep("testStep");
+		QActionTestStep actionTestStep = new QActionTestStep("actionTestStep");
+		QCallTestStep callTestStep = new QCallTestStep("callTestStep");
+
+		HibernateQuery<?> subquery = new ExtendedHibernateQuery<>()
+			.select(Expressions.ONE)
+			.from(initTestCase)
+			.leftJoin(initTestCase.steps, testStep)
+			.leftJoin(actionTestStep).on(testStep.id.eq(actionTestStep.id))
+			.leftJoin(callTestStep).on(testStep.id.eq(callTestStep.id))
+			.where(outerTestCase.id.eq(initTestCase.id))
+			.groupBy(initTestCase.id);
+
+
+		if (hasMin) {
+			int min = rangeField.getMinValue();
+			subquery.having(callTestStep.id.count().goe(min));
+		} else if (hasMax) {
+			int max = rangeField.getMaxValue();
+			subquery.having(callTestStep.id.count().loe(max));
+		}
+
+		query.where(subquery.exists());
+
+	}
+
 	static {
 
 		MAPPINGS.getFormMapping()
 			.map("attachments", TEST_CASE_ATTCOUNT)
-			.map("callsteps", TEST_CASE_CALLSTEPCOUNT)
 			.map("createdBy", TEST_CASE_CREATED_BY)
 			.map("createdOn", TEST_CASE_CREATED_ON)
 			.map("datasets", TEST_CASE_DATASETCOUNT)
@@ -313,7 +351,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("steps", TEST_CASE_STEPCOUNT)
 			.map("type", TEST_CASE_TYPE)
 			.map("automatable", TEST_CASE_AUTOMATABLE)
-			.map("automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS);
+			.map("automationRequest.requestStatus", AUTOMATION_REQUEST_STATUS)
+			.mapHandler("callsteps", new AdvancedSearchColumnMappings.SpecialHandler(TestCaseAdvancedSearchServiceImpl::createCallStepsFilter));
 
 		MAPPINGS.getResultMapping()
 			.map("project-name", TEST_CASE_PROJECT_NAME)
