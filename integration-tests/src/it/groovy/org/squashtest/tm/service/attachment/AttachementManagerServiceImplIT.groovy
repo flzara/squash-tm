@@ -402,7 +402,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	}
 
-	def "attachments shallowCopy: delete one by one of 2 PJs on a duplicate object and its source"() {
+	def "attachments shallowCopy: delete one by one the 2 PJs on a duplicate object and its source"() {
 		//expected: the PJ (content) must still exists or not in db after attachment deletion depending on other objects  have a reference on content
 		//"TC3 Gherkin" : ID=-247 (AttList = -927) 2 PJs ContentId=-9,-8) and its duplicate TestCase "TC3 Gherkin Copie1"  ID=-248 (AttList = -928)
 		given:
