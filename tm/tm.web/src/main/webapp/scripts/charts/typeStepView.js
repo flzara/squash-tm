@@ -261,9 +261,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			},
 
 			changeAxis: function (event) {
-
-				this.loadOperationWithId($(event.target).children().attr('id'), event.target.name);
-				this.loadFilter($(event.target).children().attr('id'), event.target.name);
+				// TM-184
+				var selectedOptionIndex = $(event.target).context.options.selectedIndex;
+				
+				this.loadOperationWithId($(event.target).children()[selectedOptionIndex].id, event.target.name);
+				this.loadFilter($(event.target).children()[selectedOptionIndex].id, event.target.name);
 			},
 
 
