@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
@@ -50,7 +51,9 @@ import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Component
 public class ExecutionStepModificationHelper {
@@ -121,11 +124,27 @@ public class ExecutionStepModificationHelper {
 		for (ExecutionStep eStep : execSteps) {
 			ActionTestStep aStep = (ActionTestStep) eStep.getReferencedTestStep();
 			// 6797 : Status of executionStep was lost if step was containing parameters.
-			// eStep ==> paramteres' value but aStep ==> ${param}, then eStep was adding to the 'toBeUpdated' list.
+			// eStep ==> parameters' value but aStep ==> ${param}, then eStep was adding to the 'toBeUpdated' list.
 			if (aStep != null) {
-				if (isExecutionWithParameters(aStep) && isExecutionWithDataset(execution)) {
-					Dataset dataset = execution.getTestPlan().getReferencedDataset();
-					changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
+				if (isExecutionWithParameters(aStep)) {
+					// [TM-543][TM-544] Correction for issue 6797 didn't dealt with callTestStep with dataset coming from the call test case (and not the calling one)
+					// Correction below makes them not to be added to the 'toBeUpdated' list, except if the same test case is called more than one with different dataset.
+					// This situation is considered as normally never happening.
+					Long aStepTestCaseId = aStep.getTestCase().getId();
+					Optional<CallTestStep> optionalCallTestStep = execution.getReferencedTestCase().getCallSteps().stream()
+						.filter(callTestStep -> callTestStep.getCalledTestCase().getId().equals(aStepTestCaseId))
+						.findFirst();
+					if (optionalCallTestStep.isPresent() && !optionalCallTestStep.get().isDelegateParameterValues()) {
+						Dataset dataset = optionalCallTestStep.get().getCalledDataset();
+						changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
+					} else {
+						if(isExecutionWithDataset(execution)){
+							Dataset dataset = execution.getTestPlan().getReferencedDataset();
+							changeStepParamsByValue(eStep, aStep, dataset, toBeUpdated);
+						} else{
+							testingStep( aStep,  eStep,toBeUpdated);
+						}
+					}
 				} else {
 					testingStep( aStep,  eStep,toBeUpdated);
 				}

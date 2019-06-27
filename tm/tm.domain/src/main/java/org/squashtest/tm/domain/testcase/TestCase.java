@@ -71,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -553,6 +554,16 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 		return retriever.getResult();
 
+	}
+
+	/**
+	 * @return the list of {@link CallTestStep} or empty list
+	 */
+	public List<CallTestStep> getCallSteps() {
+		return this.getSteps().stream()
+			.filter(testStep -> testStep instanceof CallTestStep)
+			.map(testStep -> (CallTestStep) testStep)
+			.collect(Collectors.toList());
 	}
 
 	private static final class ActionStepRetreiver implements TestStepVisitor {
