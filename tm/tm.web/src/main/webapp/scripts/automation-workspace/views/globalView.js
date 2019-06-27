@@ -161,8 +161,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
                         var edFnElements = $.editable.types.text.element;
-                        var checkbox = $row.find("input[type=checkbox]").text() ;
-                        if (checkbox !== undefined && checkbox.checked) {
+                        var checkbox = $row.find("input[type=checkbox]");
+                        if (checkbox !== undefined && checkbox[0].checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
 
