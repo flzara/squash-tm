@@ -462,8 +462,17 @@
       var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
       var jquerybtn = $(btn);
       var container = jquerybtn.parents(".container-credential");
-      var loginInput = container.find(".user-login").val();
-      var mpInput = container.find(".user-mp").val();
+
+      if (container.find(".user-login").val() != "") {
+        var loginInput = container.find(".user-login").val()}
+      else {
+        squashtm.notification.showWarning(<f:message key="label.savecredentials.failed"/>) };
+
+      if (container.find(".user-mp").val() != "") {
+        var mpInput = container.find(".user-mp").val()}
+      else {
+        squashtm.notification.showWarning(<f:message key="label.savecredentials.failed"/>) };
+      
 
       $.ajax({
         url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
@@ -474,6 +483,8 @@
         },
       }).success(function () {
         squashtm.notification.showInfo(<f:message key="label.savecredentials"/>)
+      }).fail(function () {
+        squashtm.notification.showWarning(<f:message key="label.savecredentials.failed"/>)
       });
     });
 
