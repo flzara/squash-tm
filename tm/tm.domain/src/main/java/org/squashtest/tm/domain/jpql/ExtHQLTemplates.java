@@ -64,6 +64,8 @@ public class ExtHQLTemplates extends HQLTemplates{
 		add(ExtOps.YEAR_MONTH_DAY, "year({0}) * 10000 + month({0}) * 100 + day({0})");
 
 		add(ExtOps.FULLTEXT, "fulltext_search({0}, {1})");
+
+		add(ExtOps.LIKE_INSENSITIVE, "i_like({0}, {1})");
 	}
 
 

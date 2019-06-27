@@ -71,7 +71,9 @@ public enum ExtOps implements Operator {
 	YEAR_MONTH_DAY(Integer.class),
 
 	//Fulltext operator
-	FULLTEXT(Boolean.class);
+	FULLTEXT(Boolean.class),
+
+	LIKE_INSENSITIVE(Boolean.class);
 
 	private final Class<?> type;
 

@@ -561,7 +561,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			if(value.contains("*")) {
 				value = value.replace("*", "%");
 			} else {
-				value = "%" + value + "%";
+				value = value + "%";
 			}
 			filterColumn.setOperation(Operation.LIKE);
 

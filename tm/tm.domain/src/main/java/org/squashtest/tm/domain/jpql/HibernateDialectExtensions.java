@@ -107,6 +107,8 @@ public final class HibernateDialectExtensions {
 
 	public static final String FN_NAME_FULLTEXT = "fulltext_search";
 
+	public static final String FN_INSENSITIVE_LIKE = "i_like";
+
 	public static final String FN_NAME_WEEK = "week";
 
 
@@ -130,7 +132,7 @@ public final class HibernateDialectExtensions {
             extensions.put(FN_NAME_MATCHES, new Regexp());
             extensions.put(FN_NAME_I_MATCHES, new InsensitiveRegexp());
 			extensions.put(FN_NAME_FULLTEXT, new MatchFullTextSearch());
-
+			extensions.put(FN_INSENSITIVE_LIKE, new LikeInsensitiveSearch());
             return extensions;
         }
 
@@ -139,6 +141,7 @@ public final class HibernateDialectExtensions {
             extensions.put(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
 			extensions.put(FN_NAME_MATCHES, new Regexp());
 			extensions.put(FN_NAME_I_MATCHES, new InsensitiveRegexp());
+			extensions.put(FN_INSENSITIVE_LIKE, new LikeInsensitiveSearch());
             return extensions;
         }
 
@@ -149,6 +152,7 @@ public final class HibernateDialectExtensions {
             extensions.put(FN_NAME_MATCHES, new TildeStar());
 			extensions.put(FN_NAME_I_MATCHES, new InsensitiveTildeStar());
 			extensions.put(FN_NAME_FULLTEXT, new TsQueryFullTextSearch());
+			extensions.put(FN_INSENSITIVE_LIKE, new ILikeSearch());
             return extensions;
         }
 
@@ -330,6 +334,18 @@ public final class HibernateDialectExtensions {
 
 	private static final class TsQueryFullTextSearch extends SQLFunctionTemplate{
 		public TsQueryFullTextSearch() {super(BooleanType.INSTANCE, " (?1 @@ to_tsquery(?2))");}
+	}
+
+	private static  final class LikeInsensitiveSearch extends  SQLFunctionTemplate{
+		public LikeInsensitiveSearch() {
+			super(BooleanType.INSTANCE, "( LOWER(?1) like (?2) )");
+		}
+	}
+
+	private static final class ILikeSearch extends SQLFunctionTemplate {
+		public ILikeSearch() {
+			super(BooleanType.INSTANCE, "( (?1) ILIKE (?2) )");
+		}
 	}
 
 }

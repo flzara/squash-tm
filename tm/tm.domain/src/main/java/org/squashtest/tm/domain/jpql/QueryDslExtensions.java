@@ -105,5 +105,10 @@ public final class QueryDslExtensions {
 		return Expressions.booleanOperation(ExtOps.FULLTEXT, attribute, new QString("'"+value+"'"));
 	}
 
+	@QueryDelegate(String.class)
+	public static BooleanExpression s_i_like(StringPath attribute, String value){
+		return Expressions.booleanOperation(ExtOps.LIKE_INSENSITIVE, attribute, new QString("'"+value+"'"));
+	}
+
 
 }

@@ -721,6 +721,9 @@ class QuerydslToolbox {
 		else if (operation == Operation.FULLTEXT) {
 			predicate = createFullTextPredicate(operation, baseExp, operands);
 		}
+		else if (operation == Operation.LIKE) {
+			predicate = createLikePredicate(operation, baseExp, operands);
+		}
 		// normal case
 		else {
 			Operator operator = getOperator(operation);
@@ -807,7 +810,13 @@ class QuerydslToolbox {
 
 		return matchExpr.isTrue();
 	}
-	
+
+	private BooleanExpression createLikePredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
+		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.LIKE_INSENSITIVE, baseExp, operands[0]);
+
+		return matchExpr.isTrue();
+	}
+
 
 	List<Expression<?>> createOperands(QueryFilterColumn filter, Operation operation) {
 		QueryColumnPrototype column = filter.getColumn();
@@ -955,7 +964,7 @@ class QuerydslToolbox {
 						throw new IllegalArgumentException("type '" + type + NOT_YET_SUPPORTED);
 				}
 
-				if (Operation.LIKE == operation) {
+				if (Operation.LIKE == operation && !operand.toString().contains("%")) {
 					operand = '%' + operand.toString() + '%';
 				}
 
