@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.infrastructure.hibernate;
 
+import java.util.Iterator;
+
 import org.hibernate.HibernateException;
-import org.hibernate.cache.spi.access.EntityDataAccess;
-import org.hibernate.cache.spi.access.NaturalIdDataAccess;
+import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
+import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Join;
@@ -30,8 +32,6 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Table;
 import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
 import org.hibernate.persister.spi.PersisterCreationContext;
-
-import java.util.Iterator;
 
 
 /*
@@ -143,10 +143,10 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 
 	public TestStepPersister(
-		final PersistentClass persistentClass,
-		final EntityDataAccess cacheAccessStrategy,
-		final NaturalIdDataAccess naturalIdRegionAccessStrategy,
-		final PersisterCreationContext creationContext) throws HibernateException {
+			final PersistentClass persistentClass,
+			final EntityRegionAccessStrategy cacheAccessStrategy,
+			final NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
+			final PersisterCreationContext creationContext) throws HibernateException {
 
 		super(persistentClass, cacheAccessStrategy, naturalIdRegionAccessStrategy, creationContext);
 
