@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.users;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,15 +32,10 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
-import org.squashtest.tm.domain.servers.AuthenticationProtocol;
-import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.domain.servers.OAuth1aCredentials;
-import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
-import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
+import org.squashtest.tm.exception.bugtracker.CannotConnectBugtrackerException;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
 import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
@@ -278,8 +272,8 @@ public class UserAccountController {
 		catch(BugTrackerNoCredentialsException ex){
 			// need to rethrow the same exception, with a message in the expected user language
 			LOGGER.debug("server-app credentials test failed : ", ex);
-			String message = i18nHelper.internationalize("thirdpartyserver.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
-			throw new BugTrackerNoCredentialsException(message, ex);
+			//	String message = i18nHelper.internationalize("thirdpartyserver.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
+			throw new CannotConnectBugtrackerException(ex);
 		}
 	}
 
