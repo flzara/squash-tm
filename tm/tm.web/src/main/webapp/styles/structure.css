@@ -2143,6 +2143,7 @@ button.tf:hover {
 #admin-pane #information-block {
 	display: block;
 	float: left;
+	width: 100%;
 }
 
 #home-workspace #information-block-wrapper {
@@ -2160,7 +2161,6 @@ button.tf:hover {
 	margin-top: 50px;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
-	width: 250%;
 	border: 1px solid red;
 	color: red;
 }
