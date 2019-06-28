@@ -23,7 +23,6 @@ package org.squashtest.tm.service.attachment
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.hibernate.Query
-import org.junit.Assert
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
@@ -37,13 +36,14 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.deletion.OperationReport
 import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-import javax.validation.constraints.AssertTrue
 
 @UnitilsSupport
 @Transactional
@@ -51,13 +51,19 @@ import javax.validation.constraints.AssertTrue
 class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
-	TestCaseModificationService service
+	TestCaseModificationService tcModService
 
 	@Inject
-	TestCaseLibraryNavigationService navService
+	TestCaseLibraryNavigationService tcNavService
 
 	@Inject
-	AttachmentManagerService attachService;
+	RequirementLibraryNavigationService reqNavService
+
+	@Inject
+	RequirementVersionManagerService reqVersionService
+
+	@Inject
+	AttachmentManagerService attachService
 
 	@Inject
 	GenericProjectManagerService genericProjectManager
@@ -74,8 +80,8 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 
 		when:
-		def attachListId = service.findById(testCaseId).attachmentList.id;
-		def attachList = service.findById(testCaseId).getAttachmentList();
+		def attachListId = tcModService.findById(testCaseId).attachmentList.id
+		def attachList = tcModService.findById(testCaseId).getAttachmentList()
 
 		then:
 		attachList != null
@@ -219,7 +225,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	def "should correctly tell if a test case have attachments or not"() {
 		when:
-		TestCase testCase = service.findById(testCaseIdWithoutAttachment);
+		TestCase testCase = tcModService.findById(testCaseIdWithoutAttachment);
 
 		then:
 		!testCase.attachmentList.hasAttachments()
@@ -231,7 +237,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		when:
 		attachService.addAttachment(attachListId, raw)
 		session.flush()
-		TestCase testCase2 = service.findById(testCaseId)
+		TestCase testCase2 = tcModService.findById(testCaseId)
 
 		then:
 		testCase2.attachmentList.hasAttachments()
@@ -253,7 +259,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		def step1AttchListId = -930L
 		def step2AttchListId = -931L
 		def step3AttchListId = -932L
-		//existing PJ of step
+		//existing PJ on step
 		def attachIdStep1Id = -18L
 		def contentIdStep1Id = -10L
 		def contentStreamStep1 = "new6"
@@ -342,11 +348,9 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 		//3°) copying the testCase with a newPJ and 3 steps, the first one with PJ
 		//expected: AttachmentContent should not be duplicate
-
 		when:
 		Long[] nodes = [testCaseId]
-
-		def copiedNodes = navService.copyNodesToLibrary(-14L,nodes)
+		def copiedNodes = tcNavService.copyNodesToLibrary(-14L,nodes)
 
 		then:
 		copiedNodes.size() == 1
@@ -377,7 +381,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		//4°) Delete the original TestCase and check if PJs on Copied TestCAse are always available
 		when:
 		mockDataSourceUrl()
-		OperationReport report = navService.deleteNodes([nodes[0]])
+		OperationReport report = tcNavService.deleteNodes([nodes[0]])
 
 		then:
 		report.removed.size() == 1
@@ -399,15 +403,12 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		attchmentsForContent.getAt(0).attachmentList.id ==  newStep1AttachList//on step 1 of copied testcase
 		attchmentsForContent.getAt(0).name.equals("new6.txt") == true
 		attchmentsForContent.getAt(0).content.stream.text == contentStreamStep1
-
 	}
 
 	def "attachments shallowCopy: delete one by one the 2 PJs on a duplicate object and its source"() {
 		//expected: the PJ (content) must still exists or not in db after attachment deletion depending on other objects  have a reference on content
 		//"TC3 Gherkin" : ID=-247 (AttList = -927) 2 PJs ContentId=-9,-8) and its duplicate TestCase "TC3 Gherkin Copie1"  ID=-248 (AttList = -928)
 		given:
-//		def testCaseId = -247L
-//		def duplicateTestCaseId = -248L
 		def testCaseAttachListId = -927L
 		def duplicateTestCaseAttachListId = -928L
 		def testCaseAttach_1_Id = -14L
@@ -506,7 +507,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		attachments.get(0).name.equals(content_1_name) == true
 
 		when:
-		//content_2 only on testCase
+		//content_2 only linked to testCase
 		attachments.clear()
 		attachments = getAttachemntsForAttachmentContent(testCaseUniqueContent_2_Id)
 		then:
@@ -532,7 +533,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		contents.size() == 0
 
 		when:
-		//no change
+		//no change for Content_2
 		attachments.clear()
 		attachments = getAttachemntsForAttachmentContent(testCaseUniqueContent_2_Id)
 		then:
@@ -573,14 +574,103 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	}
 
 
-	//**************************************************************
-	//                              UTILS
-	//**************************************************************
+	def "attachments shallowCopy: copy a tree with folder, testCase, duplicate TestCase and delete it  "() {
+		//expected: no AttachmentContent created on copy, no PJs lose on delete
+
+		given :
+		def srcFolderId = -243L //folder c
+//		                  /*******************
+//		                  *  "folder c" (PJ new6]
+//						  *    |
+//						  *    "folder Test Case 2" (PJ new5.txt)
+//						  *        |
+//						  *         "tc 2" (3 steps =>PJ new6.txt on step 2)
+//						  *   |
+//						  *    "tc 2 copie"  (3 steps =>PJ new6.txt on step 2)
+//						  *********************/
+		def targetFolderId = -237L //folder a
+		def srcFolderAttachListId = -917L
+		def targetFolderAttachListId = -898L
+		def attchmentContentsNbInTree = 3
+		def attchmentsNbInTree = 4 //1 "folder c" + 1 "folder testcase 2" + 1 "step 2 tc 2" + 1 "step2 of tc 2 copie"
+		def attchmentListNbInTree = 10
+
+		//1°) copy the tree "folder c"
+		when:
+		def initialAttachmentContentNb =  countTotalAttachmentContent() // total in database => not only contained in srcFolder
+		def initialAttachmentNb = countTotalAttachment() //idem
+		def initialAttachmentListNb = countTotalAttachmentList()
+		def nodeList = tcNavService.copyNodesToFolder(targetFolderId, srcFolderId);
+
+		then:
+		nodeList.size() == 1
+		//same content ...
+		nodeList.getAt(0).content.size() == 2 // 2 elements at first sublevel ("folder testcase 2 " and " tc2 copie"
+		nodeList.getAt(0).content.getAt(0).name == "folder Test Case 2"
+		nodeList.getAt(0).content.getAt(0).content.size() == 1 //tc2
+
+		//expected: no duplicate AttachmentContent in Database
+		countTotalAttachmentContent() == initialAttachmentContentNb
+		// see above
+		countTotalAttachment() == (initialAttachmentNb + attchmentsNbInTree)
+		countTotalAttachmentList() == (initialAttachmentListNb + attchmentListNbInTree)
+
+		//2°) remove the copy of "folder c"
+		when:
+			mockDataSourceUrl()
+			tcNavService.deleteNodes([nodeList.getAt(0).id])
+		then:
+		countTotalAttachmentContent() == initialAttachmentContentNb
+		countTotalAttachment() == initialAttachmentNb
+		countTotalAttachmentList() == initialAttachmentListNb
+
+		//3°) remove the "folder c"
+		when:
+		tcNavService.deleteNodes([srcFolderId])
+		then:
+		// remove the AttachmentContent no more use
+		countTotalAttachmentContent() == (initialAttachmentContentNb - attchmentContentsNbInTree)
+		countTotalAttachment() == (initialAttachmentNb - attchmentsNbInTree)
+		countTotalAttachmentList() == (initialAttachmentListNb - attchmentListNbInTree)
+
+	}
+
+	 /**************
+	 *       workspace requirement
+	 *       Test Folder 1  (ID=-254, atachment_list_id = -900 , no PJ)
+	 *                    |
+	 *                     TF1-R1 Test Requirement 1 (ID=-255, atachment_list_id = -888 , no PJ)
+	 *                                              |
+	 *                                              Sub ex Ex (ID=-256, atachment_list_id = - 938, PJ-> requirement.txt, Content_id = -12, Attachment_id = -21 )
+	 *                                                                                |
+	 *                                                                                 ex 1(ID=-257, atachment_list_id = - 939, PJ-> new7.txt Content_id = -13, Attachment_id = -22)
+	 ***************/
+//	def "attachments shallowCopy: workspace requirement: copy tree folder to library"() {
+//		given:
+//		def attachmentListFolderId = -254L
+//
+//
+//		when:
+//			reqVersionService.createNewVersion(collection long, false, false)
+//			reqNavService.copyNodesToLibrary()
+//		then:
+//
+//	}
+
+	/** *************************************************************
+	                 UTILS
+	************************************************************** */
 
 	protected <R> List<R> executeSelectSQLQuery(String queryString) {
 		Query query = getSession().createSQLQuery(queryString)
-		return query.list()
+		return query.getResultList()
 	}
+
+	protected Long executeCountSelectSQLQuery(String queryString) {
+		Query query = getSession().createSQLQuery(queryString)
+		return query.getSingleResult()
+	}
+
 
 	protected boolean areOrheanContents() {
 		def result = executeSelectSQLQuery(
@@ -602,7 +692,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	protected <R> List<R> executeSelectQuery(String stQuery, String paramName, Long id) {
 			Query query = getSession().createQuery(stQuery)
 			query.setParameterList(paramName,id)
-			return query.list()
+			return query.getResultList()
 	}
 
 	protected List<Attachment> getAttachmentsFromLists(Collection<Long> attchLists) {
@@ -618,8 +708,20 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		return executeSelectQuery("SELECT content from AttachmentContent content where content.id = :id order by content.id ASC", "id", contentID)
 	}
 
-	protected int countAttachemntsForAttachmentContent(Long contentID) {
+	protected Long countAttachemntsForAttachmentContent(Long contentID) {
 		return getAttachemntsForAttachmentContent(contentID).size()
+	}
+
+	protected Long countTotalAttachmentContent() {
+		return executeCountSelectSQLQuery("SELECT count(*) FROM attachment_content")
+	}
+
+	protected Long countTotalAttachment() {
+		return executeCountSelectSQLQuery("SELECT count(*) FROM attachment")
+	}
+
+	protected Long countTotalAttachmentList() {
+		return executeCountSelectSQLQuery("SELECT count(*) FROM attachment_list")
 	}
 
 	protected boolean checkIdAndStreamOfContent(Long idRef, String streamToTxtRef, AttachmentContent underTest) {
@@ -640,10 +742,8 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	private mockDataSourceUrl() {
-//		String url = dataSource.getConnection().getMetaData().getURL()
 		DataSourceProperties ds = Mock()
 		ds.getUrl() >> "NotNullPointer"
-		navService.deletionHandler.deletionDao.dataSourceProperties  = ds
-
+		tcNavService.deletionHandler.deletionDao.dataSourceProperties  = ds
 	}
 }
