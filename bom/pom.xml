@@ -479,13 +479,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${spring.boot.version}</version>
-        <exclusions>
-          <exclusion>
-            <!-- unneeded because of org.json:json -->
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -579,6 +572,23 @@
           <exclusion>
             <groupId>javax.jdo</groupId>
             <artifactId>jdo-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <!-- 
+          		Querydsl-codegen uses an obsolete version of eclipse ecj (org.eclipse.jdt.core.compiler:ecj).
+          		We need it at compile time only (not runtime). Still at runtime, when running in Eclipse IDE it will 
+          		be loaded in place of the good one (org.eclipse.jdt:ecj) which entails JSP compilation failures 
+          		(see https://github.com/spring-projects/spring-boot/issues/14398). 
+          		
+          		This is very annoying because the final Maven dependencies are correct and a distro would run 
+          		without problem because only ecj:${ecj.version} would be loaded.
+          		
+          		The solution here is to forcibly ban org.eclipse.jdt.core.compiler just because of that, and 
+          		Querydsl-s apt-maven-plugin will have to settle for the jdk compiler instead.
+          	-->
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+
           </exclusion>
         </exclusions>
       </dependency>

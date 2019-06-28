@@ -344,6 +344,7 @@
                 <bannedDependencies>
                   <excludes>
                     <exclude>commons-logging:commons-logging</exclude>
+                    <exclude>org.eclipse.jdt.core.compiler:ecj</exclude>
                   </excludes>
                 </bannedDependencies>
                 <banDuplicateClasses>

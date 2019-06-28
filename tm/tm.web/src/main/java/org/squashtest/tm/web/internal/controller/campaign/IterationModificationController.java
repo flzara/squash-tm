@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -182,7 +181,7 @@ public class IterationModificationController {
 		model.addAttribute("milestoneConf", milestoneConf);
 		model.addAttribute("iterationStatusComboJson", buildStatusComboData());
 		model.addAttribute("iterationStatusLabel", formatStatus(iteration.getStatus()));
-		model.addAttribute("userPrefs", new JSONObject(userPrefs));
+		model.addAttribute("userPrefs", userPrefs);
 
 		boolean shouldShowDashboard = customReportDashboardService.shouldShowFavoriteDashboardInWorkspace(Workspace.CAMPAIGN);
 		boolean canShowDashboard = customReportDashboardService.canShowDashboardInWorkspace(Workspace.CAMPAIGN);

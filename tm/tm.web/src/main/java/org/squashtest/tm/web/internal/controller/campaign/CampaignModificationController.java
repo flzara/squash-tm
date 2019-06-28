@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -201,7 +200,7 @@ public class CampaignModificationController {
 		model.addAttribute("campaignStatusComboJson", buildStatusComboData());
 		model.addAttribute("campaignStatusLabel", formatStatus(campaign.getStatus()));
 		model.addAttribute("statuses", getStatuses(campaign.getProject().getId()));
-		model.addAttribute("userPrefs", new JSONObject(userPrefs));
+		model.addAttribute("userPrefs", userPrefs);
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
