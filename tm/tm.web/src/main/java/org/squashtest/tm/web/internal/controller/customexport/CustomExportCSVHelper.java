@@ -205,7 +205,8 @@ public class CustomExportCSVHelper {
 			Object i18nKey = record.get(columnField);
 			// This can be null if left joined with non-existent entity
 			if(i18nKey != null) {
-				value = translator.internationalize(String.valueOf(i18nKey), locale);
+				String i18nKeyString = String.valueOf(i18nKey);
+				value = translator.getMessage(i18nKeyString, null, i18nKeyString, locale);
 			}
 		} else if (CustomExportColumnLabel.getRichTextFieldsSet().contains(label)) {
 			// Clean Html content
