@@ -154,7 +154,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 
 				this.set({ selectedAttributes: loadedStandardAttributes });
 				this.set({ selectedCufAttributes: loadedCufAttributes });
-				this.set({ selectedAllAttributes: loadedAllAttributes });
+				this.set({ allSelectedAttributes: loadedAllAttributes });
 				this.set({ selectedEntities: this.deduceSelectedEntities() });
 
 				var cufMap = squashtm.customExport.availableCustomFields;
@@ -208,14 +208,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				}),
 				columns: self.extractColumns(),
 				name: this.get("name")
-
 			});
 		},
 
 		extractColumns: function() {
-			var selectedAllAttributes = this.get("selectedAllAttributes");
+			var allSelectedAttributes = this.get("allSelectedAttributes");
 
-			return _.map(selectedAllAttributes, function(attr) {
+			return _.map(allSelectedAttributes, function(attr) {
 				// Split ColumnLabel and CufId (if it exists)
 				var splitAttr = attr.split('-');
 				return {

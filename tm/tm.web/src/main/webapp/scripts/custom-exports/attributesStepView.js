@@ -63,30 +63,51 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				// Store selected entities (only saved for the current wizard)
 				var selectedEntities = _.pluck($("[name='entity']:checked"), 'id');
 
-				// Find all selected attributes inputs
-				var allSelectedInputs = $("input[type=checkbox][name!='entity'][data-cuf]:checked:visible");
+				// Get the inputs of the checked entities
+				var entityMap = this.model.get('entityMap');
+				var allAvailableAttributesOfCheckedEntities =
+					_.chain(entityMap)
+					.pick(selectedEntities)
+					.pluck('attributes')
+					.map(function(entity) { return _.keys(entity); })
+					.flatten()
+					.value();
 
-				// Store all the attributes in order
-				var selectedAllAttributes = _.pluck(allSelectedInputs, 'id');
+				// Find all selected attributes inputs
+				var allSelectedInputs =
+					_.filter($("input[type=checkbox][name!='entity'][data-cuf]:checked"), function(input) {
+						if(input.id.includes('_CUF-')) {
+							return _.contains(selectedEntities, input.id.split('_CUF-')[0]);
+						} else {
+							return _.contains(allAvailableAttributesOfCheckedEntities, input.id);
+						}
+					});
+
+				// Store all the attributes in order (select only the ones whose entity is checked)
+				var allSelectedAttributes = _.pluck(allSelectedInputs, 'id');
 
 				// Store standard attributes
 				var selectedAttributes =
 					_.chain(allSelectedInputs)
-						.filter(function(input) { return $(input).attr('data-cuf') == 'false'; })
+						.filter(function(input) {
+							return $(input).attr('data-cuf') == 'false';
+						})
 						.pluck('id')
 						.value();
 
 				// Store cuf attributes
 				var selectedCufAttributes =
 					_.chain(allSelectedInputs)
-						.filter(function(input) { return $(input).attr('data-cuf') == 'true'; })
+						.filter(function(input) {
+							return $(input).attr('data-cuf') == 'true';
+						})
 						.pluck('id')
 						.value();
 
 				this.model.set("selectedEntities", selectedEntities);
 				this.model.set("selectedAttributes", selectedAttributes);
 				this.model.set("selectedCufAttributes", selectedCufAttributes);
-				this.model.set("selectedAllAttributes", selectedAllAttributes);
+				this.model.set("allSelectedAttributes", allSelectedAttributes);
 			},
 
 			toggleEntityPanelVisibility: function(event) {
