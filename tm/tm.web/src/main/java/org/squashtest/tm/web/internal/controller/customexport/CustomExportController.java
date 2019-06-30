@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
@@ -172,10 +173,11 @@ public class CustomExportController {
 	@RequestMapping(value = "/cuf-data", method = RequestMethod.GET)
 	public Map<String, List<CustomFieldBindingModel>> getCustomFieldBindingsData(@RequestParam Long campaignId) {
 		Campaign campaign = campaignFinder.findById(campaignId);
-		Project project = campaign.getProject();
+		Project mainProject = campaign.getProject();
+		long mainProjectId = mainProject.getId();
 
 		// Main Map
-		Map<String, List<CustomFieldBindingModel>> map = jsonProjectBuilder.buildProjectCufBindingsMap(project.getId());
+		Map<String, List<CustomFieldBindingModel>> map = jsonProjectBuilder.buildProjectCufBindingsMap(mainProjectId);
 
 		// Need to add the Cufs bound to the linked Test Cases
 		List<Iteration> iterations = campaign.getIterations();
@@ -184,9 +186,17 @@ public class CustomExportController {
 		List<Long> projectIds = iterations.stream()
 			.map(Iteration::getTestPlans)
 			.flatMap(Collection::stream)
-			.map(itpi -> itpi.getReferencedTestCase().getProject().getId())
+			.map(itpi -> {
+				// for deleted TestCases
+				TestCase testCase = itpi.getReferencedTestCase();
+				if(testCase != null) {
+					return testCase.getProject().getId();
+				} else {
+					return null;
+				}
+			})
 			.distinct()
-			.filter(projectId -> !projectId.equals(project.getId()))
+			.filter(projectId -> projectId!= null && !projectId.equals(mainProjectId))
 			.collect(Collectors.toList());
 
 		for(Long projectId : projectIds) {
