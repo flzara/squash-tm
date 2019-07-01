@@ -33,8 +33,8 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
+import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.QQueryColumnPrototype;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
@@ -51,6 +51,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
@@ -104,11 +105,10 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		Map<EntityType, Set<QueryColumnPrototype>> prototypes;
 
 		prototypes = factory.from(prototype).where(prototype.business.eq(true)).orderBy(prototype.id.asc())
-				.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
+			.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
 
 		return prototypes;
 	}
-
 
 
 	@Override
@@ -118,27 +118,27 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 
 	@Override
-	public ChartInstance generateChart(long chartDefId, List<EntityReference> dynamicScope, Long dashboardId){
+	public ChartInstance generateChart(long chartDefId, List<EntityReference> dynamicScope, Long dashboardId) {
 		ChartDefinition def = findById(chartDefId);
-		return generateChart(def,dynamicScope,dashboardId);
+		return generateChart(def, dynamicScope, dashboardId);
 	}
 
 	@Override
-	public ChartInstance generateChart(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId){
+	public ChartInstance generateChart(ChartDefinition chartDefinition, List<EntityReference> dynamicScope, Long dashboardId) {
 
 		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
 		ConfiguredQuery configuredQuery = converter.withDefinition(chartDefinition)
-											  .forDynamicScope(dynamicScope)
-											  .forDashboard(dashboardId)
-											  .convert();
+			.forDynamicScope(dynamicScope)
+			.forDashboard(dashboardId)
+			.convert();
 
 		return generateChart(chartDefinition, configuredQuery);
 	}
 
 	@Override
 	public ChartInstance generateChart(ChartDefinition chartDef, Long projectId) {
-		if(chartDef.getProject() == null) {
+		if (chartDef.getProject() == null) {
 			Project project = em.find(Project.class, projectId);
 			chartDef.setProject(project);
 		}
@@ -146,20 +146,21 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
 		ConfiguredQuery configuredQuery = converter.withDefinition(chartDef)
-											  .convert();
+			.convert();
 
 		return generateChart(chartDef, configuredQuery);
 	}
 
 
-	private Session session(){
+	private Session session() {
 		return em.unwrap(Session.class);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#definition.id, 'org.squashtest.tm.domain.chart.ChartDefinition' ,'WRITE') "
-			+ OR_HAS_ROLE_ADMIN)
-	public void updateDefinition(ChartDefinition definition, ChartDefinition oldDef) {
+		+ OR_HAS_ROLE_ADMIN)
+	public void updateDefinition(ChartDefinition definition, Long id) {
+		ChartDefinition oldDef = customReportLibraryNodeService.findChartDefinitionByNodeId(id);
 		definition.setProject(oldDef.getProject());
 		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
 		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
@@ -168,9 +169,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 			CustomReportLibraryNode node = customReportLibraryNodeService.findNodeFromEntity(oldDef);
 			node.renameNode(definition.getName());
 		}
-		session().flush();
-		session().clear();
-		update(definition);
+		/*session().flush();
+		session().clear();*/
+		session().merge(definition);
 	}
 
 	@Override
@@ -179,9 +180,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
 		ConfiguredQuery configuredQuery = converter.withDefinition(chart)
-											  .forMilestone(milestoneId)
-											  .forWorkspace(workspace)
-											  .convert();
+			.forMilestone(milestoneId)
+			.forWorkspace(workspace)
+			.convert();
 
 		return generateChart(chart, configuredQuery);
 	}
@@ -191,15 +192,15 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		ChartToConfiguredQueryConverter converter = converterProvider.get();
 
 		ConfiguredQuery configuredQuery = converter.withDefinition(chart)
-											  .forCurrentActiveMilestone()
-											  .forWorkspace(workspace)
-											  .convert();
+			.forCurrentActiveMilestone()
+			.forWorkspace(workspace)
+			.convert();
 
 		return generateChart(chart, configuredQuery);
 	}
 
 
-	private ChartInstance generateChart(ChartDefinition definition, ConfiguredQuery configuredQuery){
+	private ChartInstance generateChart(ChartDefinition definition, ConfiguredQuery configuredQuery) {
 
 		// first, gather the tuples
 		List<Tuple> tuples = dataFinder.executeQuery(configuredQuery);
@@ -208,10 +209,10 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		TupleProcessor processor = tupleProcessorProvider.get();
 
 		ChartSeries series = processor
-				   .setDefinition(definition)
-				   .initialize()
-				   .process(tuples)
-				   .createChartSeries();
+			.setDefinition(definition)
+			.initialize()
+			.process(tuples)
+			.createChartSeries();
 
 		// create the chart instance and return it
 		return new ChartInstance(definition, series);

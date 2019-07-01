@@ -22,7 +22,10 @@ package org.squashtest.tm.web.internal.model.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 

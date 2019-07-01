@@ -56,7 +56,7 @@ public interface ChartModificationService {
 	void update(ChartDefinition chartDef);
 
 
-	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
+	void updateDefinition(ChartDefinition definition, Long id);
 
 	/**
 	 * Generate a chart with the given definition for the given projectId.

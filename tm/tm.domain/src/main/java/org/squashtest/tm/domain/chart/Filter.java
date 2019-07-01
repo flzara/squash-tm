@@ -21,10 +21,10 @@
 package org.squashtest.tm.domain.chart;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import javax.persistence.CollectionTable;
@@ -51,7 +51,7 @@ public class Filter implements QueryColumnPrototypeInstance {
 	@Column(name = "FILTER_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_filter_filter_id_seq")
 	@SequenceGenerator(name = "chart_filter_filter_id_seq", sequenceName = "chart_filter_filter_id_seq", allocationSize = 1)
-	private long Id;
+	private Long id;
 
 	@JoinColumn(name = "CHART_COLUMN_ID")
 	@ManyToOne
@@ -65,7 +65,6 @@ public class Filter implements QueryColumnPrototypeInstance {
 	@CollectionTable(name = "CHART_FILTER_VALUES", joinColumns = @JoinColumn(name = "FILTER_ID") )
 	@Column(name="FILTER_VALUE")
 	private List<String> values = new ArrayList<>();
-
 	private Long cufId;
 
 	@Override
@@ -126,4 +125,9 @@ public class Filter implements QueryColumnPrototypeInstance {
 		copy.setCufId(this.getCufId());
 		return copy;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
 }

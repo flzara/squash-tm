@@ -152,19 +152,19 @@ public class ChartDefinition implements TreeEntity{
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "CHART_DEFINITION_ID", nullable = false)
-	private List<Filter> filters;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "CHART_DEFINITION_ID")
+	private List<Filter> filters = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
 	@OrderColumn(name = "AXIS_RANK")
-	private List<AxisColumn> axis;
+	private List<AxisColumn> axis = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
 	@OrderColumn(name = "MEASURE_RANK")
-	private List<MeasureColumn> measures;
+	private List<MeasureColumn> measures = new ArrayList<>();
 
 	public User getOwner() {
 		return owner;
@@ -339,6 +339,7 @@ public class ChartDefinition implements TreeEntity{
 	}
 
 	public void setFilters(List<Filter> filters) {
+		/*this.filters = new HashSet<>(filters);*/
 		this.filters = filters;
 	}
 

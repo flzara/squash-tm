@@ -202,7 +202,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 						var columnPrototype = filter.columnPrototype;
 						var cufId = filter.cufId;
 						var isCuf = cufId !== null;
-
+						var id = filter.id;
 						var columnLabel;
 						if(isCuf){
 							var cuf = self.getCufById(cufId);
@@ -219,7 +219,8 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 							values: self.getI18nKeyForFilterValues(columnPrototype.label, filter.values),
 							hasI18nValues: self.filterHasI18nValues(columnPrototype.label, filter.values),
 							operationLabel: self.addPrefix(filter.operation.name, "chart.operation."),
-							isCuf : isCuf
+							isCuf : isCuf,
+							id : id
 						};
 						return formatedFilter;
 					})

@@ -495,12 +495,14 @@ public class JsonChartInstance {
 		private List<String> values;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
+		private Long id;
 
 		public JsonFilter(Filter filter) {
 			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
 			this.operation = new JsonOperation(filter.getOperation());
 			this.values = filter.getValues();
 			this.cufId = filter.getCufId();
+			this.id = filter.getId();
 		}
 
 		public List<String> getValues() {
@@ -533,6 +535,14 @@ public class JsonChartInstance {
 
 		public void setCufId(Long cufId) {
 			this.cufId = cufId;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
 		}
 	}
 
