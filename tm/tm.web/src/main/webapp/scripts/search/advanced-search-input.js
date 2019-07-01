@@ -91,11 +91,8 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 		},
 
 		fieldvalue: function (value) {
-			if (typeof +value == "number") {
+			if ($.isNumeric(+value)) {
 				return fieldValue.call(this, "SINGLE", value);
-			} else {
-				return fieldValue.call(this, "SINGLE", "");
-
 			}
 		}
 	});

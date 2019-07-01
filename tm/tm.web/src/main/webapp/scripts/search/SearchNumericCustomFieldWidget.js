@@ -36,8 +36,9 @@ define(["jquery", "jqueryui"], function($){
 				var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
 				var min = $($(this.element.children()[0]).children()[3]).val();
 				var max = $($(this.element.children()[0]).children()[5]).val();
+
 				var id = $(this.element).attr("id");
-				if(checked && typeof +min == 'number' && typeof +max == 'number'){
+				if(checked && $.isNumeric(+min) && $.isNumeric(+max)){
 					return {"type" : "CF_NUMERIC_RANGE",
 						"minValue" : min,
 						"maxValue" : max};
