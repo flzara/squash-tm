@@ -121,7 +121,6 @@ public class UserAccountController {
 		String bugtrackerMode= map.get(SQUASH_BUGTRACKER_MODE);
 		boolean hasLocalPassword = userService.hasCurrentUserPasswordDefined();
 
-		List<BugTracker> bugtrackers = userService.findAllUserBugTracker();
 		Map<BugTracker, ManageableCredentials> bugtrackerMap = this.getPairedBugtrackerAndManagedCredentials();
 
 
@@ -137,7 +136,6 @@ public class UserAccountController {
 		mav.addObject("projectPermissions", projectPermissions);
 		mav.addObject("bugtrackerMode", bugtrackerMode);
 		mav.addObject("hasLocalPassword", hasLocalPassword);
-		mav.addObject("bugtrackers", bugtrackers);
 		mav.addObject("bugtrackerCredentialsMap", bugtrackerMap);
 
 
@@ -279,8 +277,8 @@ public class UserAccountController {
 
 	@RequestMapping(value="bugtracker/{bugtrackerId}/credentials", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId) {
-		userAccountService.deleteCurrentUserCredentials(bugtrackerId);
+	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId, String username) {
+		userAccountService.deleteCurrentUserCredentials(bugtrackerId, username);
 
 	}
 

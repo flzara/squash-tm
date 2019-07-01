@@ -287,7 +287,7 @@
   <c:forEach items="${bugtrackerCredentialsMap}" var="bugtracker">
   <div style="display:inline-flex;padding: 15px;">
     <div class="display-table container-credential std-border std-border-radius"
-         style="padding:5px; width: 200px; height: 190px " ; data-bugtrackerid="${bugtracker.key.id}">
+         style="padding:5px; width: 200px; height: 190px " data-bugtrackerid="${bugtracker.key.id}">
       <div class="display-table-cell" style="line-height:22px;">
 
         <c:choose>
@@ -512,7 +512,7 @@
         data: {
           username: loginInput,
           password: mpInput,
-          type: prot,
+          type: prot
         }
 
       }).success(function () {

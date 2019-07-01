@@ -265,8 +265,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 					"to store such credentials as application-level credentials"
 			);
 		}
-		   storeContent(serverId, credentials, StoredCredentials.ContentType.CRED);
 
+			storedCredentialsManager.storeCurrentUserCredentials(serverId, credentials);
 	}
 
 
@@ -320,12 +320,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 		}
 	}
 
-
-	private void storeContent(long serverId, ManageableCredentials content, StoredCredentials.ContentType contentType){
-
-		storedCredentialsManager.storeCurrentUserCredentials(serverId, content);
-	}
-
 	@Override
 	public void testCurrentUserCredentials(long bugtrackerId, ManageableCredentials credentials) {
 
@@ -345,9 +339,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void deleteCurrentUserCredentials(long serverId) {
-		storedCredentialsManager.deleteServerAuthConfiguration(serverId);
+	public void deleteCurrentUserCredentials(long serverId, String username) {
+		//storedCredentialsManager.deleteServerAuthConfiguration(serverId);
+		storedCredentialsManager.deleteUserCredentials(serverId, username);
 
 	}
 }

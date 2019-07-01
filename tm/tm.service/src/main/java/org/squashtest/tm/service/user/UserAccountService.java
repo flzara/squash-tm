@@ -109,7 +109,7 @@ public interface UserAccountService {
 
 	void testCurrentUserCredentials(long bugtrackerId, ManageableCredentials credentials);
 
-	void deleteCurrentUserCredentials(long serverId);
+	void deleteCurrentUserCredentials(long serverId, String username);
 
 
 }
