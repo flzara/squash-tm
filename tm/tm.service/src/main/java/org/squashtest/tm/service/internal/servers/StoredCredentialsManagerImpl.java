@@ -156,7 +156,6 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	}
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public void storeCurrentUserCredentials(long serverId, ManageableCredentials credentials) {
 		if (! credentials.allowsUserLevelStorage()){
 			throw new IllegalArgumentException(

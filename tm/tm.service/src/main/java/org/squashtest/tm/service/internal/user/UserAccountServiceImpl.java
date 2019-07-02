@@ -340,8 +340,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public void deleteCurrentUserCredentials(long serverId, String username) {
-		//storedCredentialsManager.deleteServerAuthConfiguration(serverId);
 		storedCredentialsManager.deleteUserCredentials(serverId, username);
 
-	}
+	};
 }
