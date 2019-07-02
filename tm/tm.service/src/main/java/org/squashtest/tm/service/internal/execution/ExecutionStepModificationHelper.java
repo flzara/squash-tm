@@ -91,7 +91,19 @@ public class ExecutionStepModificationHelper {
 
 			firstModifiedIndex = firstModifiedIndex < 0 ? execution.getStepIndex(execStep.getId()) : firstModifiedIndex;
 
-			Dataset dataset = execution.getTestPlan().getReferencedDataset();
+			Dataset dataset = null;
+			if (isExecutionWithParameters(step)) {
+				// [TM-544] Look for dataset inherited from called test case
+				Long aStepTestCaseId = step.getTestCase().getId();
+				Optional<CallTestStep> optionalCallTestStep = execution.getReferencedTestCase().getCallSteps().stream()
+					.filter(callTestStep -> callTestStep.getCalledTestCase().getId().equals(aStepTestCaseId))
+					.findFirst();
+				if (optionalCallTestStep.isPresent() && !optionalCallTestStep.get().isDelegateParameterValues()) {
+					dataset = optionalCallTestStep.get().getCalledDataset();
+				} else {
+					dataset = execution.getTestPlan().getReferencedDataset();
+				}
+			}
 			if (dataset != null) {
 				execStep.fillParameterMap(dataset);
 			}
