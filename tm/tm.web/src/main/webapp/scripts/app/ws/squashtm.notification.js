@@ -226,7 +226,7 @@ define(["jquery", "app/lnf/Forms", "squash.translator", "jquery.squash.messagedi
 			var daysRemaining = parseInt(dateLicenseInformation);
 			if(daysRemaining < 0) {
 				dateMessage = translator.get("information.expirationDate.warning.short2");
-			} else {
+			} else if (daysRemaining < 30) {
 				dateMessage = translator.get("information.expirationDate.warning.short1");
 			}
 		}
