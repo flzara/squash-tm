@@ -186,7 +186,7 @@ public class TeamController extends PartyControllerSupport {
 		model.addAttribute("permissionList", pgm);
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
-		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("userLicenseInformationData", userLicenseInformation);
 
 		return "team-modification.html";
 	}

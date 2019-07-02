@@ -148,7 +148,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 		// License information
 		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
-		mav.addObject("userLicenseInformation", userLicenseInformation);
+		mav.addObject("userLicenseInformationData", userLicenseInformation);
 		
 		return mav;
 	}
@@ -232,7 +232,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
 		model.addAttribute("canManageLocalPassword", canManageLocalPassword);
-		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("userLicenseInformationData", userLicenseInformation);
 		
 		
 

@@ -85,7 +85,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 			},
 
 			configureButtons: function () {
-				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				var userLicenseInformation = squashtm.app.userLicenseInformationData;
 				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
 					var userLicenseInformationArray = userLicenseInformation.split("-");
 					var allowCreateUsers = JSON.parse(userLicenseInformationArray[2]);
@@ -224,7 +224,7 @@ define(["jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squas
 
 			configureLicenseInformationDialog: function () {
 				// License information popup
-				var userLicenseInformation = squashtm.app.userLicenseInformation;
+				var userLicenseInformation = squashtm.app.userLicenseInformationData;
 				if(userLicenseInformation != null && userLicenseInformation.length !== 0){
 					var userLicenseInformationArray = userLicenseInformation.split("-");
 					var activeUsersCount = userLicenseInformationArray[0];

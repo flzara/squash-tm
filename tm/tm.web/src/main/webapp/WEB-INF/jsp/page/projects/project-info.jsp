@@ -75,7 +75,7 @@
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
-<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+<c:set var="userLicenseInformationData"   value="${userLicenseInformationData}" />
 
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
 	<jsp:attribute name="head">
@@ -454,7 +454,7 @@
 
 		</div>
 
-    <c:if test="${ not empty userLicenseInformation}">
+    <c:if test="${ not empty userLicenseInformationData}">
       <f:message var="licenseInformationTitle" key="title.Information" />
       <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
         <div class="display-table-row">
@@ -1114,7 +1114,7 @@ require(["common"], function() {
 		});
 
     // License information popup
-    var userLicenseInformation = "${userLicenseInformation}";
+    var userLicenseInformation = "${userLicenseInformationData}";
     if(userLicenseInformation != null && userLicenseInformation.length !== 0){
       var userLicenseInformationArray = userLicenseInformation.split("-");
       var activeUsersCount = userLicenseInformationArray[0];

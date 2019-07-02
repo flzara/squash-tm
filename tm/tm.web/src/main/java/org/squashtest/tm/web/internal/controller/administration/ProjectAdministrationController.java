@@ -183,7 +183,7 @@ public class ProjectAdministrationController {
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
-		mav.addObject("userLicenseInformation", userLicenseInformation);
+		mav.addObject("userLicenseInformationData", userLicenseInformation);
 
 		return mav;
 	}
