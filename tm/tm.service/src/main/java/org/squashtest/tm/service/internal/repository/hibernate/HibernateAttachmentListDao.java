@@ -55,7 +55,7 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.fetchOne();
 	}
 
-
+	@Override
 	public RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId) {
 		final QRequirementVersion req = QRequirementVersion.requirementVersion;
 
@@ -65,7 +65,4 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.fetchOne();
 	}
 
-//	@Override
-//	List<Long> findAttachmentsListsFromRequirementFolder(List<Long> requirementLibraryNodeIds)
-//	}
 }

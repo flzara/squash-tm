@@ -22,6 +22,9 @@ package org.squashtest.tm.service.internal.deletion;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -266,5 +269,18 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 	 */
 	protected abstract OperationReport batchUnbindFromMilestone(List<Long> ids);
 
+	/**
+	 * @param attachmentHolder Object with AttachmentList to be remove
+	 * @return List of External Coordinates (FileSystemRepository) of Attachment Content to be remove
+	 */
+	protected List<ExternalContentCoordinates> getExternalAttachmentContentCoordinatesOfObject(final AttachmentHolder attachmentHolder) {
+		AttachmentList attachmentList = attachmentHolder.getAttachmentList();
+		List<Long> listOfAttachmentListId= makeListAttachmentListIdFordAttachmentList(attachmentList);
+		return attachmentManager.getListIDbyContentIdForAttachmentLists(listOfAttachmentListId);
+	}
 
+	protected List<Long> makeListAttachmentListIdFordAttachmentList(AttachmentList attachmentList) {
+		Long attachmentListId = attachmentList.getId();
+		return Collections.singletonList(attachmentListId);
+	}
 }

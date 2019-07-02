@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
@@ -272,7 +273,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			// we can make one only one query against the database.
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
-			List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(testCaseAttachmentIds);
+			List<ExternalContentCoordinates> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(testCaseAttachmentIds);
 
 
 			List<Long> automationRequestIds = requestDao.getReqIdsByTcIds(tcIds);
@@ -299,7 +300,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			deletionDao.removeEntities(allIds);
 
-			//remove All AttachmentContents for FileSystemRepository and orphean in DB
+			//remove All AttachmentContents for FileSystemRepository and orphan in DB
 			attachmentManager.deleteContents(listPairContenIDListID);
 
 
@@ -466,9 +467,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	private void deleteActionStep(ActionTestStep step) {
 		AttachmentList attachmentList = step.getAttachmentList();
 		//save ListId, contentID for FileSystem Repository
-		List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(Collections.singletonList(attachmentList.getId()));
+		List<ExternalContentCoordinates> listPairContenIDListID = getExternalAttachmentContentCoordinatesOfObject(step);
 		deletionDao.removeEntity(step); //Cascade AttachmentList -> include AttachmentList and Attachments
-		attachmentManager.removeAttachmentsAndLists(Collections.singletonList(attachmentList.getId()));
+		attachmentManager.removeAttachmentsAndLists(makeListAttachmentListIdFordAttachmentList(attachmentList));
 		attachmentManager.deleteContents(listPairContenIDListID);
 	}
 

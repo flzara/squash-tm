@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 
 import java.util.List;
 import java.util.Set;
@@ -32,14 +33,13 @@ import java.util.Set;
 public interface AttachmentContentDao extends JpaRepository<AttachmentContent, Long> {
 
 	@Query
-	Set<Long> findNotOrpheanAttachmentContent(@Param("ids") List<Long> attachmentContentId);
+	Set<Long> findNotOrphanAttachmentContent(@Param("ids") List<Long> attachmentContentId);
 
 	@Query
-	List<Object[]> getListPairContentIDListIDFromAttachmentLists(@Param("ids") List<Long> attachmentsList);
+	List<ExternalContentCoordinates> getListPairContentIDListIDFromAttachmentLists(@Param("ids") List<Long> attachmentsList);
 
 	@Modifying
 	@Query
-	void removeOrpheanAttachmentContents(@Param("ids") List<Long> attachmentContentIds);
-
+	void deleteByIds(@Param("ids") List<Long> attachmentContentIds);
 
 }

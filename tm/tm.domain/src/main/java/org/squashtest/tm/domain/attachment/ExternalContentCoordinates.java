@@ -18,29 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.squashtest.tm.service.internal.repository;
-
-import org.springframework.data.jpa.repository.Query;
-import org.squashtest.tm.domain.attachment.Attachment;
-
-import java.util.List;
-import java.util.Map;
+package org.squashtest.tm.domain.attachment;
 
 /**
+ * This class pairs together the attachment list id and the content id. Together they  help to locate a binary content
+ * in an external repository (eg the {@link org.squashtest.tm.service.internal.attachment.FileSystemAttachmentRepository})
  *
- * @author bsiri
  */
-public interface CustomAttachmentDao {
-    	
-	//cannot override the final remove(long) method, so I add here a new one
-	void removeAttachment(Long attachmentId);
-        
-	void removeAll(List<Attachment> attachments);
+public class ExternalContentCoordinates {
+	private Long attachmentListId;
+	private Long contentId;
 
+	public ExternalContentCoordinates(Long attachmentListId, Long contentId) {
+		this.attachmentListId = attachmentListId;
+		this.contentId = contentId;
+	}
+
+	public Long getAttachmentListId() {
+		return attachmentListId;
+	}
+
+	public Long getContentId() {
+		return contentId;
+	}
 
 }

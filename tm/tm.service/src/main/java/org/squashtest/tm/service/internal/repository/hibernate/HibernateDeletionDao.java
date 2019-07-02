@@ -59,6 +59,13 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		return em;
 	}
 
+	@Deprecated
+	/**
+	 * Deprecated since TM-362.
+	 * To avoid to duplicate an attachmentContent when copying an object,
+	 * the same attachmentContent may be linked to many Attachment / AttachmentList
+	 * We can no more delete an AttachmentList by cascade remove
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void removeAttachmentsLists(final List<Long> attachmentListIds) {
@@ -90,6 +97,11 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 		query.executeUpdate();
 	}
 
+	@Deprecated
+	/**
+	 * Deprecated since TM-362.
+	 * See {@link #removeAttachmentLists()}
+	 */
 	@Override
 	public void removeAttachmentList(AttachmentList list) {
 		throw new RuntimeException("No more used since TM362 !");

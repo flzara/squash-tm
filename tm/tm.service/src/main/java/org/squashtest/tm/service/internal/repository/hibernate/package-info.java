@@ -552,11 +552,11 @@
 	@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
 	@NamedQuery(name = "attachment.removeAttachments", query = "delete Attachment at where at.id in (:attachIds)"),
 	@NamedQuery(name = "attachment.deleteAttachmentLists", query = "delete AttachmentList al where al.id in (:listIds)"),
-	@NamedQuery(name = "Attachment.findAllAttachments", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
+	@NamedQuery(name = "Attachment.findAllByListId", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
 
-	@NamedQuery(name = "AttachmentContent.findNotOrpheanAttachmentContent", query = "select distinct content.id from Attachment at inner join at.content content  where content.id in (:ids) group by content.id"),
-	@NamedQuery(name = "AttachmentContent.getListPairContentIDListIDFromAttachmentLists", query = "select content.id ,list.id from Attachment at inner join at.content content inner join at.attachmentList list where list.id in (:ids)"),
-	@NamedQuery(name = "AttachmentContent.removeOrpheanAttachmentContents", query = "delete AttachmentContent ac where ac.id in (:ids)"),
+	@NamedQuery(name = "AttachmentContent.findNotOrphanAttachmentContent", query = "select distinct content.id from Attachment at inner join at.content content  where content.id in (:ids) group by content.id"),
+	@NamedQuery(name = "AttachmentContent.getListPairContentIDListIDFromAttachmentLists", query = "select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(list.id, content.id) from Attachment at inner join at.content content inner join at.attachmentList list where list.id in (:ids)"),
+	@NamedQuery(name = "AttachmentContent.deleteByIds", query = "delete AttachmentContent ac where ac.id in (:ids)"),
 	//ProjectFilter
 	@NamedQuery(name = "projectFilter.findByUserLogin", query = "from ProjectFilter where userLogin = :givenUserLogin"),
 

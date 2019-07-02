@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
@@ -430,7 +431,7 @@ RequirementNodeDeletionHandler {
 
 		if (!folderIds.isEmpty()) {
 			List<Long> attachmentsLists = attachmentManager.getAttachmentsListsFromRequirementFolders(folderIds);
-			List<Long[]> pairContentIdListId = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
+			List<ExternalContentCoordinates> pairContentIdListId = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
 			deletionDao.removeEntities(folderIds);
 			report.addRemoved(folderIds, "folder");
 
@@ -541,7 +542,7 @@ RequirementNodeDeletionHandler {
 			// because the requirement deletion is made by HQL, which doesn't honor the cascades
 
 			List<Long> attachmentListIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
-			List<Long[]> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentListIds);
+			List<ExternalContentCoordinates> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentListIds);
 
 			// remove the changelog
 			deletionDao.deleteRequirementVersionAuditEvents(versionIds);

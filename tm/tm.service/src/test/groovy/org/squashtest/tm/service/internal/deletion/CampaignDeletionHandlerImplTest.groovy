@@ -44,7 +44,7 @@ class CampaignDeletionHandlerImplTest  extends Specification{
 		handler.customValueService = customValueService
 		handler.deletionDao = deletionDao
 		handler.iterationTestPlanManagerService = iterationTestPlanManagerService
-		handler.attachmentManagerService = attachmentManagerService
+		handler.attachmentManager = attachmentManagerService
 	}
 
 	def "should simulate test suite deletion with no error"(){

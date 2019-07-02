@@ -151,8 +151,6 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		}
 	}
 
-
-
 	@Override
 	@PreAuthorize(CREATE_REQUIREMENT_OR_ROLE_ADMIN)
 	public void createNewVersion(long requirementId, Collection<Long> milestoneIds, boolean inheritReqLinks, boolean inheritTestcasesReqLinks) {

@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 	 * Returns all the attachments that belong to the given AttachmentList
 	 */
 	@Query
-	Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
+	Set<Attachment> findAllByListId(@Param("id") Long attachmentListId);
 
 	/**
 	 * Same than above, paged version.
@@ -64,10 +65,9 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 		" inner join Resource.attachmentList ListAttachment where RequirementFolder.id in (:ids)")
 	List<Long> findAttachmentsListsFromRequirementFolder(@Param("ids") List<Long> requirementLibraryNodeIds);
 
-	@Query("select Attachment.content.id, v.attachmentList.id from RequirementVersion v inner join  v.attachmentList.attachments Attachment where v.id in (:ids)")
-	List<Object[]> getListPairContentIDListIDForRequirementVersions(@Param("ids") List<Long> requirementVersionIds);
+	@Query("select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(v.attachmentList.id,Attachment.content.id) from RequirementVersion v inner join  v.attachmentList.attachments Attachment where v.id in (:ids)")
+	List<ExternalContentCoordinates> getListPairContentIDListIDForRequirementVersions(@Param("ids") List<Long> requirementVersionIds);
 
-//	@Query("select Attachment.content.id, exec.attachmentList.id from ExecutionStep exec inner join  exec.attachmentList.attachments Attachment where exec.id in (:ids)")
-	@Query("select Attachment.content.id, Attachment.attachmentList.id from ExecutionStep exec inner join  exec.attachmentList attachmentList inner join attachmentList.attachments Attachment where exec.id in (:ids)")
-	List<Object[]> getListPairContentIDListIDForExecutionSteps(@Param("ids") List<Long> executionStepsIds);
+	@Query("select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(Attachment.attachmentList.id,Attachment.content.id) from ExecutionStep exec inner join  exec.attachmentList attachmentList inner join attachmentList.attachments Attachment where exec.id in (:ids)")
+	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionSteps(@Param("ids") List<Long> executionStepsIds);
 }
