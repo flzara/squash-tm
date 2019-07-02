@@ -252,14 +252,14 @@ public class UserAccountController {
 	public void saveCurrentUserCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId , @RequestParam String username,  @RequestParam char[] password){
 
 		ManageableBasicAuthCredentials credentials = new ManageableBasicAuthCredentials(username, password);
-		try{
-			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
-			userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
-		}
-		catch(BugTrackerNoCredentialsException ex){
-			LOGGER.debug("server-app credentials test failed : ", ex);
-			throw new CannotConnectBugtrackerException(ex);
-		}
+			try {
+				userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
+				userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
+			} catch (BugTrackerNoCredentialsException ex) {
+				LOGGER.debug("server-app credentials test failed : ", ex);
+				throw new CannotConnectBugtrackerException(ex);
+			}
+
 
 	}
 
@@ -277,15 +277,14 @@ public class UserAccountController {
 		catch(BugTrackerNoCredentialsException ex){
 			// need to rethrow the same exception, with a message in the expected user language
 			LOGGER.debug("server-app credentials test failed : ", ex);
-			//	String message = i18nHelper.internationalize("thirdpartyserver.admin.messages.testcreds.fail", LocaleContextHolder.getLocale());
 			throw new CannotConnectBugtrackerException(ex);
 		}
 	}
 
 	@RequestMapping(value="bugtracker/{bugtrackerId}/credentials", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId, String username) {
-		userAccountService.deleteCurrentUserCredentials(bugtrackerId, username);
+	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId) {
+		userAccountService.deleteCurrentUserCredentials(bugtrackerId);
 
 	}
 

@@ -456,7 +456,7 @@
           new ProjectToolbar();
 
         });
-      });
+
     $(".credentials-btn").on('click', function (saveCred) {
       var btn = saveCred.currentTarget;
       var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
@@ -464,22 +464,25 @@
       var container = jquerybtn.parents(".container-credential");
 
       if (container.find(".user-login").val() != "" && container.find(".user-mp").val() != "") {
-        var loginInput = container.find(".user-login").val()
-        var mpInput = container.find(".user-mp").val()}
+        var loginInput = container.find(".user-login").val();
+        var mpInput = container.find(".user-mp").val();
+
+        $.ajax({
+          url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
+          method: "POST",
+          data: {
+            username: loginInput,
+            password: mpInput
+          },
+        }).success(function () {
+          squashtm.notification.showInfo(translator.get("label.savecredentials"))
+        });
+      }
       else {
-        squashtm.notification.showWarning(<f:message key="label.savecredentials.failed"/>) };
+        squashtm.notification.showWarning(translator.get("label.savecredentials.failed")) };
 
 
-      $.ajax({
-        url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
-        method: "POST",
-        data: {
-          username: loginInput,
-          password: mpInput
-        },
-      }).success(function () {
-        squashtm.notification.showInfo(<f:message key="label.savecredentials"/>)
-      });
+
     });
 
     $(".remove-btn").on('click', function (remove) {
@@ -490,7 +493,7 @@
         url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
         method: "DELETE"
       }).success((function () {
-        squashtm.notification.showInfo(<f:message key="label.revoke.token.success"/>)
+        squashtm.notification.showInfo(translator.get("label.revoke.token.success"))
       }))
 
 
@@ -516,13 +519,13 @@
         }
 
       }).success(function () {
-        squashtm.notification.showInfo(<f:message key="label.connexion.success"/>)
+        squashtm.notification.showInfo(translator.get("label.connexion.success"))
       })
     });
 
 
   });
-
+  });
 </script>
 
 
