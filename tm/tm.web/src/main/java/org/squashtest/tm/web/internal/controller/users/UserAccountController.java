@@ -252,7 +252,14 @@ public class UserAccountController {
 	public void saveCurrentUserCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId , @RequestParam String username,  @RequestParam char[] password){
 
 		ManageableBasicAuthCredentials credentials = new ManageableBasicAuthCredentials(username, password);
-		userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
+		try{
+			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
+			userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
+		}
+		catch(BugTrackerNoCredentialsException ex){
+			LOGGER.debug("server-app credentials test failed : ", ex);
+			throw new CannotConnectBugtrackerException(ex);
+		}
 
 	}
 
