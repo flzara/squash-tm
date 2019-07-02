@@ -699,8 +699,11 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			filterColumn.setOperation(Operation.LIKE);
 			value = "%" + value + "%";
 		}
-
-		filterColumn.getValues().add(HtmlUtils.htmlEscape(value));
+		value = HtmlUtils.htmlEscape(value);
+		// The backslash is used for postgresql because unicode characters are escape by fulltext search.
+		// It's not a problem for mysql and mariadb.
+		value = value.replace("&", "\\&");
+		filterColumn.getValues().add(value);
 	}
 
 
