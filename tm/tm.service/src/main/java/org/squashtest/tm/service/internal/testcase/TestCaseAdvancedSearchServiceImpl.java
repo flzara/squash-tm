@@ -74,7 +74,6 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOM
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.EXECUTION_ISSUECOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_ATTCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_AUTOMATABLE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CALLSTEPCOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_BY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CREATED_ON;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.TEST_CASE_CUF_CHECKBOX;
@@ -157,33 +156,36 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		model.setPageable(null);
 		Set<Long> testcases = getTcIdsThroughRequirementVersion(model, locale);
+		List<TestCase> testCases = new ArrayList<>();
+		long count = 0;
+		if (!testcases.isEmpty()) {
+			Session session = entityManager.unwrap(Session.class);
 
-		Session session = entityManager.unwrap(Session.class);
+			AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
 
-		AdvancedSearchQueryModelToConfiguredQueryConverter converter = converterProvider.get();
+			List<String> keys = new ArrayList<>();
 
-		List<String> keys = new ArrayList<>();
+			AdvancedSearchModel searchModel = new AdvancedSearchModel();
+			AdvancedSearchFieldModel searchFieldModel = new AdvancedSearchListFieldModel();
 
-		AdvancedSearchModel searchModel = new AdvancedSearchModel();
-		AdvancedSearchFieldModel searchFieldModel = new AdvancedSearchListFieldModel();
+			List<String> tcIds = testcases.stream().map(aLong -> aLong.toString()).collect(Collectors.toList());
+			((AdvancedSearchListFieldModel) searchFieldModel).getValues().addAll(tcIds);
 
-		List<String> tcIds = testcases.stream().map(aLong -> aLong.toString()).collect(Collectors.toList());
-		((AdvancedSearchListFieldModel) searchFieldModel).getValues().addAll(tcIds);
+			AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(sorting, keys, searchModel);
+			queryModel.getSearchFormModel().addField("id", searchFieldModel);
+			queryModel.getSearchResultKeys().addAll(model.getSearchResultKeys());
+			converter.configureModel(queryModel).configureMapping(MAPPINGS);
 
-		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(sorting, keys, searchModel);
-		queryModel.getSearchFormModel().addField("id", searchFieldModel);
-		queryModel.getSearchResultKeys().addAll(model.getSearchResultKeys());
-		converter.configureModel(queryModel).configureMapping(MAPPINGS);
+			HibernateQuery<Tuple> query = converter.prepareFetchQuery();
+			query = query.clone(session);
 
-		HibernateQuery<Tuple> query = converter.prepareFetchQuery();
-		query = query.clone(session);
+			List<Tuple> tuples = query.fetch();
+			testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
 
-		List<Tuple> tuples = query.fetch();
-		List<TestCase> testCases = tuples.stream().map(tuple -> tuple.get(0, TestCase.class)).collect(Collectors.toList());
-
-		HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
-		countQuery = countQuery.clone(session);
-		long count = countQuery.fetchCount();
+			HibernateQuery<Tuple> countQuery = converter.prepareCountQuery();
+			countQuery = countQuery.clone(session);
+			count = countQuery.fetchCount();
+		}
 
 
 		return new PageImpl(testCases, sorting, count);
