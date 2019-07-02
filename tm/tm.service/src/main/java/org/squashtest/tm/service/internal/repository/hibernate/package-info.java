@@ -980,7 +980,7 @@
 	@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
 
 	//set InfoListItem of a project to default value
-	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :projectId) "),
+	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rv.id from RequirementVersion rv join rv.requirement req join req.project p where p.id = :projectId) "),
 	@NamedQuery(name="InfoList.setDefaultNatureForProject", query = "update TestCase tc set tc.nature = :defaultItem where tc.project.id = :projectId"),
 	@NamedQuery(name="InfoList.setDefaultTypeForProject", query = "update TestCase tc set tc.type = :defaultItem where tc.project.id = :projectId"),
 
