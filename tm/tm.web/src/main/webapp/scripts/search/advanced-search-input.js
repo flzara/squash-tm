@@ -50,9 +50,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 	// text area widget
 	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
-		options: {
-
-		},
+		options: {},
 
 		_create: function () {
 			this._super();
@@ -65,9 +63,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 	// text field widget
 	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
-		options: {
-
-		},
+		options: {},
 
 		_create: function () {
 		},
@@ -83,24 +79,25 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 	});
 
 	var searchNumericFieldWidget = $.widget("search.searchNumericFieldWidget", {
-		options: {
-
-		},
+		options: {},
 
 		_create: function () {
 		},
 
 		fieldvalue: function (value) {
-			if ($.isNumeric(+value)) {
-				return fieldValue.call(this, "SINGLE", value);
+
+			var result = fieldValue.call(this, "SINGLE", value);
+			var resultValue = result.value;
+			if ($.isNumeric(+resultValue)) {
+				return result;
+			} else {
+				return null;
 			}
 		}
 	});
 
 	var searchTextCustomFieldWidget = $.widget("search.searchTextCustomFieldWidget", {
-		options: {
-
-		},
+		options: {},
 
 		_create: function () {
 		},
@@ -290,7 +287,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			options.children().each(function () {
 				if (toselect !== null && toselect.length !== 0) {
 					if (this.selected) {
-						if (toselect.indexOf(Number(this.value) )=== -1) {
+						if (toselect.indexOf(Number(this.value)) === -1) {
 							this.selected = false;
 						}
 					}
@@ -456,8 +453,8 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 
 		makeTextFieldId: function (tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
-				"text-field-id": fieldId,
-				"text-field-title": fieldTitle,
+				"numeric-field-id": fieldId,
+				"numeric-field-title": fieldTitle,
 				fieldValue: !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
