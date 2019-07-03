@@ -296,13 +296,14 @@
           <br/>
           <label>(${bugtracker.key.url})</label>
         </div>
-        <div align="center"><span style="padding-right: 70px;">  <label style="padding-right: 51px"><f:message
-          key="label.Login"/></label></span>
+
+        <div align="justify" style="padding-left: 25px"><label><f:message
+          key="label.Login"/></label>
           <br/>
           <input type="text" class="user-login" value="${map[bugtracker.key].username}" data-bind="username">
         </div>
         <br/>
-        <div align="center"><label style="padding-right: 41px"> <f:message key="label.token.password"/></label> <br/>
+        <div align="justify" style="padding-left: 25px"><label> <f:message key="label.token.password"/></label> <br/>
           <input type="password" class="user-mp" value="${String.valueOf(map[bugtracker.key].password) }" data-bind="password">
         </div>
         <br/>
