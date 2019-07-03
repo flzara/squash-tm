@@ -20,21 +20,13 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -46,7 +38,6 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.Operation;
@@ -78,12 +69,19 @@ import org.squashtest.tm.service.query.QueryProcessingService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import com.google.common.collect.Sets;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * This converter is used to create a ConfiguredQuery with some parameters(paging, datatable and searchfield).
@@ -99,6 +97,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchQueryModelToConfiguredQueryConverter.class);
 
 	private static final String PROJECT_FILTER_NAME = "project.id";
+
+	private static final int LIST_MAX_SIZE = 1000;
 
 	private static final Set<AdvancedSearchFieldModelType> CUSTOM_FIELD_TYPES = Sets.newHashSet(
 		AdvancedSearchFieldModelType.CF_SINGLE,
@@ -127,6 +127,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	@Inject
 	private QueryProcessingService queryService;
 
+	private List<QueryFilterColumn> tooManyFilters = new ArrayList<>();
+
 
 	private AdvancedSearchQueryModel advancedSearchQueryModel;
 
@@ -146,42 +148,42 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 * Returns the query that will list the entities of interest. 
 	 * The result is returned as a Tuple, the first element of which are the entities (the rest of 
 	 * the tuple exists for technical purposes, see documentation of {@link #createMappedProjections()}).
-	 * 
-	 * 
+	 *
+	 *
 	 * Note that the query needs to be given a session.
-	 * 
+	 *
 	 * @return
 	 */
 	public HibernateQuery<Tuple> prepareFetchQuery() {
 
 		ExtendedHibernateQuery<Tuple> hibQuery = basePrepareQuery();
-		
+
 		return hibQuery;
 
 	}
-	
+
 	/**
 	 * Prepares the query as a count query. It removes the pagination
 	 * and should be invoked using 'selectCount()'. The query requires to be 
 	 * given a session.
-	 * 
+	 *
 	 * @return
 	 */
 
-	
+
 	public HibernateQuery<Tuple> prepareCountQuery() {
 
 		ExtendedHibernateQuery<Tuple> countQuery = basePrepareQuery();
-		
+
 		// neutralize the paging 
 		countQuery.limit(Long.MAX_VALUE);
 		countQuery.offset(0);
 
 		return countQuery;
-		
+
 	}
-	
-	
+
+
 	private ExtendedHibernateQuery<Tuple> basePrepareQuery() {
 
 		// Find all ColumnPrototypes
@@ -190,7 +192,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			col -> col
 		));
 
-		
+
 		// first pass : create the ConfiguredQuery
 		ConfiguredQuery configuredQuery = createConfiguredQuery();
 
@@ -199,13 +201,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		// second pass : now process the special handlers
 		applyAllSpecialHandlers(hibQuery);
-		
+
 		return hibQuery;
 
 	}
-	
-	private ConfiguredQuery createConfiguredQuery(){
-		
+
+	private ConfiguredQuery createConfiguredQuery() {
+
 		// Create queryModel
 		QueryModel query = createBaseQueryModel();
 
@@ -213,10 +215,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
 		configuredQuery.setQueryModel(query);
 		configuredQuery.setPaging(advancedSearchQueryModel.getPageable());
-		
+
 		return configuredQuery;
 	}
-	
+
 
 	// *************** Bulk query creation methods ************************
 
@@ -228,7 +230,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		// In the search field, projectids are not always set so we must secure this point on projects that the user can read.
 		secureProjectFilter();
-		
+
 		// create the projections
 		List<QueryProjectionColumn> projections = createMappedProjections();
 		query.setProjectionColumns(projections);
@@ -236,7 +238,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		// create the filters
 		List<QueryFilterColumn> filters = createMappedFilters();
 		query.setFilterColumns(filters);
-		
+
 		// create the ordering
 		List<QueryOrderingColumn> orders = createMappedOrders();
 		query.setOrderingColumns(orders);
@@ -245,7 +247,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-	private void applyAllSpecialHandlers(ExtendedHibernateQuery<Tuple> query){
+	private void applyAllSpecialHandlers(ExtendedHibernateQuery<Tuple> query) {
 
 		applySpecialProjectionHandlers(query);
 		applySpecialFilterHandlers(query);
@@ -255,7 +257,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 	// ********************** Projection creations ***********************************
-	
+
 
 	/**
 	 * <p>
@@ -277,88 +279,85 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 */
 
 	private List<QueryProjectionColumn> createMappedProjections() {
-		
+
 		List<QueryProjectionColumn> projections = new ArrayList<>();
-		
+
 		// first round : enqueue the column for the root entity
-		String rootColLabel = mappings.getRootEntityColumnLabel();		
+		String rootColLabel = mappings.getRootEntityColumnLabel();
 		QueryColumnPrototype rootProto = lookupColumnPrototypeByColumnLabel(rootColLabel);
 
-		QueryProjectionColumn entityProjection = toProjectionColumn(rootProto);		
+		QueryProjectionColumn entityProjection = toProjectionColumn(rootProto);
 		projections.add(entityProjection);
 
 		// second round : add the sorted-on columns
 		List<QueryColumnPrototype> sortByPrototypes = locatePrototypesOfMappedOrderColumns();
 
 		// if empty, add a surrogate column
-		if (sortByPrototypes.isEmpty()){
+		if (sortByPrototypes.isEmpty()) {
 			QueryProjectionColumn dummy = createDummyProjection(entityProjection);
 			projections.add(dummy);
 		}
 		// else append the columns as desired
-		else{
+		else {
 			List<QueryProjectionColumn> sortedProjections
 				= sortByPrototypes.stream()
-									.map(this::toProjectionColumn)
-									.collect(toList());
+				.map(this::toProjectionColumn)
+				.collect(toList());
 
 			projections.addAll(sortedProjections);
 		}
 
-		
+
 		return Collections.unmodifiableList(projections);
 
 	}
 
 
-	private List<QueryColumnPrototype> locatePrototypesOfMappedOrderColumns(){
+	private List<QueryColumnPrototype> locatePrototypesOfMappedOrderColumns() {
 
 		ColumnMapping resultMapping = mappings.getResultMapping();
 		Optional<Sort> maybeSort = extractSort();
 
-		if (maybeSort.isPresent()){
+		if (maybeSort.isPresent()) {
 			Sort sort = maybeSort.get();
 			return sort.stream()
-					   // retain only the result set keys that maps to a column prototype
-					   .filter(order -> resultMapping.isMappedKey(order.getProperty()))
-					   // resolve the column prototype
-					   .map(order -> lookupColumnPrototypeByResultSetKey(order.getProperty()))
-					   .collect(toList());
-		}
-		else{
+				// retain only the result set keys that maps to a column prototype
+				.filter(order -> resultMapping.isMappedKey(order.getProperty()))
+				// resolve the column prototype
+				.map(order -> lookupColumnPrototypeByResultSetKey(order.getProperty()))
+				.collect(toList());
+		} else {
 			return Collections.emptyList();
 		}
 
 
-
 	}
 
-	
-	private QueryProjectionColumn toProjectionColumn(QueryColumnPrototype proto){
+
+	private QueryProjectionColumn toProjectionColumn(QueryColumnPrototype proto) {
 		QueryProjectionColumn column = new QueryProjectionColumn();
 		column.setColumnPrototype(proto);
 		column.setOperation(Operation.NONE);
-		
+
 		return column;
 	}
-	
-	private QueryProjectionColumn createDummyProjection(QueryProjectionColumn rootProjection){
-		
+
+	private QueryProjectionColumn createDummyProjection(QueryProjectionColumn rootProjection) {
+
 		QueryColumnPrototype rootProto = rootProjection.getColumn();
 		String rootProtoLabel = rootProto.getLabel();
-		
+
 		// XXX that is a ugly hack
 		String dummyLabel = rootProtoLabel.replace("_ENTITY", "_ID");
 		QueryColumnPrototype dummyProto = lookupColumnPrototypeByColumnLabel(dummyLabel);
-		
+
 		return toProjectionColumn(dummyProto);
-		
-	}
-	
-	private void applySpecialProjectionHandlers(ExtendedHibernateQuery<Tuple> query){
-		// for now, it's a no-op
+
 	}
 
+	private void applySpecialProjectionHandlers(ExtendedHibernateQuery<Tuple> query) {
+		// for now, it's a no-op
+	}
 
 
 	// ********************** Filters creation  ***********************************
@@ -392,13 +391,13 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
 
-			if (fieldModel.isSet() && !fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)){
+			if (fieldModel.isSet()) {
 				QueryFilterColumn filter = createFilterColumn(fieldModel, key);
 				filters.add(filter);
 			}
 
 		}
-
+		filters.addAll(tooManyFilters);
 		return filters;
 	}
 
@@ -406,22 +405,22 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	/*
 	 * Once the query is available, we can apply special handlers for filters
 	 */
-	private void applySpecialFilterHandlers(ExtendedHibernateQuery<?> query){
+	private void applySpecialFilterHandlers(ExtendedHibernateQuery<?> query) {
 
 		AdvancedSearchModel model = advancedSearchQueryModel.getSearchFormModel();
 
 		ColumnMapping formMapping = mappings.getFormMapping();
 
-		Set<String> processableKeys =  model.getFieldKeys();
+		Set<String> processableKeys = model.getFieldKeys();
 
 		// process only the specially handled filters this time
 		processableKeys.retainAll(formMapping.getSpecialKeys());
 
-		for (String key: processableKeys){
+		for (String key : processableKeys) {
 			SpecialHandler handler = formMapping.findHandler(key);
 			AdvancedSearchFieldModel searchField = model.getFields().get(key);
-			
-			handler.applyFilter.accept(query,  searchField);
+
+			handler.applyFilter.accept(query, searchField);
 		}
 
 	}
@@ -441,9 +440,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
 
-			if (fieldModel.isSet() && fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)){
+			if (fieldModel.isSet() && fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)) {
 				SpecialHandler handler = cufMapping.findHandler(AdvancedSearchFieldModelType.TAGS.toString());
-				handler.applyFilter.accept(query,  fieldModel);
+				handler.applyFilter.accept(query, fieldModel);
 			}
 
 		}
@@ -453,8 +452,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private QueryFilterColumn createFilterColumn(AdvancedSearchFieldModel fieldModel,
 												 String key) {
 
-		if (! fieldModel.isSet()){
-			throw new IllegalArgumentException("attempted apply form key '"+key+"' but the field model doesn't hold any value");
+		if (!fieldModel.isSet()) {
+			throw new IllegalArgumentException("attempted apply form key '" + key + "' but the field model doesn't hold any value");
 		}
 
 		AdvancedSearchFieldModelType fieldType = fieldModel.getType();
@@ -501,17 +500,16 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 				break;
 
 
-
 			case MULTILIST:
 				// TODO : indeed that one requires a special handler.
-				throw new UnsupportedOperationException("input type '"+fieldType+"' is not supported yet ");
+				throw new UnsupportedOperationException("input type '" + fieldType + "' is not supported yet ");
 
 
 			default:
 				throw new RuntimeException("Programming error : FieldType '" + fieldType + "' unknown, couldn't create filter for search form attribute '" + key + "'");
 
 		}
-		
+
 
 		return queryFilterColumn;
 	}
@@ -526,20 +524,19 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 * @param type
 	 * @return
 	 */
-	private QueryFilterColumn initFilterColumn(String formAttributeKey, AdvancedSearchFieldModelType type){
+	private QueryFilterColumn initFilterColumn(String formAttributeKey, AdvancedSearchFieldModelType type) {
 
 		QueryFilterColumn filter = new QueryFilterColumn();
 
 		boolean isCustomfield = CUSTOM_FIELD_TYPES.contains(type);
 
-		if (isCustomfield){
+		if (isCustomfield) {
 			long cufId = Long.parseLong(formAttributeKey);
 			QueryColumnPrototype prototype = lookupColumnPrototypeByCufType(type);
 
 			filter.setColumnPrototype(prototype);
 			filter.setCufId(cufId);
-		}
-		else{
+		} else {
 			QueryColumnPrototype prototype = lookupColumnPrototypeByFormKey(formAttributeKey);
 			filter.setColumnPrototype(prototype);
 		}
@@ -555,10 +552,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		String value = singleFieldModel.getValue();
 
-		if(filterColumn.getDataType().equals(DataType.NUMERIC)) {
+		if (filterColumn.getDataType().equals(DataType.NUMERIC)) {
 			filterColumn.setOperation(Operation.EQUALS);
 		} else {
-			if(value.contains("*")) {
+			if (value.contains("*")) {
 				value = value.replace("*", "%");
 			} else {
 				value = value + "%";
@@ -581,8 +578,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
 			filterColumn.setOperation(Operation.IN);
-		}
-		else {
+		} else {
 			filterColumn.setOperation(Operation.IN);
 		}
 
@@ -600,12 +596,10 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if (startDate != null && endDate != null) {
 			filterColumn.setOperation(Operation.BETWEEN);
 			filterColumn.addValues(Arrays.asList(toIso(startDate), toIso(endDate)));
-		}
-		else if (startDate != null) {
+		} else if (startDate != null) {
 			filterColumn.setOperation(Operation.GREATER_EQUAL);
 			filterColumn.getValues().add(toIso(startDate));
-		}
-		else if (endDate != null) {
+		} else if (endDate != null) {
 			filterColumn.setOperation(Operation.LOWER_EQUAL);
 			filterColumn.getValues().add(toIso(endDate));
 		}
@@ -623,21 +617,21 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		List<String> filterParameters = new ArrayList<>();
 
 
-		if (hasMin){
+		if (hasMin) {
 			double min = numericRangeFieldModel.getLocaleAgnosticMinValue();
 			filterParameters.add(String.valueOf(min));
 		}
 
-		if (hasMax){
+		if (hasMax) {
 			double max = numericRangeFieldModel.getLocaleAgnosticMaxValue();
 			filterParameters.add(String.valueOf(max));
 		}
 
 		Operation operation = (hasMin && hasMax) ?
-								  Operation.BETWEEN :
-							  (hasMin) ?
-								  Operation.GREATER_EQUAL :
-								  Operation.LOWER_EQUAL;
+			Operation.BETWEEN :
+			(hasMin) ?
+				Operation.GREATER_EQUAL :
+				Operation.LOWER_EQUAL;
 
 		filterColumn.getValues().addAll(filterParameters);
 		filterColumn.setOperation(operation);
@@ -645,15 +639,37 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 
-	private void filterByList(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel){
+	private void filterByList(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 
 		List<String> values = listModel.getValues();
-
-		filterColumn.addValues(values);
 		filterColumn.setOperation(Operation.IN);
-	}
 
+		int size = values.size();
+		// QueryDsl Throw StackOverFlow Error when the list of predicate 'in' contains more than 1000 elements.
+		// So we split values on lists of 1000 elements and create QueryFilterColumn
+		if (size > LIST_MAX_SIZE) {
+			List<List<String>> listValues = Lists.partition(values, LIST_MAX_SIZE);
+			filterColumn.addValues(listValues.get(0));
+			for (int x = 1; x < listValues.size(); x++) {
+
+				QueryFilterColumn newFilter = new QueryFilterColumn();
+				newFilter.setOperation(filterColumn.getOperation());
+				newFilter.setColumnPrototype(filterColumn.getColumn());
+				newFilter.setCufId(filterColumn.getCufId());
+				newFilter.addValues(listValues.get(x));
+
+				tooManyFilters.add(newFilter);
+
+			}
+
+
+		} else {
+			filterColumn.addValues(values);
+		}
+
+
+	}
 
 
 	private void filterByIntegerRange(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
@@ -666,21 +682,21 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		List<String> filterParameters = new ArrayList<>();
 
 
-		if (hasMin){
+		if (hasMin) {
 			int min = rangeField.getMinValue();
 			filterParameters.add(String.valueOf(min));
 		}
 
-		if (hasMax){
+		if (hasMax) {
 			int max = rangeField.getMaxValue();
 			filterParameters.add(String.valueOf(max));
 		}
 
 		Operation operation = (hasMin && hasMax) ?
-								  Operation.BETWEEN :
-								  (hasMin) ?
-									  Operation.GREATER_EQUAL :
-									  Operation.LOWER_EQUAL;
+			Operation.BETWEEN :
+			(hasMin) ?
+				Operation.GREATER_EQUAL :
+				Operation.LOWER_EQUAL;
 
 		filterColumn.getValues().addAll(filterParameters);
 		filterColumn.setOperation(operation);
@@ -689,7 +705,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	// TODO create the filter for fulltext_search search
 	private void filterByFullText(QueryFilterColumn filterColumn, AdvancedSearchFieldModel fieldModel) {
 
-		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel)fieldModel;
+		AdvancedSearchTextFieldModel textFieldModel = (AdvancedSearchTextFieldModel) fieldModel;
 
 		String value = textFieldModel.getValue();
 		if (filterColumn.getDataType().equals(DataType.TEXT)) {
@@ -714,8 +730,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		filterColumn.addValues(checkModel.getValues());
 		filterColumn.setOperation(Operation.IN);
 	}
-	
-	
+
 
 	// ****************************** Order creation **************************
 
@@ -730,15 +745,15 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if (maybeSort.isPresent()) {
 			Sort sort = maybeSort.get();
 			orders = sort.stream()
-						 .filter( order -> resultMapping.isMappedKey(order.getProperty()))
-						 .map(this::convertToOrder)
-						 .collect(toList());
+				.filter(order -> resultMapping.isMappedKey(order.getProperty()))
+				.map(this::convertToOrder)
+				.collect(toList());
 		}
 		return orders;
 	}
 
 
-	private void applySpecialOrderHandlers(ExtendedHibernateQuery<?> query){
+	private void applySpecialOrderHandlers(ExtendedHibernateQuery<?> query) {
 
 		// TODO : add the order by clauses in the correct order, which might be difficult,
 		// see #applySpeciallyHandledProjections
@@ -749,8 +764,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		if (maybeSort.isPresent()) {
 			Sort sort = maybeSort.get();
 			sort.stream()
-				 .filter( order -> resultMapping.isSpecialKey(order.getProperty()))
-				 .forEach(order -> applySpecialOrder(order, query));
+				.filter(order -> resultMapping.isSpecialKey(order.getProperty()))
+				.forEach(order -> applySpecialOrder(order, query));
 		}
 
 	}
@@ -774,7 +789,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	}
 
-	private void applySpecialOrder(Sort.Order specifier, ExtendedHibernateQuery<?> query){
+	private void applySpecialOrder(Sort.Order specifier, ExtendedHibernateQuery<?> query) {
 
 		String property = specifier.getProperty();
 
@@ -792,7 +807,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	private void secureProjectFilter() {
 		AdvancedSearchModel formModel = advancedSearchQueryModel.getSearchFormModel();
-		
+
 		// Issue #5079 again
 		// first task is to locate which name has the project criteria because it may differ depending on the interface
 		// (test case, requirement, test-case-through-requirements
@@ -851,60 +866,58 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	 * @param formAttributeKey
 	 * @return
 	 */
-	private QueryColumnPrototype lookupColumnPrototypeByFormKey(String formAttributeKey){
+	private QueryColumnPrototype lookupColumnPrototypeByFormKey(String formAttributeKey) {
 		return internalLookupColumnPrototypeByKey(mappings.getFormMapping(), formAttributeKey);
 	}
 
-	private QueryColumnPrototype lookupColumnPrototypeByResultSetKey(String rsAttributeKey){
+	private QueryColumnPrototype lookupColumnPrototypeByResultSetKey(String rsAttributeKey) {
 		return internalLookupColumnPrototypeByKey(mappings.getResultMapping(), rsAttributeKey);
 	}
 
-	private QueryColumnPrototype lookupColumnPrototypeByCufType(AdvancedSearchFieldModelType cufType){
-		if  (! CUSTOM_FIELD_TYPES.contains(cufType)){
-			throw new IllegalArgumentException("unknown CUF type '"+cufType+"'");
-		}
-		else{
+	private QueryColumnPrototype lookupColumnPrototypeByCufType(AdvancedSearchFieldModelType cufType) {
+		if (!CUSTOM_FIELD_TYPES.contains(cufType)) {
+			throw new IllegalArgumentException("unknown CUF type '" + cufType + "'");
+		} else {
 			return internalLookupColumnPrototypeByKey(mappings.getCufMapping(), cufType.toString());
 		}
 	}
 
 
-	private QueryColumnPrototype internalLookupColumnPrototypeByKey(ColumnMapping mapping, String key){
+	private QueryColumnPrototype internalLookupColumnPrototypeByKey(ColumnMapping mapping, String key) {
 
-		if (! mapping.isMappedKey(key)){
-			throw new IllegalArgumentException("attribute key '"+key+"' is unmapped");
+		if (!mapping.isMappedKey(key)) {
+			throw new IllegalArgumentException("attribute key '" + key + "' is unmapped");
 		}
 
 		String mappedColumnLabel = mapping.findColumnPrototypeLabel(key);
 
 		return lookupColumnPrototypeByColumnLabel(mappedColumnLabel);
-		
-	}
-	
 
-	private QueryColumnPrototype lookupColumnPrototypeByColumnLabel(String mappedColumnLabel){
+	}
+
+
+	private QueryColumnPrototype lookupColumnPrototypeByColumnLabel(String mappedColumnLabel) {
 		return prototypesByLabel.computeIfAbsent(mappedColumnLabel,
-				(label) -> {
-					throw new IllegalArgumentException("column '"+label+"' is unknown (unmapped)");
-				});
+			(label) -> {
+				throw new IllegalArgumentException("column '" + label + "' is unknown (unmapped)");
+			});
 
 	}
 
 
-	private Optional<Sort> extractSort(){
+	private Optional<Sort> extractSort() {
 		Sort sort = null;
 		Pageable pageable = advancedSearchQueryModel.getPageable();
-		
-		if (pageable != null){
+
+		if (pageable != null) {
 			sort = pageable.getSort();
 		}
-		
+
 		return Optional.ofNullable(sort);
 	}
-	
 
 
-	private final String toIso(Date date){
+	private final String toIso(Date date) {
 		return DateUtils.formatIso8601Date(date);
 	}
 

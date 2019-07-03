@@ -23,13 +23,17 @@ package org.squashtest.tm.service.internal.query;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -73,6 +77,7 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
+import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper;
 
 class QuerydslToolbox {
 
@@ -271,7 +276,7 @@ class QuerydslToolbox {
 		QueryColumnPrototype proto = col.getColumn();
 
 		switch (proto.getColumnType()) {
-			case ENTITY:	
+			case ENTITY:
 			case ATTRIBUTE:
 				selectElement = createAttributeSelect(col);
 				break;
@@ -724,7 +729,6 @@ class QuerydslToolbox {
 		else if (operation == Operation.LIKE) {
 			predicate = createLikePredicate(operation, baseExp, operands);
 		}
-		// normal case
 		else {
 			Operator operator = getOperator(operation);
 
@@ -796,8 +800,8 @@ class QuerydslToolbox {
 		return result;
 
 	}
-	
-	
+
+
 	private BooleanExpression createMatchPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.S_MATCHES, baseExp, operands[0]);
 		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to 
@@ -871,7 +875,7 @@ class QuerydslToolbox {
 	private PathBuilder makePath(Class<?> srcClass, String srcAlias, Class<?> attributeClass, String attributeAlias) {
 		return new PathBuilder<>(srcClass, srcAlias).get(attributeAlias, attributeClass);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private PathBuilder makePath(Class<?> srcClass, String srcAlias) {
 		return new PathBuilder<>(srcClass, srcAlias);
@@ -886,22 +890,22 @@ class QuerydslToolbox {
 		QueryColumnPrototype prototype = column.getColumn();
 
 		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
-		
+
 		Class<?> clazz = type.getEntityClass();
 		String alias = getQName(type);
-		
+
 		// if the column represents the entity itself
 		if (prototype.representsEntityItself()){
 			return makePath(clazz, alias);
 		}
 		// if the column is an attribute
-		else{			
+		else{
 			String attribute = prototype.getAttributeName();
 			Class<?> attributeType = classFromDatatype(prototype.getDataType());
 
 			return makePath(clazz, alias, attributeType, attribute);
 		}
-		
+
 	}
 
 	/**
@@ -974,7 +978,9 @@ class QuerydslToolbox {
 
 			if (operation == Operation.IN) {
 				List<Expression<?>> listeExpression = new ArrayList<>(1);
+
 				listeExpression.add(ExpressionUtils.list(Object.class, expressions.toArray(new Expression[expressions.size()])));
+
 				return listeExpression;
 			}
 			return expressions;
@@ -1053,7 +1059,7 @@ class QuerydslToolbox {
 			case FULLTEXT:
 				operator = ExtOps.FULLTEXT;
 				break;
-				
+
 			default:
 				throw new IllegalArgumentException("Operation '" + operation + NOT_YET_SUPPORTED);
 		}
