@@ -53,7 +53,7 @@
 <f:message var="yesLabel" key="label.Yes"/>
 <f:message var="noLabel" key="label.No"/>
 
-<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+<c:set var="userLicenseInformation"   value="${userLicenseInformationData}" />
 
 
 <layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
@@ -89,7 +89,7 @@
             dates : "${datesLabel}"
 
           },
-          userLicenseInformation: "${userLicenseInformation}"
+          userLicenseInformation: "${userLicenseInformationData}"
         }
       },
       squashtm.app.connectionsManager = {
