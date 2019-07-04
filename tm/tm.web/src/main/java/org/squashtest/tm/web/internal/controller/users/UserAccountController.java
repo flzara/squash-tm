@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -274,7 +275,7 @@ public class UserAccountController {
 		try{
 			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
 		}
-		catch(BugTrackerNoCredentialsException ex){
+		catch(BugTrackerRemoteException ex){
 			// need to rethrow the same exception, with a message in the expected user language
 			LOGGER.debug("server-app credentials test failed : ", ex);
 			throw new CannotConnectBugtrackerException(ex);
