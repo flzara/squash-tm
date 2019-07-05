@@ -98,6 +98,7 @@ public interface QueryColumnPrototypeReference {
 	public static final String ITEM_TEST_PLAN_IS_EXECUTED = "ITEM_TEST_PLAN_IS_EXECUTED";
 	public static final String ITEM_TEST_PLAN_LABEL = "ITEM_TEST_PLAN_LABEL";
 	public static final String ITEM_TEST_PLAN_LASTEXECON = "ITEM_TEST_PLAN_LASTEXECON";
+	public static final String ITEM_TEST_PLAN_LASTEXECBY = "ITEM_TEST_PLAN_LASTEXECBY";
 	public static final String ITEM_TEST_PLAN_MANEXCOUNT = "ITEM_TEST_PLAN_MANEXCOUNT";
 	public static final String ITEM_TEST_PLAN_STATUS = "ITEM_TEST_PLAN_STATUS";
 	public static final String ITEM_TEST_PLAN_SUITECOUNT = "ITEM_TEST_PLAN_SUITECOUNT";

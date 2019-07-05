@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
@@ -31,16 +32,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.QCampaign;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.QCustomFieldValue;
-import org.squashtest.tm.domain.customfield.QCustomFieldValueOption;
-import org.squashtest.tm.domain.customfield.QTagsValue;
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchColumnMappings;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
@@ -54,17 +52,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.AUTOMATION_REQUEST_STATUS;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_CHECKBOX;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_DATE;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_LIST;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_NUMERIC;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_CUF_TEXT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_END_DATE;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_MILESTONE_ID;
@@ -79,11 +73,11 @@ import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ENTITY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LABEL;
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECBY;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_LASTEXECON;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_STATUS;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_SUITECOUNT;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TC_DELETED;
-import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITEM_TEST_PLAN_TESTER;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_ID;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_NAME;
 import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN;
@@ -165,6 +159,35 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	}
 
+	private static void createExecutionModeFilter(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
+
+		AdvancedSearchListFieldModel listFieldModel = (AdvancedSearchListFieldModel) model;
+		QIterationTestPlanItem outerItpi = QIterationTestPlanItem.iterationTestPlanItem;
+
+		QIterationTestPlanItem initItpi = new QIterationTestPlanItem("initItpi");
+		QExecution execution = new QExecution("execution");
+		List<String> values = listFieldModel.getValues();
+
+		List<BooleanExpression> expressions = new ArrayList<>();
+
+		for (String value : values) {
+			if ("UNDEFINED".equals(value)) {
+				expressions.add(execution.executionMode.isNull());
+			} else {
+				expressions.add(execution.executionMode.eq(TestCaseExecutionMode.valueOf(value)));
+			}
+		}
+
+
+		HibernateQuery<?> subQuery = new ExtendedHibernateQuery<>()
+			.select(Expressions.ONE)
+			.from(initItpi)
+			.leftJoin(initItpi.executions, execution)
+			.where(initItpi.id.eq(outerItpi.id).and(Expressions.anyOf(expressions.toArray(new BooleanExpression[expressions.size()]))));
+		query.where(subQuery.exists());
+
+	}
+
 	private List<Long> findPartyIdsCanAccessProject(List<Long> projectIds) {
 
 		return DSL
@@ -216,16 +239,15 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("itpi-testsuites", ITEM_TEST_PLAN_SUITECOUNT)
 			.map("itpi-status", ITEM_TEST_PLAN_STATUS)
 			.map("is-tc-deleted", ITEM_TEST_PLAN_TC_DELETED)
-			.map("itpi-executed-by", ITEM_TEST_PLAN_TESTER)
+			.map("itpi-executed-by", ITEM_TEST_PLAN_LASTEXECBY)
 			.map("itpi-executed-on", ITEM_TEST_PLAN_LASTEXECON)
 			.map("itpi-datasets", ITEM_TEST_PLAN_DSCOUNT)
 			.map("tc-weight", TEST_CASE_IMPORTANCE)
 			.map("test-case-automatable", TEST_CASE_AUTOMATABLE);
 
 		MAPPINGS.getFormMapping()
-			.map("executionMode", EXECUTION_EXECUTION_MODE)
 			.map("executionStatus", ITEM_TEST_PLAN_STATUS)
-			.map("lastExecutedBy", ITEM_TEST_PLAN_TESTER)
+			.map("lastExecutedBy", ITEM_TEST_PLAN_LASTEXECBY)
 			.map("lastExecutedOn", ITEM_TEST_PLAN_LASTEXECON)
 			.map("milestone.endDate", CAMPAIGN_MILESTONE_END_DATE)
 			.map("milestone.label", CAMPAIGN_MILESTONE_ID)
@@ -241,7 +263,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("user", ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN)
 			.map("campaign.id", CAMPAIGN_ID)
 			.map("iteration.id", ITERATION_ID)
-			.map("testSuites.id", ITEM_SUITE_ID);
+			.map("testSuites.id", ITEM_SUITE_ID)
+			.mapHandler("executionMode", new AdvancedSearchColumnMappings.SpecialHandler(CampaignAdvancedSearchServiceImpl::createExecutionModeFilter));
 
 
 	}
