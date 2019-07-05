@@ -178,6 +178,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao, Sizes.NAME_MAX);
+		copyCustomFields(source,copyFolder);
 		copyContentsOnExternalRepository (copyFolder);
 	}
 
