@@ -92,7 +92,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				this.cufurl = cufurl;
 				this.activeView = new FolderView({
 					model: activeModel,
-					acls: acls,
+					acls: acls
 				});
 			},
 
@@ -109,7 +109,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new DashboardView({
 					model: activeModel,
-          acls: acls,
+          acls: acls
 				});
 			},
 
@@ -126,7 +126,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new ChartView({
 					model: activeModel,
-					acls: acls,
+					acls: acls
 
 				});
 			},
@@ -144,7 +144,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 
 				this.activeView = new ReportView({
 					model: activeModel,
-					acls: acls,
+					acls: acls
 				});
 			},
 

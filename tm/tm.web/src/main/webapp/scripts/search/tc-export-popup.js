@@ -104,7 +104,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			var prefix =  translator.get("label.lower.dash.exportTestCase");
 			var date =  dateutils.format(new Date(), "yyyyMMdd_HHmmss");
 			return prefix + "_" + date;
-		},
+		}
 
 	});
 

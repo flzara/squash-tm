@@ -201,7 +201,7 @@ define(["jquery", "backbone", "jeditable.selectJEditable", "workspace.routing", 
 					method: 'DELETE',
 					url: routing.buildURL('generic-projects.scm-repository', projectId)
 				});
-			},
+			}
 
 		});
 

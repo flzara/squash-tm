@@ -33,7 +33,7 @@ define(['jquery', 'backbone', 'workspace.routing', './views/assignedView', './vi
 				"": "assigned",
 				"assigned": "assigned",
 				"global": "global",
-				"traitment": "traitment",
+				"traitment": "traitment"
 			},
 
 			assigned: function () {

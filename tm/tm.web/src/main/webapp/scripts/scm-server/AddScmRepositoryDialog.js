@@ -31,7 +31,7 @@
 			name: $('#name'),
 			path: $('#path'),
 			folder: $('#folder'),
-			branch: $('#branch'),
+			branch: $('#branch')
 		},
 
 		confirmPopup: $("#add-scm-confirm-dialog"),

@@ -33,7 +33,7 @@ define(['jquery', 'backbone', 'workspace.routing', './views/validateView', './vi
 				"": "transmitted",
 				"validate": "validate",
 				"global": "global",
-				"transmitted": "transmitted",
+				"transmitted": "transmitted"
 			},
 
 			validate: function () {

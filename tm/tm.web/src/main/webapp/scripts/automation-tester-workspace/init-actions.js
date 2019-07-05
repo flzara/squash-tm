@@ -48,7 +48,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing', "jquery.s
 				var self = this;
 				$.ajax({
 					url: model.contextRoot + "automation-tester-workspace/lastModifiedBy/" + requestStatus,
-					method: "GET",
+					method: "GET"
 				}).success(function (data) {
 					switch (href) {
 						case "#transmitted":

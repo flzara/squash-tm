@@ -50,7 +50,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				var self = this;
 				$.ajax({
 					url: url + requestStatus,
-					method: "GET",
+					method: "GET"
 				}).success(function (data) {
 					switch (href) {
 						case "#assigned":
@@ -71,7 +71,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace.routing'],
 				if ("#global" === href) {
 					$.ajax({
 						url: model.contextRoot + "automation-workspace/assignee",
-						method: "GET",
+						method: "GET"
 					}).success(function (data) {
 						model.assignableUsersGlobalView = data;
 					});
