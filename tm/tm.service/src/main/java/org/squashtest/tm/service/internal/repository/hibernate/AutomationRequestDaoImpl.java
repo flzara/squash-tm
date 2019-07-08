@@ -391,8 +391,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		// apply paging and sorting
 		fetchRequest.offset(pageable.getOffset()).limit(pageable.getPageSize());
 
-		OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
-		fetchRequest.orderBy(orderSpecifiers);
+		if (pageable.getSort() != null) {
+			OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
+			fetchRequest.orderBy(orderSpecifiers);
+		}
 
 		List<AutomationRequest> requests = fetchRequest.fetch();
 
