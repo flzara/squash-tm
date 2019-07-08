@@ -256,7 +256,7 @@ public class UserAccountController {
 			try {
 				userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
 				userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
-			} catch (BugTrackerNoCredentialsException ex) {
+			} catch (BugTrackerRemoteException ex) {
 				LOGGER.debug("server-app credentials test failed : ", ex);
 				throw new CannotConnectBugtrackerException(ex);
 			}
