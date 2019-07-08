@@ -26,6 +26,7 @@ package org.squashtest.tm.core.foundation.i18n;
  */
 public class Labelled extends ContextBasedInternationalized {
 	private String labelKey;
+	private Object[] labelArgs;
 
 	/**
 	 * @param labelKey
@@ -33,6 +34,10 @@ public class Labelled extends ContextBasedInternationalized {
 	 */
 	public final void setLabelKey(String labelKey) {
 		this.labelKey = labelKey;
+	}
+	
+	public final void setLabelArgs(Object[] labelArgs){
+		this.labelArgs = labelArgs;
 	}
 
 	/**
@@ -43,6 +48,11 @@ public class Labelled extends ContextBasedInternationalized {
 	}
 
 	public final String getLabel() {
-		return getMessage(labelKey);
+		if (labelArgs != null){
+			return getMessage(labelKey, labelArgs); 
+		}
+		else{
+			return getMessage(labelKey);
+		}
 	}
 }
