@@ -47,7 +47,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		SearchInputFieldModel idField = new SearchInputFieldModel("referencedTestCase.id",
 				getMessageSource().internationalize(
-"referenced-tc.id", locale), TEXTFIELD);
+"referenced-tc.id", locale), TEXTFIELDID);
 		panel.addField(idField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("referencedTestCase.reference",
 				getMessageSource()
