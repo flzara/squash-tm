@@ -65,6 +65,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -141,7 +142,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		PagedCollectionHolder<List<ConnectionLog>> connectionLogs = connectionLogFinderService.findAllFiltered(CONNECTIONS_DEFAULT_PAGING, CONNECTION_COLUMN_DEFAULT_FILTERING);
 		mav.addObject("pagedConnectionLogs", connectionLogs);
 		mav.addObject("connectionsPageSize", CONNECTIONS_DEFAULT_PAGING.getPageSize());
-		
+
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
 		mav.addObject("canManageLocalPassword", canManageLocalPassword);
@@ -149,7 +150,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		// License information
 		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
 		mav.addObject("userLicenseInformationData", userLicenseInformation);
-		
+
 		return mav;
 	}
 
@@ -218,6 +219,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 			DefaultFiltering.NO_FILTERING, "").getAaData();
 
 		List<PermissionGroupModel> pgm = getPermissionGroupModels();
+		pgm.sort(Comparator.comparing(PermissionGroupModel::getDisplayName));
 		List<ProjectModel> pm = getProjectModels(userId);
 
 		// if the local password manageable ?
@@ -225,7 +227,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 		// License information
 		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
-		
+
 		model.addAttribute("usersGroupList", usersGroupList);
 		model.addAttribute("user", user);
 		model.addAttribute("permissionList", pgm);
@@ -233,8 +235,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 		model.addAttribute("permissions", permissionModel);
 		model.addAttribute("canManageLocalPassword", canManageLocalPassword);
 		model.addAttribute("userLicenseInformationData", userLicenseInformation);
-		
-		
+
+
 
 		return "user-modification.html";
 	}

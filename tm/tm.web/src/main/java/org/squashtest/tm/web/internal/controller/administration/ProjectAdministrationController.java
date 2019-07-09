@@ -67,6 +67,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -143,6 +144,8 @@ public class ProjectAdministrationController {
 		.buildRawModel(partyProjectPermissionsBean,1);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
+		availablePermissions.sort(Comparator.comparing(it -> internationalizationHelper.internationalize(
+			"user.project-rights." + it.getSimpleName() + ".label", locale)));
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
