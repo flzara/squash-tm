@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
-	
-	
+
+
 	function _collectId(node){
 		if (node.getAttributeNode){
 			return node.getAttributeNode('resid').value;
@@ -29,22 +29,22 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 			return node.getAttribute('resid');
 		}
 	}
-	
+
 	function _loopOver(nodes, callback){
-		
+
 		var allXhrs = [];
-		
+
 		var selectors = [":folder, :campaign", ":iteration", ":test-suite"];
-		
+
 		for (var i=0;i<3;i++){
 			var filterednodes = nodes.filter(selectors[i]);
 			callback(allXhrs, filterednodes);
 		}
-		
+
 		return allXhrs;
-		
+
 	}
-	
+
 	//subclassing the deletion dialog because this is a special case
 	$.widget("squash.delcampDialog", $.squash.delnodeDialog, {
 		getSimulXhr : function(nodes){
@@ -61,8 +61,8 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					aXhrs.push(null);
 				}
 			});
-		}, 
-		
+		},
+
 		getConfirmXhr : function(nodes){
 			return _loopOver(nodes, function(aXhrs, n){
 				if (n.length>0){
@@ -77,33 +77,35 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					}));
 				}
 				else{
-					aXhrs.push( null);	
+					aXhrs.push( null);
 					//pushing null is important here because the success callback will make
 					//assumptions on the order of the response.
 				}
-			});				
-		}	
+			});
+		}
 	});
-	
+
 	function init(){
-		
+
 		var tree = zetree.get();
 		var dialog = $("#delete-node-dialog").delcampDialog({
 			tree : tree,
 			rules : rules
 		});
-		
+
 
 		dialog.on('delcampdialogconfirm', function(){
 			dialog.delcampDialog('performDeletion');
+			$("#remove-tc-from-iter").prop("checked", false);
 		});
-		
+
 		dialog.on('delcampdialogcancel', function(){
+			$("#remove-tc-from-iter").prop("checked", false);
 			dialog.delcampDialog('close');
 		});
-		
+
 	}
-	
+
 	return {
 		init : init
 	};
