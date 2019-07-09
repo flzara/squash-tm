@@ -68,11 +68,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author mpagnon
@@ -176,6 +172,7 @@ public class TeamController extends PartyControllerSupport {
 				DefaultFiltering.NO_FILTERING, "").getAaData();
 
 		List<PermissionGroupModel> pgm = getPermissionGroupModels();
+		pgm.sort(Comparator.comparing(PermissionGroupModel::getDisplayName));
 		List<ProjectModel> pm = getProjectModels(teamId);
 
 		// License information
