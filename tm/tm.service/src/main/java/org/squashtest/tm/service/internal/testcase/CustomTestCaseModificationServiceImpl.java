@@ -328,7 +328,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, 25));
+			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, Math.min(newExpectedResult.length(),25)));
 		}
 
 		testStep.setExpectedResult(newExpectedResult);
