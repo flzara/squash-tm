@@ -31,4 +31,10 @@ public interface AutomationWorkflow extends Plugin {
 	 */
 	String getWorkflowName();
 
+	/**
+	 * Get the runnable task that will be scheduled if the polling method is chosen.
+	 * @return The Runnable task to schedule
+	 */
+	Runnable getSynchronizationTask();
+
 }
