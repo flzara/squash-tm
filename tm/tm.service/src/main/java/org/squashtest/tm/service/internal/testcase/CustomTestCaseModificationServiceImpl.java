@@ -315,7 +315,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, 25));
+			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, Math.min(newAction.length(),25)));
 		}
 
 		testStep.setAction(newAction);
