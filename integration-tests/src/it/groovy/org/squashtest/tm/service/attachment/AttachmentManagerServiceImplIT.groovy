@@ -29,14 +29,12 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.attachment.AttachmentContent
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.requirement.Requirement
-
-//import org.squashtest.tm.web.internal.controller.attachment.UploadedData
-
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.deletion.OperationReport
-import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
@@ -71,18 +69,15 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	AttachmentManagerService attachService
 
 	@Inject
-	GenericProjectManagerService genericProjectManager
+	ExecutionModificationService executionModService
 
-	// IDs : see dataset
-	int folderId = -241; //folder b 1 PJ not duplicate
-	int testCaseId = -240; //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
+	// IDs : for legacy ITs. see dataset
+	int testCaseId = -240 //Test-CAse 1 Copie 2 //duplicate test case with Attachmentcontent
 	int testCaseIdWithoutAttachment = -245 //TC 2 AttachmentList 919
-	int attachListId = -898; //of test folder a, no attachment
-
+	int attachListId = -898 //of test folder a, no attachment
 
 	def "should create an AttachmentList along with a TestCase"() {
 		given:
-
 
 		when:
 		def attachListId = tcModService.findById(testCaseId).attachmentList.id
@@ -314,28 +309,11 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		//2°) add a PJ on testCase
 		when:
 		def newStContent = "It is OK"
-		def newContenName = "PJ of TC"
+		def newContentName = "PJofTC.txt"
 		InputStream newContentStream = IOUtils.toInputStream(newStContent)
-		def newContenByteSize = newContentStream.bytes.size()
 
 		//org.squashtest.tm.web.internal.controller.attachment.UploadedData not seen ...
-		//RawAttachment rawAttachment = new UploadedData(newContentStream, newContenName, newContenByteSize)
-		RawAttachment rawAttachment = new RawAttachment() {
-			@Override
-			InputStream getStream() {
-				return newContentStream
-			}
-
-			@Override
-			String getName() {
-				return newContenName
-			}
-
-			@Override
-			long getSizeInBytes() {
-				return newContenByteSize
-			}
-		}
+		RawAttachment rawAttachment = setRawAttachment(newContentStream, newContentName)
 
 		def newTCAttachId = attachService.addAttachment(testCaseAttachListId, rawAttachment)
 		def attachmentsTC = attachService.findAttachments(testCaseAttachListId)
@@ -345,7 +323,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		attachmentsTC.size() == 1
 		attachmentsTC.getAt(0).attachmentList.size() == 1
 		attachmentsTC.getAt(0).getId() == newTCAttachId
-		attachmentsTC.getAt(0).name.equals(newContenName) == true
+		attachmentsTC.getAt(0).name.equals(newContentName) == true
 		attachmentsTC.getAt(0).content.id  == newTCContentId
 		attachmentsTC.getAt(0).content.stream.text.equals(newStContent) == true
 
@@ -375,7 +353,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		//checking PJ on Testcase itself
 		copyCase.attachmentList.size() == 1
 		//same AttachmentContent on TestCase and copied TestCase, the PJ add in 2°)
-		copyCase.attachmentList.attachments.getAt(0).name.equals(newContenName) == true
+		copyCase.attachmentList.attachments.getAt(0).name.equals(newContentName) == true
 		copyCase.attachmentList.attachments.getAt(0).content.id  == newTCContentId
 		copyCase.attachmentList.attachments.getAt(0).content.stream.text.equals(newStContent) == true
 		countAttachemntsForAttachmentContent(newTCContentId) == 2 //source and target
@@ -393,7 +371,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		List<Attachment>  attchmentsForContent = getAttachmentsForAttachmentContent(newTCContentId)
 		attchmentsForContent.size() == 1
 		attchmentsForContent.getAt(0).attachmentList.id == testCopyCaseAttachListId //on testCaseCopy
-		attchmentsForContent.getAt(0).name == newContenName
+		attchmentsForContent.getAt(0).name == newContentName
 		attchmentsForContent.getAt(0).content.stream.text == newStContent
 
 		when:
@@ -635,10 +613,13 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 	def "attachments shallowCopy-workspace requirement-should not duplicate PJ when creating a new requirement version"() {
 		given:
 		def requirementId = -256L
-		def attachmentListId = -238L
 		def attachmentId = -21L
 		def pjName = "requirement.txt"
 		def contentID = -12L
+		//update circular dependencies ...
+		updateRequirementVersion(-255L, -255L)
+		updateRequirementVersion(-256L, -256L)
+		updateRequirementVersion(-257L, -257L)
 
 		//1°)  check dataset: expected only 1 Attachment for ContentId= -12L
 		when:
@@ -654,14 +635,16 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		attachment.name.equals(pjName) == true
 		attachment.id == attachmentId
 
-
 		//2°) create a new version for the used requirement
 		when:
 			reqVersionService.createNewVersion(requirementId, false, false)
 			attachments.clear()
 			attachments = getAttachmentsForAttachmentContent(contentID)
+			Long newVersionId = executeSelectSingleResultSQLQuery("SELECT current_version_id FROM requirement WHERE rln_id = " + requirementId)
 
 		then:
+			newVersionId != lastVersionId
+		    // 2 Attachments for the same AttachmentContent
 			attachments.size() == 2
 		when:
 			//old version of requirement
@@ -677,19 +660,160 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 			attachment.name.equals(pjName) == true
 			attachment.id != attachmentId
 			attachment.attachmentToCopyId == attachmentId
-//		when:
-//		    Long newVersionId = executeSelectSingleResultSQLQuery("SELECT current_version_id FROM requirement WHERE rln_id = " + requirementId)
-//		then:
-//		    newVersionId != lastVersionId
-//		when:
-//		   //check ig PJ is attached to new requirement version
-//		  executeSelectSingleResultSQLQuery("SELECT  FROM requirement WHERE rln_id = " + newVersion)
+
+		//3°) Remove the requirement (and this newly created version): AttachmentContent must be delete
+		when:
+			em.flush()
+			em.clear()
+			OperationReport report = reqNavService.deleteNodes(Collections.singletonList(requirementId))
+
+		then:
+			// the requirement and its new version
+			report.removed.size() == 1
+	    	report.removed.getAt(0).resid == requirementId
+			executeSelectSingleResultSQLQuery("SELECT count(rln_id) FROM requirement WHERE rln_id = " + requirementId) == 0
+		    executeSelectSingleResultSQLQuery("SELECT count(current_version_id) FROM requirement WHERE current_version_id = " + newVersionId) == 0
+			executeSelectSingleResultSQLQuery("SELECT count(res_id) FROM requirement_version WHERE res_id = " + requirementId) == 0
+			executeSelectSingleResultSQLQuery("SELECT count(res_id) FROM requirement_version WHERE res_id = " + newVersionId) == 0
+		    // the PJ
+			areOrhanContents() == false
+			executeSelectSingleResultSQLQuery("SELECT count(attachment_id) FROM attachment WHERE  content_id = " + contentID) == 0
+	}
+
+	def "attachments shallowCopy-workspace requirement-copy/delete tree"() {
+		def reqFolderId = -254L
+		def initialAttachmentContentNb =  countTotalAttachmentContent() // total in database
+		def initialAttachmentNb = countTotalAttachment()
+		def initialAttachmentListNb = countTotalAttachmentList()
+
+		def rootLibraryRequirementId = -14L
+
+		//check dataset
+		when:
+			List<Requirement> results = executeSelectQuery("SELECT requirement from RequirementLibraryNode requirement where requirement.id = :id", "id", reqFolderId)
+		then:
+			results.size() == 1
+			//check expected PJs existing in tree
+			results.get(0).attachmentList.size() == 0 // no PJ on folder
+			results.get(0).content.size() == 1 // 1 subElement (-255)
+			results.get(0).content.getAt(0).resource.attachmentList.size() == 0 //(no PJ)
+			results.get(0).content.getAt(0).content.size() ==1 //sublevel 2 (-256)
+			results.get(0).content.getAt(0).content.getAt(0).resource.attachmentList.size() == 1 // 1 PG
+			results.get(0).content.getAt(0).content.getAt(0).content.size() == 1 //sublevel 3
+			results.get(0).content.getAt(0).content.getAt(0).content.getAt(0).resource.attachmentList.size()  == 1
+
+		when:
+			//saving read data
+			def folderAttachListId = results.get(0).attachmentList.id
+			def level2ContentId = results.get(0).content.getAt(0).content.getAt(0).resource.attachmentList.allAttachments.getAt(0).content.id
+			def level3ContentId = results.get(0).content.getAt(0).content.getAt(0).content.getAt(0).resource.attachmentList.allAttachments.getAt(0).content.id
+			def nbContentAttachmentInTree = 2
+			//add a PJ on folder
+			def newStContent = "Content on req Folder"
+			def newContentName = "PJ of ReqFolder.txt"
+			InputStream newContentStream = IOUtils.toInputStream(newStContent)
+			RawAttachment rawAttachment = setRawAttachment(newContentStream, newContentName)
+			attachService.addAttachment(folderAttachListId, rawAttachment)
+			def attachmentsTC = attachService.findAttachments(folderAttachListId)
+		then: //check that the PJ on folder exist and is readable
+			attachmentsTC.size() == 1
+			attachmentsTC.getAt(0).attachmentList.size() == 1
+			attachmentsTC.getAt(0).name.equals(newContentName) == true
+
+			attachmentsTC.getAt(0).content.stream.text.equals(newStContent) == true
+
+		when: // copy all the folder
+			def pjOnFolderContentId = attachmentsTC.getAt(0).content.id // save
+			Long[] nodes = [reqFolderId]
+			reqNavService.copyNodesToLibrary(rootLibraryRequirementId,nodes)
+		then:
+			false == false
+//		List<Requirement> results = executeSelectQuery("SELECT requirement from RequirementLibraryNode requirement where requirement.id = :id", "id", reqFolderId)
+//		reqFolder = results.get(0)
+//		reqNavService.
+		//xxxNavService.copyNodesToFolder(rootLibraryRequirement, reqFolderId);
+//		nbOfAttahcmentsIntree =
 
 	}
+
+	/**************
+	 *       workspace campaign
+	 *
+	 *
+	 *
+	 *       Test Folder 1  (ID=-254, atachment_list_id = -900 , no PJ)
+	 *                    |
+	 *                     TF1-R1 Test Requirement 1 (ID=-255, atachment_list_id = -888 , no PJ)
+	 *                                              |
+	 *                                              Sub ex Ex (ID=-256, atachment_list_id = - 938, PJ-> requirement.txt, Content_id = -12, Attachment_id = -21 )
+	 *                                                                                |
+	 *                                                                                 ex 1(ID=-257, atachment_list_id = - 939, PJ-> new7.txt Content_id = -13, Attachment_id = -22)
+	 ***************/
+//      TODO: to run the test, we must add campaign, item_plan_test dependencies in dataset ...
+//	def "attachments shallowCopy-workspace campaign-delete an execution with added PJ linked to a TestCase with a PJ"() {
+//		//1 PJ on testCase, and an added PJ on Execution "-84" of this TestCase
+//		def linkedTestCaseId = -240L  //1PJ
+//		def linkedTestCaseAttachmentId = -910L
+//		def executionId = -84L
+//		def executionAttachmentListId = -952L
+//		def commonContentId = -1L
+//		def addedToExecutionContentId = -14L
+//
+//		when:
+//			//checking dataset
+//			List<Execution> executions = executeSelectQuery("SELECT execution from Execution execution where execution.id = :id", "id", executionId)
+//			List<Long> contentIdsOnExecution = executeSelectQuery("SELECT attachment.content.id from Attachment attachment where attachment.attachmentList.id = :id order by attachment.content.id ASC", "id", executionAttachmentListId)
+//			List<Long> contentIdsOnTestCase = executeSelectQuery("SELECT attachment.content.id from Attachment attachment where attachment.attachmentList.id = :id order by attachment.content.id ASC", "id", linkedTestCaseAttachmentId)
+//
+//		then:
+//			executions.size() == 1
+//			executions.getAt(0).attachmentList.id == executionAttachmentListId
+//			executions.getAt(0).attachmentList.getAllAttachments().size() == 2
+//			executions.getAt(0).referencedTestCase.id == linkedTestCaseId
+//			executions.getAt(0).referencedTestCase.attachmentList.id == linkedTestCaseAttachmentId
+//			executions.getAt(0).referencedTestCase.attachmentList.getAllAttachments().size() == 1
+//			contentIdsOnExecution.size() == 2
+//			contentIdsOnExecution.getAt(0) == addedToExecutionContentId
+//			contentIdsOnExecution.getAt(1) == commonContentId
+//		    contentIdsOnTestCase.size() == 1
+//	  		contentIdsOnTestCase.getAt(0) == commonContentId
+//
+//		//deleting the execution
+//		when:
+//			Execution execution = executions.getAt(0)
+//			executionModService.deleteExecution(execution)
+//		then:
+//		//expected: commonContentId should always be available for testcase but addedToExecutionContentId must not exist in db
+//		areOrhanContents() == false
+//		executeSelectSingleResultSQLQuery("SELECT count(execution_id) from Execution where execution_id = " + execution.id) == 0
+//		executeSelectSingleResultSQLQuery("SELECT count(attachment_content_id) from attachment_content where attachment_content_id = " + addedToExecutionContentId) == 0
+//		executeSelectQuery("SELECT attachment.content.id from Attachment attachment where attachment.attachmentList.id = :id order by attachment.content.id ASC",
+//			"id", linkedTestCaseAttachmentId).equals(contentIdsOnTestCase) == true // no change
+//	}
 
 	/** *************************************************************
 	                 UTILS
 	************************************************************** */
+
+	RawAttachment setRawAttachment(inputStream, name) {
+		new RawAttachment() {
+			@Override
+			InputStream getStream() {
+				return inputStream
+			}
+
+			@Override
+			String getName() {
+				return name
+			}
+
+			@Override
+			long getSizeInBytes() {
+				return inputStream.bytes.size()
+			}
+		}
+	}
+
 
 	protected <R> List<R> executeSelectSQLQuery(String queryString) {
 		Query query = getSession().createSQLQuery(queryString)
@@ -753,23 +877,6 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		return executeSelectSingleResultSQLQuery("SELECT count(*) FROM attachment_list")
 	}
 
-//	protected boolean checkIdAndStreamOfContent(Long idRef, String streamToTxtRef, AttachmentContent underTest) {
-//		boolean result = (idRef == underTest.id)
-//		if (result) {
-//			result = streamToTxtRef.equals(underTest.getStream().text)
-//		}
-//		return result
-//	}
-
-//	protected  boolean checkIdAndNameAndStreamOfAttachment(Long idRef,String attName,  String streamToTxtRef, Attachment underTest) {
-//		boolean result
-//		result = attName.equals(underTest.name)
-//		if (result) {
-//			result = checkIdAndStreamOfContent(idRef, streamToTxtRef, underTest.content)
-//		}
-//		return result
-//	}
-
 	protected  boolean checkIdAndNameOfAttachmentContent(Long idRef, String attName, Attachment underTest) {
 		boolean result = attName.equals(underTest.name)
 		if (result) {
@@ -783,5 +890,10 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		DataSourceProperties ds = Mock()
 		ds.getUrl() >> url
 		tcNavService.deletionHandler.deletionDao.dataSourceProperties  = ds
+	}
+
+	protected void updateRequirementVersion(Long res_id, Long requirement_id) {
+		Query query = getSession().createSQLQuery("UPDATE requirement_version set requirement_id = " + requirement_id + " where res_id = " + res_id)
+		query.executeUpdate()
 	}
 }

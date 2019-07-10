@@ -24,9 +24,6 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
-import java.util.List;
-import java.util.Set;
-
 public interface AttachmentListDao {
 	AttachmentList getOne(Long id);
 
