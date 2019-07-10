@@ -367,11 +367,10 @@ public class ScriptedTestCaseEventListener {
 				   .join(automationRequest.testCase, testCase)
 				   .join(testCase.project, project)
 				   .join(project.testAutomationProjects, automationProject)
-				   .join(project.scmRepository, scm) 								// condition 4
+				   .join(project.scmRepository, scm) 								// condition 3
 					.where(automationRequest.id.in(automationRequestIds) 			// condition 1
 							   .and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-							   .and(testCase.automatedTest.isNull())				// condition 3
-								.and(automationProject.canRunGherkin.isTrue())		// condition 5
+								.and(automationProject.canRunGherkin.isTrue())		// condition 4
 					)
 					.fetch();
 
