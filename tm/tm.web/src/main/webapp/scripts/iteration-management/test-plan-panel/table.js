@@ -109,6 +109,9 @@ define(
 					exRef = routing.buildURL('iterations.testplan.lastexec', iterid, tpid);
 				var exLnk = $('<a>', {'text': exTxt, 'href': exRef});
 				$row.find('.exec-on').empty().append(exLnk);
+			} else if(!!date) {
+				var exTxt = dateutils.format(date, format);
+				$row.find('.exec-on').empty().text(exTxt);
 			} else {
 				$row.find('.exec-on').empty().text('-');
 			}
