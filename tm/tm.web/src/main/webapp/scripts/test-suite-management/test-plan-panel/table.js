@@ -87,13 +87,17 @@ define(
 				iterid = _conf.testSuiteId,
 				tpid = data['entity-id'],
 				execExist = data['exec-exists'],
-				format = translator.get('squashtm.dateformat');
+				format = translator.get('squashtm.dateformat'),
+				exTxt;
 
 			if (!!date && !!execExist) {
-				var exTxt = dateutils.format(date, format),
-					exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
+				exTxt = dateutils.format(date, format);
+				var exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
 				var exLnk = $('<a>', {'text': exTxt, 'href': exRef});
 				$row.find('.exec-on').empty().append(exLnk);
+			} else if(!!date) {
+				exTxt = dateutils.format(date, format);
+				$row.find('.exec-on').empty().text(exTxt);
 			} else {
 				$row.find('.exec-on').empty().text('-');
 			}
@@ -291,7 +295,7 @@ define(
 							},
 							testPlanSubsetIds : [data['entity-id']]
 						};
-						
+
 					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
 					updateTAScript([data['entity-id']]).done(function(map){
@@ -458,7 +462,7 @@ define(
 
 								jqnew.find('.new-auto-exec').squashButton().on('click', function () {
 										var tpiId = $(this).data('tpi-id');
-										
+
 										var specification = {
 											context : {
 												type : 'TEST_SUITE',

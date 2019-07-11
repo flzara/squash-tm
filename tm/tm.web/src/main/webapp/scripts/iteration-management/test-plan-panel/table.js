@@ -102,15 +102,16 @@ define(
 				iterid = _conf.iterationId,
 				execExist = data['exec-exists'],
 				tpid = data['entity-id'],
-				format = translator.get('squashtm.dateformat');
+				format = translator.get('squashtm.dateformat'),
+				exTxt;
 
 			if (!!date && !!execExist) {
-				var exTxt = dateutils.format(date, format),
-					exRef = routing.buildURL('iterations.testplan.lastexec', iterid, tpid);
+				exTxt = dateutils.format(date, format);
+				var exRef = routing.buildURL('iterations.testplan.lastexec', iterid, tpid);
 				var exLnk = $('<a>', {'text': exTxt, 'href': exRef});
 				$row.find('.exec-on').empty().append(exLnk);
 			} else if(!!date) {
-				var exTxt = dateutils.format(date, format);
+				exTxt = dateutils.format(date, format);
 				$row.find('.exec-on').empty().text(exTxt);
 			} else {
 				$row.find('.exec-on').empty().text('-');
@@ -312,7 +313,7 @@ define(
 					var table = $("#iteration-test-plans-table").squashTable();
 					var data = table.fnGetData(row);
 
-					
+
 					var specification = {
 						context: {
 							type : 'ITERATION',
@@ -320,7 +321,7 @@ define(
 						},
 						testPlanSubsetIds : [data['entity-id']]
 					};
-					
+
 					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
 
@@ -481,7 +482,7 @@ define(
 								jqnew.find('.new-auto-exec').squashButton()
 									.on('click', function () {
 										var tpiId = $(this).data('tpi-id');
-										
+
 										var specification = {
 											context : {
 												type : 'ITERATION',
@@ -491,7 +492,7 @@ define(
 										};
 
 										var url = window.squashtm.app.contextRoot + "automated-suites/preview";
-										
+
 										$.ajax({
 											url: url,
 											dataType: 'json',
