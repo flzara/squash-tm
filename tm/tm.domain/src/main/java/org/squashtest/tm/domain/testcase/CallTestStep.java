@@ -51,6 +51,7 @@ public class CallTestStep extends TestStep {
 		copy.calledDataset = this.calledDataset;
 		copy.calledTestCase = this.calledTestCase;
 		copy.delegateParameterValues = this.isDelegateParameterValues();
+		copy.setTestCase(getTestCase());
 		return copy;
 	}
 

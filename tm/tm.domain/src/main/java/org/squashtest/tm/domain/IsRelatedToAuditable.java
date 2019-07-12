@@ -18,29 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase
+package org.squashtest.tm.domain;
 
-import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
-import spock.lang.Specification;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 
-class CallTestStepTest extends Specification {
-	def "should create a copy of step"() {
-		given:
-		TestCase callee = new TestCase(name: "callee")
-		TestCase callerTest = new TestCase(name: "caller")
-
-		and:
-		CallTestStep caller = new CallTestStep(calledTestCase: callee, testCase: callerTest)
-		use (ReflectionCategory) {
-			TestStep.set field: "id", of: caller, to: 10L
-		}
-
-		when:
-		def callerCopy = caller.createCopy()
-
-		then:
-		callerCopy.id == null // transient new entity
-		callerCopy.calledTestCase == callee
-		callerCopy.testCase == callerTest
-	}
+public interface IsRelatedToAuditable {
+	AuditableMixin getAuditable();
 }

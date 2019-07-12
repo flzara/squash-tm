@@ -21,7 +21,9 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.IsRelatedToAuditable;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,7 +46,7 @@ import java.util.Set;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
-public class Dataset implements Identified {
+public class Dataset implements Identified, IsRelatedToAuditable {
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	@Id
 	@Column(name = "DATASET_ID")
@@ -108,4 +110,8 @@ public class Dataset implements Identified {
 		this.parameterValues.remove(datasetParamValue);
 	}
 
+	@Override
+	public AuditableMixin getAuditable() {
+		return (AuditableMixin) testCase;
+	}
 }

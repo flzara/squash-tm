@@ -95,6 +95,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		ActionTestStep newTestStep = new ActionTestStep();
 		newTestStep.action = this.action;
 		newTestStep.expectedResult = this.expectedResult;
+		newTestStep.setTestCase(getTestCase());
 
 		// copy the attachments
 		for (Attachment tcAttach : this.getAttachmentList().getAllAttachments()) {

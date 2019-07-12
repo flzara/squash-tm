@@ -267,7 +267,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		LOGGER.debug("adding a new action step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-
+		newTestStep.setTestCase(parentTestCase);
 		testStepDao.persist(newTestStep);
 
 		if (index == STEP_LAST_POS){

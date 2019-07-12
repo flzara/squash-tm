@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.IsRelatedToAuditable;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-public class DatasetParamValue implements Identified {
+public class DatasetParamValue implements Identified, IsRelatedToAuditable {
 	@Id
 	@Column(name = "DATASET_PARAM_VALUE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_param_value_dataset_param_value_id_seq")
@@ -100,4 +102,8 @@ public class DatasetParamValue implements Identified {
 		return id;
 	}
 
+	@Override
+	public AuditableMixin getAuditable() {
+		return parameter.getAuditable();
+	}
 }
