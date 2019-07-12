@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.21.0.RC1-SNAPSHOT</version>
+  <version>1.20.1.RC1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
