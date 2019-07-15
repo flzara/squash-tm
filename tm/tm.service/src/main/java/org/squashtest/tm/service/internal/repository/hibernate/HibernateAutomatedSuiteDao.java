@@ -157,7 +157,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		JPAQuery<Couple<TestAutomationProject, Long>> query = createBaseTestplanQueryFromSpec(context, testPlanSubset);
 
 		// now set the select clause
-		query = query.select(Projections.constructor(Couple.class, testAutomationProject, iterationTestPlanItem.count().as("itemCount")));
+		//query = query.select(Projections.constructor(Couple.class, testAutomationProject, iterationTestPlanItem.count().as("itemCount")));
 
 		// and the group by, order etc
 		query = query.groupBy(testAutomationProject)

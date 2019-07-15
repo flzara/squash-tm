@@ -99,10 +99,10 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			.collect(Collectors.toList());
 
 		// Extract jooqTableFields from the selected columns
-		List<Field<?>> fieldsList = selectedColumns.stream()
+		List<Field<?>> fieldsList = new ArrayList<>();/*selectedColumns.stream()
 			.filter(column -> column.getLabel().getJooqTableField() != null)
 			.map(column -> column.getLabel().getJooqTableField())
-			.collect(Collectors.toList());
+			.collect(Collectors.toList());*/
 
 		// We need to include the Entity id field in the List if at least one CustomField is requested for this Entity
 		for(EntityType entityType : cufEntityList) {
