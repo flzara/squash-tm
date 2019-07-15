@@ -443,7 +443,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamOwnerPath());
 				r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
 				r.createCell(cIdx++).setCellValue(dm.getParamName());
-				r.createCell(cIdx++).setCellValue(dm.getParamValue());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(dm.getParamValue()));
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()) {
 					LOGGER.warn("cannot export content for dataset '" + dm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
