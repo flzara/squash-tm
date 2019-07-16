@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -53,6 +54,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -396,6 +398,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			throw new AccessDeniedException("access is denied");
 		}
 
+		if(boundEntity.getBoundEntityType().equals(BindableEntity.TEST_CASE)){
+			AuditableMixin auditable = (AuditableMixin) boundEntity;
+			auditable.setLastModifiedOn(new Date());
+		}
 		newValue.setValueFor(changedValue);
 	}
 
