@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.testcase;
 
 import org.hibernate.annotations.Persister;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.IsRelatedToAuditable;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
@@ -60,7 +60,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
 @Persister(impl=TestStepPersister.class)
-public abstract class TestStep implements Identified, IsRelatedToAuditable {
+public abstract class TestStep implements Identified, RelatedToAuditable {
 
 	@Id
 	@Column(name = "TEST_STEP_ID")

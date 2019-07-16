@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.IsRelatedToAuditable;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
@@ -46,7 +46,7 @@ import java.util.Set;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
-public class Dataset implements Identified, IsRelatedToAuditable {
+public class Dataset implements Identified, RelatedToAuditable {
 	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	@Id
 	@Column(name = "DATASET_ID")

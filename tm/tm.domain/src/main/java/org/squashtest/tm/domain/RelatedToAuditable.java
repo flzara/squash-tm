@@ -22,6 +22,6 @@ package org.squashtest.tm.domain;
 
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
-public interface IsRelatedToAuditable {
+public interface RelatedToAuditable {
 	AuditableMixin getAuditable();
 }

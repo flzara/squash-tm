@@ -23,6 +23,8 @@ package org.squashtest.tm.domain.testcase;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.RelatedToAuditable;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
@@ -63,7 +65,7 @@ import java.util.Set;
 	@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds"),
 	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"),})
 @Entity
-public class RequirementVersionCoverage implements Identified {
+public class RequirementVersionCoverage implements Identified, RelatedToAuditable {
 	@Id
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_coverage_requirement_version_coverage_i_seq")
@@ -311,4 +313,8 @@ public class RequirementVersionCoverage implements Identified {
 		return !verifyingSteps.isEmpty();
 	}
 
+	@Override
+	public AuditableMixin getAuditable() {
+		return (AuditableMixin) verifyingTestCase;
+	}
 }

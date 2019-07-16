@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.IsRelatedToAuditable;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -54,7 +54,7 @@ import java.util.regex.Matcher;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TEST_CASE_ID"})})
-public class Parameter implements Identified, IsRelatedToAuditable {
+public class Parameter implements Identified, RelatedToAuditable {
 
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
 	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";

@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.hibernate;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.squashtest.tm.domain.IsRelatedToAuditable;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.audit.AuditableSupport;
@@ -77,7 +77,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	}
 
 	private boolean hasIsRelatedToAuditableInterface(Class clazz){
-		return Arrays.stream(clazz.getInterfaces()).anyMatch(interfaze -> interfaze.getName().equals(IsRelatedToAuditable.class.getName()));
+		return Arrays.stream(clazz.getInterfaces()).anyMatch(interfaze -> interfaze.getName().equals(RelatedToAuditable.class.getName()));
 	}
 
 	private void checkAndLogModificationData(Object entity, Object[] currentState) {
@@ -151,7 +151,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	}
 
 	private void checkAndLogAuditableRelatedEntityModificationData(Object entity){
-		IsRelatedToAuditable relatedToAuditable = (IsRelatedToAuditable) entity;
+		RelatedToAuditable relatedToAuditable = (RelatedToAuditable) entity;
 		AuditableMixin auditable = relatedToAuditable.getAuditable();
 		if(auditable != null){
 			auditable.setLastModifiedOn(new Date());

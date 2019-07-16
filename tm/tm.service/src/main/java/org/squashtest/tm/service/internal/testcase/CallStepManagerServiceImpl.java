@@ -86,6 +86,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		CallTestStep newStep = new CallTestStep();
 		newStep.setCalledTestCase(calledTestCase);
+		newStep.setTestCase(parentTestCase);
 
 		testStepDao.persist(newStep);
 
@@ -132,6 +133,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 			CallTestStep newStep = new CallTestStep();
 			newStep.setCalledTestCase(calledTestCase);
+			newStep.setTestCase(parentTestCase);
 			testStepDao.persist(newStep);
 			if(index != null) {
 				parentTestCase. addStep(index, newStep);
@@ -156,6 +158,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		CallTestStep newStep = new CallTestStep();
 		newStep.setCalledTestCase(calledTestCase);
+		newStep.setTestCase(parentTestCase);
 
 		testStepDao.persist(newStep);
 
