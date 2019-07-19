@@ -24,7 +24,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title th:text="#{chart.wizard.title}">Assistant de création de graphique</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
