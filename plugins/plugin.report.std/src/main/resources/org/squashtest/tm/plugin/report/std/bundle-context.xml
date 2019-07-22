@@ -49,7 +49,7 @@
         </bean>
         <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
           <property name="labelKey" value="view.title.listtcbycampaign"/>
-          <property name="formats" value="xls,ods,csv,pdf,html"/>
+          <property name="formats" value="xls,csv,pdf,html"/>
           <property name="query" ref="executionProgressQuery"/>
           <property name="springView" ref="executionProgression2"></property>
         </bean>
@@ -200,14 +200,12 @@
         </entry>
         <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
           <value>
-            &lt;style&gt; table td span {
+            &lt;style&gt; table td p span {
             -moz-hyphens: auto;
             -webkit-hyphens: auto;
             hyphens: auto;
             hyphenate: auto;
-            }
-            td.columnHeader p {
-            word-break:normal;
+            word-break: break-word;
             }
             &lt;/style&gt;
           </value>
@@ -232,7 +230,7 @@
         </bean>
         <bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
           <property name="labelKey" value="report.view.title.listreqbyproject"/>
-          <property name="formats" value="xls,ods,csv,pdf,html"/>
+          <property name="formats" value="xls,csv,pdf,html"/>
           <property name="query" ref="requirementCoverageQuery"/>
           <property name="springView" ref="requirementCoverage2"></property>
         </bean>
@@ -323,11 +321,12 @@
         </entry>
         <entry key="net.sf.jasperreports.engine.export.JRHtmlExporterParameter.HTML_HEADER">
           <value>
-            &lt;style&gt; table td span {
+            &lt;style&gt; table td p span {
             -moz-hyphens: auto;
             -webkit-hyphens: auto;
             hyphens: auto;
             hyphenate: auto;
+            word-break: break-word;
             }
             &lt;/style&gt;
           </value>
