@@ -272,7 +272,7 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		//steps
 		List<long[]> result = executeSelectSQLQuery(
 			"select TEST_STEP_ID, ATTACHMENT_LIST_ID from action_test_step inner join test_case_steps ON TEST_CASE_STEPS.STEP_ID = ACTION_TEST_STEP.TEST_STEP_ID where TEST_CASE_ID = "
-				+ testCaseId + "ORDER BY 1 DESC") //negative numbers
+				+ testCaseId + " ORDER BY TEST_STEP_ID DESC, ATTACHMENT_LIST_ID DESC") //negative numbers
 
 		then:
 		areOrhanContents() == false

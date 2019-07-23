@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.api.widget.access;
 
-import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.api.widget.TreeNodeType;
-import org.squashtest.tm.api.widget.access.AnyNode;
 
 import spock.lang.Specification;
 

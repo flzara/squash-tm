@@ -382,7 +382,7 @@
 <script type="text/javascript">
   squashtm.app = squashtm.app || {};
   squashtm.app.campaignWorkspaceConf = squashtm.app.campaignWorkspaceConf || {};
-  squashtm.app.userPrefs = ${userPrefs};
+  squashtm.app.userPrefs = ${ json:serialize(userPrefs) };
 
   squashtm.workspace = squashtm.workspace || {};
   squashtm.workspace.shouldShowFavoriteDashboard = squashtm.workspace.shouldShowFavoriteDashboard || {};

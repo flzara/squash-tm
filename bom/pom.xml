@@ -27,7 +27,7 @@
     <commons-lang3.version>3.3.2</commons-lang3.version>
     <commons-validator.version>1.5.1</commons-validator.version>
     <!-- ecj.version should match that pulled by org.apache.tomcat.embed:tomcat-embed-jasper -->
-    <ecj.version>3.12.3</ecj.version>
+    <ecj.version>3.16.0</ecj.version>
     <ehcache.version>3.3.0</ehcache.version>
     <gherkin.version>5.0.0</gherkin.version>
 
@@ -37,25 +37,41 @@
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
 
+    <!-- 
+    	SB 2.1.6 would normally pull hibernate 5.3.10. However a bug in QueryDsl is still waiting to be resolved : 
+    	https://github.com/querydsl/querydsl/issues/2326. Until then we should forego Hibernate updates. 
+    	
+    	Note that the previous upgrade lead to a different bug : https://github.com/querydsl/querydsl/issues/1917
+    	We fixed this in-house, see org.squashtest.tm.domain.jpql.FixedSessionHolders. That particular bug is 
+    	resolved for Hibernate 5.3.10. When we can finally upgrade, that class can be removed too.
+    	
+    	Also, in this very pom remove the version for the dependency-management of hibernate-entitymanager.
+    	Also, when we can ready Hibernate 5.4.10, see Javassist override 
+     -->
+    <hibernate-core.version>5.2.17.Final</hibernate-core.version>
+
     <!-- Spring Boot version 2.0.3 implies Jackson 2.9.6 -->
     <jackson.version>2.9.6</jackson.version>
+
+    <!-- javassist version override because of https://github.com/jboss-javassist/javassist/issues/194 -->
+    <javassist.version>3.25.0-GA</javassist.version>
     <javax.cache-api.version>1.1.0</javax.cache-api.version>
     <javax.inject.version>1</javax.inject.version>
+    <jaxb.version>2.3.1</jaxb.version>
     <jericho-html.version>3.3</jericho-html.version>
     <mysql-connector-java.version>5.1.39</mysql-connector-java.version>
     <poi.version>3.12</poi.version>
 
     <!-- warning : querysdl.version should match that of spring-data-jpa -->
     <postgresql.version>9.4.1209.jre7</postgresql.version>
-    <querydsl.version>4.1.4</querydsl.version>
-    <spock.version>1.1-groovy-2.4</spock.version>
+    <querydsl.version>4.2.1</querydsl.version>
+    <spock.version>1.2-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.14.RELEASE</spring-security-oauth2.version>
 
-    <!-- Spring Boot version 2.0.3.RELEASE implies Spring Sec version 5.0.6.RELEASE-->
+    <!-- Spring Boot version 2.1.6.RELEASE implies Spring Sec version 5.0.6.RELEASE-->
     <spring-security.version>5.0.6.RELEASE</spring-security.version>
 
-    <!-- thymeleaf-springsec4 : see comment on the artifact dependency management declaration -->
-    <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
+    <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
 
     <unitils.version>3.4.2</unitils.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
@@ -184,8 +200,24 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
+        <!-- see comment on hibernate-core.version -->
+        <version>${hibernate-core.version}</version>
         <!-- here our transaction api will be javax.transaction-api instead -->
         <exclusions>
+          <exclusion>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <!-- see comment on hibernate-core.version -->
+        <version>${hibernate-core.version}</version>
+        <exclusions>
+          <!-- our transaction api is the official transaction api -->
           <exclusion>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.2_spec</artifactId>
@@ -326,6 +358,17 @@
       </dependency>
 
       <dependency>
+        <!-- 
+      		Version override because of https://github.com/jboss-javassist/javassist/issues/194. 
+      		Initially pulled by Hibernate. The fix for the issue above is available for version 3.24.0-GA+, 
+      		which means we can remove this version override when we can upgrade to Hibernate 5.4.10 (5.3 won't cut it yet)
+      	-->
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>javax.inject</groupId>
         <artifactId>javax.inject</artifactId>
         <version>${javax.inject.version}</version>
@@ -436,13 +479,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${spring.boot.version}</version>
-        <exclusions>
-          <exclusion>
-            <!-- unneeded because of org.json:json -->
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -476,19 +512,9 @@
       </dependency-->
 
       <dependency>
-        <!--
-          Squash TM 19, 20/07/2018
-
-          Upgrade to Spring Boot 2 -> Spring Framework 5 with Spring Security 5.
-
-          For now thymeleaf-extras-springsecurity5 is not yet available. But Note that
-          it will require thymeleaf-spring5:3.0.10.RELEASE
-          (see https://github.com/thymeleaf/thymeleaf-extras-springsecurity/issues/47),
-          so remember to redeclare thymeleaf-spring5 too when upgrading
-        -->
         <groupId>org.thymeleaf.extras</groupId>
-        <artifactId>thymeleaf-extras-springsecurity4</artifactId>
-        <version>${thymeleaf-extras-springsecurity4.version}</version>
+        <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        <version>${thymeleaf-extras-springsecurity5.version}</version>
       </dependency>
 
       <dependency>
@@ -547,6 +573,23 @@
             <groupId>javax.jdo</groupId>
             <artifactId>jdo-api</artifactId>
           </exclusion>
+          <exclusion>
+            <!-- 
+          		Querydsl-codegen uses an obsolete version of eclipse ecj (org.eclipse.jdt.core.compiler:ecj).
+          		We need it at compile time only (not runtime). Still at runtime, when running in Eclipse IDE it will 
+          		be loaded in place of the good one (org.eclipse.jdt:ecj) which entails JSP compilation failures 
+          		(see https://github.com/spring-projects/spring-boot/issues/14398). 
+          		
+          		This is very annoying because the final Maven dependencies are correct and a distro would run 
+          		without problem because only ecj:${ecj.version} would be loaded.
+          		
+          		The solution here is to forcibly ban org.eclipse.jdt.core.compiler just because of that, and 
+          		Querydsl-s apt-maven-plugin will have to settle for the jdk compiler instead.
+          	-->
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -561,6 +604,20 @@
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
         <version>${h2.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${jaxb.version}</version>
         <scope>runtime</scope>
       </dependency>
 

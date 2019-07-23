@@ -28,10 +28,10 @@ import org.hibernate.persister.collection.BasicCollectionPersister;
 import org.hibernate.persister.spi.PersisterCreationContext;
 
 public class ReadOnlyCollectionPersister extends BasicCollectionPersister {
-    public ReadOnlyCollectionPersister(Collection collectionBinding, 
-            CollectionRegionAccessStrategy cacheAccessStrategy, 
-            PersisterCreationContext creationContext) throws MappingException,
-            CacheException {
+    public ReadOnlyCollectionPersister(
+			Collection collectionBinding,
+			CollectionRegionAccessStrategy cacheAccessStrategy,
+			PersisterCreationContext creationContext) throws MappingException, CacheException {
         super(collectionBinding, cacheAccessStrategy, creationContext);
     }
 

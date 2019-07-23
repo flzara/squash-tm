@@ -30,12 +30,20 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jooq.DSLContext;
+import org.jooq.Name;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.users.QUser;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.jooq.domain.tables.AclClass;
+import org.squashtest.tm.jooq.domain.tables.AclObjectIdentity;
+import org.squashtest.tm.jooq.domain.tables.AclResponsibilityScopeEntry;
+import org.squashtest.tm.jooq.domain.tables.CoreGroupAuthority;
+import org.squashtest.tm.jooq.domain.tables.CoreGroupMember;
+import org.squashtest.tm.jooq.domain.tables.CoreTeamMember;
+import org.squashtest.tm.jooq.domain.tables.CoreUser;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomUserDao;
@@ -48,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_ADMIN;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_TA_API_CLIENT;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
@@ -57,6 +66,7 @@ import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_AUTHORITY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_MEMBER;
+import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
@@ -194,39 +204,45 @@ public class UserDaoImpl implements CustomUserDao {
 
 	@Override
 	public int countAllActiveUsersAssignedToAtLeastOneProject(){
-		return DSL.selectDistinct(count(CORE_USER.PARTY_ID)).from(CORE_USER).where(CORE_USER.PARTY_ID.in(DSL.select(CORE_USER.PARTY_ID)
-			.from(CORE_USER)
-			.innerJoin(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_USER.PARTY_ID))
-			.innerJoin(CORE_GROUP_AUTHORITY).on(CORE_GROUP_AUTHORITY.GROUP_ID.eq(CORE_GROUP_MEMBER.GROUP_ID))
-			.where(CORE_USER.ACTIVE.eq(true))
-			.and(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_ADMIN)
-				.or(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_TM_USER)
-					.andExists(
-						DSL.selectOne().from(ACL_OBJECT_IDENTITY)
-						.innerJoin(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
-						.innerJoin(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID.eq(ACL_OBJECT_IDENTITY.ID))
-						.where(CORE_GROUP_MEMBER.PARTY_ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID))
-						.and(ACL_CLASS.CLASSNAME.in("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"))
-					)
-				)
-			).union(
-				DSL.selectDistinct(CORE_USER.PARTY_ID).from(CORE_TEAM_MEMBER)
-					.innerJoin(CORE_USER).on(CORE_TEAM_MEMBER.USER_ID.eq(CORE_USER.PARTY_ID))
-					.innerJoin(CORE_GROUP_MEMBER).on(CORE_GROUP_MEMBER.PARTY_ID.eq(CORE_TEAM_MEMBER.USER_ID))
-					.innerJoin(CORE_GROUP_AUTHORITY).on(CORE_GROUP_AUTHORITY.GROUP_ID.eq(CORE_GROUP_MEMBER.GROUP_ID))
-					.where(CORE_USER.ACTIVE.eq(true))
-					.and(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_ADMIN)
-						.or(CORE_GROUP_AUTHORITY.AUTHORITY.eq(ROLE_TM_USER)
-							.andExists(
-								DSL.selectOne().from(ACL_OBJECT_IDENTITY)
-									.innerJoin(ACL_CLASS).on(ACL_CLASS.ID.eq(ACL_OBJECT_IDENTITY.CLASS_ID))
-									.innerJoin(ACL_RESPONSIBILITY_SCOPE_ENTRY).on(ACL_RESPONSIBILITY_SCOPE_ENTRY.OBJECT_IDENTITY_ID.eq(ACL_OBJECT_IDENTITY.ID))
-									.where(CORE_TEAM_MEMBER.TEAM_ID.eq(ACL_RESPONSIBILITY_SCOPE_ENTRY.PARTY_ID))
-									.and(ACL_CLASS.CLASSNAME.in("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"))
-							)
-						)
-					)
-			))).fetchOne(0, Integer.class);
+
+		CoreUser coreUser = CORE_USER.as("coreUser");
+		AclObjectIdentity objId = ACL_OBJECT_IDENTITY.as("objId");
+		AclClass aclClass = ACL_CLASS.as("aclClass");
+		AclResponsibilityScopeEntry responsibility = ACL_RESPONSIBILITY_SCOPE_ENTRY.as("responsibility");
+		CoreGroupMember groupMembers = CORE_GROUP_MEMBER.as("groupMember");
+		CoreGroupAuthority authorities = CORE_GROUP_AUTHORITY.as("groupAuthority");
+		CoreTeamMember teamMembers = CORE_TEAM_MEMBER.as("teamMembers");
+
+
+		return DSL.select(countDistinct(coreUser.PARTY_ID).as("userCount"))
+
+				   // 1. first retrieve all ACL entries on either project or project_template
+				   // we also left-join with the team membership table, that will be used in
+				   // the where condition below
+				   .from(aclClass)
+
+				   .innerJoin(objId).on(aclClass.ID.eq(objId.CLASS_ID)
+											.and(aclClass.CLASSNAME.in("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate")))
+
+				   .innerJoin(responsibility).on(responsibility.OBJECT_IDENTITY_ID.eq(objId.ID))
+
+				   .leftJoin(teamMembers).on(responsibility.PARTY_ID.eq(teamMembers.TEAM_ID))
+
+				   // 2. now we retrieve all users that are either admin or regular TM users
+				   .crossJoin(coreUser)
+				   .innerJoin(groupMembers).on(coreUser.PARTY_ID.eq(groupMembers.PARTY_ID))
+
+				   .innerJoin(authorities).on(groupMembers.GROUP_ID.eq(authorities.GROUP_ID)
+												  .and(authorities.AUTHORITY.in(ROLE_ADMIN, ROLE_TM_USER)))
+
+				   // 3. finally we filter on active users only, that have responsibilities
+				   // either directly or as a member of a team
+				   .where(coreUser.ACTIVE.eq(true))
+				   .and(coreUser.PARTY_ID.eq(responsibility.PARTY_ID)
+							.or(coreUser.PARTY_ID.eq(teamMembers.USER_ID)))
+
+				   .fetchOne().get("userCount", Integer.class);
+
 
 	}
 
