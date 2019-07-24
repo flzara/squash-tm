@@ -25,7 +25,6 @@ import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.security.UserContextHolder;
 
@@ -114,20 +113,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		}
 		return false;
 	}
-//
-//	@Override
-//	public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
-//		if(collection instanceof PersistentCollection){
-//			PersistentCollection persistentCollection = (PersistentCollection) collection;
-//			Iterator iterator = persistentCollection.entries(null);
-//			if(iterator.hasNext()){
-//				Object entry = iterator.next();
-//				if(isRelatedToAnAuditable(entry.getClass())){
-//					checkAndLogAuditableRelatedEntityModificationData(entry);
-//				}
-//			}
-//		}
-//	}
 
 	private void logCreationData(Object entity, Object[] state) {
 		try {
@@ -152,7 +137,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private void checkAndLogAuditableRelatedEntityModificationData(Object entity){
 		RelatedToAuditable relatedToAuditable = (RelatedToAuditable) entity;
-		relatedToAuditable.getAuditableAssociatedList().forEach(auditable -> {
+		relatedToAuditable.getAssociatedAuditableList().forEach(auditable -> {
 			if(auditable != null){
 				auditable.setLastModifiedOn(new Date());
 				auditable.setLastModifiedBy(getCurrentUser());

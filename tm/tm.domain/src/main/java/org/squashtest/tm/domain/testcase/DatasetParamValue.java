@@ -104,7 +104,7 @@ public class DatasetParamValue implements Identified, RelatedToAuditable {
 	}
 
 	@Override
-	public List<AuditableMixin> getAuditableAssociatedList() {
-		return parameter.getAuditableAssociatedList();
+	public List<AuditableMixin> getAssociatedAuditableList() {
+		return parameter.getAssociatedAuditableList();
 	}
 }

@@ -209,13 +209,13 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 			if (datasets.isEmpty()){
 				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
-				campaignTestPlanItemDao.persist(itp);
 				campaign.addToTestPlan(itp);
+				campaignTestPlanItemDao.persist(itp);
 			} else {
 				for (Dataset ds : datasets){
 					CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
-					campaignTestPlanItemDao.persist(itp);
 					campaign.addToTestPlan(itp);
+					campaignTestPlanItemDao.persist(itp);
 				}
 			}
 		}

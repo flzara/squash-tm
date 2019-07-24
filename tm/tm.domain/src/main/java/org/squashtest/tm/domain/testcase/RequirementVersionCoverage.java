@@ -315,7 +315,7 @@ public class RequirementVersionCoverage implements Identified, RelatedToAuditabl
 	}
 
 	@Override
-	public List<AuditableMixin> getAuditableAssociatedList() {
+	public List<AuditableMixin> getAssociatedAuditableList() {
 		return Arrays.asList((AuditableMixin) verifyingTestCase, (AuditableMixin)verifiedRequirementVersion);
 	}
 }

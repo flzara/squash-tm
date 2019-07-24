@@ -122,7 +122,7 @@ public abstract class TestStep implements Identified, RelatedToAuditable {
 	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
 
 	@Override
-	public List<AuditableMixin> getAuditableAssociatedList() {
+	public List<AuditableMixin> getAssociatedAuditableList() {
 		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }

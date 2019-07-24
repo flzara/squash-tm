@@ -30,6 +30,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -43,6 +44,7 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
@@ -54,8 +56,10 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -448,6 +452,13 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			}
 		}
 		return rvs;
+	}
+
+	private void updateAuditableData(List<AuditableMixin> auditables){
+		auditables.forEach(auditable -> {
+			auditable.setLastModifiedOn(new Date());
+			auditable.setLastModifiedBy(UserContextHolder.getUsername());
+		});
 	}
 
 }

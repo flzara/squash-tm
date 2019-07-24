@@ -112,7 +112,7 @@ public class Dataset implements Identified, RelatedToAuditable {
 	}
 
 	@Override
-	public List<AuditableMixin> getAuditableAssociatedList() {
+	public List<AuditableMixin> getAssociatedAuditableList() {
 		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }
