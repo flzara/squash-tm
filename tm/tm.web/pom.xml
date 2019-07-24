@@ -942,5 +942,13 @@
       </build>
     </profile>
 
+
+    <profile>
+      <id>sonar-build</id>
+      <properties>
+        <sonar.exclusions>**/scripts/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**</sonar.exclusions>
+      </properties>
+    </profile>
+
   </profiles>
 </project>

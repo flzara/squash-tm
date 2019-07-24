@@ -527,27 +527,44 @@
     </profile>
 
     <profile>
-      <id>code.analysis</id>
+      <id>jacoco-records</id>
       <activation>
         <property>
-          <name>code.analysis</name>
+          <name>jacoco.records</name>
         </property>
       </activation>
+
       <build>
         <plugins>
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+
+            <executions>
+              <execution>
+                <id>jacoco-prepare-it-agent</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <!--
+              further configuration of failsafe, that will make it look like surefire to sonarqube.
+            -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
-              <!-- The destination file for the code coverage report has to be set to the same value
-                   in the parent pom and in each module pom. Then JaCoCo will add up information in
-                   the same report, so that, it will give the cross-module code coverage. -->
-              <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
             </configuration>
           </plugin>
-        </plugins>
 
+        </plugins>
       </build>
+
     </profile>
   </profiles>
 
