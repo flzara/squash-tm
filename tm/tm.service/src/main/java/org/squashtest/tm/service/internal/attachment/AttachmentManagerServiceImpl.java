@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.*;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
@@ -317,7 +318,10 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 					auditable = (AuditableMixin) campaignDao.findById(entityId);
 					break;
 				case "requirement_version":
-					auditable = (AuditableMixin) requirementVersionDao.findById(entityId).get();
+					Optional<RequirementVersion> option = requirementVersionDao.findById(entityId);
+					if(option.isPresent()){
+						auditable = (AuditableMixin) option.get();
+					}
 					break;
 			}
 			if(auditable != null){

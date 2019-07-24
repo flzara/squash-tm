@@ -49,7 +49,7 @@ public interface RequirementVersionLinkDao extends CrudRepository<RequirementVer
 	 * @param singleRequirementVersionId
 	 * @param requirementVersionIdsToUnlink
 	 */
-	@Modifying
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	void deleteAllLinks(@Param("singleRequirementVersionId") long singleRequirementVersionId,
 						@Param("requirementVersionIdsToUnlink") Iterable<Long> requirementVersionIdsToUnlink);
 }

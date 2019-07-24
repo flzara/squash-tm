@@ -101,12 +101,13 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 		given: "Input data"
 			long reqVerId = 432L
-			List<Long> reqVerIdsToUnlink = [987L, 654L, 321] as List
+			List<Long> reqVerIdsToUnlink = [987L, 654L, 321L] as List
 
 		when:
 			service.removeLinkedRequirementVersionsFromRequirementVersion(reqVerId, reqVerIdsToUnlink)
 
 		then:
+			1*reqVersionDao.findAllById([987L, 654L, 321L,432L]) >> Collections.emptyList()
 			1*reqVersionLinkDao.deleteAllLinks(reqVerId, reqVerIdsToUnlink)
 
 	}

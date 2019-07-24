@@ -123,6 +123,11 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
 
+		List<Long> impactedVersionIds = new ArrayList<>(requirementVersionIdsToUnlink);
+		impactedVersionIds.add(requirementVersionId);
+		List<RequirementVersion> impactedVersions = reqVersionDao.findAllById(impactedVersionIds);
+		updateAuditableData(impactedVersions.stream().map(version -> (AuditableMixin)version).collect(Collectors.toList()));
+
 		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
 
