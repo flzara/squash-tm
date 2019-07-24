@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
@@ -239,6 +240,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedVersionId);
 		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedVersionId, requirementVersionId);
 
+		List<RequirementVersion> requirementVersions = reqVersionDao.findAllById(Arrays.asList(requirementVersionId, relatedVersionId));
+
 		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 
 		linkToUpdate.setLinkType(newLinkType);
@@ -246,6 +249,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
+
+		updateAuditableData(requirementVersions.stream().map(version -> (AuditableMixin)version).collect(Collectors.toList()));
 	}
 
 	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
