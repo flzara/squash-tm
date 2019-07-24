@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.service.audit.AuditModificationService
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao
@@ -50,12 +51,15 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 	RequirementVersionLinkTypeDao reqVersionLinkTypeDao = Mock()
 
+	AuditModificationService auditModificationService = Mock()
+
 	def setup() {
 		service.reqVersionLinkDao = reqVersionLinkDao
 		service.requirementLibraryNodeDao = requirementLibraryNodeDao
 		service.activeMilestoneHolder = activeMilestoneHolder
 		service.reqVersionDao = reqVersionDao
 		service.reqVersionLinkTypeDao = reqVersionLinkTypeDao
+		service.auditModificationService = auditModificationService
 	}
 
 	def "#findAllByRequirementVersion"() {
@@ -108,6 +112,7 @@ class LinkedRequirementVersionManagerServiceImplTest extends Specification {
 
 		then:
 			1*reqVersionDao.findAllById([987L, 654L, 321L,432L]) >> Collections.emptyList()
+			1*auditModificationService.updateRelatedToRequirementLinkAuditableEntity(_)
 			1*reqVersionLinkDao.deleteAllLinks(reqVerId, reqVerIdsToUnlink)
 
 	}

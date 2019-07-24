@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheResult;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -73,8 +74,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PrivateCustomFieldValueServiceImpl.class);
 
-	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(BindableEntity.CAMPAIGN, BindableEntity.TEST_CASE, BindableEntity.REQUIREMENT_VERSION);
-
 	@Inject
 	CustomReportLibraryNodeDao customReportLibraryNodeDao;
 	@Inject
@@ -95,6 +94,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -404,7 +406,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		newValue.setValueFor(changedValue);
 
-		updateBoundEntityAuditableData(boundEntity);
+		auditModificationService.updateRelatedToCustomFieldAuditableEntity(boundEntity);
 	}
 
 	// This method is just here to use the @CacheResult annotation
@@ -532,14 +534,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 
-	}
-
-	private void updateBoundEntityAuditableData(BoundEntity boundEntity){
-		if(auditableBindableEntity.contains(boundEntity.getBoundEntityType())){
-			AuditableMixin auditable = (AuditableMixin) boundEntity;
-			auditable.setLastModifiedOn(new Date());
-			auditable.setLastModifiedBy(UserContextHolder.getUsername());
-		}
 	}
 
 }

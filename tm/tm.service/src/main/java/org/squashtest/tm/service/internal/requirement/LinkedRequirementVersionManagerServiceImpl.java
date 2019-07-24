@@ -30,7 +30,6 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -44,7 +43,7 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
-import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
@@ -59,14 +58,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.LINK_REQVERSION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
@@ -94,6 +91,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
@@ -126,7 +125,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		List<Long> impactedVersionIds = new ArrayList<>(requirementVersionIdsToUnlink);
 		impactedVersionIds.add(requirementVersionId);
 		List<RequirementVersion> impactedVersions = reqVersionDao.findAllById(impactedVersionIds);
-		updateAuditableData(impactedVersions.stream().map(version -> (AuditableMixin)version).collect(Collectors.toList()));
+		auditModificationService.updateRelatedToRequirementLinkAuditableEntity(impactedVersions);
 
 		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
@@ -255,7 +254,7 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
 
-		updateAuditableData(requirementVersions.stream().map(version -> (AuditableMixin)version).collect(Collectors.toList()));
+		auditModificationService.updateRelatedToRequirementLinkAuditableEntity(requirementVersions);
 	}
 
 	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
@@ -462,13 +461,6 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 			}
 		}
 		return rvs;
-	}
-
-	private void updateAuditableData(List<AuditableMixin> auditables){
-		auditables.forEach(auditable -> {
-			auditable.setLastModifiedOn(new Date());
-			auditable.setLastModifiedBy(UserContextHolder.getUsername());
-		});
 	}
 
 }
