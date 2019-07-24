@@ -20,17 +20,23 @@
  */
 package org.squashtest.tm.service.internal.attachment;
 
+import org.jooq.Record2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.*;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
 import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -77,6 +83,15 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Inject
 	private AttachmentRepository attachmentRepository;
 
+	@Inject
+	private TestCaseDao testCaseDao;
+
+	@Inject
+	private CampaignDao campaignDao;
+
+	@Inject
+	private RequirementVersionDao requirementVersionDao;
+
 	@Override
 	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
 		AttachmentContent content = getAttachmentRepository().createContent(rawAttachment, attachmentListId);
@@ -90,6 +105,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachment.setName(rawAttachment.getName());
 		attachment.setSize(rawAttachment.getSizeInBytes());
 		attachmentDao.save(attachment);
+
+		updateAuditableRelatedEntity(attachmentListId);
 
 		return attachment.getId();
 	}
@@ -121,6 +138,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachmentDao.deleteById(attachment.getId());
 		ExternalContentCoordinates externalContentCoordinates = new ExternalContentCoordinates(attachmentListId, attachmentContentId);
 		deleteContents(Collections.singletonList(externalContentCoordinates));
+
+		updateAuditableRelatedEntity(attachmentListId);
 	}
 
 	@Override
@@ -276,6 +295,36 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		tab[1] = ListId;
 		result.add(tab);
 		return result;
+	}
+
+	/**
+	 * Update last modified on and las modified by attribute of related auditable (for now test case, campaign or requirement version)
+	 * @param attachmentListId the modified attachment list id
+	 */
+	private void updateAuditableRelatedEntity(long attachmentListId){
+		Record2<String, Long> result = attachmentListDao.findAuditableAssociatedEntityIfExists(attachmentListId);
+
+		if(result != null){
+			String entityName = result.get("entity_name", String.class);
+			long entityId = result.get("entity_id", Long.class);
+
+			AuditableMixin auditable = null;
+			switch (entityName){
+				case "test_case":
+					auditable = (AuditableMixin) testCaseDao.findById(entityId);
+					break;
+				case "campaign":
+					auditable = (AuditableMixin) campaignDao.findById(entityId);
+					break;
+				case "requirement_version":
+					auditable = (AuditableMixin) requirementVersionDao.findById(entityId).get();
+					break;
+			}
+			if(auditable != null){
+				auditable.setLastModifiedOn(new Date());
+				auditable.setLastModifiedBy(UserContextHolder.getUsername());
+			}
+		}
 	}
 }
 
