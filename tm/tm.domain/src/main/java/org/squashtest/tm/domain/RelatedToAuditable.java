@@ -22,6 +22,8 @@ package org.squashtest.tm.domain;
 
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
+import java.util.List;
+
 public interface RelatedToAuditable {
-	AuditableMixin getAuditable();
+	List<AuditableMixin> getAuditableAssociatedList();
 }

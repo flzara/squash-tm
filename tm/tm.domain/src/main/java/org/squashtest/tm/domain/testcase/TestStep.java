@@ -42,6 +42,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -121,7 +122,7 @@ public abstract class TestStep implements Identified, RelatedToAuditable {
 	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
 
 	@Override
-	public AuditableMixin getAuditable() {
-		return (AuditableMixin) testCase;
+	public List<AuditableMixin> getAuditableAssociatedList() {
+		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }

@@ -152,12 +152,13 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private void checkAndLogAuditableRelatedEntityModificationData(Object entity){
 		RelatedToAuditable relatedToAuditable = (RelatedToAuditable) entity;
-		AuditableMixin auditable = relatedToAuditable.getAuditable();
-		if(auditable != null){
-			auditable.setLastModifiedOn(new Date());
-			auditable.setLastModifiedBy(getCurrentUser());
-		} else {
-			throw new IllegalArgumentException("Could not update modification data. Unknown related auditable.");
-		}
+		relatedToAuditable.getAuditableAssociatedList().forEach(auditable -> {
+			if(auditable != null){
+				auditable.setLastModifiedOn(new Date());
+				auditable.setLastModifiedBy(getCurrentUser());
+			} else {
+				throw new IllegalArgumentException("Could not update modification data. Unknown related auditable.");
+			}
+		});
 	}
 }

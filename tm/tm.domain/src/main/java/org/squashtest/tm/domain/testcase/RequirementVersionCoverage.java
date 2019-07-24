@@ -43,6 +43,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -314,7 +315,7 @@ public class RequirementVersionCoverage implements Identified, RelatedToAuditabl
 	}
 
 	@Override
-	public AuditableMixin getAuditable() {
-		return (AuditableMixin) verifyingTestCase;
+	public List<AuditableMixin> getAuditableAssociatedList() {
+		return Arrays.asList((AuditableMixin) verifyingTestCase, (AuditableMixin)verifiedRequirementVersion);
 	}
 }

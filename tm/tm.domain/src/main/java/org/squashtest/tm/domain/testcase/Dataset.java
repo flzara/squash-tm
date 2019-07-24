@@ -42,6 +42,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -111,7 +112,7 @@ public class Dataset implements Identified, RelatedToAuditable {
 	}
 
 	@Override
-	public AuditableMixin getAuditable() {
-		return (AuditableMixin) testCase;
+	public List<AuditableMixin> getAuditableAssociatedList() {
+		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }

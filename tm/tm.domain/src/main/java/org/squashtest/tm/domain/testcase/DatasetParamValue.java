@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 public class DatasetParamValue implements Identified, RelatedToAuditable {
@@ -103,7 +104,7 @@ public class DatasetParamValue implements Identified, RelatedToAuditable {
 	}
 
 	@Override
-	public AuditableMixin getAuditable() {
-		return parameter.getAuditable();
+	public List<AuditableMixin> getAuditableAssociatedList() {
+		return parameter.getAuditableAssociatedList();
 	}
 }

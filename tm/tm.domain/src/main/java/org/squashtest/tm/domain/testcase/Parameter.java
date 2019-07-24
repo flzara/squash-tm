@@ -47,6 +47,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -244,7 +245,7 @@ public class Parameter implements Identified, RelatedToAuditable {
 	}
 
 	@Override
-	public AuditableMixin getAuditable() {
-		return (AuditableMixin) testCase;
+	public List<AuditableMixin> getAuditableAssociatedList() {
+		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }
