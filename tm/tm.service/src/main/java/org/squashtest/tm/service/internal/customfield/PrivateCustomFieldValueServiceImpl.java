@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
@@ -53,6 +54,7 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumMap;
@@ -70,6 +72,8 @@ import static java.util.stream.Collectors.toList;
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PrivateCustomFieldValueServiceImpl.class);
+
+	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(BindableEntity.CAMPAIGN, BindableEntity.TEST_CASE, BindableEntity.REQUIREMENT_VERSION);
 
 	@Inject
 	CustomReportLibraryNodeDao customReportLibraryNodeDao;
@@ -398,11 +402,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			throw new AccessDeniedException("access is denied");
 		}
 
-		if(boundEntity.getBoundEntityType().equals(BindableEntity.TEST_CASE)){
-			AuditableMixin auditable = (AuditableMixin) boundEntity;
-			auditable.setLastModifiedOn(new Date());
-		}
 		newValue.setValueFor(changedValue);
+
+		updateBoundEntityAuditableData(boundEntity);
 	}
 
 	// This method is just here to use the @CacheResult annotation
@@ -530,6 +532,14 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 
+	}
+
+	private void updateBoundEntityAuditableData(BoundEntity boundEntity){
+		if(auditableBindableEntity.contains(boundEntity.getBoundEntityType())){
+			AuditableMixin auditable = (AuditableMixin) boundEntity;
+			auditable.setLastModifiedOn(new Date());
+			auditable.setLastModifiedBy(UserContextHolder.getUsername());
+		}
 	}
 
 }
