@@ -44,7 +44,10 @@ import java.util.Optional;
 @Transactional
 public class AuditModificationServiceImpl implements AuditModificationService {
 
-	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(BindableEntity.CAMPAIGN, BindableEntity.TEST_CASE, BindableEntity.REQUIREMENT_VERSION);
+	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(
+		BindableEntity.CAMPAIGN, BindableEntity.CAMPAIGN_FOLDER, BindableEntity.TEST_CASE, BindableEntity.TESTCASE_FOLDER,
+		BindableEntity.REQUIREMENT_VERSION, BindableEntity.REQUIREMENT_FOLDER,
+		BindableEntity.ITERATION, BindableEntity.TEST_SUITE, BindableEntity.EXECUTION, BindableEntity.EXECUTION_STEP);
 
 	@Inject
 	private AttachmentListDao attachmentListDao;
