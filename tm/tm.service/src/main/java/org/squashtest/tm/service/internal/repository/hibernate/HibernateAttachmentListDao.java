@@ -30,8 +30,10 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.Iteration;
 import org.squashtest.tm.jooq.domain.tables.Resource;
 import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.TestSuite;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
 import javax.inject.Inject;
@@ -88,6 +90,16 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 				DSL.select(inline("requirement_version").as("entity_name"), Resource.RESOURCE.RES_ID.as("entity_id"))
 					.from(Resource.RESOURCE)
 					.where(Resource.RESOURCE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline("iteration").as("entity_name"), Iteration.ITERATION.ITERATION_ID.as("entity_id"))
+					.from(Iteration.ITERATION)
+					.where(Iteration.ITERATION.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline("test_suite").as("entity_name"), TestSuite.TEST_SUITE.ID.as("entity_id"))
+					.from(TestSuite.TEST_SUITE)
+					.where(TestSuite.TEST_SUITE.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			).fetchOne();
 		return result;
 	}

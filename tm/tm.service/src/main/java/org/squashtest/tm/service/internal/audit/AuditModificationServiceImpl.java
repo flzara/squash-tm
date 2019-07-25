@@ -24,6 +24,7 @@ import org.jooq.Record2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -31,8 +32,10 @@ import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -61,6 +64,12 @@ public class AuditModificationServiceImpl implements AuditModificationService {
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
+	@Inject
+	private IterationDao iterationDao;
+
+	@Inject
+	private TestSuiteDao testSuiteDao;
+
 	public void updateRelatedToAttachmentAuditableEntity(long attachmentListId){
 		Record2<String, Long> result = attachmentListDao.findAuditableAssociatedEntityIfExists(attachmentListId);
 
@@ -77,9 +86,18 @@ public class AuditModificationServiceImpl implements AuditModificationService {
 					auditable = (AuditableMixin) campaignDao.findById(entityId);
 					break;
 				case "requirement_version":
-					Optional<RequirementVersion> option = requirementVersionDao.findById(entityId);
-					if(option.isPresent()){
-						auditable = (AuditableMixin) option.get();
+					Optional<RequirementVersion> optionalRequirementVersion = requirementVersionDao.findById(entityId);
+					if(optionalRequirementVersion.isPresent()){
+						auditable = (AuditableMixin) optionalRequirementVersion.get();
+					}
+					break;
+				case "iteration":
+					auditable = (AuditableMixin) iterationDao.findById(entityId);
+					break;
+				case "test_suite":
+					Optional<TestSuite> optionalTestSuite = testSuiteDao.findById(entityId);
+					if(optionalTestSuite.isPresent()){
+						auditable = (AuditableMixin) optionalTestSuite.get();
 					}
 					break;
 			}
