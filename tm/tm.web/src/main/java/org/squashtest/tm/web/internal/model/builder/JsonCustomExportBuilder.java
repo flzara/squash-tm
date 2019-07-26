@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.IterationFinder;
+import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
@@ -41,6 +43,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static org.squashtest.tm.domain.EntityType.*;
 
 @Component("customReport.customExportBuilder")
 @Scope("prototype")
@@ -55,7 +59,13 @@ public class JsonCustomExportBuilder {
 	private CampaignFinder campaignFinder;
 
 	@Inject
-	CustomFieldFinderService cufFinder;
+	private IterationFinder iterationFinder;
+
+	@Inject
+	private TestSuiteFinder testSuiteFinder;
+
+	@Inject
+	private CustomFieldFinderService cufFinder;
 
 	public JsonCustomReportCustomExport build(CustomReportCustomExport customExport, Locale locale) {
 		JsonCustomReportCustomExport jsonCustomExport = new JsonCustomReportCustomExport();
@@ -79,8 +89,13 @@ public class JsonCustomExportBuilder {
 	private void fillScope(CustomReportCustomExport customExport, JsonCustomReportCustomExport jsonCustomExport) {
 		List<String> stringifiedScope = new ArrayList<>();
 		for(EntityReference scopeEntity : customExport.getScope()) {
-			Campaign scopeCampaign = campaignFinder.findById(scopeEntity.getId());
-			stringifiedScope.add(scopeCampaign.getName());
+			String scopeName = "";
+			switch(scopeEntity.getType()) {
+				case CAMPAIGN: scopeName = campaignFinder.findById(scopeEntity.getId()).getName(); break;
+				case ITERATION: scopeName = iterationFinder.findById(scopeEntity.getId()).getName(); break;
+				default: scopeName = testSuiteFinder.findById(scopeEntity.getId()).getName();
+			}
+			stringifiedScope.add(scopeName);
 		}
 		jsonCustomExport.setScope(stringifiedScope);
 	}

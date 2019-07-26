@@ -97,11 +97,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 					var treeConfig = {
 						model: model,
 						treeselector: "#tree",
-						workspace: workspaceName,
+						workspace: "campaign",
 						isStrict: true,
 						nodelimit: 1
 					};
-					tree.initLinkableTree(treeConfig);
+					tree.initSearchTree(treeConfig);
 				});
 
 			},

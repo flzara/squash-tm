@@ -32,14 +32,19 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.IterationFinder;
+import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -60,6 +65,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +88,10 @@ public class CustomExportController {
 	@Inject
 	private CampaignFinder campaignFinder;
 	@Inject
+	private IterationFinder iterationFinder;
+	@Inject
+	private TestSuiteFinder testSuiteFinder;
+	@Inject
 	private JsonProjectBuilder jsonProjectBuilder;
 	@Inject
 	private CustomFieldFinderService cufService;
@@ -102,16 +112,21 @@ public class CustomExportController {
 		if(crln.getEntityType().getTypeName().equals(CustomReportNodeType.CUSTOM_EXPORT_NAME)) {
 			CustomReportCustomExport customExportDefinition = (CustomReportCustomExport) crln.getEntity();
 			mav.addObject("customExportDefinition", JsonHelper.serialize(customExportDefinition));
-			mav.addObject("scopeCampaignName", getScopeCampaignName(customExportDefinition.getScope().get(0)));
-			mav.addObject("availableCustomFields", getCustomFieldBindingsData(customExportDefinition.getScope().get(0).getId()));
+			mav.addObject("scopeCampaignName", getScopeNodeName(customExportDefinition.getScope().get(0)));
+			mav.addObject("availableCustomFields", getCustomFieldBindingsData(customExportDefinition.getScope().get(0).getType().name(), customExportDefinition.getScope().get(0).getId()));
 		}
 
 		mav.addObject("parentId", parentId);
 		return mav;
 	}
 
-	private String getScopeCampaignName(EntityReference entity) {
-		return campaignFinder.findById(entity.getId()).getName();
+	private String getScopeNodeName(EntityReference entity) {
+		switch(entity.getType()) {
+			case CAMPAIGN: return campaignFinder.findById(entity.getId()).getName();
+			case ITERATION: return iterationFinder.findById(entity.getId()).getName();
+			default: return testSuiteFinder.findById(entity.getId()).getName();
+		}
+
 	}
 
 	@ResponseBody
@@ -171,9 +186,25 @@ public class CustomExportController {
 
 	@ResponseBody
 	@RequestMapping(value = "/cuf-data", method = RequestMethod.GET)
-	public Map<String, List<CustomFieldBindingModel>> getCustomFieldBindingsData(@RequestParam Long campaignId) {
-		Campaign campaign = campaignFinder.findById(campaignId);
+	public Map<String, List<CustomFieldBindingModel>> getCustomFieldBindingsData(@RequestParam String entityType, @RequestParam Long entityId) {
+
+		switch (entityType) {
+			case "CAMPAIGN":
+				return getCustomFieldsDataForCampaign(entityId);
+			case "ITERATION":
+				return getCustomFieldsDataForIteration(entityId);
+			case "TEST_SUITE":
+				return getCustomFieldsDataForTestSuite(entityId);
+			default:
+				throw new IllegalArgumentException();
+		}
+	}
+
+	private Map<String, List<CustomFieldBindingModel>> getCustomFieldsDataForCampaign(Long id) {
+		// TODO: just one for the moment...
+		Campaign campaign = campaignFinder.findById(id);
 		Project mainProject = campaign.getProject();
+
 		long mainProjectId = mainProject.getId();
 
 		// Main Map
@@ -186,6 +217,70 @@ public class CustomExportController {
 		List<Long> projectIds = iterations.stream()
 			.map(Iteration::getTestPlans)
 			.flatMap(Collection::stream)
+			.map(itpi -> {
+				// for deleted TestCases
+				TestCase testCase = itpi.getReferencedTestCase();
+				if(testCase != null) {
+					return testCase.getProject().getId();
+				} else {
+					return null;
+				}
+			})
+			.distinct()
+			.filter(projectId -> projectId!= null && !projectId.equals(mainProjectId))
+			.collect(Collectors.toList());
+
+		for(Long projectId : projectIds) {
+			List<CustomFieldBinding> cufs = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+			for(CustomFieldBinding binding : cufs) {
+				map.get(BindableEntity.TEST_CASE.toString()).add(customFieldConverter.toJson(binding));
+			}
+		}
+		return map;
+	}
+
+	private Map<String, List<CustomFieldBindingModel>> getCustomFieldsDataForIteration(Long id) {
+		Iteration iteration = iterationFinder.findById(id);
+		Project mainProject = iteration.getProject();
+
+		long mainProjectId = mainProject.getId();
+		// Main Map
+		Map<String, List<CustomFieldBindingModel>> map = jsonProjectBuilder.buildProjectCufBindingsMap(mainProjectId);
+
+		// Get the ids of the projects of the test case linked to the given campaign (excluding the main project)
+		List<Long> projectIds = iteration.getTestPlans().stream()
+			.map(itpi -> {
+				// for deleted TestCases
+				TestCase testCase = itpi.getReferencedTestCase();
+				if(testCase != null) {
+					return testCase.getProject().getId();
+				} else {
+					return null;
+				}
+			})
+			.distinct()
+			.filter(projectId -> projectId!= null && !projectId.equals(mainProjectId))
+			.collect(Collectors.toList());
+
+		for(Long projectId : projectIds) {
+			List<CustomFieldBinding> cufs = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_CASE);
+			for(CustomFieldBinding binding : cufs) {
+				map.get(BindableEntity.TEST_CASE.toString()).add(customFieldConverter.toJson(binding));
+			}
+		}
+		return map;
+	}
+
+	private Map<String, List<CustomFieldBindingModel>> getCustomFieldsDataForTestSuite(Long id) {
+		TestSuite testSuite = testSuiteFinder.findById(id);
+		Project mainProject = testSuite.getProject();
+
+		long mainProjectId = mainProject.getId();
+		// Main Map
+		Map<String, List<CustomFieldBindingModel>> map = jsonProjectBuilder.buildProjectCufBindingsMap(mainProjectId);
+
+		// Get the ids of the projects of the test case linked to the given campaign (excluding the main project)
+		List<Long> projectIds = testSuite.getTestPlan().stream()
 			.map(itpi -> {
 				// for deleted TestCases
 				TestCase testCase = itpi.getReferencedTestCase();

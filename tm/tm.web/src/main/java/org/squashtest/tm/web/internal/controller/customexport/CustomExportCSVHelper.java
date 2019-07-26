@@ -154,8 +154,8 @@ public class CustomExportCSVHelper {
 		if(entityTypeToCufIdsListMap.isEmpty()) {
 			return null;
 		}
-		EntityReference campaign = customExport.getScope().get(0);
-		return cufValueService.getCufValueMapByEntityRef(campaign.getId(), entityTypeToCufIdsListMap);
+		EntityReference entity = customExport.getScope().get(0);
+		return cufValueService.getCufValueMapByEntityRef(entity, entityTypeToCufIdsListMap);
 	}
 
 	/**

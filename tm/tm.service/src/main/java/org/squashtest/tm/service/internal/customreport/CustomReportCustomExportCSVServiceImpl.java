@@ -33,6 +33,8 @@ import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
 import org.squashtest.tm.jooq.domain.tables.Iteration;
+import org.squashtest.tm.service.campaign.IterationFinder;
+import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
 
@@ -83,7 +85,13 @@ import static org.squashtest.tm.jooq.domain.Tables.VERIFYING_STEPS;
 public class CustomReportCustomExportCSVServiceImpl implements CustomReportCustomExportCSVService {
 
 	@Inject
-	CustomFieldFinderService cufService;
+	private CustomFieldFinderService cufService;
+
+	@Inject
+	private IterationFinder iterationFinder;
+
+	@Inject
+	private TestSuiteFinder testSuiteFinder;
 
 	@Inject
 	private DSLContext DSL;
@@ -112,26 +120,38 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 			}
 		}
 		// Fetch data from database
-		EntityReference campaign = customExport.getScope().get(0);
-		return fetchData(campaign.getId(), fieldsList, fullEntityList, selectedColumns);
+		EntityReference entity = customExport.getScope().get(0);
+		return fetchData(entity, fieldsList, fullEntityList, selectedColumns);
 	}
 
 	@SuppressWarnings("unchecked")
-	private Iterator<Record> fetchData(long campaignId, Collection<Field<?>> fieldList, List<EntityType> fullEntityList, List<CustomReportCustomExportColumn> selectedColumns) {
+	private Iterator<Record> fetchData(EntityReference entity, Collection<Field<?>> fieldList, List<EntityType> fullEntityList, List<CustomReportCustomExportColumn> selectedColumns) {
 
 		int queryDepth = getQueryDepth(fullEntityList);
 
 		boolean isTestSuiteRequested = fullEntityList.contains(EntityType.TEST_SUITE);
+		boolean isIterationSelected = EntityType.ITERATION.equals(entity.getType());
+		boolean isTestSuiteSelected = EntityType.TEST_SUITE.equals(entity.getType());
 
 		SelectSelectStep selectQuery = DSL.select(fieldList);
 
-		SelectJoinStep fromQuery = buildFromClauseOfMainQuery(fieldList, isTestSuiteRequested, queryDepth, selectQuery);
+		SelectJoinStep fromQuery = buildFromClauseOfMainQuery(fieldList, isTestSuiteRequested, isIterationSelected, isTestSuiteSelected, queryDepth, selectQuery);
 
-		fromQuery.where(CAMPAIGN.CLN_ID.eq(campaignId))
-
-			.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
-
-			.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
+		switch(entity.getType()) {
+			case CAMPAIGN:
+				fromQuery.where(CAMPAIGN.CLN_ID.eq(entity.getId()))
+					.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
+					.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
+				break;
+			case ITERATION:
+				fromQuery.where(ITERATION.ITERATION_ID.eq(entity.getId()))
+				.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
+				.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
+				break;
+			default: fromQuery.where(TEST_SUITE.ID.eq(entity.getId()))
+				.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
+				.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
+		}
 
 		return fromQuery.fetch().iterator();
 	}
@@ -144,7 +164,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	 * @param selectQuery The previously built Select clause of the Query
 	 * @return The From clause of the Query
 	 */
-	private SelectJoinStep buildFromClauseOfMainQuery(Collection<Field<?>> fieldList, boolean isTestSuiteRequested, int queryDepth, SelectSelectStep selectQuery) {
+	private SelectJoinStep buildFromClauseOfMainQuery(Collection<Field<?>> fieldList, boolean isTestSuiteRequested, boolean isIterationSelected, boolean isTestSuiteSelected, int queryDepth, SelectSelectStep selectQuery) {
 		SelectJoinStep fromQuery = selectQuery.from(CAMPAIGN);
 
 		fromQuery.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_LIBRARY_NODE.CLN_ID.eq(CAMPAIGN.CLN_ID));
@@ -155,7 +175,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				.leftJoin(MILESTONE.as("camp_milestone")).on(MILESTONE.as("camp_milestone").MILESTONE_ID.eq(MILESTONE_CAMPAIGN.MILESTONE_ID));
 		}
 
-		if (queryDepth > 1) {
+		if (queryDepth > 1 || isIterationSelected) {
 			fromQuery.leftJoin(CAMPAIGN_ITERATION).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN.CLN_ID))
 				.leftJoin(ITERATION).on(ITERATION.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID));
 		}
@@ -180,7 +200,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 				.leftJoin(INFO_LIST_ITEM.as("type_nature")).on(INFO_LIST_ITEM.as("type_nature").ITEM_ID.eq(TEST_CASE.TC_NATURE))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc")).on(REQUIREMENT_VERSION_COVERAGE.as("tc_rvc").VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID));
 
-			if (isTestSuiteRequested) {
+			if (isTestSuiteRequested || isTestSuiteSelected) {
 				// only if TEST_SUITE attributes were selected
 				fromQuery.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
 					.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID));
@@ -297,7 +317,14 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 	@Override
 	public Object computeCampaignProgressRate(CustomReportCustomExport customExport) {
-		long campaignId = customExport.getScope().get(0).getId();
+		EntityReference entity = customExport.getScope().get(0);
+		long campaignId;
+		switch(entity.getType()) {
+			case CAMPAIGN: campaignId = entity.getId(); break;
+			case ITERATION: campaignId = iterationFinder.findById(entity.getId()).getCampaign().getId(); break;
+			case TEST_SUITE: campaignId = testSuiteFinder.findById(entity.getId()).getIteration().getCampaign().getId(); break;
+			default: throw new IllegalArgumentException();
+		}
 		return getCampaignProgressRateData(campaignId);
 	}
 

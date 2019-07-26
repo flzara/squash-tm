@@ -118,5 +118,5 @@ public interface CustomFieldValueFinderService {
 	 * @return The Map<EntityReference, Map<Long, Object>> where the keys are the entities contained in the Campaign and
 	 * the values are Maps of CustomFieldValues mapped by CustomField ids.
 	 */
-	Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(long campaignId, Map<EntityType, List<Long>> cufIdsMapByEntityType);
+	Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(EntityReference entity, Map<EntityType, List<Long>> cufIdsMapByEntityType);
 }

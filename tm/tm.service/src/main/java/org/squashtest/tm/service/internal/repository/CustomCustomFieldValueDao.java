@@ -33,9 +33,9 @@ public interface CustomCustomFieldValueDao {
 	 * Given a Campaign Id and a Map listing all the CustomField ids requested mapped by EntityType,
 	 * get a Map which keys are EntityReferences contained in the Campaign and values are
 	 * Maps containing CustomFieldValues mapped by CustomField id.
-	 * @param campaignId The id of the Campaign
+	 * @param entity The id of the Campaign
 	 * @param cufMapByEntityType A Map containing the list of requested CustomField ids mapped by EntityType
 	 * @return A Map which keys are EntityReferences and values are Maps containing CustomFieldValues mapped by CustomField id.
 	 */
-	Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(long campaignId, Map<EntityType, List<Long>> cufMapByEntityType);
+	Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(EntityReference entity, Map<EntityType, List<Long>> cufMapByEntityType);
 }

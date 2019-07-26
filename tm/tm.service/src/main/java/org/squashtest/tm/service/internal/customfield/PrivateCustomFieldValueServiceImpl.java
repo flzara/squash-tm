@@ -468,8 +468,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(long campaignId, Map<EntityType, List<Long>> cufIdsMapByEntityType) {
-		return customFieldValueDao.getCufValuesMapByEntityReference(campaignId, cufIdsMapByEntityType);
+	public Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(EntityReference entity, Map<EntityType, List<Long>> cufIdsMapByEntityType) {
+		return customFieldValueDao.getCufValuesMapByEntityReference(entity, cufIdsMapByEntityType);
 	}
 
 	// *********************** private convenience methods ********************

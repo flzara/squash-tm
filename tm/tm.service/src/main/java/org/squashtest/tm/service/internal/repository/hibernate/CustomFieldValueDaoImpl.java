@@ -75,9 +75,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 			.as("COMPUTED_VALUE");
 
 	@Override
-	public Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(long campaignId, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
+	public Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(EntityReference entity, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
 		// Fetch all the Entities involved in the Campaign which cuf were requested
-		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(campaignId, entityTypeToCufIdsListMap.keySet());
+		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(entity, entityTypeToCufIdsListMap.keySet());
 		if(allRequestedEntitiesInCampaign.isEmpty()) {
 			return null;
 		}
@@ -166,51 +166,68 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	/**
 	 * Extract a Set of all the EntityReferences contained in the given Campaign, limited to the EntityTypes contained
 	 * in the Set given as parameter.
-	 * @param campaignId The id of the Campaign concerned
+	 * @param entity The id of the Campaign concerned
 	 * @param entityTypes The EntityTypes of the EntityReferences that must be returned
 	 * @return A Set of all the EntityReferences contained in the Campaign which EntityType is contained in the given Set.
 	 */
-	private Set<EntityReference> getEntityReferencesFromCampaign(long campaignId, Set<EntityType> entityTypes) {
-		SelectJoinStep query = buildEntityReferencesQuery(campaignId, entityTypes);
+	private Set<EntityReference> getEntityReferencesFromCampaign(EntityReference entity, Set<EntityType> entityTypes) {
+		SelectJoinStep query = buildEntityReferencesQuery(entity, entityTypes);
 		Iterator<Record> queryResult = query.fetch().iterator();
-		return buildEntityReferencesSetFromQueryResult(campaignId, entityTypes, queryResult);
+		return buildEntityReferencesSetFromQueryResult(entity, entityTypes, queryResult);
 	}
 
 	/**
 	 * Build the complete Query to retrieve all the requested EntityReferences from a Campaign.
-	 * @param campaignId The Campaign Id
+	 * @param entity The Campaign Id
 	 * @param entityTypes The EntityType of the requested EntityReferences
 	 * @return The Query to retrieve all the requested EntityReferences from the Campaign
 	 */
-	private SelectJoinStep buildEntityReferencesQuery(long campaignId, Set<EntityType> entityTypes) {
+	private SelectJoinStep buildEntityReferencesQuery(EntityReference entity, Set<EntityType> entityTypes) {
 		int cufQueryDepth = getDepthOfEntitiesQuery(entityTypes);
 		boolean isTestSuiteRequested = entityTypes.contains(EntityType.TEST_SUITE);
+		boolean isIterationSelected = EntityType.ITERATION.equals(entity.getType());
+		boolean isTestSuiteSelected = EntityType.TEST_SUITE.equals(entity.getType());
 
-		List<Field<?>> fieldList = buildFieldsListOfEntitiesQuery(cufQueryDepth, isTestSuiteRequested);
+		List<Field<?>> fieldList = buildFieldsListOfEntitiesQuery(cufQueryDepth, isTestSuiteRequested, isIterationSelected, isTestSuiteSelected);
 
 		SelectSelectStep selectQuery = Dsl.select(fieldList);
 		SelectJoinStep fromQuery = buildFromClauseOfEntitiesQuery(selectQuery, cufQueryDepth, isTestSuiteRequested);
-		fromQuery.where(CAMPAIGN.CLN_ID.eq(campaignId));
+		switch(entity.getType()) {
+			case CAMPAIGN: fromQuery.where(CAMPAIGN.CLN_ID.eq(entity.getId())); break;
+			case ITERATION: fromQuery.where(ITERATION.ITERATION_ID.eq(entity.getId())); break;
+			default: fromQuery.where(TEST_SUITE.ID.eq(entity.getId()));
+		}
+
 		return fromQuery;
 	}
 
 	/**
 	 * Exploit the EntityReferences Query Results to build a Set of all the EntityReferences in the given Campaign.
-	 * @param campaignId The Campaign id
+	 * @param entity The Campaign id
 	 * @param entityTypes The EntityTypes requested in the result
 	 * @param queryResult The Results of the Query
 	 * @return The Set of all EntityReferences in the Campaign based on the Query Results
 	 */
-	private Set<EntityReference> buildEntityReferencesSetFromQueryResult(long campaignId, Set<EntityType> entityTypes, Iterator<Record> queryResult) {
+	private Set<EntityReference> buildEntityReferencesSetFromQueryResult(EntityReference entity, Set<EntityType> entityTypes, Iterator<Record> queryResult) {
 		Set<EntityReference> entityReferenceSet = new HashSet<>();
 
-		// The campaign is the the same all the way and we already know its id
-		if(entityTypes.contains(EntityType.CAMPAIGN)) {
-			entityReferenceSet.add(new EntityReference(EntityType.CAMPAIGN, campaignId));
-		}
-		// We can remove the campaign from the requested entities
 		Set<EntityType> entityTypesWithoutCampaign = new HashSet(entityTypes);
-		entityTypesWithoutCampaign.remove(EntityType.CAMPAIGN);
+
+		// The campaign is the the same all the way and we already know its id
+		if (entityTypes.contains(EntityType.CAMPAIGN)) {
+			entityReferenceSet.add(new EntityReference(EntityType.CAMPAIGN, entity.getId()));
+			// We can remove the campaign from the requested entities
+			entityTypesWithoutCampaign.remove(EntityType.CAMPAIGN);
+		}/* else if (entityTypes.contains(EntityType.ITERATION)) {
+			entityReferenceSet.add(new EntityReference(EntityType.ITERATION, entity.getId()));
+			// We can remove the campaign from the requested entities
+			entityTypesWithoutCampaign.remove(EntityType.ITERATION);
+		} else if (entityTypes.contains(EntityType.TEST_SUITE)) {
+			entityReferenceSet.add(new EntityReference(EntityType.TEST_SUITE, entity.getId()));
+			// We can remove the campaign from the requested entities
+			entityTypesWithoutCampaign.remove(EntityType.TEST_SUITE);
+		}*/
+
 
 		queryResult.forEachRemaining(record -> {
 			for(EntityType entityType : entityTypesWithoutCampaign) {
@@ -264,15 +281,15 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param isTestSuiteRequested If at least one TestSuite Cuf is requested
 	 * @return The List of Fields the Cuf Query have to select
 	 */
-	private List<Field<?>> buildFieldsListOfEntitiesQuery(int cufQueryDepth, boolean isTestSuiteRequested) {
+	private List<Field<?>> buildFieldsListOfEntitiesQuery(int cufQueryDepth, boolean isTestSuiteRequested, boolean isIterationSelected, boolean isTestSuiteSelected) {
 		List<Field<?>> fieldList = new ArrayList<>();
-		if(cufQueryDepth > 1) {
+		if(cufQueryDepth > 1 || isIterationSelected) {
 			fieldList.add(ITERATION.ITERATION_ID);
 		}
 		if(cufQueryDepth > 2) {
 			fieldList.add(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID);
 			fieldList.add(TEST_CASE.TCLN_ID);
-			if (isTestSuiteRequested) {
+			if (isTestSuiteRequested || isTestSuiteSelected) {
 				fieldList.add(TEST_SUITE.ID);
 			}
 		}
