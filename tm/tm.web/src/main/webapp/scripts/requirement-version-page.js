@@ -3,10 +3,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 	"custom-field-values", "squash.configmanager", "jeditable.simpleJEditable", "app/ws/squashtm.notification",
 	"workspace.routing", "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
 	"app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel", "req-workspace/linked-requirements-panel", "req-workspace/requirement-coverage-stat-view",
-	"bugtracker/bugtracker-panel", "app/util/StringUtil", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
+	"bugtracker/bugtracker-panel", "app/util/StringUtil", "underscore", "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 	function (module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
 		cufvalues, confman, SimpleJEditable, notification, routing, translator, upload, milestoneNotifier,
-		squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil) {
+		squash, VerifyingTestCasesPanel, LinkedRequirementsPanel, CoveverageStatView, bugtrackerPanel, StringUtil, _) {
 
 		// event subscription
 		pubsub.subscribe('reload.requirement.name', initName);
@@ -85,10 +85,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 		function unescapeData(data) {
 			var result = {};
-			for (var property in data) {
-				var code = StringUtil.unescape(property);
-				var label = StringUtil.unescape(data[property]);
-				result[code] = label;
+			for (var property in _.keys(data)) {
+                var code = StringUtil.unescape(property);
+                var label = StringUtil.unescape(data[property]);
+                result[code] = label;
 			}
 			return result;
 		}
@@ -101,7 +101,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			if (config.permissions.writable) {
 
 				// ********** REFERENCE *****************
-				var refconf = new SimpleJEditable({
+				new SimpleJEditable({
 					targetUrl: baseURL,
 					componentId: "requirement-reference",
 					submitCallback: function (reference) {
@@ -175,8 +175,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				 ************************************************************************************************************/
 
 				var statusChangeSelect = $("#requirement-status"),
-					statusSelectConf = confman.getJeditableSelect(),
-					statusChangeDialog = $("#requirement-status-confirm-dialog");
+					statusSelectConf = confman.getJeditableSelect();
 
 				var stsmessages = translator.get({
 					'cannot-set-status-allowed': 'requirement.status.notAllowed.approved',
@@ -235,7 +234,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 		function initVerifyingtestcases() {
 			var config = module.config();
 
-			var table = $("#verifying-test-cases-table").squashTable({
+			$("#verifying-test-cases-table").squashTable({
 				aaData: config.basic.verifyingTestcases
 			}, {
 					unbindButtons: {
@@ -388,7 +387,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						var summaryRoot = $("#add-summary-dialog > ul");
 						summaryRoot.empty();
 
-						for (var rejectionType in summary) {
+						for (var rejectionType in _.keys(summary)) {
 							var message = summaryMessages[rejectionType];
 
 							if (message) {
@@ -635,7 +634,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 			var model = new modelConstructor();
 
-			var coverageStatView = new CoveverageStatView({
+			new CoveverageStatView({
 				model: model
 			});
 		}
