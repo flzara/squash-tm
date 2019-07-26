@@ -218,15 +218,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 			entityReferenceSet.add(new EntityReference(EntityType.CAMPAIGN, entity.getId()));
 			// We can remove the campaign from the requested entities
 			entityTypesWithoutCampaign.remove(EntityType.CAMPAIGN);
-		}/* else if (entityTypes.contains(EntityType.ITERATION)) {
-			entityReferenceSet.add(new EntityReference(EntityType.ITERATION, entity.getId()));
-			// We can remove the campaign from the requested entities
-			entityTypesWithoutCampaign.remove(EntityType.ITERATION);
-		} else if (entityTypes.contains(EntityType.TEST_SUITE)) {
-			entityReferenceSet.add(new EntityReference(EntityType.TEST_SUITE, entity.getId()));
-			// We can remove the campaign from the requested entities
-			entityTypesWithoutCampaign.remove(EntityType.TEST_SUITE);
-		}*/
+		}
 
 
 		queryResult.forEachRemaining(record -> {

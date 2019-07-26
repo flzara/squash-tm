@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
@@ -38,13 +37,11 @@ import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.squashtest.tm.domain.EntityType.*;
 
 @Component("customReport.customExportBuilder")
 @Scope("prototype")
