@@ -43,6 +43,7 @@ import org.squashtest.tm.exception.requirement.link.AlreadyLinkedRequirementVers
 import org.squashtest.tm.exception.requirement.link.LinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.SameRequirementLinkedRequirementVersionException;
 import org.squashtest.tm.exception.requirement.link.UnlinkableLinkedRequirementVersionException;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionLinkDao;
@@ -54,6 +55,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,6 +91,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	@PreAuthorize(READ_REQVERSION_OR_ROLE_ADMIN)
@@ -117,6 +121,11 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)
 	public void removeLinkedRequirementVersionsFromRequirementVersion(
 		long requirementVersionId, List<Long> requirementVersionIdsToUnlink) {
+
+		List<Long> impactedVersionIds = new ArrayList<>(requirementVersionIdsToUnlink);
+		impactedVersionIds.add(requirementVersionId);
+		List<RequirementVersion> impactedVersions = reqVersionDao.findAllById(impactedVersionIds);
+		auditModificationService.updateRelatedToRequirementLinkAuditableEntity(impactedVersions);
 
 		reqVersionLinkDao.deleteAllLinks(requirementVersionId, requirementVersionIdsToUnlink);
 	}
@@ -235,6 +244,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 		RequirementVersionLink linkToUpdate = reqVersionLinkDao.findByReqVersionsIds(requirementVersionId, relatedVersionId);
 		RequirementVersionLink symmetricalLinkToUpdate = reqVersionLinkDao.findByReqVersionsIds(relatedVersionId, requirementVersionId);
 
+		List<RequirementVersion> requirementVersions = reqVersionDao.findAllById(Arrays.asList(requirementVersionId, relatedVersionId));
+
 		RequirementVersionLinkType newLinkType = reqVersionLinkTypeDao.getOne(linkTypeId);
 
 		linkToUpdate.setLinkType(newLinkType);
@@ -242,6 +253,8 @@ public class LinkedRequirementVersionManagerServiceImpl implements LinkedRequire
 
 		symmetricalLinkToUpdate.setLinkType(newLinkType);
 		symmetricalLinkToUpdate.setLinkDirection(!linkDirection);
+
+		auditModificationService.updateRelatedToRequirementLinkAuditableEntity(requirementVersions);
 	}
 
 	@PreAuthorize(LINK_REQVERSION_OR_ROLE_ADMIN)

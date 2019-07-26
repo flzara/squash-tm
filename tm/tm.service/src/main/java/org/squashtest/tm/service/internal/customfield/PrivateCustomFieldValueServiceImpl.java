@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -38,8 +39,10 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheResult;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -52,7 +55,9 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +94,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -397,6 +405,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 		newValue.setValueFor(changedValue);
+
+		auditModificationService.updateRelatedToCustomFieldAuditableEntity(boundEntity);
 	}
 
 	// This method is just here to use the @CacheResult annotation

@@ -235,9 +235,9 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should have the same steps"() {
 		given:
 		TestCase source = new TestCase()
-		source.setName("source");
+		source.setName("source")
 		source.notifyAssociatedWithProject(mockFactory.mockProject())
-		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
+		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt", testCase: source)
 		source.steps << sourceStep
 
 		when:
@@ -253,16 +253,16 @@ class TestCaseTest extends Specification {
 
 	def "should remove automated script link"(){
 		given :
-		TestCase automatedTestCase = new TestCase();
-		AutomatedTest automatedTest = new AutomatedTest();
+		TestCase automatedTestCase = new TestCase()
+		AutomatedTest automatedTest = new AutomatedTest()
 		use(ReflectionCategory){
 			TestCase.set field:"automatedTest", of:automatedTestCase, to: automatedTest
 		}
 		when :
-		automatedTestCase.removeAutomatedScript();
+		automatedTestCase.removeAutomatedScript()
 
 		then:
-		automatedTestCase.automatedTest == null;
+		automatedTestCase.automatedTest == null
 
 	}
 

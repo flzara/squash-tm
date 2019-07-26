@@ -23,11 +23,13 @@ package org.squashtest.tm.service.internal.hibernate;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.security.UserContextHolder;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -39,12 +41,24 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
 
+	@Override
+	public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		if(isRelatedToAnAuditable(entity.getClass())){
+			checkAndLogAuditableRelatedEntityModificationData(entity);
+		}
+	}
 
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
 		if (isAuditable(entity)) {
 			checkAndLogModificationData(entity, currentState);
+			if(isRelatedToAnAuditable(entity.getClass())){
+				checkAndLogAuditableRelatedEntityModificationData(entity);
+			}
+			return true;
+		} else if(isRelatedToAnAuditable(entity.getClass())){
+			checkAndLogAuditableRelatedEntityModificationData(entity);
 			return true;
 		}
 		return false;
@@ -52,6 +66,20 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private boolean isAuditable(Object entity) {
 		return AnnotationUtils.findAnnotation(entity.getClass(), Auditable.class) != null;
+	}
+
+	private boolean isRelatedToAnAuditable(Class clazz) {
+		if(hasIsRelatedToAuditableInterface(clazz)){
+			return true;
+		} else if(clazz.getSuperclass() != null){
+			return isRelatedToAnAuditable(clazz.getSuperclass());
+		} else {
+			return false;
+		}
+	}
+
+	private boolean hasIsRelatedToAuditableInterface(Class clazz){
+		return Arrays.stream(clazz.getInterfaces()).anyMatch(interfaze -> interfaze.getName().equals(RelatedToAuditable.class.getName()));
 	}
 
 	private void checkAndLogModificationData(Object entity, Object[] currentState) {
@@ -81,6 +109,12 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
 		if (isAuditable(entity)) {
 			logCreationData(entity, state);
+			if(isRelatedToAnAuditable(entity.getClass())){
+				checkAndLogAuditableRelatedEntityModificationData(entity);
+			}
+			return true;
+		} else if(isRelatedToAnAuditable(entity.getClass())){
+			checkAndLogAuditableRelatedEntityModificationData(entity);
 			return true;
 		}
 		return false;
@@ -105,5 +139,17 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private String getCurrentUser() {
 		return UserContextHolder.getUsername();
+	}
+
+	private void checkAndLogAuditableRelatedEntityModificationData(Object entity){
+		RelatedToAuditable relatedToAuditable = (RelatedToAuditable) entity;
+		relatedToAuditable.getAssociatedAuditableList().forEach(auditable -> {
+			if(auditable != null){
+				auditable.setLastModifiedOn(new Date());
+				auditable.setLastModifiedBy(getCurrentUser());
+			} else {
+				throw new IllegalArgumentException("Could not update modification data. Unknown related auditable.");
+			}
+		});
 	}
 }

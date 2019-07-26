@@ -34,11 +34,13 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -81,6 +83,9 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
 
+	@Inject
+	private AuditModificationService auditModificationService;
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -96,6 +101,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		TestSuite suite = testSuiteDao.getOne(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 		customTestSuiteModificationService.updateExecutionStatus(suite);
+		auditModificationService.updateAuditable((AuditableMixin) suite);
+		auditModificationService.updateAuditable((AuditableMixin) suite.getIteration());
 	}
 
 	@Override()
@@ -110,6 +117,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.bindTestPlanItems(itemTestPlans);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite.getIteration());
 	}
 
 	@Override()
@@ -125,6 +134,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.unBindTestPlan(itemTestPlans);
 		customTestSuiteModificationService.updateExecutionStatus(testSuite);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite.getIteration());
 	}
 
 	@Override
@@ -205,6 +216,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		bindTestPlanObj(testSuite, listTestPlanItemsToAffectToTestSuite);
 		customTestSuiteModificationService.updateExecutionStatus(testSuite);
+		auditModificationService.updateAuditable((AuditableMixin)testSuite);
 	}
 
 	@Override
@@ -232,6 +244,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
+
+		auditModificationService.updateAuditable((AuditableMixin)testSuite);
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}

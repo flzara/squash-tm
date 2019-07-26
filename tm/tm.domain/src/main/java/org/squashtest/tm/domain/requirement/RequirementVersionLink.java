@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.requirement;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.RelatedToAuditable;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +33,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by jlor on 09/05/2017.
@@ -38,7 +42,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "REQUIREMENT_VERSION_LINK")
-public class RequirementVersionLink implements Identified {
+public class RequirementVersionLink implements Identified, RelatedToAuditable {
 
 	@Id
 	@Column(name = "LINK_ID")
@@ -141,5 +145,10 @@ public class RequirementVersionLink implements Identified {
 
 	public RequirementVersionLink copyForRequirementVersion(RequirementVersion copyVersion) {
 		return new RequirementVersionLink(copyVersion, this.relatedRequirementVersion, this.linkType, this.linkDirection);
+	}
+
+	@Override
+	public List<AuditableMixin> getAssociatedAuditableList() {
+		return Arrays.asList((AuditableMixin) requirementVersion, (AuditableMixin) relatedRequirementVersion);
 	}
 }

@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.attachment.*;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
@@ -77,6 +78,9 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	@Inject
 	private AttachmentRepository attachmentRepository;
 
+	@Inject
+	private AuditModificationService auditModificationService;
+
 	@Override
 	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
 		AttachmentContent content = getAttachmentRepository().createContent(rawAttachment, attachmentListId);
@@ -90,6 +94,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachment.setName(rawAttachment.getName());
 		attachment.setSize(rawAttachment.getSizeInBytes());
 		attachmentDao.save(attachment);
+
+		auditModificationService.updateRelatedToAttachmentAuditableEntity(attachmentListId);
 
 		return attachment.getId();
 	}
@@ -121,6 +127,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachmentDao.deleteById(attachment.getId());
 		ExternalContentCoordinates externalContentCoordinates = new ExternalContentCoordinates(attachmentListId, attachmentContentId);
 		deleteContents(Collections.singletonList(externalContentCoordinates));
+
+		auditModificationService.updateRelatedToAttachmentAuditableEntity(attachmentListId);
 	}
 
 	@Override

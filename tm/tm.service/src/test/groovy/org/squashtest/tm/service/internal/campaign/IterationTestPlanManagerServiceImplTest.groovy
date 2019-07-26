@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.users.User
-
+import org.squashtest.tm.service.audit.AuditModificationService
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
@@ -51,6 +51,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	DatasetDao datasetDao = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
+	AuditModificationService auditModificationService = Mock()
 
 	def setup() {
 		service.testCaseLibraryNodeDao = nodeDao
@@ -60,6 +61,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.deletionHandler = deletionHandler
 		service.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
+		service.auditModificationService = auditModificationService
 	}
 
 	def "should reccursively add a list of test cases to an iteration"() {

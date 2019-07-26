@@ -31,6 +31,8 @@
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.4.7</groovy.version>
 
+    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+
     <jasperreports.version>6.1.1</jasperreports.version>
     <java.version>1.8</java.version>
 
@@ -45,8 +47,6 @@
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
-
-    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
   </properties>
   <build>
     <!--
