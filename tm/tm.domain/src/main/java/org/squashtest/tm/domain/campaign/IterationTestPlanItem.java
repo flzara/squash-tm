@@ -80,7 +80,7 @@ import java.util.stream.Collectors;
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
 @Persister(impl=IterationTestPlanItemPersister.class)
-public class IterationTestPlanItem implements HasExecutionStatus, Identified, RelatedToAuditable {
+public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -565,12 +565,5 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified, Re
 
 	public Set<Milestone> getMilestones() {
 		return getIteration().getCampaign().getMilestones();
-	}
-
-	@Override
-	public List<AuditableMixin> getAssociatedAuditableList() {
-		List<AuditableMixin> auditables = testSuites.stream().map(suite -> (AuditableMixin) suite).collect(Collectors.toList());
-		auditables.add((AuditableMixin) iteration);
-		return auditables;
 	}
 }

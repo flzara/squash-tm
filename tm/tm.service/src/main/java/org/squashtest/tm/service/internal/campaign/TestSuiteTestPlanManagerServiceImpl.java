@@ -102,6 +102,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 		customTestSuiteModificationService.updateExecutionStatus(suite);
 		auditModificationService.updateAuditable((AuditableMixin) suite);
+		auditModificationService.updateAuditable((AuditableMixin) suite.getIteration());
 	}
 
 	@Override()
@@ -117,6 +118,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.bindTestPlanItems(itemTestPlans);
 		auditModificationService.updateAuditable((AuditableMixin) testSuite);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite.getIteration());
 	}
 
 	@Override()
@@ -133,6 +135,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		testSuite.unBindTestPlan(itemTestPlans);
 		customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		auditModificationService.updateAuditable((AuditableMixin) testSuite);
+		auditModificationService.updateAuditable((AuditableMixin) testSuite.getIteration());
 	}
 
 	@Override
@@ -241,6 +244,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		TestSuite testSuite = testSuiteDao.getOne(suiteId);
 
 		Iteration iteration = testSuite.getIteration();
+
+		auditModificationService.updateAuditable((AuditableMixin)testSuite);
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}

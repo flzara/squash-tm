@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -57,6 +58,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -149,6 +151,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -286,6 +291,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			iteration.addTestPlan(itp);
 			iterationTestPlanDao.save(itp);
 		}
+		auditModificationService.updateAuditable((AuditableMixin)iteration);
 	}
 
 	@Override
@@ -376,6 +382,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		iteration.removeItemFromTestPlan(item);
 
 		deletionHandler.deleteIterationTestPlanItem(item);
+
+		auditModificationService.updateAuditable((AuditableMixin)iteration);
 	}
 
 	@Override
