@@ -48,7 +48,6 @@
 	</style>
 	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF" fill="Solid">
 		<box>
-			<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 			<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 			<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 			<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>

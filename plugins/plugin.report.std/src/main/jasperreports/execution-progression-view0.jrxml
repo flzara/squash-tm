@@ -34,6 +34,9 @@
 	<!-- no empty first column (html border) -->
 	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
 
+	<property name="net.sf.jasperreports.export.html.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.html.remove.emtpy.space.between.rows" value="true"/>
+
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>

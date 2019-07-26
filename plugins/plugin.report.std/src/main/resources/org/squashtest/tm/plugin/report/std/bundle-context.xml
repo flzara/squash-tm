@@ -208,6 +208,8 @@
             word-break: break-word;
             }
             &lt;/style&gt;
+            &lt;style&gt; br {display: none;}
+            &lt;/style&gt;
           </value>
         </entry>
       </map>
@@ -278,7 +280,6 @@
             </list>
           </property>
         </bean>
-        <!--  manque l'arbre -->
       </list>
     </property>
   </bean>
@@ -328,6 +329,8 @@
             hyphenate: auto;
             word-break: break-word;
             }
+            &lt;/style&gt;
+            &lt;style&gt; br {display: none;}
             &lt;/style&gt;
           </value>
         </entry>
