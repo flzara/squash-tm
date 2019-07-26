@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.audit;
 
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -47,4 +48,11 @@ public interface AuditModificationService {
 	 * @param boundEntity the given {@link BoundEntity}
 	 */
 	void updateRelatedToCustomFieldAuditableEntity(BoundEntity boundEntity);
+
+	/**
+	 * Update last modified on and las modified by of given {@link AuditableMixin}
+	 * @param auditableMixin the given {@link AuditableMixin}
+	 */
+	void updateAuditable(AuditableMixin auditableMixin);
+
 }

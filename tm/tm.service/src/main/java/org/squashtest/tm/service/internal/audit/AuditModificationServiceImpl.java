@@ -117,7 +117,7 @@ public class AuditModificationServiceImpl implements AuditModificationService {
 		}
 	}
 
-	private void updateAuditable(AuditableMixin auditable){
+	public void updateAuditable(AuditableMixin auditable){
 		auditable.setLastModifiedOn(new Date());
 		auditable.setLastModifiedBy(UserContextHolder.getUsername());
 	}

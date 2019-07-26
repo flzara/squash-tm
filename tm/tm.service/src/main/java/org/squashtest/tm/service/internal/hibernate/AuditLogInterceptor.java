@@ -53,6 +53,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 			String[] propertyNames, Type[] types) {
 		if (isAuditable(entity)) {
 			checkAndLogModificationData(entity, currentState);
+			if(isRelatedToAnAuditable(entity.getClass())){
+				checkAndLogAuditableRelatedEntityModificationData(entity);
+			}
 			return true;
 		} else if(isRelatedToAnAuditable(entity.getClass())){
 			checkAndLogAuditableRelatedEntityModificationData(entity);
@@ -106,6 +109,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
 		if (isAuditable(entity)) {
 			logCreationData(entity, state);
+			if(isRelatedToAnAuditable(entity.getClass())){
+				checkAndLogAuditableRelatedEntityModificationData(entity);
+			}
 			return true;
 		} else if(isRelatedToAnAuditable(entity.getClass())){
 			checkAndLogAuditableRelatedEntityModificationData(entity);

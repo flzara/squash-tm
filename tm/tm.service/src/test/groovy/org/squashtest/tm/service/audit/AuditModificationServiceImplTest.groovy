@@ -22,6 +22,7 @@ package org.squashtest.tm.service.audit
 
 import org.jooq.Record2
 import org.springframework.security.core.Authentication
+import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.requirement.RequirementVersion
@@ -59,6 +60,18 @@ class AuditModificationServiceImplTest extends Specification {
 
 		UserContextHolder.context.authentication = authentication
 		authentication.name >> "bruce dickinson"
+	}
+
+	def "should update an auditable"(){
+		given:
+		RequirementVersion auditable = Mock()
+
+		when:
+		service.updateAuditable((AuditableMixin)auditable)
+
+		then:
+		1*auditable.setLastModifiedBy('bruce dickinson')
+		1*auditable.setLastModifiedOn(_ as Date)
 	}
 
 	def "should update campaign related to an attachment list"(){
