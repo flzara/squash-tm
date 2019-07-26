@@ -258,21 +258,24 @@ public class ReportHelper {
 		List<String> names = new ArrayList<>();
 		List<Long> ids = new ArrayList<>();
 		Locale locale = LocaleContextHolder.getLocale();
-		
+		String entityLabelKey = "";
+
 		switch (entity) {
-			case CAMPAIGN_ID:
+			case CAMPAIGN_ID: entityLabelKey = "label.Campaign";
 			case CAMPAIGN_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Campaign> campaigns = campaignModificationService.findAllByIds(ids);
 				campaigns.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("label.campaigns",locale), names);
+				if (entityLabelKey.isEmpty()) { entityLabelKey = "label.campaigns"; }
+				attributes.put(i18nHelper.internationalize(entityLabelKey, locale), names);
 				break;
-			case ITERATION_ID:
+			case ITERATION_ID: entityLabelKey = "label.iteration";
 			case ITERATION_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
 				List<Iteration> iterations = iterationModificationService.findAllByIds(ids);
 				iterations.forEach(o -> names.add(o.getName()));
-				attributes.put(i18nHelper.internationalize("label.iterations",locale), names);
+				if (entityLabelKey.isEmpty()) { entityLabelKey = "label.iterations"; }
+				attributes.put(i18nHelper.internationalize(entityLabelKey, locale), names);
 				break;
 			case REQUIREMENTS_IDS:
 				targetIds.forEach(id -> ids.add(Long.parseLong(id)));
