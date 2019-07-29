@@ -214,6 +214,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private TestCaseLibraryDao testCaseLibraryDao;
 
 
+
 	/* *************** TestCase section ***************************** */
 
 	@Override
@@ -1313,17 +1314,5 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		project.getAutomationRequestLibrary().addContent(request);
 	}
 
-	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void createRemoteRequestForTestCaseIfNotExist(long testCaseId) {
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		AutomationRequest automationRequest = testCase.getAutomationRequest();
-		// Create the remoteRequest only if does not exist yet
-		if(automationRequest != null && automationRequest.getRemoteAutomationRequestExtender() == null) {
-			RemoteAutomationRequestExtender remoteRequest = new RemoteAutomationRequestExtender();
-			remoteRequest.setAutomationRequest(testCase.getAutomationRequest());
-			testCase.getAutomationRequest().setRemoteAutomationRequestExtender(remoteRequest);
-		}
-	}
 
 }

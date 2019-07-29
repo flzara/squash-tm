@@ -113,16 +113,6 @@ public class ScriptedTestCaseEventListener {
 
 		Collection<Long> testCaseIds = findTestCaseIdsByAutomationRequestIds(requestIds);
 
-		LOGGER.debug("creating remote automation requests in bugtracker");
-
-		for(Long tcId : testCaseIds) {
-			// If the request is meant to be managed in a Remote tool - Maybe write a single method here
-			// Here create the RemoteRequests in the remote BugTracker
-
-			// Create the RemoteAutomationRequestExtender for the given TestCase
-			tcService.createRemoteRequestForTestCaseIfNotExist(tcId);
-		}
-
 		LOGGER.debug("committing test cases to their repositories");
 		LOGGER.trace("test case ids : '{}'", testCaseIds);
 

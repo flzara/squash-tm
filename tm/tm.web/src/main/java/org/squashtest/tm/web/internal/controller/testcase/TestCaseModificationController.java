@@ -312,11 +312,19 @@ public class TestCaseModificationController {
 		if(automReq != null) {
 			remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
 			if(remoteAutomReqExists) {
+				remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
 				RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
 				mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
+				mav.addObject("remoteReqAssignedTo",(!remoteAutomReq.getRemoteAssignedTo().equals(null)? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
 				mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
-				mav.addObject("automReqLastTransmittedOn", automReq.getTransmissionDate());
+				mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
 			}
+		}else{
+			mav.addObject("remoteReqUrl", internationalizationHelper.internationalize("squashtm.nodata", locale));
+			mav.addObject("remoteReqAssignedTo",internationalizationHelper.internationalize("squashtm.nodata", locale));
+			mav.addObject("remoteReqStatusLabel", internationalizationHelper.internationalize("squashtm.nodata", locale));
+			mav.addObject("automReqLastTransmittedOn",null);
+
 		}
 		mav.addObject("remoteAutomationRequestExists", remoteAutomReqExists);
 	}

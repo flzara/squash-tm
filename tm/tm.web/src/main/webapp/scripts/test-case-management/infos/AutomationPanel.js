@@ -30,8 +30,8 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					this.updateAutomatableInTree = $.proxy(this._updateAutomatableInTree, this);
 					self.settings = options.settings;
 
-					var remoteAutomReqExists = self.settings.remoteAutomationRequestExists;
-					self.initAutomationRequestBlock(remoteAutomReqExists);
+					var isRemoteAutomationWorkflowUsed = self.settings.isRemoteAutomationWorkflowUsed;
+					self.initAutomationRequestBlock(isRemoteAutomationWorkflowUsed);
 					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
 					eventBus.onContextual("test-case.transmitted", function(evt, data) {
@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							}
 						});
 
-						if(!remoteAutomReqExists) {
+						if(!isRemoteAutomationWorkflowUsed) {
 							this.statusEditable = new SelectJEditable({
 								target : this.settings.urls.testCaseUrl,
 								componentId : "automation-request-status",
@@ -82,6 +82,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 
 						automatableRadio.on('change', function() {
 							var value = this.value;
+							var isRemoteAutomationWorkflowUsed = self.settings.isRemoteAutomationWorkflowUsed;
 							$.ajax({
 								url:  self.settings.urls.testCaseUrl,
 								method: 'POST',
@@ -90,7 +91,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 									'value': this.value
 								}
 							}).success(function() {
-									self.initAutomationRequestBlock();
+									self.initAutomationRequestBlock(isRemoteAutomationWorkflowUsed);
 									self.updateAutomatableInTree(value);
 							});
 						});
@@ -117,7 +118,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 
 				},
 
-				initAutomationRequestBlock : function(remoteAutomReqExists) {
+				initAutomationRequestBlock : function(isRemoteAutomationWorkflowUsed) {
 					var isAutomatable = $('input[type=radio][name=test-case-automatable]:checked').val() === 'Y';
 					if (isAutomatable) {
 						$('.test-case-automation-request-block').show();
@@ -125,7 +126,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						$('.test-case-automation-request-block').hide();
 					}
 					// Display remote-automation-request-block according to existence of the remoteRequest
-					if(isAutomatable && remoteAutomReqExists) {
+					if(isAutomatable && isRemoteAutomationWorkflowUsed) {
 						$('.test-case-remote-automation-request-block').show();
 					} else {
 						$('.test-case-remote-automation-request-block').hide();
@@ -142,6 +143,8 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
 					// url
 					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					//assignedTo
+					$("#remote-automation-request-assignedTo").text(automationRequest.remoteAutomationRequestExtender.remoteRequestAssignedTo);
 					// date transmission
 					$("#automation-last-transmitted-on").text(automationRequest.transmissionDate);
 				}

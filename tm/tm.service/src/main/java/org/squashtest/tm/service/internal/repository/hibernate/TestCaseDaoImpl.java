@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -38,17 +39,21 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,6 +117,9 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	@Inject
 	private DSLContext DSL;
+
+	@PersistenceContext
+	private EntityManager em;
 
 
 	@Override
@@ -486,6 +494,14 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 				.and(TEST_CASE.TA_TEST.isNotNull())
 			.fetchOne().value1();
 	}
+
+	@Override
+	public List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds) {
+		Query query = (Query) entityManager.createNamedQuery("testCase.findTestCaseByAutomationRequestIds");
+		query.setParameter("requestIds", requestIds);
+		return query.getResultList();
+	}
+
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
 

@@ -63,10 +63,23 @@ public class RemoteAutomationRequestExtender {
 	@Column(name = "REMOTE_STATUS")
 	private String remoteRequestStatus;
 
+	@Column(name = "REMOTE_ISSUE_KEY")
+	private String remoteIssueKey;
+
+	@Column(name = "REMOTE_ASSIGNED_TO")
+	private String remoteAssignedTo;
+
 	@org.hibernate.validator.constraints.URL
 	@Size(min = 0, max = 300)
 	private String remoteRequestUrl;
 
+	public String getRemoteIssueKey() {
+		return remoteIssueKey;
+	}
+
+	public void setRemoteIssueKey(String remoteIssueKey) {
+		this.remoteIssueKey = remoteIssueKey;
+	}
 
 	public Long getId() {
 		return id;
@@ -102,4 +115,13 @@ public class RemoteAutomationRequestExtender {
 	public void setRemoteRequestUrl(String remoteRequestUrl) {
 		this.remoteRequestUrl = remoteRequestUrl;
 	}
+	public String getRemoteAssignedTo() {
+		return remoteAssignedTo;
+	}
+
+	public void setRemoteAssignedTo(String remoteAssignedTo) {
+		this.remoteAssignedTo = remoteAssignedTo;
+	}
+
+
 }

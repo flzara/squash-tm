@@ -272,7 +272,7 @@
           hasCufs: ${hasCUF},
           hasBugtracker: ${testCase.project.bugtrackerConnected},
           isAutomated: ${testCase.project.testAutomationEnabled},
-          remoteAutomationRequestExists: ${remoteAutomationRequestExists},
+          isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
           , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}

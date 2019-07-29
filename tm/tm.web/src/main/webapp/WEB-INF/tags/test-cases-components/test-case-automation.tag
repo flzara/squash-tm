@@ -99,7 +99,7 @@
 
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="remote-automation-request-status">
-         <f:message key="test-case.automation-status.label" />
+         <f:message key="test-case.automation-status-jira.label" />
        </label>
        <div class="display-table-cell" id="remote-automation-request-status">
          <span>${ remoteReqStatusLabel }</span>
@@ -113,6 +113,14 @@
          <span>${ remoteReqUrl }</span>
        </div>
      </div>
+      <div class="display-table-row test-case-remote-automation-request-block">
+        <label class="display-table-cell" for="remote-automation-request-assignedTo">
+          <f:message key="label.assigned" />
+        </label>
+        <div class="display-table-cell" id="remote-automation-request-assignedTo">
+          <span>${ remoteReqAssignedTo }</span>
+        </div>
+      </div>
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="automation-last-transmitted-on">
          <f:message key="automation.datatable.headers.transmittedon" />

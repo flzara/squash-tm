@@ -202,4 +202,6 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId);
 
+	List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds);
+
 }
