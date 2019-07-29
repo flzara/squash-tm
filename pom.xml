@@ -747,11 +747,15 @@
       </build>
     </profile>
 
+
     <profile>
       <!--
         the profile sonar-build will preprocess any qualimetry-related resource before sonarqube scanner is run.
       -->
       <id>sonar-build</id>
+      <properties>
+        <sonar.exclusions>**/webapp/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**, **/scripts/jquery/**, **/scripts/sinon.js, **/scripts/require.js, **/scripts/require-min.js, **/scripts/text.js, **/styles/ckeditor/**, **/styles/spectrum/**, **/styles/switchButton/**, **/styles/jqplot/**, **/styles/images/**, **/styles/jquery/**, **/styles/bootstrap*, **/org/springframework/**</sonar.exclusions>
+      </properties>
       <build>
         <plugins>
           <plugin>

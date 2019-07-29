@@ -943,12 +943,6 @@
     </profile>
 
 
-    <profile>
-      <id>sonar-build</id>
-      <properties>
-        <sonar.exclusions>**/scripts/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**, **/scripts/jquery/**, **/scripts/sinon.js, **/scripts/require.js, **/scripts/require-min.js, **/scripts/text.js</sonar.exclusions>
-      </properties>
-    </profile>
 
   </profiles>
 </project>
