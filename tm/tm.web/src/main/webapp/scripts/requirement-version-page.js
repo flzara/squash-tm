@@ -477,7 +477,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
 					var params = {
 						reqVersionLinkTypeId: selectedTypeId,
-						reqVersionLinkTypeDirection: selectedTypeDirection,
+						reqVersionLinkTypeDirection: selectedTypeDirection
 					};
 					if (self.data("edit")) {
 						params.isRelatedIdANodeId = self.data("isRelatedIdANodeId");
