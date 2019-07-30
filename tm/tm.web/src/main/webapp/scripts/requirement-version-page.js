@@ -85,10 +85,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 		function unescapeData(data) {
 			var result = {};
-			for (var property in _.keys(data)) {
-                var code = StringUtil.unescape(property);
-                var label = StringUtil.unescape(data[property]);
-                result[code] = label;
+			for (var property in data) {
+				var code = StringUtil.unescape(property);
+				var label = StringUtil.unescape(data[property]);
+				result[code] = label;
 			}
 			return result;
 		}
