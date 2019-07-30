@@ -24,7 +24,7 @@ require([ "common" ], function(common) {
 
 		$(function() {
 			WS.init();
-			RequirementSearchResultView();
+			new RequirementSearchResultView();
 		});
 
 	});
