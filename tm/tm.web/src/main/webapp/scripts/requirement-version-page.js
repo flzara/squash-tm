@@ -387,7 +387,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 						var summaryRoot = $("#add-summary-dialog > ul");
 						summaryRoot.empty();
 
-						for (var rejectionType in _.keys(summary)) {
+						for (var rejectionType in summary) {
 							var message = summaryMessages[rejectionType];
 
 							if (message) {
