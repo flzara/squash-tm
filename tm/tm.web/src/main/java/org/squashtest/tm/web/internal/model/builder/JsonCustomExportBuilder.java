@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
@@ -28,10 +29,8 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
-import org.squashtest.tm.service.campaign.CampaignFinder;
-import org.squashtest.tm.service.campaign.IterationFinder;
-import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
+import org.squashtest.tm.service.customreport.CustomReportCustomExportService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
 
@@ -53,13 +52,7 @@ public class JsonCustomExportBuilder {
 	private InternationalizationHelper i18nHelper;
 
 	@Inject
-	private CampaignFinder campaignFinder;
-
-	@Inject
-	private IterationFinder iterationFinder;
-
-	@Inject
-	private TestSuiteFinder testSuiteFinder;
+	private CustomReportCustomExportService customExportService;
 
 	@Inject
 	private CustomFieldFinderService cufFinder;
@@ -85,14 +78,12 @@ public class JsonCustomExportBuilder {
 
 	private void fillScope(CustomReportCustomExport customExport, JsonCustomReportCustomExport jsonCustomExport) {
 		List<String> stringifiedScope = new ArrayList<>();
-		for(EntityReference scopeEntity : customExport.getScope()) {
-			String scopeName = "";
-			switch(scopeEntity.getType()) {
-				case CAMPAIGN: scopeName = campaignFinder.findById(scopeEntity.getId()).getName(); break;
-				case ITERATION: scopeName = iterationFinder.findById(scopeEntity.getId()).getName(); break;
-				default: scopeName = testSuiteFinder.findById(scopeEntity.getId()).getName();
-			}
-			stringifiedScope.add(scopeName);
+		for (EntityReference scopeEntity : customExport.getScope()) {
+			String scopeEntityName = customExportService.getScopeEntityName(scopeEntity);
+			String scope = scopeEntityName.isEmpty() ? i18nHelper.internationalize(
+				"custom-export.scope.not-available-anymore", LocaleContextHolder.getLocale()) : scopeEntityName;
+
+			stringifiedScope.add(scope);
 		}
 		jsonCustomExport.setScope(stringifiedScope);
 	}

@@ -105,7 +105,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				var scope = this.model.get('scope');
 				var selectedPerimeterSpan = $('#selected-perimeter');
 
-				if(scope) {
+				if (scope && !_.isEmpty(scope)) {
 					// TODO : make it work for multi nodes selection
 					var selectedNodeName = scope[0].name;
 					selectedPerimeterSpan.text(StringUtil.unescape(selectedNodeName));
@@ -118,7 +118,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				return $.ajax({
 					method: 'GET',
 					url: router.buildURL('custom-report.custom-export.cufs'),
-					data: { entityType: type, entityId: nodeId}
+					data: { entityType: type, entityId: nodeId }
 				});
 			}
 

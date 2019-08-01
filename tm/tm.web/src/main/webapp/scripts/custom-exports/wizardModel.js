@@ -132,7 +132,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 			// Reload customExportDef into this model if it is a modification of an existing CustomExport
 			if (customExportDef) {
 				// put the name of the scope campaign in the scope attribute
-				customExportDef.scope[0].name = customExportDef.scopeCampaignName;
+				customExportDef.scope[0].name = customExportDef.scopeEntityName;
 				this.set({ scope: customExportDef.scope });
 				this.set({ selectedTreeNodes: [{ id: "Campaign-" + customExportDef.scope[0].id }] });
 
