@@ -304,7 +304,7 @@ public class TestCaseModificationController {
 		mav.addObject("milestoneConf", milestoneConf);
 
 		// RemoteAutomationRequestExtender
-		String workflowType = testCase.getProject().getAutomationWorkflowType();
+		String workflowType = testCase.getProject().getAutomationWorkflowType().getI18nKey();
 		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
 
 		boolean remoteAutomReqExists = false;

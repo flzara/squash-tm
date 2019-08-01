@@ -26,6 +26,7 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.springframework.scheduling.TaskScheduler;
 	import org.springframework.stereotype.Component;
 	import org.squashtest.tm.api.wizard.AutomationWorkflow;
+	import org.squashtest.tm.domain.project.AutomationWorkflowType;
 	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 	import javax.annotation.PostConstruct;
@@ -47,6 +48,8 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	private static final String NONE = "NONE";
 	private static final String I18N_KEY_NONE = "label.None";
 	private static final String NATIVE = "NATIVE";
+	private static final String REMOTE = "REMOTE_WORKFLOW";
+	private static final String I18N_KEY_REMOTE = "label.Remote";
 	private static final String I18N_KEY_NATIVE = "label.Native";
 
 	public static final int DEFAULT_DELAY = 30;
@@ -83,6 +86,17 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	}
 
 	@Override
+	public Map<String, String> getAutomationWorkflowsTypeFilteredByIds(Collection<String> activePluginsIds, Locale locale) {
+		Map<String, String> result = new LinkedHashMap<>();
+		result.put(NONE, i18nHelper.internationalize(I18N_KEY_NONE, locale));
+		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
+		if(plugins.size()!=0) result.put(REMOTE, i18nHelper.internationalize(I18N_KEY_REMOTE, locale));
+
+
+		return result;
+	}
+
+	@Override
 	public Collection<String> getAutomationWorkflowsIds() {
 		List<String> result = new ArrayList<>();
 		result.add(NONE);
@@ -90,6 +104,16 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		for(AutomationWorkflow workflow : plugins) {
 			result.add(workflow.getId());
 		}
+		return result;
+	}
+
+	@Override
+	public Collection<AutomationWorkflowType> getAutomationWorkflowsType() {
+		List<AutomationWorkflowType> result = new ArrayList<>();
+		result.add(AutomationWorkflowType.NONE);
+		result.add(AutomationWorkflowType.NATIVE);
+		if(plugins.size()!=0) result.add(AutomationWorkflowType.REMOTE_WORKFLOW);
+
 		return result;
 	}
 }

@@ -280,5 +280,5 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	void changeUseTreeStructureInScmRepo(long projectId, boolean activated);
 
-	boolean isProjectUsingWorkflow(long projectId, String workflowType);
+	boolean isProjectUsingWorkflow(long projectId);
 }

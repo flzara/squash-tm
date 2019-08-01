@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.project.AutomationWorkflowType
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.requirement.RequirementLibrary
@@ -726,7 +727,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "#changeAutomationWorkflow(long, String) - Should change the project automation workflow type"() {
 		given:
 			Project project = Mock()
-			project.getAutomationWorkflowType() >> "NATIVE"
+			project.getAutomationWorkflowType() >> AutomationWorkflowType.NATIVE
 			project.isBoundToTemplate() >> false
 			project.accept(_) >> true
 			genericProjectDao.getOne(22L) >> project
@@ -745,10 +746,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow"() {
 		given:
 			Project p = Mock()
-			p.getAutomationWorkflowType() >> "myWorkflow"
 			genericProjectDao.getOne(9L) >> p
+			p.getAutomationWorkflowType().getI18nKey()>>"REMOTE_WORKFLOW"
 		when:
-			def result = manager.isProjectUsingWorkflow(9L, "myWorkflow")
+			def result = manager.isProjectUsingWorkflow(9L)
 		then:
 			result == true
 	}
@@ -756,10 +757,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "#isProjectUsingWorkflow(long, String) - Should return false since the project uses another workflow"() {
 		given:
 			Project p = Mock()
-			p.getAutomationWorkflowType() >> "anotherWorkflow"
 			genericProjectDao.getOne(9L) >> p
+			p.getAutomationWorkflowType().getI18nKey()>>"NATIVE"
 		when:
-		def result = manager.isProjectUsingWorkflow(9L, "myWorkflow")
+		def result = manager.isProjectUsingWorkflow(9L)
 		then:
 		result == false
 	}

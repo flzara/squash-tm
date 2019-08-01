@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.AdministrableProject;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
@@ -1115,7 +1116,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void changeAutomationWorkflow(long projectId, String automationWorkflow) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		genericProject.setAutomationWorkflowType(automationWorkflow);
+		genericProject.setAutomationWorkflowType(AutomationWorkflowType.valueOf(automationWorkflow));
 
 		// Since allowAutomationWorkflow still exists, we have to update it consequently
 		boolean active = !automationWorkflow.equals("NONE");
@@ -1145,8 +1146,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	public boolean isProjectUsingWorkflow(long projectId, String workflowType) {
+	public boolean isProjectUsingWorkflow(long projectId) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		return workflowType.equals(genericProject.getAutomationWorkflowType());
+		String workflowType = genericProject.getAutomationWorkflowType().getI18nKey();
+		return workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey());
 	}
 }

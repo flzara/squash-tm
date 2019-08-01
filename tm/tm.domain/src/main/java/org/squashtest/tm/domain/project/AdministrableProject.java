@@ -101,5 +101,5 @@ public class AdministrableProject {
 		return project.isUseTreeStructureInScmRepo();
 	}
 
-	public String getAutomationWorkflowType() { return project.getAutomationWorkflowType(); }
+	public AutomationWorkflowType getAutomationWorkflowType() { return project.getAutomationWorkflowType(); }
 }

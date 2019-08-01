@@ -188,7 +188,7 @@ public class ProjectAdministrationController {
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
-		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType());
+		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
 		mav.addObject("availableAutomationWorkflows", automationWorkflows);
 
 		return mav;
@@ -205,7 +205,7 @@ public class ProjectAdministrationController {
 			pluginManager.findEnabledWizards(projectId)
 				.stream().map(WorkspaceWizard::getId).collect(Collectors.toList());
 
-		return workflowPluginManager.getAutomationWorkflowsMapFilteredByIds(activePlugins, locale);
+		return workflowPluginManager.getAutomationWorkflowsTypeFilteredByIds(activePlugins, locale);
 	}
 
 	@RequestMapping(value = "{projectId}/workflows")

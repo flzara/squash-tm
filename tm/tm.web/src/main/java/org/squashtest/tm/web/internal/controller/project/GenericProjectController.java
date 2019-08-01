@@ -46,6 +46,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
@@ -472,7 +473,7 @@ public class GenericProjectController {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
 		// If plugin Workflow, check if the workflow is used by the project and throw an Exception if so
 		if(AutomationWorkflow.class.isAssignableFrom(plugin.getClass())
-			&& projectManager.isProjectUsingWorkflow(projectId, pluginId)) {
+			&& projectManager.isProjectUsingWorkflow(projectId)) {
 			throw new AutomationWorkflowInUseException();
 		}
 		projectManager.disablePluginForWorkspace(projectId, plugin.getDisplayWorkspace(), pluginId);
@@ -578,11 +579,12 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
 	@ResponseBody
-	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflow) {
-		if(!workflowPluginManager.getAutomationWorkflowsIds().contains(automationWorkflow)) {
+	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflowtype) {
+		AutomationWorkflowType  automationWorkflow = AutomationWorkflowType.valueOf(automationWorkflowtype);
+		if(!workflowPluginManager.getAutomationWorkflowsType().contains(automationWorkflow)) {
 			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
 		}
-		projectManager.changeAutomationWorkflow(projectId, automationWorkflow);
+		projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=tree-structure-in-scm-repo", VALUE})

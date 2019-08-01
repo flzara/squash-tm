@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.SimpleColumnFiltering;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQueryFactory;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -422,7 +423,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 					.where(project.id.in(inProjectIds)
 						.and(request.testCase.automatable.eq(TestCaseAutomatable.Y))
 						.and(project.allowAutomationWorkflow.isTrue())
-						.and(project.automationWorkflowType.eq("NATIVE")));
+						.and(project.automationWorkflowType.eq(AutomationWorkflowType.NATIVE)));
 
 
 		return querydslRequest;

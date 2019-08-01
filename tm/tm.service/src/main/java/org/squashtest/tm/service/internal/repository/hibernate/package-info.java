@@ -531,6 +531,7 @@
 	@NamedQuery(name = "Project.findAllBoundToTemplate", query = "from Project p where p.template.id = :templateId"),
 	@NamedQuery(name = "Project.findAllIdsBoundToTemplate", query = "select p.id from Project p where p.template.id = :templateId"),
 	@NamedQuery(name = "Project.unbindAllFromTemplate", query = "update Project set template = null where template.id = :templateId"),
+	@NamedQuery(name = "Project.findTestCaseLibraryPluginBindingByIdProject", query = "Select tcl  from Project p join p.testCaseLibrary tcl where p.id = :projectId "),
 
 	//Attachement et al
 	@NamedQuery(name = "attachment.getAttachmentAndContentIdsFromList", query = "select attachment.id, content.id from AttachmentList list join list.attachments attachment join attachment.content content where list.id in (:listIds) group by attachment.id, content.id"),

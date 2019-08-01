@@ -99,7 +99,7 @@
 
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="remote-automation-request-status">
-         <f:message key="test-case.automation-status-jira.label" />
+         <f:message key="test-case.automation-status-remote.label" />
        </label>
        <div class="display-table-cell" id="remote-automation-request-status">
          <span>${ remoteReqStatusLabel }</span>

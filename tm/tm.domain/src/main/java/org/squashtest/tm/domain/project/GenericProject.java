@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -52,6 +53,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -67,6 +70,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -176,7 +180,12 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@FieldBridge(impl = BooleanBridge.class)
 	private boolean allowAutomationWorkflow = false;
 
-	private String automationWorkflowType = "NONE";
+	@NotNull
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
+	@SortableField
+	@Enumerated(EnumType.STRING)
+	private AutomationWorkflowType automationWorkflowType = AutomationWorkflowType.NONE;
 
 	private boolean useTreeStructureInScmRepo = true;
 
@@ -529,11 +538,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		this.useTreeStructureInScmRepo = useTreeStructureInScmRepo;
 	}
 
-	public String getAutomationWorkflowType() {
+	public AutomationWorkflowType getAutomationWorkflowType() {
 		return automationWorkflowType;
 	}
 
-	public void setAutomationWorkflowType(String automationWorkflowType) {
+	public void setAutomationWorkflowType(AutomationWorkflowType automationWorkflowType) {
 		this.automationWorkflowType = automationWorkflowType;
 	}
 }

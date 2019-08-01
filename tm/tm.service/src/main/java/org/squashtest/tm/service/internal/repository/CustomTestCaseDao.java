@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 import java.util.Collection;
@@ -203,5 +204,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId);
 
 	List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds);
+
+	TestCaseLibrary findWorkflowForProjectByLibaryType(Long projectId);
 
 }

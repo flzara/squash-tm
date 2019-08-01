@@ -135,6 +135,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
+	private static final String TEST_CASE = "TestCase";
 
 	@Inject
 	private TestCaseDao testCaseDao;

@@ -98,6 +98,18 @@
       <artifactId>core.testautomation.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.ehcache</groupId>

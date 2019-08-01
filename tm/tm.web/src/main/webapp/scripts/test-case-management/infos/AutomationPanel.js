@@ -67,6 +67,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						}
 
 						$('#transmit-test-case-autom-request-button').on('click', function() {
+						var isRemoteAutomationWorkflowUsed = self.settings.isRemoteAutomationWorkflowUsed;
 							$.ajax({
 								url: self.settings.urls.testCaseUrl,
 								method: 'POST',

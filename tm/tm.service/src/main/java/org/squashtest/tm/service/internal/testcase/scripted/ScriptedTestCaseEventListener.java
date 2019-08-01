@@ -27,9 +27,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
@@ -42,10 +44,14 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.servers.CredentialsProvider;
@@ -74,6 +80,10 @@ public class ScriptedTestCaseEventListener {
 
 	private static final String SPEL_ARSTATUS = "T(org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus)";
 
+	private static final String TYPE_WORKFLOW = "T(org.squashtest.tm.domain.project.AutomationWorkflowType)";
+
+	private static final String  PREFIX_NAME_PLUGIN = "henix.plugin.automation.workflow";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -91,6 +101,19 @@ public class ScriptedTestCaseEventListener {
 
 	@Inject
 	private ScmRepositoryDao scmRepositoryDao;
+
+	@Inject
+	private TestCaseDao testCaseDao;
+
+	@Inject
+	private GenericProjectManagerService projectManager;
+
+	@Inject
+	private AutomationWorkflow automationWorkflow;
+
+
+
+
 
 
 	/**
@@ -131,6 +154,34 @@ public class ScriptedTestCaseEventListener {
 			synchronizeRepository(scm, credentials);
 		}
 	}
+	/**
+	 * If Remote workflow automation is actif and newStatus is TRANSMITTED then create a new jira ticket and add remoteAutomationREquestExtender
+	 **/
+	@Order(11)
+	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED and " +
+		"#event.workflowType == " + TYPE_WORKFLOW + ".REMOTE_WORKFLOW")
+	public void remoteRemoteTickets(AutomationRequestStatusChangeEvent event) {
+		String remoteIssueKey;
+		LOGGER.debug("request status changed and type workflow isremote : create a new jira ticket and remoteRAE");
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
+		}
+
+		List<Long> requestIds = event.getAutomationRequestIds();
+		List<TestCase> listTestCase = testCaseDao.findTestCaseByAutomationRequestIds(requestIds);
+		for(TestCase tc: listTestCase){
+			remoteIssueKey = automationWorkflow.createNewTicketRemoteServer(tc);
+			if (remoteIssueKey!=null){
+				automationWorkflow.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc);
+			}else{
+
+			}
+		}
+
+
+		System.out.println("teste Listerner remoteRemoteTickets");
+	}
+
 
 	/**
 	 * Check first if the credentials for the given ScmRepository have been set, if the protocol is valid,

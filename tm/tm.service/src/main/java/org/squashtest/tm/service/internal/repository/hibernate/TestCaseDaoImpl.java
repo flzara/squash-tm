@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -500,6 +501,14 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		Query query = (Query) entityManager.createNamedQuery("testCase.findTestCaseByAutomationRequestIds");
 		query.setParameter("requestIds", requestIds);
 		return query.getResultList();
+	}
+
+
+	@Override
+	public TestCaseLibrary findWorkflowForProjectByLibaryType(Long projectId) {
+		javax.persistence.Query query = entityManager.createNamedQuery("Project.findTestCaseLibraryPluginBindingByIdProject");
+		query.setParameter("projectId", projectId);
+		return (TestCaseLibrary) query.getSingleResult();
 	}
 
 

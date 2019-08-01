@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
+
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -36,11 +38,15 @@ public interface AutomationWorkflowPluginManager {
 	 * given Project as parameter.
 	 */
 	Map<String, String> getAutomationWorkflowsMapFilteredByIds(Collection<String> activePluginsIds, Locale locale);
+	Map<String, String> getAutomationWorkflowsTypeFilteredByIds(Collection<String> activePluginsIds, Locale locale);
 
 	/**
 	 * Get the Collection the existing automation workflows represented by their ids.
 	 * @return A Collection of ids representing all the available automation workflows.
 	 */
 	Collection<String> getAutomationWorkflowsIds();
+
+	Collection<AutomationWorkflowType> getAutomationWorkflowsType();
+
 
 }

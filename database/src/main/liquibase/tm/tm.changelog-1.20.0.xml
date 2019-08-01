@@ -163,7 +163,7 @@
     <comment>Modify column ALLOW_AUTOMATION_WORKFLOW into AUTOMATION_WORKFLOW_TYPE</comment>
 
     <addColumn tableName="PROJECT">
-      <column name="AUTOMATION_WORKFLOW_TYPE" type="VARCHAR(255)" defaultValue="NONE" remarks="This column precises which workflow type is used.">
+      <column name="AUTOMATION_WORKFLOW_TYPE" type="VARCHAR(25)" defaultValue="NONE" remarks="This column precises which workflow type is used.">
         <constraints nullable="false" />
       </column>
     </addColumn>
