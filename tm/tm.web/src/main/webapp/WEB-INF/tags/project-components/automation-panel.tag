@@ -182,9 +182,7 @@
       <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-      <label>
-        <f:message key="label.warning" />
-      </label>
+      <label><f:message key="label.warning" /></label>
       <f:message key="message.testAutomationServer.noExecution.warning" />
     </p>
     <p>
@@ -197,9 +195,7 @@
       <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-      <label>
-        <f:message key="label.warning" />
-      </label>
+      <label><f:message key="label.warning" /></label>
       <f:message key="message.testAutomationServer.withExecution.warning" />
     </p>
     <p>
