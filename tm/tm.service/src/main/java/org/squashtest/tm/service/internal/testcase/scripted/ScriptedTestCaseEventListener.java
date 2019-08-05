@@ -127,6 +127,10 @@ public class ScriptedTestCaseEventListener {
 	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED")
 	public void commitWhenTransmitted(AutomationRequestStatusChangeEvent event) {
 
+		// Issue #TM-241: This event can occur after the modification of many AutomationRequests
+		// If Hibernate entities were loaded before this modification, Hibernate cache may not have been updated
+		em.clear();
+
 		LOGGER.debug("request status changed : committing test scripts to repositories if needed");
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
@@ -423,8 +427,7 @@ public class ScriptedTestCaseEventListener {
 			.join(project.scmRepository, scm) 								// condition 4
 			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
 				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-				.and(testCase.automatedTest.isNull())				// condition 3
-				.and(automationProject.canRunGherkin.isTrue())		// condition 5
+								.and(automationProject.canRunGherkin.isTrue())		// condition 4
 			)
 			.fetch();
 

@@ -37,11 +37,11 @@
  * and pre-rendered whenever possible.
  *
  * 1/ Configuration
- * 
+ *
  * The configuration is modeled after the java bean ThirdPartyServerCredentialsManagementBean.
  *
  *	{
- *		entityUrl : the url of third party server entity 
+ *		entityUrl : the url of third party server entity
  *		remoteUrl : the url of the actual remote server
  *		authPolicy :  either 'USER' and 'APP_LEVEL'
  *		availableProtos : the list of available authentication protocols
@@ -466,7 +466,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				model : model,
 				failureMessage: options.conf.failureMessage,
 				warningMessage: options.conf.warningMessage,
-				
+
 				// UI features
 				features : {
 					featureTestCredentialsButton : options.conf.featureTestCredentialsButton,
@@ -514,7 +514,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			accessTokenUrl: "",
 			userAuthorizationUrl: ""
 		}
-	
+
 	});
 
 	// ----- protocol conf views -----------------
@@ -637,7 +637,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		policySelector : true,
 		testCredentials : true,
-		
+
 		initialize : function(conf){
 			BasePanelView.prototype.initialize.call(this, conf);
 			this.policySelector = conf.features.featureAuthPolicySelection;
@@ -658,9 +658,9 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			return this.model.currentCreds();
 		},
 
-		events: function(){ 
+		events: function(){
 			var events = {
-				'click .auth-save' : 'save',
+				'click .auth-save' : 'save'
 			};
 			if (this.policySelector){
 				events['change input[name="srv-auth-policy"]'] = 'updatePolicy';
@@ -717,11 +717,11 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			var self = this;
 
 			// test before save - if that feature is enabled, otherwise return an always-resolved promise
-			var deferTest = (this.testCredentials) ? 
+			var deferTest = (this.testCredentials) ?
 					this._postCreds(testUrl, payload) :
 					this.deferSuccess();
-			
-			// now proceed with saving 
+
+			// now proceed with saving
 			deferTest.done(function(){
 				return self._postCreds(saveUrl, payload);
 			})
@@ -731,7 +731,7 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 				radio.trigger('srv-auth-creds', 'success',  translator.get('thirdpartyserver.admin.messages.save.success'));
 			});
 		},
-		
+
 		deferSuccess : function(){
 			return $.Deferred().resolve().promise();
 		}

@@ -27,9 +27,10 @@ class CallTestStepTest extends Specification {
 	def "should create a copy of step"() {
 		given:
 		TestCase callee = new TestCase(name: "callee")
+		TestCase callerTest = new TestCase(name: "caller")
 
 		and:
-		CallTestStep caller = new CallTestStep(calledTestCase: callee)
+		CallTestStep caller = new CallTestStep(calledTestCase: callee, testCase: callerTest)
 		use (ReflectionCategory) {
 			TestStep.set field: "id", of: caller, to: 10L
 		}
@@ -40,5 +41,6 @@ class CallTestStepTest extends Specification {
 		then:
 		callerCopy.id == null // transient new entity
 		callerCopy.calledTestCase == callee
+		callerCopy.testCase == callerTest
 	}
 }

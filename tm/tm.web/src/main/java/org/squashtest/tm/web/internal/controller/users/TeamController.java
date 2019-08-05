@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -68,6 +69,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,6 +94,9 @@ public class TeamController extends PartyControllerSupport {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private ConfigurationService configurationService;
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
 	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", Team.class)
@@ -172,14 +177,18 @@ public class TeamController extends PartyControllerSupport {
 				DefaultFiltering.NO_FILTERING, "").getAaData();
 
 		List<PermissionGroupModel> pgm = getPermissionGroupModels();
+		pgm.sort(Comparator.comparing(PermissionGroupModel::getDisplayName));
 		List<ProjectModel> pm = getProjectModels(teamId);
 
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
 
 		model.addAttribute("team", team);
 		model.addAttribute("users", userModel);
 		model.addAttribute("permissionList", pgm);
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
+		model.addAttribute("userLicenseInformationData", userLicenseInformation);
 
 		return "team-modification.html";
 	}

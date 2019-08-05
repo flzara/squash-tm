@@ -267,9 +267,7 @@ public class ReportController {
 		} else {
 			mav = report.buildModelAndView(viewIndex, format, crit);
 		}
-
 		return mav;
-
 	}
 
 

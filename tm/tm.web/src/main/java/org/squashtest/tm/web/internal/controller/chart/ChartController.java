@@ -152,8 +152,7 @@ public class ChartController {
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	public String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
 										@PathVariable("id") long id) {
-		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
-		chartService.updateDefinition(definition, oldDef);
+		chartService.updateDefinition(definition, id);
 		return String.valueOf(id);
 	}
 

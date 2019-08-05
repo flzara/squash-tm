@@ -20,35 +20,44 @@
  */
 package org.squashtest.tm.web.internal.controller.users;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.bugtracker.CannotConnectBugtrackerException;
 import org.squashtest.tm.service.internal.dto.json.JsonMilestone;
 import org.squashtest.tm.service.internal.security.AuthenticationProviderContext;
+import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
+import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerModificationController;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static org.squashtest.tm.domain.servers.OAuth1aCredentials.SignatureMethod;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 //XSS ok bflessel
@@ -75,6 +84,15 @@ public class UserAccountController {
 	private PartyPreferenceService partyPreferenceService;
 
 	@Inject
+	private StoredCredentialsManager credManager;
+
+	@Inject
+	private UserAccountService userAccountService;
+
+	@Inject
+	private InternationalizationHelper i18nHelper;
+
+	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
 		this.permissionFinder = permissionFinder;
 	}
@@ -91,6 +109,10 @@ public class UserAccountController {
 	public void setPartyPreferenceService(PartyPreferenceService partyPreferenceService) {
 		this.partyPreferenceService = partyPreferenceService;
 	}
+
+	private static final String BUGTRACKER_ID = "bugtrackerId";
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerModificationController.class);
+
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails() {
 		User user = userService.findCurrentUser();
@@ -99,6 +121,9 @@ public class UserAccountController {
 		Map<String, String> map  =  partyPreferenceService.findPreferences(party);
 		String bugtrackerMode= map.get(SQUASH_BUGTRACKER_MODE);
 		boolean hasLocalPassword = userService.hasCurrentUserPasswordDefined();
+
+		Map<BugTracker, ManageableCredentials> bugtrackerMap = this.getPairedBugtrackerAndManagedCredentials();
+
 
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
@@ -112,6 +137,8 @@ public class UserAccountController {
 		mav.addObject("projectPermissions", projectPermissions);
 		mav.addObject("bugtrackerMode", bugtrackerMode);
 		mav.addObject("hasLocalPassword", hasLocalPassword);
+		mav.addObject("bugtrackerCredentialsMap", bugtrackerMap);
+
 
 		// also, active milestone
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
@@ -129,7 +156,6 @@ public class UserAccountController {
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
 		mav.addObject("canManageLocalPassword", canManageLocalPassword);
-		
 
 		return mav;
 
@@ -168,5 +194,100 @@ public class UserAccountController {
 		partyPreferenceService.addOrUpdatePreferenceForCurrentUser(SQUASH_BUGTRACKER_MODE,bugtrackerMode);
 		return partyPreferenceService.findPreferenceForCurrentUser(SQUASH_BUGTRACKER_MODE);
 	}
+
+
+	/**
+	 * For all bugtrackers that the current user can access, map the bugtracker to an instance of manageable
+	 * credentials of the appropriate protocol. If the current user has no credentials for that bugtracker,
+	 * a default, empty instance will be supplied instead (ie the values are never null).
+	 *
+	 * @return
+	 */
+	private Map<BugTracker, ManageableCredentials> getPairedBugtrackerAndManagedCredentials(){
+
+		Map<BugTracker, ManageableCredentials> bugtrackerMap = new LinkedHashMap<>();
+		List<BugTracker> bugtrackers = userService.findAllUserBugTracker();
+
+		bugtrackers.sort(Comparator.comparing((BugTracker::getAuthenticationProtocol)));
+		for (BugTracker bugtracker : bugtrackers) {
+			ManageableCredentials credentials = credManager.findCurrentUserCredentials(bugtracker.getId());
+
+			if (credentials == null){
+				credentials = createDefaultCredentials(bugtracker);
+			}
+
+			bugtrackerMap.put(bugtracker,credentials);
+
+		}
+
+		return bugtrackerMap;
+
+	}
+
+	/**
+	 * This method creates default, empty instances of manageable credentials if none are defined
+	 * for the current user for that server.
+	 *
+	 * @param bugtracker
+	 * @return
+	 */
+	private ManageableCredentials createDefaultCredentials(BugTracker bugtracker) {
+		ManageableCredentials credentials;
+		switch(bugtracker.getAuthenticationProtocol()){
+
+			case BASIC_AUTH: credentials = new ManageableBasicAuthCredentials("", "");
+			break;
+
+			case OAUTH_1A: credentials = new UserOAuth1aToken("", "");
+			break;
+
+			default:
+				throw new IllegalArgumentException("AuthenticationProtocol '"+bugtracker.getAuthenticationProtocol()+"' not supported");
+
+		}
+		return credentials;
+	}
+
+	@RequestMapping(value = "bugtracker/{bugtrackerId}/credentials",params={ "username", "password"}, method =  RequestMethod.POST)
+	@ResponseBody
+	public void saveCurrentUserCredentials(@PathVariable(BUGTRACKER_ID) long bugtrackerId , @RequestParam String username,  @RequestParam char[] password){
+
+		ManageableBasicAuthCredentials credentials = new ManageableBasicAuthCredentials(username, password);
+			try {
+				userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
+				userAccountService.saveCurrentUserCredentials(bugtrackerId, credentials);
+			} catch (BugTrackerRemoteException ex) {
+				LOGGER.debug("server-app credentials test failed : ", ex);
+				throw new CannotConnectBugtrackerException(ex);
+			}
+
+
+	}
+
+	@RequestMapping(value= "bugtracker/{bugtrackerId}/credentials/validator", params = {"username", "password"}, method = RequestMethod.POST)
+	@ResponseBody
+	public void testCredentials(@PathVariable(BUGTRACKER_ID)  long bugtrackerId , @RequestParam String username, @RequestParam char[] password){
+		/*
+		 * catch BugTrackerNoCredentialsException, let fly the others
+		 */
+		ManageableBasicAuthCredentials credentials = new ManageableBasicAuthCredentials(username, password);
+
+		try{
+			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
+		}
+		catch(BugTrackerRemoteException ex){
+			// need to rethrow the same exception, with a message in the expected user language
+			LOGGER.debug("server-app credentials test failed : ", ex);
+			throw new CannotConnectBugtrackerException(ex);
+		}
+	}
+
+	@RequestMapping(value="bugtracker/{bugtrackerId}/credentials", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId) {
+		userAccountService.deleteCurrentUserCredentials(bugtrackerId);
+
+	}
+
 
 }

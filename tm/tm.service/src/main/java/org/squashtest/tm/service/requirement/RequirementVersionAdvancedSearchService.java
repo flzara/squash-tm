@@ -21,10 +21,14 @@
 package org.squashtest.tm.service.requirement;
 
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
+import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchQueryModelToConfiguredQueryConverter;
 
 import java.util.List;
 import java.util.Locale;
@@ -38,9 +42,9 @@ public interface RequirementVersionAdvancedSearchService {
 	//Querying
 
 
-	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
+	Page<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel searchModel, Pageable paging, MessageSource source, Locale locale);
 
-	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
+	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchQueryModel model, Locale locale);
 
 	List<String> findAllUsersWhoCreatedRequirementVersions(List<Long> idList);
 

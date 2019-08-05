@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.20.0.IT6-SNAPSHOT</version>
+  <version>1.21.0.IT2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -31,6 +31,8 @@
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.4.7</groovy.version>
 
+    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+
     <jasperreports.version>6.1.1</jasperreports.version>
     <java.version>1.8</java.version>
 
@@ -40,8 +42,8 @@
     <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot-maven-plugin.version>2.0.3.RELEASE</spring-boot-maven-plugin.version>
-    <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
+    <spring-boot-maven-plugin.version>2.1.6.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
@@ -344,6 +346,7 @@
                 <bannedDependencies>
                   <excludes>
                     <exclude>commons-logging:commons-logging</exclude>
+                    <exclude>org.eclipse.jdt.core.compiler:ecj</exclude>
                   </excludes>
                 </bannedDependencies>
                 <banDuplicateClasses>
@@ -677,88 +680,11 @@
     </profile>
 
     <profile>
-      <id>eclipse</id>
-      <activation>
-        <file>
-          <exists>${basedir}\.project</exists>
-        </file>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <!--This plugin's configuration is used to store Eclipse m2e settings
-							only. It has no influence on the Maven build itself. -->
-            <plugin>
-              <groupId>org.eclipse.m2e</groupId>
-              <artifactId>lifecycle-mapping</artifactId>
-              <version>1.0.0</version>
-              <configuration>
-                <lifecycleMappingMetadata>
-                  <pluginExecutions>
-                    <pluginExecution>
-                      <pluginExecutionFilter>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>aspectj-maven-plugin</artifactId>
-                        <versionRange>[1.4,)</versionRange>
-                        <goals>
-                          <goal>test-compile</goal>
-                          <goal>compile</goal>
-                        </goals>
-                      </pluginExecutionFilter>
-                      <action>
-                        <execute />
-                      </action>
-                    </pluginExecution>
-
-                    <pluginExecution>
-                      <pluginExecutionFilter>
-                        <groupId>com.springsource.bundlor</groupId>
-                        <artifactId>com.springsource.bundlor.maven</artifactId>
-                        <versionRange>[1.0.0.RC1,)</versionRange>
-                        <goals>
-                          <goal>bundlor</goal>
-                        </goals>
-                      </pluginExecutionFilter>
-                      <action>
-                        <execute />
-                      </action>
-                    </pluginExecution>
-
-                    <pluginExecution>
-                      <pluginExecutionFilter>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <versionRange>[1.2.0,)</versionRange>
-                        <goals>
-                          <goal>process</goal>
-                        </goals>
-                      </pluginExecutionFilter>
-                      <action>
-                        <execute>
-                          <runOnIncremental>false</runOnIncremental>
-                        </execute>
-                      </action>
-                    </pluginExecution>
-
-                  </pluginExecutions>
-                </lifecycleMappingMetadata>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-
-    <profile>
       <id>add-windows-hg-hooks</id>
       <activation>
         <os>
           <family>windows</family>
         </os>
-        <!--<file>-->
-        <!-- mvn appplies OR so criterion below is deactivated -->
-        <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
-        <!--</file>-->
       </activation>
       <build>
         <plugins>
@@ -785,75 +711,97 @@
     </profile>
 
     <profile>
-      <!-- Configuration for sonar / code coverage measurement using jacoco -->
-      <id>code.analysis</id>
+
+      <!--
+        This profile sets the project up for jacoco records. It should be run in a separate build from
+        the sonar-build, because there is an issue with the build order of the integration test that would
+        make the merge of unit test and integration test execution traces impossible otherwise.
+      -->
+      <id>jacoco-records</id>
       <activation>
         <property>
-          <name>code.analysis</name>
+          <name>jacoco.records</name>
         </property>
       </activation>
-      <properties>
-        <!--<sonar.groovy.jacoco.itReportPath>${sonar.jacoco.itReportPath}</sonar.groovy.jacoco.itReportPath>-->
-        <!--<sonar.groovy.jacoco.reportPath>${sonar.jacoco.reportPath}</sonar.groovy.jacoco.reportPath>-->
-        <!--<sonar.jacoco.itReportPath>${project.build.directory}/jacoco-integraiton-tests.exec</sonar.jacoco.itReportPath>-->
-        <!--<sonar.jacoco.reportPath>${project.build.directory}/jacoco-unit-tests.exec</sonar.jacoco.reportPath>-->
-      </properties>
       <build>
         <plugins>
-          <!--<plugin>-->
-          <!--<groupId>org.apache.maven.plugins</groupId>-->
-          <!--<artifactId>maven-surefire-plugin</artifactId>-->
-          <!--<configuration>-->
-          <!--<argLine>${jacoco.agent.ut.arg}</argLine>-->
-          <!--<properties>-->
-          <!--<property>-->
-          <!--<name>listener</name>-->
-          <!--<value>org.sonar.java.jacoco.JUnitListener</value>-->
-          <!--<testFailureIgnore>true</testFailureIgnore>-->
-          <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
-          <!--</property>-->
-          <!--</properties>-->
-          <!--</configuration>-->
-          <!--</plugin>-->
 
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.3</version>
-            <configuration>
-              <append>true</append>
-            </configuration>
+            <version>${jacoco-maven-plugin.version}</version>
+
             <executions>
               <execution>
-                <id>agent-for-ut</id>
+                <id>jacoco-prepare-ut-agent</id>
                 <goals>
                   <goal>prepare-agent</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>agent-for-it</id>
-                <goals>
-                  <goal>prepare-agent-integration</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>jacoco-site</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-                <phase>verify</phase>
-              </execution>
+
             </executions>
+
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+
+
+    <profile>
+      <!--
+        the profile sonar-build will preprocess any qualimetry-related resource before sonarqube scanner is run.
+      -->
+      <id>sonar-build</id>
+      <properties>
+        <sonar.exclusions>**/webapp/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**, **/scripts/jquery/**, **/scripts/sinon.js, **/scripts/require.js, **/scripts/require-min.js, **/scripts/text.js, **/styles/ckeditor/**, **/styles/spectrum/**, **/styles/switchButton/**, **/styles/jqplot/**, **/styles/images/**, **/styles/jquery/**, **/styles/bootstrap*, **/org/springframework/**</sonar.exclusions>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+
+            <executions>
+
+              <execution>
+                <id>jacoco-merge-it</id>
+                <goals>
+                  <goal>merge</goal>
+                </goals>
+                <phase>validate</phase>
+                <configuration>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${session.executionRootDirectory}</directory>
+                      <includes>
+                        <include>integration-tests/target/jacoco-it.exec</include>
+                      </includes>
+                    </fileSet>
+                    <fileSet>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>jacoco.exec</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
+                  <destFile>target/jacoco.exec</destFile>
+                </configuration>
+              </execution>
+
+            </executions>
+
           </plugin>
         </plugins>
       </build>
     </profile>
 
     <!--
-This profile forbids the javadoc plugin to fail for linter reasons.
-The proper fix (that is, really documenting parameters and such) must
-wait a bit.
--->
+      This profile forbids the javadoc plugin to fail for linter reasons.
+      The proper fix (that is, really documenting parameters and such) must
+      wait a bit.
+    -->
     <profile>
       <id>disable-java8-doclint</id>
       <activation>

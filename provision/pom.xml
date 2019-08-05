@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.20.0.IT6-SNAPSHOT</version>
+    <version>1.21.0.IT1-SNAPSHOT</version>
   </parent>
 
   <groupId>org.squashtest.tm</groupId>
@@ -30,13 +30,9 @@
     <db.url>jdbc:h2:${squashtest.rootDir}/data/squash-tm</db.url>
     <db.username>sa</db.username>
 
-    <hibernate.search.index>./indexes</hibernate.search.index>
-
     <log.dir>./logs</log.dir>
     <log.level.global>INFO</log.level.global>
     <log.level.squash>DEBUG</log.level.squash>
-
-    <lucene.dir>${project.build.directory}/luceneindexes</lucene.dir>
 
     <master.changelog>${db.resources.dir}/sample/sample-db.changelog.xml</master.changelog>
     <master.emptychangelog>${db.resources.dir}/global.changelog-master.xml</master.emptychangelog>

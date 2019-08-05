@@ -183,4 +183,5 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createFromItemsAndTestSuite(List<Long> testPlanIds, long testSuiteId);
 
+
 }

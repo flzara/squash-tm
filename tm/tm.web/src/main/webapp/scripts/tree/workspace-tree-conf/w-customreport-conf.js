@@ -47,7 +47,7 @@ define(function () {
 							"valid_children": "none"
 						},
 						"folder": {
-							"valid_children": ["report", "chart", "dashboard", "folder"]
+							"valid_children": ["report", "chart", "dashboard", "custom-export", "folder"]
 						},
 						"drive": {
 							"valid_children": ["report", "chart", "dashboard", "folder", "custom-export"]

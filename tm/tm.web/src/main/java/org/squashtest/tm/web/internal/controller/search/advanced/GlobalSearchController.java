@@ -198,14 +198,17 @@ public abstract class GlobalSearchController {
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		if (activeMilestone.isPresent()) {
-			AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
+			AdvancedSearchListFieldModel milestoneIds = new AdvancedSearchListFieldModel();
 			AdvancedSearchSingleFieldModel activeMilestoneMode = new AdvancedSearchSingleFieldModel();
+
 			List<String> milestones = new ArrayList<>();
 			milestones.add(activeMilestone.get().getId().toString());
-			model.setValues(milestones);
+
+			milestoneIds.setValues(milestones);
 			activeMilestoneMode.setValue("true");
-			searchModel.addField("milestones.id", model);
-			searchModel.addField("activeMilestoneMode", activeMilestoneMode);
+
+			searchModel.addField("milestones.id", milestoneIds);
+			searchModel.addField("searchByMilestone", activeMilestoneMode);
 		}
 	}
 

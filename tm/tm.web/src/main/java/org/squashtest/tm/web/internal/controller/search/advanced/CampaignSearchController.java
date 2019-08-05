@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.search.advanced;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +38,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -51,15 +54,19 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -217,10 +224,12 @@ public class CampaignSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, campaignSearchResultMapper, (String key)-> key);
 
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder =
-			campaignAdvancedSearchService.searchForIterationTestPlanItem(searchModel, paging, locale);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, campaignSearchResultMapper.getMappedKeys(), searchModel);
+
+		Page<IterationTestPlanItem> holder =
+			campaignAdvancedSearchService.searchForIterationTestPlanItem(queryModel, paging, locale);
 
 		return new CampaignSearchResultDataTableModelBuilder(locale, getMessageSource(), getPermissionService())
 			.buildDataModel(holder, params.getsEcho());
@@ -244,4 +253,5 @@ public class CampaignSearchController extends GlobalSearchController {
 	protected MultiMap mapIdsByType(String[] openedNodes) {
 		return JsTreeHelper.mapIdsByType(openedNodes);
 	}
+
 }

@@ -90,26 +90,31 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 
 			var	tpid = row['itpi-id'];
 			var itId = row['iteration-id'];
-			
+
 			var payload = {
 				context : {
-					type: 'ITERATION',
+				  type: 'ITERATION',
 					id : itId
 				},
-				testPlanSubsetIds : [tpid]
+			  testPlanSubsetIds : [tpid]
 			};
-			
-			var url = squashtm.app.contextRoot + "automated-suites/preview";
 
-			$.ajax({
-				url : url,
-				dataType :'json',
-				contentType : 'application/json', 
-				type : 'post',
-				data : JSON.stringify(payload)
-			})
-			.done(function(suite) {
-				squashtm.context.autosuiteOverview.start(suite);
+			updateTAScript(itId, tpid).done(function(map){
+				if (map[tpid] !== undefined){
+					$("#campaign-search-result-table").squashTable().refresh();
+					$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+				} else {
+					var url = squashtm.app.contextRoot + "automated-suites/preview";
+					$.ajax({
+						url: url,
+						dataType: 'json',
+						contentType : 'application/json',
+						type: 'post',
+						data : JSON.stringify(payload)
+					}).done(function(suite) {
+							squashtm.context.autosuiteOverview.start(suite);
+					});
+				}
 			});
 
 		},
@@ -174,6 +179,19 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			this.$el.squashTable().fnDraw(false);
 		}
 	});
+
+	function updateTAScript(itId, tpId) {
+	 var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+		return $.ajax({
+			type : "POST",
+			url : associateUrl,
+			dataType : "json",
+			data : {	testPlanItemsIds :[tpId],
+				iterationId : itId},
+			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+	}
 
 	return CampaignSearchResultTable;
 });

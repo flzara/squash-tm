@@ -50,6 +50,7 @@ import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.RecordMapper;
 import org.jooq.Row;
+import org.jooq.TXTFormat;
 import org.jooq.Table;
 import org.jooq.XMLFormat;
 import org.jooq.exception.DataTypeException;
@@ -109,6 +110,36 @@ public class StubJooqRecord implements Record {
 
 	@Override
 	public void formatJSON(OutputStream outputStream) throws IOException {
+
+	}
+
+	@Override
+	public String format() {
+		return null;
+	}
+
+	@Override
+	public String format(TXTFormat txtFormat) {
+		return null;
+	}
+
+	@Override
+	public void format(OutputStream outputStream) throws IOException {
+
+	}
+
+	@Override
+	public void format(OutputStream outputStream, TXTFormat txtFormat) throws IOException {
+
+	}
+
+	@Override
+	public void format(Writer writer) throws IOException {
+
+	}
+
+	@Override
+	public void format(Writer writer, TXTFormat txtFormat) throws IOException {
 
 	}
 

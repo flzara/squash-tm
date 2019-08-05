@@ -299,11 +299,14 @@ public class IssueDaoImpl implements CustomIssueDao {
 	@Override
 	@SuppressWarnings(UNCHECKED)
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter) {
-		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase", sorter);
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue)  " +
+											" from Execution ex join ex.issues Issue " +
+											" join ex.testPlan tp join tp.referencedTestCase tc " +
+											" where tc = :testCase", sorter);
 
 		Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("testCase", testCase);
 		PagingUtils.addPaging(query, sorter);
-
+		
 		return query.list();
 	}
 

@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -55,9 +56,9 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -116,9 +117,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private UserDao userDao;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private UserAccountService userService;
 
 	@Inject
@@ -153,6 +151,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -264,8 +265,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			// TODO somewhat useless, above "if" branch could handle both cases
 			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
-
-		indexationService.reindexTestCase(testCase.getId());
 	}
 
 	@PreventConcurrent(entityType = Iteration.class, paramName = ITERATION_ID)
@@ -292,6 +291,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			iteration.addTestPlan(itp);
 			iterationTestPlanDao.save(itp);
 		}
+		auditModificationService.updateAuditable((AuditableMixin)iteration);
 	}
 
 	@Override
@@ -383,10 +383,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		deletionHandler.deleteIterationTestPlanItem(item);
 
-		// unless the test case was deleted, we need to re-index its statistics
-		if (testCase != null) {
-			indexationService.reindexTestCase(testCase.getId());
-		}
+		auditModificationService.updateAuditable((AuditableMixin)iteration);
 	}
 
 	@Override

@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +40,6 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -71,7 +69,6 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -188,9 +185,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private AttachmentManagerService attachmentManagerService;
 
 	@Inject
@@ -227,14 +221,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} name from '{}' to '{}' ", testCase.getId(), testCase.getName(), newName);
 
 		testCaseManagementService.renameNode(testCaseId, newName);
-
 		eventPublisher.publishEvent(new TestCaseNameChangeEvent(testCaseId, newName));
 
-		LOGGER.trace("reindexing");
-		// [Issue 6337] sorry ma, they forced me to
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 
@@ -247,14 +235,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} reference from '{}' to '{}' ", testCase.getId(), testCase.getReference(), reference);
 
 		testCase.setReference(reference);
-
 		eventPublisher.publishEvent(new TestCaseReferenceChangeEvent(testCaseId, reference));
 
-		LOGGER.trace("reindexing");
-		// [Issue 6337] sorry ma, they forced me to
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
 	}
 
 	@Override
@@ -263,19 +245,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		LOGGER.debug("changing test case #{} importance from '{}' to '{}' ", testCase.getId(), testCase.getImportance(), importance);
 		testCase.setImportance(importance);
-		reindexItpisReferencingTestCase(testCase);
-		// Issue #6776 : it seems that the more we fix it the more we break it...
-		indexationService.batchReindexTc(Lists.newArrayList(testCase.getId()));
-	}
-
-	private void reindexItpisReferencingTestCase(TestCase testCase) {
-		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
-		List<Long> itpiIds = new ArrayList();
-		for (IterationTestPlanItem itpi : itpis) {
-			itpiIds.add(itpi.getId());
-		}
-		LOGGER.trace("reindexing");
-		indexationService.batchReindexItpi(itpiIds);
 	}
 
 	@Override
@@ -311,7 +280,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		LOGGER.debug("adding a new action step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-
+		newTestStep.setTestCase(parentTestCase);
 		testStepDao.persist(newTestStep);
 
 		if (index == STEP_LAST_POS){
@@ -359,7 +328,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, 25));
+			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, Math.min(newAction.length(),25)));
 		}
 
 		testStep.setAction(newAction);
@@ -372,7 +341,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, 25));
+			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, Math.min(newExpectedResult.length(),25)));
 		}
 
 		testStep.setExpectedResult(newExpectedResult);
@@ -550,7 +519,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStepVisitor visitor = new TestStepVisitor() {
 			@Override
 			public void visit(ActionTestStep visited) {
-				attachmentManagerService.copyAttachments(visited);
+				attachmentManagerService.copyContentsOnExternalRepository(visited);
 			}
 
 			@Override
@@ -663,6 +632,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
+		Collection<TestAutomationProject> taProjects = extractAutomationProject(testCase);
+
+		return taService.listTestsInProjects(taProjects);
+	}
+
+	private Collection<TestAutomationProject> extractAutomationProject(TestCase testCase){
+
 		Collection<TestAutomationProject> taProjects = testCase.getProject().getTestAutomationProjects();
 
 		if (LOGGER.isTraceEnabled()){
@@ -670,7 +646,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.trace("involved test automation projects are : {}", taProjectIds);
 		}
 
-		return taService.listTestsInProjects(taProjects);
+		return taProjects;
 	}
 
 	@Override
@@ -966,7 +942,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			} else {
 
 				Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
-
+				/*TM-13: Màj is-Manuel = true */
+				requestDao.updateIsManual(testCaseId, true);
 				// once it's okay we commit the test association
 				return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
 			}
@@ -974,6 +951,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName) {
+			return bindAutomatedTest(testCaseId, taProjectId, testName);
 	}
 
 	@Override
@@ -1145,8 +1127,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				createRequestForTestCase(testCaseId, null);
 			}
 		}
-		reindexItpisReferencingTestCase(tc);
-		indexationService.reindexTestCase(testCaseId);
 		return tc.getProject().isAllowAutomationWorkflow();
 	}
 
@@ -1311,6 +1291,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		User currentUser = userAccountService.findCurrentUser();
 		request.setCreatedBy(currentUser);
 
+		//TM-13: setting isManual depending on test case's automated test value
+		if(testCase.getAutomatedTest()!=null) {
+			request.setManual(true);
+		}
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
 	}

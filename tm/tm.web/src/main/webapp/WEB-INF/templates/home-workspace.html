@@ -57,7 +57,9 @@
         testCaseStatus : /*[[${testCaseStatus}]]*/{},
         requirementStatus : /*[[${requirementStatus}]]*/{},
         requirementCriticality : /*[[${requirementCriticality}]]*/{},
-        executionStatus : /*[[${executionStatus}]]*/{}
+        executionStatus : /*[[${executionStatus}]]*/{},
+        userLicenseInformation: /*[[${userLicenseInformation}]]*/,
+        dateLicenseInformation: /*[[${dateLicenseInformation}]]*/
       };
 
 
@@ -95,6 +97,18 @@
             <input type="button" th:attr="value=#{workspace.home.label.dashboard},title=#{workspace.home.title.dashboard}" id="show-favorite-dashboard" class="sq-btn btn-sm" />
           </div>
         <div class="unsnap"></div>
+      </div>
+
+      <div id="information-block" class="not-displayed" th:if="${sec.hasRole('ROLE_ADMIN') && ((userLicenseInformation != null  && userLicenseInformation != '') || dateLicenseInformation != null)}
+                                         or ${userLicenseInformation != null && userLicenseInformation.contains('false')} or ${dateLicenseInformation != null && dateLicenseInformation < 0}">
+        <div id="information-block-wrapper" class="ui-widget ui-widget-content ui-corner-all">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-warning-signal"></div>
+            </div>
+            <div id="information-block-content" class="display-table-cell"></div>
+          </div>
+        </div>
       </div>
 
       <div id="home-content">

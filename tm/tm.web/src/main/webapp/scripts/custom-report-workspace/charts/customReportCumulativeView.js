@@ -88,7 +88,7 @@ define(["jquery", "./abstractCustomReportChart",
 						tickOptions:{
 							gridStyle : {
 								lineDash : [5],
-								strokeStyle : "#c3c3c3",
+								strokeStyle : "#c3c3c3"
 							},
 							markStyle : {
 								lineDash : [5],

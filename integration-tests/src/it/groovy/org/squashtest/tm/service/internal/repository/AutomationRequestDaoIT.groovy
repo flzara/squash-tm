@@ -257,6 +257,32 @@ class AutomationRequestDaoIT extends DbunitDaoSpecification{
 		page.content.collect {it.id } as Set == [-4L, -2L, -1L] as Set
 	}
 
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should update isManual attribute"(){
+		given:
+		Long automationRequestId = -2L
+
+		when:
+		requestDao.updateIsManual(automationRequestId, false)
+
+		then:
+		AutomationRequest result = requestDao.findById(automationRequestId).get()
+		result.isManual == false
+	}
+
+	@DataSet("AutomationRequestDaoIT.sample.xml")
+	def "should update conflictAssociation attribute"(){
+		given:
+		Long automationRequestId = -2L
+		String conflictAssociationValue = "toto, titi"
+
+		when:
+		requestDao.updateConflictAssociation(automationRequestId, conflictAssociationValue)
+
+		then:
+		AutomationRequest result = requestDao.findById(automationRequestId).get()
+		result.conflictAssociation == conflictAssociationValue
+	}
 
 
 

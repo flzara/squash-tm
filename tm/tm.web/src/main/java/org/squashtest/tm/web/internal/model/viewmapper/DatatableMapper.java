@@ -21,6 +21,9 @@
 package org.squashtest.tm.web.internal.model.viewmapper;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @param <KEY>
  */
@@ -65,6 +68,13 @@ public interface DatatableMapper<KEY> {
 	 * 
 	 */
 	String getMapping(KEY key);
+
+	/**
+	 * Returns the mapped attributes, in the order of registration.
+	 *
+	 * @return
+	 */
+	List<KEY> getMappedKeys();
 	
 	public static interface Mapping{
 		

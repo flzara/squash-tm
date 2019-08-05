@@ -20,15 +20,9 @@
  */
 package org.squashtest.tm.domain.tf.automationrequest;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -43,6 +37,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -54,7 +49,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "AUTOMATION_REQUEST")
-@Indexed
 public class AutomationRequest implements Identified {
 
 	@Id
@@ -66,9 +60,6 @@ public class AutomationRequest implements Identified {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUEST_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	private AutomationRequestStatus requestStatus = AutomationRequestStatus.WORK_IN_PROGRESS;
 
 	@Column(name = "TRANSMITTED_ON")
@@ -102,6 +93,37 @@ public class AutomationRequest implements Identified {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
+
+	/*TM-13*/
+	@Column(name="CONFLICT_ASSOCIATION")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	private String conflictAssociation = "";
+
+	/*Tm-13: true if testCase's TA script is from a manual association*/
+	@Column(name= "IS_MANUAL")
+	private boolean isManual;
+
+	public String getConflictAssociation() {
+		if(conflictAssociation==null){
+			return "";
+		}
+		return conflictAssociation;
+	}
+
+	public void setConflictAssociation(String conflictAssociation) {
+		this.conflictAssociation = conflictAssociation;
+	}
+
+	public boolean isManual() {
+		return isManual;
+	}
+
+	public void setManual(boolean manual) {
+		isManual = manual;
+	}
+
+
 
 	@OneToOne(mappedBy = "automationRequest", optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private RemoteAutomationRequestExtender remoteAutomationRequestExtender;

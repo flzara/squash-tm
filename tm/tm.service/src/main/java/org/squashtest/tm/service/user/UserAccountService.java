@@ -20,13 +20,19 @@
  */
 package org.squashtest.tm.service.user;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.dto.UserDto;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {
@@ -96,5 +102,14 @@ public interface UserAccountService {
 
 	// Feature 6763 - Add a new method for updating the user's last connection date at each authentication success.
 	void updateUserLastConnectionDate();
+
+	List<BugTracker> findAllUserBugTracker();
+
+	void saveCurrentUserCredentials(long serverId, ManageableCredentials credentials);
+
+	void testCurrentUserCredentials(long bugtrackerId, ManageableCredentials credentials);
+
+	void deleteCurrentUserCredentials(long serverId);
+
 
 }

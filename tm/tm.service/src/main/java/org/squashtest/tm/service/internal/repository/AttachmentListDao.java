@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.jooq.Record2;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -30,4 +31,14 @@ public interface AttachmentListDao {
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
 
 	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
+
+	/**
+	 * Find the associated auditable entity, among test case, campaign and requirement version, associated to the given attachment list.
+	 * Record object return by Jooq is enough to further exploitation.
+	 * @param attachmentListId the given attachment list id
+	 * @return a jooq's {@link Record2} object or null if the associated entity is not from the eligible type (test case, campaign, requirement version).
+	 * First component is field 'entity_name' and is the name of the entity associated to the attachment list (test_case, campaign or requirement_version).
+	 * Second component is field 'entity_id' and is the id of the associated entity
+	 */
+	Record2<String, Long> findAuditableAssociatedEntityIfExists(Long attachmentListId);
 }

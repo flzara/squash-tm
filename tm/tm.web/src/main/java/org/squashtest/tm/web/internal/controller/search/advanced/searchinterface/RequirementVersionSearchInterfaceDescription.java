@@ -180,7 +180,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		panel.addCssClass("search-icon-associations");
 
 		SearchInputFieldModel testcasesField = new SearchInputFieldModel("testcases", getMessageSource()
-				.internationalize("search.requirement.association.testcase.label", locale), RANGE);
+				.internationalize("search.requirement.association.testcase.label", locale), NUMERICRANGE);
 		panel.addField(testcasesField);
 
 		SearchInputFieldModel childRequirementsField = new SearchInputFieldModel("requirement.children",

@@ -173,8 +173,6 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 		ChartDefinition childChart = childChartNode.getEntity()
 		childChart.getId() != -1L
 		childChart.getCustomReportLibrary().getId().equals(-2L)
-		ChartQuery chartQuery = childChart.getQuery()
-		chartQuery.id != originalchart.getQuery().id
 
 
 		//checking that all linked entities are properly copied and not the original one relinked
@@ -372,8 +370,6 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 		ChartDefinition childChart = childChartNode.getEntity()
 		childChart.getId() == -1L
 		childChart.getCustomReportLibrary().getId().equals(-2L)
-		ChartQuery chartQuery = childChart.getQuery()
-		chartQuery.id == originalchart.getQuery().id
 
 
 		//checking that all linked entities are properly copied and not the original one relinked

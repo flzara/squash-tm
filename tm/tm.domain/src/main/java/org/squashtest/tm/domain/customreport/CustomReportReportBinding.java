@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.customreport;
 
-import org.hibernate.search.annotations.DocumentId;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -43,7 +42,6 @@ public class CustomReportReportBinding implements Identified {
 	@Column(name = "CRRB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_report_report_binding_crrb_id_seq")
 	@SequenceGenerator(name = "custom_report_report_binding_crrb_id_seq", sequenceName = "custom_report_report_binding_crrb_id_seq", allocationSize = 1)
-	@DocumentId
 	private Long id;
 
 	@NotNull

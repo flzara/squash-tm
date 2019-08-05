@@ -81,6 +81,8 @@ public final class Messages {
 	public static final String ERROR_REQUIREMENT_NOT_EXISTS = "message.import.log.error.requirement.notExists";
 	public static final String ERROR_REQ_USER_NOT_FOUND = "message.import.log.error.requirement.userNotFound";
 	public static final String ERROR_REQUIREMENT_VERSION_NULL = "message.import.log.error.requirement.version.null";
+	public static final String ERROR_WRONG_UUID_FORMAT = "message.import.log.error.tc.uuid.wrongFormat";
+	public static final String ERROR_ALREADY_EXISTING_UUID = "message.import.log.error.tc.uuid.alreadyExisting";
 
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";

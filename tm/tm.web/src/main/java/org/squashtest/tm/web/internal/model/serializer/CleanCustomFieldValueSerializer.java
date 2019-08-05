@@ -32,7 +32,8 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import java.io.IOException;
 
-public class CleanCustomFieldValueSerializer extends JsonSerializer<String> {
+public class
+CleanCustomFieldValueSerializer extends JsonSerializer<String> {
 
 	@Override
 	public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {

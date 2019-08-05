@@ -135,7 +135,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 		 */
 		isUpdatingAnExistingExport : function () {
 			return this.model.get("customExportDef") !== null;
-		},
+		}
 
 		// - Check if previous steps are valid
 

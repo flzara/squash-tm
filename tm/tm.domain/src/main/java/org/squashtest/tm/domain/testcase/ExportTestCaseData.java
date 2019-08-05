@@ -44,6 +44,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private ExportTestStepData lastBuildStepData;
 	private String lastModifiedBy = "";
 	private Date lastModifiedOn ;
+	private String uuid;
 
 	public ExportTestCaseData() {
 		super();
@@ -60,6 +61,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		AuditableMixin audit = (AuditableMixin) testCase;
 		this.lastModifiedBy = audit.getLastModifiedBy();
 		this.lastModifiedOn = audit.getLastModifiedOn();
+		this.uuid = testCase.getUuid();
 		formatSteps(testCase);
 	}
 
@@ -214,5 +216,13 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 
 	public void setLastModifiedOn(Date lastModifiedOn) {
 		this.lastModifiedOn = lastModifiedOn;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.20.0.IT6-SNAPSHOT</version>
+    <version>1.21.0.IT1-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
@@ -14,6 +14,13 @@
     run it explicitely</description>
 
   <properties>
+
+    <!--
+     this is the argument lines for maven-failsafe-plugin.
+     It is declared this way to make it work with jacoco,
+     see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
+     -->
+    <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
     <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
     <database.dialect>h2</database.dialect>
     <database.drivername>org.h2.Driver</database.drivername>
@@ -42,6 +49,7 @@
 
     <skipITs>false</skipITs>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+
   </properties>
 
   <dependencyManagement>
@@ -289,10 +297,12 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
-          <!--threadCount>1</threadCount>
-          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine-->
+          <!--threadCount>1</threadCount> -->
 
-          <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+          <!--
+            Don't configure 'argLine' here ! Please use the <argLine> defined in the <properties> section
+            An explanation will be supplied there
+          -->
 
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
@@ -326,22 +336,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>sonar</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <configuration>
-                <argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.file.path}</argLine>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
 
     <profile>
       <id>h2.windows</id>
@@ -533,27 +527,44 @@
     </profile>
 
     <profile>
-      <id>code.analysis</id>
+      <id>jacoco-records</id>
       <activation>
         <property>
-          <name>code.analysis</name>
+          <name>jacoco.records</name>
         </property>
       </activation>
+
       <build>
         <plugins>
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+
+            <executions>
+              <execution>
+                <id>jacoco-prepare-it-agent</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <!--
+              further configuration of failsafe, that will make it look like surefire to sonarqube.
+            -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
-              <!-- The destination file for the code coverage report has to be set to the same value
-                   in the parent pom and in each module pom. Then JaCoCo will add up information in
-                   the same report, so that, it will give the cross-module code coverage. -->
-              <destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
             </configuration>
           </plugin>
-        </plugins>
 
+        </plugins>
       </build>
+
     </profile>
   </profiles>
 

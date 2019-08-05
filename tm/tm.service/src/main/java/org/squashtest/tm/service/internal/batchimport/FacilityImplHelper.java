@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 final class FacilityImplHelper {
 
@@ -93,6 +94,10 @@ final class FacilityImplHelper {
 
 		if (testCase.isImportanceAuto() == null) {
 			testCase.setImportanceAuto(Boolean.FALSE);
+		}
+
+		if (testCase.getUuid() == null) {
+			testCase.setUuid(UUID.randomUUID().toString());
 		}
 
 	}

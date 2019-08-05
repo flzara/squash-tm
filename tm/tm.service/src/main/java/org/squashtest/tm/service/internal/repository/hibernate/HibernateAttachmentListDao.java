@@ -21,21 +21,35 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.Iteration;
+import org.squashtest.tm.jooq.domain.tables.Resource;
+import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.TestSuite;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import static org.jooq.impl.DSL.inline;
+
 
 @Repository
 public class HibernateAttachmentListDao implements AttachmentListDao {
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Inject
+	private DSLContext DSL;
 
 	@Override
 	public AttachmentList getOne(Long id) {
@@ -61,4 +75,33 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			.where(req.attachmentList.id.eq(attachmentListId))
 			.fetchOne();
 	}
+
+	@Override
+	public Record2<String, Long> findAuditableAssociatedEntityIfExists(Long attachmentListId) {
+		Record2<String, Long> result = DSL.select(inline("test_case").as("entity_name"), TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID.as("entity_id"))
+			.from(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE)
+			.where(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			.union(
+				DSL.select(inline("campaign").as("entity_name"), CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.CLN_ID.as("entity_id"))
+					.from(CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE)
+					.where(CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline("requirement_version").as("entity_name"), Resource.RESOURCE.RES_ID.as("entity_id"))
+					.from(Resource.RESOURCE)
+					.where(Resource.RESOURCE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline("iteration").as("entity_name"), Iteration.ITERATION.ITERATION_ID.as("entity_id"))
+					.from(Iteration.ITERATION)
+					.where(Iteration.ITERATION.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline("test_suite").as("entity_name"), TestSuite.TEST_SUITE.ID.as("entity_id"))
+					.from(TestSuite.TEST_SUITE)
+					.where(TestSuite.TEST_SUITE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			).fetchOne();
+		return result;
+	}
+
 }

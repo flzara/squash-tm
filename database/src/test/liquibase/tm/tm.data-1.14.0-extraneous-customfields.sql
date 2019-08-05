@@ -13,7 +13,7 @@ insert into CUSTOM_REPORT_LIBRARY(crl_id, attachment_list_id) values (1, 900);
 
  insert into PROJECT(project_id, name, created_by, created_on, attachment_list_id, req_categories_list, tc_natures_list, tc_types_list,
 tcl_id, cl_id, rl_id, crl_id)
-values (1, 'project', 'admin', '2016-06-29', 900, -1, -2, -3, 1, 1, 1, 1);
+values (1, 'project', 'admin', '2016-06-29', 900, 1, 2, 3, 1, 1, 1, 1);
 
 -- create a couple of custom fields
 -- first a combobox, second a tag list
@@ -44,8 +44,8 @@ values (-1, 'tc-6340-fine', 'admin', '2016-06-29', 1, 900),
         (-2, 'tc-6340-wrong', 'admin', '2016-06-29', 1, 900);
 
 insert into TEST_CASE(tcln_id, version, tc_nature, tc_type, prerequisite)
-values (-1, 1, -12, -20, ''),
-        (-2, 1, -12, -20, '');
+values (-1, 1, 12, 20, ''),
+        (-2, 1, 12, 20, '');
 
 -- and the steps
 

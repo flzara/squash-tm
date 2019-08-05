@@ -50,6 +50,7 @@ import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -116,7 +117,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	private DSLContext DSL;
 
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 
 	@Override
@@ -496,6 +497,24 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	public List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds) {
 		Query query = (Query) entityManager.createNamedQuery("testCase.findTestCaseByAutomationRequestIds");
 		query.setParameter("requestIds", requestIds);
+		return query.getResultList();
+	}
+	
+	public TestCase findTestCaseByUuid(String uuid) {
+		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findTestCaseByUuid");
+		query.setParameter("uuid", uuid);
+		try {
+			TestCase result = (TestCase) query.getSingleResult();
+			return result;
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<TestCase> findAllByIdsWithProject(List<Long> testCaseIds) {
+		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findAllByIdsWithProject");
+		query.setParameter("tcIds", testCaseIds);
 		return query.getResultList();
 	}
 

@@ -257,6 +257,15 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	AutomatedTest bindAutomatedTestByAutomationProgrammer(Long testCaseId, String testPath);
 
+	/**
+	 * Same than {@link #bindAutomatedTest(Long, Long, String)}, minus the hibernate PreAuthorize annotation check.
+	 * @param testCaseId
+	 * @param taProjectId
+	 * @param testName
+	 * @return
+	 */
+	AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName);
+
 	Collection<TestAutomationProjectContent> findAssignableAutomationTestsToAutomationProgramer(long testCaseId);
 
 

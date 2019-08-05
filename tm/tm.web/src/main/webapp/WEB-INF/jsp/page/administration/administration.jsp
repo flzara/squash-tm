@@ -35,14 +35,25 @@
 <c:url var="customFieldsUrl"          value="/administration/custom-fields" />
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
 <c:url var="scmServerUrl"             value="/administration/scm-servers" />
-<c:url var="indexUrl"                 value="/administration/indexes" />
 <c:url var="milestoneUrl"             value="/administration/milestones" />
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
 <c:url var="logfileUrl"               value="/administration/log-file" />
 
+<c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
+<c:set var="dateLicenseInformation"   value="${dateLicenseInformation}" />
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="<c:url value='/scripts/require-min.js' />" data-main="scripts/administration"></script>
 <layout:info-page-layout titleKey="label.administration">
+
   <jsp:attribute name="head">
+    <script type="text/javascript">
+      var squashtm = squashtm || {};
+      squashtm.app.userLicenseInformation = "${userLicenseInformation}";
+      squashtm.app.dateLicenseInformation = "${dateLicenseInformation}";
+    </script>
     <comp:sq-css name="squash.grey.css" />
     <comp:sq-css name="squash.core.override.css" />
   </jsp:attribute>
@@ -55,6 +66,19 @@
 
   <jsp:attribute name="informationContent">
     <div id="admin-pane">
+      <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
+      <c:if test="${(isAdmin and (not empty userLicenseInformation or not empty dateLicenseInformation)) or (not empty userLicenseInformation and userLicenseInformation.contains('false')) or (not empty dateLicenseInformation and dateLicenseInformation < 0)}">
+      <div id="information-block">
+        <div id="information-block-wrapper" class="ui-widget ui-widget-content ui-corner-all">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-warning-signal"></div>
+            </div>
+            <div id="information-block-content" class="display-table-cell"></div>
+          </div>
+        </div>
+      </div>
+      </c:if>
       <div id="admin-link-pane">
 
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
@@ -109,11 +133,6 @@
           <span class="admin-section-label"><f:message key="label.scmServersManagement"/></span>
         </a>
 
-        <a href="${ indexUrl }" class="unstyledLink">
-          <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
-          <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
-        </a>
-
         <a id="fake-link" class="unstyledLink"></a>
 
         </sec:authorize>
@@ -160,23 +179,6 @@
               </div>
             </div>
           </c:if>
-        </div>
-        <div class="admin-stats-table">
-          <label><f:message key="label.lastIndexing" /></label>
-          <div>
-            <div>
-              <label><f:message key="label.requirements" /></label>
-              <span id="req-last-index">
-                <comp:date value="${ adminStats.requirementIndexingDate }" noValueKey="label.lower.Never" />
-              </span>
-            </div>
-            <div>
-              <label><f:message key="label.testCases" /></label>
-              <span id="tc-last-index">
-                <comp:date value="${ adminStats.testcaseIndexingDate }" noValueKey="label.lower.Never" />
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 

@@ -24,6 +24,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +40,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.NotAllowedByLicenseException;
 import org.squashtest.tm.exception.user.ActiveUserDeleteException;
 import org.squashtest.tm.exception.user.ChartOwnerDeleteException;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
@@ -70,10 +72,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+import static org.squashtest.tm.domain.users.UsersGroup.ADMIN;
 
 /**
  *
@@ -111,6 +116,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private ObjectAclService aclService;
 
 	@Inject
+	private MessageSource messageSource;
+
+	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
 
 	@Inject
@@ -125,6 +133,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private EntityManager em;
 
 	private static final String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
+	private static final String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
+	private static final String ACTIVATED_USER_EXCESS = "activated.user.excess";
 	private static final String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 	private static final String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
 	private static final String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
@@ -200,10 +210,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addUser(User user, long groupId, String password) {
-		// FIXME : check the auth login is available when time has come
-		createUserWithoutCredentials(user, groupId);
-		adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			// FIXME : check the auth login is available when time has come
+			createUserWithoutCredentials(user, groupId);
+			adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
 	}
 
 	@Override
@@ -231,6 +246,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.activateUser(userId);
 		User user = userDao.getOne(userId);
 		adminAuthentService.activateAccount(user.getLogin());
+		// TM-547
+		aclService.updateDerivedPermissions(userId);
+
 		aclService.refreshAcls();
 	}
 
@@ -313,6 +331,55 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	public String findWelcomeMessage() {
 		return configurationService.findConfiguration(WELCOME_MESSAGE_KEY);
+	}
+
+	@Override
+	public Map<String, String> findInformation() {
+		Map<String, String> result = new HashMap<>();
+		String expiration = configurationService.findConfiguration(PLUGIN_LICENSE_EXPIRATION);
+		String excess = configurationService.findConfiguration(ACTIVATED_USER_EXCESS);
+
+		if (hasInformation(expiration, excess)) {
+			User current = userAccountService.findCurrentUser();
+			boolean isAdmin = ADMIN.equals(current.getGroup().getQualifiedName());
+			if (isAdmin) {
+				if (expiration != null && !expiration.isEmpty()) {
+					result = retrieveInformationDate(result, expiration);
+				}
+				if (excess != null && !excess.isEmpty()) {
+					result = retrieveInformationUser(result, excess);
+				}
+			}
+		}
+		return result;
+	}
+
+	private Map<String, String> retrieveInformationDate(Map<String, String> result, String expiration) {
+		String messageDate;
+		Integer expi = Integer.parseInt(expiration);
+		if (expi < 0) {
+			messageDate = "warning3";
+			result.put("messageDate", messageDate);
+			result.put("daysRemaining", expi.toString());
+		}
+		return result;
+	}
+
+	private Map<String, String> retrieveInformationUser(Map<String, String> result, String excess) {
+		String[] excesses = excess.split("-");
+		if (excesses.length == 3) {
+			if (! Boolean.valueOf(excesses[2])) {
+				result.put("messageUser", "warning2");
+				result.put("currentUserNb", excesses[0]);
+				result.put("maxUserNb", excesses[1]);
+			}
+		}
+		return result;
+	}
+
+	private boolean hasInformation(String informationDate, String informationUser) {
+		return (informationDate != null && ! informationDate.isEmpty())
+				|| (informationUser != null && ! informationUser.isEmpty());
 	}
 
 	@Override
@@ -447,15 +514,21 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public User createUserFromLogin(@NotNull String login) throws LoginAlreadyExistsException {
-		String loginTrim = login.trim();
-		checkLoginAvailability(loginTrim);
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			String loginTrim = login.trim();
+			checkLoginAvailability(loginTrim);
 
-		User user = User.createFromLogin(loginTrim);
-		UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
-		user.setGroup(defaultGroup);
+			User user = User.createFromLogin(loginTrim);
+			UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
+			user.setGroup(defaultGroup);
 
-		userDao.save(user);
-		return user;
+			userDao.save(user);
+			return user;
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
+		return null;
 	}
 
 	/**
@@ -471,7 +544,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		userDao.save(user);
 	}
-	
+
 	@Override
 	public void createUserWithoutCredentials(User user, String usergroupName) {
 		checkLoginAvailability(user.getLogin());
@@ -488,12 +561,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
-		
+
 		if (! adminAuthentService.canModifyUser()) {
 			throw new UnauthorizedPasswordChange(
 					"The authentication service do not allow users to change their passwords using Squash");
 		}
-		
+
 		User user = userDao.getOne(userId);
 
 		if (!adminAuthentService.userExists(user.getLogin())) {
@@ -519,11 +592,16 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public User createAdministrator(User user, String password) throws LoginAlreadyExistsException {
-		UsersGroup admin = groupDao.findByQualifiedName(UsersGroup.ADMIN);
-		user.normalize();
-		addUser(user, admin.getId(), password);
-
-		return user;
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		if(userLicenseInformation == null || !userLicenseInformation.contains("false")){
+			UsersGroup admin = groupDao.findByQualifiedName(UsersGroup.ADMIN);
+			user.normalize();
+			addUser(user, admin.getId(), password);
+			return user;
+		} else if (userLicenseInformation.contains("false")){
+			throw new NotAllowedByLicenseException();
+		}
+		return null;
 	}
 
 	@Override
@@ -555,7 +633,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
-	public int countAllActiveUsers() {
-		return userDao.countAllByActiveIsTrue();
+	public int countAllActiveUsersAssignedToAtLeastOneProject() {
+		return userDao.countAllActiveUsersAssignedToAtLeastOneProject();
 	}
 }

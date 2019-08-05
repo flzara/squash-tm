@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.servers.AuthenticationStatus
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
-import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.bugtracker.BugTrackersService
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.servers.CredentialsProvider
@@ -47,7 +46,6 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 	IssueDao issueDao = Mock()
 	BugTrackersService bugTrackersService = Mock()
-	IndexationService indexationService = Mock();
 	CredentialsProvider credentialsProvider = Mock()
 	StoredCredentialsManager storedCredentialsManager = Mock()
 
@@ -57,7 +55,6 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	def setup() {
 		service.issueDao = issueDao
 		service.remoteBugTrackersService = bugTrackersService
-		service.indexationService = indexationService;
 		service.credentialsProvider = credentialsProvider
 		service.storedCredentialsManager = storedCredentialsManager
 

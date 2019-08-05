@@ -226,7 +226,6 @@ public class RequirementExcelExporter {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 		//call extension point and get the new column index in return
-		doOptionalCreateSheetHeader(h, cIdx);
 	}
 
 	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {//NOSONAR this is an extension point
@@ -237,6 +236,10 @@ public class RequirementExcelExporter {
 	private void createRequirementHeaders() {
 		List<RequirementSheetColumn> columns = milestonesEnabled ? REQUIREMENT_COLUMNS_MILESTONES : REQUIREMENT_COLUMNS;
 		createSheetHeaders(REQUIREMENT_SHEET, columns);
+		Sheet dsSheet = workbook.getSheet(REQUIREMENT_SHEET);
+		Row r = dsSheet.getRow(0);
+		int idx = r.getLastCellNum();
+		doOptionalCreateSheetHeader(r, idx);
 	}
 
 	private void appendOneRequirement(Sheet reqSheet, int rowIndex,
@@ -301,7 +304,7 @@ public class RequirementExcelExporter {
 		if(StringUtils.isBlank(html)){
 			return "";
 		}
-		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
+		return html.replaceAll("(?s)<[^>]*>(<[^>]*>)*", "");
 	}
 
 	public File print() {

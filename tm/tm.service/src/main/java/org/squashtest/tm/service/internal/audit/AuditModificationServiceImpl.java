@@ -1,0 +1,124 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.audit;
+
+import org.jooq.Record2;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.audit.AuditModificationService;
+import org.squashtest.tm.service.internal.repository.AttachmentListDao;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+@Service("squashtest.tm.service.AuditModificationService")
+@Transactional
+public class AuditModificationServiceImpl implements AuditModificationService {
+
+	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(
+		BindableEntity.CAMPAIGN, BindableEntity.CAMPAIGN_FOLDER, BindableEntity.TEST_CASE, BindableEntity.TESTCASE_FOLDER,
+		BindableEntity.REQUIREMENT_VERSION, BindableEntity.REQUIREMENT_FOLDER,
+		BindableEntity.ITERATION, BindableEntity.TEST_SUITE, BindableEntity.EXECUTION, BindableEntity.EXECUTION_STEP);
+
+	@Inject
+	private AttachmentListDao attachmentListDao;
+
+	@Inject
+	private TestCaseDao testCaseDao;
+
+	@Inject
+	private CampaignDao campaignDao;
+
+	@Inject
+	private RequirementVersionDao requirementVersionDao;
+
+	@Inject
+	private IterationDao iterationDao;
+
+	@Inject
+	private TestSuiteDao testSuiteDao;
+
+	public void updateRelatedToAttachmentAuditableEntity(long attachmentListId){
+		Record2<String, Long> result = attachmentListDao.findAuditableAssociatedEntityIfExists(attachmentListId);
+
+		if(result != null){
+			String entityName = result.get("entity_name", String.class);
+			long entityId = result.get("entity_id", Long.class);
+
+			AuditableMixin auditable = null;
+			switch (entityName){
+				case "test_case":
+					auditable = (AuditableMixin) testCaseDao.findById(entityId);
+					break;
+				case "campaign":
+					auditable = (AuditableMixin) campaignDao.findById(entityId);
+					break;
+				case "requirement_version":
+					Optional<RequirementVersion> optionalRequirementVersion = requirementVersionDao.findById(entityId);
+					if(optionalRequirementVersion.isPresent()){
+						auditable = (AuditableMixin) optionalRequirementVersion.get();
+					}
+					break;
+				case "iteration":
+					auditable = (AuditableMixin) iterationDao.findById(entityId);
+					break;
+				case "test_suite":
+					Optional<TestSuite> optionalTestSuite = testSuiteDao.findById(entityId);
+					if(optionalTestSuite.isPresent()){
+						auditable = (AuditableMixin) optionalTestSuite.get();
+					}
+					break;
+			}
+			if(auditable != null){
+				updateAuditable(auditable);
+			}
+		}
+	}
+
+	public void updateRelatedToRequirementLinkAuditableEntity(List<RequirementVersion> versions){
+		versions.stream().map(version -> (AuditableMixin)version).forEach(this::updateAuditable);
+	}
+
+	public void updateRelatedToCustomFieldAuditableEntity(BoundEntity boundEntity){
+		if(auditableBindableEntity.contains(boundEntity.getBoundEntityType())){
+			updateAuditable((AuditableMixin) boundEntity);
+		}
+	}
+
+	public void updateAuditable(AuditableMixin auditable){
+		auditable.setLastModifiedOn(new Date());
+		auditable.setLastModifiedBy(UserContextHolder.getUsername());
+	}
+}

@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
@@ -70,6 +71,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -115,6 +117,8 @@ public class ProjectAdministrationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
+	@Inject
+	private ConfigurationService configurationService;
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -148,6 +152,8 @@ public class ProjectAdministrationController {
 		.buildRawModel(partyProjectPermissionsBean,1);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
+		availablePermissions.sort(Comparator.comparing(it -> internationalizationHelper.internationalize(
+			"user.project-rights." + it.getSimpleName() + ".label", locale)));
 
 		// Automation workflows
 		Map<String, String> automationWorkflows = getAvailableWorkflows(projectId, locale);
@@ -171,6 +177,9 @@ public class ProjectAdministrationController {
 		// list of templates
 		List<NamedReference> templatesList = templateFinder.findAllReferences();
 
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
@@ -189,6 +198,7 @@ public class ProjectAdministrationController {
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
 		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
+		mav.addObject("userLicenseInformationData", userLicenseInformation);
 		mav.addObject("availableAutomationWorkflows", automationWorkflows);
 
 		return mav;

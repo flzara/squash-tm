@@ -26,7 +26,6 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.attachment.Attachment;
-
 import java.util.List;
 
 /**
@@ -38,5 +37,7 @@ public interface CustomAttachmentDao {
 	//cannot override the final remove(long) method, so I add here a new one
 	void removeAttachment(Long attachmentId);
         
-        void removeAll(List<Attachment> attachments);
+	void removeAll(List<Attachment> attachments);
+
+
 }

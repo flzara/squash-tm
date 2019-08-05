@@ -20,12 +20,20 @@
  */
 package org.squashtest.tm.service.user
 
+import org.jooq.DSLContext
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.core.foundation.collection.Filtering
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.users.Team
+import org.squashtest.tm.jooq.domain.tables.AclClass
+import org.squashtest.tm.jooq.domain.tables.AclObjectIdentity
+import org.squashtest.tm.jooq.domain.tables.AclResponsibilityScopeEntry
+import org.squashtest.tm.jooq.domain.tables.CoreGroupAuthority
+import org.squashtest.tm.jooq.domain.tables.CoreGroupMember
+import org.squashtest.tm.jooq.domain.tables.CoreTeamMember
+import org.squashtest.tm.jooq.domain.tables.CoreUser
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.lang.Unroll
@@ -33,8 +41,18 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
+import static org.jooq.impl.DSL.countDistinct
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_ADMIN
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_USER
 import static org.squashtest.tm.core.foundation.collection.SortOrder.ASCENDING
 import static org.squashtest.tm.core.foundation.collection.SortOrder.DESCENDING
+import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS
+import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY
+import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY
+import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_AUTHORITY
+import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_MEMBER
+import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER
+import static org.squashtest.tm.jooq.domain.Tables.CORE_USER
 
 /**
  * @author mpagnon
@@ -43,6 +61,9 @@ import static org.squashtest.tm.core.foundation.collection.SortOrder.DESCENDING
 @UnitilsSupport
 @Transactional
 class AdministrationServiceIT extends DbunitServiceSpecification {
+
+	@Inject
+	private DSLContext DSL;
 
 	@Inject
 	AdministrationService service
@@ -108,5 +129,17 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		0     | 2        | "id"     | ASCENDING  |     false     | ""    |["ONE", "TWO"]
 		2     | 4        | "id"     | ASCENDING  |     false     | ""    |["THREE", "FIVE", "SIX", "SEVEN"]
 	}
+
+	@DataSet("AdministrationServiceIT.should count all active users assigned to at least one project.xml")
+	def "should count all active users assigned to at least one project"() {
+		given: "the dataset"
+
+		when:
+		def res = service.countAllActiveUsersAssignedToAtLeastOneProject()
+
+		then:
+		res == 5
+	}
+
 
 }

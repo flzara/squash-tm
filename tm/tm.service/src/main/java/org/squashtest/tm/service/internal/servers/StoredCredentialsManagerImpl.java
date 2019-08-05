@@ -39,8 +39,10 @@ import org.squashtest.tm.domain.servers.StoredCredentials;
 import org.squashtest.tm.domain.servers.StoredCredentials.ContentType;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;
@@ -149,12 +151,32 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 					"to store such credentials for human users"
 			);
 		}
+
 		storeContent(serverId, username, credentials, ContentType.CRED);
 	}
 
 	@Override
+	public void storeCurrentUserCredentials(long serverId, ManageableCredentials credentials) {
+		if (! credentials.allowsUserLevelStorage()){
+			throw new IllegalArgumentException(
+				"Refused to store credentials of type '"+credentials.getImplementedProtocol()+"' : business rules forbid " +
+					"to store such credentials for human users"
+			);
+		}
+	 	String	username = UserContextHolder.getUsername();
+		storeContent(serverId, username, credentials, ContentType.CRED);
+	}
+
+
+	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN + OR_CURRENT_USER_OWNS_CREDENTIALS)
 	public ManageableCredentials findUserCredentials(long serverId, String username) {
+		return unsecuredFindUserCredentials(serverId, username);
+	}
+
+	@Override
+	public ManageableCredentials findCurrentUserCredentials(long serverId){
+		String username = UserContextHolder.getUsername();
 		return unsecuredFindUserCredentials(serverId, username);
 	}
 

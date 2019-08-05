@@ -83,7 +83,8 @@
         removeTeamField : /*[[ #{label.removeTeam} ]]*/ "remove team"
       }
 
-    }
+    },
+    userLicenseInformationData: /*[[${userLicenseInformationData}]]*/
   };
 </script>
 <script data-main="../../scripts/user-page.js" th:attr="data-main=@{/scripts/user-page.js}"
@@ -144,7 +145,7 @@
                 th:with="auditableEntity=${user},entityUrl=@{/users/__${user.id}__}" th:remove="tag"></div>
               <span class="help-inline">&nbsp;</span>
               <div class="toolbar-button-panel">
-                <input type="button" th:value="#{ user.delete.label }" value="Remove" id="delete-user-button"
+                <input type="button" th:value="#{ button.delete.label }" value="Remove" id="delete-user-button"
                   class="sq-btn" />
               </div>
             </div>
@@ -165,31 +166,31 @@
                       </div>
                     </div>
                     <div class="display-table-row">
-                      <label for="toggle-activation-checkbox" th:text="#{label.State}">State</label>
+                      <label th:text="#{label.State}" class="display-table-cell" style="vertical-align:middle;">State</label>
                       <div class="display-table-cell">
                         <input id="toggle-activation-checkbox" type="checkbox" th:checked="${user.active}"
                           th:attr="data-def='width=35, on_label='+#{label.active}+', off_label='+#{label.inactive}" />
                       </div>
                     </div>
-                    
-                    
+
+
                     <!-- password management -->
                     <div class="display-table-row" >
                       <label for="reset-password-button" th:text="#{label.localPassword}" class="display-table-cell">Password</label>
-                      
+
                       <div class="display-table-cell" th:if="${canManageLocalPassword}">
                         <a id="reset-password-button" th:text="#{user.button.reset.password}"
                           th:class="${ !user.hasAuthentication } ? 'not-displayed' : 'cursor-pointer' ">Reset</a>
                         <a id="create-auth-button" th:text="#{label.createPassword}"
                           th:class="${ user.hasAuthentication } ? 'not-displayed' : 'cursor-pointer' ">Create authentication</a>
                       </div>
-                      
+
                       <span th:if="${not canManageLocalPassword}" class="display-table-cell" >[[#{message.managedPassword}]]</span>
-                      
+
                     </div>
- 
+
                     <!-- /password management -->
-                   
+
                     <div class="display-table-row">
                       <label for="user-first-name" th:text="#{label.FirstName}">First name</label>
                       <div id="user-first-name" class="display-table-cell" th:text="${ user.firstName }">Machinou</div>
@@ -350,7 +351,7 @@ th:title="#{user.account.password.reset.label}">
 
   <div id="add-team-dialog" class="not-displayed popup-dialog" title="Add Team" th:title="#{title.subscribeToTeam}">
     <div class="main">
-      <label for="add-teams-input" th:text="#{label.team}">which one </label>
+      <label for="add-team-input" th:text="#{label.team}">which one </label>
       <input type="text" id="add-team-input" />
     </div>
     <div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >zzz</div>
@@ -391,6 +392,9 @@ th:title="#{user.account.password.reset.label}">
 
   <div id="add-permission-dialog" class="not-displayed popup-dialog" title="AddPermission"
     th:title="#{title.AddPermission}">
+    <div id="information-block">
+      <span></span>
+    </div>
     <div  data-def="state=main">
       <table id="add-permission-dialog-table">
         <tr>
@@ -426,6 +430,20 @@ th:title="#{user.account.password.reset.label}">
       <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=main" />
       <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=main" />
       <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, state=main no-more-projects" />
+    </div>
+  </div>
+
+  <div id="license-information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-warning-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span id="information-message"></span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input class="cancel" type="button" th:value="#{label.Close}" data-def="evt=cancel"/>
     </div>
   </div>
 

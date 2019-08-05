@@ -59,32 +59,35 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	}
 
 
-
-	@DataSet("NodeDeletionDaoTest.should cascade delete on attachments.xml")
-	def "should cascade-remove an attachment list"(){
-
-		when :
-		deletionDao.removeAttachmentsLists([-1L, -4L]);
-
-		then :
-
-		found("ATTACHMENT_CONTENT", "attachment_content_id", -121L)
-		found("ATTACHMENT_CONTENT", "attachment_content_id", -1111L)
-		!found("ATTACHMENT_CONTENT", "attachment_content_id", -111L)
-		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1211L)
-		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1212L)
-
-		found("ATTACHMENT", "attachment_id", -121L)
-		found("ATTACHMENT", "attachment_id", -1111L)
-		!found("ATTACHMENT", "attachment_id", -111L)
-		!found("ATTACHMENT", "attachment_id", -1211L)
-		!found("ATTACHMENT", "attachment_id", -1212L)
-
-		found("ATTACHMENT_LIST", "attachment_list_id", -2L)
-		found("ATTACHMENT_LIST", "attachment_list_id", -3L)
-		!found("ATTACHMENT_LIST", "attachment_list_id", -1L)
-		!found("ATTACHMENT_LIST", "attachment_list_id", -4L)
-	}
+	//since [TM-362]: no more cascade remove on Attachment => an  AttachmenContent may be linked to many Attachments
+	//ManyToOne instead OneToOne.
+	// "deletionDao.removeAttachmentsLists" is no more called. An exception is raised on use.
+	// For IT test, see now AttachmentManagerServiceImpliIT
+//	@DataSet("NodeDeletionDaoTest.should cascade delete on attachments.xml")
+//	def "should cascade-remove an attachment list"(){
+//
+//		when :
+//		deletionDao.removeAttachmentsLists([-1L, -4L]);
+//
+//		then :
+//
+//		found("ATTACHMENT_CONTENT", "attachment_content_id", -121L)
+//		found("ATTACHMENT_CONTENT", "attachment_content_id", -1111L)
+//		!found("ATTACHMENT_CONTENT", "attachment_content_id", -111L)
+//		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1211L)
+//		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1212L)
+//
+//		found("ATTACHMENT", "attachment_id", -121L)
+//		found("ATTACHMENT", "attachment_id", -1111L)
+//		!found("ATTACHMENT", "attachment_id", -111L)
+//		!found("ATTACHMENT", "attachment_id", -1211L)
+//		!found("ATTACHMENT", "attachment_id", -1212L)
+//
+//		found("ATTACHMENT_LIST", "attachment_list_id", -2L)
+//		found("ATTACHMENT_LIST", "attachment_list_id", -3L)
+//		!found("ATTACHMENT_LIST", "attachment_list_id", -1L)
+//		!found("ATTACHMENT_LIST", "attachment_list_id", -4L)
+//	}
 
 
 

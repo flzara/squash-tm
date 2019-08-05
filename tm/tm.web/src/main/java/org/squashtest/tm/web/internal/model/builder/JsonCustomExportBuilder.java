@@ -21,26 +21,26 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
-import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
+import org.squashtest.tm.service.customreport.CustomReportCustomExportService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 
 @Component("customReport.customExportBuilder")
 @Scope("prototype")
@@ -52,10 +52,10 @@ public class JsonCustomExportBuilder {
 	private InternationalizationHelper i18nHelper;
 
 	@Inject
-	private CampaignFinder campaignFinder;
+	private CustomReportCustomExportService customExportService;
 
 	@Inject
-	CustomFieldFinderService cufFinder;
+	private CustomFieldFinderService cufFinder;
 
 	public JsonCustomReportCustomExport build(CustomReportCustomExport customExport, Locale locale) {
 		JsonCustomReportCustomExport jsonCustomExport = new JsonCustomReportCustomExport();
@@ -78,9 +78,12 @@ public class JsonCustomExportBuilder {
 
 	private void fillScope(CustomReportCustomExport customExport, JsonCustomReportCustomExport jsonCustomExport) {
 		List<String> stringifiedScope = new ArrayList<>();
-		for(EntityReference scopeEntity : customExport.getScope()) {
-			Campaign scopeCampaign = campaignFinder.findById(scopeEntity.getId());
-			stringifiedScope.add(scopeCampaign.getName());
+		for (EntityReference scopeEntity : customExport.getScope()) {
+			String scopeEntityName = customExportService.getScopeEntityName(scopeEntity);
+			String scope = scopeEntityName.isEmpty() ? i18nHelper.internationalize(
+				"custom-export.perimeter.not-available-anymore", LocaleContextHolder.getLocale()) : scopeEntityName;
+
+			stringifiedScope.add(scope);
 		}
 		jsonCustomExport.setScope(stringifiedScope);
 	}

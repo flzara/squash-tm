@@ -124,12 +124,15 @@ define(
 
 					$.ajax({url : url, type : method}).success(function() {
 						pubsub.publish("project.plugin.toggled");
-					}).error(function() {
+					}).error(function(event) {
 						btn.switchButton("option", "checked", !checked);
+						data['enabled'] = true;
+						configureSwitch($row, data);
 					});
 
 
 					configureStyle($row, data);
+
 				});
 
 			};

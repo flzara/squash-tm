@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
@@ -54,11 +55,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -433,10 +430,13 @@ RequirementNodeDeletionHandler {
 		OperationReport report = new OperationReport();
 
 		if (!folderIds.isEmpty()) {
+			List<Long> attachmentsLists = attachmentManager.getAttachmentsListsFromRequirementFolders(folderIds);
+			List<ExternalContentCoordinates> pairContentIdListId = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
 			deletionDao.removeEntities(folderIds);
 			report.addRemoved(folderIds, "folder");
 
 			deletionDao.flush();
+			attachmentManager.deleteContents(pairContentIdListId);
 		}
 
 		return report;
@@ -540,7 +540,9 @@ RequirementNodeDeletionHandler {
 
 			// save the attachment list ids for later reference. We cannot rely on the cascade here
 			// because the requirement deletion is made by HQL, which doesn't honor the cascades
-			List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
+
+			List<Long> attachmentListIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
+			List<ExternalContentCoordinates> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentListIds);
 
 			// remove the changelog
 			deletionDao.deleteRequirementVersionAuditEvents(versionIds);
@@ -552,9 +554,12 @@ RequirementNodeDeletionHandler {
 
 			// remove the elements now
 			deletionDao.deleteVersions(versionIds);
-			deletionDao.removeAttachmentsLists(versionsAttachmentIds);
+			//remove Attachments
+			attachmentManager.removeAttachmentsAndLists(attachmentListIds);
 
 			deletionDao.flush();
+
+			attachmentManager.deleteContents(listPairContenIDListID);
 
 		}
 

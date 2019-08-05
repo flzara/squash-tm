@@ -294,6 +294,22 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	}
 
 	@Override
+	public void updateConflictAssociation(Long testCaseId, String newValue) {
+		entityManager.createNamedQuery("AutomationRequest.updateConflictAssociation")
+			.setParameter("conflictAssociation", newValue)
+			.setParameter("testCaseId", testCaseId)
+			.executeUpdate();
+	}
+
+	@Override
+	public void updateIsManual(Long testCaseId, boolean newValue) {
+		entityManager.createNamedQuery("AutomationRequest.updateIsManual")
+		.setParameter("isManual", newValue)
+		.setParameter("testCaseId", testCaseId)
+		.executeUpdate();
+	}
+
+	@Override
 	public void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
 			"where req.id in :reqIds and req.requestStatus in :initialStatus and req.transmissionDate is not null")
@@ -376,8 +392,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		// apply paging and sorting
 		fetchRequest.offset(pageable.getOffset()).limit(pageable.getPageSize());
 
-		OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
-		fetchRequest.orderBy(orderSpecifiers);
+		if (pageable.getSort() != null) {
+			OrderSpecifier<?>[] orderSpecifiers = toQueryDslSorting(pageable.getSort());
+			fetchRequest.orderBy(orderSpecifiers);
+		}
 
 		List<AutomationRequest> requests = fetchRequest.fetch();
 

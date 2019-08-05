@@ -40,4 +40,6 @@ public interface AttachmentRepository {
 	void copyContent(Attachment copy);
 
 	void deleteContent(List<Long> attachmentListIds);
+
+	void removeContent(long attachmentListId, long attachmentContentId);
 }

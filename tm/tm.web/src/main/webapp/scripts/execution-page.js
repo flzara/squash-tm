@@ -61,6 +61,11 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				$("#ieo-execution-button").prop('disabled', true);
 			}
 
+			// features requiring deletable permission
+			if (!config.permissions.deletable) {
+				$("#delete-execution-button").prop('disabled', true);
+			}
+
 			// the execute-execution button
 			squashtm.execution.updateBtnlabelFromTable = function () {
 
@@ -72,7 +77,6 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				$("#ieo-execution-button").val(btnlang.resumeOER);
 				$("#execute-execution-button").prop('disabled', false);
         $("#ieo-execution-button").prop('disabled', false);
-
 			}
 
 

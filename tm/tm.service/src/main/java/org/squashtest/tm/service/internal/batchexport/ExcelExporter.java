@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
@@ -53,6 +54,8 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCol
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.internal.dto.NumericCufHelper;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -92,6 +95,11 @@ class ExcelExporter {
 	protected boolean milestonesEnabled;
 
 	private MessageSource messageSource;
+
+	@Inject
+	private ProjectFinder projectFinder;
+	@Inject
+	private TestCaseFinder testCaseFinder;
 
 	private String errorCellTooLargeMessage;
 
@@ -135,6 +143,7 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_PATH,
 		TestCaseSheetColumn.TC_NUM,
 		TestCaseSheetColumn.TC_ID,
+		TestCaseSheetColumn.TC_UUID,
 		TestCaseSheetColumn.TC_REFERENCE,
 		TestCaseSheetColumn.TC_NAME,
 		TestCaseSheetColumn.TC_WEIGHT_AUTO,
@@ -153,11 +162,10 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
 		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
-		TestCaseSheetColumn.TC_SCRIPT,
-		TestCaseSheetColumn.TC_AUTOMATABLE
+		TestCaseSheetColumn.TC_SCRIPT
 	};
 
-	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
+	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 8, TestCaseSheetColumn.TC_MILESTONE)));
 
 	private static final List<TestCaseSheetColumn> TC_COLUMNS = Arrays.asList(BASIC_TC_COLUMNS);
 
@@ -259,6 +267,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getPath());
 				r.createCell(cIdx++).setCellValue(tcm.getOrder());
 				r.createCell(cIdx++).setCellValue(tcm.getId());
+				r.createCell(cIdx++).setCellValue(tcm.getUuid());
 				r.createCell(cIdx++).setCellValue(tcm.getReference());
 				r.createCell(cIdx++).setCellValue(tcm.getName());
 				if (milestonesEnabled) {
@@ -280,8 +289,6 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
 				cIdx = appendScriptedTestCaseExtender(r, cIdx, tcm);
-
-				r.createCell(cIdx++).setCellValue(tcm.getAutomatable().name());
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
 				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);
@@ -321,6 +328,15 @@ class ExcelExporter {
 
 	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) { //NOSONAR
 		//extension point for optional columns
+		TestCase tc = testCaseFinder.findById(tcm.getId());
+		int cIdxOptional = cIdx;
+		if (projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+			if(tc.getProject().isAllowAutomationWorkflow()) {
+				r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
+			} else {
+				r.createCell(cIdxOptional++).setCellValue("-");
+			}
+		}
 		return cIdx;
 	}
 
@@ -427,7 +443,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamOwnerPath());
 				r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
 				r.createCell(cIdx++).setCellValue(dm.getParamName());
-				r.createCell(cIdx++).setCellValue(dm.getParamValue());
+				r.createCell(cIdx++).setCellValue(HtmlUtils.htmlUnescape(dm.getParamValue()));
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()) {
 					LOGGER.warn("cannot export content for dataset '" + dm.getId() + DATA_EXCEED_MAX_CELL_SIZE_MESSAGE);
@@ -571,6 +587,12 @@ class ExcelExporter {
 
 	protected void createOptionalTestCaseSheetHeaders() {
 		//extension point for optionnal columns
+		Sheet dsSheet = workbook.getSheet(TC_SHEET);
+		Row h = dsSheet.getRow(0);
+		int cIdx = h.getLastCellNum();
+		if(projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
+			h.createCell(cIdx++).setCellValue("TC_AUTOMATABLE");
+		}
 	}
 
 }

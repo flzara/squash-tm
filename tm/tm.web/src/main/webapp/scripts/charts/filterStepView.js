@@ -281,10 +281,16 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			var ids = _.pluck($('[id^="filter-selection-"]').filter(":checked"), "name");
 			var self = this;
 			var filters = ids.map(function (id){
+
+				var filtersModel = self.model.get('filters');
+				var filterModel = filtersModel.find(function(fm) {
+					return fm.column.id == id;
+				});
 				return {
 					column : self.findColumnById(id),
 					operation : $("#filter-operation-select-" + id).val(),
-					values : self.getFilterValues(id) };
+					values : self.getFilterValues(id) ,
+					id: filterModel !== undefined ? filterModel.id : null};
 				});
 
 			//filtering filters

@@ -32,7 +32,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 var self = this;
                 var datatableSettings = {
                     sAjaxSource: squashtm.app.contextRoot + "automation-workspace/automation-requests/global",
-                    "aaSorting": [[7, 'desc'], [8, 'asc'], [11, 'desc']],
+                    "aaSorting": [[7, 'desc'], [8, 'asc'], [12, 'desc']],
                     "bDeferRender": true,
                     "iDisplayLength": 25,
                     "aoColumnDefs": [{
@@ -83,18 +83,34 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "bSortable": true,
                         "aTargets": [10],
                         "mDataProp": "script",
-                        "sClass": "assigned-script"
+                        "sClass": "assigned-script",
+						"mRender": function (data, type, row) {
+							var hrefScript="";
+							var title = translator.get('test-case.automation-btn-conflict');
+							if (row['listScriptConflict'].length!==1) {
+								hrefScript='<a href="" class="tf-sm script-conflict" id="list-script-conflict" >'+ title +'</a>';
+
+							}else{
+								hrefScript = data;
+							}
+
+							return hrefScript;
+						}
                     }, {
-                        "bSortable": true,
+                        "bSortable": false,
                         "aTargets": [11],
+                        "mDataProp": "uuid"
+                    },{
+                        "bSortable": true,
+                        "aTargets": [12],
                         "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [12],
+                        "aTargets": [13],
                         "mDataProp": "assigned-on"
                     }, {
                         "bSortable": false,
-                        "aTargets": [13],
+                        "aTargets": [14],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -104,10 +120,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "writableAutom",
                         "bVisible": false,
-                        "aTargets": [14]
+                        "aTargets": [15]
                     }, {
                         "bSortable": false,
-                        "aTargets": [15],
+                        "aTargets": [16],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -132,8 +148,12 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [16]
-                    }],
+                        "aTargets": [17]
+                    }, {
+						"mDataProp": "listScriptConflict",
+						"bVisible": false,
+						"aTargets": [18]
+					}],
                     "bFilter": true,
 
                     fnRowCallback: function (row, data, displayIndex) {
@@ -141,8 +161,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var edObj = $.extend(true, {}, $.editable.types.text);
                         var edFnButtons = $.editable.types.defaults.buttons;
                         var edFnElements = $.editable.types.text.element;
-                        var checkbox = $row.find("input[type=checkbox]")[0];
-                        if (checkbox !== undefined && checkbox.checked) {
+                        var checkbox = $row.find("input[type=checkbox]");
+                        if (checkbox !== undefined && checkbox[0].checked) {
                             $row.addClass("ui-state-row-selected").removeClass("ui-state-highlight");
                         }
 
@@ -209,6 +229,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             return input;
                         };
 
+
                         $.editable.addInputType('ta-picker', edObj);
                         var cellId = "assigned-script" + data["entity-id"];
                         var editable = confman.getStdJeditable();
@@ -216,9 +237,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
                         var entityId = data["entity-id"];
+
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                        if (data['script'] !== '-' && !isGherkin) {
+                        if (data['script'] !== '-' && (data['isManual'] || data['script'] === null) && !isGherkin && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -251,9 +273,27 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 return false;// see comment above
                             });
-                        } else if (isGherkin && data['script'] !== '-') {
+                        } else if (isGherkin && data['script'] !== '-' || data['script']!==null) {
                             cell.css({ 'color': 'gray', 'font-style': 'italic' });
-                        }
+                        } else if (data['listScriptConflict'] !== null && data['listScriptConflict'].length!==1) {
+							/*TM-13: list of script in conflict*/
+							cell.css({ 'color': 'gray', 'font-style': 'italic' });
+							cell.on('click', '.script-conflict', function(evt){
+							event.preventDefault();
+							var $btn = $(evt.currentTarget);
+							var $row = $btn.parents('tr');
+							var rowmodel = sqtable.fnGetData($row);
+							var title =  translator.get('test-case.automation-btn-conflict') + ":";
+              var msg =  translator.get('test-case.automation-conflict-message');
+
+							var list = '<ul>' + rowmodel.listScriptConflict.map(function(scr){return '<li>'+scr+'</li>';}) + '</ul>';
+							var listScript = list.replace(',', '');
+							notification.showInfo(title + "\n" + listScript + "\n" + msg);
+
+							evt.stopPropagation();
+
+						    });
+						}
                     },
 
                     fnDrawCallback: function () {
@@ -394,12 +434,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     });
                 };
 
-                var reset = function () {
-                    if (testAutomationTree.jstree('get_selected').length > 0) {
-                        testAutomationTree.jstree('get_selected').deselect();
-                    }
-                };
-
                 // ****************** transaction ************
 
 
@@ -427,6 +461,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 // ************ events *********************
 
+                $('.assigned-script').on('click',function(evt){
+
+                                	var $toto = $(evt.currentTarget);
+                                	console.log("evt" +  $toto);
+
+                                });
+
                 dialog.on('formdialogconfirm', submit);
 
                 dialog.on('formdialogcancel', function () {
@@ -434,11 +475,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 dialog.on("formdialogopen", function () {
-                    if (dialog.data('model-cache') === undefined) {
-                        dialog.initAjax = initDialogCache();
-                    } else {
-                        reset();
-                    }
+					dialog.initAjax = initDialogCache();
 
                 });
 
@@ -573,6 +610,16 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 this.deselectAll(table);
             },
 
+			trySquashTAScriptAssociation : function (tcIds) {
+				return $.ajax({
+							url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
+							method: 'POST',
+							data: {
+								"tcIds": tcIds
+							}
+						});
+			},
+
             actions: function (table, url) {
                 var tcIds = this.getSelectedTcIds(table);
 
@@ -615,14 +662,18 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
                 $("#automated-automation-button").on("click", function () {
                     var tcIds = self.getSelectedTcIds(domtable);
-                    var scripts = self.checkScriptAutoIsAbsent(domtable);
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
-                    } else if (scripts !== 0) {
-                        notification.showWarning(translator.get("automation.notification.script.none"));
                     } else {
-                        self.updateStatus(domtable, "AUTOMATED");
-                    }
+											self.trySquashTAScriptAssociation(tcIds).done(function(map){
+												if(Object.keys(map).length === 0){
+													self.updateStatus(domtable, "AUTOMATED");
+												} else {
+													domtable.refresh();
+													notification.showWarning(translator.get("automation.notification.script.none"));
+												}
+											});
+										}
                 });
 
                 $("#rejected-automation-button").on("click", function () {
@@ -637,8 +688,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     self.actions(domtable, "automation-requests/unassigned");
                 });
             }
-
-
         });
 
         return View;

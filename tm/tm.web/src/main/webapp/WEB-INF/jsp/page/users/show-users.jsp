@@ -53,6 +53,8 @@
 <f:message var="yesLabel" key="label.Yes"/>
 <f:message var="noLabel" key="label.No"/>
 
+<c:set var="userLicenseInformation"   value="${userLicenseInformationData}" />
+
 
 <layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
   <jsp:attribute  name="head">
@@ -86,7 +88,8 @@
             login : "${loginLabel}",
             dates : "${datesLabel}"
 
-          }
+          },
+          userLicenseInformation: "${userLicenseInformationData}"
         }
       },
       squashtm.app.connectionsManager = {
@@ -181,7 +184,9 @@
 
         <f:message var="adduserTitle" key="title.AddUser"/>
         <div id="add-user-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
-
+          <div id="information-block">
+            <span></span>
+          </div>
         <table id="add-user-table">
           <tr>
             <td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
@@ -292,5 +297,23 @@
       </div>
 
     </div>
+
+    <c:if test="${ not empty userLicenseInformation}">
+      <f:message var="licenseInformationTitle" key="title.Information" />
+        <div id="license-information-dialog" class="popup-dialog not-displayed" title="${licenseInformationTitle}">
+          <div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+              <div class="generic-warning-signal"></div>
+            </div>
+            <div class="display-table-cell">
+              <span id="information-message"></span>
+            </div>
+          </div>
+          <div class="popup-dialog-buttonpane">
+            <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
+          </div>
+        </div>
+    </c:if>
+
   </jsp:attribute>
 </layout:info-page-layout>

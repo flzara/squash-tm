@@ -186,9 +186,7 @@
       <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-      <label>
-        <f:message key="label.warning" />
-      </label>
+      <label><f:message key="label.warning" /></label>
       <f:message key="message.testAutomationServer.noExecution.warning" />
     </p>
     <p>
@@ -201,9 +199,7 @@
       <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-      <label>
-        <f:message key="label.warning" />
-      </label>
+      <label><f:message key="label.warning" /></label>
       <f:message key="message.testAutomationServer.withExecution.warning" />
     </p>
     <p>
@@ -255,35 +251,6 @@
   </div>
 </div>
 
-<%-- ================================================
-	Indexation Popup
-================================================ --%>
-<f:message var="automationWorkflowChange" key="dialog.project.automation-workflow-change.title" />
-<div id="change-workflow-popup" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index"><f:message key="dialog.info-list.warning.reindex.before"/></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-    <input type="button"  value="${confirmLabel}" data-def="mainbtn,evt=confirm" />
-    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-  </div>
-
-</div>
-
-<div id="change-workflow-popup-after" class="popup-dialog not-displayed" title="${automationWorkflowChange}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index-after"><f:message key="dialog.info-list.warning.reindex.after"/></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-  <c:if test="${isAdmin}">
-    <input type="button" value="${goToIndexLabel}" data-def="evt=confirm" />
-    </c:if>
-    <input type="button"  value="${closeLabel}" data-def="mainbtn, evt=cancel"/>
-  </div>
-
-</div>
 <%-- ================================================
 	Add Project Popup.
 ================================================= --%>

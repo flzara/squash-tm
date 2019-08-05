@@ -20,17 +20,12 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.AnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
-
-public class StandardAnalyzerWithoutStopWords extends AnalyzerWrapper {
+public class StandardAnalyzerWithoutStopWords {
     /**
      * As recommended per AnalyzerWrapper(...) javadoc, we shall use the wrapped analyser's Reuse Strategy.
      * Yet the recommended idiom is not possible : super(delegate.getReuseStrategy()) because super() must be the first
      * instruction of a constructor.
-     */
+     *//*
     private static final ReuseStrategy REUSE_STRATEGY = new StandardAnalyzer(new CharArraySet(1, true)).getReuseStrategy();
 
     private StandardAnalyzer standardAnalyzer = new StandardAnalyzer(new CharArraySet(1, true));
@@ -57,5 +52,5 @@ public class StandardAnalyzerWithoutStopWords extends AnalyzerWrapper {
     public CharArraySet getStopwordSet() {
 
         return standardAnalyzer.getStopwordSet();
-    }
+    }*/
 }

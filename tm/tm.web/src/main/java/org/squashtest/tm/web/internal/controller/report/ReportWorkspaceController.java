@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.report.ReportDefinition;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 
@@ -44,9 +45,19 @@ public class ReportWorkspaceController {
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showReportWorkspace(Model model) {
 		populateModelWithReportsRegistry(model);
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 		return "report-workspace.html";
 	}
 

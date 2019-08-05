@@ -24,15 +24,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.attachment.AttachmentContent;
-import org.squashtest.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.tm.domain.attachment.AttachmentList;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.domain.attachment.*;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
+import org.squashtest.tm.service.audit.AuditModificationService;
+import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -42,12 +39,7 @@ import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 /*
  * FIXME !
@@ -80,10 +72,14 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private AttachmentListDao attachmentListDao;
 
 	@Inject
-	private IndexationService indexationService;
+	private AttachmentContentDao attachmentContentDao;
+
 
 	@Inject
 	private AttachmentRepository attachmentRepository;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
@@ -99,24 +95,9 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachment.setSize(rawAttachment.getSizeInBytes());
 		attachmentDao.save(attachment);
 
-
-		reindexBoundEntities(attachmentListId);
+		auditModificationService.updateRelatedToAttachmentAuditableEntity(attachmentListId);
 
 		return attachment.getId();
-	}
-
-	private void reindexBoundEntities(long attachmentListId) {
-		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
-		if (testCase != null) {
-			indexationService.reindexTestCase(testCase.getId());
-			return; // lists can't be shared, don't bother looking up requirement
-		}
-
-		RequirementVersion requirementVersion = attachmentListDao
-			.findAssociatedRequirementVersionIfExists(attachmentListId);
-		if (requirementVersion != null) {
-			indexationService.reindexRequirementVersion(requirementVersion.getId());
-		}
 	}
 
 	private AttachmentRepository getAttachmentRepository() {
@@ -134,48 +115,27 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Override
 	public Set<Attachment> findAttachments(Long attachmentListId) {
-		return attachmentDao.findAllAttachments(attachmentListId);
+		return attachmentDao.findAllByListId(attachmentListId);
 	}
 
 	@Override
 	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
-		AttachmentList list = attachmentListDao.getOne(attachmentListId);
-		Attachment attachment = attachmentDao.getOne(attachmentId);
+		Attachment attachment = findAttachment(attachmentId);
+		//save for FileSystemRepository
+		Long attachmentContentId = attachment.getContent().getId();
 
-		list.removeAttachment(attachment);
-		attachmentDao.removeAttachment(attachment.getId());
+		attachmentDao.deleteById(attachment.getId());
+		ExternalContentCoordinates externalContentCoordinates = new ExternalContentCoordinates(attachmentListId, attachmentContentId);
+		deleteContents(Collections.singletonList(externalContentCoordinates));
 
-		getAttachmentRepository().removeContent(attachmentId);
-
-		reindexBoundEntities(attachmentListId);
+		auditModificationService.updateRelatedToAttachmentAuditableEntity(attachmentListId);
 	}
 
 	@Override
 	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException {
-
-		Iterator<Attachment> iterAttach = attachmentListDao.getOne(attachmentListId).getAllAttachments().iterator();
-
-		while (iterAttach.hasNext()) {
-			Attachment att = iterAttach.next();
-			ListIterator<Long> iterIds = attachmentIds.listIterator();
-
-			while (iterIds.hasNext()) {
-				Long id = iterIds.next();
-				if (id.equals(att.getId())) {
-					iterAttach.remove();
-					iterIds.remove();
-					getAttachmentRepository().removeContent(att.getId());
-					attachmentDao.removeAttachment(att.getId());
-					break;
-				}
-			}
-			if (attachmentIds.isEmpty()) {
-				break;
-			}
+		for (Long attachmentId : attachmentIds) {
+			removeAttachmentFromList(attachmentListId, attachmentId);
 		}
-
-		reindexBoundEntities(attachmentListId);
-
 	}
 
 	@Override
@@ -202,7 +162,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	/**
 	 * @see org.squashtest.tm.service.attachment.AttachmentManagerService#writeContent(long,
-	 *      OutputStream)
+	 * OutputStream)
 	 */
 	@Override
 	public void writeContent(long attachmentId, OutputStream outStream) throws IOException {
@@ -228,7 +188,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void copyAttachments(AttachmentHolder attachmentHolder) {
+	public void copyContentsOnExternalRepository(AttachmentHolder attachmentHolder) {
 		em.flush();
 		AttachmentList attachmentList = attachmentHolder.getAttachmentList();
 		for (Attachment attachment : attachmentList.getAllAttachments()) {
@@ -242,9 +202,89 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void cleanContent(AttachmentHolder attachmentHolder) {
-		if (attachmentHolder != null && attachmentHolder.getAttachmentList()!= null) {
-			cleanContent(Collections.singletonList(attachmentHolder.getAttachmentList().getId()));
+	public void removeContent(long attachmentListId, long attachmentContentId) {
+		if (attachmentRepository.getClass().getSimpleName().equals("FileSystemAttachmentRepository")) {
+			removeContentFromFileSystem(attachmentListId, attachmentContentId);
 		}
 	}
+
+
+	private void removeContentFromFileSystem(long attachmentListId, long attachmentContentId) {
+		attachmentRepository.removeContent(attachmentListId, attachmentContentId);
+	}
+
+	@Override
+	public List<ExternalContentCoordinates> getListIDbyContentIdForAttachmentLists(List<Long> attachmentsList) {
+		return attachmentContentDao.getListPairContentIDListIDFromAttachmentLists(attachmentsList);
+	}
+
+	@Override
+	public void deleteContents(List<ExternalContentCoordinates> contentIdListIdList) {
+		List<Long> contentIds = new ArrayList<>();
+
+		for (ExternalContentCoordinates coord: contentIdListIdList) {
+			contentIds.add(coord.getContentId());
+		}
+
+		//remove Db Orphans
+		removeOrphanAttachmentContents(contentIds);
+
+		// remove from FileSystem
+		if (attachmentRepository.getClass().getSimpleName().contains("FileSystemAttachmentRepository")) {
+			for (ExternalContentCoordinates externalCoord:contentIdListIdList) {
+				removeContentFromFileSystem(externalCoord.getAttachmentListId(), externalCoord.getContentId());
+			}
+		}
+	}
+
+	private void removeOrphanAttachmentContents (List<Long> contentIds) {
+		if (!contentIds.isEmpty()) {
+			Set<Long> notOrphans = attachmentContentDao.findNotOrphanAttachmentContent(contentIds);
+			contentIds.removeAll(notOrphans);
+			if (!contentIds.isEmpty()) {
+				attachmentContentDao.deleteByIds(contentIds);
+			}
+		}
+	}
+
+	@Override
+	public void removeAttachmentsAndLists(List<Long> attachmentListIds) {
+		if (!attachmentListIds.isEmpty()) {
+			Set<Long> attachmentIds = attachmentDao.findAllAttachmentsFromLists(attachmentListIds);
+			if (!attachmentIds.isEmpty()) {
+				attachmentDao.removeAllAttachments(attachmentIds);
+			}
+			attachmentDao.removeAllAttachmentsLists(attachmentListIds);
+		}
+	}
+
+	@Override
+	public List<Long> getAttachmentsListsFromRequirementFolders(List<Long> requirementLibraryNodeIds) {
+		return attachmentDao.findAttachmentsListsFromRequirementFolder(requirementLibraryNodeIds);
+	}
+
+	@Override
+	public List<ExternalContentCoordinates> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds) {
+		return attachmentDao.getListPairContentIDListIDForRequirementVersions(requirementVersionIds);
+	}
+
+	@Override
+	public List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps) {
+		List<Long> executionStepsIds = new ArrayList<>();
+		for(ExecutionStep executionStep:executionSteps) {
+			executionStepsIds.add(executionStep.getId());
+		}
+		return attachmentDao.getListPairContentIDListIDForExecutionSteps(executionStepsIds);
+	}
+
+	private List<Long[]> constructList(Long contentID, Long ListId) {
+		List<Long[]> result = new ArrayList<>();
+		Long[] tab = new Long[2];
+		tab[0] = contentID;
+		tab[1] = ListId;
+		result.add(tab);
+		return result;
+	}
 }
+
+

@@ -294,7 +294,7 @@ public class ExecutionModificationController {
 			baseColumns.add(new AoColumnDef(true, false, "status-combo", null, "status"));// 4
 			baseColumns.add(new AoColumnDef(true, false, "exec-on", null, "last-exec-on"));// 5
 			baseColumns.add(new AoColumnDef(true, false, "assignee-combo", null, "last-exec-by"));// 6
-			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));// 7
+			baseColumns.add(new AoColumnDef(true, false, "rich-editable-comment", null, "comment"));// 7
 			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));// 8
 			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));// 9
 			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));// 10

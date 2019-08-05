@@ -24,8 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -86,6 +84,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
+import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
@@ -135,7 +134,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private BugTrackerDao bugTrackerDao;
 	@PersistenceContext
 	private EntityManager em;
-
+	@Inject
+	private RemoteSynchronisationDao remoteSynchronisationDao;
 	@Inject
 	private PartyDao partyDao;
 	@Inject
@@ -592,9 +592,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		library.disablePlugin(pluginId);
+	public void disablePluginForWorkspace(long projectId, List<WorkspaceType> workspaces, String pluginId) {
+		for (WorkspaceType workspace : workspaces) {
+			PluginReferencer<?> library = findLibrary(projectId, workspace);
+			library.disablePlugin(pluginId);
+		}
+	}
+
+	@Override
+	public boolean hasProjectRemoteSynchronisation(long projectId) {
+		return remoteSynchronisationDao.findByProjectId(projectId).size() != 0;
 	}
 
 	@Override
@@ -961,6 +968,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	private void copyAutomationWorkflowSettings(GenericProject target, GenericProject source) {
+		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
+	}
+
 	private void copyBugtrackerSettings(GenericProject target, GenericProject source) {
 		if (source.isBugtrackerConnected()) {
 			changeBugTracker(target, source.getBugtrackerBinding().getBugtracker());
@@ -1022,6 +1033,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		if (params.isCopyAutomatedProjects()) {
 			copyTestAutomationSettings(target, source);
+			copyAutomationWorkflowSettings(target, source);
 		}
 		if (params.isCopyInfolists()) {
 			copyInfolists(target, source);
@@ -1053,6 +1065,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if(target.getBugtrackerBinding() == null) {
 			copyBugtrackerSettings(target, source);
 		}
+		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
 		if(target.getTestAutomationServer() == null) {
 			copyTestAutomationSettings(target, source);
 		}
@@ -1102,20 +1115,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void changeAutomationWorkflow(long projectId, boolean active) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
 
+		genericProject.setAllowAutomationWorkflow(active);
 
-		if(!genericProject.isBoundToTemplate()) {
-			genericProject.setAllowAutomationWorkflow(active);
-
-			if (active) {
-				List<Long> tcIds = testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(projectId);
-				createAutomationRequestForTc(tcIds);
-			}
-			/* If project is a Template, propagate on all the bound projects. */
-			if (ProjectHelper.isTemplate(genericProject)) {
-				templateDao.propagateAllowAutomationWorkflow(projectId, active);
-			}
-		} else {
-			throw new LockedParameterException();
+		if (active) {
+			List<Long> tcIds = testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(projectId);
+			createAutomationRequestForTc(tcIds);
+		}
+		/* If project is a Template, propagate on all the bound projects. */
+		if (ProjectHelper.isTemplate(genericProject)) {
+			templateDao.propagateAllowAutomationWorkflow(projectId, active);
 		}
 	}
 
@@ -1145,8 +1153,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			customTestCaseModificationService.createRequestForTestCase(tcId, AutomationRequestStatus.AUTOMATED);
 			if (x % 20 == 0) {
 				em.flush();
-				FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-				ftem.flushToIndexes();
 				em.clear();
 			}
 		}

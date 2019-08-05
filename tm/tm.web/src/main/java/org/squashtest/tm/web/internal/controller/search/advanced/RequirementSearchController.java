@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.search.advanced;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -43,14 +46,19 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -58,7 +66,6 @@ import java.util.Set;
  */
 @Controller
 public class RequirementSearchController extends GlobalSearchController {
-
 
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
@@ -149,10 +156,12 @@ public class RequirementSearchController extends GlobalSearchController {
 
 		addMilestoneToSearchModel(searchModel);
 
-		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
+		Pageable paging = SpringPagination.pageable(params, requirementSearchResultMapper, (String key)-> key);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService
-			.searchForRequirementVersions(searchModel, paging, getMessageSource(), locale);
+		AdvancedSearchQueryModel queryModel = new AdvancedSearchQueryModel(paging, requirementSearchResultMapper.getMappedKeys(), searchModel);
+
+		Page<RequirementVersion> holder = requirementVersionAdvancedSearchService
+			.searchForRequirementVersions(queryModel, paging, getMessageSource(), locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associationType);
 

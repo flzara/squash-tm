@@ -7472,3 +7472,8 @@ body {
 .no-print {
   display: none !important;
 }
+
+.opacity-link-step{
+
+	opacity: 0;
+}

@@ -26,10 +26,12 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Gregory Fouquet
@@ -47,7 +49,13 @@ class TestSuiteIssueFinder extends IssueOwnershipFinderSupport<TestSuite> {
 
 	@Override
 	protected List<Pair<Execution, Issue>> findExecutionIssuePairs(TestSuite testSuite, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionIssuePairsByTestSuite(testSuite, sorter);
+		//return issueDao.findAllExecutionIssuePairsByTestSuite(testSuite, sorter);
+		List<Pair<Execution, Issue>> listTmpExecutionIssuePairs = issueDao.findAllExecutionIssuePairsByTestSuite(testSuite, sorter);
+		// TM-301:verifier si le bugtracker du projet de l'execution et le m$eme que celui de l issue
+		List<Pair<Execution, Issue>> listExecutionIssuePairs = listTmpExecutionIssuePairs.stream()
+			.filter(tmpExcIssue->(tmpExcIssue.left.getProject().getBugtrackerBinding().getBugtracker().equals(tmpExcIssue.right.getBugtracker())))
+			.collect(Collectors.toList());
+		return listExecutionIssuePairs;
 	}
 
 	@Override

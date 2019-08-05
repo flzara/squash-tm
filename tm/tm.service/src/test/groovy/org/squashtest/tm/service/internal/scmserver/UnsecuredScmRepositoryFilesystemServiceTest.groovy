@@ -109,10 +109,14 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	def "should create a file with the nominal name for given test case"(){
 
 		given:
+		def project = Mock(Project) {
+			isUseTreeStructureInScmRepo() >> false
+		}
 		def tc = Mock(TestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
 			getKind() >> TestCaseKind.GHERKIN
+			getProject() >> project
 		}
 
 		when :
@@ -129,10 +133,14 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	def "should create a file with the backup name for a given test case"(){
 
 		given:
+		def project = Mock(Project) {
+			isUseTreeStructureInScmRepo() >> false
+		}
 		def tc = Mock(TestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
 			getKind() >> TestCaseKind.GHERKIN
+			getProject() >> project
 		}
 
 		when :

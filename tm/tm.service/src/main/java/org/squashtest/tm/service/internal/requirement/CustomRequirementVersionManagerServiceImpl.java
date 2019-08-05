@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion.PropertiesSetter;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -102,9 +101,6 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	private MilestoneMembershipManager milestoneManager;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 
 	@Inject
@@ -146,7 +142,6 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		em.persist(req.getCurrentVersion());
 		RequirementVersion newVersion = copyAttachmentsForNewVersions(req);
 
-		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
 		if (inheritReqLinks) {
 			requirementLinkService.copyRequirementVersionLinks(previousVersion, newVersion);
@@ -155,8 +150,6 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			requirementLinkService.postponeTestCaseToNewRequirementVersion(previousVersion, newVersion);
 		}
 	}
-
-
 
 	@Override
 	@PreAuthorize(CREATE_REQUIREMENT_OR_ROLE_ADMIN)

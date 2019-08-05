@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "workspace.projects", "workspace.routing"],
-	function (Backbone, translator, Handlebars, dateutils, projects, urlBuilder) {
+define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "workspace.projects", "workspace.routing", "app/ws/squashtm.notification"],
+	function (Backbone, translator, Handlebars, dateutils, projects, urlBuilder, notification) {
 		"use strict";
 
 		var View = Backbone.View.extend({
@@ -112,7 +112,11 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 			},
 
 			generate: function() {
-				document.location.href = urlBuilder.buildURL('custom-report.custom-export.generate', this.model.get('id'));
+				if ($('#custom-export-perimeter').text().trim() !== translator.get('custom-export.perimeter.not-available-anymore')) {
+					document.location.href = urlBuilder.buildURL('custom-report.custom-export.generate', this.model.get('id'));
+				} else {
+					notification.showWarning(translator.get('custom-export.perimeter.not-available-anymore'));
+				}
 			},
 
 			modify: function() {

@@ -20,12 +20,13 @@
  */
 package org.squashtest.tm.service.requirement
 
+
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.requirement.*
 import org.squashtest.tm.domain.resource.Resource
 import org.squashtest.tm.domain.testcase.*
-import org.squashtest.tm.service.advancedsearch.IndexationService
+
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.*
@@ -51,7 +52,6 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	IndexationService indexationService = Mock()
 	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
@@ -65,7 +65,6 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 		service.callTreeFinder = callTreeFinder
 		service.permissionService = permissionService
-		service.indexationService = indexationService
 		service.activeMilestoneHolder = activeMilestoneHolder
 		activeMilestoneHolder.getActiveMilestone() >> Optional.empty()
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true

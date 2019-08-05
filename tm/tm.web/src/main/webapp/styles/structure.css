@@ -1386,7 +1386,7 @@ div.information-panel p {
 	 color: #888888;
 }
 #admin-link-pane{
-    margin-top: 10%;
+    margin-top: 5%;
     display: block;
     text-align: center;
      font-size: 1.5em;
@@ -1397,7 +1397,7 @@ div.information-panel p {
 
 #admin-link-pane a {
 	display: inline-block;
-    width: 18%;
+    width: 25%;
     position:relative;
     margin-top: 50px;
 }
@@ -2118,4 +2118,49 @@ button.tf:hover {
 
 .rangedatepicker-input {
 	width: 90%;
+}
+
+.opacity-link-step{
+
+	opacity: 0;
+}
+
+/**** LICENSE INFORMATION BLOCK ****/
+#add-permission-dialog #information-block, #add-user-dialog #information-block {
+	visibility: hidden;
+}
+
+#add-permission-dialog #information-block span, #add-user-dialog #information-block span {
+	color: red;
+	font-style: italic;
+	text-align: justify;
+}
+
+#home-workspace #information-block {
+	width: 98%;
+}
+
+#admin-pane #information-block {
+	display: block;
+	float: left;
+	width: 100%;
+}
+
+#home-workspace #information-block-wrapper {
+	margin: auto;
+	margin-top: 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 80%;
+	border: 1px solid red;
+	color: red;
+}
+
+#admin-pane #information-block-wrapper {
+	margin: auto;
+	margin-top: 50px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	border: 1px solid red;
+	color: red;
 }

@@ -144,7 +144,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
 
 		TestCase tc = emptyTC()
-		stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: new ListItemReference("NAT_SECURITY_TESTING")])
+		stuffWith(tc, [uuid: "44d63d7e-11dd-44b0-b584-565b6f791fa9", name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: new ListItemReference("NAT_SECURITY_TESTING")])
 
 		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 		instr.customFields.putAll([
@@ -174,6 +174,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		t.importanceAuto == Boolean.FALSE
 		t.importance == TestCaseImportance.LOW
+		t.uuid == "44d63d7e-11dd-44b0-b584-565b6f791fa9"
 
 		storedcufs.size() == 2
 		storedcufs.hasCuf "TXT_TC", "shazam"
@@ -212,7 +213,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/test 3")
 
 		TestCase tc = emptyTC()
-		stuffWith(tc, [name : "renamed", description : "this description has been modified", importance : TestCaseImportance.HIGH, reference : "modified"])
+		stuffWith(tc, [uuid: "44d63d7e-11dd-44b0-b584-565b6f791fa9", name : "renamed", description : "this description has been modified", importance : TestCaseImportance.HIGH, reference : "modified"])
 
 		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 		instr.customFields.putAll([ TXT_TC : "changed the cuf value"])
@@ -243,6 +244,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		new ListItemReference("TYP_REGRESSION_TESTING").references(t.type)
 		storedcufs.hasCuf  "CK_TC" , "false"
+		t.uuid == "44d63d7e-11dd-44b0-b584-565b6f791fa4"
 
 	}
 
@@ -258,7 +260,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/flawednaturetype")
 
 		TestCase tc = emptyTC()
-		stuffWith(tc, [name : "flawednaturetype", nature : new ListItemReference("I_DONT_EXIST"), type : new ListItemReference("ME_NEITHER")])
+		stuffWith(tc, [uuid: "44d63d7e-11dd-44b0-b584-565b6f791fa9", name : "flawednaturetype", nature : new ListItemReference("I_DONT_EXIST"), type : new ListItemReference("ME_NEITHER")])
 
 		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 
@@ -325,7 +327,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
 
 		TestCase tc = emptyTC()
-		stuffWith(tc, [name:"test case 1", description : "special description"])
+		stuffWith(tc, [uuid: "44d63d7e-11dd-44b0-b584-565b6f791fa9", name:"test case 1", description : "special description"])
 
 		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 

@@ -76,7 +76,8 @@
 						remove : /*[[ @{'/administration/teams/'+${team.id}+'/remove-permission'} ]]*/ "/administration/teams/1/remove-permission",
 					}
 			}
-		}
+		},
+    userLicenseInformationData: /*[[${userLicenseInformationData}]]*/
 	};
 </script>
 <script data-main="../../scripts/team-modification.js"
@@ -344,6 +345,9 @@
 
 	<div id="add-permission-dialog" class="not-displayed popup-dialog"
 		title="AddPermission" th:title="#{title.AddHabilitation}">
+    <div id="information-block">
+      <span></span>
+    </div>
 		<div data-def="state=main">
 			<table id="add-permission-dialog-table">
 				<tr>
@@ -382,5 +386,19 @@
       <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, state=main no-more-projects" />
 		</div>
 	</div>
+
+  <div id="license-information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-warning-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span id="information-message"></span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input class="cancel" type="button" th:value="#{label.Close}" data-def="evt=cancel"/>
+    </div>
+  </div>
 </body>
 </html>

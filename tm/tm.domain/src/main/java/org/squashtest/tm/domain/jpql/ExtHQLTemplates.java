@@ -53,11 +53,19 @@ public class ExtHQLTemplates extends HQLTemplates{
 		add(ExtOps.ORDERED_GROUP_CONCAT, "group_concat({0},{1},{2})");
 		add(ExtOps.ORDERED_GROUP_CONCAT_DIR, "group_concat({0},{1},{2},{3})");
 
+		// pattern matching
+		add(ExtOps.S_MATCHES, "matches({0}, {1})");
+		add(ExtOps.S_I_MATCHES, "i_matches({0}, {1})");
+
 		// boolean case when
 		add(ExtOps.TRUE_IF, "case when {0} then true else false end ");
 		
 		// by_day operator
 		add(ExtOps.YEAR_MONTH_DAY, "year({0}) * 10000 + month({0}) * 100 + day({0})");
+
+		add(ExtOps.FULLTEXT, "fulltext_search({0}, {1})");
+
+		add(ExtOps.LIKE_INSENSITIVE, "i_like({0}, {1})");
 	}
 
 

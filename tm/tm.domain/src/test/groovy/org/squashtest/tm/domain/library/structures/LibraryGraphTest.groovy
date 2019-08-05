@@ -102,7 +102,7 @@ class LibraryGraphTest extends Specification {
 
 		and :
 		def nodes2 = [[null, 3l], [3l, 31l], [3l, 32l], [32l, 41l]]
-		LibraryGraph<Long, CustomNode<Long>> thisgraph = new LibraryGraph()
+		LibraryGraph<Long, CustomNode> thisgraph = new LibraryGraph()
 		nodes2.each { thisgraph.addEdge( new CustomNode(it[0]), new CustomNode(it[1])) }
 
 		when :
@@ -154,7 +154,7 @@ class LibraryGraphTest extends Specification {
 
 		and :
 		def nodes2 = [[null, 1l], [1l, 2l], [1l, 3l], [3l, 4l], [4l, 5l]]
-		LibraryGraph<Long, CustomNode<Long>> thisgraph = new LibraryGraph()
+		LibraryGraph<Long, CustomNode> thisgraph = new LibraryGraph()
 		nodes2.each { thisgraph.addEdge( new CustomNode(it[0]), new CustomNode(it[1])) }
 
 		when :

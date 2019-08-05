@@ -37,8 +37,10 @@ import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
 import org.squashtest.tm.service.servers.OAuth1aConsumerService;
 import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.util.UriUtils;
 
 import javax.inject.Inject;
@@ -73,6 +75,9 @@ public class ThirdPartyServersAuthenticationController {
 
 	@Inject
 	private OAuth1aConsumerService oauth1aService;
+	
+	@Inject
+	private UserAccountService userService;
 
 	/**
 	 * returns information about whether the user is authenticated or not
@@ -94,11 +99,15 @@ public class ThirdPartyServersAuthenticationController {
 	@ResponseBody
 	@RequestMapping(value = "/{serverId}/authentication", method = RequestMethod.POST, consumes="application/json")
 	public
-	void authenticate(@RequestBody BasicAuthenticationCredentials credentials,
+	void authenticate(@RequestBody ManageableBasicAuthCredentials credentials,
 			@PathVariable("serverId") long serverId) {
 
-
+		// will throw if there is a problem
 		btService.validateCredentials(serverId, credentials, false);
+
+		// Issue 602 : we need to store the credentials on successful validation  
+		// because the credentials are not always cacheable.
+		userService.saveCurrentUserCredentials(serverId, credentials);
 
 	}
 

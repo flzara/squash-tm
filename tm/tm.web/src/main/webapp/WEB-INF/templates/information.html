@@ -1,0 +1,102 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title th:text="#{squashtm}">Squash</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <!-- default header name is X-CSRF-TOKEN -->
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <!-- ... -->
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+    sq:css="squash.core.css" />
+  <link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+    th:href="@{/images/favicon.ico}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
+    sq:css="squash.grey.css" />
+  <!-- rich jeditable header -->
+
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    var squashtm = {};
+    var pathname = window.location.pathname;
+    squashtm.app = {
+      locale: /*[[#{squashtm.locale}]]*/ 'fr',
+      contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+
+      informationConf: {
+      },
+      information: /*[[${information}]]*/ || {}
+    };
+
+    squashtm.workspace = squashtm.workspace || {};
+    squashtm.workspace.projects = /*[[${projects}]]*/[];
+
+    /* ]]> */
+  </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  <script data-main="../../scripts/information.js" th:attr="data-main=@{/scripts/information.js}"
+          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+
+</head>
+
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>
+  <div id="workspace">
+    <div id="workspace-title" class="noprint">
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div th:remove="all">
+      <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+      <!-- 		above the stacking context of the contextual content. -->
+      <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+    </div>
+    <div id="information-dialog" class="popup-dialog not-displayed" th:title="#{title.Information}">
+      <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-warning-signal"></div>
+        </div>
+        <div class="display-table-cell" style="text-align:justify;">
+          <span id="information-message-date"></span>
+          <p id="information-divider" style="border-top:2px solid black;width:50%;margin-left:25%;"></p>
+          <span id="information-message-user"></span>
+        </div>
+      </div>
+      <div class="popup-dialog-buttonpane">
+        <input class="cancel" type="button" value="cancel" th:value="#{label.Close}" data-def="evt=cancel" />
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  publish("load.informationContent");
+  </script>
+</body>
+</html>

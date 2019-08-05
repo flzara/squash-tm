@@ -38,6 +38,7 @@ import javax.persistence.Query
 
 class StoredCredentialsManagerImplTest extends Specification{
 
+
 	private static ManageableCredentials DEFAULT_CREDS = new ManageableBasicAuthCredentials("bob", "you'll never find it" as char[])
 
 	// one possible encryption result of the above
@@ -258,7 +259,7 @@ class StoredCredentialsManagerImplTest extends Specification{
 	def "cannot store because such credentials are not suitable for user-level persistence"(){
 
 		when:
-			manager.storeUserCredentials(10L, "bob", new ManageableBasicAuthCredentials("bob", "bobpassword" as char[]))
+			manager.storeUserCredentials(10L, "bob", new PseudoCredentials())
 
 		then:
 			thrown IllegalArgumentException
@@ -393,5 +394,6 @@ class StoredCredentialsManagerImplTest extends Specification{
 
 
 	}
+
 
 }

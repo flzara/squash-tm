@@ -29,8 +29,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.*;
-import org.squashtest.tm.domain.search.NotGMTDateBridge;
 
 /**
  * This aspect adds the {@link AuditableMixin} mixin to entities annotated with @Audidable
@@ -47,26 +45,18 @@ public aspect AuditableMixinAspect {
 	@Transient private
 	AuditableSupport AuditableMixin.audit = new AuditableSupport();
 
-	@NumericField
-	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl=NotGMTDateBridge.class))
 	public Date AuditableMixin.getCreatedOn() {
 		return this.getAudit().getCreatedOn();
 	}
 
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@SortableField(forField = "createdBy")
 	public String AuditableMixin.getCreatedBy() {
 		return this.getAudit().getCreatedBy();
 	}
 
-	@NumericField
-	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl=NotGMTDateBridge.class))
 	public Date AuditableMixin.getLastModifiedOn() {
 		return this.getAudit().getLastModifiedOn();
 	}
 
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@SortableField(forField = "lastModifiedBy")
 	public String AuditableMixin.getLastModifiedBy() {
 		return this.getAudit().getLastModifiedBy();
 	}

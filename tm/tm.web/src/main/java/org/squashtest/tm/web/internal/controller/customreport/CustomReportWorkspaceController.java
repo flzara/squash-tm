@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
@@ -118,6 +119,9 @@ public class CustomReportWorkspaceController {
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 								@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
@@ -173,6 +177,13 @@ public class CustomReportWorkspaceController {
 
 		model.addAttribute("projectFilter", workspaceHelperService.findFilterModel(currentUser, readableProjectIds));
 		model.addAttribute("bugtrackers", bugTrackerFinderService.findDistinctBugTrackersForProjects(readableProjectIds));
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 
 		return getWorkspaceViewName();
 	}

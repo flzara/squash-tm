@@ -197,7 +197,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
-	// @IndexedEmbedded
 	private TestCase referencedTestCase;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -320,7 +319,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	private void populateAttachments() {
 		for (Attachment tcAttach : referencedTestCase.getAllAttachments()) {
-			Attachment clone = tcAttach.hardCopy();
+			Attachment clone = tcAttach.shallowCopy();
 			attachmentList.addAttachment(clone);
 		}
 	}

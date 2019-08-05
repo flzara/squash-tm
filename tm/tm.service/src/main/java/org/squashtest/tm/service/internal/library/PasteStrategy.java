@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.internal.library;
 
 import org.hibernate.Session;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -35,7 +33,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -49,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>
@@ -106,9 +102,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private Class<NODE> nodeType;
 
 	@Inject
-	private IndexationService indexationService;
-
-	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
 	@PersistenceContext
@@ -119,8 +112,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private List<NODE> outputList;
 	private Collection<NodePairing> nextLayer;
 	private Collection<NodePairing> sourceLayer;
-	private Set<Long> tcIdsToIndex = new HashSet<>();
-	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
 	private boolean isReqMother = false;
 
 	// ******************* initialization *****************************
@@ -186,7 +177,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		// loop on all following generations
 		while (!nextLayer.isEmpty()) {
 
-			removeProcessedNodesFromCache();
+		removeProcessedNodesFromCache();
 
 			shiftToNextLayer();
 
@@ -262,8 +253,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 		}
 
-		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
 
@@ -295,8 +284,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				}
 			}
 		}
-		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
+
 	}
 
 	private NODE transform(NODE srcNode, NodeContainer<TreeNode> destination, ReqToTestCaseConfiguration configuration) {
@@ -375,8 +363,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 		}
 
-		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
 	}
 
 
@@ -401,8 +387,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				}
 			}
 		}
-		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
+
 	}
 
 	private PasteOperation createNextLayerOperation() {
@@ -429,8 +414,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private void reindexAfterCopy() {
 		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
 		em.unwrap(Session.class).flush();
-		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
-		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
 	}
 
 
@@ -441,14 +424,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	 */
 	private void removeProcessedNodesFromCache() {
 
-		// if we cont flush and then evict, some entities might not be persisted
+		// if we don't flush and then evict, some entities might not be persisted
 		em.flush();
-		// We shouldn't forget to flush to indexes or we will raise ClosedSessionExeception
-		// The logic behind is that Lucene queued some work, and when he will need the entities they will be evicted...
-		//So we need to flush lucene queue before cleaning.
-		FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-		ftem.flushToIndexes();
-
 		Collection<TreeNode> nextNodes = new HashSet<>();
 		for (NodePairing nextPairing : nextLayer) {
 			nextNodes.add((TreeNode) nextPairing.getContainer());

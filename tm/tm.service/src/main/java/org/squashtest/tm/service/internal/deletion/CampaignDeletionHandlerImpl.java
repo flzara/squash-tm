@@ -26,18 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
@@ -51,13 +45,7 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
-import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -116,10 +104,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
-
-	@Inject
-	private AttachmentManagerService attachmentManagerService;
-
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -404,17 +388,35 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
+		List<Long> attachmentsLists = new ArrayList<>();
 
 		//prepare the operation report:
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
 
-		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
+		List<Campaign> campaigns = campaignDao.findAllByIds(separatedIds[1]);
+		List<CampaignFolder> folders = folderDao.findAllByIds(separatedIds[0]);
+
+		//saving {contentId, ListId} of campaigns for FileSystem repository and Content to really remove
+		for (Campaign campaign:campaigns)
+		{
+			attachmentsLists.add(campaign.getAttachmentList().getId());
+		}
+		//saving {contentId, ListId} of folders
+		for (CampaignFolder folder:folders)
+		{
+			attachmentsLists.add(folder.getAttachmentList().getId());
+		}
+		//merge folders and Campaigns
+		List<ExternalContentCoordinates> listPairContenIDListID = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
 
 		//empty of those campaigns
 		deleteCampaignContent(campaigns);
 
 		// now we can delete the folders as well
 		deletionDao.removeEntities(ids);
+
+		//remove Content from FileSystem and remove orphans AttachmentContent from BD
+		attachmentManager.deleteContents(listPairContenIDListID);
 
 		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
@@ -488,7 +490,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
-
+		List<ExternalContentCoordinates> pairContentIDListIDS = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.getTestSuites().clear();
@@ -497,16 +499,21 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(testSuite);
 
-			attachmentManagerService.cleanContent(testSuite);
+			pairContentIDListIDS.addAll(getExternalAttachmentContentCoordinatesOfObject(testSuite));
 			deletionDao.removeEntity(testSuite);
 		}
-
 		deletionDao.flush();
+		attachmentManager.deleteContents(pairContentIDListIDS);
 	}
 
 	@Override
 	public void deleteExecution(Execution execution) {
-		deleteExecSteps(execution);
+		List<ExternalContentCoordinates> pairContentIDListIDSteps  = deleteExecSteps(execution);
+		List<ExternalContentCoordinates> pairContentIDListIDExec = getExternalAttachmentContentCoordinatesOfObject(execution);
+		//Merge all lists of attachments
+		if (!pairContentIDListIDExec.isEmpty()) {
+			pairContentIDListIDSteps.addAll(pairContentIDListIDExec);
+		}
 
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
 		testPlanItem.removeExecution(execution);
@@ -519,8 +526,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
-		attachmentManagerService.cleanContent(execution);
-		deletionDao.removeEntity(execution);
+		deletionDao.removeEntity(execution); // cascade list, Attachment
+		attachmentManager.deleteContents(pairContentIDListIDSteps);
 	}
 
 	/*
@@ -560,6 +567,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * - remove itself from repository.
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
+		List<ExternalContentCoordinates> pairContentIDListIDSteps = new ArrayList<>();
 		for (Iteration iteration : iterations) {
 
 			Collection<TestSuite> suites = new ArrayList<>(iteration.getTestSuites());
@@ -572,9 +580,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
-			attachmentManagerService.cleanContent(iteration);
+			pairContentIDListIDSteps.addAll(getExternalAttachmentContentCoordinatesOfObject(iteration));
 			deletionDao.removeEntity(iteration);
 		}
+		attachmentManager.deleteContents(pairContentIDListIDSteps);
 	}
 
 	/*
@@ -588,7 +597,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deleteIterationTestPlanItem(item);
 		}
 	}
-
 
 	@Override
 	public void deleteIterationTestPlanItem(IterationTestPlanItem item) {
@@ -609,13 +617,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		}
 	}
 
-	/*
-	 * removing the steps mean :
-	 * - remove the denormalized custom fields,
-	 * - remote the custom fields,
-	 * - remove themselves.
+	/**
+	 *
+	 * @param execution
+	 * @return List<ExternalContentCoordinates id est the list of tuple (AttachmentListId, AttachmentContentId) corresponding to
+	 *  the (path, fileName) of the AttachmentContent when it is stored on FileSystemRepository
+	 *
 	 */
-	public void deleteExecSteps(Execution execution) {
+	private List<ExternalContentCoordinates> deleteExecSteps(Execution execution) {
 
 		/*
 		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -,
@@ -630,16 +639,23 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
 		execution.getSteps().clear();
+		//saving path Content for FileSystem Repository
+		List<ExternalContentCoordinates> pairContentIDListID = null;
+		if (!steps.isEmpty()) {
+			pairContentIDListID = attachmentManager.getListPairContentIDListIDForExecutionSteps(steps);
+		}
+		else {
+			pairContentIDListID = new ArrayList<>();
+		}
 
 		// now we can delete them
 		for (ExecutionStep step : steps) {
-
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
-			attachmentManagerService.cleanContent(step);
 			deletionDao.removeEntity(step);
 		}
 
+		return pairContentIDListID;
 	}
 
 	private void deleteAutomatedExecutionExtender(Execution execution) {
@@ -696,13 +712,11 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				if (result == null) {
 					idsToRemove.add(itpi.getId());
 				}
-
 			}
 		}
 
 		for (Long id : idsToRemove) {
 			iterationTestPlanManagerService.removeTestPlanFromIteration(id);
 		}
-
 	}
 }

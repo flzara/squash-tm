@@ -21,14 +21,6 @@
 package org.squashtest.tm.domain.requirement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -36,7 +28,6 @@ import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
@@ -76,11 +67,7 @@ import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
  */
 
 @Entity
-@Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-@ClassBridges({
-	@ClassBridge(name = "children", analyze = Analyze.NO, store = Store.YES, impl = RequirementCountChildrenBridge.class)
-})
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 
 	private static final String REQUIREMENT_FOLDER_SUFFIX = "_";
@@ -94,8 +81,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@OneToMany(mappedBy = "requirement", cascade = {CascadeType.ALL})
 	@OrderBy("versionNumber DESC")
-	@Field(analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = CollectionSizeBridge.class))
-	@SortableField
 	private List<RequirementVersion> versions = new ArrayList<>();
 
 

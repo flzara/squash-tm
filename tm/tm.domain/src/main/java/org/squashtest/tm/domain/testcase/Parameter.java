@@ -23,7 +23,9 @@ package org.squashtest.tm.domain.testcase;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
@@ -45,6 +47,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +55,7 @@ import java.util.regex.Matcher;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TEST_CASE_ID"})})
-public class Parameter implements Identified {
+public class Parameter implements Identified, RelatedToAuditable {
 
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
 	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";
@@ -239,5 +242,10 @@ public class Parameter implements Identified {
 		res.description = null;
 
 		return res;
+	}
+
+	@Override
+	public List<AuditableMixin> getAssociatedAuditableList() {
+		return Collections.singletonList((AuditableMixin) testCase);
 	}
 }

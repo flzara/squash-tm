@@ -215,6 +215,19 @@
 	@NamedQuery(name = "IterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
 	@NamedQuery(name="IterationTestPlanItem.findAllForMilestones", query="select itpi.id from IterationTestPlanItem itpi join itpi.iteration.campaign.milestones milestone where milestone.id in (:milestonesIds)"),
+	//TM-13
+	@NamedQuery(name="IterationTestPlanItem.findAllByIterationIdWithTCAutomated",
+					  	query="select distinct item from Iteration it join it.testPlans item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+		       			" where it.id = :iterationId and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+
+	@NamedQuery(name="IterationTestPlanItem.findAllByTestSuiteIdWithTCAutomated",
+		query="select distinct item from TestSuite ts join ts.testPlan item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+			" where ts.id = :testSuiteId and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+
+	@NamedQuery(name="IterationTestPlanItem.findAllByItemsIdWithTCAutomated",
+		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
+			" where item.id in(:itemsIds) and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
+
 
 	// TestSuite
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),
@@ -243,6 +256,8 @@
 	@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByAutomationRequestIds", query = "select tc from TestCase tc join fetch tc.automationRequest ar inner join fetch ar.project pr where ar.id in (:requestIds)"),
+	@NamedQuery(name = "testCase.findTestCaseByUuid", query = "select tc from TestCase tc where tc.uuid = :uuid"),
+	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr inner join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.kind = 'STANDARD'"),
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
 	 *  name of the class, because the client code assumes this will be the
@@ -304,7 +319,7 @@
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
 	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
-	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
+	"select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("
@@ -326,7 +341,7 @@
 	+ " group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id, tc.kind, scExt.language, scExt.script "
 	),
 
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
+	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
 	+ "("
@@ -538,8 +553,11 @@
 	@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
 	@NamedQuery(name = "attachment.removeAttachments", query = "delete Attachment at where at.id in (:attachIds)"),
 	@NamedQuery(name = "attachment.deleteAttachmentLists", query = "delete AttachmentList al where al.id in (:listIds)"),
-        @NamedQuery(name = "Attachment.findAllAttachments", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
+	@NamedQuery(name = "Attachment.findAllByListId", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
 
+	@NamedQuery(name = "AttachmentContent.findNotOrphanAttachmentContent", query = "select distinct content.id from Attachment at inner join at.content content  where content.id in (:ids) group by content.id"),
+	@NamedQuery(name = "AttachmentContent.getListPairContentIDListIDFromAttachmentLists", query = "select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(list.id, content.id) from Attachment at inner join at.content content inner join at.attachmentList list where list.id in (:ids)"),
+	@NamedQuery(name = "AttachmentContent.deleteByIds", query = "delete AttachmentContent ac where ac.id in (:ids)"),
 	//ProjectFilter
 	@NamedQuery(name = "projectFilter.findByUserLogin", query = "from ProjectFilter where userLogin = :givenUserLogin"),
 
@@ -819,7 +837,7 @@
 	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by name"),
 
 	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, case trim(c.reference) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end as name, itp.executionStatus as status, count(tc) as num "
-			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name"),
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name, campid"),
 
 	//Iteration Statistics
 
@@ -963,7 +981,7 @@
 	@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
 
 	//set InfoListItem of a project to default value
-	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :projectId) "),
+	@NamedQuery(name="InfoList.setDefaultCategoryForProject", query= "update RequirementVersion reqV set reqV.category = :defaultItem where reqV.id in  (select rv.id from RequirementVersion rv join rv.requirement req join req.project p where p.id = :projectId) "),
 	@NamedQuery(name="InfoList.setDefaultNatureForProject", query = "update TestCase tc set tc.nature = :defaultItem where tc.project.id = :projectId"),
 	@NamedQuery(name="InfoList.setDefaultTypeForProject", query = "update TestCase tc set tc.type = :defaultItem where tc.project.id = :projectId"),
 
@@ -1063,7 +1081,14 @@
 	@NamedQuery(name="ScmRepository.isOneRepositoryBoundToProject", query="select case when (count(r) > 0) then true else false end from GenericProject p join p.scmRepository r where r.id in (:scmRepositoryIds)"),
 
 	// RemoteSynchronisation
-	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId")
+	@NamedQuery(name="RemoteSynchronisation.findWithProjectByServer", query="select rs from RemoteSynchronisation rs join fetch rs.project where rs.server.id = :serverId"),
+	@NamedQuery(name="RemoteSynchronisation.findByProjectId", query="select rs from RemoteSynchronisation rs where rs.project.id = :projectId"),
+
+	// AutomationRequest
+	@NamedQuery(name="AutomationRequest.updateIsManual", query = "UPDATE AutomationRequest ar SET ar.isManual = :isManual WHERE ar.testCase.id = :testCaseId"),
+	@NamedQuery(name="AutomationRequest.updateConflictAssociation", query = "UPDATE AutomationRequest ar SET ar.conflictAssociation = :conflictAssociation WHERE ar.testCase.id = :testCaseId"),
+
+
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

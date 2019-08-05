@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.20.0.IT6-SNAPSHOT</version>
+    <version>1.21.0.IT2-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-tm-database</artifactId>
@@ -153,6 +153,7 @@
             </configuration>
           </execution>
 
+
           <execution>
             <!-- Performs incremental updates in h2 -->
             <id>test-h2-incremental-updates</id>
@@ -185,7 +186,6 @@
               <password>sa</password>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
 

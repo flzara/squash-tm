@@ -83,7 +83,7 @@
 	<thead>
 	<tr>
 		<th data-def="select, map=entity-index">#</th>
-		<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow" style="width:32px;">&nbsp;</th>
+		<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow, sWidth= 75px"><f:message key="label.associateTestSteps"/></th>
 		<th data-def="sortable, map=project"><f:message key="label.project"/></th>
 		<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
 		<c:if test="${milestoneConf.milestoneDatesColumnVisible}">

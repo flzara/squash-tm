@@ -108,7 +108,7 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 
 
 	// the two methods below create an entity manager and bind them to
-	// the future transaction, so that other parties (like hibernate search bridges)
+	// the future transaction, so that other parties
 	// know where to find the correct instance of the entity manager
 	def createManager(){
 

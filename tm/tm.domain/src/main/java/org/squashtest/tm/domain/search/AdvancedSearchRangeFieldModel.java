@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.RANGE;
@@ -28,7 +30,6 @@ public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 	
 	private Integer maxValue;
 
-	private boolean ignoreBridge = false;
 	
 	@Override
 	public AdvancedSearchFieldModelType getType() {
@@ -50,9 +51,19 @@ public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
 	}
-	
+
+	@JsonIgnore
+	public boolean hasMinValue(){
+		return minValue != null;
+	}
+
+	@JsonIgnore
+	public boolean hasMaxValue(){
+		return maxValue != null;
+	}
+
 	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public boolean isSet() {
+		return hasMinValue() || hasMaxValue();
 	}
 }

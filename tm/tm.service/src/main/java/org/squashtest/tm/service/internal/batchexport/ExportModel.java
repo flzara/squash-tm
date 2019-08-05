@@ -238,10 +238,11 @@ public class ExportModel {
 		private ScriptedTestCaseLanguage scriptedTestCaseLanguage;
 		private String tcScript;
 		private TestCaseAutomatable automatable;
+		private String uuid;
 
 
 		// that monster constructor will be used by Hibernate in a hql query
-		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
+		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String uuid, String reference, String name,
 							 String milestone,
 							 Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 							 TestCaseStatus status, TestCaseAutomatable automatable, String description, String prerequisite, Long nbReq, Long nbCaller,
@@ -254,6 +255,7 @@ public class ExportModel {
 			this.projectName = projectName;
 			this.order = order;
 			this.id = id;
+			this.uuid = uuid;
 			this.reference = reference;
 			this.name = name;
 			this.milestone = milestone;
@@ -501,6 +503,14 @@ public class ExportModel {
 
 		public void setAutomatable(TestCaseAutomatable automatable) {
 			this.automatable = automatable;
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
 		}
 	}
 

@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.campaign;
 
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.RelatedToAuditable;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -37,11 +39,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "CAMPAIGN_TEST_PLAN_ITEM")
 @InheritsAcls(constrainedClass = Campaign.class, collectionName = "testPlan")
-public class CampaignTestPlanItem implements Identified{
+public class CampaignTestPlanItem implements Identified, RelatedToAuditable {
 	// TODO give meaningful name ! eg assigned user
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
@@ -141,4 +145,8 @@ public class CampaignTestPlanItem implements Identified{
 		this.campaign = campaign;
 	}
 
+	@Override
+	public List<AuditableMixin> getAssociatedAuditableList() {
+		return Collections.singletonList((AuditableMixin) campaign);
+	}
 }

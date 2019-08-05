@@ -129,8 +129,7 @@
               <tr>
                 <td><label for="report-summary" th:text="#{label.Summary}"></label></td>
                 <td><input id="report-summary" name="summary" type="text" maxlength="255" style="width: 50vw;"
-                           data-prop="summary" data-object="reportDefinition"/><span
-                  class="error-message name-error"></span></td>
+                           data-prop="summary" data-object="reportDefinition"/><span></span></td>
               </tr>
               <tr>
                 <td><label style="vertical-align: middle;" for="report-description"
@@ -330,7 +329,7 @@
         <div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">ANOTHER VIEW HERE</div>
       </div>
 
-      <div id="report-attributs" style="display: none; margin-top: 1.65em;" class="sq-tg collapse">
+      <div id="report-attributs" style="margin-top: 1.65em;" class="sq-tg expand">
         <div class="tg-head">
           <h3>
             <span th:text="#{label.Attributes}">Attributes</span>
@@ -414,30 +413,13 @@
 
       /* ]]> */
 
-      /* TODO : Create a new type of Inputs Group for "Anomalies Details" (CheckboxInput with disable function for TextInput + PasswordInput + LabelInput). Now, we only have separate inputs, so we added css and js this way. */
-      if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
-        $("input#includeLogin").css("margin", "5px 0px 5px 61px");
-      } else {
-        $("input#includeLogin").css("margin", "5px 0px 5px 56px");
-      }
-      $("input#includePassword").css("margin", "0px 0px 5px 10px");
-      $("label#includeLogin").css("padding-left", "48px").css("font-style", "normal");
-      $("label#includePassword").css("padding-left", "48px").css("font-style", "normal");
-      $("#includeBugtrackerConnection").css("font-style", "italic").css("padding-left", "20px").css("font-size", "11px");
 
+      $("#includeBugtrackerConnection").css("font-style", "italic").css("padding-left", "20px").css("font-size", "11px");
 
       function showAnomaliesDetails() {
         if ($("#includeAnomaliesDetails").is(":checked") == true) {
-          $("input#includeLogin").show();
-          $("input#includePassword").show();
-          $("label#includeLogin").show();
-          $("label#includePassword").show();
           $("#includeBugtrackerConnection").show();
         } else {
-          $("input#includeLogin").hide();
-          $("input#includePassword").hide();
-          $("label#includeLogin").hide();
-          $("label#includePassword").hide();
           $("#includeBugtrackerConnection").hide();
         }
       }
@@ -468,6 +450,7 @@
         addMarginToCheckBox($("input[value='printStepLinkedRequirements']"));
         addMarginToCheckBox($("input[value='printStepAttachments']"));
         $("input[value='printCallSteps']").parent().hide();
+        $("#includeBugtrackerConnection").hide();
         if ($("#includeAnomaliesDetails").length !== 0) {
           setTimeout(function () {
             showAnomaliesDetails();

@@ -40,10 +40,14 @@
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${false}"/>
+<c:set var="deletable" value="${false}"/>
 
 <c:if test="${not milestoneConf.locked}">
   <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
     <c:set var="editable" value="${ true }"/>
+  </authz:authorized>
+  <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ execution }">
+    <c:set var="deletable" value="${ true }"/>
   </authz:authorized>
 </c:if>
 
@@ -81,7 +85,8 @@
           statuses: ${json:serialize(statuses)}
         },
         permissions: {
-          editable: ${editable}
+          editable: ${editable},
+          deletable: ${deletable}
         },
         urls: {
           attachmentsURL: "${attachmentsUrl}"
@@ -293,7 +298,7 @@
 
   <%----------------------------------- Execution -----------------------------------------------%>
    <comp:toggle-panel id="execution-cufs-panel"
-                        titleKey="label.Execution"
+                        titleKey="label.customFieldsManagement"
                         open="${not empty executionCufValues}">
      <jsp:attribute name="body">
      <div id="execution-cufs-table" class="display-table">
@@ -376,7 +381,7 @@
     <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executionUrl}'"/>
   </c:if>
   <f:message var="executionComment" key="execution.description.panel.title"/>
-  <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="false">
+  <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="true">
 		<jsp:attribute name="body">
 		<div id="execution-description" ${descrRicheditAttributes} >${ execution.description }</div>
 	</jsp:attribute>

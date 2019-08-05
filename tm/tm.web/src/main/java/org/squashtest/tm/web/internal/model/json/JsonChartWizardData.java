@@ -26,16 +26,16 @@ import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -64,7 +64,7 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 public class JsonChartWizardData {
 
 
-	private Map<EntityType, Set<ColumnPrototype>> columnPrototypes;
+	private Map<EntityType, Set<QueryColumnPrototype>> columnPrototypes;
 
 	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
 
@@ -94,7 +94,7 @@ public class JsonChartWizardData {
 	private Map<Long, Set<ExecutionStatus>> disabledStatusByProject = new HashMap<>();
 
 
-	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects,
+	public JsonChartWizardData(Map<EntityType, Set<QueryColumnPrototype>> columnPrototypes, List<Project> projects,
 			InfoListFinderService infoListFinder, CustomFieldBindingModificationService cufBindingService) {
 
 		this.columnPrototypes = columnPrototypes;
@@ -205,7 +205,7 @@ public class JsonChartWizardData {
 		levelEnums.put(name, EnumSet.allOf(clazz));
 	}
 
-	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
+	public Map<EntityType, Set<QueryColumnPrototype>> getColumnPrototypes() {
 		return columnPrototypes;
 	}
 

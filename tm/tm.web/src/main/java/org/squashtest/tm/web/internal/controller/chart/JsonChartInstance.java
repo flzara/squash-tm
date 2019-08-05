@@ -28,15 +28,15 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ChartType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.ScopeType;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
-import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.DataType;
+import org.squashtest.tm.domain.query.Operation;
+import org.squashtest.tm.domain.query.QueryColumnPrototype;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -365,7 +365,7 @@ public class JsonChartInstance {
 
 	public static final class JsonColumnPrototype {
 
-		private final ColumnType columnType;
+		private ColumnType columnType;
 
 		private String label;
 
@@ -373,7 +373,7 @@ public class JsonChartInstance {
 
 		private DataType dataType;
 
-		public JsonColumnPrototype(ColumnPrototype column) {
+		public JsonColumnPrototype(QueryColumnPrototype column) {
 			this.label = column.getLabel();
 			this.specializedEntityType = new JsonSpecializedEntityType(column.getSpecializedType());
 			this.dataType = column.getDataType();
@@ -465,7 +465,7 @@ public class JsonChartInstance {
 
 	public static final class JsonSpecializedEntityType {
 		private EntityType entityType;
-		private EntityRole entityRole;
+		private SpecializedEntityType.EntityRole entityRole;
 
 		public JsonSpecializedEntityType(SpecializedEntityType specializedEntityType) {
 			this.entityRole = specializedEntityType.getEntityRole();
@@ -480,11 +480,11 @@ public class JsonChartInstance {
 			this.entityType = entityType;
 		}
 
-		public EntityRole getEntityRole() {
+		public SpecializedEntityType.EntityRole getEntityRole() {
 			return entityRole;
 		}
 
-		public void setEntityRole(EntityRole entityRole) {
+		public void setEntityRole(SpecializedEntityType.EntityRole entityRole) {
 			this.entityRole = entityRole;
 		}
 	}
@@ -495,12 +495,14 @@ public class JsonChartInstance {
 		private List<String> values;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
+		private Long id;
 
 		public JsonFilter(Filter filter) {
 			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
 			this.operation = new JsonOperation(filter.getOperation());
 			this.values = filter.getValues();
 			this.cufId = filter.getCufId();
+			this.id = filter.getId();
 		}
 
 		public List<String> getValues() {
@@ -533,6 +535,14 @@ public class JsonChartInstance {
 
 		public void setCufId(Long cufId) {
 			this.cufId = cufId;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
 		}
 	}
 

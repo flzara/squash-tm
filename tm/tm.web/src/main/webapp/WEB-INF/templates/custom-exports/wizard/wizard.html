@@ -24,7 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-
+  <title th:text="#{custom-export.wizard.title}">Assistant de création d'export personnalisé</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
@@ -61,7 +61,7 @@
   squashtm.customExport = {};
   squashtm.customExport.parentId = /*[[${parentId}]]*/ '456';
   squashtm.customExport.definition = /*[[${customExportDefinition}]]*/ '{ scope: ... }';
-  squashtm.customExport.scopeCampaignName = /*[[${scopeCampaignName}]]*/ 'Campaign_8';
+  squashtm.customExport.scopeEntityName = /*[[${scopeEntityName}]]*/ 'Campaign_8';
   squashtm.customExport.availableCustomFields = /*[[${availableCustomFields}]]*/ '{ CAMPAIGN : [], ...}';
   /* ]]> */
 </script>

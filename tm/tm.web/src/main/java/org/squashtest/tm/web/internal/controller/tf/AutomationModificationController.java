@@ -38,8 +38,13 @@ import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import static org.squashtest.tm.web.internal.controller.RequestParams.ITERATION_ID;
+import static org.squashtest.tm.web.internal.controller.RequestParams.TEST_PLAN_ITEMS_IDS;
+import static org.squashtest.tm.web.internal.controller.RequestParams.TEST_SUITE_ID;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+import static org.squashtest.tm.web.internal.http.ContentTypes.APPLICATION_JSON;
 
 @Controller
 @RequestMapping("/automation-requests")
@@ -90,5 +95,41 @@ public class AutomationModificationController {
 	@ResponseBody
 	public void assigneeToAutomationReq(@RequestParam("tcIds[]") List<Long> tcIds) {
 		automationRequestModificationService.assignedToRequest(tcIds);
+	}
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {"tcIds[]"})
+	@ResponseBody
+	public Map<Long, String> resolveTAScriptAssociation(@RequestParam("tcIds[]") List<Long> tcIds){
+		return automationRequestModificationService.updateTAScript(tcIds);
+	}
+
+	/*TM-13: update automatic association */
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {ITERATION_ID}, produces = APPLICATION_JSON)
+	@ResponseBody
+	public Map<Long, String> resolveTAScriptAssociationForIteration(@RequestParam(ITERATION_ID) long iterationId) {
+
+		return automationRequestModificationService.updateTAScriptForIteration(iterationId);
+	}
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_SUITE_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
+	@ResponseBody
+	public Map<Long, String> resolveTAScriptAssociationForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
+
+		return automationRequestModificationService.updateTAScriptForTestSuite(testSuiteId);
+	}
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, ITERATION_ID}, produces = APPLICATION_JSON)
+	@ResponseBody
+	public Map<Long, String> resolveTAScriptAssociationForIterationItems
+		(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
+		return automationRequestModificationService.updateTAScriptForItems(testPlanIds);
+	}
+
+	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, TEST_SUITE_ID}, produces = APPLICATION_JSON)
+	@ResponseBody
+	public Map<Long, String> resolveTAScriptAssociationForTestSuiteItems(
+		@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
+		return automationRequestModificationService.updateTAScriptForItems(testPlanIds);
 	}
 }

@@ -20,15 +20,28 @@
  */
 package org.squashtest.tm.domain.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchFieldModel{
 
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.NUMERIC_RANGE;
+	private AdvancedSearchFieldModelType type;
 
 	private String minValue;
-
 	private String maxValue;
 
-	private boolean ignoreBridge = false;
+
+	public AdvancedSearchNumericRangeFieldModel() {
+		type = AdvancedSearchFieldModelType.NUMERIC_RANGE;
+	}
+
+	public AdvancedSearchNumericRangeFieldModel(AdvancedSearchFieldModelType type) {
+		this.type = type;
+	}
 
 	public String getMinValue() {
 		return minValue;
@@ -42,29 +55,48 @@ public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchField
 		return maxValue;
 	}
 
-	public Double getMaxValueAsDouble() {
-		try {
-			String stdMaxValue = this.maxValue.replace(",",".");
-			return Double.parseDouble(stdMaxValue);
-		} catch (NumberFormatException nfe) {
-			return Double.POSITIVE_INFINITY;//NOSONAR it's handled by replacing the invalid user input value with a constant.
+	@JsonIgnore
+	public double getLocaleAgnosticMinValue(){
+		try{
+			return getLocaleAgnosticValue(minValue);
+		}
+		catch(NumberFormatException nfe){
+			return Double.NEGATIVE_INFINITY; //NOSONAR it's handled by replacing the invalid user input value with a constant.
 		}
 	}
 
-	public Double getMinValueAsDouble() {
-		try {
-			String stdMinValue = this.minValue.replace(",",".");
-			return Double.parseDouble(stdMinValue);
-		} catch (NumberFormatException nfe) {
-			return Double.NEGATIVE_INFINITY;//NOSONAR it's handled by replacing the invalid user input value with a constant.
+	@JsonIgnore
+	public double getLocaleAgnosticMaxValue(){
+		try{
+			return getLocaleAgnosticValue(maxValue);
+		}
+		catch(NumberFormatException nfe){
+			return Double.POSITIVE_INFINITY; //NOSONAR it's handled by replacing the invalid user input value with a constant.
 		}
 	}
+
+	@JsonIgnore
+	public boolean hasMinValue(){
+		return ! StringUtils.isBlank(minValue);
+	}
+
+	@JsonIgnore
+	public boolean hasMaxValue(){
+		return ! StringUtils.isBlank(maxValue);
+	}
+
+
+	private double getLocaleAgnosticValue(String opinionatedValue){
+		Locale locale = LocaleContextHolder.getLocale();
+		NumberFormat format = NumberFormat.getInstance(locale);
+		double asDouble = Double.parseDouble(opinionatedValue);
+		return asDouble;
+	}
+
 
 	public void setMaxValue(String maxValue) {
 		this.maxValue = maxValue;
 	}
-
-
 
 	@Override
 	public AdvancedSearchFieldModelType getType() {
@@ -72,7 +104,7 @@ public class AdvancedSearchNumericRangeFieldModel implements AdvancedSearchField
 	}
 
 	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+	public boolean isSet() {
+		return hasMaxValue() || hasMinValue();
 	}
 }

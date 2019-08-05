@@ -162,13 +162,13 @@ public class UserCredentialsCache implements Serializable {
 	}
 
 	/**
-	 * Returns whether credentials are allowed to stay live. Currently the test is hardcoded and class-driven (basic auth only).
+	 * Returns whether credentials are allowed to stay live. Currently the test is hardcoded and returns false (we don't want to cache anything).
 	 *
 	 * @param credentials
 	 * @return
 	 */
 	private boolean isCachable(Credentials credentials){
-		return BasicAuthenticationCredentials.class.isAssignableFrom(credentials.getClass());
+		return false;
 	}
 
 }

@@ -39,6 +39,7 @@ import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.wizard.exception.AutomationWorkflowInUseException;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -55,6 +56,9 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
+import org.squashtest.tm.exception.bugtracker.CannotDeleteBugtrackerLinkedToSynchronisationException;
+import org.squashtest.tm.exception.plugin.CannotDisablePluginLinkedToSynchronisationException;
+import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
@@ -87,6 +91,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -134,8 +139,6 @@ public class GenericProjectController {
 
 	private static final String PROJECT_ID_URL = "/{" + RequestParams.PROJECT_ID + "}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
-
-	private static final String VALUES = "values[]";
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
@@ -268,10 +271,9 @@ public class GenericProjectController {
 		return toReturn;
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {
-		"id=project-bugtracker-project-name", VALUES})
+	@RequestMapping(value = PROJECT_ID_URL + "/bugtracker/projectName", method = RequestMethod.POST)
 	@ResponseBody
-	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
+	public List<String> changeBugtrackerProjectName(@RequestBody List<String> projectBugTrackerNames,
 													@PathVariable long projectId) {
 		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerNames);
 		return projectBugTrackerNames;
@@ -477,7 +479,16 @@ public class GenericProjectController {
 			&& projectManager.isProjectUsingWorkflow(projectId)) {
 			throw new AutomationWorkflowInUseException();
 		}
-		projectManager.disablePluginForWorkspace(projectId, plugin.getDisplayWorkspace(), pluginId);
+		List<WorkspaceType> workspaceTypes;
+		if ("squash.tm.plugin.jirasync".equals(pluginId)) {
+			if (projectManager.hasProjectRemoteSynchronisation(projectId)) {
+				throw new CannotDisablePluginLinkedToSynchronisationException();
+			}
+			workspaceTypes = Arrays.asList(WorkspaceType.CAMPAIGN_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE);
+		} else {
+			workspaceTypes = Collections.singletonList(plugin.getDisplayWorkspace());
+		}
+		projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
 	}
 
 

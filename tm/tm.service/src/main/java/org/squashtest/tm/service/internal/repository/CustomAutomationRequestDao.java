@@ -140,6 +140,10 @@ public interface CustomAutomationRequestDao {
 
 	void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy);
 
+	void updateIsManual(Long testCaseId, boolean newValue);
+
+	void updateConflictAssociation(Long testCaseId, String newValue);
+
 	void updateStatusToAutomated(List<Long> reqIds, AutomationRequestStatus requestStatus, List<AutomationRequestStatus> initialStatus);
 
 	Integer countAutomationRequestValid(List<Long> readableIds);

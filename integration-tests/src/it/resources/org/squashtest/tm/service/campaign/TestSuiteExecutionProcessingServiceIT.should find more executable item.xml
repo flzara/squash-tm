@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.19.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.20.0.dtd">
 <dataset>
 	<CORE_PARTY PARTY_ID="-1"/>
  	<CORE_USER LOGIN="StubUserContextService" CREATED_ON="2013-10-07" CREATED_BY="mp" PARTY_ID="-1"/>
@@ -64,7 +64,7 @@
 	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="test case 1"
 		CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-3" />
 	<TEST_CASE TCLN_ID="-1" VERSION="1"
-		PREREQUISITE="test" />
+		PREREQUISITE="test" UUID="2d387bac-dc8b-4648-94b0-2fa1f281f32a"/>
 	<!-- 3 TEST CASE STEP -->
 	<TEST_STEP TEST_STEP_ID="-1" />
 	<ACTION_TEST_STEP TEST_STEP_ID="-1" ACTION="lipsum1"
@@ -87,13 +87,13 @@
 	<TEST_CASE_LIBRARY_NODE TCLN_ID="-2" NAME="test case 2"
 		CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-8"/>
 	<TEST_CASE TCLN_ID="-2" VERSION="1"
-		PREREQUISITE="test" />
+		PREREQUISITE="test" UUID="2d387bac-dc8b-4648-94b0-2fa1f281f32b"/>
 
   <!-- A GHERKIN TEST CASE -->
   <TEST_CASE_LIBRARY_NODE TCLN_ID="-3" NAME="test case 3"
                           CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-9"/>
   <TEST_CASE TCLN_ID="-3" VERSION="1"
-             PREREQUISITE="test" TC_KIND="GHERKIN"/>
+             PREREQUISITE="test" TC_KIND="GHERKIN" UUID="2d387bac-dc8b-4648-94b0-2fa1f281f32c"/>
   <SCRIPTED_TC_EXTENDER SCRIPTED_TC_EXTENDER_ID="-1" LANGUAGE="GHERKIN" TEST_CASE_ID="-3" SCRIPT="Feature: gherk 2&#xD;Scenario: Check that the machine is available.&#xD;Given the machine is operating.&#xD;When I use my badge.&#xD;Then I can check my balance."/>
 
 

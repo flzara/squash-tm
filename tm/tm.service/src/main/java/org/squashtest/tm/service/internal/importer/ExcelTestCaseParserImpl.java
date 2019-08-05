@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /*
  * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)
@@ -221,6 +224,15 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.getStepElements().add(stepInfo);
 			}
 		});
+
+		// uuid populator
+		fieldPopulators.add(new FieldPopulator(UUID_TAG) {
+			@Override
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String uuid = valueCell(row).getStringCellValue();
+				pseudoTestCase.setUuid(uuid);
+			}
+		});
 	}
 
 	@Override
@@ -309,6 +321,8 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		setTestCaseAutomatable(pseudoTestCase, summary, testCase);
 
 		setTestCaseSteps(pseudoTestCase, testCase);
+
+		setTestCaseUuid(pseudoTestCase, testCase, summary);
 
 		return testCase;
 	}
@@ -417,6 +431,19 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private void setTestCaseDescription(PseudoTestCase pseudoTestCase, TestCase testCase) {
 		String desc = pseudoTestCase.formatDescription();
 		testCase.setDescription(desc);
+	}
+
+	private void setTestCaseUuid(PseudoTestCase pseudoTestCase, TestCase testCase, ImportSummaryImpl summary) {
+		Pattern uuidPattern = Pattern.compile("[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}");
+		String uuid = pseudoTestCase.getUuid();
+		if (StringUtils.isBlank(uuid)){
+			uuid = UUID.randomUUID().toString();
+		} else if (!uuidPattern.matcher(uuid).matches()){
+			throw new IllegalArgumentException("The value: " + uuid + " for column TC_UUID does not match the regular" +
+				" expression [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]" +
+				"{4}-[0-9a-fA-F]{12}");
+		}
+		testCase.setUuid(uuid);
 	}
 
 	/**

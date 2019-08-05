@@ -167,7 +167,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		testStep.accept(this);
 		referencedTestStep = testStep;
 		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
-			Attachment clone = actionStepAttach.hardCopy();
+			Attachment clone = actionStepAttach.shallowCopy();
 			attachmentList.addAttachment(clone);
 		}
 	}

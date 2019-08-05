@@ -29,31 +29,28 @@ public interface PasteOperation {
 
 	/**
 	 * <p>
-	 * Some operation involving a node and another node will happen, ie the source will be copied or moved to the destination. 
+	 * Some operation involving a node and another node will happen, ie the source will be copied or moved to the destination.
 	 * Also returns a TreeNode resulting from this operation,  that will be either the copy of the source or the source itself.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * If a position is specified, the source node will be copied/moved to its destination at this position. If position
 	 * is left to null, it will be appended to the content of the destination.
-	 * 
+	 *
 	 * </p>
 	 */
 	TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, Integer position);
 
 	TreeNode performOperationFromReqToTc(TreeNode source, TreeNode transformed, NodeContainer<TreeNode> destination, Integer position);
 
-	
+
 	/**
 	 * will say if the operation allows to go process node's childrens after operation.
 	 * see {@link TreeNodeCopier#visit(org.squashtest.tm.domain.campaign.Iteration)} for an example of when it is not ok.
-	 * 
+	 *
 	 * @return
 	 */
 	boolean isOkToGoDeeper();
-	
-	List<Long> getRequirementVersionToIndex();
-	
-	List<Long> getTestCaseToIndex();
-	
+
+
 }

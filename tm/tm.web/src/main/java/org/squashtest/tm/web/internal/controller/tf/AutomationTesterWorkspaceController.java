@@ -33,6 +33,7 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -74,6 +75,9 @@ public class AutomationTesterWorkspaceController {
 	@Inject
 	private AutomationRequestFinderService automationRequestFinderService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	private final DatatableMapper<String> automationRequestMapper = new NameBasedMapper()
 		.map(DataTableModelConstants.PROJECT_NAME_KEY, "testCase.project.name")
 		.map("reference", "testCase.reference")
@@ -88,7 +92,8 @@ public class AutomationTesterWorkspaceController {
 		.map("script", "testCase.automatedTest.name")
 		.map("entity-index", "index(AutomationRequest)")
 		.map("requestId", "id")
-		.map("assigned-to", "assignedTo");
+		.map("assigned-to", "assignedTo")
+		.map("uuid", "testCase.uuid");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -117,6 +122,13 @@ public class AutomationTesterWorkspaceController {
 		List<String> allStatus = new ArrayList<>(automReqStatuses.keySet());
 		model.addAttribute("testerGlobalView",
 			automationRequestFinderService.getTcLastModifiedByForAutomationRequests(allStatus));
+
+		// License information
+		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);
+		String dateLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.PLUGIN_LICENSE_EXPIRATION);
+
+		model.addAttribute("userLicenseInformation", userLicenseInformation);
+		model.addAttribute("dateLicenseInformation", (dateLicenseInformation == null || dateLicenseInformation.isEmpty()) ? null : Integer.valueOf(dateLicenseInformation));
 
 		return getWorkspaceViewName();
 	}

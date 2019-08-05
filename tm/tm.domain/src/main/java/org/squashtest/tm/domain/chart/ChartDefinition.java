@@ -27,6 +27,10 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryModel;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -49,16 +53,20 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
@@ -99,14 +107,20 @@ public class ChartDefinition implements TreeEntity{
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
 
+	// --------------- scope ----------------------
+
+	/**
+	 * The ScopeType is the coarse-grained hint about whether, and how, the attribute 'scope' should be considered.
+	 * The doc in the enum type will tell you more about.
+	 */
 	@Enumerated(EnumType.STRING)
 	private ScopeType scopeType;
 
-	@ElementCollection
-	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
-	private List<String> projectScope = new ArrayList<>();
-
-
+	/**
+	 * The scope forms the boundaries of the data that should be retrieved. It consists of a set of domain object
+	 * instances that the data processed in the chart will be restricted to. They can be either specific
+	 * instances, or folder/projects.
+	 */
 	@ElementCollection
 	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@AttributeOverrides({
@@ -115,14 +129,42 @@ public class ChartDefinition implements TreeEntity{
 	})
 	private List<EntityReference> scope = new ArrayList<>();
 
+	// -------------- /scope --------------------
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "QUERY_ID", nullable = false)
-	private ChartQuery query = new ChartQuery();
+	// ---------------- project scope --------------
+
+	/**
+	 * The project scope has unfortunately a bad name. It has nothing to do with the Chart Scope,
+	 * ie the set of entities that forms the boundaries of the expected results.
+	 *
+	 * What the projectScope really is, is an indicator for the GUI (the chart creation wizard) so that it knows
+	 * which custom fields should be proposed in the interface. It has no other purpose and is ignored when
+	 * the query is processed.
+	 */
+	@ElementCollection
+	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
+	private List<String> projectScope = new ArrayList<>();
+
+
+	// --------------- /project scope --------------
 
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "CHART_DEFINITION_ID")
+	private List<Filter> filters = new ArrayList<>();
+
+	@ElementCollection
+	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
+	@OrderColumn(name = "AXIS_RANK")
+	private List<AxisColumn> axis = new ArrayList<>();
+
+	@ElementCollection
+	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_DEFINITION_ID") )
+	@OrderColumn(name = "MEASURE_RANK")
+	private List<MeasureColumn> measures = new ArrayList<>();
 
 	public User getOwner() {
 		return owner;
@@ -145,19 +187,15 @@ public class ChartDefinition implements TreeEntity{
 	}
 
 	public List<Filter> getFilters() {
-		return query.getFilters();
+		return filters;
 	}
 
 	public List<AxisColumn> getAxis() {
-		return query.getAxis();
+		return axis;
 	}
 
 	public List<MeasureColumn> getMeasures() {
-		return query.getMeasures();
-	}
-
-	public ChartQuery getQuery(){
-		return query;
+		return measures;
 	}
 
 	public ScopeType getScopeType() {
@@ -174,7 +212,29 @@ public class ChartDefinition implements TreeEntity{
 	 * @return
 	 */
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
-		return query.getInvolvedEntities();
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(3);
+
+		Collection<? extends QueryColumnPrototypeInstance> columns;
+
+		columns = getFilters();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+
+		columns = getAxis();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> axisTypes = collectTypes(columns);
+			result.put(ColumnRole.AXIS, axisTypes);
+		}
+
+		columns = getMeasures();
+		if (! columns.isEmpty()){
+			Set<SpecializedEntityType> measureTypes = collectTypes(columns);
+			result.put(ColumnRole.MEASURE, measureTypes);
+		}
+
+		return result;
 	}
 
 
@@ -230,9 +290,6 @@ public class ChartDefinition implements TreeEntity{
 		this.scope = scope;
 	}
 
-	public void setQuery(ChartQuery query) {
-		this.query = query;
-	}
 
 	@Override
 	public TreeEntity createCopy() {
@@ -242,17 +299,19 @@ public class ChartDefinition implements TreeEntity{
 		copy.setProject(this.getProject());
 		copy.setProjectScope(copyProjectScope());
 		copy.setDescription(this.getDescription());
-		copy.setQuery(this.copyQuery());
+
 		copy.setType(this.getType());
 		copy.setScope(this.copyScope());
 		copy.setVisibility(this.getVisibility());
 		copy.setScopeType(this.getScopeType());
+
+		copy.setAxis(copyAxis());
+		copy.setFilters(copyFilters());
+		copy.setMeasures(copyMeasures());
+
 		return copy;
 	}
 
-	private ChartQuery copyQuery() {
-		return this.getQuery().createCopy();
-	}
 
 	private List<EntityReference> copyScope() {
 		List<EntityReference> copy = new ArrayList<>();
@@ -279,4 +338,36 @@ public class ChartDefinition implements TreeEntity{
 		this.projectScope = projectScope;
 	}
 
+	public void setFilters(List<Filter> filters) {
+		/*this.filters = new HashSet<>(filters);*/
+		this.filters = filters;
+	}
+
+	public void setAxis(List<AxisColumn> axis) {
+		this.axis = axis;
+	}
+
+	public void setMeasures(List<MeasureColumn> measures) {
+		this.measures = measures;
+	}
+
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends QueryColumnPrototypeInstance> columns){
+		Set<SpecializedEntityType> types = new HashSet<>();
+		for (QueryColumnPrototypeInstance col : columns){
+			types.add(col.getSpecializedType());
+		}
+		return types;
+	}
+
+	private List<AxisColumn> copyAxis(){
+		return axis.stream().map(AxisColumn::createCopy).collect(Collectors.toList());
+	}
+
+	private List<MeasureColumn> copyMeasures(){
+		return measures.stream().map(MeasureColumn::createCopy).collect(Collectors.toList());
+	}
+
+	private List<Filter> copyFilters(){
+		return filters.stream().map(Filter::createCopy).collect(Collectors.toList());
+	}
 }

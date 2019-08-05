@@ -32,8 +32,8 @@ public interface ConfigurationService {
 		String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
 		String UPLOAD_EXTENSIONS_WHITELIST = "uploadfilter.fileExtensions.whitelist";
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
-		String TOTAL_ACTIVATED_USERS = "total.activated.users";
-		String SQUASH_CALLBACK_URL = "squashtest.tm.callbackurl";
+		String ACTIVATED_USER_EXCESS = "activated.user.excess";
+		String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
 	}
 
 	void createNewConfiguration(String key, String value);

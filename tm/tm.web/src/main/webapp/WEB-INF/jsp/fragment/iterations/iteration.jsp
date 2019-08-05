@@ -34,6 +34,7 @@
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues" %>
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <f:message var="squashlocale" key="squashtm.locale"/>
 
@@ -124,7 +125,7 @@
   squashtm.workspace = squashtm.workspace || {};
   squashtm.app.campaignWorkspaceConf = squashtm.app.campaignWorkspaceConf || {};
 
-  squashtm.app.userPrefs = ${userPrefs};
+  squashtm.app.userPrefs = ${ json:serialize(userPrefs) };
   //favorite dashboard
   squashtm.workspace.canShowFavoriteDashboard = ${canShowDashboard};
   squashtm.workspace.shouldShowFavoriteDashboard = ${shouldShowDashboard};

@@ -87,13 +87,17 @@ define(
 				iterid = _conf.testSuiteId,
 				tpid = data['entity-id'],
 				execExist = data['exec-exists'],
-				format = translator.get('squashtm.dateformat');
+				format = translator.get('squashtm.dateformat'),
+				exTxt;
 
 			if (!!date && !!execExist) {
-				var exTxt = dateutils.format(date, format),
-					exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
+				exTxt = dateutils.format(date, format);
+				var exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
 				var exLnk = $('<a>', {'text': exTxt, 'href': exRef});
 				$row.find('.exec-on').empty().append(exLnk);
+			} else if(!!date) {
+				exTxt = dateutils.format(date, format);
+				$row.find('.exec-on').empty().text(exTxt);
 			} else {
 				$row.find('.exec-on').empty().text('-');
 			}
@@ -291,18 +295,23 @@ define(
 							},
 							testPlanSubsetIds : [data['entity-id']]
 						};
-						
+
 					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
-					$.ajax({
-						url: url,
-						dataType: 'json',
-						contentType : 'application/json',
-						type: 'post',
-						data: JSON.stringify(specification)
-					})
-					.done(function (suite) {
-						window.squashtm.context.autosuiteOverview.start(suite);
+					updateTAScript([data['entity-id']]).done(function(map){
+						if (map[data['entity-id']] !== undefined){
+							$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+						} else {
+							$.ajax({
+								url: url,
+								dataType: 'json',
+						    contentType : 'application/json',
+								type: 'post',
+						    data: JSON.stringify(specification)
+					    }).done(function (suite) {
+								window.squashtm.context.autosuiteOverview.start(suite);
+							});
+						}
 					});
 					return false;
 				}
@@ -453,7 +462,7 @@ define(
 
 								jqnew.find('.new-auto-exec').squashButton().on('click', function () {
 										var tpiId = $(this).data('tpi-id');
-										
+
 										var specification = {
 											context : {
 												type : 'TEST_SUITE',
@@ -463,17 +472,23 @@ define(
 										};
 
 										var url = window.squashtm.app.contextRoot + "automated-suites/preview";
-										
-										$.ajax({
-											url: url,
-											dataType: 'json',
-											type: 'post',
-											data: JSON.stringify(specification),
-											contentType: "application/json"
-										})
-										.done(function (suite) {
-											window.squashtm.context.autosuiteOverview.start(suite);
-										});
+
+									  updateTAScript([tpiId]).done(function(map){
+										  if (map[tpiId] !== undefined){
+												table.refresh();
+											  $.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
+										  } else {
+											  $.ajax({
+												  url: url,
+												  dataType: 'json',
+												  contentType : 'application/json',
+												  type: 'post',
+												  data: JSON.stringify(specification)
+											  }).done(function (suite) {
+												  window.squashtm.context.autosuiteOverview.start(suite);
+											  });
+										  }
+									  });
 
 										return false;
 									});
@@ -504,6 +519,26 @@ define(
 				sconf: squashSettings
 			};
 
+		}
+
+		function updateTAScript(itemIds) {
+			var associateUrl = squashtm.app.contextRoot + 'automation-requests/associate-TA-script';
+
+			var data = {};
+			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+			data[ent] = squashtm.page.identity.resid;
+
+			if (!!itemIds && itemIds.length > 0) {
+				data.testPlanItemsIds = itemIds;
+			}
+
+			return $.ajax({
+				type : "POST",
+				url : associateUrl,
+				dataType : "json",
+				data : data,
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+			});
 		}
 
 		// **************** MAIN ****************

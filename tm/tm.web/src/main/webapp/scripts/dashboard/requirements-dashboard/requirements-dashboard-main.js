@@ -102,8 +102,7 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 				fields: {
 					"requirement.id": {
 						type: "LIST",
-						values: "",
-						ignoreBridge: "false"
+						values: ""
 					}
 				}
 			};
@@ -111,7 +110,6 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 			search.fields.isCurrentVersion = {};
 			search.fields.isCurrentVersion.type = "SINGLE";
 			search.fields.isCurrentVersion.value = "1";
-			search.fields.isCurrentVersion.ignoreBridge = "false";
 
 			return search;
 		}
@@ -217,16 +215,16 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 
 			switch (pointIndex) {
 				case 0:
-					search.fields.status.values = ["1-WORK_IN_PROGRESS"];
+					search.fields.status.values = ["WORK_IN_PROGRESS"];
 					break;
 				case 1:
-					search.fields.status.values = ["2-UNDER_REVIEW"];
+					search.fields.status.values = ["UNDER_REVIEW"];
 					break;
 				case 2:
-					search.fields.status.values = ["3-APPROVED"];
+					search.fields.status.values = ["APPROVED"];
 					break;
 				case 3:
-					search.fields.status.values = ["4-OBSOLETE"];
+					search.fields.status.values = ["OBSOLETE"];
 					break;
 			}
 		}
@@ -237,16 +235,16 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 
 			switch (pointIndex) {
 				case 0:
-					search.fields.criticality.values = ["3-UNDEFINED"];
+					search.fields.criticality.values = ["UNDEFINED"];
 					break;
 				case 1:
-					search.fields.criticality.values = ["2-MINOR"];
+					search.fields.criticality.values = ["MINOR"];
 					break;
 				case 2:
-					search.fields.criticality.values = ["1-MAJOR"];
+					search.fields.criticality.values = ["MAJOR"];
 					break;
 				case 3:
-					search.fields.criticality.values = ["0-CRITICAL"];
+					search.fields.criticality.values = ["CRITICAL"];
 					break;
 			}
 		}
@@ -274,16 +272,16 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 
 			switch (seriesIndex) {
 				case 0:
-					search.fields.criticality.values = ["0-CRITICAL"];
+					search.fields.criticality.values = ["CRITICAL"];
 					break;
 				case 1:
-					search.fields.criticality.values = ["1-MAJOR"];
+					search.fields.criticality.values = ["MAJOR"];
 					break;
 				case 2:
-					search.fields.criticality.values = ["2-MINOR"];
+					search.fields.criticality.values = ["MINOR"];
 					break;
 				case 3:
-					search.fields.criticality.values = ["3-UNDEFINED"];
+					search.fields.criticality.values = ["UNDEFINED"];
 					break;
 			}
 
@@ -358,8 +356,11 @@ define(["require", "dashboard/basic-objects/model", "dashboard/basic-objects/tim
 					}
 				}).success(function (requirementIdsFromValidation) {
 					search.fields["requirement.id"].values = requirementIdsFromValidation.toString().split(",");
-					var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-					document.location.href = squashtm.app.contextRoot + "advanced-search/results?searchDomain=requirement&" + queryString;
+					var token = $("meta[name='_csrf']").attr("content");
+					utils.post(squashtm.app.contextRoot + "advanced-search/results?searchDomain=requirement", {
+						searchModel: JSON.stringify(search),
+						_csrf: token
+					});
 				});
 
 			});

@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
+	require(["app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "app/util/StringUtil", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 	         "milestone-manager/milestone-activation", "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, squashtm, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
+			function(ps, squashtm, $, translator, StringUtil, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
 		"use strict";
 
 		var trans = translator.get({
@@ -480,10 +480,11 @@ require(["common"], function(){
 				union:"label.milestone.synchronize.union"
 			});
 
-
-			$("#mil1Label").text(msg.mil.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
-			$("#mil2Label").text(msg.mil.split('"{0}"').join(mil2.label).split('"{1}"').join(mil1.label));
-			$("#unionLabel").text(msg.union.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
+			var mil1Label = StringUtil.unescape(mil1.label);
+			var mil2Label = StringUtil.unescape(mil2.label);
+			$("#mil1Label").text(msg.mil.split('"{0}"').join(mil1Label).split('"{1}"').join(mil2Label));
+			$("#mil2Label").text(msg.mil.split('"{0}"').join(mil2Label).split('"{1}"').join(mil1Label));
+			$("#unionLabel").text(msg.union.split('"{0}"').join(mil1Label).split('"{1}"').join(mil2Label));
 			greyTextForDisabledLabel($("#mil1"), $("#mil1Label"));
 			greyTextForDisabledLabel($("#mil2"), $("#mil2Label"));
 			greyTextForDisabledLabel($("#union"),$("#unionLabel"));

@@ -40,25 +40,28 @@ class TaParameterBuilderTest extends Specification {
 		given:
 		TestCase tc = Mock()
 		tc.reference >> "Farewell, sweet Concorde!"
+		tc.uuid >> "44d63d7e-11dd-44b0-b584-565b6f791fa9"
 
 		when:
 		Map params = builder.testCase().addEntity(tc).build()
 
 		then:
 		params["TC_REFERENCE"] == "Farewell, sweet Concorde!"
-		params.size() == 1
+		params["TC_UUID"] == "44d63d7e-11dd-44b0-b584-565b6f791fa9"
+		params.size() == 2
 	}
 
 	def "should not populate null params from test case"() {
 		given:
 		TestCase tc = Mock()
 		tc.reference >> null
+		tc.uuid >> "44d63d7e-11dd-44b0-b584-565b6f791fa9"
 
 		when:
 		Map params = builder.testCase().addEntity(tc).build()
 
 		then:
-		params.size() == 0
+		params.size() == 1
 	}
 
 	def "should populate params from iteration"() {

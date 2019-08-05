@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
@@ -59,6 +60,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
  * @author Gregory Fouquet
@@ -92,7 +94,14 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	}
 
 	private List<Pair<Execution, Issue>> findExecutionIssuePairs(TestCase testCase, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter);
+		List<Pair<Execution, Issue>> listTmpExecutionIssuePairs = issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter);
+
+		// TM-301:verifier si le bugtracker du projet de l'execution et le m$eme que celui de l issue
+		List<Pair<Execution, Issue>>listExecutionIssuePairs = listTmpExecutionIssuePairs.stream()
+									//.filter(tmpExcIssue->!(tmpExcIssue.left.getProject().equals(projectOfThisTC) && !tmpExcIssue.right.getBugtracker().equals(btProjectOfThisTc)))
+									.filter(tmpExcIssue->(tmpExcIssue.left.getProject().getBugtrackerBinding().getBugtracker().equals(tmpExcIssue.right.getBugtracker())))
+									.collect(Collectors.toList());
+		return listExecutionIssuePairs;
 	}
 
 	private long countIssues(TestCase testCase) {
@@ -163,7 +172,10 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	private Multimap<BugTracker, Pair<Execution, Issue>> mapPairsByBugTracker(List<Pair<Execution, Issue>> pairs, Map<Execution, BugTracker> bugtrackerByExecution) {
 		Multimap<BugTracker, Pair<Execution, Issue>> pairsByBugtracker = ArrayListMultimap.create();
 		for (Pair<Execution, Issue> pair : pairs) {
-			pairsByBugtracker.put(bugtrackerByExecution.get(pair.left), pair);
+
+				pairsByBugtracker.put(bugtrackerByExecution.get(pair.left), pair);
+
+
 		}
 		return pairsByBugtracker;
 	}
@@ -215,9 +227,10 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder {
 		for (Pair<Execution, Issue> pair : pairs) {
 			Issue ish = pair.right;
 			RemoteIssue remote = remoteById.get(ish.getRemoteIssueId());
-
-			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
-			ownerships.put(pair, ownership);
+			if (remote != null){
+				IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
+				ownerships.put(pair, ownership);
+			}
 		}
 
 		return ownerships;

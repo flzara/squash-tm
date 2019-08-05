@@ -21,11 +21,28 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-coverage_projects" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="179150fa-10d1-4f51-a76d-87516ba36eee">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+			  name="requirement-coverage_projects" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802"
+			  leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="/WEB-INF/messages/tm/messages"
+			  whenResourceMissingType="Key" uuid="179150fa-10d1-4f51-a76d-87516ba36eee">
+<!--			  isIgnorePagination="true/>-->
+
+	<!--  no empty rows in the midle of xls files (page break) -->
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<!-- no columnHeader in the middle of xls and csv files -->
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<!-- no empty first column (html border) -->
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+
+	<property name="net.sf.jasperreports.export.html.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.html.remove.emtpy.space.between.rows" value="true"/>
+
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="cell" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+	<style name="header_cell" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box leftPadding="2">
 			<topPen lineWidth="1.0"/>
@@ -34,7 +51,7 @@
 			<rightPen lineWidth="1.0" lineStyle="Solid"/>
 		</box>
 	</style>
-	<style name="cell_left" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+	<style name="header_cell_left" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box>
 			<topPen lineWidth="1.0"/>
@@ -43,7 +60,7 @@
 			<rightPen lineWidth="1.0" lineStyle="Solid"/>
 		</box>
 	</style>
-	<style name="cell_right" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
+	<style name="header_cell_right" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box>
 			<topPen lineWidth="1.0"/>
@@ -70,49 +87,49 @@
 	<columnHeader>
 		<band height="61" splitType="Stretch">
 			<textField>
-				<reportElement uuid="7cc55b98-4cc8-43e1-8a7a-c46995e5ff8d" style="cell_left" x="0" y="41" width="142" height="20"/>
+				<reportElement uuid="7cc55b98-4cc8-43e1-8a7a-c46995e5ff8d" style="header_cell_left" x="0" y="41" width="142" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.project.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="44aa3a48-f819-455c-8bc4-6a5b17ea3721" style="cell" x="142" y="41" width="150" height="20"/>
+				<reportElement uuid="44aa3a48-f819-455c-8bc4-6a5b17ea3721" style="header_cell" x="142" y="41" width="150" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.parent.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="0835d7da-3576-4024-a0c5-75aee82a5b98" style="cell" x="292" y="41" width="91" height="20"/>
+				<reportElement uuid="0835d7da-3576-4024-a0c5-75aee82a5b98" style="header_cell" x="292" y="41" width="91" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.reference.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7a05ee6f-2f4b-431b-8161-8e55bd73da5d" style="cell" x="383" y="41" width="210" height="20"/>
+				<reportElement uuid="7a05ee6f-2f4b-431b-8161-8e55bd73da5d" style="header_cell" x="383" y="41" width="210" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.label.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="d81f4b19-84e0-4c04-93dd-8ac804be11da" style="cell" x="643" y="41" width="109" height="20"/>
+				<reportElement uuid="d81f4b19-84e0-4c04-93dd-8ac804be11da" style="header_cell" x="643" y="41" width="109" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.criticality.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="68433ca9-9fdb-4f93-a43e-3a906ba53619" style="cell_right" x="752" y="41" width="50" height="20"/>
+				<reportElement uuid="68433ca9-9fdb-4f93-a43e-3a906ba53619" style="header_cell_right" x="752" y="41" width="50" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.associatedtc.label}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a8f58392-4be7-4e3d-85e8-2bdbc2351c30" style="cell" x="593" y="41" width="50" height="20"/>
+				<reportElement uuid="a8f58392-4be7-4e3d-85e8-2bdbc2351c30" style="header_cell" x="593" y="41" width="50" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>

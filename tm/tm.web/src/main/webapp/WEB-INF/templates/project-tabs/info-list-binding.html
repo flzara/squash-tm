@@ -67,24 +67,11 @@
     <span id="warning-message" th:text="#{dialog.project.info-list.change}"></span>
     <br/>
     <span th:if="${isTemplate}" class="red-warning-message" th:text="#{dialog.project.info-list.change.warningForTemplate}"></span>
-    <br/>
-    <span class="red-warning-message" id="warning-index" th:text="#{dialog.info-list.warning.reindex.before}"></span>
+
   </div>
   <div class="popup-dialog-buttonpane">
     <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
     <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
-  </div>
-
-</div>
-
-<div id="change-list-popup-after" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
-
-  <div class="display-table-row">
-    <span class="red-warning-message" id="warning-index-after" th:text="#{dialog.info-list.warning.reindex.after}"></span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-    <input th:if="${sec.hasRole('ROLE_ADMIN')}" type="button" th:value="#{label.GotoIndex}" data-def="evt=confirm" />
-    <input type="button" th:value="#{label.Close}" data-def="mainbtn, evt=cancel"/>
   </div>
 
 </div>

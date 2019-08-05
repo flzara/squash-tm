@@ -34,7 +34,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                     sAjaxSource: squashtm.app.contextRoot + "automation-tester-workspace/automation-request/validate",
                     "iDisplayLength": 25,
                     "bDeferRender": true,
-                    "aaSorting": [[7, "desc"], [8, "asc"]],
+                    "aaSorting": [[8, "desc"], [9, "asc"]],
                     "aoColumnDefs": [{
                         "bSortable": false,
                         "aTargets": [0],
@@ -59,25 +59,29 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         "aTargets": [4],
                         "mDataProp": "name"
                     }, {
+						"bSortable": false,
+						"aTargets": [5],
+						"mDataProp": "uuid"
+					}, {
                         "bSortable": true,
-                        "aTargets": [5],
+                        "aTargets": [6],
                         "mDataProp": "format"
                     }, {
                         "bSortable": true,
-                        "aTargets": [6],
+                        "aTargets": [7],
                         "mDataProp": "created-by"
                     }, {
                         "bSortable": true,
-                        "aTargets": [7],
+                        "aTargets": [8],
                         "mDataProp": "priority",
                         "sClass": "priority"
                     }, {
                         "bSortable": true,
-                        "aTargets": [8],
+                        "aTargets": [9],
                         "mDataProp": "status"
                     }, {
                         "bSortable": false,
-                        "aTargets": [9],
+                        "aTargets": [10],
                         "mDataProp": "writable",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -94,7 +98,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                         }
                     }, {
                         "bSortable": false,
-                        "aTargets": [10],
+                        "aTargets": [11],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -119,7 +123,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", "
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [11]
+                        "aTargets": [12]
                     }],
                     "bFilter": true,
                     fnRowCallback: function (row, data, displayIndex) {

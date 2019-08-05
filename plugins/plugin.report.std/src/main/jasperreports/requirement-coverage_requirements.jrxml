@@ -28,7 +28,6 @@
 	<style name="cell" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box leftPadding="2">
-			<topPen lineWidth="1.0"/>
 			<leftPen lineWidth="1.0" lineStyle="Solid"/>
 			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid"/>
@@ -37,7 +36,6 @@
 	<style name="cell_left" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box>
-			<topPen lineWidth="1.0"/>
 			<leftPen lineWidth="2.0" lineStyle="Solid"/>
 			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid"/>
@@ -46,7 +44,6 @@
 	<style name="cell_right" fill="Solid" hAlign="Left" vAlign="Middle" pattern="">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 		<box>
-			<topPen lineWidth="1.0"/>
 			<leftPen lineWidth="1.0" lineStyle="Solid"/>
 			<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 			<rightPen lineWidth="2.0" lineStyle="Solid"/>

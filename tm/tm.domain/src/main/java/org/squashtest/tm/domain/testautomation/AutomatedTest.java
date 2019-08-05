@@ -33,7 +33,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @NamedQueries({
 	@NamedQuery(name="automatedTest.countReferencesByTestCases", query="select count(*) from TestCase tc join tc.automatedTest autoTest where autoTest.id = :autoTestId"),
@@ -59,6 +61,10 @@ public class AutomatedTest implements Identified{
 	@Size(max = Sizes.NAME_MAX)
 	private String name;
 
+	// [TM-13] Transient list of Squash TM Test Cases'UUID. Used when we ask remote server automation projects' test list to associate a TestCase with an automation script.
+	@Transient
+	private List<String> linkedTC;
+
 	protected AutomatedTest() {
 		super();
 	}
@@ -67,6 +73,13 @@ public class AutomatedTest implements Identified{
 		super();
 		this.name = name;
 		this.project = project;
+	}
+
+	public AutomatedTest(String name, TestAutomationProject project, List<String> linkedTC) {
+		super();
+		this.name = name;
+		this.project = project;
+		this.linkedTC = linkedTC;
 	}
 
 	@Override
@@ -138,5 +151,7 @@ public class AutomatedTest implements Identified{
 		return new AutomatedTest(name, newP);
 	}
 
-
+	public List<String> getLinkedTC() {
+		return linkedTC;
+	}
 }

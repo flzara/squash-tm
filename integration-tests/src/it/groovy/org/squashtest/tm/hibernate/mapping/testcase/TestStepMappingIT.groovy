@@ -26,21 +26,21 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 class TestStepMappingIT extends DbunitMappingSpecification {
 
 
-	def "shoud persist and retrieve a test step"() {
-		given:
-		ActionTestStep ts = new ActionTestStep(action: "my action", expectedResult: "my expected result")
-
-		when:
-		doInTransaction({ session -> session.persist(ts) })
-		def obj = doInTransaction({ session -> session.get(ActionTestStep, ts.id) })
-
-		then:
-		obj.action == ts.action
-		obj.expectedResult == ts.expectedResult
-
-		cleanup:
-		deleteFixture ts
-	}
+//	def "shoud persist and retrieve a test step"() {
+//		given:
+//		ActionTestStep ts = new ActionTestStep(action: "my action", expectedResult: "my expected result")
+//
+//		when:
+//		doInTransaction({ session -> session.persist(ts) })
+//		def obj = doInTransaction({ session -> session.get(ActionTestStep, ts.id) })
+//
+//		then:
+//		obj.action == ts.action
+//		obj.expectedResult == ts.expectedResult
+//
+//		cleanup:
+//		deleteFixture ts
+//	}
 
 	/*def "should cascade step persistence from test case"() {
 	 given:

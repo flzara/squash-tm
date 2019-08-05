@@ -65,37 +65,34 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 						};
 					});
 
-					// Check if it is a campaign
-					if(scope[0].type === 'CAMPAIGN') {
-						// Store the perimeter
-						self.model.set({scope: scope});
+					// Store the perimeter
+					self.model.set({scope: scope});
 
-						// Fetch the corresponding projects data (used to get the custom fields)
-						self.doFetchCufData(scope[0].id).then(function(cufMap) {
-								var entityWithCuf = self.model.get('entityWithCuf');
-								var availableCustomFields = _.chain(cufMap).pick(entityWithCuf).mapObject(function(cufList) {
-									return _.map(cufList, function(cufBinding) {
-										return {
-											id: cufBinding.boundEntity.enumName + "_CUF-" + cufBinding.customField.id,
-											label: cufBinding.customField.label,
-											code: cufBinding.customField.code,
-											type: cufBinding.customField.inputType.friendlyName
-										};
-									});
-								}).value();
-								self.model.set({ availableCustomFields: availableCustomFields });
-						});
+					// Fetch the corresponding projects data (used to get the custom fields)
+					self.doFetchCufData(scope[0].type, scope[0].id).then(function(cufMap) {
+							var entityWithCuf = self.model.get('entityWithCuf');
+							var availableCustomFields = _.chain(cufMap).pick(entityWithCuf).mapObject(function(cufList) {
+								return _.map(cufList, function(cufBinding) {
+									return {
+										id: cufBinding.boundEntity.enumName + "_CUF-" + cufBinding.customField.id,
+										label: cufBinding.customField.label,
+										code: cufBinding.customField.code,
+										type: cufBinding.customField.inputType.friendlyName
+									};
+								});
+							}).value();
+							self.model.set({ availableCustomFields: availableCustomFields });
+					});
 
-						// Store the selected node to reselect it if the tree is opened later
-						var selecteTreedNodes = _.map($('#tree').jstree('get_selected'), function(selected) {
-							return {
-								id: $(selected).attr("id")
-							};
-						});
-						self.model.set({ selectedTreeNodes: selecteTreedNodes });
+					// Store the selected node to reselect it if the tree is opened later
+					var selecteTreedNodes = _.map($('#tree').jstree('get_selected'), function(selected) {
+						return {
+							id: $(selected).attr("id")
+						};
+					});
+					self.model.set({ selectedTreeNodes: selecteTreedNodes });
 
-						self.updateDisplayWithPerimeter();
-					}
+					self.updateDisplayWithPerimeter();
 				});
 
 			},
@@ -105,18 +102,19 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				var scope = this.model.get('scope');
 				var selectedPerimeterSpan = $('#selected-perimeter');
 
-				if(scope) {
-					selectedPerimeterSpan.text(scope[0].name);
+				if (scope && !_.isEmpty(scope)) {
+					var selectedNodeName = scope[0].name;
+					selectedPerimeterSpan.text(StringUtil.unescape(selectedNodeName));
 				} else {
 					selectedPerimeterSpan.text(translator.get('wizard.perimeter.msg.perimeter.choose'));
 				}
 			},
 
-			doFetchCufData: function(campaignId) {
+			doFetchCufData: function(type, nodeId) {
 				return $.ajax({
 					method: 'GET',
 					url: router.buildURL('custom-report.custom-export.cufs'),
-					data: { campaignId: campaignId }
+					data: { entityType: type, entityId: nodeId }
 				});
 			}
 

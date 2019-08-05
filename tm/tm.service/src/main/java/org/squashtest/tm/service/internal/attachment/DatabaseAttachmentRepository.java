@@ -78,4 +78,9 @@ public class DatabaseAttachmentRepository implements AttachmentRepository {
 	private Session currentSession() throws HibernateException {
 		return entityManager.unwrap(Session.class);
 	}
+
+	@Override
+	public void removeContent(long attachmentListId, long attachmentContentId) {
+	//Noop
+	}
 }

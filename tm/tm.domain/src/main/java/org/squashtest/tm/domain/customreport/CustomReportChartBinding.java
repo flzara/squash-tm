@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.customreport;
 
-import org.hibernate.search.annotations.DocumentId;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -43,7 +42,6 @@ public class CustomReportChartBinding implements Identified {
 	@Column(name = "CRCB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_report_chart_binding_crcb_id_seq")
 	@SequenceGenerator(name = "custom_report_chart_binding_crcb_id_seq", sequenceName = "custom_report_chart_binding_crcb_id_seq", allocationSize = 1)
-	@DocumentId
 	private Long id;
 
 	@NotNull
