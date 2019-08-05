@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.testcase.scripted;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,8 @@ import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
-import org.squashtest.tm.domain.project.AutomationWorkflowType;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
@@ -44,9 +46,8 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
@@ -82,8 +83,6 @@ public class ScriptedTestCaseEventListener {
 
 	private static final String TYPE_WORKFLOW = "T(org.squashtest.tm.domain.project.AutomationWorkflowType)";
 
-	private static final String  PREFIX_NAME_PLUGIN = "henix.plugin.automation.workflow";
-
 	@PersistenceContext
 	private EntityManager em;
 
@@ -106,15 +105,16 @@ public class ScriptedTestCaseEventListener {
 	private TestCaseDao testCaseDao;
 
 	@Inject
+	private ProjectDao projectDao;
+
+	@Inject
 	private GenericProjectManagerService projectManager;
 
 	@Inject
 	private AutomationWorkflow automationWorkflow;
 
-
-
-
-
+	@Autowired(required = false)
+	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
 
 	/**
 	 * If the new status is suitable for commit (eg, TRANSMITTED),
@@ -162,6 +162,7 @@ public class ScriptedTestCaseEventListener {
 		"#event.workflowType == " + TYPE_WORKFLOW + ".REMOTE_WORKFLOW")
 	public void remoteRemoteTickets(AutomationRequestStatusChangeEvent event) {
 		String remoteIssueKey;
+
 		LOGGER.debug("request status changed and type workflow isremote : create a new jira ticket and remoteRAE");
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
@@ -170,16 +171,21 @@ public class ScriptedTestCaseEventListener {
 		List<Long> requestIds = event.getAutomationRequestIds();
 		List<TestCase> listTestCase = testCaseDao.findTestCaseByAutomationRequestIds(requestIds);
 		for(TestCase tc: listTestCase){
-			remoteIssueKey = automationWorkflow.createNewTicketRemoteServer(tc);
-			if (remoteIssueKey!=null){
-				automationWorkflow.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc);
-			}else{
-
+			//workflow d'automatisation active
+			if(tc.getProject().isAllowAutomationWorkflow()){
+				//select plugin which is attach în project
+				LibraryPluginBinding lpb= projectDao.findPluginForProject(tc.getProject().getId(), PluginType.AUTOMATION);
+				for(AutomationWorkflow plugin: plugins){
+					if(plugin.getPluginType().equals(lpb.getPluginType())){
+						remoteIssueKey = plugin.createNewTicketRemoteServer(tc);
+						if (remoteIssueKey!=null){
+							plugin.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc);
+						}
+					}
+				}
 			}
+
 		}
-
-
-		System.out.println("teste Listerner remoteRemoteTickets");
 	}
 
 

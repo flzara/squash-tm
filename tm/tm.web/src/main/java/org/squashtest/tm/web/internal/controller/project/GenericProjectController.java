@@ -463,7 +463,8 @@ public class GenericProjectController {
 	@ResponseBody
 	public void enablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard wizard = pluginManager.findById(pluginId);
-		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId);
+		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId, wizard.getPluginType());
+
 
 	}
 

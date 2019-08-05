@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.domain.project;
 
+import org.squashtest.tm.api.plugin.PluginType;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,6 +59,10 @@ public abstract class LibraryPluginBinding  {
 	@Column
 	private String pluginId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PLUGIN_TYPE")
+	private PluginType pluginType;
+
 
 	@ElementCollection
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))
@@ -71,6 +79,13 @@ public abstract class LibraryPluginBinding  {
 		super();
 		this.pluginId = pluginId;
 	}
+	public LibraryPluginBinding(String pluginId, PluginType pluginType){
+		super();
+		this.pluginId = pluginId;
+		this.pluginType = pluginType;
+	}
+
+
 
 	public long getId() {
 		return id;
@@ -104,5 +119,13 @@ public abstract class LibraryPluginBinding  {
 
 	public Map<String, String> getProperties(){
 		return properties;
+	}
+
+	public PluginType getPluginType() {
+		return pluginType;
+	}
+
+	public void setPluginType(PluginType pluginType) {
+		this.pluginType = pluginType;
 	}
 }

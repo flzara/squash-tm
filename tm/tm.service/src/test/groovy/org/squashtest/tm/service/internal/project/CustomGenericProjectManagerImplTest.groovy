@@ -746,6 +746,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow"() {
 		given:
 			Project p = Mock()
+			p.getAutomationWorkflowType() >> AutomationWorkflowType.REMOTE_WORKFLOW
 			genericProjectDao.getOne(9L) >> p
 			p.getAutomationWorkflowType().getI18nKey()>>"REMOTE_WORKFLOW"
 		when:
@@ -757,6 +758,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "#isProjectUsingWorkflow(long, String) - Should return false since the project uses another workflow"() {
 		given:
 			Project p = Mock()
+			p.getAutomationWorkflowType() >> AutomationWorkflowType.NATIVE
 			genericProjectDao.getOne(9L) >> p
 			p.getAutomationWorkflowType().getI18nKey()>>"NATIVE"
 		when:

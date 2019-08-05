@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -578,9 +579,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
+	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId, PluginType pluginType) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.enablePlugin(pluginId);
+		/*add pluginType*/
+		if(!pluginType.equals(null)){
+			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+			binding.setPluginType(pluginType);
+		}
+
 	}
 
 	@Override

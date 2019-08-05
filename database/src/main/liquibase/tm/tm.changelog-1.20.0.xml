@@ -178,5 +178,17 @@
     </sql>
 
   </changeSet>
+  <changeSet id="tm-1.20.0-TM-248-plugin-type" author="amk">
+
+    <comment>add new column PLUGIN_TYPE into LIBRARY_PLUGIN_BINDING</comment>
+
+    <addColumn tableName="LIBRARY_PLUGIN_BINDING">
+      <column name="PLUGIN_TYPE" type="VARCHAR(25)"  remarks="This column specifies which type of plugin is used. for now only one type used: Automation.">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+
+  </changeSet>
+
 
 </databaseChangeLog>

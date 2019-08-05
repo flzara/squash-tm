@@ -26,6 +26,7 @@ import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
+import org.squashtest.tm.api.plugin.PluginType;
 
 import javax.annotation.PostConstruct;
 
@@ -57,6 +58,19 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	private String typeKey;
 
+	/**
+	 * it's the type of plugin, for the moment only one type "Automation"
+	 */
+
+	private PluginType pluginType;
+
+	public PluginType getPluginType() {
+		return pluginType;
+	}
+
+	public void setPluginType(PluginType pluginType) {
+		this.pluginType = pluginType;
+	}
 
 	@Override
 	public Map<String, String> getProperties(){

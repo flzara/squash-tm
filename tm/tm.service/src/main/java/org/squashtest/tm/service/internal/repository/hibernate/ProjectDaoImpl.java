@@ -21,18 +21,14 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.jooq.DSLContext;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 import javax.inject.Inject;
-import javax.persistence.Query;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,6 +133,14 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 			.from(PROJECT)
 			.where(PROJECT.ALLOW_AUTOMATION_WORKFLOW.eq(true))
 			.fetchOne().value1();
+	}
+
+	@Override
+	public LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType) {
+		javax.persistence.Query query = entityManager.createNamedQuery("Project.findPluginForProject");
+		query.setParameter("projectId", projectId);
+		query.setParameter("pluginType",pluginType);
+		return (LibraryPluginBinding) query.getSingleResult();
 	}
 
 }

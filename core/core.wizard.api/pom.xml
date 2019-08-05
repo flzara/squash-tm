@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>
-      <version>1.20.0.IT6-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>tm.domain</artifactId>
-      <version>1.20.0.IT6-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

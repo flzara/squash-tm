@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -39,15 +38,12 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
@@ -502,15 +498,6 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		query.setParameter("requestIds", requestIds);
 		return query.getResultList();
 	}
-
-
-	@Override
-	public TestCaseLibrary findWorkflowForProjectByLibaryType(Long projectId) {
-		javax.persistence.Query query = entityManager.createNamedQuery("Project.findTestCaseLibraryPluginBindingByIdProject");
-		query.setParameter("projectId", projectId);
-		return (TestCaseLibrary) query.getSingleResult();
-	}
-
 
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
 

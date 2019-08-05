@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 
 import java.util.List;
 
@@ -56,6 +56,6 @@ public interface CustomProjectDao {
 
 	Integer countProjectsAllowAutomationWorkflow();
 
-
+	LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType);
 
 }

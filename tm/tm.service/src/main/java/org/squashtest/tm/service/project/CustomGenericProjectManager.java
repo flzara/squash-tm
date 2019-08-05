@@ -27,6 +27,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
@@ -162,7 +163,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	/**
 	 * enables the given plugin for the given workspace of the given project
 	 */
-	void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
+	void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId, PluginType pluginType);
 
 	/**
 	 * disables the given plugin for the given workspace of the given project
