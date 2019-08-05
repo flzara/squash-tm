@@ -27,12 +27,22 @@ import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by jprioux on 31/07/2019.
- */
 public interface CustomReportCustomExportService {
 
+	/**
+	 * Get the entity name from entity reference
+	 * @param entityReference the entity selected
+	 * @return entity name
+	 */
 	String getScopeEntityName(EntityReference entityReference);
+
+	/**
+	 * Get all custom fields data from itpis
+	 * @param mainProjectId the project id
+	 * @param itpis list of itpi
+	 * @param map initial map
+	 * @return map with cufs by entity
+	 */
 	Map<String, List<CustomFieldBindingModel>> getCustomFieldsData(
 		Long mainProjectId, List<IterationTestPlanItem> itpis, Map<String, List<CustomFieldBindingModel>> map);
 

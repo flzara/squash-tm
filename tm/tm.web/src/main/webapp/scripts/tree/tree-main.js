@@ -93,6 +93,24 @@ define(["jquery",
 			window.squashtm.tree = instance;
 
 		},
+		initCustomExportTree: function (settings) {
+			pluginsFactory.configure("search-tree");
+			var conf = searchConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
+
+			instance.on("select_node.jstree", function (event, data) {
+				var prevSelect = $($(event.target).jstree('get_selected')[0]).attr('restype');
+				var size = $(event.target).jstree('get_selected').size();
+				if (size > 1 || prevSelect === 'campaign-libraries' || prevSelect === 'campaign-folders') {
+					$(event.target).jstree('deselect_node');
+				}
+
+				return true;
+			});
+
+			window.squashtm.tree = instance;
+
+		},
 		initLinkableTree: function (settings) {
 			pluginsFactory.configure("tree-picker");
 			var conf = pickerConf.generate(settings);
@@ -116,18 +134,18 @@ define(["jquery",
 		get: function (arg) {
 			if (arg === undefined) {
 				var zetree = $("#tree");
-				
+
 				// if not found, try to find if there is one matching .tree.jstree
 				if (zetree.length === 0){
 					zetree = $(".tree.jstree");
 				}
-				
-				// if 0 or more instances were found, that's no good 
+
+				// if 0 or more instances were found, that's no good
 				// return null instead to fail-fast
 				if (zetree.length !== 1){
 					zetree = null;
 				}
-				
+
 				return zetree;
 			}
 			else {
