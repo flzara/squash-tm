@@ -95,6 +95,12 @@
       </div>
     </div>
 
+	  <div class="display-table-row test-case-automation-request-block">
+        <label for="test-case-uuid" class="display-table-cell"><f:message key="test-case.automation-uuid.label" /></label>
+        <div class="display-table-cell">
+          <span id="test-case-uuid">${uuid}</span>
+        </div>
+    </div>
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
      <%--== If remote Automation Workflow is used ==--%>
 
@@ -102,13 +108,6 @@
        <label class="display-table-cell" for="remote-automation-request-status">
          <f:message key="test-case.automation-status-remote.label" />
        </label>
-		<div class="display-table-row test-case-automation-request-block">
-        <label for="test-case-uuid" class="display-table-cell"><f:message key="test-case.automation-uuid.label" /></label>
-        <div class="display-table-cell">
-          <span id="test-case-uuid">${uuid}</span>
-        </div>
-    </div>
-
        <div class="display-table-cell" id="remote-automation-request-status">
          <span>${ remoteReqStatusLabel }</span>
        </div>

@@ -77,11 +77,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.automationworkflow.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>

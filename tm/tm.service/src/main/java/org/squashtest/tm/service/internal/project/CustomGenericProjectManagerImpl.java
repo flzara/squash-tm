@@ -583,7 +583,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.enablePlugin(pluginId);
 		/*add pluginType*/
-		if(!pluginType.equals(null)){
+		if(pluginType!=null){
 			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
 			binding.setPluginType(pluginType);
 		}

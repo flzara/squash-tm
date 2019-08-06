@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -170,9 +169,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	private boolean allowAutomationWorkflow = false;
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	@SortableField
 	@Enumerated(EnumType.STRING)
 	private AutomationWorkflowType automationWorkflowType = AutomationWorkflowType.NONE;
 

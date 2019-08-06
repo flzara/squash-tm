@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.configuration;
 
-import org.apache.logging.log4j.util.Strings;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -90,7 +90,7 @@ public class CallbackUrlProvider {
 	 * @throws BadConfiguration If the Url found is not a valid {@link URL} or if both of the properties are not set.
 	 */
 	public URL getCallbackUrl() {
-		if(callbackUrlFromDatabase != null && !Strings.isEmpty(callbackUrlFromDatabase)) {
+		if(callbackUrlFromDatabase != null && !callbackUrlFromDatabase.isEmpty()) {
 			try {
 				return new URL(callbackUrlFromDatabase);
 			} catch (MalformedURLException ex) {
@@ -100,7 +100,7 @@ public class CallbackUrlProvider {
 				bc.setPropertyName(SQUASH_CALLBACK_URL);
 				throw bc;
 			}
-		} else if(callbackUrlFromConfFile != null && !Strings.isEmpty(callbackUrlFromConfFile)){
+		} else if(callbackUrlFromConfFile != null && !callbackUrlFromConfFile.isEmpty()){
 			try {
 				return new URL(callbackUrlFromConfFile);
 			} catch(MalformedURLException ex) {
