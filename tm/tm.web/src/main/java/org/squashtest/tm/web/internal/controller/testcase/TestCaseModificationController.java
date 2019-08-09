@@ -38,6 +38,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -55,6 +57,8 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -81,6 +85,8 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -146,6 +152,7 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE = "testCase";
 	private static final String TEST_SPACE_CASE = "test case ";
 	private static final String TEST_CASE_ID = "testCaseId";
+	public static final String FINAL_STATE = "finalState";
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
@@ -219,6 +226,11 @@ public class TestCaseModificationController {
 	@Inject
 	private AutomationRequestModificationService automationRequestModificationService;
 
+	@Inject
+	private GenericProjectManagerService projectManager;
+	@Inject
+	private ProjectDao projectDao;
+
 	/**
 	 * Returns the fragment html view of test case
 	 *
@@ -275,7 +287,8 @@ public class TestCaseModificationController {
 	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
 
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
-
+		String finalStatusConfiged = null;
+		boolean remoteAutomReqExists = false;
 		// Convert execution mode with local parameter
 		List<OptionTag> executionModes = new ArrayList<>();
 		for (TestCaseExecutionMode executionMode : TestCaseExecutionMode.values()) {
@@ -284,7 +297,6 @@ public class TestCaseModificationController {
 			ot.setValue(executionMode.toString());
 			executionModes.add(ot);
 		}
-
 		mav.addObject(TEST_CASE, testCase);
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
@@ -307,24 +319,35 @@ public class TestCaseModificationController {
 		String workflowType = testCase.getProject().getAutomationWorkflowType().getI18nKey();
 		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
 
-		boolean remoteAutomReqExists = false;
-		AutomationRequest automReq = testCase.getAutomationRequest();
-		if(automReq != null) {
-			remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
-			if(remoteAutomReqExists) {
-				remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
-				RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
-				mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
-				mav.addObject("remoteReqAssignedTo",(!remoteAutomReq.getRemoteAssignedTo().equals(null)? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
-				mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
-				mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
-			}
-		}else{
-			mav.addObject("remoteReqUrl", internationalizationHelper.internationalize("squashtm.nodata", locale));
-			mav.addObject("remoteReqAssignedTo",internationalizationHelper.internationalize("squashtm.nodata", locale));
-			mav.addObject("remoteReqStatusLabel", internationalizationHelper.internationalize("squashtm.nodata", locale));
-			mav.addObject("automReqLastTransmittedOn",null);
+		//if the remote workflow is used, search for the plug-in used to retrieve the final configuration of the state
+		if (workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())){
+			LibraryPluginBinding  lpb = projectDao.findPluginForProject(testCase.getProject().getId(),PluginType.AUTOMATION );
+			Map<String,String> pluginConfiguration =  projectManager.getPluginConfiguration(testCase.getProject().getId(), WorkspaceType.TEST_CASE_WORKSPACE, lpb.getPluginId());
+			finalStatusConfiged = pluginConfiguration.get(FINAL_STATE);
 
+			AutomationRequest automReq = testCase.getAutomationRequest();
+			if(automReq != null) {
+				remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
+				if(remoteAutomReqExists) {
+					remoteAutomReqExists = automReq.getRemoteAutomationRequestExtender() != null;
+					RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
+					mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
+					mav.addObject("remoteIssueKey", remoteAutomReq.getRemoteIssueKey());
+					mav.addObject("remoteReqAssignedTo",(!remoteAutomReq.getRemoteAssignedTo().equals(null)? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
+					mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "OUI":
+																		(remoteAutomReq.getRemoteRequestStatus()==null?internationalizationHelper.internationalize("squashtm.nodata", locale):"NON")));
+					mav.addObject("finalStatusConfiged",finalStatusConfiged);
+				}
+			}else{
+				mav.addObject("remoteReqUrl", internationalizationHelper.internationalize("squashtm.nodata", locale));
+				mav.addObject("remoteReqAssignedTo",internationalizationHelper.internationalize("squashtm.nodata", locale));
+				mav.addObject("remoteReqStatusLabel", internationalizationHelper.internationalize("squashtm.nodata", locale));
+				mav.addObject("automatedTestCase",internationalizationHelper.internationalize("squashtm.nodata", locale));
+				mav.addObject("automReqLastTransmittedOn",null);
+				mav.addObject("finalStatusConfiged",finalStatusConfiged);
+			}
 		}
 		mav.addObject("remoteAutomationRequestExists", remoteAutomReqExists);
 	}

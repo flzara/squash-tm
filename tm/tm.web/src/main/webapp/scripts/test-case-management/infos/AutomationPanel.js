@@ -36,11 +36,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 
 					eventBus.onContextual("test-case.transmitted", function(evt, data) {
           	// query the newly created AutomationRequest and its potential RemoteAutomationRequestExtender
-          	self.doGetAutomationRequestInfos().success(function(automationRequest) {
-          		// then update the automation panel
-          		self.updateAutomationRequestBlockInfos(automationRequest);
-          		self.initAutomationRequestBlock(automationRequest != null);
-          	});
+						if(isRemoteAutomationWorkflowUsed){
+							self.doGetAutomationRequestInfos().success(function(automationRequest) {
+								// then update the automation panel
+								self.updateAutomationRequestBlockInfos(automationRequest);
+								self.initAutomationRequestBlock(automationRequest != null);
+							});
+						}
           });
 
 					if (self.settings.writable) {
@@ -130,8 +132,12 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					// Display remote-automation-request-block according to existence of the remoteRequest
 					if(isAutomatable && isRemoteAutomationWorkflowUsed) {
 						$('.test-case-remote-automation-request-block').show();
+						$("#automation-request-status-label").hide()
+						$("#automation-request-status").hide();
 					} else {
 						$('.test-case-remote-automation-request-block').hide();
+						$("#automation-request-status").show();
+						$("#automation-request-status-label").show();
 					}
 				},
 
@@ -145,13 +151,32 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 				updateAutomationRequestBlockInfos: function(automationRequest) {
 					// status
 					var automReqStatusInput = $("#automation-request-status");
+					var finalStatusConfiged = $("#finalStatusConfiged");
+					var automatedTestCase = $("#test-case-automatisable");
+					var remoteRequestStatus = automationRequest.remoteAutomationRequestExtender.remoteRequestStatus;
+/*					var remoteReqUrl = automationRequest.remoteAutomationRequestExtender.remoteRequestUrl;
+					var remoteIssueKey = automationRequest.remoteAutomationRequestExtender.remoteIssueKey;*/
 					automReqStatusInput.editable("disable");
 					automReqStatusInput.removeClass("editable");
 					automReqStatusInput.text(automationRequest.requestStatus);
 					// remoteStatus
 					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
+
+					if(remoteRequestStatus == finalStatusConfiged){
+							$("#test-case-automatisable").text("OUI");
+						}else{
+							$("#test-case-automatisable").text("NON");
+						}
 					// url
 					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+				/*	if(remoteReqUrl != '-'){
+					$("#remote-automation-request-url").prop("href", remoteReqUrl);
+
+					}
+					if(remoteReqUrl == '-' || (remoteReqUrl==null) ){
+					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					}*/
+
 					//assignedTo
 					$("#remote-automation-request-assignedTo").text(automationRequest.remoteAutomationRequestExtender.remoteRequestAssignedTo);
 					// date transmission

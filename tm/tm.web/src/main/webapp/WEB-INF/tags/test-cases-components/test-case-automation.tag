@@ -58,8 +58,9 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="body">
-	<div id="test-case-automation-table" class="display-table">
+	<div id="test-case-automation-table" class="display-table" style="width: 80%">
 
+<div class="div-test-case-automatable" style="float:left;width:600px;">
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-automation-indicator"><f:message key="test-case.automation-indicator.label"/></label>
 			<div class="display-table-cell" id="test-case-automation-indicator">
@@ -87,7 +88,7 @@
     </div>
 
     <div class="display-table-row test-case-automation-request-block">
-      <label class="display-table-cell" for="automation-request-status">
+      <label id="automation-request-status-label" class="display-table-cell" for="automation-request-status">
         <f:message key="test-case.automation-status.label"/>
       </label>
       <div class="display-table-cell" id="automation-request-status">
@@ -101,9 +102,15 @@
           <span id="test-case-uuid">${uuid}</span>
         </div>
     </div>
+
+    <%-- Test Automation structure --%>
+    		<tc:testcase-test-automation testCase="${testCase}"
+    									 canModify="${writable}"/>
+    <%--/Test Automation structure --%>
+   </div><%-- test--%>
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
      <%--== If remote Automation Workflow is used ==--%>
-
+<div class="div-test-case-automatable1" style="float:right;width:600px;">
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="remote-automation-request-status">
          <f:message key="test-case.automation-status-remote.label" />
@@ -111,13 +118,30 @@
        <div class="display-table-cell" id="remote-automation-request-status">
          <span>${ remoteReqStatusLabel }</span>
        </div>
-     </div>
+       </div>
+       <%--== invisible field==--%>
+        <input type="hidden" id="finalStatusConfiged" name="finalStatusConfiged" value=${ finalStatusConfiged }>
+
+       <div class="display-table-row test-case-remote-automation-request-block">
+        <label class="display-table-cell" for="test-case-automatisable">
+          <f:message key="test-case.automatisable.label" />
+        </label>
+        <div class="display-table-cell" id="test-case-automatisable">
+          <span>${ automatedTestCase }</span>
+        </div>
+        </div>
+
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="remote-automation-request-url">
          <f:message key="label.Url" />
        </label>
-       <div class="display-table-cell" id="remote-automation-request-url">
+       <div class="display-table-cell" id="remote-automation-request-url" >
+       <c:if test="${ remoteReqUrl != '-' }">
+       <a href="${remoteReqUrl}" target="_blank"><c:out value="${remoteIssueKey}" /></a>
+       </c:if>
+       <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
          <span>${ remoteReqUrl }</span>
+        </c:if>
        </div>
      </div>
       <div class="display-table-row test-case-remote-automation-request-block">
@@ -136,6 +160,9 @@
          <span><f:formatDate value="${ automReqLastTransmittedOn }" pattern="${displayDateFormat}" /></span>
        </div>
      </div>
+</div><%-- test1--%>
+
+
 
 	</div>
 	</jsp:attribute>
