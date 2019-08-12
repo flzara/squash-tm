@@ -28,9 +28,9 @@ var squashtm = squashtm || {};
  * @author Gregory Fouquet
  */
 define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "./ReportInformationPanel", "./ReportCriteriaPanel", "./ConciseFormModel",
-		"is","workspace.routing", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.jeditable"],
+		"is", "squash.translator", "app/ws/squashtm.notification", "workspace.routing", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.jeditable"],
 	function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil, ReportInformationPanel, ReportCriteriaPanel, FormModel,
-					 is, router) {
+					 is, translator, notification, router) {
 	"use strict";
 
 	var config = {
@@ -141,30 +141,34 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function generateView() {
 
+		// TM-743
+		if ($('#report-attributs .tg-body .display-table-row:nth-child(2) div:nth-child(2)').text() !== "") {
+			if (formModel.hasBoundary()) {
+				formerState.save();
 
-		if (formModel.hasBoundary()) {
-			formerState.save();
+				// collapses the form
+				$("#report-criteria-panel").click();
 
-			// collapses the form
-			$("#report-criteria-panel").click();
+				var tabPanel = $("#view-tabed-panel");
 
-			var tabPanel = $("#view-tabed-panel");
+				if (!selectedTab) {
+					tabPanel.tabs("option", "active", 0);
+					// tab is inited, we dont need collapsible anymore,
+					// otherwise click on active tab will trigger an event
+					tabPanel.tabs("option", "collapsible", false);
+				} else {
+					loadTab(selectedTab);
+				}
 
-			if (!selectedTab) {
-				tabPanel.tabs("option", "active", 0);
-				// tab is inited, we dont need collapsible anymore,
-				// otherwise click on active tab will trigger an event
-				tabPanel.tabs("option", "collapsible", false);
+				$("#view-tabed-panel:hidden").show("blind", {}, 500);
+
 			} else {
-				loadTab(selectedTab);
+				var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
+				invalidPerimeterDialog.messageDialog("open");
 			}
-
-			$("#view-tabed-panel:hidden").show("blind", {}, 500);
-
 		} else {
-			var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
-			invalidPerimeterDialog.messageDialog("open");
-		}
+    	notification.showWarning(translator.get('report.perimeter.not-available-anymore'));
+    }
 
 	}
 

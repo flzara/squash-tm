@@ -112,10 +112,10 @@ define(["backbone", "squash.translator", "handlebars", "squash.dateutils", "work
 			},
 
 			generate: function() {
-				if ($('#custom-export-perimeter').text().trim() !== translator.get('custom-export.perimeter.not-available-anymore')) {
+				if ($('#custom-export-perimeter').text().trim() !== translator.get('report.perimeter.not-available-anymore')) {
 					document.location.href = urlBuilder.buildURL('custom-report.custom-export.generate', this.model.get('id'));
 				} else {
-					notification.showWarning(translator.get('custom-export.perimeter.not-available-anymore'));
+					notification.showWarning(translator.get('report.perimeter.not-available-anymore'));
 				}
 			},
 
