@@ -29,12 +29,15 @@ public class JsonRemoteAutomationRequestExtender {
 
 	private String remoteRequestStatus;
 	private String remoteRequestUrl;
+	private String remoteIssueKey;
 
 	public JsonRemoteAutomationRequestExtender(RemoteAutomationRequestExtender remoteAutomationRequestExtender) {
 		String remoteStatus = remoteAutomationRequestExtender.getRemoteRequestStatus();
 		this.remoteRequestStatus = Strings.isNotBlank(remoteStatus) ? remoteStatus : DASH;
 		String remoteUrl = remoteAutomationRequestExtender.getRemoteRequestUrl();
 		this.remoteRequestUrl = Strings.isNotBlank(remoteUrl) ? remoteUrl : DASH;
+		String remoteIssueKey = remoteAutomationRequestExtender.getRemoteIssueKey();
+		this.remoteIssueKey = Strings.isNotBlank(remoteIssueKey) ? remoteIssueKey : DASH;
 	}
 
 	public String getRemoteRequestStatus() {
@@ -49,5 +52,13 @@ public class JsonRemoteAutomationRequestExtender {
 	}
 	public void setRemoteRequestUrl(String remoteRequestUrl) {
 		this.remoteRequestUrl = remoteRequestUrl;
+	}
+
+	public String getRemoteIssueKey() {
+		return remoteIssueKey;
+	}
+
+	public void setRemoteIssueKey(String remoteIssueKey) {
+		this.remoteIssueKey = remoteIssueKey;
 	}
 }

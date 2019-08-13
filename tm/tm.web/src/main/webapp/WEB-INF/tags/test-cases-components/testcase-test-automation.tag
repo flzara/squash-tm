@@ -113,9 +113,9 @@
 
 
 <c:if test="${allowAutomationWorkflow && testCase.project.getAutomationWorkflowType().getI18nKey() == 'REMOTE_WORKFLOW'}">
-  <div class="display-table-row">
+  <div class="display-table-row"  id="script-auto-remote-automation-request">
 
-    <label class="display-table-cell"><f:message key="test-case.testautomation.section.label"/></label>
+    <label class="display-table-cell" style="align-content" ><f:message key="test-case.testautomation.section.label"/></label>
 
     <div class="display-table-cell">
 

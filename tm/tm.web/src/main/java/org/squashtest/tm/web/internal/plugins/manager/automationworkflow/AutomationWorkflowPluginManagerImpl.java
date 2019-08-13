@@ -25,8 +25,12 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.scheduling.TaskScheduler;
 	import org.springframework.stereotype.Component;
+	import org.squashtest.tm.api.plugin.PluginType;
+	import org.squashtest.tm.api.plugin.PluginValidationException;
 	import org.squashtest.tm.api.wizard.AutomationWorkflow;
+	import org.squashtest.tm.api.workspace.WorkspaceType;
 	import org.squashtest.tm.domain.project.AutomationWorkflowType;
+	import org.squashtest.tm.service.project.GenericProjectManagerService;
 	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 	import javax.annotation.PostConstruct;
@@ -56,6 +60,8 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 
 	@Inject
 	InternationalizationHelper i18nHelper;
+	@Inject
+	private GenericProjectManagerService projectManager;
 
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
@@ -115,5 +121,18 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		if(plugins.size()!=0) result.add(AutomationWorkflowType.REMOTE_WORKFLOW);
 
 		return result;
+	}
+
+	@Override
+	public void enableRemoteAutomationWorkflowPlugin( String automationWorkflowtype, long projectId) {
+		for (AutomationWorkflow plugin : plugins) {
+			if (plugin.getPluginType().equals(PluginType.AUTOMATION)==true) {
+				projectManager.enablePluginForWorkspace(projectId, WorkspaceType.TEST_CASE_WORKSPACE, plugin.getId(), plugin.getPluginType());
+
+			}else{
+				String msg = "Aucun plugin d'automatisation n'existe.";
+				throw new PluginValidationException(msg);
+			}
+		}
 	}
 }

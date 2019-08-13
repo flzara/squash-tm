@@ -132,10 +132,12 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					// Display remote-automation-request-block according to existence of the remoteRequest
 					if(isAutomatable && isRemoteAutomationWorkflowUsed) {
 						$('.test-case-remote-automation-request-block').show();
+						$("#script-auto-remote-automation-request").show();
 						$("#automation-request-status-label").hide()
 						$("#automation-request-status").hide();
 					} else {
 						$('.test-case-remote-automation-request-block').hide();
+						$("#script-auto-remote-automation-request").hide();
 						$("#automation-request-status").show();
 						$("#automation-request-status-label").show();
 					}
@@ -154,8 +156,8 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					var finalStatusConfiged = $("#finalStatusConfiged");
 					var automatedTestCase = $("#test-case-automatisable");
 					var remoteRequestStatus = automationRequest.remoteAutomationRequestExtender.remoteRequestStatus;
-/*					var remoteReqUrl = automationRequest.remoteAutomationRequestExtender.remoteRequestUrl;
-					var remoteIssueKey = automationRequest.remoteAutomationRequestExtender.remoteIssueKey;*/
+					var remoteReqUrl = automationRequest.remoteAutomationRequestExtender.remoteRequestUrl;
+					var remoteIssueKey = automationRequest.remoteAutomationRequestExtender.remoteIssueKey;
 					automReqStatusInput.editable("disable");
 					automReqStatusInput.removeClass("editable");
 					automReqStatusInput.text(automationRequest.requestStatus);
@@ -168,15 +170,15 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							$("#test-case-automatisable").text("NON");
 						}
 					// url
-					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
-				/*	if(remoteReqUrl != '-'){
-					$("#remote-automation-request-url").prop("href", remoteReqUrl);
-
+					$("#testUrl").prop("href",automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					if(remoteReqUrl != '-'){
+						$("#span-remote-req-url").remove();
+						var newHref= "<a id='testUrl' href='" + remoteReqUrl + "' target='_blank'>" + remoteIssueKey + "</a>";
+						$("#remote-automation-request-url").append(newHref);
 					}
-					if(remoteReqUrl == '-' || (remoteReqUrl==null) ){
-					$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
-					}*/
-
+					if((remoteReqUrl == '-') || (remoteReqUrl==null)){
+						$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					}
 					//assignedTo
 					$("#remote-automation-request-assignedTo").text(automationRequest.remoteAutomationRequestExtender.remoteRequestAssignedTo);
 					// date transmission

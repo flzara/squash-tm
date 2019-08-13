@@ -48,5 +48,7 @@ public interface AutomationWorkflowPluginManager {
 
 	Collection<AutomationWorkflowType> getAutomationWorkflowsType();
 
+	void enableRemoteAutomationWorkflowPlugin( String automationWorkflowtype, long projectId);
+
 
 }

@@ -102,12 +102,11 @@
           <span id="test-case-uuid">${uuid}</span>
         </div>
     </div>
-
     <%-- Test Automation structure --%>
-    		<tc:testcase-test-automation testCase="${testCase}"
-    									 canModify="${writable}"/>
+              <tc:testcase-test-automation testCase="${testCase}"  canModify="${writable}"/>
     <%--/Test Automation structure --%>
-   </div><%-- test--%>
+    </div><%-- div-test-case-automatable--%>
+
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
      <%--== If remote Automation Workflow is used ==--%>
 <div class="div-test-case-automatable1" style="float:right;width:600px;">
@@ -135,12 +134,12 @@
        <label class="display-table-cell" for="remote-automation-request-url">
          <f:message key="label.Url" />
        </label>
-       <div class="display-table-cell" id="remote-automation-request-url" >
+       <div id="remote-automation-request-url" class="display-table-cell"  >
        <c:if test="${ remoteReqUrl != '-' }">
-       <a href="${remoteReqUrl}" target="_blank"><c:out value="${remoteIssueKey}" /></a>
+       <a id="testUrl" href="${remoteReqUrl}" target="_blank"><c:out value="${remoteIssueKey}" /></a>
        </c:if>
        <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
-         <span>${ remoteReqUrl }</span>
+         <span id="span-remote-req-url"> ${ remoteReqUrl }</span>
         </c:if>
        </div>
      </div>
