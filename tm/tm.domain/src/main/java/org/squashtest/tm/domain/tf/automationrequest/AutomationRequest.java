@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -125,6 +125,9 @@ public class AutomationRequest implements Identified {
 
 
 
+	@OneToOne(mappedBy = "automationRequest", optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private RemoteAutomationRequestExtender remoteAutomationRequestExtender;
+
 	public Long getId() {
 		return id;
 	}
@@ -197,6 +200,13 @@ public class AutomationRequest implements Identified {
 		this.transmittedBy = transmittedBy;
 	}
 
+	public RemoteAutomationRequestExtender getRemoteAutomationRequestExtender() {
+		return remoteAutomationRequestExtender;
+	}
+
+	public void setRemoteAutomationRequestExtender(RemoteAutomationRequestExtender remoteAutomationRequestExtender) {
+		this.remoteAutomationRequestExtender = remoteAutomationRequestExtender;
+	}
 
 	public Project getProject() {
 		return project;

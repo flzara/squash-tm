@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.plugin;
 
+
 import java.util.Map;
 
 
@@ -59,6 +60,11 @@ public interface Plugin {
 	 */
 	String getType();
 
+	/**
+	 * it is an internal data, which serves to identify the type of the plugin and to differentiate the plugins used.
+	 * @return
+	 */
+	PluginType getPluginType();
 
 	/**
 	 * <p>Declares which properties, if any, are used by this plugin for configuration purposes. This map should never be null.</p>

@@ -59,7 +59,6 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 	public void contextInitialized(ServletContextEvent sce) {
 		this.sce = sce;
 		exposeMilestoneFeatEnabled();
-
 	}
 
 	private synchronized void exposeMilestoneFeatEnabled() {

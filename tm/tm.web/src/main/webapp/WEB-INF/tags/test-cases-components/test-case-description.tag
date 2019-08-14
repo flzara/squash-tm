@@ -35,7 +35,7 @@
 <%@ attribute name="testCaseImportanceLabel" required="true" type="java.lang.String"
 			  description="a label related to test case importance, not sure to remember what." %>
 
-
+<c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 <c:set var="scripted" value="${testCase.isScripted()}"/>
 
@@ -87,10 +87,12 @@
 
 
 			<%-- Test Automation structure --%>
-		<c:if test="${testCase.project.testAutomationEnabled}">
-		<tc:testcase-test-automation testCase="${testCase}"
-									 canModify="${writable}"/>
-		</c:if>
+		<c:if test="${!allowAutomationWorkflow}">
+      <c:if test="${testCase.project.testAutomationEnabled}">
+      <tc:testcase-test-automation testCase="${testCase}"
+                     canModify="${writable}"/>
+      </c:if>
+    </c:if>
 			<%--/Test Automation structure --%>
 
 	</div>

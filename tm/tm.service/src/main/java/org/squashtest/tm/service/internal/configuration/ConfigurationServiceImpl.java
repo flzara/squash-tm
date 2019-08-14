@@ -21,11 +21,14 @@
 package org.squashtest.tm.service.internal.configuration;
 
 import org.hibernate.HibernateException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -43,12 +46,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
+
 	@Override
 	public void createNewConfiguration(String key, String value) {
 		Query sqlQuery = em.createNativeQuery(INSERT_KEY_SQL);
 		sqlQuery.setParameter(1, key);
 		sqlQuery.setParameter(2, value);
 		sqlQuery.executeUpdate();
+		eventPublisher.publishEvent(new ConfigUpdateEvent(key));
 	}
 
 	@Override
@@ -57,7 +64,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		sqlQuery.setParameter(1, value);
 		sqlQuery.setParameter(2, key);
 		sqlQuery.executeUpdate();
-
+		eventPublisher.publishEvent(new ConfigUpdateEvent(key));
 	}
 
 	@Override

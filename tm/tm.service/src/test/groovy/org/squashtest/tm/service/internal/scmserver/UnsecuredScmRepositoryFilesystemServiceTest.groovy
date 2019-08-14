@@ -21,8 +21,10 @@
 package org.squashtest.tm.service.internal.scmserver
 
 import org.apache.commons.io.FileUtils
+import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
+import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -30,11 +32,13 @@ import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
+import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.nio.file.Files
 
@@ -43,6 +47,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	private UnsecuredScmRepositoryFilesystemService service = new UnsecuredScmRepositoryFilesystemService()
 
 	private PathService pathService = Mock(PathService);
+
+	private ApplicationEventPublisher eventPublisher = Mock(ApplicationEventPublisher);
 
 	@Shared
 	private ScmRepository scm = new MockFactory().mockScmRepository(10L, "scmtest_", "squash"){
@@ -53,6 +59,11 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	def setup() {
 		service.pathService = pathService
+		service.eventPublisher = eventPublisher
+
+		def server = Mock(ScmServer)
+		server.getUrl() >> "http://github.com"
+		scm.setScmServer(server)
 	}
 
 	def cleanupSpec(){
@@ -145,8 +156,15 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	def "#locateOrMoveOrCreateTestFile - Should create/locate/move the file for a given test case"() {
 		given:
+			def scmServer = Mock(ScmServer) {
+				getUrl() >> "http://the_url.org"
+			}
+			def scmRepo = Mock(ScmRepository) {
+				getScmServer() >> scmServer
+			}
 			def project = Mock(Project) {
 				isUseTreeStructureInScmRepo() >> pUseTreeStructure
+				getScmRepository() >> scmRepo
 			}
 			def tc = Mock(TestCase) {
 				getId() >> pTestCaseId
@@ -180,7 +198,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			nbrPathCall = pUseTreeStructure ? 1 : 0 // pathService is only called (twice) if the tree structure is used
 	}
 
-
 	def "#moveAndRenameFileIfNeeded - Should rename/move the file or not"() {
 		given:
 			def project = Mock(Project) {
@@ -198,7 +215,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		and:
 			pNbrePathCall * pathService.buildTestCaseFoldersPath(499L) >> pReturnedFoldersPath
 		when:
-			def resultFile = service.moveAndRenameFileIfNeeded(testCase, file, workingFolder)
+			def resultFile = service.moveAndRenameFileIfNeeded(testCase, file, scm)
 		then:
 			relativePathFromWorkingDirectory(resultFile) == pExpectedRelativePath
 			resultFile.exists()
@@ -218,7 +235,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			true 				| "499_connection.feature"							| "cônnèctîon"	| "main folder/sub folder" 	| "main_folder/sub_folder/499_connection.feature"
 			true 				| "499_connection.feature"							| "décônnèctîon"| "main folder/sub folder" 	| "main_folder/sub_folder/499_deconnection.feature"
 
-			true 				| "main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"| null	| "499_deconnection.feature"
+			true 				| "main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"| null						| "499_deconnection.feature"
 
 			pNbrePathCall = pUseTreeStructure ? 1 : 0
 	}
@@ -297,8 +314,15 @@ go home quickly before someone notices that the ITs are broken"""
 """
 
 		and: "the test cases"
+		def scmServer = Mock(ScmServer) {
+			getUrl() >> "http://theUrl"
+		}
+		def scmRepo = Mock(ScmRepository) {
+			getScmServer() >> scmServer
+		}
 		def project = Mock(Project) {
 			isUseTreeStructureInScmRepo() >> false
+			getScmRepository() >> scmRepo
 		}
 		def newTcExtender = new ScriptedTestCaseExtender(script:script1)
 		def newTc = Mock(TestCase){

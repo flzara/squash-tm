@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
 import org.springframework.http.client.ClientHttpRequestFactory
-
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
 import spock.lang.Specification
 
 /**
@@ -38,6 +38,7 @@ class StartTestExecutionTest extends Specification {
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
 	HttpClientProvider clientProvider = Mock()
+	HttpRequestFactory httpRequestFactory = Mock()
         
 	StartTestExecution ste
 
@@ -48,7 +49,7 @@ class StartTestExecutionTest extends Specification {
         
 		buildDef.project >> project
 
-		ste = new StartTestExecution(buildDef, clientProvider, "EXTERNAL-ID")
+		ste = new StartTestExecution(buildDef, clientProvider, httpRequestFactory, "EXTERNAL-ID")
 	}
 
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.tf.event;
 
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 public class AutomationRequestStatusChangeEvent extends AutomationRequestBaseEvent {
 
 	private AutomationRequestStatus newStatus;
+	private AutomationWorkflowType workflowType;
 
 	public AutomationRequestStatusChangeEvent(List<Long> automationRequestIds, AutomationRequestStatus newStatus) {
 
@@ -38,7 +40,17 @@ public class AutomationRequestStatusChangeEvent extends AutomationRequestBaseEve
 
 		this.newStatus = newStatus;
 	}
+	public AutomationRequestStatusChangeEvent(List<Long> automationRequestIds, AutomationRequestStatus newStatus,AutomationWorkflowType workflowType) {
 
+		super(automationRequestIds);
+
+		if (automationRequestIds == null  || newStatus == null){
+			throw new IllegalArgumentException("null parameters are not allowed");
+		}
+
+		this.newStatus = newStatus;
+		this.workflowType = workflowType;
+	}
 	public List<Long> getAutomationRequestIds(){
 		return (List<Long>)getSource();
 	}
@@ -49,5 +61,13 @@ public class AutomationRequestStatusChangeEvent extends AutomationRequestBaseEve
 
 	public void setNewStatus(AutomationRequestStatus newStatus) {
 		this.newStatus = newStatus;
+	}
+
+	public AutomationWorkflowType getWorkflowType() {
+		return workflowType;
+	}
+
+	public void setWorkflowType(AutomationWorkflowType workflowType) {
+		this.workflowType = workflowType;
 	}
 }

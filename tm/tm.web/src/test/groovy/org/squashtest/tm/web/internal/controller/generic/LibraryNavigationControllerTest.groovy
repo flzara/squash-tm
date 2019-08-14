@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
+import org.squashtest.tm.api.plugin.PluginType
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.library.*
 import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.LibraryPluginBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding
 import org.squashtest.tm.exception.DuplicateNameException
@@ -327,5 +329,7 @@ class DummyLibrary implements Library<DummyNode> {
 	public TestCaseLibraryPluginBinding getPluginBinding(String pluginId) {
 		return null;
 	}
+
+
 }
 

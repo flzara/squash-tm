@@ -255,9 +255,9 @@
 	@NamedQuery(name = "testCase.findRootContentTestCase", query = "from TestCase where id in (:paramIds) and id in (select rootnodes.id from TestCaseLibrary tcl join tcl.rootContent rootnodes)"),
 	@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
+	@NamedQuery(name = "testCase.findTestCaseByAutomationRequestIds", query = "select tc from TestCase tc join fetch tc.automationRequest ar inner join fetch ar.project pr where ar.id in (:requestIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByUuid", query = "select tc from TestCase tc where tc.uuid = :uuid"),
 	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr inner join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.kind = 'STANDARD'"),
-
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
 	 *  name of the class, because the client code assumes this will be the
@@ -546,6 +546,7 @@
 	@NamedQuery(name = "Project.findAllBoundToTemplate", query = "from Project p where p.template.id = :templateId"),
 	@NamedQuery(name = "Project.findAllIdsBoundToTemplate", query = "select p.id from Project p where p.template.id = :templateId"),
 	@NamedQuery(name = "Project.unbindAllFromTemplate", query = "update Project set template = null where template.id = :templateId"),
+	@NamedQuery(name = "Project.findPluginForProject", query = "Select lpb  from Project p join p.testCaseLibrary tcl join tcl.enabledPlugins lpb where p.id = :projectId and  lpb.pluginType =:pluginType"),
 
 	//Attachement et al
 	@NamedQuery(name = "attachment.getAttachmentAndContentIdsFromList", query = "select attachment.id, content.id from AttachmentList list join list.attachments attachment join attachment.content content where list.id in (:listIds) group by attachment.id, content.id"),

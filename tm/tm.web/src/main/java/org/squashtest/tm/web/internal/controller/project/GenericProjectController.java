@@ -36,7 +36,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.wizard.exception.AutomationWorkflowInUseException;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -45,7 +48,9 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -59,6 +64,8 @@ import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -78,6 +85,7 @@ import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonUrl;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.squashtest.tm.web.internal.plugins.manager.automationworkflow.AutomationWorkflowPluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
@@ -125,6 +133,14 @@ public class GenericProjectController {
 
 	@Inject
 	private WorkspaceWizardManager pluginManager;
+
+	@Inject
+	private AutomationWorkflowPluginManager workflowPluginManager;
+
+	@Inject
+	private GenericProjectDao genericProjectDao;
+	@Inject
+	private ProjectDao projectDao;
 
 	@Inject
 	private TaskExecutor taskExecutor;
@@ -458,7 +474,8 @@ public class GenericProjectController {
 	@ResponseBody
 	public void enablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard wizard = pluginManager.findById(pluginId);
-		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId);
+		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId, wizard.getPluginType());
+
 
 	}
 
@@ -466,6 +483,11 @@ public class GenericProjectController {
 	@ResponseBody
 	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
+		// If plugin Workflow, check if the workflow is used by the project and throw an Exception if so
+		if(AutomationWorkflow.class.isAssignableFrom(plugin.getClass())
+			&& projectManager.isProjectUsingWorkflow(projectId)) {
+			throw new AutomationWorkflowInUseException();
+		}
 		List<WorkspaceType> workspaceTypes;
 		if ("squash.tm.plugin.jirasync".equals(pluginId)) {
 			if (projectManager.hasProjectRemoteSynchronisation(projectId)) {
@@ -574,6 +596,23 @@ public class GenericProjectController {
 	@ResponseBody
 	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) boolean active) {
 		projectManager.changeAutomationWorkflow(projectId, active);
+	}
+
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
+	@ResponseBody
+	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflowtype) {
+		AutomationWorkflowType  automationWorkflow = AutomationWorkflowType.valueOf(automationWorkflowtype);
+		if(!workflowPluginManager.getAutomationWorkflowsType().contains(automationWorkflow)) {
+			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
+		}
+		//activate the automation plugin
+		if(automationWorkflowtype.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())==true) {
+			workflowPluginManager.enableRemoteAutomationWorkflowPlugin( automationWorkflowtype,projectId);
+			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
+		}else{
+			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
+		}
+
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=tree-structure-in-scm-repo", VALUE})

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -254,6 +255,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		String username = userCtxt.getUsername();
 		User user = userDao.findUserByLogin(username);
 		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
+
 		switch (automationRequestStatus) {
 			case REJECTED:
 				PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
@@ -288,6 +290,11 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		}
 
 		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds, automationRequestStatus));
+		List<TestCase> listTestCases = testCaseDao.findAllByIds(tcIds);
+		for (TestCase tc: listTestCases) {
+			eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds,automationRequestStatus, tc.getProject().getAutomationWorkflowType()));
+		}
+
 	}
 
 	@Override

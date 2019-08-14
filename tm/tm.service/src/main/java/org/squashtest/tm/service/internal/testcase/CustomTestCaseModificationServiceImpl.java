@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,6 +63,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -82,6 +84,9 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -127,6 +132,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
+	private static final String TEST_CASE = "TestCase";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -194,6 +200,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
+	private ApplicationEventPublisher eventPublisher;
+
+	@Inject
 	private TestCaseFolderDao testCaseFolderDao;
 
 	@Inject
@@ -212,6 +221,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} name from '{}' to '{}' ", testCase.getId(), testCase.getName(), newName);
 
 		testCaseManagementService.renameNode(testCaseId, newName);
+		eventPublisher.publishEvent(new TestCaseNameChangeEvent(testCaseId, newName));
+
 	}
 
 
@@ -224,6 +235,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} reference from '{}' to '{}' ", testCase.getId(), testCase.getReference(), reference);
 
 		testCase.setReference(reference);
+		eventPublisher.publishEvent(new TestCaseReferenceChangeEvent(testCaseId, reference));
+
 	}
 
 	@Override
@@ -656,6 +669,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.trace("deleting previous automated test if exists and unused");
 			taService.removeIfUnused(previousTest);
 		}
+
+		eventPublisher.publishEvent(new TestCaseScriptAutoChangeEvent(testCaseId, newTest.getFullName()));
 
 		return newTest;
 	}
@@ -1266,8 +1281,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Project project = testCase.getProject();
 
 		AutomationRequest request = new AutomationRequest();
-
-
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);
 		request.setProject(project);
@@ -1284,7 +1297,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
-
 	}
+
 
 }

@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.administration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.provider.ClientAlreadyExistsException;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -37,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.event.ConfigUpdateEvent;
+import org.squashtest.tm.exception.WrongUrlException;
 import org.squashtest.tm.exception.client.ClientNameAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -49,6 +48,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -85,9 +86,6 @@ public class ConfigAdministrationController {
     @Inject
     private UserManagerService userManager;
 
-	@Inject
-	private ApplicationEventPublisher eventPublisher;
-
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public void changeConfig(@RequestParam(WHITE_LIST) String whiteList,
@@ -97,7 +95,6 @@ public class ConfigAdministrationController {
         configService.updateConfiguration(WHITE_LIST, whiteList);
         configService.updateConfiguration(UPLOAD_SIZE_LIMIT, uploadSizeLimit);
         configService.updateConfiguration(IMPORT_SIZE_LIMIT, importSizeLimit);
-        sendUpdateEvent();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -107,6 +104,8 @@ public class ConfigAdministrationController {
         mav.addObject("whiteList", configService.findConfiguration(WHITE_LIST));
         mav.addObject("uploadSizeLimit", configService.findConfiguration(UPLOAD_SIZE_LIMIT));
         mav.addObject("uploadImportSizeLimit", configService.findConfiguration(IMPORT_SIZE_LIMIT));
+
+        mav.addObject("callbackUrl", configService.findConfiguration(ConfigurationService.Properties.SQUASH_CALLBACK_URL));
 
         mav.addObject("caseInsensitiveLogin", features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN));
         mav.addObject("duplicateLogins", userManager.findAllDuplicateLogins());
@@ -121,7 +120,6 @@ public class ConfigAdministrationController {
     @ResponseBody
     public String changeWhiteList(@RequestParam(VALUE) String newWhiteList) {
         configService.updateConfiguration(WHITE_LIST, newWhiteList);
-        sendUpdateEvent();
         return newWhiteList;
     }
 
@@ -129,7 +127,6 @@ public class ConfigAdministrationController {
     @ResponseBody
     public String changeUploadSizeLimit(@RequestParam(VALUE) String newUploadSizeLimit) {
         configService.updateConfiguration(UPLOAD_SIZE_LIMIT, newUploadSizeLimit);
-        sendUpdateEvent();
         return newUploadSizeLimit;
     }
 
@@ -137,14 +134,20 @@ public class ConfigAdministrationController {
     @ResponseBody
     public String changeUploadImportSizeLimit(@RequestParam(VALUE) String newUploadImportSizeLimit) {
         configService.updateConfiguration(IMPORT_SIZE_LIMIT, newUploadImportSizeLimit);
-        sendUpdateEvent();
         return newUploadImportSizeLimit;
     }
 
-    private void sendUpdateEvent() {
-		ConfigUpdateEvent event = new ConfigUpdateEvent("");
-		eventPublisher.publishEvent(event);
-    }
+	@RequestMapping(method = RequestMethod.POST, params={"id=callbackUrl", VALUE})
+	@ResponseBody
+	public String changeCallbackUrl(@RequestParam(VALUE) String newCallbackUrl) {
+		try {
+			new URL(newCallbackUrl);
+		} catch (MalformedURLException ex) {
+			throw new WrongUrlException("callbackUrl", ex);
+		}
+		configService.set(ConfigurationService.Properties.SQUASH_CALLBACK_URL, newCallbackUrl);
+		return newCallbackUrl;
+	}
 
     @ResponseBody
 	@RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)

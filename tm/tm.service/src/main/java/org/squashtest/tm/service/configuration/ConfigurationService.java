@@ -34,6 +34,7 @@ public interface ConfigurationService {
 		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
 		String ACTIVATED_USER_EXCESS = "activated.user.excess";
 		String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
+		String SQUASH_CALLBACK_URL = "squashtest.tm.callbackurl";
 	}
 
 	void createNewConfiguration(String key, String value);

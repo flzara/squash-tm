@@ -29,6 +29,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -36,13 +37,12 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
-import java.net.MalformedURLException;
+import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenkinsConnector.getJobSubPath;
 
@@ -50,6 +50,7 @@ import static org.squashtest.tm.plugin.testautomation.jenkins.TestAutomationJenk
  * TODO Crudely migrated from httpclient 3 to httpclient 4. Test coverage was mostly null so when it breaks,
  * write some tests. Or use RestTemplate.
  */
+@Component
 public class HttpRequestFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
@@ -84,10 +85,10 @@ public class HttpRequestFactory {
 		new BasicNameValuePair(TREE, "suites[name,cases[name,status]]")
 	};
 
-
 	private final JsonParser jsonParser = new JsonParser();
 
-	private final CallbackURLProvider callbackProvider = new CallbackURLProvider();
+	@Inject
+	private CallbackUrlProvider callbackUrlProvider;
 
 	public String newRandomId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
@@ -136,35 +137,36 @@ public class HttpRequestFactory {
 	}
 
 	public ParameterArray getStartTestSuiteBuildParameters(String externalID) {
-		String strURL = callbackProvider.get().toExternalForm();
-
+		String callbackUrl = getSquashCallbackUrl();
 		return new ParameterArray(
 			new Object[]{
 				Parameter.operationRunSuiteParameter(),
 				Parameter.newExtIdParameter(externalID),
-				Parameter.newCallbackURlParameter(strURL),
+				Parameter.newCallbackURlParameter(callbackUrl),
 				Parameter.testListParameter(),
 				new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 			});
 	}
 
 	public ParameterArray getStartTestSuiteBuildParameters(String externalID, String executor) {
-		String strURL = callbackProvider.get().toExternalForm();
-
+		String callbackUrl = getSquashCallbackUrl();
 		if (StringUtils.isBlank(executor)) {
 			return getStartTestSuiteBuildParameters(externalID);
-
 		} else {
 			return new ParameterArray(
 				new Object[]{
 					Parameter.operationRunSuiteParameter(),
 					Parameter.newExtIdParameter(externalID),
-					Parameter.newCallbackURlParameter(strURL),
+					Parameter.newCallbackURlParameter(callbackUrl),
 					Parameter.testListParameter(),
 					Parameter.executorParameter(executor),
 					new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 				});
 		}
+	}
+
+	private String getSquashCallbackUrl() {
+		return callbackUrlProvider.getCallbackUrl().toExternalForm();
 	}
 
 	public HttpGet newCheckQueue(TestAutomationProject project) {
@@ -281,29 +283,6 @@ public class HttpRequestFactory {
 			sb.insert(insertIndex, "," + JOB_PARAM);
 		}
 		return sb.toString();
-	}
-
-	private static class CallbackURLProvider {
-
-		public URL get() {
-
-			CallbackURL callback = CallbackURL.getInstance();
-			String strURL = callback.getValue();
-
-			try {
-				return new URL(strURL);
-			} catch (MalformedURLException ex) {
-				BadConfiguration bc = new BadConfiguration(
-					"Test Automation configuration : The test could not be started because the service is not configured properly. The url '" + strURL + "' specified at property '" + callback.getConfPropertyName()
-						+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please contact the administration team.", ex);
-
-				bc.setPropertyName(callback.getConfPropertyName());
-
-				throw bc;
-			}
-
-		}
-
 	}
 
 }

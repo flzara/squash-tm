@@ -254,6 +254,7 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 					var msg = translator.get('test-case.automation.transmit-all.size') + tcIds.length;
 					if (allEligible) {
 						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+						eventBus.trigger("test-case.transmitted");
 					} else {
 						msg += "</br>" + translator.get('dialog.transmit.eligible.message');
 					}

@@ -46,6 +46,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -61,6 +63,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -164,6 +167,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	private boolean allowTcModifDuringExec = false;
 
 	private boolean allowAutomationWorkflow = false;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private AutomationWorkflowType automationWorkflowType = AutomationWorkflowType.NONE;
 
 	private boolean useTreeStructureInScmRepo = true;
 
@@ -514,5 +521,13 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	public void setUseTreeStructureInScmRepo(boolean useTreeStructureInScmRepo) {
 		this.useTreeStructureInScmRepo = useTreeStructureInScmRepo;
+	}
+
+	public AutomationWorkflowType getAutomationWorkflowType() {
+		return automationWorkflowType;
+	}
+
+	public void setAutomationWorkflowType(AutomationWorkflowType automationWorkflowType) {
+		this.automationWorkflowType = automationWorkflowType;
 	}
 }

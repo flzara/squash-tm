@@ -62,18 +62,22 @@
   <jsp:attribute name="body">
 
   <div id="project-workflow-option-table" class="display-table">
-  	<div class="display-table-row">
-  		<div class="display-table-cell">
-  			<label class="display-table-cell" style="vertical-align:bottom">
-  				<f:message key="label.workflow.modification" />
-  			</label>
-  		</div>
-  		<div class="display-table-cell">
-  			<input id="toggle-WORKFLOW-checkbox" type="checkbox" data-def="width=35, on_label=${active},
-  				off_label=${inactive}, checked=${allowAutomationWorkflow}" style="display: none;" />
-  		</div>
-  	</div>
+    <!-- Automation Workflow Menu -->
+    <div class="display-table-row">
+      <div class="display-table-cell">
+        <label class="display-table-cell">
+          <f:message key="label.workflow.modification" />
+        </label>
+      </div>
+      <div id="project-workflows-select-container" class="display-table-cell">
+        <div id ="project-workflows-select" style="display: inline">
+          <c:out value="${availableAutomationWorkflows[chosenAutomationWorkflow]}" />
+        </div>
+      </div>
+    </div>
   </div>
+
+
   <div class="ta-main-div">
 
       	<%-- =================================== server block =============================================================== --%>
@@ -421,10 +425,13 @@ require(["common"], function() {
       $(function(){
 
         var automationSettings = {
+          projectId: ${project.id},
         	isAdmin: ${isAdmin},
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
-          TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id}
+          TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
+          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };
 
         automationBlock.init(automationSettings);

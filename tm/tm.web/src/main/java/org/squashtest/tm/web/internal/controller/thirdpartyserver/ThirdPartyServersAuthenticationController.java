@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
 import org.squashtest.tm.service.servers.OAuth1aConsumerService;
 import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
@@ -54,6 +55,7 @@ public class ThirdPartyServersAuthenticationController {
 
 	private static final String OAUTH_ERROR_PAGE = "servers/oauth1a-failure.html";
 	private static final String OAUTH_SUCCESS_PAGE = "servers/oauth1a-success.html";
+	private static final String SQUASH_TM_CALLBACK_URL_KEY = "squashtest.tm.callbackurl";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyServersAuthenticationController.class);
 
@@ -64,6 +66,9 @@ public class ThirdPartyServersAuthenticationController {
 	// see below
 	@Value("${tm.test.automation.server.callbackurl}")
 	private String baseCallbackUrl;
+
+	@Inject
+	private ConfigurationService configService;
 
 	@Inject
 	private BugTrackersLocalService btService;
@@ -187,30 +192,53 @@ public class ThirdPartyServersAuthenticationController {
 
 
 	/**
-	 * Returns the official callback url if set, or extract one from the http request
-	 * as a fallback
+	 * Returns the official callback url if set, or extract one from the http request as a fallback.
+	 *
+	 * Since 1.20.0 : The official callback url is first searched in database. If it is not set so, then it is searched
+	 * in configuration file. If it is not set so either, then extracted with the fallback.
 	 *
 	 * @param request
 	 * @return
 	 */
 	private String createCallbackUrl(HttpServletRequest request, long serverId){
 		String base;
-		if (isCallbackUrlSet()){
+		if(isCallbackUrlSetInDatabase()) {
+			base = configService.findConfiguration(SQUASH_TM_CALLBACK_URL_KEY);
+		} else if (isCallbackUrlSetInProperties()) {
 			base = baseCallbackUrl;
 		}
 		else{
 			base = UriUtils.extractBaseUrl(request);
 		}
-
 		return base + "/servers/"+serverId+"/authentication/oauth1a/callback";
 	}
 
-	// callback URL is considered defined if
-	// it is not blank and not referencing localhost
-	private boolean isCallbackUrlSet(){
+	/**
+	 * Whether the callback Url property 'tm.test.automation.server.callbackurl' is set in configuration file.
+	 *
+	 * Since 1.20.0 : The former property 'tm.test.automation.server.callbackurl' set in configuration file
+	 * is DEPRECATED and priority is given to the property 'squashtest.tm.callbackurl' set in database.
+	 *
+	 * Callback URL is considered defined if it is not blank and not referencing localhost.
+	 *
+	 * @return Whether the callback Url property 'tm.test.automation.server.callbackurl' is set in configuration file.
+	 */
+	private boolean isCallbackUrlSetInProperties(){
 		return (!StringUtils.isBlank(baseCallbackUrl) &&
 			! baseCallbackUrl.contains("localhost")
 		);
+	}
+
+	/**
+	 * Whether the callback Url property 'squashtest.tm.callbackurl' is set in database.
+	 * Since 1.20.0 : The former property 'tm.test.automation.server.callbackurl' set in properties file
+	 * is DEPRECATED and priority is given to the property 'squashtest.tm.callbackurl' set in database.
+	 *
+	 * @return Whether the callback Url property 'squashtest.tm.callbackurl' is set in database.
+	 */
+	private boolean isCallbackUrlSetInDatabase() {
+		String callbackUrl = configService.findConfiguration(SQUASH_TM_CALLBACK_URL_KEY);
+		return callbackUrl != null;
 	}
 
 }

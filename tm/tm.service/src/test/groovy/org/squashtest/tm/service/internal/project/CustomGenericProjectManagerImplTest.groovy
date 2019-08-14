@@ -28,13 +28,16 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.project.AutomationWorkflowType
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
@@ -43,11 +46,14 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.project.GenericProjectCopyParameter
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
+import org.squashtest.tm.service.testcase.CustomTestCaseModificationService
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import javax.persistence.EntityManager
@@ -67,6 +73,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	ProjectTemplateDao templateDao = Mock()
 	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
+	TestCaseDao testCaseDao = Mock()
 
 	ObjectIdentityService objectIdentityService = Mock()
 	InfoListFinderService infoListService = Mock()
@@ -74,6 +81,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	TestAutomationProjectManagerService taProjectService = Mock()
+	CustomTestCaseModificationService customTestCaseModificationService = Mock()
 
 	def setup() {
 		manager.em = em
@@ -83,6 +91,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
 		manager.templateDao = templateDao
 		manager.projectDao = projectDao
+		manager.testCaseDao = testCaseDao
 
 		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.infoListService = infoListService
@@ -90,7 +99,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		manager.customFieldBindingModificationService = customFieldBindingModificationService
 		manager.permissionEvaluationService = permissionEvaluationService
 		manager.taProjectService = taProjectService
-
+		manager.customTestCaseModificationService = customTestCaseModificationService
 	}
 
 	def "should not persist project with name in use"() {
@@ -712,5 +721,49 @@ class CustomGenericProjectManagerImplTest extends Specification {
 			manager.changeUseTreeStructureInScmRepo(87L, false)
 		then:
 			!project.isUseTreeStructureInScmRepo()
+	}
+
+	@Ignore(value = "As long as attribute GenericProject#allowAutomationWorkflow exists, we have to call #changeAutomationWorkflow(long, boolean) as well and it is not testable.")
+	def "#changeAutomationWorkflow(long, String) - Should change the project automation workflow type"() {
+		given:
+			Project project = Mock()
+			project.getAutomationWorkflowType() >> AutomationWorkflowType.NATIVE
+			project.isBoundToTemplate() >> false
+			project.accept(_) >> true
+			genericProjectDao.getOne(22L) >> project
+			testCaseDao.findAllTestCaseAssociatedToTAScriptByProject(22L) >> [5L]
+		and:
+			TestCase testCase = Mock()
+			testCaseDao.findById(5L) >> testCase
+
+		when:
+			manager.changeAutomationWorkflow(22L, "Jira")
+		then:
+			project.getAutomationWorkflowType() == "Jira"
+			1 * customTestCaseModificationService.createRequestForTestCase(5L, AutomationRequestStatus.AUTOMATED)
+	}
+
+	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow"() {
+		given:
+			Project p = Mock()
+			p.getAutomationWorkflowType() >> AutomationWorkflowType.REMOTE_WORKFLOW
+			genericProjectDao.getOne(9L) >> p
+			p.getAutomationWorkflowType().getI18nKey()>>"REMOTE_WORKFLOW"
+		when:
+			def result = manager.isProjectUsingWorkflow(9L)
+		then:
+			result == true
+	}
+
+	def "#isProjectUsingWorkflow(long, String) - Should return false since the project uses another workflow"() {
+		given:
+			Project p = Mock()
+			p.getAutomationWorkflowType() >> AutomationWorkflowType.NATIVE
+			genericProjectDao.getOne(9L) >> p
+			p.getAutomationWorkflowType().getI18nKey()>>"NATIVE"
+		when:
+		def result = manager.isProjectUsingWorkflow(9L)
+		then:
+		result == false
 	}
 }

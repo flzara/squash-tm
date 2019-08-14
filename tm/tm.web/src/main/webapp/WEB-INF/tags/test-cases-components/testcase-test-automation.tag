@@ -42,9 +42,7 @@
 <f:message var="deleteAutoTitle" 			key='title.confirmDeleteAutomatedTestLink'/>
 
 <c:set var="isTestSet" value="${not empty testCase.automatedTest}"/>
-<c:set var="scriptnameLabel" value="${not canModify && not isTestSet ? testNone :
-									  isTestSet ? testCase.automatedTest.fullLabel :
-									  ''}"/>
+<c:set var="scriptnameLabel" value="${not canModify && not isTestSet ? testNone : isTestSet ? testCase.automatedTest.fullLabel : ''}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 
 <c:if test="${!allowAutomationWorkflow}">
@@ -109,8 +107,63 @@
       </div>
 
     </div>
-
 </div>
+</c:if>
+</c:if>
 
+
+<c:if test="${allowAutomationWorkflow && testCase.project.getAutomationWorkflowType().getI18nKey() == 'REMOTE_WORKFLOW'}">
+  <div class="display-table-row"  id="script-auto-remote-automation-request">
+
+    <label class="display-table-cell" style="align-content" ><f:message key="test-case.testautomation.section.label"/></label>
+
+    <div class="display-table-cell">
+
+      <span id="ta-script-picker-span" style="width:255px" class="cursor-pointer"><c:out value="${scriptnameLabel}"/></span>
+
+    </div>
+  </div>
+  <c:if test="${canModify}">
+    <%-- we must enforce display:none here because of inheritance of other css rules that override the display mode --%>
+    <div style="display:none">
+
+      <div id="ta-picker-popup" class="popup-dialog" title="${testAutomationPickerTitle}">
+
+        <div class="ta-picker-structure-maindiv">
+
+          <div data-def="state=pleasewait" class="structure-pleasewait">
+            <comp:waiting-pane/>
+          </div>
+
+          <div data-def="state=main" class="structure-treepanel has-standard-margin">
+            <div class="structure-tree"></div>
+          </div>
+
+        </div>
+
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${testAutomationPickerOk}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" value="${labelCancel}" data-def="evt=cancel" />
+        </div>
+
+      </div>
+
+
+        <f:message var="removePopupTitle" key="dialog.unbind-ta-script.title"/>
+        <div id="ta-remove-popup" class="popup-dialog" title="${removePopupTitle}">
+
+          <div class="std-margin-top std-margin-bottom">
+            <span><f:message key="dialog.unbind-ta-script.message"/></span>
+          </div>
+
+          <div class="popup-dialog-buttonpane">
+            <input type="button" value="${labelConfirm}" data-def="mainbtn, evt=confirm"/>
+            <input type="button" value="${labelCancel}" data-def="evt=cancel"/>
+          </div>
+
+        </div>
+
+    </div>
+  </c:if>
 </c:if>
-</c:if>
+

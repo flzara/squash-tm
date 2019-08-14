@@ -18,48 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
+package org.squashtest.tm.service.internal.testcase.event;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+public class TestCaseGherkinLocationChangeEvent extends TestCaseBaseEvent {
 
-/*
- * Ugly trick. Booh.
- *
- * @author bsiri
- *
- */
+	private String gherkinFileLocation;
 
-@Component
-public final class CallbackURL {
-	private static CallbackURL instance;
-	private static final String PROPERTY_NAME = "tm.test.automation.server.callbackurl";
-
-	private String strURL = null;
-
-	private CallbackURL() {
-		super();
-		instance = this; // NOSONAR cannot be inited otherwise, I guess
+	public TestCaseGherkinLocationChangeEvent(Long testCaseId, String newGherkinLocation) {
+		super(testCaseId);
+		this.gherkinFileLocation = newGherkinLocation;
 	}
 
-	public String getValue() {
-		return strURL;
+	public Long getTestCaseId() { return (Long) getSource(); }
+	public String getGherkinFileLocation() {
+		return gherkinFileLocation;
 	}
-
-	String getConfPropertyName() {
-		return PROPERTY_NAME;
-	}
-
-	@Value("${" + PROPERTY_NAME + "}")
-	void setURL(String url) {
-		strURL = url;
-	}
-
-	/**
-	 * @return the instance
-	 */
-	public static CallbackURL getInstance() {
-		return instance;
-	}
-
 }

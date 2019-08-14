@@ -119,6 +119,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	@PersistenceContext
 	private EntityManager entityManager;
 
+
 	@Override
 	public void safePersist(TestCase testCase) {
 
@@ -493,6 +494,12 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	}
 
 	@Override
+	public List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds) {
+		Query query = (Query) entityManager.createNamedQuery("testCase.findTestCaseByAutomationRequestIds");
+		query.setParameter("requestIds", requestIds);
+		return query.getResultList();
+	}
+	
 	public TestCase findTestCaseByUuid(String uuid) {
 		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findTestCaseByUuid");
 		query.setParameter("uuid", uuid);

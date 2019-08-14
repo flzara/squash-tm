@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
+import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
@@ -266,6 +267,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName);
 
 	Collection<TestAutomationProjectContent> findAssignableAutomationTestsToAutomationProgramer(long testCaseId);
+
 
 
 }

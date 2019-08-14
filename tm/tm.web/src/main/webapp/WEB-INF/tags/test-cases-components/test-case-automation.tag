@@ -31,18 +31,19 @@
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object" description="the testcase" %>
+<%@ attribute name="isRemoteAutomationWorkflowUsed" required="true" type="java.lang.Boolean" description="whether a remote automation workflow is used for the project" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 
 <c:set var="toInstruct" 	value="${(testCase.automatable == 'M') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
-<c:set var="requestStatus" 	value="${(testCase.automationRequest != null) ? testCase.automationRequest.requestStatus.getI18nKey() : 'automation-request.request_status.WORK_IN_PROGRESS'}" />
 <c:set var="uuid" 	value="${testCase.uuid}" />
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 
 <f:message var="labelAutomation" key="label.automation" />
 <f:message var="transmitLabel" key="automation.label.to_transmit" />
+<f:message var="displayDateFormat" key="squashtm.dateformat" />
 
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
@@ -57,8 +58,9 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="body">
-	<div id="test-case-automation-table" class="display-table">
+	<div id="test-case-automation-table" class="display-table" style="width: 80%">
 
+<div class="div-test-case-automatable" style="float:left;width:600px;">
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-automation-indicator"><f:message key="test-case.automation-indicator.label"/></label>
 			<div class="display-table-cell" id="test-case-automation-indicator">
@@ -76,28 +78,93 @@
 				  </label>
 			</div>
 		</div>
-		<div class="display-table-row test-case-automation-request-block">
-			<label class="display-table-cell" for="automation-request-priority">
-				<f:message key="test-case.automation-priority.label"/>
-			</label>
-			<div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
-		</div>
 
-		<div class="display-table-row test-case-automation-request-block">
-			<label class="display-table-cell" for="automation-request-status">
-				<f:message key="test-case.automation-status.label"/>
-			</label>
-			<div class="display-table-cell" id="automation-request-status">
-				<span id="automation-request-status">${ automReqStatusLabel }</span>
-			</div>
-		</div>
+    <div class="display-table-row test-case-automation-request-block">
+      <label class="display-table-cell" for="automation-request-priority">
+        <f:message key="test-case.automation-priority.label"/>
+      </label>
+      <%-- The below tags Must be on the same line, otherwise the editor will add extra spaces... --%>
+      <div class="display-table-cell" id="automation-request-priority"><c:out value="${ testCase.automationRequest.automationPriority }" escapeXml="true"/></div>
+    </div>
 
-		<div class="display-table-row test-case-automation-request-block">
+    <div class="display-table-row test-case-automation-request-block">
+      <label id="automation-request-status-label" class="display-table-cell" for="automation-request-status">
+        <f:message key="test-case.automation-status.label"/>
+      </label>
+      <div class="display-table-cell" id="automation-request-status">
+        <span id="automation-request-status">${ automReqStatusLabel }</span>
+      </div>
+    </div>
+
+	  <div class="display-table-row test-case-automation-request-block">
         <label for="test-case-uuid" class="display-table-cell"><f:message key="test-case.automation-uuid.label" /></label>
         <div class="display-table-cell">
           <span id="test-case-uuid">${uuid}</span>
         </div>
     </div>
+
+    <c:if test="${ hasProjectWithTaServer ==true }">
+         <tc:testcase-test-automation testCase="${testCase}"  canModify="${writable}"/>
+    </c:if>
+   <div class="display-table-row test-case-remote-automation-request-block">
+         <label class="display-table-cell" for="automation-last-transmitted-on">
+           <f:message key="automation.datatable.headers.transmittedon" />
+         </label>
+         <div class="display-table-cell" id="automation-last-transmitted-on">
+           <span><f:formatDate value="${ automReqLastTransmittedOn }" pattern="${displayDateFormat}" /></span>
+         </div>
+     </div>
+
+    </div><%-- div-test-case-automatable--%>
+
+     <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
+     <%--== If remote Automation Workflow is used ==--%>
+<div class="div-test-case-automatable1" style="float:right;width:600px;">
+     <div class="display-table-row test-case-remote-automation-request-block">
+       <label class="display-table-cell" for="remote-automation-request-status">
+         <f:message key="test-case.automation-status-remote.label" />
+       </label>
+       <div class="display-table-cell" id="remote-automation-request-status">
+         <span>${ remoteReqStatusLabel }</span>
+       </div>
+       </div>
+       <%--== invisible field==--%>
+        <input type="hidden" id="finalStatusConfiged" name="finalStatusConfiged" value=${ finalStatusConfiged }>
+
+       <div class="display-table-row test-case-remote-automation-request-block">
+        <label class="display-table-cell" for="test-case-automatisable">
+          <f:message key="test-case.automatisable.label" />
+        </label>
+        <div class="display-table-cell" id="test-case-automatisable">
+          <span>${ automatedTestCase }</span>
+        </div>
+        </div>
+
+     <div class="display-table-row test-case-remote-automation-request-block">
+       <label class="display-table-cell" for="remote-automation-request-url">
+         <f:message key="label.Url" />
+       </label>
+       <div id="remote-automation-request-url" class="display-table-cell"  >
+       <c:if test="${ remoteReqUrl != '-' }">
+       <a id="testUrl" href="${remoteReqUrl}" target="_blank"><c:out value="${remoteIssueKey}" /></a>
+       </c:if>
+       <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
+         <span id="span-remote-req-url"> ${ remoteReqUrl }</span>
+        </c:if>
+       </div>
+     </div>
+      <div class="display-table-row test-case-remote-automation-request-block">
+        <label class="display-table-cell" for="remote-automation-request-assignedTo">
+          <f:message key="label.assigned" />
+        </label>
+        <div class="display-table-cell" id="remote-automation-request-assignedTo">
+          <span>${ remoteReqAssignedTo }</span>
+        </div>
+      </div>
+
+</div><%-- test1--%>
+
+
 
 	</div>
 	</jsp:attribute>

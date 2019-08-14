@@ -49,7 +49,9 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.AdministrableProject;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
@@ -577,9 +579,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
+	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId, PluginType pluginType) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.enablePlugin(pluginId);
+		/*add pluginType*/
+		if(pluginType!=null){
+			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+			binding.setPluginType(pluginType);
+		}
+
 	}
 
 	@Override
@@ -1119,6 +1127,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	@Override
+	public void changeAutomationWorkflow(long projectId, String automationWorkflow) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setAutomationWorkflowType(AutomationWorkflowType.valueOf(automationWorkflow));
+
+		// Since allowAutomationWorkflow still exists, we have to update it consequently
+		boolean active = !automationWorkflow.equals("NONE");
+		changeAutomationWorkflow(projectId, active);
+	}
+
 	@Override
 	public void changeUseTreeStructureInScmRepo(long projectId, boolean activated) {
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
@@ -1137,5 +1156,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 				em.clear();
 			}
 		}
+	}
+
+	@Override
+	public boolean isProjectUsingWorkflow(long projectId) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		String workflowType = genericProject.getAutomationWorkflowType().getI18nKey();
+		return workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey());
 	}
 }

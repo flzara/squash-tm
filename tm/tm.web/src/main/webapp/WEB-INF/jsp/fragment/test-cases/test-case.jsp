@@ -113,6 +113,7 @@
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
+<c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
 <%---------------------------- Test Case Header ------------------------------%>
 
@@ -187,7 +188,7 @@
 
         <%-- ------------------------- Automation Panel ------------------------- --%>
       <c:if test="${allowAutomationWorkflow}">
-        <tc:test-case-automation testCase="${testCase}" writable="${writable}"/>
+        <tc:test-case-automation testCase="${testCase}" isRemoteAutomationWorkflowUsed="${isRemoteAutomationWorkflowUsed}" writable="${writable}"/>
       </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
@@ -271,6 +272,7 @@
           hasCufs: ${hasCUF},
           hasBugtracker: ${testCase.project.bugtrackerConnected},
           isAutomated: ${testCase.project.testAutomationEnabled},
+          isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
           , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}

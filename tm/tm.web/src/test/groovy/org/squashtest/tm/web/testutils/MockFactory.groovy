@@ -23,6 +23,7 @@ package org.squashtest.tm.web.testutils
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.infolist.ListItemReference
+import org.squashtest.tm.domain.project.AutomationWorkflowType
 import org.squashtest.tm.domain.project.Project
 import spock.lang.Specification
 
@@ -54,6 +55,7 @@ class MockFactory extends Specification {
 		p.getTestCaseNatures() >> natures
 		p.getTestCaseTypes() >> types
 		p.getRequirementCategories() >> categories
+		p.getAutomationWorkflowType()>> AutomationWorkflowType.NONE
 
 
 		p

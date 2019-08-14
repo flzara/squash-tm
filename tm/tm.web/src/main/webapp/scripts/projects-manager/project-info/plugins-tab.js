@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "jquery.squash.togglepanel",
+		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "app/pubsub", "jquery.squash.togglepanel",
 		  "jqueryui", "squashtable", "jquery.switchButton"],
 
-		function($, Backbone, _, translator, routing) {
+		function($, Backbone, _, translator, routing, pubsub) {
 
 			translator.load(["label.Enabled", "label.disabled", "label.Configure"]);
 
@@ -122,10 +122,14 @@ define(
 					var url = routing.buildURL('project-plugins', projectId, pluginId),
 						method = (btn[0].checked) ? 'POST' : 'DELETE';
 
-					$.ajax({url : url, type : method}).error(function(event) {
+					$.ajax({url : url, type : method}).success(function() {
+						pubsub.publish("project.plugin.toggled");
+					}).error(function(event) {
+						btn.switchButton("option", "checked", !checked);
 						data['enabled'] = true;
 						configureSwitch($row, data);
 					});
+
 
 					configureStyle($row, data);
 

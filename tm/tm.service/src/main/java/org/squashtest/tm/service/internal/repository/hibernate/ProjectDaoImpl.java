@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.jooq.DSLContext;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
@@ -132,4 +134,13 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 			.where(PROJECT.ALLOW_AUTOMATION_WORKFLOW.eq(true))
 			.fetchOne().value1();
 	}
+
+	@Override
+	public LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType) {
+		javax.persistence.Query query = entityManager.createNamedQuery("Project.findPluginForProject");
+		query.setParameter("projectId", projectId);
+		query.setParameter("pluginType",pluginType);
+		return (LibraryPluginBinding) query.getSingleResult();
+	}
+
 }

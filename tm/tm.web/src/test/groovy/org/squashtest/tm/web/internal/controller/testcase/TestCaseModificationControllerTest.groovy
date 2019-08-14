@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.project.AutomationWorkflowType
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -154,6 +155,7 @@ class TestCaseModificationControllerTest extends Specification {
 		tc.getSteps() >> steps
 		long tcId=15
 		testCaseModificationService.findById(tcId) >> tc
+
 
 		and :
 		enrichTC(tc)

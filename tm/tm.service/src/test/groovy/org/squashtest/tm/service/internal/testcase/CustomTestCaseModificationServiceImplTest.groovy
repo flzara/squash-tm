@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
+import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomField
@@ -45,6 +46,8 @@ import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
+import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
+import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
@@ -65,6 +68,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	IterationTestPlanFinder iterationTestPlanFinder = Mock()
 	ActionTestStepDao actionStepDao = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
+	ApplicationEventPublisher eventPublisher = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -83,6 +87,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.iterationTestPlanFinder = iterationTestPlanFinder
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
+		service.eventPublisher = eventPublisher
 	}
 
 	def "should find test case and add a step at last position"() {
@@ -294,7 +299,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * testCaseManagementService.renameNode(10L, "Bob")
 
 		1 * testCaseDao.findById(10L) >> tc
-
+		1* eventPublisher.publishEvent({
+			it instanceof TestCaseNameChangeEvent && it.testCaseId == 10L && it.newName == "Bob"
+		})
 	}
 
 
@@ -312,6 +319,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setReference("reref")
 
 		1 * testCaseDao.findById(10L) >> tc
+		1 * eventPublisher.publishEvent({
+			it instanceof TestCaseReferenceChangeEvent && it.testCaseId == 10L && it.newReference == "reref"
+		})
 	}
 
 	def "should change the importance of a test case"(){

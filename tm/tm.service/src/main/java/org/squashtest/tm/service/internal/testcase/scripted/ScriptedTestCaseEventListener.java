@@ -23,13 +23,17 @@ package org.squashtest.tm.service.internal.testcase.scripted;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
@@ -43,9 +47,12 @@ import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.servers.CredentialsProvider;
@@ -74,6 +81,8 @@ public class ScriptedTestCaseEventListener {
 
 	private static final String SPEL_ARSTATUS = "T(org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus)";
 
+	private static final String TYPE_WORKFLOW = "T(org.squashtest.tm.domain.project.AutomationWorkflowType)";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -92,6 +101,20 @@ public class ScriptedTestCaseEventListener {
 	@Inject
 	private ScmRepositoryDao scmRepositoryDao;
 
+	@Inject
+	private TestCaseDao testCaseDao;
+
+	@Inject
+	private ProjectDao projectDao;
+
+	@Inject
+	private GenericProjectManagerService projectManager;
+
+	@Inject
+	private AutomationWorkflow automationWorkflow;
+
+	@Autowired(required = false)
+	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
 
 	/**
 	 * If the new status is suitable for commit (eg, TRANSMITTED),
@@ -135,6 +158,40 @@ public class ScriptedTestCaseEventListener {
 			synchronizeRepository(scm, credentials);
 		}
 	}
+	/**
+	 * If Remote workflow automation is actif and newStatus is TRANSMITTED then create a new jira ticket and add remoteAutomationREquestExtender
+	 **/
+	@Order(11)
+	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED and " +
+		"#event.workflowType == " + TYPE_WORKFLOW + ".REMOTE_WORKFLOW")
+	public void remoteRemoteTickets(AutomationRequestStatusChangeEvent event) {
+		String remoteIssueKey;
+
+		LOGGER.debug("request status changed and type workflow isremote : create a new jira ticket and remoteRAE");
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
+		}
+
+		List<Long> requestIds = event.getAutomationRequestIds();
+		List<TestCase> listTestCase = testCaseDao.findTestCaseByAutomationRequestIds(requestIds);
+		for(TestCase tc: listTestCase){
+			//workflow d'automatisation active
+			if(tc.getProject().isAllowAutomationWorkflow()){
+				//select plugin which is attach în project
+				LibraryPluginBinding lpb= projectDao.findPluginForProject(tc.getProject().getId(), PluginType.AUTOMATION);
+				for(AutomationWorkflow plugin: plugins){
+					if(plugin.getPluginType().equals(lpb.getPluginType())){
+						remoteIssueKey = plugin.createNewTicketRemoteServer(tc);
+						if (remoteIssueKey!=null){
+							plugin.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc);
+						}
+					}
+				}
+			}
+
+		}
+	}
+
 
 	/**
 	 * Check first if the credentials for the given ScmRepository have been set, if the protocol is valid,
@@ -165,7 +222,7 @@ public class ScriptedTestCaseEventListener {
 		}
 
 		// fix the error here
-		
+
 		return credentials;
 	}
 	/**
@@ -191,7 +248,7 @@ public class ScriptedTestCaseEventListener {
 	 */
 	@Order(100)
 	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED or " +
-																					 "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
+		"#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
 	public void autoBindWhenAvailable(AutomationRequestStatusChangeEvent event){
 
 		LOGGER.debug("request status changed : autobinding test scripts if needed and possible");
@@ -210,7 +267,7 @@ public class ScriptedTestCaseEventListener {
 
 		// group them by Tm Project.
 		Map<Project, List<TestCase>> testCasesByProjects = candidates.stream()
-															   .collect(Collectors.groupingBy(tc -> tc.getProject()));
+			.collect(Collectors.groupingBy(tc -> tc.getProject()));
 
 		for (Map.Entry<Project, List<TestCase>> entry : testCasesByProjects.entrySet()){
 
@@ -309,11 +366,11 @@ public class ScriptedTestCaseEventListener {
 		TestCase tc = tcs.get(0);
 
 		return tc.getProject()
-			   .getTestAutomationProjects()
-			   .stream()
-			   .filter(TestAutomationProject::isCanRunGherkin)
-			   .sorted(Comparator.comparing(TestAutomationProject::getLabel))
-			   .findFirst();
+			.getTestAutomationProjects()
+			.stream()
+			.filter(TestAutomationProject::isCanRunGherkin)
+			.sorted(Comparator.comparing(TestAutomationProject::getLabel))
+			.findFirst();
 	}
 
 	/**
@@ -332,11 +389,11 @@ public class ScriptedTestCaseEventListener {
 		QTestCase testCase = QTestCase.testCase;
 
 		return new JPAQueryFactory(em)
-				   .select(testCase.id)
-					.from(automationRequest)
-					.join(automationRequest.testCase, testCase)
-					.where(automationRequest.id.in(automationRequestIds))
-					.fetch();
+			.select(testCase.id)
+			.from(automationRequest)
+			.join(automationRequest.testCase, testCase)
+			.where(automationRequest.id.in(automationRequestIds))
+			.fetch();
 
 	}
 
@@ -362,17 +419,17 @@ public class ScriptedTestCaseEventListener {
 		QScmRepository scm = QScmRepository.scmRepository;
 
 		return new JPAQueryFactory(em)
-				   .select(testCase)
-				   .from(automationRequest)
-				   .join(automationRequest.testCase, testCase)
-				   .join(testCase.project, project)
-				   .join(project.testAutomationProjects, automationProject)
-				   .join(project.scmRepository, scm) 								// condition 3
-					.where(automationRequest.id.in(automationRequestIds) 			// condition 1
-							   .and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
+			.select(testCase)
+			.from(automationRequest)
+			.join(automationRequest.testCase, testCase)
+			.join(testCase.project, project)
+			.join(project.testAutomationProjects, automationProject)
+			.join(project.scmRepository, scm) 								// condition 4
+			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
+				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
 								.and(automationProject.canRunGherkin.isTrue())		// condition 4
-					)
-					.fetch();
+			)
+			.fetch();
 
 	}
 

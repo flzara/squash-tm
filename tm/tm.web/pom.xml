@@ -77,6 +77,7 @@
       <version>${project.version}</version>
     </dependency>
 
+
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>

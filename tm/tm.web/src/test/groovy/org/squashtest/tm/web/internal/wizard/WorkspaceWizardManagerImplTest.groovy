@@ -25,6 +25,7 @@ import org.squashtest.tm.api.widget.MenuItem
 import org.squashtest.tm.api.wizard.WorkspaceWizard
 import org.squashtest.tm.api.workspace.WorkspaceType
 import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.api.plugin.PluginType
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -92,7 +93,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					String getType(){
 						return "R"
 					}
-					String getConfigurationPath(EntityReference ref){
+
+					PluginType getPluginType() {
+						return PluginType.AUTOMATION
+					}
+
+			String getConfigurationPath(EntityReference ref){
 						return "/toto"
 					}
 					Map getProperties() { return [:]}
@@ -134,6 +140,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					String getModule(){
 						return "module";
 					}
+					PluginType getPluginType() {
+				return PluginType.AUTOMATION
+			}
 				}, new WorkspaceWizard() {
 					String getId() {
 						"test case"
@@ -161,6 +170,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					}
 					String getType(){
 						return "R"
+					}
+					PluginType getPluginType() {
+						return null
 					}
 					String getConfigurationPath(EntityReference ref){
 						return "/toto"
