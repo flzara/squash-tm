@@ -102,9 +102,19 @@
           <span id="test-case-uuid">${uuid}</span>
         </div>
     </div>
-    <%-- Test Automation structure --%>
-              <tc:testcase-test-automation testCase="${testCase}"  canModify="${writable}"/>
-    <%--/Test Automation structure --%>
+
+    <c:if test="${ hasProjectWithTaServer ==true }">
+         <tc:testcase-test-automation testCase="${testCase}"  canModify="${writable}"/>
+    </c:if>
+   <div class="display-table-row test-case-remote-automation-request-block">
+         <label class="display-table-cell" for="automation-last-transmitted-on">
+           <f:message key="automation.datatable.headers.transmittedon" />
+         </label>
+         <div class="display-table-cell" id="automation-last-transmitted-on">
+           <span><f:formatDate value="${ automReqLastTransmittedOn }" pattern="${displayDateFormat}" /></span>
+         </div>
+     </div>
+
     </div><%-- div-test-case-automatable--%>
 
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
@@ -151,14 +161,7 @@
           <span>${ remoteReqAssignedTo }</span>
         </div>
       </div>
-     <div class="display-table-row test-case-remote-automation-request-block">
-       <label class="display-table-cell" for="automation-last-transmitted-on">
-         <f:message key="automation.datatable.headers.transmittedon" />
-       </label>
-       <div class="display-table-cell" id="automation-last-transmitted-on">
-         <span><f:formatDate value="${ automReqLastTransmittedOn }" pattern="${displayDateFormat}" /></span>
-       </div>
-     </div>
+
 </div><%-- test1--%>
 
 

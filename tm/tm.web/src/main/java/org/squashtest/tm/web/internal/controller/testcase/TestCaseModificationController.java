@@ -315,6 +315,10 @@ public class TestCaseModificationController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
 		mav.addObject("milestoneConf", milestoneConf);
 
+		//hasProjectWithTaServer
+
+		mav.addObject("hasProjectWithTaServer", (testCase.getProject().getTestAutomationServer()!= null ? true : false));
+
 		// RemoteAutomationRequestExtender
 		String workflowType = testCase.getProject().getAutomationWorkflowType().getI18nKey();
 		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
@@ -336,8 +340,8 @@ public class TestCaseModificationController {
 					mav.addObject("remoteReqAssignedTo",(!remoteAutomReq.getRemoteAssignedTo().equals(null)? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
 					mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
 					mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
-					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "OUI":
-																		(remoteAutomReq.getRemoteRequestStatus()==null?internationalizationHelper.internationalize("squashtm.nodata", locale):"NON")));
+					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "Oui":
+																		(remoteAutomReq.getRemoteRequestStatus()==null?internationalizationHelper.internationalize("squashtm.nodata", locale):"Non")));
 					mav.addObject("finalStatusConfiged",finalStatusConfiged);
 				}
 			}else{
