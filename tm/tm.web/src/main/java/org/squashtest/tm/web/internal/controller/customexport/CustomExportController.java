@@ -55,6 +55,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
@@ -199,12 +200,14 @@ public class CustomExportController {
 				}
 				break;
 			case TEST_SUITE:
-				TestSuite testSuite = testSuiteFinder.findById(entityId);
-				if (testSuite != null) {
+				try {
+					TestSuite testSuite = testSuiteFinder.findById(entityId);
 					mainProjectId = testSuite.getId();
 					itpis = testSuite.getTestPlan();
+					break;
+				} catch (EntityNotFoundException e) {
+					return new HashMap<>();
 				}
-				break;
 			default:
 				throw new IllegalArgumentException("Entity of type " + entityType.name() + " is not supported");
 		}
