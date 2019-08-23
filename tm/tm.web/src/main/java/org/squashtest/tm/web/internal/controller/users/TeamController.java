@@ -309,7 +309,7 @@ public class TeamController extends PartyControllerSupport {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
-			res.put(DESCRIPTION, HtmlUtils.htmlEscape(item.getDescription()));
+			res.put(DESCRIPTION, HTMLCleanupUtils.escapeOrDefault(item.getDescription(), ""));
 			res.put("nb-associated-users", item.getMembers().size());
 			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, HtmlUtils.htmlEscape(auditable.getCreatedBy()));
