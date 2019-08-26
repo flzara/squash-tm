@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.hibernate;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -29,7 +31,6 @@ import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.security.UserContextHolder;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -41,9 +42,14 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuditLogInterceptor.class);
+
 	@Override
 	public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		if(isRelatedToAnAuditable(entity.getClass())){
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("Deleting entity {}", entity);
+		}
+		if(RelatedToAuditable.class.isAssignableFrom(entity.getClass())){
 			checkAndLogAuditableRelatedEntityModificationData(entity);
 		}
 	}
@@ -51,35 +57,22 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("Entity {} is dirty and will be flushed", entity);
+		}
+		boolean currentStateIsModified = false;
 		if (isAuditable(entity)) {
 			checkAndLogModificationData(entity, currentState);
-			if(isRelatedToAnAuditable(entity.getClass())){
-				checkAndLogAuditableRelatedEntityModificationData(entity);
-			}
-			return true;
-		} else if(isRelatedToAnAuditable(entity.getClass())){
-			checkAndLogAuditableRelatedEntityModificationData(entity);
-			return true;
+			currentStateIsModified = true;
 		}
-		return false;
+		if(RelatedToAuditable.class.isAssignableFrom(entity.getClass())){
+			checkAndLogAuditableRelatedEntityModificationData(entity);
+		}
+		return currentStateIsModified;
 	}
 
 	private boolean isAuditable(Object entity) {
 		return AnnotationUtils.findAnnotation(entity.getClass(), Auditable.class) != null;
-	}
-
-	private boolean isRelatedToAnAuditable(Class clazz) {
-		if(hasIsRelatedToAuditableInterface(clazz)){
-			return true;
-		} else if(clazz.getSuperclass() != null){
-			return isRelatedToAnAuditable(clazz.getSuperclass());
-		} else {
-			return false;
-		}
-	}
-
-	private boolean hasIsRelatedToAuditableInterface(Class clazz){
-		return Arrays.stream(clazz.getInterfaces()).anyMatch(interfaze -> interfaze.getName().equals(RelatedToAuditable.class.getName()));
 	}
 
 	private void checkAndLogModificationData(Object entity, Object[] currentState) {
@@ -88,6 +81,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 			// Feature 6763 - the 'last connected on' date was also updating the 'last modified on' date
 			// so we added a boolean and now we check that the boolean is false before making changes.
 			if (!audit.isSkipModifyAudit()) {
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("Updating audit {} of entity {}", audit, entity);
+				}
 				audit.setLastModifiedBy(getCurrentUser());
 				audit.setLastModifiedOn(new Date());
 			}
@@ -107,17 +103,19 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("Saving entity {}", entity);
+		}
+
+		boolean stateIsModified = false;
 		if (isAuditable(entity)) {
 			logCreationData(entity, state);
-			if(isRelatedToAnAuditable(entity.getClass())){
-				checkAndLogAuditableRelatedEntityModificationData(entity);
-			}
-			return true;
-		} else if(isRelatedToAnAuditable(entity.getClass())){
-			checkAndLogAuditableRelatedEntityModificationData(entity);
-			return true;
+			stateIsModified = true;
 		}
-		return false;
+		if(RelatedToAuditable.class.isAssignableFrom(entity.getClass())){
+			checkAndLogAuditableRelatedEntityModificationData(entity);
+		}
+		return stateIsModified;
 	}
 
 	private void logCreationData(Object entity, Object[] state) {
@@ -145,6 +143,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		RelatedToAuditable relatedToAuditable = (RelatedToAuditable) entity;
 		relatedToAuditable.getAssociatedAuditableList().forEach(auditable -> {
 			if(auditable != null){
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("Updating auditable {} related to entity {}", auditable, entity);
+				}
 				auditable.setLastModifiedOn(new Date());
 				auditable.setLastModifiedBy(getCurrentUser());
 			} else {
