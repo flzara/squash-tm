@@ -38,6 +38,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +71,12 @@ public class CustomReportCustomExportServiceImpl implements CustomReportCustomEx
 				Iteration iteration = iterationFinder.findById(entityReference.getId());
 				return iteration != null ? iteration.getName() : "";
 			case TEST_SUITE:
-				TestSuite testSuite = testSuiteFinder.findById(entityReference.getId());
-				return testSuite != null ? testSuite.getName() : "";
+				try {
+					TestSuite testSuite = testSuiteFinder.findById(entityReference.getId());
+					return testSuite.getName();
+				} catch (EntityNotFoundException e) {
+					return "";
+				}
 			default:
 				throw new IllegalArgumentException("Entity of type " + entityReference.getType().name() + " is not supported");
 		}

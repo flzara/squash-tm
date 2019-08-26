@@ -133,7 +133,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					if(isAutomatable && isRemoteAutomationWorkflowUsed) {
 						$('.test-case-remote-automation-request-block').show();
 						$("#script-auto-remote-automation-request").show();
-						$("#automation-request-status-label").hide()
+						$("#automation-request-status-label").hide();
 						$("#automation-request-status").hide();
 					} else {
 						$('.test-case-remote-automation-request-block').hide();

@@ -81,7 +81,7 @@ public class JsonCustomExportBuilder {
 		for (EntityReference scopeEntity : customExport.getScope()) {
 			String scopeEntityName = customExportService.getScopeEntityName(scopeEntity);
 			String scope = scopeEntityName.isEmpty() ? i18nHelper.internationalize(
-				"custom-export.perimeter.not-available-anymore", LocaleContextHolder.getLocale()) : scopeEntityName;
+				"report.perimeter.not-available-anymore", LocaleContextHolder.getLocale()) : scopeEntityName;
 
 			stringifiedScope.add(scope);
 		}

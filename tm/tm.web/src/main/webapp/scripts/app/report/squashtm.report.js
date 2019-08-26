@@ -28,9 +28,9 @@ var squashtm = squashtm || {};
  * @author Gregory Fouquet
  */
 define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "./ReportInformationPanel", "./ReportCriteriaPanel", "./ConciseFormModel",
-		"is","workspace.routing", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.jeditable"],
+		"is", "squash.translator", "app/ws/squashtm.notification", "workspace.routing", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.jeditable"],
 	function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil, ReportInformationPanel, ReportCriteriaPanel, FormModel,
-					 is, router) {
+					 is, translator, notification, router) {
 	"use strict";
 
 	var config = {
@@ -140,7 +140,6 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	}
 
 	function generateView() {
-
 
 		if (formModel.hasBoundary()) {
 			formerState.save();

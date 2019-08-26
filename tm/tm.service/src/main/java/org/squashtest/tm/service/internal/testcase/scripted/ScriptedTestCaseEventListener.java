@@ -110,9 +110,6 @@ public class ScriptedTestCaseEventListener {
 	@Inject
 	private GenericProjectManagerService projectManager;
 
-	@Inject
-	private AutomationWorkflow automationWorkflow;
-
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
 

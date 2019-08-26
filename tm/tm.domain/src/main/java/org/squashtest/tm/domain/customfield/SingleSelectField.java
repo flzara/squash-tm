@@ -248,7 +248,8 @@ public class SingleSelectField extends CustomField {
 	 */
 	public void moveOptions(int newIndex, List<String> optionsLabels) {
 		List<CustomFieldOption> newOptions = copyOptionList(optionsLabels);
-		removeOptions(optionsLabels);
+		// TM-746 : we don't need to remove check for default option when moving options
+		removeOptionsWithoutCheck(optionsLabels);
 		options.addAll(newIndex, newOptions);
 	}
 
@@ -262,9 +263,9 @@ public class SingleSelectField extends CustomField {
 		return newOptions;
 	}
 
-	private void removeOptions(List<String> optionsLabels) {
+	private void removeOptionsWithoutCheck(List<String> optionsLabels) {
 		for (String option : optionsLabels) {
-			removeOption(option);
+			removeOptionWithoutCheck(option);
 		}
 	}
 
