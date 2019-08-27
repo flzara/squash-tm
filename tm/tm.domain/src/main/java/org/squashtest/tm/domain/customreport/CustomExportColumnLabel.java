@@ -354,8 +354,8 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	EXECUTION_USER(
 		I18nKeys.I18N_KEY_USER,
-		CORE_USER.LOGIN,
-		CORE_USER.PARTY_ID,
+		EXECUTION.LAST_EXECUTED_BY,
+		EXECUTION.EXECUTION_ID,
 		EntityType.EXECUTION),
 
 	EXECUTION_EXECUTION_DATE(
