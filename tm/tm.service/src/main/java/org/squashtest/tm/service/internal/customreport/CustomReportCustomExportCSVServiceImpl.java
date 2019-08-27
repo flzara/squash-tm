@@ -140,9 +140,15 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 		TableField tableFieldId;
 		switch(entity.getType()) {
-			case CAMPAIGN: tableFieldId = CAMPAIGN.CLN_ID; break;
-			case ITERATION: tableFieldId = ITERATION.ITERATION_ID; break;
-			case TEST_SUITE: tableFieldId = TEST_SUITE.ID; break;
+			case CAMPAIGN:
+				tableFieldId = CAMPAIGN.CLN_ID;
+				break;
+			case ITERATION:
+				tableFieldId = ITERATION.ITERATION_ID;
+				break;
+			case TEST_SUITE:
+				tableFieldId = TEST_SUITE.ID;
+				break;
 			default: throw new IllegalArgumentException("Entity of type " + entity.getType().name() + " is not supported");
 		}
 		fromQuery.where(tableFieldId.eq(entity.getId()))
