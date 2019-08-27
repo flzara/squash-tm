@@ -57,9 +57,8 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 
 	private static final Map<String, Class> ENTITY_CLASS_MAP;
 	static {
-		ENTITY_CLASS_MAP = new HashMap<>(8);
+		ENTITY_CLASS_MAP = new HashMap<>(7);
 		ENTITY_CLASS_MAP.put(EntityType.PROJECT.toString(), GenericProject.class);
-		ENTITY_CLASS_MAP.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
 		ENTITY_CLASS_MAP.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
 		ENTITY_CLASS_MAP.put(EntityType.TEST_CASE.toString(), TestCase.class);
 		ENTITY_CLASS_MAP.put(EntityType.CAMPAIGN.toString(), Campaign.class);
