@@ -55,17 +55,17 @@ import static org.jooq.impl.DSL.inline;
 @Repository
 public class HibernateAttachmentListDao implements AttachmentListDao {
 
-	private static final Map<String, Class> entityClassMap;
+	private static final Map<String, Class> ENTITY_CLASS_MAP;
 	static {
-		entityClassMap = new HashMap<>(8);
-		entityClassMap.put(EntityType.PROJECT.toString(), GenericProject.class);
-		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
-		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
-		entityClassMap.put(EntityType.TEST_CASE.toString(), TestCase.class);
-		entityClassMap.put(EntityType.CAMPAIGN.toString(), Campaign.class);
-		entityClassMap.put(EntityType.ITERATION.toString(), org.squashtest.tm.domain.campaign.Iteration.class);
-		entityClassMap.put(EntityType.TEST_SUITE.toString(), org.squashtest.tm.domain.campaign.TestSuite.class);
-		entityClassMap.put(EntityType.EXECUTION.toString(), org.squashtest.tm.domain.execution.Execution.class);
+		ENTITY_CLASS_MAP = new HashMap<>(8);
+		ENTITY_CLASS_MAP.put(EntityType.PROJECT.toString(), GenericProject.class);
+		ENTITY_CLASS_MAP.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
+		ENTITY_CLASS_MAP.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
+		ENTITY_CLASS_MAP.put(EntityType.TEST_CASE.toString(), TestCase.class);
+		ENTITY_CLASS_MAP.put(EntityType.CAMPAIGN.toString(), Campaign.class);
+		ENTITY_CLASS_MAP.put(EntityType.ITERATION.toString(), org.squashtest.tm.domain.campaign.Iteration.class);
+		ENTITY_CLASS_MAP.put(EntityType.TEST_SUITE.toString(), org.squashtest.tm.domain.campaign.TestSuite.class);
+		ENTITY_CLASS_MAP.put(EntityType.EXECUTION.toString(), org.squashtest.tm.domain.execution.Execution.class);
 	}
 
 	@PersistenceContext
@@ -108,7 +108,7 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 			String entityType = jooqRecord.get("entity_type", String.class);
 			long entityId = jooqRecord.get("entity_id", Long.class);
 
-			Class<?> entityClass = entityClassMap.get(entityType);
+			Class<?> entityClass = ENTITY_CLASS_MAP.get(entityType);
 			if(entityClass != null){
 				auditable = (AuditableMixin) entityManager.find(entityClass, entityId);
 			}

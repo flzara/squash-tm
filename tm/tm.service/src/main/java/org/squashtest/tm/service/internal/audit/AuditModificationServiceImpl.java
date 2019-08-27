@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.audit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -39,7 +41,9 @@ import java.util.List;
 @Transactional
 public class AuditModificationServiceImpl implements AuditModificationService {
 
-	private static final List<BindableEntity> auditableBindableEntity = Arrays.asList(
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuditModificationServiceImpl.class);
+
+	private static final List<BindableEntity> AUDITABLE_BINDABLE_ENTITY = Arrays.asList(
 		BindableEntity.CAMPAIGN, BindableEntity.CAMPAIGN_FOLDER, BindableEntity.TEST_CASE, BindableEntity.TESTCASE_FOLDER,
 		BindableEntity.REQUIREMENT_VERSION, BindableEntity.REQUIREMENT_FOLDER,
 		BindableEntity.ITERATION, BindableEntity.TEST_SUITE, BindableEntity.EXECUTION, BindableEntity.EXECUTION_STEP);
@@ -47,24 +51,33 @@ public class AuditModificationServiceImpl implements AuditModificationService {
 	@Inject
 	private AttachmentListDao attachmentListDao;
 
+	@Override
 	public void updateRelatedToAttachmentAuditableEntity(long attachmentListId){
+		LOGGER.debug("Looking for auditable related to attachment list with ID {}", attachmentListId);
 		AuditableMixin auditable = attachmentListDao.findAuditableAssociatedEntityIfExists(attachmentListId);
 		if(auditable != null){
 			updateAuditable(auditable);
 		}
 	}
 
+	@Override
 	public void updateRelatedToRequirementLinkAuditableEntity(List<RequirementVersion> versions){
+		LOGGER.debug("Updating requirement version auditable related to a RequirementLink");
+
 		versions.stream().map(version -> (AuditableMixin)version).forEach(this::updateAuditable);
 	}
 
+	@Override
 	public void updateRelatedToCustomFieldAuditableEntity(BoundEntity boundEntity){
-		if(auditableBindableEntity.contains(boundEntity.getBoundEntityType())){
+		LOGGER.debug("Updating auditable related to CUF BoundEntity {}", boundEntity);
+		if(AUDITABLE_BINDABLE_ENTITY.contains(boundEntity.getBoundEntityType())){
 			updateAuditable((AuditableMixin) boundEntity);
 		}
 	}
 
+	@Override
 	public void updateAuditable(AuditableMixin auditable){
+		LOGGER.debug("Updating auditable {}", auditable);
 		auditable.setLastModifiedOn(new Date());
 		auditable.setLastModifiedBy(UserContextHolder.getUsername());
 	}
