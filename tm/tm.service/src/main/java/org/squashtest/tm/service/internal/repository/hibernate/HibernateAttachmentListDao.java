@@ -24,7 +24,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
@@ -40,11 +43,26 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.jooq.impl.DSL.inline;
 
 
 @Repository
 public class HibernateAttachmentListDao implements AttachmentListDao {
+
+	private static final Map<String, Class> entityClassMap;
+	static {
+		entityClassMap = new HashMap<>(6);
+		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
+		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
+		entityClassMap.put(EntityType.TEST_CASE.toString(), TestCase.class);
+		entityClassMap.put(EntityType.CAMPAIGN.toString(), Campaign.class);
+		entityClassMap.put(EntityType.ITERATION.toString(), org.squashtest.tm.domain.campaign.Iteration.class);
+		entityClassMap.put(EntityType.TEST_SUITE.toString(), org.squashtest.tm.domain.campaign.TestSuite.class);
+	}
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -59,7 +77,6 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 	@Override
 	public TestCase findAssociatedTestCaseIfExists(Long attachmentListId) {
 		final QTestCase testCase = QTestCase.testCase;
-
 		return new JPAQueryFactory(entityManager)
 			.selectFrom(testCase)
 			.where(testCase.attachmentList.id.eq(attachmentListId))
@@ -77,31 +94,47 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 	}
 
 	@Override
-	public Record2<String, Long> findAuditableAssociatedEntityIfExists(Long attachmentListId) {
-		Record2<String, Long> result = DSL.select(inline("test_case").as("entity_name"), TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID.as("entity_id"))
+	public AuditableMixin findAuditableAssociatedEntityIfExists(Long attachmentListId) {
+		AuditableMixin auditable = null;
+
+		Record2<String, Long> jooqRecord = getAssociatedEntityTypeAndId(attachmentListId);
+
+		if(jooqRecord != null){
+			String entityType = jooqRecord.get("entity_type", String.class);
+			long entityId = jooqRecord.get("entity_id", Long.class);
+
+			Class<?> entityClass = entityClassMap.get(entityType);
+			if(entityClass != null){
+				auditable = (AuditableMixin) entityManager.find(entityClass, entityId);
+			}
+		}
+		return auditable;
+	}
+
+	private Record2<String, Long> getAssociatedEntityTypeAndId(Long attachmentListId){
+		return DSL.select(inline(EntityType.TEST_CASE.toString()).as("entity_type"), TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID.as("entity_id"))
 			.from(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE)
 			.where(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			.union(
-				DSL.select(inline("campaign").as("entity_name"), CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.CLN_ID.as("entity_id"))
+				DSL.select(inline(EntityType.CAMPAIGN.toString()).as("entity_type"), CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.CLN_ID.as("entity_id"))
 					.from(CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE)
 					.where(CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			)
 			.union(
-				DSL.select(inline("requirement_version").as("entity_name"), Resource.RESOURCE.RES_ID.as("entity_id"))
+				DSL.select(inline(EntityType.REQUIREMENT_VERSION.toString()).as("entity_type"), Resource.RESOURCE.RES_ID.as("entity_id"))
 					.from(Resource.RESOURCE)
 					.where(Resource.RESOURCE.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			)
 			.union(
-				DSL.select(inline("iteration").as("entity_name"), Iteration.ITERATION.ITERATION_ID.as("entity_id"))
+				DSL.select(inline(EntityType.ITERATION.toString()).as("entity_type"), Iteration.ITERATION.ITERATION_ID.as("entity_id"))
 					.from(Iteration.ITERATION)
 					.where(Iteration.ITERATION.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			)
 			.union(
-				DSL.select(inline("test_suite").as("entity_name"), TestSuite.TEST_SUITE.ID.as("entity_id"))
+				DSL.select(inline(EntityType.TEST_SUITE.toString()).as("entity_type"), TestSuite.TEST_SUITE.ID.as("entity_id"))
 					.from(TestSuite.TEST_SUITE)
 					.where(TestSuite.TEST_SUITE.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			).fetchOne();
-		return result;
 	}
 
 }

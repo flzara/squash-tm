@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.audit
 
-import org.jooq.Record2
 import org.springframework.security.core.Authentication
 import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.campaign.Campaign
@@ -30,9 +29,6 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.security.UserContextHolder
 import org.squashtest.tm.service.internal.audit.AuditModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.AttachmentListDao
-import org.squashtest.tm.service.internal.repository.CampaignDao
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
 import spock.lang.Specification
 
 /**
@@ -44,20 +40,10 @@ class AuditModificationServiceImplTest extends Specification {
 
 	AttachmentListDao attachmentListDao = Mock()
 
-	TestCaseDao testCaseDao = Mock()
-
-	CampaignDao campaignDao = Mock()
-
-	RequirementVersionDao requirementVersionDao = Mock()
-
 	Authentication authentication = Mock()
 
 	def setup(){
 		service.attachmentListDao = attachmentListDao
-		service.testCaseDao = testCaseDao
-		service.campaignDao = campaignDao
-		service.requirementVersionDao = requirementVersionDao
-
 		UserContextHolder.context.authentication = authentication
 		authentication.name >> "bruce dickinson"
 	}
@@ -77,16 +63,12 @@ class AuditModificationServiceImplTest extends Specification {
 	def "should update campaign related to an attachment list"(){
 		given:
 		Campaign campaign = Mock()
-		Record2<String,Long> record = Mock()
-		record.get("entity_name", String.class) >> "campaign"
-		record.get("entity_id", Long.class) >> 1L
 
 		when:
 		service.updateRelatedToAttachmentAuditableEntity(1L)
 
 		then:
-		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> record
-		1*campaignDao.findById(1L) >> campaign
+		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> campaign
 		1*campaign.setLastModifiedBy('bruce dickinson')
 		1*campaign.setLastModifiedOn(_ as Date)
 	}
@@ -94,17 +76,12 @@ class AuditModificationServiceImplTest extends Specification {
 	def "should update requirement version related to an attachment list"(){
 		given:
 		RequirementVersion requirementVersion = Mock()
-		Optional<RequirementVersion> optional = Optional.of(requirementVersion)
-		Record2<String,Long> record = Mock()
-		record.get("entity_name", String.class) >> "requirement_version"
-		record.get("entity_id", Long.class) >> 1L
 
 		when:
 		service.updateRelatedToAttachmentAuditableEntity(1L)
 
 		then:
-		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> record
-		1*requirementVersionDao.findById(1L) >> optional
+		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> requirementVersion
 		1*requirementVersion.setLastModifiedBy('bruce dickinson')
 		1*requirementVersion.setLastModifiedOn(_ as Date)
 	}
@@ -112,16 +89,12 @@ class AuditModificationServiceImplTest extends Specification {
 	def "should update test case related to an attachment list"(){
 		given:
 		TestCase testCase = Mock()
-		Record2<String,Long> record = Mock()
-		record.get("entity_name", String.class) >> "test_case"
-		record.get("entity_id", Long.class) >> 1L
 
 		when:
 		service.updateRelatedToAttachmentAuditableEntity(1L)
 
 		then:
-		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> record
-		1*testCaseDao.findById(1L) >> testCase
+		1*attachmentListDao.findAuditableAssociatedEntityIfExists(1L) >> testCase
 		1*testCase.setLastModifiedBy('bruce dickinson')
 		1*testCase.setLastModifiedOn(_ as Date)
 	}
