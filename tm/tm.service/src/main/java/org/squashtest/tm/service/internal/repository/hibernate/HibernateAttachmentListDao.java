@@ -28,12 +28,15 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.Execution;
 import org.squashtest.tm.jooq.domain.tables.Iteration;
+import org.squashtest.tm.jooq.domain.tables.Project;
 import org.squashtest.tm.jooq.domain.tables.Resource;
 import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
 import org.squashtest.tm.jooq.domain.tables.TestSuite;
@@ -54,13 +57,15 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 
 	private static final Map<String, Class> entityClassMap;
 	static {
-		entityClassMap = new HashMap<>(6);
+		entityClassMap = new HashMap<>(8);
+		entityClassMap.put(EntityType.PROJECT.toString(), GenericProject.class);
 		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
 		entityClassMap.put(EntityType.REQUIREMENT_VERSION.toString(), RequirementVersion.class);
 		entityClassMap.put(EntityType.TEST_CASE.toString(), TestCase.class);
 		entityClassMap.put(EntityType.CAMPAIGN.toString(), Campaign.class);
 		entityClassMap.put(EntityType.ITERATION.toString(), org.squashtest.tm.domain.campaign.Iteration.class);
 		entityClassMap.put(EntityType.TEST_SUITE.toString(), org.squashtest.tm.domain.campaign.TestSuite.class);
+		entityClassMap.put(EntityType.EXECUTION.toString(), org.squashtest.tm.domain.execution.Execution.class);
 	}
 
 	@PersistenceContext
@@ -134,6 +139,16 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 				DSL.select(inline(EntityType.TEST_SUITE.toString()).as("entity_type"), TestSuite.TEST_SUITE.ID.as("entity_id"))
 					.from(TestSuite.TEST_SUITE)
 					.where(TestSuite.TEST_SUITE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline(EntityType.PROJECT.toString()).as("entity_type"), Project.PROJECT.PROJECT_ID.as("entity_id"))
+					.from(Project.PROJECT)
+					.where(Project.PROJECT.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
+			.union(
+				DSL.select(inline(EntityType.EXECUTION.toString()).as("entity_type"), Execution.EXECUTION.EXECUTION_ID.as("entity_id"))
+					.from(Execution.EXECUTION)
+					.where(Execution.EXECUTION.ATTACHMENT_LIST_ID.eq(attachmentListId))
 			).fetchOne();
 	}
 
