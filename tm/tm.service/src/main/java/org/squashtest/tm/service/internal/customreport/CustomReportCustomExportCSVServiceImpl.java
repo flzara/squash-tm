@@ -25,6 +25,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSelectStep;
+import org.jooq.TableField;
 import org.jooq.impl.SQLDataType;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityReference;
@@ -137,21 +138,16 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 
 		SelectJoinStep fromQuery = buildFromClauseOfMainQuery(fieldList, isTestSuiteRequested, isIterationSelected, isTestSuiteSelected, queryDepth, selectQuery);
 
+		TableField tableFieldId;
 		switch(entity.getType()) {
-			case CAMPAIGN:
-				fromQuery.where(CAMPAIGN.CLN_ID.eq(entity.getId()))
-					.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
-					.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
-				break;
-			case ITERATION:
-				fromQuery.where(ITERATION.ITERATION_ID.eq(entity.getId()))
-				.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
-				.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
-				break;
-			default: fromQuery.where(TEST_SUITE.ID.eq(entity.getId()))
-				.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
-				.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
+			case CAMPAIGN: tableFieldId = CAMPAIGN.CLN_ID; break;
+			case ITERATION: tableFieldId = ITERATION.ITERATION_ID; break;
+			case TEST_SUITE: tableFieldId = TEST_SUITE.ID; break;
+			default: throw new IllegalArgumentException("Entity of type " + entity.getType().name() + " is not supported");
 		}
+		fromQuery.where(tableFieldId.eq(entity.getId()))
+			.groupBy(buildGroupByFieldList(queryDepth, selectedColumns))
+			.orderBy(buildOrderByFieldList(queryDepth, isTestSuiteRequested));
 
 		return fromQuery.fetch().iterator();
 	}
