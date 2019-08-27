@@ -20,27 +20,52 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
+import org.hibernate.Session
 import org.squashtest.it.basespecs.DbunitMappingSpecification
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestStep
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+import javax.transaction.Transactional
+
+@UnitilsSupport
+@Transactional
 class TestStepMappingIT extends DbunitMappingSpecification {
 
+	@PersistenceContext
+	EntityManager em
 
-//	def "shoud persist and retrieve a test step"() {
-//		given:
-//		ActionTestStep ts = new ActionTestStep(action: "my action", expectedResult: "my expected result")
-//
-//		when:
-//		doInTransaction({ session -> session.persist(ts) })
-//		def obj = doInTransaction({ session -> session.get(ActionTestStep, ts.id) })
-//
-//		then:
-//		obj.action == ts.action
-//		obj.expectedResult == ts.expectedResult
-//
-//		cleanup:
-//		deleteFixture ts
-//	}
+	Session getSession() {
+		em.unwrap(Session.class)
+	}
+
+
+	@DataSet("TestStepMappingIT.should persist and retrieve a test step.xml")
+	def "shoud persist and retrieve a test step"() {
+		given:
+		TestCase tc = session.load(TestCase, -10L)
+
+		when:
+		ActionTestStep ts = new ActionTestStep(action: "my action", expectedResult: "my expected result")
+		tc.steps << ts
+		ts.testCase = tc
+
+		session.persist ts
+		session.flush()
+		session.clear()
+
+		and:
+		TestStep obj = session.get(TestStep, ts.id)
+
+		then:
+		obj.action == ts.action
+		obj.expectedResult == ts.expectedResult
+
+	}
 
 	/*def "should cascade step persistence from test case"() {
 	 given:
