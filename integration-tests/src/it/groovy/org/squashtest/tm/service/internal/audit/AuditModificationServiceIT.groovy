@@ -62,7 +62,7 @@ class AuditModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("AuditModificationServiceIT.xml")
 	def "should update requirement version related to an attachment list"(){
 		when:
-		auditModificationService.updateRelatedToAttachmentAuditableEntity(-1L)
+		auditModificationService.updateRelatedToAttachmentAuditableEntity(-10L)
 
 		then:
 
