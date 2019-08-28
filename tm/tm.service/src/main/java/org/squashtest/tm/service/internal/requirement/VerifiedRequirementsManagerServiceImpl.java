@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
@@ -54,6 +55,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -134,6 +136,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -587,6 +592,7 @@ List<Long> requirementsIds) {
 		for (RequirementVersionCoverage cov : coverages) {
 			ts.removeRequirementVersionCoverage(cov);
 		}
+		auditModificationService.updateAuditable((AuditableMixin)ts.getTestCase());
 
 	}
 

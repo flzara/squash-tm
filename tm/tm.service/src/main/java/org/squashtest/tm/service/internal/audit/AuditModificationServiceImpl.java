@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
@@ -72,6 +73,10 @@ public class AuditModificationServiceImpl implements AuditModificationService {
 		LOGGER.debug("Updating auditable related to CUF BoundEntity {}", boundEntity);
 		if(AUDITABLE_BINDABLE_ENTITY.contains(boundEntity.getBoundEntityType())){
 			updateAuditable((AuditableMixin) boundEntity);
+		} else if(boundEntity.getBoundEntityType().equals(BindableEntity.TEST_STEP)){
+			//[TM-418] Safe cast: CallTestStep doesn't implement BoundEntity
+			ActionTestStep testStep = (ActionTestStep) boundEntity;
+			updateAuditable((AuditableMixin) testStep.getTestCase());
 		}
 	}
 
