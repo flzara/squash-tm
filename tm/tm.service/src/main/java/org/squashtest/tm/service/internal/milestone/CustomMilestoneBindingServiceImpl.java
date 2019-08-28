@@ -20,14 +20,18 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
@@ -46,6 +50,8 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomMilestoneBindingServiceImpl.class);
+
 	@Inject
 	private MilestoneDao milestoneDao;
 
@@ -60,6 +66,9 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId) {
@@ -96,7 +105,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		project.bindMilestones(milestones);
 		for (Milestone milestone : milestones) {
 			milestone.addProjectToPerimeter(project);
+			LOGGER.debug("Milestone binding: updating auditable milestone {}", milestone.getId());
+			auditModificationService.updateAuditable((AuditableMixin)milestone);
 		}
+
+		LOGGER.debug("Milestone binding: updating auditable project {}", projectId);
+		auditModificationService.updateAuditable((AuditableMixin)project);
 	}
 
 	@Override
@@ -105,6 +119,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		Milestone milestone = milestoneDao.getOne(milestoneId);
 		milestone.bindProjects(projects);
 		milestone.addProjectsToPerimeter(projects);
+
+		LOGGER.debug("Milestone binding: updating auditable milestone {}", milestoneId);
+		auditModificationService.updateAuditable((AuditableMixin)milestone);
+
+		LOGGER.debug("Milestone binding: updating multiple auditable projects");
+		projects.forEach(project -> auditModificationService.updateAuditable((AuditableMixin)project));
 	}
 
 	@Override
@@ -155,10 +175,15 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 		project.unbindMilestones(milestones);
 
+		LOGGER.debug("Milestone unbinding: updating auditable project {}", project.getId());
+		auditModificationService.updateAuditable((AuditableMixin)project);
+
 		// Remove the project in different for loop because milestoneDao.unbindAllObjectsForProject may clear the
 		// session
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
+			LOGGER.debug("Milestone unbinding: updating auditable milestone {}", milestone.getId());
+			auditModificationService.updateAuditable((AuditableMixin)milestone);
 		}
 
 		for (Milestone milestone : milestones) {
@@ -179,7 +204,15 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		Milestone milestone = milestoneDao.getOne(milestoneId);
 		List<GenericProject> projects = projectDao.findAllById(projectIds);
 		milestone.unbindProjects(projects);
+
+		LOGGER.debug("Milestone unbinding: updating multiple auditable projects");
+		projects.forEach(project -> auditModificationService.updateAuditable((AuditableMixin)project));
+
 		milestone.removeProjectsFromPerimeter(projects);
+
+		LOGGER.debug("Milestone unbinding: updating auditable milestone {}", milestone.getId());
+		auditModificationService.updateAuditable((AuditableMixin)milestone);
+
 		milestoneDao.unbindAllObjectsForProjects(milestoneId, projectIds);
 	}
 
@@ -272,6 +305,13 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		Milestone milestone = milestoneDao.getOne(milestoneId);
 		List<GenericProject> projects = projectDao.findAllById(projectIds);
 		milestone.unbindProjects(projects);
+
+		LOGGER.debug("Milestone unbinding: updating auditable milestone {}", milestone.getId());
+		auditModificationService.updateAuditable((AuditableMixin)milestone);
+
+		LOGGER.debug("Milestone unbinding: updating multiple auditable project");
+		projects.forEach(project -> auditModificationService.updateAuditable((AuditableMixin)project));
+
 		milestoneDao.unbindAllObjectsForProjects(milestoneId, projectIds);
 	}
 

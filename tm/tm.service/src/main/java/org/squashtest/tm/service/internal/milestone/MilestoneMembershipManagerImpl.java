@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
@@ -48,6 +52,8 @@ import static org.squashtest.tm.service.security.Authorizations.WRITE_TC_OR_ROLE
 @Service("squashtest.tm.service.MilestoneMembershipManager")
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(MilestoneMembershipManagerImpl.class);
+
 	@Inject
 	private TestCaseDao testCaseDao;
 
@@ -61,6 +67,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Inject
 	private MilestoneDao milestoneDao;
 
+	@Inject
+	private AuditModificationService auditModificationService;
+
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds) {
@@ -70,6 +79,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		for (Milestone m : milestones) {
 			tc.bindMilestone(m);
 		}
+
+		LOGGER.debug("Milestone binding: updating auditable test case {}", testCaseId);
+		auditModificationService.updateAuditable((AuditableMixin)tc);
 	}
 
 	@Override
@@ -79,6 +91,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		for (Long milestoneId : milestoneIds) {
 			tc.unbindMilestone(milestoneId);
 		}
+
+		LOGGER.debug("Milestone unbinding: updating auditable test case {}", testCaseId);
+		auditModificationService.updateAuditable((AuditableMixin)tc);
 	}
 
 	@Override
@@ -93,6 +108,8 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 			}
 		}
 
+		LOGGER.debug("Milestone binding: updating auditable requirement version {}", requirementVersionId);
+		auditModificationService.updateAuditable((AuditableMixin)version);
 	}
 
 	@Override
@@ -102,6 +119,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		for (Long milestoneId : milestoneIds) {
 			version.unbindMilestone(milestoneId);
 		}
+
+		LOGGER.debug("Milestone unbinding: updating auditable requirement version {}", requirementVersionId);
+		auditModificationService.updateAuditable((AuditableMixin)version);
 	}
 
 	@Override
@@ -111,6 +131,8 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 			Campaign campaign = campaignDao.findById(campaignId);
 			Milestone milestone = milestoneDao.getOne(milestoneId);
 			campaign.bindMilestone(milestone);
+			LOGGER.debug("Milestone binding: updating auditable campaign {}", campaignId);
+			auditModificationService.updateAuditable((AuditableMixin)campaign);
 		}
 	}
 
@@ -121,6 +143,8 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		for (Long milestoneId : milestoneIds) {
 			campaign.unbindMilestone(milestoneId);
 		}
+		LOGGER.debug("Milestone unbinding: updating auditable campaign {}", campaignId);
+		auditModificationService.updateAuditable((AuditableMixin)campaign);
 	}
 
 	@Override
