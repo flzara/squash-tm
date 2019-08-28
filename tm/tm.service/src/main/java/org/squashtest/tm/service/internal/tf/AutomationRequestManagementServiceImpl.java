@@ -29,6 +29,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -39,6 +40,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.tf.IllegalAutomationRequestStatusException;
+import org.squashtest.tm.service.audit.AuditModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
@@ -126,6 +128,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
+
+	@Inject
+	private AuditModificationService auditModificationService;
 
 	// *************** implementation of the finder interface *************************
 
@@ -293,6 +298,7 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		List<TestCase> listTestCases = testCaseDao.findAllByIds(tcIds);
 		for (TestCase tc: listTestCases) {
 			eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds,automationRequestStatus, tc.getProject().getAutomationWorkflowType()));
+			auditModificationService.updateAuditable((AuditableMixin)tc);
 		}
 
 	}
@@ -302,6 +308,11 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		List<Long> reqIds = requestDao.getReqIdsByTcIds(tcIds);
 		PermissionsUtils.checkPermission(permissionEvaluationService, reqIds, WRITE_AS_FUNCTIONAL, AutomationRequest.class.getName());
 		requestDao.updatePriority(tcIds, priority);
+
+		List<TestCase> listTestCases = testCaseDao.findAllByIds(tcIds);
+		for (TestCase tc: listTestCases) {
+			auditModificationService.updateAuditable((AuditableMixin)tc);
+		}
 	}
 
 	@Override
