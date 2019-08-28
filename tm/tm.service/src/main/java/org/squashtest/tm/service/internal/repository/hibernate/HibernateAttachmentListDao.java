@@ -33,12 +33,14 @@ import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.jooq.domain.tables.ActionTestStep;
 import org.squashtest.tm.jooq.domain.tables.CampaignLibraryNode;
 import org.squashtest.tm.jooq.domain.tables.Execution;
 import org.squashtest.tm.jooq.domain.tables.Iteration;
 import org.squashtest.tm.jooq.domain.tables.Project;
 import org.squashtest.tm.jooq.domain.tables.Resource;
 import org.squashtest.tm.jooq.domain.tables.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.TestCaseSteps;
 import org.squashtest.tm.jooq.domain.tables.TestSuite;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -119,6 +121,13 @@ public class HibernateAttachmentListDao implements AttachmentListDao {
 		return DSL.select(inline(EntityType.TEST_CASE.toString()).as("entity_type"), TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID.as("entity_id"))
 			.from(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE)
 			.where(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			.union(
+				DSL.select(inline(EntityType.TEST_CASE.toString()).as("entity_type"), TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID.as("entity_id"))
+					.from(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE)
+					.innerJoin(TestCaseSteps.TEST_CASE_STEPS).on(TestCaseSteps.TEST_CASE_STEPS.TEST_CASE_ID.eq(TestCaseLibraryNode.TEST_CASE_LIBRARY_NODE.TCLN_ID))
+					.innerJoin(ActionTestStep.ACTION_TEST_STEP).on(ActionTestStep.ACTION_TEST_STEP.TEST_STEP_ID.eq(TestCaseSteps.TEST_CASE_STEPS.STEP_ID))
+					.where(ActionTestStep.ACTION_TEST_STEP.ATTACHMENT_LIST_ID.eq(attachmentListId))
+			)
 			.union(
 				DSL.select(inline(EntityType.CAMPAIGN.toString()).as("entity_type"), CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE.CLN_ID.as("entity_id"))
 					.from(CampaignLibraryNode.CAMPAIGN_LIBRARY_NODE)
