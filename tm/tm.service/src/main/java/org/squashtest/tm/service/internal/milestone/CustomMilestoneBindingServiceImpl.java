@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -41,7 +38,6 @@ import org.squashtest.tm.service.security.UserContextService;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
@@ -49,14 +45,6 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Transactional
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
-
-	private static final Transformer ID_COLLECTOR = new Transformer() {
-
-		@Override
-		public Object transform(Object input) {
-			return ((Identified) input).getId();
-		}
-	};
 
 	@Inject
 	private MilestoneDao milestoneDao;
@@ -172,11 +160,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
 		}
-		// save the test case and requirement ids for reindexation later
-		Collection<Long> milestoneIds = CollectionUtils.collect(milestones, ID_COLLECTOR);
-
-		Collection<Long> tcIds = milestoneDao.findTestCaseIdsBoundToMilestones(milestoneIds);
-		Collection<Long> reqIds = milestoneDao.findRequirementVersionIdsBoundToMilestones(milestoneIds);
 
 		for (Milestone milestone : milestones) {
 			// that thing will probably clear the session, be careful
