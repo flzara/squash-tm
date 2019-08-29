@@ -174,7 +174,7 @@ define(["jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.s
 					this.navigatePrologue();
 				} else {
 					var zeroBasedIndex = newStepIndex - 1;
-					var nextUrl = state.baseStepUrl + "/index/" + zeroBasedIndex + "?optimized=true";
+					var nextUrl = state.baseStepUrl + "/index/" + zeroBasedIndex + "?optimized";
 					getJson(nextUrl).success(function (json) {
 						state.currentStepStatus = json.currentStepStatus;
 						state.currentStepId = json.currentStepId;
