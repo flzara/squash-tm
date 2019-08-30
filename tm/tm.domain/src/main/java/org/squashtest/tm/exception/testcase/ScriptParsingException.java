@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.exception.testcase;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
-
-public class ScriptParsingException extends ActionException {
+//[TM-358] ScriptParsingException can't extends ActionException otherwise we are not sure if the error will be handled by HandlerActionExceptionResolver
+//or HandlerScriptParsingExceptionResolver (as it should be)
+public class ScriptParsingException extends RuntimeException {
 	public ScriptParsingException(Throwable arg0) {
 		super(arg0);
 	}
