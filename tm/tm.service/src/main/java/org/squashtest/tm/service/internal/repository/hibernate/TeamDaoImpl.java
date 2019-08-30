@@ -50,7 +50,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 public class TeamDaoImpl implements CustomTeamDao {
 
 	private static final String HQL_FIND_TEAMS_BASE = "from Team Team ";
-	private static final String HQL_FIND_TEAMS_FILTER = "where Team.name like :filter or Team.audit.createdBy like :filter or Team.audit.lastModifiedBy like :filter ";
+	private static final String HQL_FIND_TEAMS_FILTER = "where lower(Team.name) like lower(:filter) or lower(Team.audit.createdBy) like lower(:filter) or lower(Team.audit.lastModifiedBy) like lower(:filter) ";
 
 	@PersistenceContext
 	private EntityManager entityManager;
