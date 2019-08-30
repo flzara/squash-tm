@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-import org.squashtest.tm.core.foundation.exception.ActionException;
+import org.squashtest.tm.exception.testcase.ScriptParsingException;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -55,23 +55,23 @@ public class HandlerScriptParsingExceptionResolver extends AbstractHandlerExcept
 	}
 
 	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-		ActionException actionEx = (ActionException) ex; // NOSONAR Type was checked earlier
+		ScriptParsingException parsingException = (ScriptParsingException) ex; // NOSONAR Type was checked earlier
 		if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON) || ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.ANYTHING)) {
-			return formatJsonResponse(response, actionEx, request.getLocale());
+			return formatJsonResponse(response, parsingException, request.getLocale());
 		}
 
 		else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
-			return formatPlainTextResponse(response, actionEx, request.getLocale());
+			return formatPlainTextResponse(response, parsingException, request.getLocale());
 
 		}
 
 		return null;
 	}
 
-	private ModelAndView formatPlainTextResponse(HttpServletResponse response, ActionException actionEx, Locale locale) {
+	private ModelAndView formatPlainTextResponse(HttpServletResponse response, ScriptParsingException parsingException, Locale locale) {
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-		String exception = actionEx.getClass().getSimpleName();
-		String message = getLocalizedMessage(locale, actionEx);
+		String exception = parsingException.getClass().getSimpleName();
+		String message = getLocalizedMessage(locale, parsingException);
 		String error = exception + ':' + message;
 
 		AbstractView view = new PlainTextView();
@@ -79,31 +79,22 @@ public class HandlerScriptParsingExceptionResolver extends AbstractHandlerExcept
 		return new ModelAndView(view, "actionValidationError", error);
 	}
 
-	private ModelAndView formatJsonResponse(HttpServletResponse response, ActionException actionEx, Locale locale) {
+	private ModelAndView formatJsonResponse(HttpServletResponse response, ScriptParsingException parsingException, Locale locale) {
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-		String exception = actionEx.getClass().getSimpleName();
-		String message = getLocalizedMessage(locale, actionEx);
+		String exception = parsingException.getClass().getSimpleName();
+		String message = getLocalizedMessage(locale, parsingException);
 		ActionValidationErrorModel error = new ActionValidationErrorModel(exception, message);
 		return new ModelAndView(new MappingJackson2JsonView(), "actionValidationError", error);
 	}
 
-	private String getLocalizedMessage(Locale locale, ActionException actionEx) {
-		String key = actionEx.getI18nKey();
-		String message = null;
-		if(key == null  && actionEx.getMessage() != null && !actionEx.getMessage().isEmpty()){
-			message = actionEx.getMessage();
-		}
-		else if(key != null){
-			message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
-		}
-		if(message == null){
-			message = messageSource.getMessage("error.generic.label", null, locale);
-		}
-		return message;
+	private String getLocalizedMessage(Locale locale, ScriptParsingException parsingException) {
+		String message = messageSource.getMessage("squashtm.action.exception.testcase.scripted.parsing", null, locale);
+		message = message + "\n\n" + parsingException.getCause().getMessage();
+		return message.replace("\n", "<br/>");
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		return ActionException.class.isAssignableFrom(ex.getClass());
+		return ScriptParsingException.class.isAssignableFrom(ex.getClass());
 	}
 
 
