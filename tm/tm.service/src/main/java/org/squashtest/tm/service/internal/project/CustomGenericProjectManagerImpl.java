@@ -970,6 +970,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	private void copyAutomationWorkflowSettings(GenericProject target, GenericProject source) {
 		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
+		target.setAutomationWorkflowType(source.getAutomationWorkflowType());
 	}
 
 	private void copyBugtrackerSettings(GenericProject target, GenericProject source) {
