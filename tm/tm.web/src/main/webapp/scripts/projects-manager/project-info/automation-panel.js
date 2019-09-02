@@ -324,6 +324,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							value: workflow
 						}
 					});
+					Location.reload()
 				},
 				reforgeWorkflowsCombobox: function() {
 					var self = this;

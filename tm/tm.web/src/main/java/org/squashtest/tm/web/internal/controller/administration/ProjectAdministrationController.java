@@ -277,6 +277,8 @@ public class ProjectAdministrationController {
 			model.setIndex(loop++);
 			model.setEnabled(enabled);
 
+			model.setPluginType(plugin.getPluginType());
+
 			String url = plugin.getConfigurationPath(context);
 
 			if(url != null) {

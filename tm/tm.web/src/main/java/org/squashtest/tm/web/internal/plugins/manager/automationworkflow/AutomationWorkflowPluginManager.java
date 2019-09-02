@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
+import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.domain.project.AutomationWorkflowType;
 
 import java.util.Collection;
@@ -49,6 +50,8 @@ public interface AutomationWorkflowPluginManager {
 	Collection<AutomationWorkflowType> getAutomationWorkflowsType();
 
 	void enableRemoteAutomationWorkflowPlugin( String automationWorkflowtype, long projectId);
+
+	boolean pluginCanNotBeDisabled(WorkspaceWizard plugin, long projectId);
 
 
 }

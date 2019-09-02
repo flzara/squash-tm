@@ -28,6 +28,8 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.squashtest.tm.api.plugin.PluginType;
 	import org.squashtest.tm.api.plugin.PluginValidationException;
 	import org.squashtest.tm.api.wizard.AutomationWorkflow;
+	import org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard;
+	import org.squashtest.tm.api.wizard.WorkspaceWizard;
 	import org.squashtest.tm.api.workspace.WorkspaceType;
 	import org.squashtest.tm.domain.project.AutomationWorkflowType;
 	import org.squashtest.tm.service.project.GenericProjectManagerService;
@@ -134,5 +136,16 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 				throw new PluginValidationException(msg);
 			}
 		}
+	}
+
+	@Override
+	public boolean pluginCanNotBeDisabled(WorkspaceWizard plugin, long projectId) {
+		//it concerns that automation plugin
+		//if plugin don't have a configuration we can disable it
+		Map<String, String> conf =  projectManager.getPluginConfiguration(projectId, WorkspaceType.TEST_CASE_WORKSPACE, plugin.getId());
+
+		return (PluginType.AUTOMATION.equals(plugin.getPluginType())
+				&& projectManager.isProjectUsingWorkflow(projectId)
+				&& !conf.isEmpty());
 	}
 }

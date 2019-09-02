@@ -165,15 +165,15 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
 
 					if(remoteRequestStatus == finalStatusConfiged){
-							$("#test-case-automatisable").text("OUI");
+							$("#test-case-automatisable").text("Oui");
 						}else{
-							$("#test-case-automatisable").text("NON");
+							$("#test-case-automatisable").text("Non");
 						}
 					// url
-					$("#testUrl").prop("href",automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
+					$("#urlTicket").prop("href",automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
 					if(remoteReqUrl != '-'){
-						$("#span-remote-req-url").remove();
-						var newHref= "<a id='testUrl' href='" + remoteReqUrl + "' target='_blank'>" + remoteIssueKey + "</a>";
+						$("#urlTicket").remove();
+						var newHref= "<a id='urlTicket' href='" + remoteReqUrl + "' target='_blank'>" + remoteIssueKey + "</a>";
 						$("#remote-automation-request-url").append(newHref);
 					}
 					if((remoteReqUrl == '-') || (remoteReqUrl==null)){

@@ -38,6 +38,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.wizard.AutomationWorkflow;
+import org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.wizard.exception.AutomationWorkflowInUseException;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -483,9 +484,8 @@ public class GenericProjectController {
 	@ResponseBody
 	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
-		// If plugin Workflow, check if the workflow is used by the project and throw an Exception if so
-		if(AutomationWorkflow.class.isAssignableFrom(plugin.getClass())
-			&& projectManager.isProjectUsingWorkflow(projectId)) {
+		// If plugin Workflow, check if the workflow is used by the project and it have a configuration and throw an Exception if so
+		if(workflowPluginManager.pluginCanNotBeDisabled(plugin, projectId)){
 			throw new AutomationWorkflowInUseException();
 		}
 		List<WorkspaceType> workspaceTypes;
@@ -605,13 +605,15 @@ public class GenericProjectController {
 		if(!workflowPluginManager.getAutomationWorkflowsType().contains(automationWorkflow)) {
 			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
 		}
-		//activate the automation plugin
+		projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
+
+		/*//activate the automation plugin
 		if(automationWorkflowtype.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())==true) {
 			workflowPluginManager.enableRemoteAutomationWorkflowPlugin( automationWorkflowtype,projectId);
 			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
 		}else{
 			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
-		}
+		}*/
 
 	}
 
