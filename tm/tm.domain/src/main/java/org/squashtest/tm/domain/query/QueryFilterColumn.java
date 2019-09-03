@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.query;
 
-import org.springframework.beans.BeanUtils;
 import org.squashtest.tm.domain.EntityType;
 
 import javax.persistence.CollectionTable;
@@ -51,7 +50,7 @@ public class QueryFilterColumn implements QueryColumnPrototypeInstance {
 
 	@ManyToOne
 	@JoinColumn(name = "QUERY_COLUMN_ID", nullable = false)
-	private QueryColumnPrototype columnPrototype;
+	private QueryColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "FILTER_OPERATION")
@@ -66,22 +65,22 @@ public class QueryFilterColumn implements QueryColumnPrototypeInstance {
 
 	@Override
 	public QueryColumnPrototype getColumn() {
-		return columnPrototype;
+		return column;
 	}
 
 	@Override
 	public EntityType getEntityType() {
-		return columnPrototype.getEntityType();
+		return column.getEntityType();
 	}
 
 	@Override
 	public SpecializedEntityType getSpecializedType() {
-		return columnPrototype.getSpecializedType();
+		return column.getSpecializedType();
 	}
 
 	@Override
 	public DataType getDataType() {
-		return columnPrototype.getDataType();
+		return column.getDataType();
 	}
 
 	@Override
@@ -94,8 +93,8 @@ public class QueryFilterColumn implements QueryColumnPrototypeInstance {
 		return cufId;
 	}
 
-	public void setColumnPrototype(QueryColumnPrototype columnPrototype) {
-		this.columnPrototype = columnPrototype;
+	public void setColumn(QueryColumnPrototype column) {
+		this.column = column;
 	}
 
 	public void setOperation(Operation operation) {

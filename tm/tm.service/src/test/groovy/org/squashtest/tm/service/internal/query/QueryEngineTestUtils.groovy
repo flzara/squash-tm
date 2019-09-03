@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.testautomation.QAutomatedTest
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
 import org.squashtest.tm.service.query.ConfiguredQuery
-import spock.lang.Specification
 
 public class QueryEngineTestUtils{
 
@@ -101,7 +100,7 @@ public class QueryEngineTestUtils{
 		def specType = new SpecializedEntityType(entityType : eType)
 		def label = genLabel(specType, attributeName)
 		def proto = new QueryColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName, label:label)
-		def filter = new QueryFilterColumn(columnPrototype : proto, operation : operation, values : values)
+		def filter = new QueryFilterColumn(column: proto, operation : operation, values : values)
 
 		return filter
 	}

@@ -45,7 +45,6 @@ import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.QueryOrderingColumn;
 import org.squashtest.tm.domain.query.QueryProjectionColumn;
 import org.squashtest.tm.domain.query.QueryStrategy;
-import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.internal.repository.ColumnPrototypeDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
@@ -56,7 +55,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -313,7 +312,7 @@ class ChartToConfiguredQueryConverter {
 
 		QueryFilterColumn queryFilter = new QueryFilterColumn();
 
-		queryFilter.setColumnPrototype(chartFilter.getColumn());
+		queryFilter.setColumn(chartFilter.getColumn());
 		queryFilter.setOperation(chartFilter.getOperation());
 		queryFilter.setCufId(chartFilter.getCufId());
 		queryFilter.getValues().addAll(chartFilter.getValues());
@@ -357,7 +356,7 @@ class ChartToConfiguredQueryConverter {
 			default:
 				break;
 		}
-		filter.setColumnPrototype(columnPrototype);
+		filter.setColumn(columnPrototype);
 		filter.setOperation(Operation.EQUALS);
 		filter.getValues().add(this.milestoneId.toString());
 

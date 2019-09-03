@@ -534,11 +534,11 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			long cufId = Long.parseLong(formAttributeKey);
 			QueryColumnPrototype prototype = lookupColumnPrototypeByCufType(type);
 
-			filter.setColumnPrototype(prototype);
+			filter.setColumn(prototype);
 			filter.setCufId(cufId);
 		} else {
 			QueryColumnPrototype prototype = lookupColumnPrototypeByFormKey(formAttributeKey);
-			filter.setColumnPrototype(prototype);
+			filter.setColumn(prototype);
 		}
 
 		return filter;
@@ -655,7 +655,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 				QueryFilterColumn newFilter = new QueryFilterColumn();
 				newFilter.setOperation(filterColumn.getOperation());
-				newFilter.setColumnPrototype(filterColumn.getColumn());
+				newFilter.setColumn(filterColumn.getColumn());
 				newFilter.setCufId(filterColumn.getCufId());
 				newFilter.addValues(listValues.get(x));
 

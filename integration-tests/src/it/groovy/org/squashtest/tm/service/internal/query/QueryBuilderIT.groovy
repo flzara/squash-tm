@@ -35,14 +35,12 @@ import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.query.ConfiguredQuery
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 
 import static org.squashtest.tm.domain.query.ColumnType.*
 import static org.squashtest.tm.domain.query.DataType.*
 import static org.squashtest.tm.domain.query.Operation.*
-import static org.squashtest.tm.domain.EntityType.*
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 import javax.persistence.Query
 
@@ -113,7 +111,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		and :
 		def projection = mkProj(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values : ["1"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.GREATER, values : ["1"])
 
 		def aggregation = mkAggr(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
 
@@ -238,7 +236,7 @@ order by col_0_0_ asc"""
 		def aggrproj = new QueryProjectionColumn(columnPrototype : aggProto, operation : Operation.NONE)
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : GREATER, values : ["0"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : GREATER, values : ["0"])
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggProto, operation : Operation.NONE)
 
@@ -298,7 +296,7 @@ order by col_0_0_ asc"""
 		and :
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.EQUALS, values : ["TRUE"])
 
 		def ordering = new QueryOrderingColumn(columnPrototype : orderProto, operation : Operation.NONE)
 
@@ -336,7 +334,7 @@ order by col_0_0_ asc"""
 		and :
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.EQUALS, values : ["FALSE"])
 
 		def ordering = new QueryOrderingColumn(columnPrototype : orderProto, operation : Operation.NONE)
 
@@ -420,7 +418,7 @@ order by col_0_0_ asc"""
 		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.EQUALS, values : ["TRUE"])
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
@@ -492,7 +490,7 @@ order by col_0_0_ asc"""
 		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.EQUALS, values : ["FALSE"])
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
@@ -653,7 +651,7 @@ order by col_0_0_ asc"""
 		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values :["0"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.GREATER, values :["0"])
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
@@ -704,8 +702,8 @@ order by col_0_0_ asc"""
 		def aggrproj = new QueryProjectionColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 		def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
 
-		def filter = new QueryFilterColumn(columnPrototype : filterProto, operation : Operation.GREATER, values :["0"])
-		def filter2 = new QueryFilterColumn(columnPrototype : filter2Proto, operation : Operation.LIKE, values :["cp 1 it1%"])
+		def filter = new QueryFilterColumn(column: filterProto, operation : Operation.GREATER, values :["0"])
+		def filter2 = new QueryFilterColumn(column: filter2Proto, operation : Operation.LIKE, values :["cp 1 it1%"])
 
 		def aggregation = new QueryAggregationColumn(columnPrototype : aggrProto, operation : Operation.NONE)
 
