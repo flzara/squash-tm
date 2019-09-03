@@ -94,7 +94,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private AuditableSupport findAudit(Object[] state) {
 		for (Object field : state) {
-			if (field != null && field.getClass().isAssignableFrom(AuditableSupport.class)) {
+			if (field != null && AuditableSupport.class.isAssignableFrom(field.getClass())) {
 				return (AuditableSupport) field;
 			}
 		}
