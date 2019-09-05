@@ -24,6 +24,8 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -112,6 +114,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	TestCaseAdvancedSearchService {
 
 	private static final AdvancedSearchColumnMappings MAPPINGS = new AdvancedSearchColumnMappings(TEST_CASE_ENTITY);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAdvancedSearchServiceImpl.class);
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -220,6 +224,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private static void createFilterTags(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
 
+		LOGGER.debug("Begin create filter tags");
+
 		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
 
 		List<String> tags = fieldModel.getTags();
@@ -235,6 +241,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		HibernateQuery<Integer> subquery;
 
 		long size = tags.size();
+
+		LOGGER.debug("Create sub query");
 
 		subquery = new ExtendedHibernateQuery<>().select(Expressions.ONE)
 			.from(initTestCase)
@@ -252,6 +260,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		}
 		query.where(subquery.exists());
+
+		LOGGER.debug("End create filter tags");
 	}
 
 	private Set<Long> getTcIdsThroughRequirementVersion(AdvancedSearchQueryModel model, Locale locale) {
@@ -323,6 +333,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	static {
+		LOGGER.debug("Populate Test Case Advanced Search Column Mapping");
 
 		MAPPINGS.getFormMapping()
 			.map("attachments", TEST_CASE_ATTCOUNT)
