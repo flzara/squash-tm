@@ -469,6 +469,14 @@ public class GenericProjectController {
 		projectManager.unbindScmRepository(projectId);
 	}
 
+	/*********************enablePlugin and DisablePlugin with the save of the configuration */
+	@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = { VALUE})
+	@ResponseBody
+	public void disablePlugin(@PathVariable long projectId, @RequestParam(VALUE) Boolean saveConf) {
+
+	}
+
+
 	// ************************* plugins administration ***********************
 
 	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.POST)

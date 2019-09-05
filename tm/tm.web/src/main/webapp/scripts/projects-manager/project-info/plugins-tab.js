@@ -119,14 +119,17 @@ define(
 					if(checked==true){
 							$.ajax({url : url, type : method, data: {id: id, value: 'REMOTE_WORKFLOW'}})
 							 .success(function(){
-									document.location.reload();
-									activateTab.attr('aria-selected',true);
+									/*document.location.reload();
+									$('#ui-id-15').trigger('click');*/
+
+
+
 							 });
 					}else{
 							$.ajax({url : url, type : method, data: {id: id, value: 'NONE'}})
 							 .success(function(){
-									document.location.reload();
-									activateTab.attr('aria-selected',true);
+									/*document.location.reload();
+									$('#ui-id-15').trigger('click');*/
 							 });
 					}
 
@@ -151,6 +154,7 @@ define(
 						/*when we activate or deactivate the plugin, we update the automation workflow list*/
 						if(pluginType == 'AUTOMATION'){
 							updateAutomationWorkflowSelect(checked, projectId);
+
 						}
 
 					}).error(function(event) {

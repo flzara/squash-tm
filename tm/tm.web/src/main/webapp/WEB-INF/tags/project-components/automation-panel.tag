@@ -409,6 +409,27 @@
     <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
   </div>
 </div>
+
+<%-- ================================================
+  disabled the plugin popup.
+================================================= --%>
+<div id="disabled-plugin" title="<f:message key="label.disabled.plugin"/>" class="not-displayed">
+	<div id="detail">
+		<span style="font-weight:normal"><f:message key="message.disabled.plugin" /></span>
+		<p>
+			<input type="checkbox" id="save-conf" />
+			<span style="font-weight:normal"><f:message key="message.save.conf" /></span>
+		</p>
+		<p>
+      <span style="font-weight:bold"><f:message key="message.disabled.plugin.confirm" /> </span>
+    </p>
+	</div>
+    <div class="popup-dialog-buttonpane">
+        <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm" />
+        <input class="cancel"  type="button" value="${cancelLabel}" data-def="evt=cancel" />
+    </div>
+</div>
+
 <%-- ===================================
 	Js initialization
 ==================================== --%>
