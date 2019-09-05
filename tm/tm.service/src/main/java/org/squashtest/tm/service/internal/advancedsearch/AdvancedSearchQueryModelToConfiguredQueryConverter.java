@@ -55,7 +55,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchNumericRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.search.SearchCustomFieldCheckBoxFieldModel;
@@ -391,7 +390,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
 
-			if (fieldModel.isSet()) {
+			// [TM-769] Tags is a specially handled key in custom fields keys.
+			if (fieldModel.isSet() && !fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)) {
 				QueryFilterColumn filter = createFilterColumn(fieldModel, key);
 				filters.add(filter);
 			}
@@ -471,10 +471,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			case SINGLE:
 			case CF_SINGLE:
 				filterByPlainText(queryFilterColumn, fieldModel);
-				break;
-
-			case TAGS:
-				filterByTags(queryFilterColumn, fieldModel);
 				break;
 
 			case NUMERIC_RANGE:
@@ -565,22 +561,6 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		}
 
 		filterColumn.getValues().add(value);
-
-	}
-
-
-	private void filterByTags(QueryFilterColumn filterColumn, AdvancedSearchFieldModel model) {
-
-		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
-		List<String> tags = fieldModel.getTags();
-
-		filterColumn.addValues(tags);
-
-		if (AdvancedSearchTagsFieldModel.Operation.AND.equals(fieldModel.getOperation())) {
-			filterColumn.setOperation(Operation.IN);
-		} else {
-			filterColumn.setOperation(Operation.IN);
-		}
 
 	}
 

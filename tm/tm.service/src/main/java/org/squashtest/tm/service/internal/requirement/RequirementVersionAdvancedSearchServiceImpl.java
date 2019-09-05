@@ -192,6 +192,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	// to alteration of the outer query.
 	private static void createFilterHaveChildren(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
 
+		LOGGER.debug("Create filter Have Children");
 		AdvancedSearchRangeFieldModel range = (AdvancedSearchRangeFieldModel) model;
 
 		QRequirement parentRequirement = new QRequirement("parentRequirement");
@@ -340,7 +341,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	}
 
 	private static void createFilterTags(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
-
+		LOGGER.debug("Create requirement filter tag");
 		AdvancedSearchTagsFieldModel fieldModel = (AdvancedSearchTagsFieldModel) model;
 
 		List<String> tags = fieldModel.getTags();
@@ -381,6 +382,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	static {
 
+		LOGGER.debug("Populate Requirement Version Advanced Search Column Mapping");
 		/* **************************************************
 		 *
 		 * 		Input form columns registry
