@@ -203,10 +203,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						self.automationWorkflowPopup.formDialog("close");
 						self.workflowSelector.setValue(self.chosenAutomationWorkflow);
 
-					}),
+					});
 
 					/*when we change the automation workflow value to None or squash, we disable the plugin*/
-					this.disabledPluginPopup = $("#disabled-plugin").formDialog(),
+					this.disabledPluginPopup = $("#disabled-plugin").formDialog();
 
 					this.disabledPluginPopup.on("formdialogconfirm", function() {
 							var saveConf = $("#save-conf").prop("checked");
@@ -215,17 +215,16 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 
 							/*disable the plugin with or without keeping the configuration*/
-							$.ajax({url : url, type : 'DELETE', data : {value : saveConf} });
+							//$.ajax({url : url, type : 'DELETE', data : {value : saveConf} });
 
 							self.disabledPluginPopup.formDialog("close");
 
 
 
-					}),
+					});
 					this.disabledPluginPopup.on("formdialogcancel", function() {
 						self.disabledPluginPopup.formDialog("close");
 						self.reloadWorkflowsComboBox(self);
-						console.log("annuler");
 					});
 
 					this.changeWorkflowDialogAfter = $("#change-workflow-popup-after").formDialog();
@@ -265,7 +264,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.listenTo(self.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", self.refreshTable);
 
 					$('#project-workflows-select').on('click', function() {
-								var selectOption= $("option[value='REMOTE_WORKFLOW']")
+								var selectOption= $("option[value='REMOTE_WORKFLOW']");
 								selectOption.attr("disabled", true);
           });
 
@@ -374,7 +373,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 				doChangeAutomationWorkflow: function(workflow) {
 					var self = this;
-					return $.ajax({
+					$.ajax({
 						method: 'POST',
 						url: self.changeUrl,
 						data: {
@@ -382,7 +381,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							value: workflow
 						}
 					});
-					Location.reload()
+					Location.reload();
 				},
 				reforgeWorkflowsCombobox: function() {
 					var self = this;

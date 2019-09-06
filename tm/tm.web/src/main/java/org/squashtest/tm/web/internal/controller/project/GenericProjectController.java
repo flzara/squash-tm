@@ -469,15 +469,23 @@ public class GenericProjectController {
 		projectManager.unbindScmRepository(projectId);
 	}
 
-	/*********************enablePlugin and DisablePlugin with the save of the configuration */
-	@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = { VALUE})
+
+	/********************* DisablePlugin with the save of the configuration */
+
+
+	/*@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = {"saveConf", "pluginType"})
 	@ResponseBody
-	public void disablePlugin(@PathVariable long projectId, @RequestParam(VALUE) Boolean saveConf) {
+	public void disablePluginAutomationWorkflow(@PathVariable long projectId,
+												@RequestParam("saveConf") Boolean saveConf, @RequestParam("pluginType") String pluginType) {
+
+		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.valueOf(pluginType));
+		WorkspaceWizard wizard = pluginManager.findById(lpb.getPluginId());
+
 		System.out.print("disablePlugin");
-		/*WorkspaceWizard plugin = */
 
 
-	}
+
+	}*/
 
 
 	// ************************* plugins administration ***********************
