@@ -113,10 +113,10 @@ define(
 
 					var url = squashtm.app.contextRoot + 'generic-projects/' + projectId;
 					var method= 'POST';
-					var id = 'change-automation-workflow'
+					var id = 'change-automation-workflow';
 					var activateTab = $(document.activeElement.id);
 
-					if(checked==true){
+					if(checked===true){
 							$.ajax({url : url, type : method, data: {id: id, value: 'REMOTE_WORKFLOW'}})
 							 .success(function(){
 									/*document.location.reload();
@@ -138,7 +138,7 @@ define(
 					var btn = $(evt.currentTarget);
 					var $row = btn.parents('tr').first();
 					var checked = btn[0].checked;
-					var pluginType = table.fnGetData($row.get(0))['pluginType']
+					var pluginType = table.fnGetData($row.get(0))['pluginType'];
 
 					var projectId = conf.projectId,
 						pluginId = table.fnGetData($row.get(0))['id'];
