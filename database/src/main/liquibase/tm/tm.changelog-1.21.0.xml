@@ -120,7 +120,6 @@
 
     <addColumn tableName="LIBRARY_PLUGIN_BINDING">
       <column name="ACTIVE" type="BOOLEAN"  remarks="This column specifies if plugin is enable or disable for a project ." defaultValueBoolean="true">
-        <constraints nullable="false"/>
       </column>
     </addColumn>
 

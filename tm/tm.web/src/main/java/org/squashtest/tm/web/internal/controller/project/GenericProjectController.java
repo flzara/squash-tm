@@ -473,6 +473,9 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = { VALUE})
 	@ResponseBody
 	public void disablePlugin(@PathVariable long projectId, @RequestParam(VALUE) Boolean saveConf) {
+		System.out.print("disablePlugin");
+		/*WorkspaceWizard plugin = */
+
 
 	}
 
