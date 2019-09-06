@@ -108,10 +108,37 @@ define(
 					}
 				},{});
 
+
+				function updateAutomationWorkflowSelect(checked, projectId){
+
+					var url = squashtm.app.contextRoot + 'generic-projects/' + projectId;
+					var method= 'POST';
+					var id = 'change-automation-workflow'
+					var activateTab = $(document.activeElement.id);
+
+					if(checked==true){
+							$.ajax({url : url, type : method, data: {id: id, value: 'REMOTE_WORKFLOW'}})
+							 .success(function(){
+									/*document.location.reload();
+									$('#ui-id-15').trigger('click');*/
+
+
+
+							 });
+					}else{
+							$.ajax({url : url, type : method, data: {id: id, value: 'NONE'}})
+							 .success(function(){
+									/*document.location.reload();
+									$('#ui-id-15').trigger('click');*/
+							 });
+					}
+
+				}
 				table.on('change', 'input[type="checkbox"]', function(evt){
 					var btn = $(evt.currentTarget);
 					var $row = btn.parents('tr').first();
 					var checked = btn[0].checked;
+					var pluginType = table.fnGetData($row.get(0))['pluginType']
 
 					var projectId = conf.projectId,
 						pluginId = table.fnGetData($row.get(0))['id'];
@@ -124,6 +151,12 @@ define(
 
 					$.ajax({url : url, type : method}).success(function() {
 						pubsub.publish("project.plugin.toggled");
+						/*when we activate or deactivate the plugin, we update the automation workflow list*/
+						if(pluginType == 'AUTOMATION'){
+							updateAutomationWorkflowSelect(checked, projectId);
+
+						}
+
 					}).error(function(event) {
 						btn.switchButton("option", "checked", !checked);
 						data['enabled'] = true;

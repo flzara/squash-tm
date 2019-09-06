@@ -114,4 +114,16 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.21.0-TM-211-active" author="amk">
+
+    <comment>add new column ACTIVE into LIBRARY_PLUGIN_BINDING</comment>
+
+    <addColumn tableName="LIBRARY_PLUGIN_BINDING">
+      <column name="ACTIVE" type="BOOLEAN"  remarks="This column specifies if plugin is enable or disable for a project ." defaultValueBoolean="true">
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+
 </databaseChangeLog>

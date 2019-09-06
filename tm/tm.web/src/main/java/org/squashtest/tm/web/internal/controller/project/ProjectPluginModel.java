@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 
 // XSS OK
@@ -32,6 +33,8 @@ public class ProjectPluginModel {
 	private String name;
 	private String status;
 	private String configUrl;
+	/*Automation workflow*/
+	private PluginType pluginType;
 
 	public int getIndex() {
 		return index;
@@ -93,11 +96,20 @@ public class ProjectPluginModel {
 		super();
 	}
 
+	public PluginType getPluginType() {
+		return pluginType;
+	}
+
+	public void setPluginType(PluginType pluginType) {
+		this.pluginType = pluginType;
+	}
+
 	public ProjectPluginModel(WorkspaceWizard plugin) {
 		super();
 		this.id = plugin.getId();
 		this.type = plugin.getType();
 		this.name = plugin.getName();
+		this.pluginType = plugin.getPluginType();
 	}
 
 }

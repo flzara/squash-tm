@@ -63,6 +63,8 @@ public abstract class LibraryPluginBinding  {
 	@Column(name = "PLUGIN_TYPE")
 	private PluginType pluginType;
 
+	@Column(name = "ACTIVATE")
+	private Boolean active;
 
 	@ElementCollection
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))
@@ -127,5 +129,13 @@ public abstract class LibraryPluginBinding  {
 
 	public void setPluginType(PluginType pluginType) {
 		this.pluginType = pluginType;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

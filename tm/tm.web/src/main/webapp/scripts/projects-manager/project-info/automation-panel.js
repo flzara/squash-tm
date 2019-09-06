@@ -196,13 +196,36 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.workflowSelector = this.initAutomationWorkflowSelect();
 
 					this.automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
-
 					this.automationWorkflowPopup.on("formdialogconfirm", function() {
 						self.changeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 					});
 					this.automationWorkflowPopup.on("formdialogcancel", function() {
 						self.automationWorkflowPopup.formDialog("close");
 						self.workflowSelector.setValue(self.chosenAutomationWorkflow);
+
+					}),
+
+					/*when we change the automation workflow value to None or squash, we disable the plugin*/
+					this.disabledPluginPopup = $("#disabled-plugin").formDialog(),
+
+					this.disabledPluginPopup.on("formdialogconfirm", function() {
+							var saveConf = $("#save-conf").prop("checked");
+							var url = conf.tmProjectURL + '/plugins' ;
+							/*save change*/
+							self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
+
+							/*disable the plugin with or without keeping the configuration*/
+							$.ajax({url : url, type : 'DELETE', data : {value : saveConf} });
+
+							self.disabledPluginPopup.formDialog("close");
+
+
+
+					}),
+					this.disabledPluginPopup.on("formdialogcancel", function() {
+						self.disabledPluginPopup.formDialog("close");
+						self.reloadWorkflowsComboBox(self);
+						console.log("annuler");
 					});
 
 					this.changeWorkflowDialogAfter = $("#change-workflow-popup-after").formDialog();
@@ -240,6 +263,12 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.listenTo(self.popups.bindPopup, "bindTAProjectPopup.confirm.success", self.refreshTable);
 					this.listenTo(self.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", self.refreshTable);
 					this.listenTo(self.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", self.refreshTable);
+
+					$('#project-workflows-select').on('click', function() {
+								var selectOption= $("option[value='REMOTE_WORKFLOW']")
+								selectOption.attr("disabled", true);
+          });
+
 				},
 
 				events : {
@@ -262,14 +291,23 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 				initAutomationWorkflowSelect: function() {
 					var self = this;
+
 					return new SelectJEditable({
 						componentId: "project-workflows-select",
 						jeditableSettings: {
 							data: self.automationWorkflows
+
 						},
 						target: function(value) {
+
+							//if NONE or SQUASH disabled plugin
+							if(value!=="REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW"){
+								var res = self.disabledPluginPopup.formDialog("open");
+								console.log("resu pop: " + res);
+
+							}
 							// Check if the value changed, otherwise, nothing is to do.
-							if(self.chosenAutomationWorkflow !== value) {
+							/*if(self.chosenAutomationWorkflow !== value) {
 								// Is workflow inactive or active ?
 								if(!self.isAWorkflow(value)) {
 									// Just change it
@@ -278,11 +316,31 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 									// Check TA Scripts
 									self.checkTcGherkinWithTaScript(value);
 								}
-							}
+
+
+							}*/
 							return value;
 						}
+
 					});
 				},
+				saveChangeAutomationWorkflow: function(value){
+					var self = this;
+					// Check if the value changed, otherwise, nothing is to do.
+					if(self.chosenAutomationWorkflow !== value) {
+						// Is workflow inactive or active ?
+						if(!self.isAWorkflow(value)) {
+							// Just change it
+							self.changeAutomationWorkflow(value);
+						} else {
+							// Check TA Scripts
+							self.checkTcGherkinWithTaScript(value);
+						}
+					}
+
+				return value;
+				},
+
 				isAWorkflow: function(workflow) {
 					return workflow !== 'NONE';
 				},
@@ -324,6 +382,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							value: workflow
 						}
 					});
+					Location.reload()
 				},
 				reforgeWorkflowsCombobox: function() {
 					var self = this;
