@@ -105,6 +105,9 @@ public class RemoteSynchronisation {
 	@Enumerated(EnumType.STRING)
 	private SynchronisationStatus lastSynchronisationStatus = NEVER_EXECUTED;
 
+	@Column(name="SYNC_ENABLE")
+	private boolean synchronisationEnable;
+
 	public long getId() {
 		return id;
 	}
@@ -195,6 +198,12 @@ public class RemoteSynchronisation {
 
 	public void setLastSynchronisationStatus(SynchronisationStatus lastSynchronisationStatus) {
 		this.lastSynchronisationStatus = lastSynchronisationStatus;
+	}
+
+	public boolean isSynchronisationEnable() {return synchronisationEnable;}
+
+	public void setSynchronisationEnable(boolean synchronisationEnable) {
+		this.synchronisationEnable = synchronisationEnable;
 	}
 
 	@Override
