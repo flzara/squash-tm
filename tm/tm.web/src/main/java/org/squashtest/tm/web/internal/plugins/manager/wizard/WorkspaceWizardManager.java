@@ -98,7 +98,7 @@ public interface WorkspaceWizardManager {
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces);
 
-
+	Boolean isActivePlugin(WorkspaceWizard plugin, long projectId);
 
 
 }

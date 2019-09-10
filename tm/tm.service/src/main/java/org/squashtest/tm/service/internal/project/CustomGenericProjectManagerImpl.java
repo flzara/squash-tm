@@ -580,14 +580,20 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId, PluginType pluginType) {
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		library.enablePlugin(pluginId);
-		/*add pluginType*/
-		if(pluginType!=null){
-			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
-			binding.setPluginType(pluginType);
-		}
 
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
+		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+		//verifier si le pluginID n'existe pas deja pr ce projet si c'est cas active = true
+		if(binding!=null){
+			binding.setActive(true);
+		}else{
+			library.enablePlugin(pluginId);
+			LibraryPluginBinding newBinding = library.getPluginBinding(pluginId);
+			/*add pluginType*/
+			if(pluginType!=null){
+				newBinding.setPluginType(pluginType);
+			}
+		}
 	}
 
 	@Override
@@ -596,6 +602,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		for (WorkspaceType workspace : workspaces) {
 			PluginReferencer<?> library = findLibrary(projectId, workspace);
 			library.disablePlugin(pluginId);
+		}
+	}
+
+	@Override
+	public void disablePluginAndSaveConf(long projectId, WorkspaceType workspace, String pluginId) {
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
+		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+		if (binding != null) {
+			binding.setActive(false);
 		}
 	}
 

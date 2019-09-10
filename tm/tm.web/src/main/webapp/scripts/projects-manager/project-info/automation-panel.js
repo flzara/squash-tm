@@ -205,28 +205,6 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					});
 
-					/*when we change the automation workflow value to None or squash, we disable the plugin*/
-					this.disabledPluginPopup = $("#disabled-plugin").formDialog();
-
-					this.disabledPluginPopup.on("formdialogconfirm", function() {
-							var saveConf = $("#save-conf").prop("checked");
-							var url = conf.tmProjectURL + '/plugins' ;
-							/*save change*/
-							self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
-
-							/*disable the plugin with or without keeping the configuration*/
-							//$.ajax({url : url, type : 'DELETE', data : {value : saveConf} });
-
-							self.disabledPluginPopup.formDialog("close");
-
-
-
-					});
-					this.disabledPluginPopup.on("formdialogcancel", function() {
-						self.disabledPluginPopup.formDialog("close");
-						self.reloadWorkflowsComboBox(self);
-					});
-
 					this.changeWorkflowDialogAfter = $("#change-workflow-popup-after").formDialog();
 
 					this.changeWorkflowDialogAfter.on("formdialogconfirm", function() {
@@ -267,6 +245,27 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 								var selectOption= $("option[value='REMOTE_WORKFLOW']");
 								selectOption.attr("disabled", true);
           });
+          /********* Disabled plugin popup*/
+          var disabledPluginPopup = $("#disabled-plugin").formDialog();
+
+					disabledPluginPopup.on("formdialogconfirm", function() {
+							var saveConf = $("#save-conf").prop("checked");
+							var url = conf.tmProjectURL + '/plugins' ;
+							console.log("saveConf: " + saveConf);
+							/*disable the plugin with or without keeping the configuration*/
+              $.ajax({url : url, type : 'DELETE', data : {saveConf : saveConf} }).success(function(){
+								/*save change*/
+								self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
+              });
+							disabledPluginPopup.formDialog("close");
+							var btnSwitch = find( 'input[type="checkbox"]');
+					});
+
+					disabledPluginPopup.on("formdialogcancel", function() {
+						disabledPluginPopup.formDialog("close");
+						self.reloadWorkflowsComboBox(self);
+					});
+
 
 				},
 
@@ -298,30 +297,19 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 						},
 						target: function(value) {
-
+								 var disabledPluginPopup = $("#disabled-plugin").formDialog();
 							//if NONE or SQUASH disabled plugin
 							if(value!=="REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW"){
-								var res = self.disabledPluginPopup.formDialog("open");
+								var res = disabledPluginPopup.formDialog("open");
 								console.log("resu pop: " + res);
 
 							}
-							// Check if the value changed, otherwise, nothing is to do.
-							/*if(self.chosenAutomationWorkflow !== value) {
-								// Is workflow inactive or active ?
-								if(!self.isAWorkflow(value)) {
-									// Just change it
-									self.changeAutomationWorkflow(value);
-								} else {
-									// Check TA Scripts
-									self.checkTcGherkinWithTaScript(value);
-								}
 
-
-							}*/
 							return value;
 						}
 
 					});
+
 				},
 				saveChangeAutomationWorkflow: function(value){
 					var self = this;
@@ -354,14 +342,14 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					}).success(function (success) {
 						if (success) {
 							self.automationWorkflowPopup.formDialog("open");
-						} else {
+						}else {
 							self.changeAutomationWorkflow(workflowType);
 						}
 					});
 				},
 				changeAutomationWorkflow: function(workflowType) {
 					var self = this;
-					self.doChangeAutomationWorkflow(workflowType).error(function(xhr) {
+					  self.doChangeAutomationWorkflow(workflowType).error(function(xhr) {
          		self.workflowSelector.setValue(self.chosenAutomationWorkflow);
          		WTF.showError(xhr.statusText);
          	}).success(function() {
@@ -372,8 +360,9 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
          	self.automationWorkflowPopup.formDialog("close");
 				},
 				doChangeAutomationWorkflow: function(workflow) {
+				console.log("doChangeAutomationWorkflow");
 					var self = this;
-					$.ajax({
+				return	$.ajax({
 						method: 'POST',
 						url: self.changeUrl,
 						data: {
@@ -381,7 +370,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							value: workflow
 						}
 					});
-					Location.reload();
+					//Location.reload();
 				},
 				reforgeWorkflowsCombobox: function() {
 					var self = this;

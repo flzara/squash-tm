@@ -171,6 +171,12 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void disablePluginForWorkspace(long projectId, List<WorkspaceType> workspaces, String pluginId);
 
 	/**
+	 * disables the given plugin for the given workspace but save configuration
+	 */
+	void disablePluginAndSaveConf(long projectId,  WorkspaceType workspace, String pluginId);
+
+
+	/**
 	 * project still has remote synchronisation or not
 	 */
 	boolean hasProjectRemoteSynchronisation(long projectId);

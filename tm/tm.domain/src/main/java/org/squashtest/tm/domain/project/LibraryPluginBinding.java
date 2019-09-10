@@ -64,7 +64,7 @@ public abstract class LibraryPluginBinding  {
 	private PluginType pluginType;
 
 	@Column(name = "ACTIVE")
-	private Boolean active;
+	private Boolean active= true;
 
 	@ElementCollection
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))

@@ -27,10 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 
 import javax.annotation.PostConstruct;
@@ -155,6 +157,13 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 			allWizards.addAll(findDisabledWizards(projectId, workspace));
 		}
 		return allWizards;
+	}
+
+	@Override
+	public Boolean isActivePlugin(WorkspaceWizard plugin, long projectId) {
+		PluginReferencer<?> library = findLibrary(projectId, plugin.getDisplayWorkspace());
+		LibraryPluginBinding binding = library.getPluginBinding(plugin.getId());
+		return (binding!= null? binding.getActive() : false);
 	}
 
 // ******************************** private stuffs *************************

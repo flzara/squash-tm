@@ -270,7 +270,7 @@ public class ProjectAdministrationController {
 		int loop=1;
 		for (WorkspaceWizard plugin : plugins) {
 
-			boolean enabled = enabledPlugins.contains(plugin.getId());
+		boolean enabled = pluginManager.isActivePlugin(plugin, projectId);
 
 			ProjectPluginModel model = new ProjectPluginModel(plugin);
 

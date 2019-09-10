@@ -470,22 +470,23 @@ public class GenericProjectController {
 	}
 
 
-	/********************* DisablePlugin with the save of the configuration */
+	/********************* DisablePlugin with the save of the configuration  from the automation workflow list ****/
 
 
-	/*@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = {"saveConf", "pluginType"})
+	@RequestMapping(value = PROJECT_ID_URL + "/plugins", method = RequestMethod.DELETE, params = {"saveConf"})
 	@ResponseBody
 	public void disablePluginAutomationWorkflow(@PathVariable long projectId,
-												@RequestParam("saveConf") Boolean saveConf, @RequestParam("pluginType") String pluginType) {
+												@RequestParam("saveConf") Boolean saveConf) {
 
-		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.valueOf(pluginType));
-		WorkspaceWizard wizard = pluginManager.findById(lpb.getPluginId());
+		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
+		WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
+		if(saveConf.equals(true)){
+			projectManager.disablePluginAndSaveConf(projectId, WorkspaceType.TEST_CASE_WORKSPACE, plugin.getId());
+		}else{
+			projectManager.disablePluginForWorkspace(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
 
-		System.out.print("disablePlugin");
-
-
-
-	}*/
+		}
+	}
 
 
 	// ************************* plugins administration ***********************
@@ -495,7 +496,6 @@ public class GenericProjectController {
 	public void enablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
 		WorkspaceWizard wizard = pluginManager.findById(pluginId);
 		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId, wizard.getPluginType());
-
 
 	}
 
@@ -516,6 +516,7 @@ public class GenericProjectController {
 		} else {
 			workspaceTypes = Collections.singletonList(plugin.getDisplayWorkspace());
 		}
+
 		projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
 	}
 
