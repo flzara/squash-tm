@@ -173,7 +173,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	/**
 	 * disables the given plugin for the given workspace but save configuration
 	 */
-	void disablePluginAndSaveConf(long projectId,  WorkspaceType workspace, String pluginId);
+	void disablePluginAndSaveConf(long projectId, List<WorkspaceType> workspaces, String pluginId);
 
 
 	/**

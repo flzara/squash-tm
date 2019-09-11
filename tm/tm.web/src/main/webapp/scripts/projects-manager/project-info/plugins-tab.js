@@ -26,6 +26,9 @@ define(
 
 			translator.load(["label.Enabled", "label.disabled", "label.Configure"]);
 
+			 function urlPlugin(projectId,pluginId) {
+					return  routing.buildURL('project-plugins', projectId, pluginId);
+			}
 
 			function configureSwitch($row, data){
 				var switchcell = $row.find('.plugin-enabled');
@@ -108,7 +111,6 @@ define(
 					}
 				},{});
 
-
 				function updateAutomationWorkflowSelect(checked, projectId){
 
 					var url = squashtm.app.contextRoot + 'generic-projects/' + projectId;
@@ -122,8 +124,6 @@ define(
 									/*document.location.reload();
 									$('#ui-id-15').trigger('click');*/
 
-
-
 							 });
 					}else{
 							$.ajax({url : url, type : method, data: {id: id, value: 'NONE'}})
@@ -134,11 +134,14 @@ define(
 					}
 
 				}
-				table.on('change', 'input[type="checkbox"]', function(evt){
+
+
+table.on('change', 'input[type="checkbox"]', function(evt){
 					var btn = $(evt.currentTarget);
 					var $row = btn.parents('tr').first();
 					var checked = btn[0].checked;
 					var pluginType = table.fnGetData($row.get(0))['pluginType'];
+					var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
 					var projectId = conf.projectId,
 						pluginId = table.fnGetData($row.get(0))['id'];
@@ -146,28 +149,51 @@ define(
 					var data = table.fnGetData($row);
 					data['enabled'] = checked;
 
-					var url = routing.buildURL('project-plugins', projectId, pluginId),
-						method = (btn[0].checked) ? 'POST' : 'DELETE';
+					var url = urlPlugin(projectId, pluginId);
+					method = (btn[0].checked) ? 'POST' : 'DELETE';
 
-					$.ajax({url : url, type : method}).success(function() {
-						pubsub.publish("project.plugin.toggled");
-						/*when we activate or deactivate the plugin, we update the automation workflow list*/
-						if(pluginType == 'AUTOMATION'){
+					if(checked===false){
+						 disabledPluginPopup.formDialog("open");
+						 disablePlugin(url, checked, btn, data);
+					}else{
+							$.ajax({url : url, type : 'POST'}).success(function() {
+								pubsub.publish("project.plugin.toggled");
+							}).error(function(event) {
+								btn.switchButton("option", "checked", !checked);
+								data['enabled'] = true;
+								configureSwitch($row, data);
+							});
+					}
+					/*when we activate or deactivate the plugin, we update the automation workflow list*/
+					if(pluginType == 'AUTOMATION'){
 							updateAutomationWorkflowSelect(checked, projectId);
-
-						}
-
-					}).error(function(event) {
-						btn.switchButton("option", "checked", !checked);
-						data['enabled'] = true;
-						configureSwitch($row, data);
-					});
-
-
+					}
 					configureStyle($row, data);
-
 				});
+				/**/
+				function disablePlugin(url, checked, btn, data){
 
-			};
+				 	var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
+					disabledPluginPopup.on("formdialogconfirm", function() {
+							var saveConf = $("#saveConf").prop("checked");
+							var $row = btn.parents('tr').first();
+
+							$.ajax({url : url, type : 'DELETE', data: {saveConf : saveConf}}).success(function() {
+								pubsub.publish("project.plugin.toggled");
+								}).error(function(event) {
+									btn.switchButton("option", "checked", !checked);
+									data['enabled'] = true;
+									configureSwitch($row, data);
+								});
+
+							disabledPluginPopup.formDialog("close");
+					}),
+
+					disabledPluginPopup.on("formdialogcancel", function() {
+						disabledPluginPopup.formDialog("close");
+						self.reloadWorkflowsComboBox(self);
+					});
+				};
+			}
 });

@@ -586,6 +586,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		//verifier si le pluginID n'existe pas deja pr ce projet si c'est cas active = true
 		if(binding!=null){
 			binding.setActive(true);
+			//si c'est jirasync il faut mettre à jour  la valeur de active de  la ligne pour le workspace requirement
+			if("squash.tm.plugin.jirasync".equals(pluginId)){
+				PluginReferencer<?> libraryOther = findLibrary(projectId, WorkspaceType.REQUIREMENT_WORKSPACE);
+				LibraryPluginBinding bindingOther = libraryOther.getPluginBinding(pluginId);
+				if(binding!=null) {
+					bindingOther.setActive(true);
+				}
+			}
 		}else{
 			library.enablePlugin(pluginId);
 			LibraryPluginBinding newBinding = library.getPluginBinding(pluginId);
@@ -606,12 +614,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	public void disablePluginAndSaveConf(long projectId, WorkspaceType workspace, String pluginId) {
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
-		if (binding != null) {
-			binding.setActive(false);
+	public void disablePluginAndSaveConf(long projectId, List<WorkspaceType> workspaces, String pluginId) {
+		for (WorkspaceType workspace : workspaces) {
+			PluginReferencer<?> library = findLibrary(projectId, workspace);
+			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+			if (binding != null) {
+				binding.setActive(false);
+			}
 		}
+
 	}
 
 	@Override

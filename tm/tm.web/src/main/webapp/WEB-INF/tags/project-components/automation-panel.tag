@@ -413,7 +413,7 @@
 <%-- ================================================
   disabled the plugin popup.
 ================================================= --%>
-<div id="disabled-plugin" title="<f:message key="label.disabled.plugin"/>" class="not-displayed">
+<div id="disabled-plugin-wa" title="<f:message key="label.disabled.plugin"/>" class="not-displayed">
 	<div id="detail">
 		<span style="font-weight:normal"><f:message key="message.disabled.plugin" /></span>
 		<p>

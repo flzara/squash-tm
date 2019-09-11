@@ -481,7 +481,7 @@ public class GenericProjectController {
 		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
 		WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
 		if(saveConf.equals(true)){
-			projectManager.disablePluginAndSaveConf(projectId, WorkspaceType.TEST_CASE_WORKSPACE, plugin.getId());
+			projectManager.disablePluginAndSaveConf(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
 		}else{
 			projectManager.disablePluginForWorkspace(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
 
@@ -499,9 +499,9 @@ public class GenericProjectController {
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.DELETE, params = {"saveConf"})
 	@ResponseBody
-	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
+	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId, @RequestParam("saveConf") Boolean saveConf) {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
 		// If plugin Workflow, check if the workflow is used by the project and it have a configuration and throw an Exception if so
 		if(workflowPluginManager.pluginCanNotBeDisabled(plugin, projectId)){
@@ -516,8 +516,12 @@ public class GenericProjectController {
 		} else {
 			workspaceTypes = Collections.singletonList(plugin.getDisplayWorkspace());
 		}
+		if(saveConf.equals(true)){
+			projectManager.disablePluginAndSaveConf(projectId, workspaceTypes, plugin.getId());
+		}else{
+			projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
+		}
 
-		projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
 	}
 
 
@@ -626,14 +630,6 @@ public class GenericProjectController {
 			throw new IllegalArgumentException("The automation workflow type with code " + automationWorkflow + " is not valid.");
 		}
 		projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
-
-		/*//activate the automation plugin
-		if(automationWorkflowtype.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())==true) {
-			workflowPluginManager.enableRemoteAutomationWorkflowPlugin( automationWorkflowtype,projectId);
-			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
-		}else{
-			projectManager.changeAutomationWorkflow(projectId, automationWorkflowtype);
-		}*/
 
 	}
 

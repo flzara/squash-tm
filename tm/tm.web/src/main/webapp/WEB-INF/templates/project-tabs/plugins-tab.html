@@ -68,8 +68,23 @@
 		</div>
 			
 	</div>
-	
-	
+  <!--disabled the plugin popup.-->
+  <div id="disabled-plugin"  th:title="#{label.disabled.plugin}" class="not-displayed">
+  <div id="detail">
+    <span style="font-weight:normal" th:text="#{message.disabled.plugin}" ></span>
+    <p>
+      <input type="checkbox" id="saveConf" />
+      <span style="font-weight:normal" th:text="#{message.save.conf}" ></span>
+    </p>
+    <p>
+      <span style="font-weight:bold" th:text="#{message.disabled.plugin.confirm}" ></span>
+    </p>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input class="confirm" type="button" th:value="#{label.Confirm}" data-def="evt=confirm" />
+    <input class="cancel"  type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+  </div>
+</div>
 
 	<script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
