@@ -302,6 +302,8 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 								var res = disabledPluginWAPopup.formDialog("open");
 								console.log("resu pop: " + res);
 
+							}else{
+								self.saveChangeAutomationWorkflow(value);
 							}
 
 							return value;
