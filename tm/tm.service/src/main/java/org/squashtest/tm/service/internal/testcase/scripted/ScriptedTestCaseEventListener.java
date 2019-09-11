@@ -178,9 +178,9 @@ public class ScriptedTestCaseEventListener {
 				LibraryPluginBinding lpb= projectDao.findPluginForProject(tc.getProject().getId(), PluginType.AUTOMATION);
 				for(AutomationWorkflow plugin: plugins){
 					if(plugin.getPluginType().equals(lpb.getPluginType())){
-						remoteIssueKey = plugin.createNewTicketRemoteServer(tc);
+						remoteIssueKey = plugin.createNewTicketRemoteServer(tc.getId());
 						if (remoteIssueKey!=null){
-							plugin.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc);
+							plugin.createRemoteAutomationRequestExtenderForTestCaseIfNotExist(remoteIssueKey, tc.getId());
 						}
 					}
 				}

@@ -50,12 +50,6 @@
     </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
-      <artifactId>tm.domain</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
       <artifactId>spock-test-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>

@@ -21,8 +21,6 @@
 package org.squashtest.tm.api.wizard;
 
 import org.squashtest.tm.api.plugin.Plugin;
-import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface AutomationWorkflow extends Plugin {
 
@@ -44,11 +42,11 @@ public interface AutomationWorkflow extends Plugin {
 	 * @return the Remote Issue Key
 	 */
 
-	String createNewTicketRemoteServer(TestCase tc);
+	String createNewTicketRemoteServer(Long testCaseId);
 
 	/**
 	 * add new ligne in remoteAtomationRequestExtender table
 	 */
-	void createRemoteAutomationRequestExtenderForTestCaseIfNotExist(String remoteIssueKey, TestCase tc);
+	void createRemoteAutomationRequestExtenderForTestCaseIfNotExist(String remoteIssueKey, Long testCaseId);
 
 }
