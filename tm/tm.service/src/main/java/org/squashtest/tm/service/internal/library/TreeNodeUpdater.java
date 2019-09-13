@@ -51,6 +51,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtenderDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
@@ -91,6 +92,9 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	@Inject
 	private RequirementFolderSyncExtenderDao requirementFolderSyncExtenderDao;
+
+	@Inject
+	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
 	@Override
 
@@ -258,7 +262,12 @@ public class TreeNodeUpdater implements NodeVisitor {
 			AutomationRequestLibrary newLibrary = project.getAutomationRequestLibrary();
 
 			formerLibrary.removeContent(request);
+
+			//[TM-786] We need to flush the session to avoid unique constraint violation during insert instruction
+			// in AUTOMATION_REQUEST_LIBRARY_CONTENT
+			testCaseLibraryNodeDao.flush();
 			newLibrary.addContent(request);
+
 			request.notifyAssociatedWithProject(project);
 		}
 	}
