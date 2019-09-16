@@ -70,7 +70,9 @@
 <s:url var="pluginsManagerURL"      value="/administration/projects/{projectId}/plugins">
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
-
+<s:url var="projectInfoURL"      value="/administration/projects/{projectId}/info">
+	<s:param name="projectId" 	    value="${adminproject.project.id}" />
+</s:url>
 <s:url var="milestoneManagerURL"      value="/administration/projects/{projectId}/milestone-binding">
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>

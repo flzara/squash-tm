@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "app/pubsub", "jquery.squash.togglepanel",
+		[ "jquery", "backbone", "underscore", "squash.translator", "workspace.routing", "app/pubsub", "workspace.event-bus","jquery.squash.togglepanel",
 		  "jqueryui", "squashtable", "jquery.switchButton"],
 
-		function($, Backbone, _, translator, routing, pubsub) {
+		function($, Backbone, _, translator, routing, pubsub, eventBus) {
 
 			translator.load(["label.Enabled", "label.disabled", "label.Configure"]);
 
@@ -116,59 +116,49 @@ define(
 					var url = squashtm.app.contextRoot + 'generic-projects/' + projectId;
 					var method= 'POST';
 					var id = 'change-automation-workflow';
-					var activateTab = $(document.activeElement.id);
 
 					if(checked===true){
-							$.ajax({url : url, type : method, data: {id: id, value: 'REMOTE_WORKFLOW'}})
-							 .success(function(){
-									/*document.location.reload();
-									$('#ui-id-15').trigger('click');*/
-
-							 });
+							$.ajax({url : url, type : method, data: {id: id, value: 'REMOTE_WORKFLOW'}});
 					}else{
-							$.ajax({url : url, type : method, data: {id: id, value: 'NONE'}})
-							 .success(function(){
-									/*document.location.reload();
-									$('#ui-id-15').trigger('click');*/
-							 });
+							$.ajax({url : url, type : method, data: {id: id, value: 'NONE'}});
 					}
 
 				}
 
+				table.on('change', 'input[type="checkbox"]', function(evt){
+						var btn = $(evt.currentTarget);
+						var $row = btn.parents('tr').first();
+						var checked = btn[0].checked;
+						var pluginType = table.fnGetData($row.get(0))['pluginType'];
+						var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
-table.on('change', 'input[type="checkbox"]', function(evt){
-					var btn = $(evt.currentTarget);
-					var $row = btn.parents('tr').first();
-					var checked = btn[0].checked;
-					var pluginType = table.fnGetData($row.get(0))['pluginType'];
-					var disabledPluginPopup = $("#disabled-plugin").formDialog();
-
-					var projectId = conf.projectId,
+						var projectId = conf.projectId;
 						pluginId = table.fnGetData($row.get(0))['id'];
 
-					var data = table.fnGetData($row);
-					data['enabled'] = checked;
+						var data = table.fnGetData($row);
+						data['enabled'] = checked;
 
-					var url = urlPlugin(projectId, pluginId);
-					method = (btn[0].checked) ? 'POST' : 'DELETE';
+						var url = urlPlugin(projectId, pluginId);
+						method = (btn[0].checked) ? 'POST' : 'DELETE';
+						newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+						if(checked===false){
+							 disabledPluginPopup.formDialog("open");
+							 disablePlugin(url, checked, btn, data);
+						}else{
+								$.ajax({url : url, type : 'POST'}).success(function() {
+								/*when we activate or deactivate the plugin, we update the automation workflow list*/
+								if(pluginType == 'AUTOMATION'){
+										updateAutomationWorkflowSelect(checked, projectId);
+										eventBus.trigger("project.plugin.toggled", newType);
+                }
+                data['enabled'] = true;
+                configureStyle($row, data);
 
-					if(checked===false){
-						 disabledPluginPopup.formDialog("open");
-						 disablePlugin(url, checked, btn, data);
-					}else{
-							$.ajax({url : url, type : 'POST'}).success(function() {
-								pubsub.publish("project.plugin.toggled");
-							}).error(function(event) {
-								btn.switchButton("option", "checked", !checked);
-								data['enabled'] = true;
-								configureSwitch($row, data);
-							});
-					}
-					/*when we activate or deactivate the plugin, we update the automation workflow list*/
-					if(pluginType == 'AUTOMATION'){
-							updateAutomationWorkflowSelect(checked, projectId);
-					}
-					configureStyle($row, data);
+								}).error(function(event) {
+								 putBackButtonSwitch(btn,checked, data, event );
+								});
+						}
+
 				});
 				/**/
 				function disablePlugin(url, checked, btn, data){
@@ -178,13 +168,21 @@ table.on('change', 'input[type="checkbox"]', function(evt){
 					disabledPluginPopup.on("formdialogconfirm", function() {
 							var saveConf = $("#saveConf").prop("checked");
 							var $row = btn.parents('tr').first();
+							var pluginType = table.fnGetData($row.get(0))['pluginType'];
+							var projectId = conf.projectId;
 
 							$.ajax({url : url, type : 'DELETE', data: {saveConf : saveConf}}).success(function() {
-								pubsub.publish("project.plugin.toggled");
+							/*when we activate or deactivate the plugin, we update the automation workflow list*/
+									if(pluginType == 'AUTOMATION'){
+											updateAutomationWorkflowSelect(checked, projectId);
+											eventBus.trigger("project.plugin.toggled", newType);
+									}
+							data['enabled'] = false;
+              configureStyle($row, data);
+
 								}).error(function(event) {
-									btn.switchButton("option", "checked", !checked);
-									data['enabled'] = true;
-									configureSwitch($row, data);
+								 	putBackButtonSwitch(btn,checked, data, event );
+								 	eventBus.trigger("project.plugin.toggled",  newType );
 								});
 
 							disabledPluginPopup.formDialog("close");
@@ -192,8 +190,19 @@ table.on('change', 'input[type="checkbox"]', function(evt){
 
 					disabledPluginPopup.on("formdialogcancel", function() {
 						disabledPluginPopup.formDialog("close");
-						self.reloadWorkflowsComboBox(self);
+						 putBackButtonSwitch(btn,checked, data, event );
+
 					});
 				};
+
+				function putBackButtonSwitch(btn,checked, data, event ){
+					var $row = btn.parents('tr').first();
+					btn.switchButton("option", "checked", !checked);
+					newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+					data['enabled'] = false;
+					configureStyle($row, data);
+				};
+
+
 			}
 });

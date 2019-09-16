@@ -27,8 +27,9 @@
  - availableAutomationWorkflows : the map of automation workflows available
  - chosenAutomationWorkflow : the current automation workflow of the project
  */
-define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "app/pubsub", "squashtable", "jquery.squash.formdialog" ],
-		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub) {
+define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog",
+ 					"./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "app/pubsub", "workspace.event-bus", "squashtable", "jquery.squash.formdialog" ],
+		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub, eventBus) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -215,7 +216,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						self.changeWorkflowDialogAfter.formDialog("close");
 					});
 
-					pubsub.subscribe('project.plugin.toggled', function() { self.reloadWorkflowsComboBox(self); });
+					//pubsub.subscribe('project.plugin.toggled', function(newType) { self.reloadWorkflowsComboBox(self, newType); });
 
 					this.popups = popups;
 					for(var popup in popups){
@@ -241,17 +242,17 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.listenTo(self.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", self.refreshTable);
 					this.listenTo(self.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", self.refreshTable);
 
-					$('#project-workflows-select').on('click', function() {
-								var selectOption= $("option[value='REMOTE_WORKFLOW']");
-								selectOption.attr("disabled", true);
-          });
           /********* Disabled plugin popup*/
+
+          	eventBus.onContextual('project.plugin.toggled', function (event, string) {
+                    			self.reloadWorkflowsComboBox(self, string);
+                 });
+
           var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 
 					disabledPluginWAPopup.on("formdialogconfirm", function() {
 							var saveConf = $("#save-conf").prop("checked");
 							var url = conf.tmProjectURL + '/plugins' ;
-							console.log("saveConf: " + saveConf);
 							/*disable the plugin with or without keeping the configuration*/
               $.ajax({url : url, type : 'DELETE', data : {saveConf : saveConf} }).success(function(){
 								/*save change*/
@@ -262,9 +263,8 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					disabledPluginWAPopup.on("formdialogcancel", function() {
 						disabledPluginWAPopup.formDialog("close");
-						self.reloadWorkflowsComboBox(self);
+						self.reloadWorkflowsComboBox(self, self.chosenAutomationWorkflow);
 					});
-
 
 				},
 
@@ -272,10 +272,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					"click #ta-projects-bind-button" : "openAuthenticationPopup"
 				},
 
-				reloadWorkflowsComboBox: function(self) {
-					self.doFetchWorkflowsMap().then(function(workflowsMap) {
+				reloadWorkflowsComboBox: function(self, newType) {
+						self.doFetchWorkflowsMap().then(function(workflowsMap) {
 						self.automationWorkflows = workflowsMap;
-						self.reforgeWorkflowsCombobox();
+						self.reforgeWorkflowsCombobox(newType);
 						self.workflowSelector = self.initAutomationWorkflowSelect();
 					});
 				},
@@ -289,23 +289,24 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				initAutomationWorkflowSelect: function() {
 					var self = this;
 
+					var selectOption= $("option[value='REMOTE_WORKFLOW']");
+					selectOption.attr("disabled", true);
+
 					return new SelectJEditable({
 						componentId: "project-workflows-select",
 						jeditableSettings: {
 							data: self.automationWorkflows
 
 						},
+
 						target: function(value) {
 								 var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 							//if NONE or SQUASH disabled plugin
 							if(value!=="REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW"){
 								var res = disabledPluginWAPopup.formDialog("open");
-								console.log("resu pop: " + res);
-
 							}else{
 								self.saveChangeAutomationWorkflow(value);
 							}
-
 							return value;
 						}
 
@@ -361,7 +362,6 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
          	self.automationWorkflowPopup.formDialog("close");
 				},
 				doChangeAutomationWorkflow: function(workflow) {
-				console.log("doChangeAutomationWorkflow");
 					var self = this;
 				return	$.ajax({
 						method: 'POST',
@@ -373,9 +373,9 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					});
 					//Location.reload();
 				},
-				reforgeWorkflowsCombobox: function() {
+				reforgeWorkflowsCombobox: function(newType) {
 					var self = this;
-					var displayedWorkflow = self.automationWorkflows[self.chosenAutomationWorkflow];
+					var displayedWorkflow = self.automationWorkflows[newType];
 					if(displayedWorkflow === undefined || displayedWorkflow === null) {
 						displayedWorkflow = self.automationWorkflows['NONE'];
 					}
@@ -510,6 +510,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						}
 					});
 				}
+			});
+			$('#project-workflows-select').on('click', function() {
+				var selectOption= $("option[value='REMOTE_WORKFLOW']");
+				selectOption.attr("disabled", true);
 			});
 
 
