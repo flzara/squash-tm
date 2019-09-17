@@ -188,7 +188,7 @@ define(
 							disabledPluginPopup.formDialog("close");
 					}),
 					disabledPluginPopup.on("formdialogcancel", function() {
-						 putBackButtonSwitch(btn,checked, data, event );
+						 putBackButtonSwitch(btn,checked, data, event);
 						 disabledPluginPopup.formDialog("close");
 					});
 				}
@@ -197,7 +197,6 @@ define(
 					var $row = btn.parents('tr').first();
 					btn.switchButton("option", "checked", !checked);
 					newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
-					data['enabled'] = false;
 					configureStyle($row, data);
 				}
 
