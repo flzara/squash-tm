@@ -155,7 +155,9 @@ define(
                 configureStyle($row, data);
 
 								}).error(function(event) {
-								 putBackButtonSwitch(btn,checked, data, event );
+									 btn.switchButton("option", "checked", !checked);
+									data['enabled'] = true;
+									configureSwitch($row, data);
 								});
 						}
 
@@ -181,24 +183,22 @@ define(
               configureStyle($row, data);
 
 								}).error(function(event) {
-								 	putBackButtonSwitch(btn,checked, data, event );
-								 	eventBus.trigger("project.plugin.toggled",  newType );
+								 	btn.switchButton("option", "checked", !checked);
+									data['enabled'] = true;
+									configureSwitch($row, data);
 								});
 
 							disabledPluginPopup.formDialog("close");
 					}),
-					disabledPluginPopup.on("formdialogcancel", function() {
-						 putBackButtonSwitch(btn,checked, data, event);
-						 disabledPluginPopup.formDialog("close");
+
+					disabledPluginPopup.on("formdialogcancel", function(data) {
+						btn.switchButton("option", "checked", !checked);
+						var $row = btn.parents('tr').first();
+						data['enabled'] = true;
+						configureSwitch($row, data);
+						disabledPluginPopup.formDialog("close");
 					});
 				}
-
-				function putBackButtonSwitch(btn,checked, data, event ){
-					var $row = btn.parents('tr').first();
-					btn.switchButton("option", "checked", !checked);
-					configureStyle($row, data);
-				}
-
 
 			};
 });
