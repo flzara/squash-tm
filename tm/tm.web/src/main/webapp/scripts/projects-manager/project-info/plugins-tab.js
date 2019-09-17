@@ -196,7 +196,6 @@ define(
 				function putBackButtonSwitch(btn,checked, data, event ){
 					var $row = btn.parents('tr').first();
 					btn.switchButton("option", "checked", !checked);
-					newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
 					configureStyle($row, data);
 				}
 
