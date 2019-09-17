@@ -187,13 +187,11 @@ define(
 
 							disabledPluginPopup.formDialog("close");
 					}),
-
 					disabledPluginPopup.on("formdialogcancel", function() {
-						disabledPluginPopup.formDialog("close");
 						 putBackButtonSwitch(btn,checked, data, event );
-
+						 disabledPluginPopup.formDialog("close");
 					});
-				};
+				}
 
 				function putBackButtonSwitch(btn,checked, data, event ){
 					var $row = btn.parents('tr').first();
@@ -201,8 +199,8 @@ define(
 					newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
 					data['enabled'] = false;
 					configureStyle($row, data);
-				};
+				}
 
 
-			}
+			};
 });
