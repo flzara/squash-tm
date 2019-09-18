@@ -155,8 +155,7 @@ define(
                 configureStyle($row, data);
 
 								}).error(function(event) {
-									 btn.switchButton("option", "checked", !checked);
-									data['enabled'] = true;
+									putBackButtonSwitch(btn,checked, data, event);
 									configureSwitch($row, data);
 								});
 						}
@@ -179,25 +178,26 @@ define(
 											updateAutomationWorkflowSelect(checked, projectId);
 											eventBus.trigger("project.plugin.toggled", newType);
 									}
-							data['enabled'] = false;
-              configureStyle($row, data);
+									data['enabled'] = false;
+									configureStyle($row, data);
 
 								}).error(function(event) {
-								 	btn.switchButton("option", "checked", !checked);
-									data['enabled'] = true;
-									configureSwitch($row, data);
+								 	putBackButtonSwitch(btn,checked, data, event);
 								});
 
 							disabledPluginPopup.formDialog("close");
 					}),
 
 					disabledPluginPopup.on("formdialogcancel", function(data) {
-						btn.switchButton("option", "checked", !checked);
-						var $row = btn.parents('tr').first();
-						data['enabled'] = true;
-						configureSwitch($row, data);
+						putBackButtonSwitch(btn,checked, data, event);
 						disabledPluginPopup.formDialog("close");
 					});
+				}
+				 function putBackButtonSwitch (btn,checked, data, event ){
+					var $row = btn.parents('tr').first();
+					btn.switchButton("option", "checked", !checked);
+					configureStyle($row, data);
+					return  $row;
 				}
 
 			};
