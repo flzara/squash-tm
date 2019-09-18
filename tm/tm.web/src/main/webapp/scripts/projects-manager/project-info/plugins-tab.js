@@ -78,7 +78,7 @@ define(
 
 			function configureStyle($row, data){
 				var cells = $row.find('>td').not('.plugin-index, plugin-enabled'),
-					state = data['enabled'];
+				state = data['enabled'];
 
 				if (state){
 					cells.removeClass('disabled-transparent');
@@ -139,14 +139,14 @@ define(
 						var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
 						var projectId = conf.projectId;
-						pluginId = table.fnGetData($row.get(0))['id'];
+						var pluginId = table.fnGetData($row.get(0))['id'];
 
 						var data = table.fnGetData($row);
 						data['enabled'] = checked;
 
 						var url = urlPlugin(projectId, pluginId);
-						method = (btn[0].checked) ? 'POST' : 'DELETE';
-						newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+						var method = (btn[0].checked) ? 'POST' : 'DELETE';
+						var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
 						if(checked===false){
 							 disabledPluginPopup.formDialog("open");
 							 disablePlugin(url, checked, btn, data);
@@ -177,10 +177,11 @@ define(
 							var $row = btn.parents('tr').first();
 							var pluginType = table.fnGetData($row.get(0))['pluginType'];
 							var projectId = conf.projectId;
+							var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
 
 							$.ajax({url : url, type : 'DELETE', data: {saveConf : saveConf}}).success(function() {
 							/*when we activate or deactivate the plugin, we update the automation workflow list*/
-									if(pluginType == 'AUTOMATION'){
+									if(pluginType === 'AUTOMATION'){
 											updateAutomationWorkflowSelect(checked, projectId);
 											eventBus.trigger("project.plugin.toggled", newType);
 									}
@@ -192,9 +193,7 @@ define(
 								});
 
 							disabledPluginPopup.formDialog("close");
-					}),
-
-
+					});
 
 					disabledPluginPopup.on("formdialogcancel", function() {
 						putBackButtonSwitch(btn,checked, data, event);

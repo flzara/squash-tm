@@ -503,10 +503,6 @@ public class GenericProjectController {
 	@ResponseBody
 	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId, @RequestParam("saveConf") Boolean saveConf) {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
-		// If plugin Workflow, check if the workflow is used by the project and it have a configuration and throw an Exception if so
-		if(workflowPluginManager.pluginCanNotBeDisabled(plugin, projectId)){
-			throw new AutomationWorkflowInUseException();
-		}
 		List<WorkspaceType> workspaceTypes;
 		if ("squash.tm.plugin.jirasync".equals(pluginId)) {
 			if (projectManager.hasProjectRemoteSynchronisation(projectId)) {

@@ -288,10 +288,6 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				},
 				initAutomationWorkflowSelect: function() {
 					var self = this;
-
-					var selectOption= $("option[value='REMOTE_WORKFLOW']");
-					selectOption.attr("disabled", true);
-
 					return new SelectJEditable({
 						componentId: "project-workflows-select",
 						jeditableSettings: {
