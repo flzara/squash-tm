@@ -30,6 +30,12 @@ define(
 					return  routing.buildURL('project-plugins', projectId, pluginId);
 			}
 
+			function putBackButtonSwitch (btn,checked, data, event ){
+			 var $row = btn.parents('tr').first();
+			 btn.switchButton("option", "checked", !checked);
+			 configureStyle($row, data);
+      }
+
 			function configureSwitch($row, data){
 				var switchcell = $row.find('.plugin-enabled');
 
@@ -188,17 +194,12 @@ define(
 							disabledPluginPopup.formDialog("close");
 					}),
 
-					disabledPluginPopup.on("formdialogcancel", function(data) {
+
+
+					disabledPluginPopup.on("formdialogcancel", function() {
 						putBackButtonSwitch(btn,checked, data, event);
 						disabledPluginPopup.formDialog("close");
 					});
 				}
-				 function putBackButtonSwitch (btn,checked, data, event ){
-					var $row = btn.parents('tr').first();
-					btn.switchButton("option", "checked", !checked);
-					configureStyle($row, data);
-					return  $row;
-				}
-
 			};
 });
