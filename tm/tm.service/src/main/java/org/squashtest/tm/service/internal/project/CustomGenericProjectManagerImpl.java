@@ -590,7 +590,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			if("squash.tm.plugin.jirasync".equals(pluginId)){
 				PluginReferencer<?> libraryOther = findLibrary(projectId, WorkspaceType.REQUIREMENT_WORKSPACE);
 				LibraryPluginBinding bindingOther = libraryOther.getPluginBinding(pluginId);
-				if(binding!=null) {
+				if(bindingOther!=null) {
 					bindingOther.setActive(true);
 				}
 			}
