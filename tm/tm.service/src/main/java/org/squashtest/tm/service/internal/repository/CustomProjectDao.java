@@ -58,4 +58,6 @@ public interface CustomProjectDao {
 
 	LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType);
 
+	void removeLibraryPluginBindingProperty(Long libraryPluginBindingId);
+
 }
