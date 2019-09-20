@@ -72,7 +72,6 @@ public abstract class LibraryPluginBinding  {
 	@Column(name = "PLUGIN_BINDING_VALUE")
 	private Map<String, String> properties = new HashMap<>(2);
 
-
 	public LibraryPluginBinding(){
 		super();
 	}
