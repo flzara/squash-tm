@@ -182,6 +182,9 @@ public final class NativeQueries {
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
+	/******************************LIBRARY_PLUGIN_PINDING********************************************/
+
+	public static final String  DELETE_LIBRARY_PLUGING_PINDING_PROERTY= "delete from LIBRARY_PLUGIN_BINDING_PROPERTY lpbp where lpbp.PLUGIN_BINDING_ID = :libraryPluginBindingId";
 
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
