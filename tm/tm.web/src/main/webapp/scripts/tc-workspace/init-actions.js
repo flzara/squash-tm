@@ -140,6 +140,10 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				$("#add-test-case-dialog").data("test-case-script-language", "GHERKIN").formDialog("open");
 			});
 
+			$("#new-test-case-robot-tree-button").on("click", function () {
+				$("#add-test-case-dialog").data("test-case-script-language", "ROBOT").formDialog("open");
+			});
+
 
 			// *************** copy paste ****************
 

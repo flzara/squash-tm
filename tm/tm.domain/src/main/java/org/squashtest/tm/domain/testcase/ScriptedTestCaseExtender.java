@@ -97,7 +97,7 @@ public class ScriptedTestCaseExtender {
 				throw new IllegalArgumentException("Unknown scriptLanguage of scripted test case : " + scriptLanguage);
 			}
 			this.language = scriptedTestCaseLanguage;
-			this.populateInitialScript(testCase, scriptLanguage, locale);
+			this.populateInitialScript(testCase, scriptedTestCaseLanguage, locale);
 	} else {
 			throw new IllegalArgumentException("Scripted test case MUST have a not null scriptLanguage");
 		}
@@ -105,8 +105,22 @@ public class ScriptedTestCaseExtender {
 
 	//For SquashTM 1.18 this is for Gherkin only for now
 	//if sometime another script language need to be handled, you will probably need to subclass with a discriminator column...
-	private void populateInitialScript(TestCase testCase, String scriptLanguage, String locale) {
-		LOGGER.info("Try to populate script with script language {} and locale {}.", scriptLanguage, locale);
+	private void populateInitialScript(TestCase testCase, ScriptedTestCaseLanguage scriptLanguage, String locale) {
+		LOGGER.info("Try to populate script with script language {} and locale {}.", scriptLanguage.name(), locale);
+		String initialScript="";
+		switch (scriptLanguage){
+			case GHERKIN:
+				initialScript = populateGherkinScript(testCase,locale);
+				break;
+			case ROBOT:
+			default:
+				LOGGER.info("No script initialisation for language {}.", scriptLanguage.name());
+		}
+
+		this.setScript(initialScript);
+	}
+
+	private String populateGherkinScript(TestCase testCase, String locale){
 		StringBuilder sb = new StringBuilder();
 		sb.append(LANGUAGE_TAG)
 			.append(locale)
@@ -119,7 +133,7 @@ public class ScriptedTestCaseExtender {
 			.append(": ")
 			.append(testCase.getName());
 
-		this.setScript(sb.toString());
+		return sb.toString();
 	}
 
 	/**

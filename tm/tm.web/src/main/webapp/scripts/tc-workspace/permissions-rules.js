@@ -300,6 +300,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 			'new-folder-tree-button' : this.canCreateFolder,
 			'new-test-case-tree-button' : this.canCreateTestCase,
 			'new-test-case-gherkin-tree-button' : this.canCreateTestCase,
+			'new-test-case-robot-tree-button' : this.canCreateTestCase,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,

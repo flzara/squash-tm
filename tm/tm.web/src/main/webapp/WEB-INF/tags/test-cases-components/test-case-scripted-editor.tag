@@ -27,6 +27,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ attribute name="writable" required="true" type="java.lang.Boolean"  description="can current user have rights to edit this script" %>
+<%@ attribute name="language" required="true" type="java.lang.String"  description="language of the script" %>
 
 <div id="tab-tc-script-editor">
   <%-- ==================== toolbar definition ===================--%>
@@ -42,16 +43,19 @@
                       class="sq-btn" style="display: none">
                     <f:message key="label.Cancel"/>
               </button>
-               <button id="tc-script-snippets-button" title="Ctrl+<f:message key="label.Space"/>"
-                       class="sq-btn" style="display: none">
+              <c:if test="${language eq 'GHERKIN'}">
+                <button id="tc-script-snippets-button" title="Ctrl+<f:message key="label.Space"/>"
+                        class="sq-btn" style="display: none">
                  <f:message key="label.Insert"/>
               </button>
-				  <button id="tc-script-validate-button"
-						  class="sq-btn" style="display: none">
+                <button id="tc-script-validate-button"
+                        class="sq-btn" style="display: none">
                  <f:message key="test-case.scripted.check"/>
               </button>
+              </c:if>
             </span>
     </div>
+    <c:if test="${language eq 'GHERKIN'}">
     <div class="right btn-toolbar">
             <span class="group">
               <button id="tc-script-toggle-help-panel"
@@ -60,6 +64,7 @@
               </button>
             </span>
     </div>
+    </c:if>
   </div>
   <div id="tc-script-editor" class="tc-script-editor tc-script-editor-option-closed"></div>
 </div>
