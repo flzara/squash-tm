@@ -306,7 +306,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						})
 						.success(function() {
 							self.chosenTcScriptType = scriptType;
-						})
+						});
 				},
 
 				getChangeTcScriptTypePromise: function(scriptType) {
