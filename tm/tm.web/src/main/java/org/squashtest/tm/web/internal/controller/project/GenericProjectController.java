@@ -622,7 +622,6 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-tc-script-type", VALUE})
 	@ResponseBody
 	public void changeTcScriptType(@PathVariable long projectId, @RequestParam(VALUE) String tcScriptType) {
-		ScriptedTestCaseLanguage scriptType = ScriptedTestCaseLanguage.valueOf(tcScriptType);
 		projectManager.changeTcScriptType(projectId, tcScriptType);
 	}
 

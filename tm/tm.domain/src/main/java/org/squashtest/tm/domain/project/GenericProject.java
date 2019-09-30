@@ -537,7 +537,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		this.automationWorkflowType = automationWorkflowType;
 	}
 
-	public ScriptedTestCaseLanguage getTestCaseScriptType() {
+	public ScriptedTestCaseLanguage getTcScriptType() {
 		return tcScriptType;
 	}
 

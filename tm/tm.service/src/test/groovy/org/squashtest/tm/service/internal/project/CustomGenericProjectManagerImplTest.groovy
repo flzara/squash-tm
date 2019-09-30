@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
@@ -55,6 +56,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerServ
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService
 import spock.lang.Ignore
 import spock.lang.Specification
+import sun.font.Script
 
 import javax.persistence.EntityManager
 
@@ -766,4 +768,30 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 		result == false
 	}
+
+	def "#changeTcScriptType(long, String) - Should change tcScriptType attribute of a Project"() {
+		given:
+		Project project = new Project()
+		project.setTcScriptType(ScriptedTestCaseLanguage.GHERKIN)
+		and:
+		genericProjectDao.getOne(7L) >> project
+		when:
+		manager.changeTcScriptType(7, "ROBOT")
+		then:
+		project.getTcScriptType() == ScriptedTestCaseLanguage.ROBOT
+	}
+
+	def "#changeTcScriptType(long, String) - Should throw an IllegalArgumentException because tcScriptType is invalid"() {
+		given:
+		Project project = new Project()
+		project.setTcScriptType(ScriptedTestCaseLanguage.GHERKIN)
+		and:
+		genericProjectDao.getOne(7L) >> project
+		when:
+		manager.changeTcScriptType(7, "INVALID_TYPE")
+		then:
+		thrown IllegalArgumentException
+	}
+
+
 }

@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.project;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 /**
  * Dto to decorate a generic project with functional informations such as "deletable" or is "template".
@@ -105,5 +104,5 @@ public class AdministrableProject {
 
 	public AutomationWorkflowType getAutomationWorkflowType() { return project.getAutomationWorkflowType(); }
 
-	public ScriptedTestCaseLanguage getTestCaseScriptType() { return project.getTestCaseScriptType(); }
+	public ScriptedTestCaseLanguage getTestCaseScriptType() { return project.getTcScriptType(); }
 }
