@@ -55,6 +55,7 @@ import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -616,6 +617,13 @@ public class GenericProjectController {
 	@ResponseBody
 	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) boolean active) {
 		projectManager.changeAutomationWorkflow(projectId, active);
+	}
+
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-tc-script-type", VALUE})
+	@ResponseBody
+	public void changeTcScriptType(@PathVariable long projectId, @RequestParam(VALUE) String tcScriptType) {
+		ScriptedTestCaseLanguage scriptType = ScriptedTestCaseLanguage.valueOf(tcScriptType);
+		projectManager.changeTcScriptType(projectId, tcScriptType);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})

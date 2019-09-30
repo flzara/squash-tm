@@ -61,8 +61,24 @@
 
   <jsp:attribute name="body">
 
-  <div id="project-workflow-option-table" class="display-table">
+    <!-- Test Case Script Type Menu -->
+    <div id="test-case-script-type" class="display-table">
+      <div class="display-table-row">
+        <div class="display-table-cell">
+          <label class="display-table-cell">
+            <f:message key="label.test-case.script.type" />
+          </label>
+        </div>
+        <div class="display-table-cell">
+          <div id="project-test-case-script-type-select" style="display: inline">
+            <c:out value="${availableScriptTypes[chosenScriptType]}" />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Automation Workflow Menu -->
+    <div id="project-workflow-option-table" class="display-table">
     <div class="display-table-row">
       <div class="display-table-cell">
         <label class="display-table-cell">
@@ -451,6 +467,8 @@ require(["common"], function() {
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
+          chosenTcScriptType: "${choseScriptType}",
+          availableTcScriptTypes: ${json:serialize(availableScriptTypes)},
           chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
           availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };

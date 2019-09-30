@@ -192,6 +192,10 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					this.isAdmin = conf.isAdmin;
 					this.projectId = conf.projectId;
 
+					this.chosenTcScriptType = conf.chosenTcScriptType;
+					this.tcScriptTypes = conf.availableTcScriptTypes;
+					this.tcScriptTypeSelector = this.initTcScriptTypeSelector();
+
 					this.automationWorkflows = conf.availableAutomationWorkflows;
 					this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
 					this.workflowSelector = this.initAutomationWorkflowSelect();
@@ -270,6 +274,51 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				events : {
 					"click #ta-projects-bind-button" : "openAuthenticationPopup"
+				},
+
+				initTcScriptTypeSelector: function() {
+					var self = this;
+					return new SelectJEditable({
+						componentId: "project-test-case-script-type-select",
+						jeditableSettings: {
+							data: self.tcScriptTypes
+						},
+						target: function(scriptType) {
+							self.saveChangeTcScriptType(scriptType);
+							return scriptType;
+						}
+					});
+				},
+
+				saveChangeTcScriptType: function(scriptType) {
+					var self = this;
+					if(self.chosenTcScriptType !== scriptType) {
+						self.changeTcScriptType(scriptType);
+					}
+				},
+
+				changeTcScriptType: function(scriptType) {
+					var self = this;
+					self.getChangeTcScriptTypePromise(scriptType)
+						.error(function(xhr) {
+							self.tcScriptTypes.setValue(self.chosenTcScriptType);
+							WTF.showError(xhr.statusText);
+						})
+						.success(function() {
+							self.chosenTcScriptType = scriptType;
+						})
+				},
+
+				getChangeTcScriptTypePromise: function(scriptType) {
+					var self = this;
+					return $.ajax({
+						method: 'POST',
+						url: self.changeUrl,
+						data: {
+							id: 'change-tc-script-type',
+							value: scriptType
+						}
+					});
 				},
 
 				reloadWorkflowsComboBox: function(self, newType) {

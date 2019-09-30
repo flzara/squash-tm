@@ -540,4 +540,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	public ScriptedTestCaseLanguage getTestCaseScriptType() {
 		return tcScriptType;
 	}
+
+	public void setTcScriptType(ScriptedTestCaseLanguage tcScriptType) {
+		this.tcScriptType = tcScriptType;
+	}
 }
