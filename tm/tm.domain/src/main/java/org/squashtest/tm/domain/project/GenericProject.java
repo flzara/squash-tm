@@ -37,7 +37,10 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 
@@ -110,30 +113,30 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ProjectTemplate template;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCL_ID")
 	private TestCaseLibrary testCaseLibrary;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "RL_ID")
 	private RequirementLibrary requirementLibrary;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
 	private CustomReportLibrary customReportLibrary;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ARL_ID")
 	private AutomationRequestLibrary automationRequestLibrary;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "tmProject")
+	@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "tmProject")
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<>();
 
 	@JoinColumn(name = "TA_SERVER_ID")
@@ -144,21 +147,21 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ScmRepository scmRepository;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	// the so-called information lists
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="REQ_CATEGORIES_LIST")
+	@JoinColumn(name = "REQ_CATEGORIES_LIST")
 	private InfoList requirementCategories;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="TC_NATURES_LIST")
+	@JoinColumn(name = "TC_NATURES_LIST")
 	private InfoList testCaseNatures;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="TC_TYPES_LIST")
+	@JoinColumn(name = "TC_TYPES_LIST")
 	private InfoList testCaseTypes;
 
 	@ManyToMany(mappedBy = "projects")
@@ -171,6 +174,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private AutomationWorkflowType automationWorkflowType = AutomationWorkflowType.NONE;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private ScriptedTestCaseLanguage tcScriptType = ScriptedTestCaseLanguage.GHERKIN;
 
 	private boolean useTreeStructureInScmRepo = true;
 
@@ -259,7 +266,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	public void setAutomationRequestLibrary(AutomationRequestLibrary automationRequestLibrary) {
 		this.automationRequestLibrary = automationRequestLibrary;
-		if (automationRequestLibrary != null){
+		if (automationRequestLibrary != null) {
 			automationRequestLibrary.notifyAssociatedWithProject(this);
 		}
 	}
@@ -385,10 +392,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	}
 
 	/**
-	 *
 	 * @return the BugTracker the Project is bound to
-	 * @throws NoBugTrackerBindingException
-	 *             if the project is not BugtrackerConnected
+	 * @throws NoBugTrackerBindingException if the project is not BugtrackerConnected
 	 */
 	public BugTracker findBugTracker() {
 		if (isBugtrackerConnected()) {
@@ -397,7 +402,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 			throw new NoBugTrackerBindingException();
 		}
 	}
-
 
 
 	public InfoList getRequirementCategories() {
@@ -439,6 +443,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	/**
 	 * CONSIDER THIS PRIVATE ! It should only be called by project.unbindMilestone or milestone.unbindProject
 	 * TODO find a better design
+	 *
 	 * @param milestone
 	 */
 	public void removeMilestone(Milestone milestone) {
@@ -470,7 +475,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	}
 
 	public void bindMilestones(List<Milestone> milestones) {
-		for (Milestone milestone : milestones){
+		for (Milestone milestone : milestones) {
 			bindMilestone(milestone);
 		}
 
@@ -491,6 +496,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	public ProjectTemplate getTemplate() {
 		return template;
 	}
+
 	public void setTemplate(ProjectTemplate template) {
 		this.template = template;
 	}
@@ -506,7 +512,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	public void setAllowAutomationWorkflow(boolean allowAutomationWorkflow) {
 		this.allowAutomationWorkflow = allowAutomationWorkflow;
 	}
-	
+
 	public ScmRepository getScmRepository() {
 		return scmRepository;
 	}
@@ -529,5 +535,9 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	public void setAutomationWorkflowType(AutomationWorkflowType automationWorkflowType) {
 		this.automationWorkflowType = automationWorkflowType;
+	}
+
+	public ScriptedTestCaseLanguage getTestCaseScriptType() {
+		return tcScriptType;
 	}
 }
