@@ -167,6 +167,23 @@ define(["jquery", "underscore"], function($, _){
 		return allmilestones;
 		
 	}
+
+	function haveDifferentTestCaseScriptType(srcProjects, targetProject){
+		var haveDifferentScriptType =  false;
+
+		var targetJsonProject = findProject(targetProject);
+		var targetScriptType = targetJsonProject.testCaseScriptType;
+
+		for (var i=0; i<srcProjects.length; i++){
+			var p = findProject(srcProjects[i]);
+
+			if(p.testCaseScriptType !== targetScriptType){
+				haveDifferentScriptType = true;
+			}
+		}
+
+		return haveDifferentScriptType;
+	}
 	
 
 	return {
@@ -175,7 +192,8 @@ define(["jquery", "underscore"], function($, _){
 		getProjectsNames : getProjectsNames,
 		haveDifferentInfolists : haveDifferentInfolists,
 		getAllMilestones : getAllMilestones,
-		willMilestonesBeLost : willMilestonesBeLost
+		willMilestonesBeLost : willMilestonesBeLost,
+		haveDifferentTestCaseScriptType: haveDifferentTestCaseScriptType
 	};
 	
 	

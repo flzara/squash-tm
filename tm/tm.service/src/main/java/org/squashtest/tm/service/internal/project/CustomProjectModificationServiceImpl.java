@@ -233,7 +233,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	private Map<Long, JsonProject> findJsonProjects(List<Long> readableProjectIds, Map<Long, JsonInfoList> infoListMap) {
-		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST)
+		return DSL.select(PROJECT.PROJECT_ID, PROJECT.NAME, PROJECT.REQ_CATEGORIES_LIST, PROJECT.TC_NATURES_LIST, PROJECT.TC_TYPES_LIST,
+			PROJECT.TC_SCRIPT_TYPE)
 			.from(PROJECT)
 			.where(PROJECT.PROJECT_ID.in(readableProjectIds)).and(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE))
 			.orderBy(PROJECT.PROJECT_ID)
@@ -241,6 +242,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			.map(r -> {
 				Long projectId = r.get(PROJECT.PROJECT_ID);
 				JsonProject jsonProject = new JsonProject(projectId, r.get(PROJECT.NAME));
+				jsonProject.setTestCaseScriptType(r.get(PROJECT.TC_SCRIPT_TYPE));
 				jsonProject.setRequirementCategories(infoListMap.get(r.get(PROJECT.REQ_CATEGORIES_LIST)));
 				jsonProject.setTestCaseNatures(infoListMap.get(r.get(PROJECT.TC_NATURES_LIST)));
 				jsonProject.setTestCaseTypes(infoListMap.get(r.get(PROJECT.TC_TYPES_LIST)));
