@@ -45,26 +45,30 @@ public enum ScriptToFileStrategy {
 
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
-			if (! canHandle(testCase)){
-				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but current test case is of kind "+testCase.getKind());
-			}
+			return getDefaultWritableFileContent(testCase);
+		}
+	},
+	ROBOT_STRATEGY() {
+		@Override
+		public TestCaseKind getHandledKind() {
+			return TestCaseKind.ROBOT;
+		}
 
-			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+		@Override
+		public String getExtension() {
+			return "robot";
+		}
 
-			return extender.computeScriptWithAppendedMetadata();
+		@Override
+		public String getWritableFileContent(TestCase testCase) {
+			return getDefaultWritableFileContent(testCase);
 		}
 	};
 
 
-
-
 	// ******************* public API ******************************
 
-
 	public static final int FILENAME_MAX_SIZE = 100;
-
-
-
 
 	/**
 	 * Selects the correct instance of Strategy for the given language
@@ -76,14 +80,14 @@ public enum ScriptToFileStrategy {
 		ScriptToFileStrategy strategy = null;
 		switch(kind){
 			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
+			case ROBOT: strategy = ROBOT_STRATEGY; break;
 			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;
 	}
 
 
-
-	 // ---- language-specific methods -------
+	// ---- language-specific methods -------
 
 	/**
 	 * Returns the kind of TestCase this strategy is for.
@@ -92,14 +96,12 @@ public enum ScriptToFileStrategy {
 	 */
 	public abstract TestCaseKind getHandledKind();
 
-
 	/**
 	 * Returns the extension usually associated to files written in this language.
 	 *
 	 * @return
 	 */
 	public abstract String getExtension();
-
 
 	/**
 	 * <p>Returns the content of the script, possibly with additional metadata (eg comments)
@@ -115,7 +117,6 @@ public enum ScriptToFileStrategy {
 
 	// --------- common methods --------------
 
-
 	/**
 	 * Returns whether this strategy can handle that test case (ie, the test case
 	 * is a scripted test case and corresponds to the scripting language).
@@ -127,7 +128,7 @@ public enum ScriptToFileStrategy {
 	public boolean canHandle(TestCase testCase){
 		TestCaseKind kind = testCase.getKind();
 		return testCase.isScripted() &&
-				   kind == getHandledKind();
+			kind == getHandledKind();
 	}
 
 	/**
@@ -180,10 +181,7 @@ public enum ScriptToFileStrategy {
 	}
 
 
-
-
 	// ****************** private API **********************
-
 
 	private static final String ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-]";
 
@@ -208,6 +206,14 @@ public enum ScriptToFileStrategy {
 		String normalized = deaccented.replaceAll(ILLEGAL_PATTERN, "_");
 
 		return id + "_" + normalized;
+	}
+
+	protected String getDefaultWritableFileContent(TestCase testCase) {
+		if (! canHandle(testCase)) {
+			throw new IllegalArgumentException("This strategy handles Gherkin test cases, but current test case is of kind " + testCase.getKind());
+		}
+		ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+		return extender.computeScriptWithAppendedMetadata();
 	}
 
 }
