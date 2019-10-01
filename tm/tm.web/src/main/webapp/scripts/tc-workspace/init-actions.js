@@ -136,12 +136,16 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				$("#add-test-case-dialog").data("test-case-script-language", "STANDARD").formDialog("open");
 			});
 
-			$("#new-test-case-gherkin-tree-button").on("click", function () {
-				$("#add-test-case-dialog").data("test-case-script-language", "GHERKIN").formDialog("open");
-			});
-
-			$("#new-test-case-robot-tree-button").on("click", function () {
-				$("#add-test-case-dialog").data("test-case-script-language", "ROBOT").formDialog("open");
+			$("#new-scripted-test-case-tree-button").on("click", function () {
+				var libraryNode;
+				var selectedNode = tree.jstree('get_selected')[0];
+				if(selectedNode.attributes.getNamedItem('restype').value === 'test-case-libraries'){
+					libraryNode = selectedNode;
+				} else {
+					libraryNode = selectedNode.closest('[tcscripttype]');
+				}
+				var scriptLanguage = libraryNode.attributes.getNamedItem('tcscripttype').value;
+				$("#add-test-case-dialog").data("test-case-script-language", scriptLanguage).formDialog("open");
 			});
 
 
