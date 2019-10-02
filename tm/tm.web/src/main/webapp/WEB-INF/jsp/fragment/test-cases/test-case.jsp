@@ -216,7 +216,7 @@
 
       <%------------------------------ Script Editor Only for scripted test case ---------------------------------------------%>
     <c:if test="${scripted}">
-      <tc:test-case-scripted-editor writable="${writable}" language="${scriptedLanguage}"/>
+      <tc:test-case-scripted-editor writable="${writable}" language="${scriptLanguage}"/>
     </c:if>
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
