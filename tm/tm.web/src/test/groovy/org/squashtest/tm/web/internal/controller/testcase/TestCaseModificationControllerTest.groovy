@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
@@ -46,10 +47,14 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 import org.squashtest.tm.web.testutils.MockFactory
 import spock.lang.Specification
 
+import javax.inject.Inject
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 
 class TestCaseModificationControllerTest extends Specification {
+
+	 GenericProjectManagerService projectManager = Mock()
+
 	TestCaseModificationController controller = new TestCaseModificationController()
 
 	TestCaseModificationService testCaseModificationService = Mock()
@@ -81,6 +86,8 @@ class TestCaseModificationControllerTest extends Specification {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
 		controller.internationalizationHelper = messageSource
+
+		controller.projectManager =projectManager
 
 		setupImportanceComboBuilder()
 		controller.importanceComboBuilderProvider = importanceComboBuilderProvider
@@ -155,7 +162,7 @@ class TestCaseModificationControllerTest extends Specification {
 		tc.getSteps() >> steps
 		long tcId=15
 		testCaseModificationService.findById(tcId) >> tc
-
+		projectManager.isProjectUsingWorkflow(_)>>true
 
 		and :
 		enrichTC(tc)
@@ -195,6 +202,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "should return general info fragment"() {
 		given:
 		TestCase testCase = Mock()
+
 		AuditableMixin mixin = (AuditableMixin) testCase
 		mixin.getCreatedOn() >> new Date(1385488000402);
 		mixin.getCreatedBy() >> "robert"

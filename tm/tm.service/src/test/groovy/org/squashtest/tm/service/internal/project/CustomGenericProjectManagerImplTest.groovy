@@ -745,7 +745,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 			1 * customTestCaseModificationService.createRequestForTestCase(5L, AutomationRequestStatus.AUTOMATED)
 	}
 
-	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow"() {
+	def "#isProjectUsingWorkflow(long, String) - Should return true since the project uses the workflow if plugin exist"() {
 		given:
 			Project p = Mock()
 			p.getAutomationWorkflowType() >> AutomationWorkflowType.REMOTE_WORKFLOW
@@ -754,7 +754,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		when:
 			def result = manager.isProjectUsingWorkflow(9L)
 		then:
-			result == true
+			result == false
 	}
 
 	def "#isProjectUsingWorkflow(long, String) - Should return false since the project uses another workflow"() {
