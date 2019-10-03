@@ -243,7 +243,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.join(tagsValue.selectedOptions, cfvo)
 			.where(cfv.boundEntityType.eq(BindableEntity.TEST_CASE)
 				.and(initTestCase.id.eq(outerTestCase.id))
-				.and(cfvo.label.in(tags)));
+				.and(cfvo.label.in(tags)).and(cfv.cufId.eq(fieldModel.getCufId())));
 
 		if (fieldModel.getOperation().equals(AdvancedSearchTagsFieldModel.Operation.AND)) {
 
