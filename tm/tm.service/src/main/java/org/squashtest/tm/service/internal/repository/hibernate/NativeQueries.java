@@ -184,7 +184,7 @@ public final class NativeQueries {
 
 	/******************************LIBRARY_PLUGIN_PINDING********************************************/
 
-	public static final String  DELETE_LIBRARY_PLUGING_PINDING_PROERTY= "delete from LIBRARY_PLUGIN_BINDING_PROPERTY lpbp where lpbp.PLUGIN_BINDING_ID = :libraryPluginBindingId";
+	public static final String  DELETE_LIBRARY_PLUGING_PINDING_PROPERTY= "delete from LIBRARY_PLUGIN_BINDING_PROPERTY lpbp where lpbp.PLUGIN_BINDING_ID = :libraryPluginBindingId";
 
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 

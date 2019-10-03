@@ -145,7 +145,7 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 
 	@Override
 	public void removeLibraryPluginBindingProperty(Long libraryPluginBindingId) {
-		javax.persistence.Query query = entityManager.createNativeQuery(NativeQueries.DELETE_LIBRARY_PLUGING_PINDING_PROERTY);
+		javax.persistence.Query query = entityManager.createNativeQuery(NativeQueries.DELETE_LIBRARY_PLUGING_PINDING_PROPERTY);
 		query.setParameter("libraryPluginBindingId", libraryPluginBindingId);
 		query.executeUpdate();
 	}
