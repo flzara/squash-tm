@@ -213,4 +213,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	public Long findNodeIdByRemoteKeyAndRemoteSyncId(String remoteKey, Long remoteSyncId) {
 		return null;
 	}
+
+	@Override
+	public void updateManagementMode(Long remoteSynchronisationId){ }
 }

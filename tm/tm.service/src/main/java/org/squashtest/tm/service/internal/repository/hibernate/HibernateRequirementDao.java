@@ -28,9 +28,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.tm.domain.requirement.ManagementMode;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementSyncExtender;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -40,6 +42,7 @@ import org.squashtest.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,9 +53,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_SYNC_EXTENDER;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
+
+	@Inject
+	DSLContext DSL;
 
 	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION =
 		new EnumMap<>(VerificationCriterion.class);
@@ -512,4 +522,23 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return query.list();
 	}
 
+	@Override
+	public void updateManagementMode(Long remoteSynchronisationId){
+		Collection<Long> reqIds = findSynchronizedRequirementIds(remoteSynchronisationId).values();
+		DSL.update(REQUIREMENT)
+			.set(REQUIREMENT.MODE, ManagementMode.NATIVE.name())
+			.where(REQUIREMENT.RLN_ID.in(reqIds))
+			.execute();
+
+	}
+
+	public Map<String, Long> findSynchronizedRequirementIds(Long remoteSynchronisationId) {
+		return DSL.select(REQUIREMENT.RLN_ID, REQUIREMENT_SYNC_EXTENDER.REMOTE_REQ_ID)
+			.from(REQUIREMENT)
+			.innerJoin(REQUIREMENT_SYNC_EXTENDER).on(REQUIREMENT.RLN_ID.eq(REQUIREMENT_SYNC_EXTENDER.REQUIREMENT_ID))
+			.where(REQUIREMENT_SYNC_EXTENDER.REMOTE_SYNCHRONISATION_ID.eq(remoteSynchronisationId))
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(r -> r.get(REQUIREMENT_SYNC_EXTENDER.REMOTE_REQ_ID), r -> r.get(REQUIREMENT.RLN_ID)));
+	}
 }

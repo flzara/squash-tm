@@ -147,6 +147,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<Long> sortRequirementByNodeRelationship(List<Long> requirementVersionIds);
 
-
 	Long findNodeIdByRemoteKeyAndRemoteSyncId(String remoteKey, Long remoteSyncId);
+
+	void updateManagementMode(Long remoteSynchronisationId);
 }

@@ -182,6 +182,17 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean hasProjectRemoteSynchronisation(long projectId);
 
 	/**
+	 * disables all RemoteSynchronisations in JiraSync project
+	 */
+	void setAllSyncToDisable(long projectId);
+
+	/**
+	 * delete all RemoteSynchronisations in JiraSync project
+	 */
+	void deleteAllSync(long projectId);
+
+
+	/**
 	 * Returns the configuration of a given plugin for a given project. Returns an empty map if the plugin is not bound
 	 * to this project.
 	 */

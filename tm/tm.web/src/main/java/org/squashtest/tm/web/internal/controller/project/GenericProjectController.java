@@ -37,10 +37,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.api.plugin.PluginType;
-import org.squashtest.tm.api.wizard.AutomationWorkflow;
-import org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.api.wizard.exception.AutomationWorkflowInUseException;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -55,18 +52,13 @@ import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
-import org.squashtest.tm.exception.bugtracker.CannotDeleteBugtrackerLinkedToSynchronisationException;
-import org.squashtest.tm.exception.plugin.CannotDisablePluginLinkedToSynchronisationException;
-import org.squashtest.tm.exception.tf.WrongPriorityFormatException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
@@ -139,8 +131,6 @@ public class GenericProjectController {
 	@Inject
 	private AutomationWorkflowPluginManager workflowPluginManager;
 
-	@Inject
-	private GenericProjectDao genericProjectDao;
 	@Inject
 	private ProjectDao projectDao;
 
@@ -506,16 +496,19 @@ public class GenericProjectController {
 		WorkspaceWizard plugin = pluginManager.findById(pluginId);
 		List<WorkspaceType> workspaceTypes;
 		if ("squash.tm.plugin.jirasync".equals(pluginId)) {
-			if (projectManager.hasProjectRemoteSynchronisation(projectId)) {
-				throw new CannotDisablePluginLinkedToSynchronisationException();
-			}
 			workspaceTypes = Arrays.asList(WorkspaceType.CAMPAIGN_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE);
 		} else {
 			workspaceTypes = Collections.singletonList(plugin.getDisplayWorkspace());
 		}
 		if(saveConf.equals(true)){
 			projectManager.disablePluginAndSaveConf(projectId, workspaceTypes, plugin.getId());
+			projectManager.setAllSyncToDisable(projectId);
 		}else{
+			if ("squash.tm.plugin.jirasync".equals(pluginId)) {
+				if (projectManager.hasProjectRemoteSynchronisation(projectId)) {
+						projectManager.deleteAllSync(projectId);
+				}
+			}
 			projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
 		}
 

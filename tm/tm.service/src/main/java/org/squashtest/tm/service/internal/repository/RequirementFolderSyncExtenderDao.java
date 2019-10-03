@@ -21,8 +21,16 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementFolderSyncExtender;
+
+import java.util.List;
 
 public interface RequirementFolderSyncExtenderDao extends JpaRepository<RequirementFolderSyncExtender, Long> {
 
+	@Query("delete from RequirementFolderSyncExtender rm where rm.remoteSynchronisation.id in :remoteSynchronisationId")
+	@Modifying
+	void deleteByRemoteSynchronisationId(@Param("remoteSynchronisationId") List<Long> remoteSynchronisationId);
 }

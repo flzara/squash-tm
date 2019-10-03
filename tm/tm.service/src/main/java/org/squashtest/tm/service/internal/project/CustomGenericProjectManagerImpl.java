@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectForCustomCompare;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
@@ -86,7 +87,10 @@ import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
+import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtenderDao;
+import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -114,6 +118,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -167,8 +172,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private TestCaseDao testCaseDao;
 	@Inject
 	private CustomTestCaseModificationService customTestCaseModificationService;
-
-	@Inject private MilestoneBindingManagerService milestoneBindingManager;
+	@Inject
+	private RequirementFolderSyncExtenderDao requirementFolderSyncExtenderDao;
+	@Inject
+	private RequirementSyncExtenderDao requirementSyncExtenderDao;
+	@Inject
+	private HibernateRequirementDao hibernateRequirementDao;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -629,6 +638,33 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public boolean hasProjectRemoteSynchronisation(long projectId) {
 		return remoteSynchronisationDao.findByProjectId(projectId).size() != 0;
+	}
+
+	@Override
+	public void setAllSyncToDisable(long projectId){
+		List<RemoteSynchronisation> syncList = remoteSynchronisationDao.findByProjectId(projectId);
+		for (RemoteSynchronisation sync: syncList) {
+			if(sync.isSynchronisationEnable()){
+				sync.setSynchronisationEnable(false);
+			}
+		}
+	}
+
+	@Override
+	public void deleteAllSync(long projectId){
+
+		List<RemoteSynchronisation> rmList = remoteSynchronisationDao.findByProjectId(projectId);
+		List<Long> ids = rmList.stream().map(RemoteSynchronisation::getId).collect(Collectors.toList());
+		for (Long id: ids
+			 ) {
+			hibernateRequirementDao.updateManagementMode(id);
+		}
+		//deleteRequierement folder sync extender
+		requirementFolderSyncExtenderDao.deleteByRemoteSynchronisationId(ids);
+		//delete sync extender
+		requirementSyncExtenderDao.deleteByRemoteSynchronisationId(ids);
+		//delete sync
+		remoteSynchronisationDao.deleteByProjectId(projectId);
 	}
 
 	@Override

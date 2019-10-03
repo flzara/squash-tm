@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * /!\ I (GRF) AM PRETTY SURE THIS CLASS IS USED AS AN API BY SOME PLUGIN - DON'T REMOVE ANY UNUSED METHOD !
@@ -57,4 +58,7 @@ public interface RequirementSyncExtenderDao extends JpaRepository<RequirementSyn
 	@Transactional
 	void deleteAllByServer(@Param("serverId") Long serverId);
 
+	@Query("delete from RequirementSyncExtender rm where rm.remoteSynchronisation.id in :remoteSynchronisationId")
+	@Modifying
+	void deleteByRemoteSynchronisationId(@Param("remoteSynchronisationId") List<Long> remoteSynchronisationId);
 }
