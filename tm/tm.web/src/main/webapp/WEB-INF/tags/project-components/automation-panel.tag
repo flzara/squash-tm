@@ -57,6 +57,10 @@
 
 <c:set var="inputSize" value="50" />
 
+<c:if test="${! availableAutomationWorkflows.containsKey(chosenAutomationWorkflow)}">
+      <c:set var="chosenAutomationWorkflow" value="NATIVE"/>
+</c:if>
+
 <comp:toggle-panel id="test-automation-management-panel" titleKey="project.testauto.panel.title" open="true">
 
   <jsp:attribute name="body">
@@ -460,6 +464,11 @@ require(["common"], function() {
       squashtm.app.messages["message.project.bindJob.duplicatelabels"] = "${duplicateTMLabel}";
       squashtm.app.messages["message.project.bindJob.noneChecked"] = "${checkOneJob}";
       $(function(){
+        var chosenAutomationWorkflow = "${chosenAutomationWorkflow}";
+        var availableAutomationWorkflows = "${availableAutomationWorkflows}";
+        if(!availableAutomationWorkflows.includes(chosenAutomationWorkflow)){
+            chosenAutomationWorkflow = "NATIVE";
+        }
 
         var automationSettings = {
           projectId: ${project.id},
@@ -467,9 +476,9 @@ require(["common"], function() {
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
-          chosenTcScriptType: "${choseScriptType}",
+	  chosenTcScriptType: "${choseScriptType}",
           availableTcScriptTypes: ${json:serialize(availableScriptTypes)},
-          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+ 	  chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
           availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };
 

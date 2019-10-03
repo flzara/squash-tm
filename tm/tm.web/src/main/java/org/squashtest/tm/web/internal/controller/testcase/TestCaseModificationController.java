@@ -289,6 +289,8 @@ public class TestCaseModificationController {
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 		String finalStatusConfiged = null;
 		boolean remoteAutomReqExists = false;
+		Boolean isRemoteAutomationWorkflowUsed;
+
 		// Convert execution mode with local parameter
 		List<OptionTag> executionModes = new ArrayList<>();
 		for (TestCaseExecutionMode executionMode : TestCaseExecutionMode.values()) {
@@ -321,7 +323,8 @@ public class TestCaseModificationController {
 
 		// RemoteAutomationRequestExtender
 		String workflowType = testCase.getProject().getAutomationWorkflowType().getI18nKey();
-		mav.addObject("isRemoteAutomationWorkflowUsed", !"NONE".equals(workflowType) && !"NATIVE".equals(workflowType));
+		isRemoteAutomationWorkflowUsed = projectManager.isProjectUsingWorkflow(testCase.getProject().getId());
+		mav.addObject("isRemoteAutomationWorkflowUsed", isRemoteAutomationWorkflowUsed);
 
 		//if the remote workflow is used, search for the plug-in used to retrieve the final configuration of the state
 		if (workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())){

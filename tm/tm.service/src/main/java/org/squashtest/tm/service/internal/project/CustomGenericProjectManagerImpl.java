@@ -26,10 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
+import org.squashtest.tm.api.wizard.WizardPlugin;
+import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -117,6 +121,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -178,6 +183,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private RequirementSyncExtenderDao requirementSyncExtenderDao;
 	@Inject
 	private HibernateRequirementDao hibernateRequirementDao;
+
+	@Autowired(required = false)
+	Collection<WorkspaceWizard> plugins = Collections.EMPTY_LIST;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -1231,8 +1239,18 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public boolean isProjectUsingWorkflow(long projectId) {
+		boolean isProjectUsingWorkflow=false;
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
 		String workflowType = genericProject.getAutomationWorkflowType().getI18nKey();
-		return workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey());
+		if(workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())){
+			//check if the plugin exists
+			for (WorkspaceWizard plugin : plugins) {
+				if(PluginType.AUTOMATION.equals(plugin.getPluginType())){
+					isProjectUsingWorkflow = true;
+					break;
+				}
+			}
+					}
+		return isProjectUsingWorkflow;
 	}
 }
