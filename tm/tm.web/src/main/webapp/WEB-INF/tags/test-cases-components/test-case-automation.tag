@@ -149,7 +149,7 @@
        <a id="urlTicket" href="${remoteReqUrl}" target="_blank"><c:out value="${remoteIssueKey}" /></a>
        </c:if>
        <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
-         <span id="span-remote-req-url"> ${ remoteReqUrl }</span>
+         <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
        </div>
      </div>
