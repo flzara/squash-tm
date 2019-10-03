@@ -70,8 +70,8 @@ def processScripted( hasReq,  ypos2,  statuses2,  importances2, File f2){
 	for(int j = 0; j<statuses2.size(); j++){
 		ypos2 += widthOfOneIcon
 		for(int i = 0; i<importances2.size(); i++){
-			println('process combination : kind=gherkin and status='+statuses2[j]+' importance='+importances2[i]+' req='+hasReq)
-			f2.append('li[rel="test-case"][kind="gherkin"][isreqcovered="'+hasReq+'"][importance="'+importances2[i]+'"][status="'+statuses2[j]+'"]> a > .jstree-icon {\n')
+			println('process combination : not(kind=standard) and status='+statuses2[j]+' importance='+importances2[i]+' req='+hasReq)
+			f2.append('li[rel="test-case"]:not([kind="standard"])[isreqcovered="'+hasReq+'"][importance="'+importances2[i]+'"][status="'+statuses2[j]+'"]> a > .jstree-icon {\n')
 			printBackgroundProperty(i*heightOfOneIcon, ypos2, f2)
 			f2.append('}\n')
 		}
