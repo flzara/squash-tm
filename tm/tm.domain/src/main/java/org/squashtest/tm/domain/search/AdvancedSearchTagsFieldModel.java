@@ -33,6 +33,7 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 
 	private List<String> tags = new ArrayList<>();
 	private Operation operation;
+	private Long cufId;
 
 	@Override
 	public AdvancedSearchFieldModelType getType() {
@@ -59,5 +60,13 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 	@Override
 	public boolean isSet() {
 		return ! tags.isEmpty();
+	}
+
+	public Long getCufId() {
+		return cufId;
+	}
+
+	public void setCufId(Long cufId) {
+		this.cufId = cufId;
 	}
 }
