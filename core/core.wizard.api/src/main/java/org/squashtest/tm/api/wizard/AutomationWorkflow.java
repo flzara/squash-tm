@@ -22,7 +22,7 @@ package org.squashtest.tm.api.wizard;
 
 import org.squashtest.tm.api.plugin.Plugin;
 
-public interface AutomationWorkflow extends Plugin {
+public interface AutomationWorkflow extends SynchronisationPlugin {
 
 	/**
 	 * Get the name of this AutomationWorkflow.
@@ -30,12 +30,6 @@ public interface AutomationWorkflow extends Plugin {
 	 * @return The name of this AutomationWorkflow
 	 */
 	String getWorkflowName();
-
-	/**
-	 * Get the runnable task that will be scheduled if the polling method is chosen.
-	 * @return The Runnable task to schedule
-	 */
-	Runnable getSynchronizationTask();
 
 	/**
 	 * Created new ticket in the remote bugtracker

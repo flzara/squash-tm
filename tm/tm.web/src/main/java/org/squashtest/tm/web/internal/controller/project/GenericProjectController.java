@@ -471,7 +471,7 @@ public class GenericProjectController {
 
 		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
 		WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
-		if(saveConf.equals(true)){
+		if(saveConf){
 			projectManager.disablePluginAndSaveConf(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
 		}else{
 			projectManager.disablePluginForWorkspace(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());

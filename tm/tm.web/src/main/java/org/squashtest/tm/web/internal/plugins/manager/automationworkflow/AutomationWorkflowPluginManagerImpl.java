@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.slf4j.Logger;
 	import org.slf4j.LoggerFactory;
 	import org.springframework.beans.factory.annotation.Autowired;
-	import org.springframework.scheduling.TaskScheduler;
 	import org.springframework.stereotype.Component;
 	import org.squashtest.tm.api.plugin.PluginType;
 	import org.squashtest.tm.api.plugin.PluginValidationException;
@@ -34,10 +33,7 @@ package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 	import org.squashtest.tm.domain.project.AutomationWorkflowType;
 	import org.squashtest.tm.service.project.GenericProjectManagerService;
 	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-
-	import javax.annotation.PostConstruct;
 	import javax.inject.Inject;
-	import javax.inject.Named;
 	import java.util.ArrayList;
 	import java.util.Collection;
 	import java.util.Collections;
@@ -67,18 +63,6 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
-
-	@Inject
-	@Named("squashtest.tm.service.ThreadPoolTaskScheduler")
-	private TaskScheduler taskScheduler;
-
-	@PostConstruct
-	public void scheduleSynchronization() {
-		for(AutomationWorkflow workflowPlugin : plugins) {
-			LOGGER.info("Registering automation workflow plugin {} as {}.", workflowPlugin, workflowPlugin.getId());
-			taskScheduler.scheduleWithFixedDelay(workflowPlugin.getSynchronizationTask(), DEFAULT_DELAY * 1000);
-		}
-	}
 
 	@Override
 	public Map<String, String> getAutomationWorkflowsMapFilteredByIds(Collection<String> activePluginsIds, Locale locale) {
