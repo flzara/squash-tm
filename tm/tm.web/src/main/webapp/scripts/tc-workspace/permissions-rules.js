@@ -308,6 +308,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 			'export-tree-button' : this.canExport,
 			'create-tc-from-req-tree-button' : this.CantCreateTcFromReq,
 			'export-gherkin-tree-button' : this.canExport,
+			'export-robot-tree-button' : this.canExport,
 			'transmit-for-automation-tree-button' : this.canTransmit,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch

@@ -689,6 +689,48 @@ public class TestCaseLibraryNavigationServiceImpl
 		}
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public File exportRobotTestCaseAsRobotFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource) {
+		Collection<Long> ids = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		return doRobotExport(ids);
+	}
+
+	// TODO Factorise export for scripted test case, whichever kind it is (Gherkin, Robot...)
+	private File doRobotExport(Collection<Long> ids) {
+		List<ScriptedTestCaseExtender> extenders = scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage.ROBOT, ids);
+
+		FileOutputStream fileOutputStream = null;
+		try {
+			File zipFile = File.createTempFile("export-robot-script-", ".zip");
+			fileOutputStream = new FileOutputStream(zipFile);
+			zipFile.deleteOnExit();
+
+			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
+
+			for (ScriptedTestCaseExtender extender : extenders) {
+				String name = "tc_" + extender.getTestCaseId();
+				ZipArchiveEntry entry = new ZipArchiveEntry(name + ".robot");
+				archive.putArchiveEntry(entry);
+				archive.write(extender.getScript().getBytes(Charset.forName("UTF-8")));
+				archive.closeArchiveEntry();
+			}
+
+			archive.close();
+			return zipFile;
+		} catch (IOException | ArchiveException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (fileOutputStream != null) {
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+					LOGGER.error("Unable to close FileOutputStream: ", e);
+				}
+			}
+		}
+	}
+
 
 	@Override
 	@SuppressWarnings("unchecked")
