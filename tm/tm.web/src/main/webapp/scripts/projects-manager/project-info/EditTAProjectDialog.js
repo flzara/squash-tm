@@ -30,7 +30,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			label : "",
 			jobName : "",
 			slaves : "",
-			canRunGherkin : false
+			canRunScript : false
 		},
 
 		validateAll : function() {
@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			// model prop which name matches the textbox name
 			"blur input:text.strprop" : "changeStrProp",
 			"change select" : "changeStrProp",
-			"change #ta-project-cangherkin" : "changeCanRunGherkin",
+			"change #ta-project-cangherkin" : "changeCanRunScript",
 			"formdialogconfirm" : "confirm",
 			"formdialogcancel" : "cancel",
 			"formdialogclose" : "close"
@@ -77,9 +77,9 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			this.model.set(textbox.name, textbox.value);
 		},
 		
-		changeCanRunGherkin : function(event){
+		changeCanRunScript : function(event){
 			var state = event.currentTarget.checked;
-			this.model.set("canRunGherkin", state);
+			this.model.set("canRunScript", state);
 		},
 
 		cancel : function(event) {
@@ -139,7 +139,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			// populate inputs
 			this.$el.find("input[name=label]").val(taProject.label);
 			this.$el.find("input[name=slaves]").val(taProject.slaves);
-			this.$el.find("input[name=canRunGherkin]").prop('checked', taProject.canRunGherkin);
+			this.$el.find("input[name=canRunScript]").prop('checked', taProject.canRunScript);
 
 			/* If the user is Admin, we don't ask for credentials */
 			if(this.isAdmin) {

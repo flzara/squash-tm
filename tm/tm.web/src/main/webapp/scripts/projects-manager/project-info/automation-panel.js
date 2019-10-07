@@ -451,15 +451,15 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 									var data = table.getDataById(jobId);
 									
 									// coerce string to boolean if needed
-									// indeed "canGherkin" can be a stringified boolean because the initial table model is read from html as string by default
-									var canGherkin = data['gherkin'];
-									canGherkin = (canGherkin === "false") ? false : (canGherkin === "true") ? true : canGherkin;
+									// indeed "canRunScript" can be a stringified boolean because the initial table model is read from html as string by default
+									var canRunScript = data['canRunScript'];
+									canRunScript = (canRunScript === "false") ? false : (canRunScript === "true") ? true : canRunScript;
 									var taProject = {
 											id : data['entity-id'],
 											jobName :data["jobName"],
 											label : data["label"],
 											slaves : data["slaves"],
-											canRunGherkin : canGherkin
+											canRunScript : canRunScript
 									};
 									self.popups.editTAProjectPopup.$el.data('projectId', jobId).data('taProject', taProject);
 									self.openAuthenticationPopup();

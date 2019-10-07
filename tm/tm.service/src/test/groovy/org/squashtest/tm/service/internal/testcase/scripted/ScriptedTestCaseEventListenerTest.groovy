@@ -54,17 +54,17 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 
 	// ************** autobind event *********************
 
-	def "should locate the first gherkin-able server (by lexicographical order) for a bunch of test cases"(){
+	def "should locate the first script-able server (by lexicographical order) for a bunch of test cases"(){
 
 		given: "the automation project"
 
-		def canGherkinZ = new TestAutomationProject(label: "can gherkin ZZZ", canRunGherkin: true)
-		def cannotGherkin = new TestAutomationProject(label: "cannot gherkin", canRunGherkin: false)
-		def canGherkinA = new TestAutomationProject(label: "can gherkin AAA", canRunGherkin: true)
+		def canScriptZ = new TestAutomationProject(label: "can script ZZZ", canRunScript: true)
+		def cannotScript = new TestAutomationProject(label: "cannot script", canRunScript: false)
+		def canScriptA = new TestAutomationProject(label: "can script AAA", canRunScript: true)
 
 		and: "the TM project"
 
-		def project = new Project(testAutomationProjects: [canGherkinZ, cannotGherkin, canGherkinA])
+		def project = new Project(testAutomationProjects: [canScriptZ, cannotScript, canScriptA])
 
 		and : "the test cases"
 
@@ -73,19 +73,19 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 
 		when:
 
-		def maybeGherkin = listener.findFirstGherkinProject testcases
+		def maybeScript = listener.findFirstScriptProject testcases
 
 		then:
-		maybeGherkin.get() == canGherkinA
+		maybeScript.get() == canScriptA
 
 	}
 
-	def "should find no Gherkin-able automation project for a bunch of test cases"(){
+	def "should find no Script-able automation project for a bunch of test cases"(){
 		given: "the automation project"
 
-		def cannot1 = new TestAutomationProject(label: "cannot gherkin", canRunGherkin: false)
-		def cannot2 = new TestAutomationProject(label: "cannot gherkin either", canRunGherkin: false)
-		def cannot3 = new TestAutomationProject(label: "ditto", canRunGherkin: false)
+		def cannot1 = new TestAutomationProject(label: "cannot script", canRunScript: false)
+		def cannot2 = new TestAutomationProject(label: "cannot script either", canRunScript: false)
+		def cannot3 = new TestAutomationProject(label: "ditto", canRunScript: false)
 
 		and: "the TM project"
 
@@ -98,20 +98,20 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 
 		when:
 
-		def maybeGherkin = listener.findFirstGherkinProject testcases
+		def maybeScript = listener.findFirstScriptProject testcases
 
 		then:
-		! maybeGherkin.isPresent()
+		! maybeScript.isPresent()
 	}
 
 
-	def "should autobind a test case because a Gherkin-able automation project is available and the script was found in the scm"(){
+	def "should autobind a test case because a Script-able automation project is available and the script was found in the scm"(){
 
 		given :
 		def auto = Mock(TestAutomationProject){
 			getId() >> 10L
-			getLabel() >> "gherkin project"
-			isCanRunGherkin() >> true
+			getLabel() >> "script project"
+			isCanRunScript() >> true
 		}
 
 		def project = new Project(label: "tm project", testAutomationProjects: [auto])

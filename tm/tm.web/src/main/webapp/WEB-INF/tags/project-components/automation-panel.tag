@@ -148,8 +148,8 @@
               <th data-def="map=url, link-new-tab={url}">
                <f:message key="label.testAutomationProject.url" />
               </th>
-              <th data-def="map=gherkin, sWidth=8em, render-yesno">
-              	<f:message key="label.canRunGherkin"/>
+              <th data-def="map=canRunScript, sWidth=8em, render-yesno">
+              	<f:message key="label.canRunScript"/>
               </th>
               <th data-def="map=empty-edit-holder, narrow, sClass=edit-job-button">&nbsp;</th>
               <th data-def="map=empty-delete-holder, unbind-button=#ta-projects-unbind-popup">&nbsp;</th>
@@ -164,7 +164,7 @@
               <td><c:out value="${taproj.label}" escapeXml="true" /></td>
               <td><c:out value="${taproj.jobName}" escapeXml="true" /></td>
               <td>${jobUrls[taproj.jobName]}</td>
-              <td>${taproj.canRunGherkin}</td>
+              <td>${taproj.canRunScript}</td>
               <td> </td>
               <td> </td>
             </tr>
@@ -329,7 +329,7 @@
 
   <div data-def="state=main">
     <div class="display-table-row">
-      <label class="display-table-cell" for="label">
+      <label class="display-table-cell" for="ta-project-label">
         <f:message key="label.Label" />
       </label>
       <div class="display-table-cell">
@@ -339,7 +339,7 @@
     </div>
 
     <div class="display-table-row">
-      <label class="display-table-cell" for="jobName">
+      <label class="display-table-cell" for="ta-project-jobName">
         <f:message key="label.job.input" />
       </label>
       <div class="display-table-cell">
@@ -348,16 +348,16 @@
     </div>
 
     <div class="display-table-row">
-      <label class="display-table-cell" for="canRunGherkin">
-        <f:message key="label.canRunGherkin" />
+      <label class="display-table-cell" for="ta-project-cangherkin">
+        <f:message key="label.canRunScript" />
       </label>
       <div class="display-table-cell">
-        <input type="checkbox" id="ta-project-cangherkin" name="canRunGherkin"/>
+        <input type="checkbox" id="ta-project-cangherkin" name="canRunScript"/>
       </div>
     </div>
 
     <div class="control-group">
-      <label for="slaves">
+      <label for="ta-project-slaves">
         <f:message key="label.slaves.input" />
       </label>
       <div>

@@ -537,7 +537,7 @@ public class GenericProjectController {
 			res.put("jobName", HtmlUtils.htmlEscape(item.getJobName()));
 			res.put("slaves", HtmlUtils.htmlEscape(item.getSlaves()));
 			res.put("url", jobUrls.get(item.getJobName()));
-			res.put("gherkin", item.isCanRunGherkin());
+			res.put("canRunScript", item.isCanRunScript());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");
 			return res;

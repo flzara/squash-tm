@@ -116,9 +116,9 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	
 
 	@Override
-	public void changeCanRunGherking(long projectId, boolean canRunGherkin) {
+	public void changeCanRunScript(long projectId, boolean canRunScript) {
 		TestAutomationProject project = projectDao.findById(projectId);
-		project.setCanRunGherkin(canRunGherkin);
+		project.setCanRunScript(canRunScript);
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		changeJobName(projectId, newValues.getJobName());
 		changeLabel(projectId, newValues.getLabel());
 		changeSlaves(projectId, newValues.getSlaves());
-		changeCanRunGherking(projectId, newValues.isCanRunGherkin());
+		changeCanRunScript(projectId, newValues.isCanRunScript());
 	}
 
 	@Override

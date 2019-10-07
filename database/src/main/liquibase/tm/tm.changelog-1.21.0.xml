@@ -144,4 +144,9 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.21.0-rename-can_run_gherkin-column" author="jlor">
+    <comment>Rename CAN_RUN_GHERKIN column to CAN_RUN_SCRIPT</comment>
+    <renameColumn tableName="TEST_AUTOMATION_PROJECT" oldColumnName="CAN_RUN_GHERKIN" newColumnName="CAN_RUN_SCRIPT" />
+  </changeSet>
+
 </databaseChangeLog>
