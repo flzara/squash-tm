@@ -27,9 +27,10 @@ define(["jquery",
 		"workspace.routing",
 		"milestones/milestone-panel",
 		"milestones/entity-milestone-count-notifier",
+		"app/util/StringUtil",
 		"jqueryui",
 		"jquery.squash.formdialog"],
-		function($, pubsub, basic, contentHandlers, Frag, eventBus, routing, milestonePanel, milestoneNotifier){
+		function($, pubsub, basic, contentHandlers, Frag, eventBus, routing, milestonePanel, milestoneNotifier, StringUtil){
 
 
 	function initRenameDialog(settings){
@@ -100,8 +101,8 @@ define(["jquery",
 					fullname+='-'+settings.milestone.label;
 				}
 
-				$("#new-version-test-case-name").val(fullname);
-				$("#new-version-test-case-reference").val(ref);
+				$("#new-version-test-case-name").val(StringUtil.unescape(fullname));
+				$("#new-version-test-case-reference").val(StringUtil.unescape(ref));
 				CKEDITOR.instances['new-version-test-case-description'].setData(json.description);
 
 				dialog.formDialog('setState','confirm');
