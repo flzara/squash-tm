@@ -90,6 +90,13 @@ define(
 				}
 			}
 
+			function configurePopup(){
+			 	var popup = $("#disabled-plugin").formDialog();
+			 	var label = popup.find($("#msgXsquash"))
+			 	label.empty();
+				label.append(translator.get('message.disabled.plugin.xsquashjira'));
+			}
+
 
 			return function(conf){
 
@@ -141,6 +148,14 @@ define(
 						var projectId = conf.projectId;
 						var pluginId = table.fnGetData($row.get(0))['id'];
 
+						if (pluginId =="squash.tm.plugin.jirasync") {
+							configurePopup()
+						}
+						else {
+							var label = disabledPluginPopup.find($("#msgXsquash"));
+							label.empty();
+						}
+
 						var data = table.fnGetData($row);
 						data['enabled'] = checked;
 
@@ -158,13 +173,13 @@ define(
 										eventBus.trigger("project.plugin.toggled", newType);
                 }
                 data['enabled'] = true;
-                configureStyle($row, data);
 
 								}).error(function(event) {
 									putBackButtonSwitch(btn,checked, data, event);
 									configureSwitch($row, data);
 								});
 						}
+					configureStyle($row, data);
 
 				});
 				/**/
@@ -186,7 +201,6 @@ define(
 											eventBus.trigger("project.plugin.toggled", newType);
 									}
 									data['enabled'] = false;
-									configureStyle($row, data);
 
 								}).error(function(event) {
 								 	putBackButtonSwitch(btn,checked, data, event);

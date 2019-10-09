@@ -74,11 +74,12 @@
     <span style="font-weight:normal" th:text="#{message.disabled.plugin}" ></span>
     <p>
       <input type="checkbox" id="saveConf" checked />
-      <span style="font-weight:normal" th:text="#{message.save.conf}" ></span>
+      <span style="font-weight:normal" th:text="#{message.save.conf}"></span>
     </p>
     <p>
       <span style="font-weight:bold" th:text="#{message.disabled.plugin.confirm}" ></span>
     </p>
+    <p id="msgXsquash" style="font-weight:normal; white-space: pre-line"></p>
   </div>
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" th:value="#{label.Confirm}" data-def="evt=confirm" />
