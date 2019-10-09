@@ -31,7 +31,7 @@ public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronis
 
 	List<RemoteSynchronisation> findByKind(String kind);
 	List<RemoteSynchronisation> findByNameAndKind(String name,String kind);
-
+	List<RemoteSynchronisation> findByProjectIdAndKind(Long projectId,String kind);
 	/**
 	 * Return the list of {@link RemoteSynchronisation} using the given {@link org.squashtest.tm.domain.servers.ThirdPartyServer}
 	 * @param serverId {@link org.squashtest.tm.domain.servers.ThirdPartyServer} id
