@@ -92,7 +92,7 @@ define(
 
 			function configurePopup(){
 			 	var popup = $("#disabled-plugin").formDialog();
-			 	var label = popup.find($("#msgXsquash"))
+			 	var label = popup.find($("#msgXsquash"));
 			 	label.empty();
 				label.append(translator.get('message.disabled.plugin.xsquashjira'));
 			}
@@ -149,7 +149,7 @@ define(
 						var pluginId = table.fnGetData($row.get(0))['id'];
 
 						if (pluginId =="squash.tm.plugin.jirasync") {
-							configurePopup()
+							configurePopup();
 						}
 						else {
 							var label = disabledPluginPopup.find($("#msgXsquash"));
