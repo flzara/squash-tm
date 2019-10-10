@@ -71,15 +71,15 @@
   <!--disabled the plugin popup.-->
   <div id="disabled-plugin"  th:title="#{label.disabled.plugin}" class="not-displayed">
   <div id="detail">
-    <span style="font-weight:normal" th:text="#{message.disabled.plugin}" ></span>
+    <span style="font-weight:normal" th:text="#{message.disabled.plugin}" ></span> <label style="font-style: normal; color: black; font-family: Verdana, Arial, sans-serif; font-size: 1em"  id="pluginName"></label>
     <p>
       <input type="checkbox" id="saveConf" checked />
       <span style="font-weight:normal" th:text="#{message.save.conf}"></span>
     </p>
+    <p id="msgDisablePlugin" style="font-weight:normal; white-space: pre-line"></p>
     <p>
       <span style="font-weight:bold" th:text="#{message.disabled.plugin.confirm}" ></span>
     </p>
-    <p id="msgXsquash" style="font-weight:normal; white-space: pre-line"></p>
   </div>
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" th:value="#{label.Confirm}" data-def="evt=confirm" />
