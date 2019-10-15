@@ -32,9 +32,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Table(name = "REMOTE_AUTOMATION_REQUEST_EXTENDER")
@@ -72,6 +75,10 @@ public class RemoteAutomationRequestExtender {
 	@org.hibernate.validator.constraints.URL
 	@Size(min = 0, max = 300)
 	private String remoteRequestUrl;
+
+	@Column(name = "LAST_SYNC_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastSyncDate;
 
 	public String getRemoteIssueKey() {
 		return remoteIssueKey;
@@ -123,5 +130,11 @@ public class RemoteAutomationRequestExtender {
 		this.remoteAssignedTo = remoteAssignedTo;
 	}
 
+	public Date getLastSyncDate() {
+		return lastSyncDate;
+	}
 
+	public void setLastSyncDate(Date lastSyncDate) {
+		this.lastSyncDate = lastSyncDate;
+	}
 }
