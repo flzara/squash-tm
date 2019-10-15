@@ -604,6 +604,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		//verifier si le pluginID n'existe pas deja pr ce projet si c'est cas active = true
 		if(binding!=null){
 			binding.setActive(true);
+
+			//if the plugin has a remote synchronization it must be activated
+			List<RemoteSynchronisation> listRemoteSync = remoteSynchronisationDao.findByProjectIdAndKind(projectId,pluginId);
+			listRemoteSync.forEach(remoteSync-> remoteSync.setSynchronisationEnable(true));
+
 			//si c'est jirasync il faut mettre à jour  la valeur de active de  la ligne pour le workspace requirement
 			if("squash.tm.plugin.jirasync".equals(pluginId)){
 				PluginReferencer<?> libraryOther = findLibrary(projectId, WorkspaceType.REQUIREMENT_WORKSPACE);
@@ -628,6 +633,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		for (WorkspaceType workspace : workspaces) {
 			PluginReferencer<?> library = findLibrary(projectId, workspace);
 			library.disablePlugin(pluginId);
+
+			//remoteSynchronisation
+			List<RemoteSynchronisation> listRemoteSync = remoteSynchronisationDao.findByProjectIdAndKind(projectId,pluginId);
+			listRemoteSync.forEach(remoteSync-> remoteSynchronisationDao.delete(remoteSync));
 		}
 	}
 
@@ -636,9 +645,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		for (WorkspaceType workspace : workspaces) {
 			PluginReferencer<?> library = findLibrary(projectId, workspace);
 			LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+
 			if (binding != null) {
 				binding.setActive(false);
 			}
+			//remoteSynchronisation
+			List<RemoteSynchronisation> listRemoteSync = remoteSynchronisationDao.findByProjectIdAndKind(projectId,pluginId);
+			listRemoteSync.forEach(remoteSync-> remoteSync.setSynchronisationEnable(false));
 		}
 
 	}
