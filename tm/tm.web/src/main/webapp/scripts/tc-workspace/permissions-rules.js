@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone-manager/milestone-activation'], function($, copier, tree, underscore, milestones){
+define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone-manager/milestone-activation'], function ($, copier, tree, underscore, milestones) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
 
-	if (squashtm.workspace.permissions_rules === undefined){
+	if (squashtm.workspace.permissions_rules === undefined) {
 		squashtm.workspace.permissions_rules = new TestCasePermissionsRules();
 	}
 
@@ -42,7 +42,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 
 	// operation : 'canCreateDelete' || 'canEdit'
 	// metaattr : 'milestone-creatable' || 'milestone-editable'
-	function milestonesAllowOperation(nodes, operation, metaattr){
+	function milestonesAllowOperation(nodes, operation, metaattr) {
 
 		var allowed = true;
 
@@ -52,11 +52,11 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 			nodesAllowed = true;
 		// no nodes -> check the active milestone
 		// no active milestone -> true
-		activeAllowed = (!! activeMilestone) ? activeMilestone[operation] : true;
+		activeAllowed = (!!activeMilestone) ? activeMilestone[operation] : true;
 
-		if (nodes !== undefined){
+		if (nodes !== undefined) {
 			// nodes : they must all allow the operation
-			nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
+			nodesAllowed = (nodes.filter(':' + metaattr).length === nodes.length);
 		}
 
 		allowed = activeAllowed && nodesAllowed;
@@ -65,11 +65,11 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 		return allowed;
 	}
 
-	function milestonesAllowCreation(nodes){
+	function milestonesAllowCreation(nodes) {
 		return milestonesAllowOperation(nodes, 'canCreateDelete', 'milestone-creatable');
 	}
 
-	function milestonesAllowEdition(nodes){
+	function milestonesAllowEdition(nodes) {
 		return milestonesAllowOperation(nodes, 'canEdit', 'milestone-editable');
 	}
 
@@ -78,48 +78,46 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 	 * Main Object
 	 *********************************************************/
 
-	function TestCasePermissionsRules(){
+	function TestCasePermissionsRules() {
 
 		this.milestonesAllowCreation = milestonesAllowCreation;
 
 		this.milestonesAllowEdition = milestonesAllowEdition;
 
 
-		this.canCreateButton = function(nodes){
+		this.canCreateButton = function (nodes) {
 			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
 		};
 
-		this.canCreateFolder = function(nodes){
+		this.canCreateFolder = function (nodes) {
 			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 
-		this.canCreateTestCase = function(nodes){
+		this.canCreateTestCase = function (nodes) {
 			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
 		};
 
-		this.whyCantCreate = function(nodes){
-			if (! milestonesAllowCreation()){
+		this.whyCantCreate = function (nodes) {
+			if (!milestonesAllowCreation()) {
 				return "milestone-denied";
-			}
-			else if (! this.canCreateButton(nodes)){
+			} else if (!this.canCreateButton(nodes)) {
 				return "permission-denied";
-			}
-			else {
+			} else {
 				return "yes-you-can";
 			}
 		};
 
 		// must be not empty, and not contain libraries.
-		this.canCopy = function(nodes){
-			return (nodes.length > 0) && (! nodes.is(':library'));
+		this.canCopy = function (nodes) {
+			return (nodes.length > 0) && (!nodes.is(':library'));
 		};
 
-		this.whyCantCopy = function(nodes){
-			if (nodes.length===0){
+		this.whyCantCopy = function (nodes) {
+			if (nodes.length === 0) {
 				return "empty-selection";
 			}
 
-			if (nodes.is(':library')){
+			if (nodes.is(':library')) {
 				return "no-libraries-allowed";
 			}
 
@@ -132,134 +130,132 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 		 *
 		 * Rest of the rules is standard stuff.
 		 */
-		this.whyCantPaste = function(){
+		this.whyCantPaste = function () {
 
 			var nodes = copier.bufferedNodes();
 
-			if (nodes.length===0){
+			if (nodes.length === 0) {
 				return "empty-selection";
 			}
 
 			var target = nodes.tree.get_selected();
 
-			if (target.length !== 1){
+			if (target.length !== 1) {
 				return "not-unique";
 			}
 
-			if (! target.isCreatable()){
+			if (!target.isCreatable()) {
 				return "not-creatable";
 			}
 
-			if (! target.acceptsAsContent(nodes)){
+			if (!target.acceptsAsContent(nodes)) {
 				return 'invalid-content';
 			}
 
-			if (! milestonesAllowCreation(target)){
+			if (!milestonesAllowCreation(target)) {
 				return "milestone-denied";
 			}
 
 			return "yes-you-can";
 		};
 
-		this.canPaste = $.proxy(function(nodes){
+		this.canPaste = $.proxy(function (nodes) {
 			return (this.whyCantPaste(nodes) === "yes-you-can");
 		}, this);
 
-		this.whyCantRename = function(nodes){
+		this.whyCantRename = function (nodes) {
 
-			if (! milestonesAllowEdition(nodes)){
+			if (!milestonesAllowEdition(nodes)) {
 				return "milestone-denied";
-			}
-			else if (nodes.length !== 1){
+			} else if (nodes.length !== 1) {
 				return "not-unique";
-			}
-			else if (nodes.filter(':editable').not(':library').length !== 1){
+			} else if (nodes.filter(':editable').not(':library').length !== 1) {
 				return "permission-denied";
-			}
-			else {
+			} else {
 				return "yes-you-can";
 			}
 		};
 
-		this.canRename = $.proxy(function(nodes){
+		this.canRename = $.proxy(function (nodes) {
 			return (this.whyCantRename(nodes) === "yes-you-can");
 		}, this);
 
-		this.canImport = function(nodes){
+		this.canImport = function (nodes) {
 			return tree.get().data('importable');	//tree.data would lead to a different object.
 		};
 
-		this.canExport = function(nodes){
-			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length>0);
+		this.canExport = function (nodes) {
+			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length > 0);
 		};
 
-		this.whyCantTransmit = function(nodes) {
+		this.whyCantTransmit = function (nodes) {
 
-			if (! milestonesAllowEdition(nodes)) {
+			if (!milestonesAllowEdition(nodes)) {
 				return "milestone-denied";
-			}
-			else if (nodes.length === 0) {
+			} else if (nodes.length === 0) {
 				return "empty-selection";
-			}
-			else if (nodes.filter(':editable').length !== nodes.length) {
+			} else if (nodes.filter(':editable').length !== nodes.length) {
 				return "permission-denied";
-			}
-			else if (! this.isAllowAutomWorkflow(nodes)) {
+			} else if (!this.isAllowAutomWorkflow(nodes)) {
 				return "autom-workflow-disabled";
-			}
-			else {
+			} else {
 				return "yes-you-can";
 			}
 		};
 
-		this.isAllowAutomWorkflow = function(nodes) {
+		this.isAllowAutomWorkflow = function (nodes) {
 			var libraries = nodes.filter(':library');
 			var tcsAndFoldersLibraries = nodes.not(':library').parents(':library');
 
 			return libraries.filter('[allowautomworkflow="true"]').length
-						+ tcsAndFoldersLibraries.filter('[allowautomworkflow="true"]').length === libraries.length + tcsAndFoldersLibraries.length;
+				+ tcsAndFoldersLibraries.filter('[allowautomworkflow="true"]').length === libraries.length + tcsAndFoldersLibraries.length;
 		};
 
-		this.canTransmit = $.proxy(function(nodes) {
+		this.canTransmit = $.proxy(function (nodes) {
 			return (this.whyCantTransmit(nodes) === "yes-you-can");
 		}, this);
 
-		this.whyCantCreateTcFromReq = function(){
-			var nodes = copier.bufferedNodesForTc();
+		this.whyCantCreateTcFromReq = function (nodes) {
+			console.log(nodes);
+			var nodesReq = copier.bufferedNodesForTc();
 
-			if (nodes.length===0){
+			if (nodesReq.length === 0) {
 				return "empty-selection";
+			}
+
+			if (!this.canCreateTestCase(nodes)) {
+				return "permission-denied";
 			}
 
 			return "yes-you-can";
 		};
 
-		this.CantCreateTcFromReq = $.proxy(function(nodes){
+		this.CantCreateTcFromReq = $.proxy(function (nodes) {
 			return (this.whyCantCreateTcFromReq(nodes) === "yes-you-can");
 		}, this);
 
-		this.canSearch = function(nodes){
+		this.canSearch = function (nodes) {
 			return true;
 		};
 
-		this.canDelete = function(nodes){
-			return milestonesAllowCreation(nodes) && (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
+		this.canDelete = function (nodes) {
+			return milestonesAllowCreation(nodes) && (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length > 0);
 		};
 
-		this.whyCantDelete = function(nodes){
-			if (nodes.length===0){
+		this.whyCantDelete = function (nodes) {
+			if (nodes.length === 0) {
 				return "empty-selection";
 			}
 
-			if (nodes.not(':deletable').length>0){
+			if (nodes.not(':deletable').length > 0) {
 				return "not-deletable";
 			}
 
-			if (nodes.is(':library')){
+			if (nodes.is(':library')) {
 				return "no-libraries-allowed";
 			}
 
-			if (! milestonesAllowCreation(nodes)){
+			if (!milestonesAllowCreation(nodes)) {
 				return "milestone-denied";
 			}
 
@@ -267,27 +263,27 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 		};
 
 
-		this.canDnD = function(movednodes, newparent){
+		this.canDnD = function (movednodes, newparent) {
 
 			var oldparent = movednodes.getParent();
 
 			// check if the node is draggable first
-			if (movednodes.is(':library')){
+			if (movednodes.is(':library')) {
 				return false;
 			}
 
 			//check that moving the node will not remove it from its original container
-			if (! squashtm.keyEventListener.ctrl && ! movednodes.isDeletable()){
+			if (!squashtm.keyEventListener.ctrl && !movednodes.isDeletable()) {
 				return false;
 			}
 
 			// check that the destination type is legal
-			if (! newparent.isCreatable() || ! newparent.acceptsAsContent(movednodes)) {
+			if (!newparent.isCreatable() || !newparent.acceptsAsContent(movednodes)) {
 				return false;
 			}
 
 			// check that destination isn't locked by milestones
-			if (! milestonesAllowCreation(newparent)){
+			if (!milestonesAllowCreation(newparent)) {
 				return false;
 			}
 
@@ -296,21 +292,21 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 		};
 
 		this.buttonrules = {
-			'tree-create-button' : this.canCreateButton,
-			'new-folder-tree-button' : this.canCreateFolder,
-			'new-test-case-tree-button' : this.canCreateTestCase,
+			'tree-create-button': this.canCreateButton,
+			'new-folder-tree-button': this.canCreateFolder,
+			'new-test-case-tree-button': this.canCreateTestCase,
 			'new-test-case-gherkin-tree-button' : this.canCreateTestCase,
-			'copy-node-tree-button' : this.canCopy,
-			'paste-node-tree-button' : this.canPaste,
-			'rename-node-tree-button' : this.canRename,
-			'import-excel-tree-button' : this.canImport,
-			'import-links-excel-tree-button' : this.canImport,
-			'export-tree-button' : this.canExport,
-			'create-tc-from-req-tree-button' : this.CantCreateTcFromReq,
-			'export-gherkin-tree-button' : this.canExport,
-			'transmit-for-automation-tree-button' : this.canTransmit,
-			'delete-node-tree-button' : this.canDelete,
-			'search-tree-button' : this.canSearch
+			'copy-node-tree-button': this.canCopy,
+			'paste-node-tree-button': this.canPaste,
+			'rename-node-tree-button': this.canRename,
+			'import-excel-tree-button': this.canImport,
+			'import-links-excel-tree-button': this.canImport,
+			'export-tree-button': this.canExport,
+			'create-tc-from-req-tree-button': this.CantCreateTcFromReq,
+			'export-gherkin-tree-button': this.canExport,
+			'transmit-for-automation-tree-button': this.canTransmit,
+			'delete-node-tree-button': this.canDelete,
+			'search-tree-button': this.canSearch
 		};
 
 	}

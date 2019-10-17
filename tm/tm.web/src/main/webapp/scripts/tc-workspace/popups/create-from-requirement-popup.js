@@ -43,10 +43,12 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', "worksp
 			var configuration = {
 				tcKind: tcKind
 			};
-			if (rules.CantCreateTcFromReq()) {
+
+			var nodes = tree.jstree('get_selected');
+			if (rules.CantCreateTcFromReq(nodes)) {
 				copier.pasteNodesForTcFromCookie(configuration);
 			} else {
-				var why = rules.whyCantCreateTcFromReq();
+				var why = rules.whyCantCreateTcFromReq(nodes);
 				showError(why);
 			}
 		}
