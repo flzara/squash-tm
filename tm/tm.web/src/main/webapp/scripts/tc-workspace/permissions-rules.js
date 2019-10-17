@@ -216,7 +216,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'underscore', 'milestone
 		}, this);
 
 		this.whyCantCreateTcFromReq = function (nodes) {
-			console.log(nodes);
 			var nodesReq = copier.bufferedNodesForTc();
 
 			if (nodesReq.length === 0) {
