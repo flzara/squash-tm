@@ -165,7 +165,7 @@
                   <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Import}+'...'">Import ...</a>
                   </li>
-                  <li id="create-tc-from-req-tree-button" class="cursor-pointer">
+                  <li id="create-tc-from-req-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export.FromTestcaseToRequirement}+'...'">full ...</a>
                   </li>
 
@@ -694,7 +694,7 @@
     <!--  ================ /IMPORT EXCEL POPUP ======================  -->
 
     <!--  ================ /CREATE FROM REQUIREMENT POPUP ======================  -->
-    <div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
+    <!--<div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
          title="create from requirement">
 
       <div>
@@ -719,12 +719,37 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
       </div>
 
-    </div>
+    </div>-->
 
     <!--  ================ /IMPORT LINK POPUP ======================  -->
   </div>
 
+  <div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
+       title="create from requirement">
 
+    <div>
+
+      <tr>
+        <td>
+          <label for="create-from-requirement-format" th:text="#{test-case.format.label}">Format</label>
+        </td>
+
+        <td>
+          <select id="create-from-requirement-format">
+            <option value="STANDARD"><span th:text="#{test-case.format.standard}">Classique</span></option>
+            <option value="GHERKIN"><span th:text="#{test-case.format.gherkin}">Classique</span></option>
+          </select>
+        </td>
+      </tr>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" value="confirm"
+             data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+      <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+    </div>
+
+  </div>
     <div id="export-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}"
       th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
       data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
