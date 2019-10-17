@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +39,17 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "SERVER_ID")
 public class ScmServer extends ThirdPartyServer {
 
-
 	@Column(name = "KIND")
 	@Size(max = 30)
 	private String kind;
 
+	@Column(name="COMMITTER_MAIL")
+	@Size(max = 255)
+	@Email
+	private String committerMail = "";
+
 	@OneToMany(mappedBy = "scmServer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ScmRepository> repositories = new ArrayList<>();
-
 
 
 	public String getKind() {
@@ -53,6 +57,13 @@ public class ScmServer extends ThirdPartyServer {
 	}
 	public void setKind(String kind) {
 		this.kind = kind;
+	}
+
+	public String getCommitterMail() {
+		return committerMail;
+	}
+	public void setCommitterMail(String committerMail) {
+		this.committerMail = committerMail;
 	}
 
 	public List<ScmRepository> getRepositories() {

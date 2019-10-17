@@ -160,5 +160,15 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.21.0-TM-725-add-committer-mail-in-scm-server" author="jlor">
+    <comment>Add column COMMITTER_MAIL in SCM_SERVER</comment>
+
+    <addColumn tableName="SCM_SERVER">
+      <column name="COMMITTER_MAIL" type="VARCHAR(255)" defaultValue="">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+
+  </changeSet>
 
 </databaseChangeLog>
