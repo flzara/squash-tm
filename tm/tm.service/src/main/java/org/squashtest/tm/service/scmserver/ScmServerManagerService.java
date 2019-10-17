@@ -67,6 +67,13 @@ public interface ScmServerManagerService {
 	 */
 	String updateUrl(long scmServerId, String url);
 	/**
+	 * Update the committer mail of the ScmServer with the given Id with the given committerMail.
+	 * @param scmServerId The Id of the ScmServer which committer mail is to update.
+	 * @param committerMail The new committer mail to give to the ScmServer
+	 * @return The new committer mail of the ScmServer.
+	 */
+	String updateCommitterMail(long scmServerId, String committerMail);
+	/**
 	 * Delete the ScmServers with the given Ids. Also deletes the ScmRepositories contained in these ScmServers.
 	 * @param scmServerIds The Ids of the ScmServers to delete.
 	 */

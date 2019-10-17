@@ -72,6 +72,7 @@ public class ScmServerModificationController {
 
 	private static final String NAME = "name";
 	private static final String URL = "url";
+	private static final String COMMITTER_MAIL = "committerMail";
 	private static final String PATH = "path";
 	private static final String REPOSITORY_PATH = "repositoryPath";
 	private static final String FOLDER = "folder";
@@ -126,6 +127,12 @@ public class ScmServerModificationController {
 	@ResponseBody
 	public String updateUrl(@PathVariable long scmServerId, @RequestParam String url) {
 		return scmServerManager.updateUrl(scmServerId, url);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = COMMITTER_MAIL)
+	@ResponseBody
+	public String updateCommitterMail(@PathVariable long scmServerId, @RequestParam String committerMail) {
+		return scmServerManager.updateCommitterMail(scmServerId, committerMail);
 	}
 
 	@RequestMapping(value = "/repositories", method = RequestMethod.GET, params = S_ECHO_PARAM)

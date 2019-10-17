@@ -283,6 +283,43 @@ class ScmServerManagerServiceTest extends Specification {
 			thrown Exception
 	}
 
+	def "#updateCommiterMail(long, String) - [Nominal] Should update the committer mail of a ScmServer"() {
+		given: "Mock data"
+			long serverId = 2
+			ScmServer server = new ScmServer()
+			setServerId(server, serverId)
+			server.committerMail = "committer@mail.com"
+		and:
+			String newCommitterMail = "new.committer@mail.com"
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultCommitterMail = scmServerManagerService.updateCommitterMail(serverId, newCommitterMail)
+		then:
+			server.id == serverId
+			server.committerMail == newCommitterMail
+			1 * scmServerDao.save(server)
+			resultCommitterMail == newCommitterMail
+	}
+
+	def "#updateCommitterMail(long, String) - [Nothing] Should try to update the committer mail of a ScmServer with the same mail and do nothing"() {
+		given: "Mock data"
+			long serverId = 3
+			String serverCommitterMail = "committer@mail.com"
+			ScmServer server = new ScmServer()
+			setServerId(server, serverId)
+			server.committerMail = serverCommitterMail
+		and: "Mock Dao method"
+			scmServerDao.getOne(serverId) >> server
+		when:
+			String resultCommitterMail = scmServerManagerService.updateCommitterMail(serverId, serverCommitterMail)
+		then:
+			server.id == serverId
+			server.committerMail == serverCommitterMail
+			0 * scmServerDao.save(server)
+			resultCommitterMail == serverCommitterMail
+	}
+
 	def "isOneServerBoundToProject(Collection<Long>) - [True] Should verify that the ScmServers contain a ScmRepository bound to a Project and return true"() {
 		given:
 			Collection<Long> serverIds = [5, 27]

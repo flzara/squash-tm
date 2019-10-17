@@ -150,6 +150,25 @@
             /Credentials management
           ------------------------------------------------------------------------------------- -->
 
+          <!--------------------------------- Commit management ---------------------------------->
+          <div class="sq-tg expand">
+            <div class="tg-head">
+              <h3 th:text="#{'label.ScmCommitPolicy'}" />
+            </div>
+            <div class="tg-body">
+              <div class="display-table">
+                <div class="display-table-row">
+                  <label for="scm-server-committer-mail" th:text="#{label.Email}">Email</label>
+                  <div class="display-table-cell">
+                    <span id="scm-server-committer-mail" type="text" th:text="${scmServer.committerMail}">committer@mail.com</span>
+                    <span class="error-message committerMail-error"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--------------------------------- /Commit management ---------------------------------->
+
           <div class="sq-tg expand">
 
             <div class="tg-head">

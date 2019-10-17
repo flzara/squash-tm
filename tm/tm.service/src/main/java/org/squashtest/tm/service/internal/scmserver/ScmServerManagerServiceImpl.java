@@ -113,6 +113,19 @@ public class ScmServerManagerServiceImpl implements ScmServerManagerService {
 	}
 
 	@Override
+	public String updateCommitterMail(long scmServerId, String newCommitterMail) {
+		ScmServer scmServer = scmServerDao.getOne(scmServerId);
+		String formerCommitterMail = scmServer.getCommitterMail();
+		if(formerCommitterMail.equals(newCommitterMail)) {
+			LOGGER.debug("Did not update the ScmServer committer mail because the submitted mail is identical to the former one.");
+			return formerCommitterMail;
+		}
+		scmServer.setCommitterMail(newCommitterMail);
+		scmServerDao.save(scmServer);
+		return newCommitterMail;
+	}
+
+	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteScmServers(Collection<Long> scmServerIds) {
 		scmServerDao.releaseContainedScmRepositoriesFromProjects(scmServerIds);

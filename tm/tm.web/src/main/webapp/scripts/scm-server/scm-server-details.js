@@ -49,6 +49,18 @@ require([ "common" ], function() {
 			$(this).siblings('.error-message').text('');
 		});
 
+		/* JEditable for Committer email modification. */
+		new SimpleJEditable({
+			// targetUrl: The target Url is the current Url.
+			componentId: "scm-server-committer-mail",
+			jeditableSettings: {
+				name: 'committerMail'
+			}
+		});
+
+		$('#scm-server-committer-mail').click(function() {
+			$(this).siblings('.error-message').text('');
+		});
 
 		// ******* authentication ***********
 		 var authConf = $.extend({}, squashtm.pageConfiguration.authConf);
