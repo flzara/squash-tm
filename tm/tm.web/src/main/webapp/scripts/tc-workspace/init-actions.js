@@ -137,15 +137,7 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 			});
 
 			$("#new-scripted-test-case-tree-button").on("click", function () {
-				var libraryNode;
-				var selectedNode = tree.jstree('get_selected')[0];
-				if(selectedNode.attributes.getNamedItem('restype').value === 'test-case-libraries'){
-					libraryNode = selectedNode;
-				} else {
-					libraryNode = selectedNode.closest('[tcscripttype]');
-				}
-				var scriptLanguage = libraryNode.attributes.getNamedItem('tcscripttype').value;
-				$("#add-test-case-dialog").data("test-case-script-language", scriptLanguage).formDialog("open");
+				$("#add-test-case-dialog").data("test-case-script-language", getSelectedNodeScriptLanguage()).formDialog("open");
 			});
 
 
@@ -190,8 +182,19 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 
 			// ****************** Create testcases from requirements ******************
 			$("#create-tc-from-req-tree-button").on("click", function () {
-				$("#create-from-requirement-dialog").formDialog("open");
+				$("#create-from-requirement-dialog").data("test-case-script-language", getSelectedNodeScriptLanguage()).formDialog("open");
 			});
+
+			function getSelectedNodeScriptLanguage() {
+				var libraryNode;
+				var selectedNode = tree.jstree('get_selected')[0];
+				if(selectedNode.attributes.getNamedItem('restype').value === 'test-case-libraries'){
+					libraryNode = selectedNode;
+				} else {
+					libraryNode = selectedNode.closest('[tcscripttype]');
+				}
+				return libraryNode.attributes.getNamedItem('tcscripttype').value;
+			}
 
 
 			// ****************** import tc ******************
