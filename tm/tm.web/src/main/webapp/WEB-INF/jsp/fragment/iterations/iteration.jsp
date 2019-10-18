@@ -280,6 +280,12 @@
               </div>
             </div>
 
+          <div class="display-table-row">
+            <label for="iteration-progress-status" class="display-table-cell"><f:message
+              key="iteration.progress_status.label"/></label>
+            <span id="iteration-progress-status"><f:message key="${ statistics.status.i18nKey }"/></span>
+          </div>
+
 		</jsp:attribute>
       </comp:toggle-panel>
 
