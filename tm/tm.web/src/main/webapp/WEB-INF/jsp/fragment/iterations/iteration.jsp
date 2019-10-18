@@ -65,6 +65,8 @@
   <s:param name="boundEntityType" value="${iteration.boundEntityType}"/>
 </s:url>
 
+<s:url var="iteInfoStatisticsUrl" value="/iterations/${iteration.id}/statistics"/>
+
 <f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 <f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label"/>
 <f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
@@ -318,6 +320,9 @@
 			</jsp:attribute>
       </comp:toggle-panel>
 
+        <%-- ------------------ statistiques --------------------------- --%>
+      <comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ iteInfoStatisticsUrl }"/>
+        <%-- ------------------ /statistiques --------------------------- --%>
     </div>
 
       <%-- ------------------ test plan ------------------------------ --%>
