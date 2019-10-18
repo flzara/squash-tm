@@ -334,6 +334,12 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	),
 
 	// --- EXECUTION ---
+	EXECUTION_ID(
+		I18nKeys.I18N_KEY_ID,
+		EXECUTION.EXECUTION_ID,
+		EXECUTION.EXECUTION_ID,
+		EntityType.EXECUTION),
+
 	EXECUTION_EXECUTION_MODE(
 		"label.ExecutionMode",
 		EXECUTION.EXECUTION_MODE,

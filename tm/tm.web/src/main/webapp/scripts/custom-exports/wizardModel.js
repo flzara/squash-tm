@@ -84,6 +84,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 		EXECUTION: {
 			iconClass: "icon-chart-execution",
 			attributes: {
+				EXECUTION_ID: 'label.id',
 				EXECUTION_EXECUTION_MODE: 'label.ExecutionMode',
 				EXECUTION_STATUS: 'label.Status',
 				EXECUTION_SUCCESS_RATE: 'iteration.executions.table.column-header.succesPercent.label',
