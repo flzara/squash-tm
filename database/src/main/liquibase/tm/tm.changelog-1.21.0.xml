@@ -113,7 +113,7 @@
     </addColumn>
 
   </changeSet>
-  
+
     <changeSet id="tm-1.21.0-TM-211-active" author="amk">
 
     <comment>add new column ACTIVE into LIBRARY_PLUGIN_BINDING</comment>
@@ -168,6 +168,15 @@
         <constraints nullable="false" />
       </column>
     </addColumn>
+
+  </changeSet>
+  
+  <changeSet id="tm-1.21.0-TM-713-add-axis_and_measure-to-execution_is_auto" author="abo">
+
+    <sql>
+      INSERT INTO CHART_COLUMN_ROLE (CHART_COLUMN_ID, ROLE) values ((SELECT QUERY_COLUMN_ID FROM QUERY_COLUMN_PROTOTYPE WHERE QUERY_COLUMN_PROTOTYPE.LABEL = 'EXECUTION_ISAUTO'), 'MEASURE'),
+      ((SELECT QUERY_COLUMN_ID FROM QUERY_COLUMN_PROTOTYPE WHERE QUERY_COLUMN_PROTOTYPE.LABEL = 'EXECUTION_ISAUTO'), 'AXIS');
+    </sql>
 
   </changeSet>
 
