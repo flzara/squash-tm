@@ -84,7 +84,7 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		confirm : function() {
 			var self = this;
 			// find checked
-			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
+			var checked = this.$el.find(".ta-project-bind-listdiv input[name='select']:checkbox:checked");
 			// check there are checked values
 			if (checked.length === 0) {
 				var message = squashtm.app.messages["message.project.bindJob.noneChecked"];
@@ -98,12 +98,14 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 			var datas = _.map(checked, function(item) {
 				var $item = $(item);
 				var row = $item.parents("tr")[0];
-				var input = $(row).find("td.ta-project-tm-label input")[0];
-				var tmLabel = $(input).val();
+				var labelInput = $(row).find("td.ta-project-tm-label input")[0];
+				var tmLabel = $(labelInput).val();
+				var canRunScript = $(row).find("input[type=checkbox][name=canExecuteScripts]").prop('checked');
 				tmLabels.push(tmLabel);
 				return {
 					jobName : $item.val(),
-					label : tmLabel
+					label : tmLabel,
+					canRunScript: canRunScript
 				};
 			});
 			// check for empty values
@@ -155,33 +157,31 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 			var tablePanel = this.$el.find(".ta-project-bind-listdiv");
 			tablePanel.empty();
 
-			var i = 0;
-			var rows = $();
+			var builtTable = this.buildProjectTable(projectList);
+			tablePanel.append(builtTable);
 
-			for (i = 0; i < projectList.length; i++) {
-				var row = this.newRow(projectList[i]);
-				rows = rows.add(row);
-			}
-
-			rows.filter("tr:odd").addClass("odd");
-			rows.filter("tr:even").addClass("even");
-
-			tablePanel.append(rows);
+			// add colors on rows
+			var tableRows = tablePanel.children(":not(.listdiv-item-head)");
+			var oddRows = tableRows.filter("tr:odd").addClass("odd");
+			var evenRows = tableRows.filter("tr:even").addClass("even");
 		},
+
+		buildProjectTable : function(jsonItem) {
+			var source = $("#default-item-tpl").html();
+			var template = Handlebars.compile(source);
+			var table = template(jsonItem);
+			return table;
+		},
+
 		bindProjectListEvents : function() {
 			var self = this;
-			this.$el.find(".ta-project-bind-listdiv input:checkbox").change(function(event) {
+			var projectTable = self.$el.find(".ta-project-bind-listdiv");
+			projectTable.find("input[type=checkbox][name=select]").change(function(event) {
 				var $checkbox = $(event.target);
 				var row = $checkbox.parents("tr")[0];
 				var tmLabelCell = $(row).find("td.ta-project-tm-label")[0];
 				self.tmLabelEditable($(tmLabelCell), $checkbox.is(":checked"));
 			});
-		},
-		newRow : function(jsonItem) {
-			var source = $("#default-item-tpl").html();
-			var template = Handlebars.compile(source);
-			var row = template(jsonItem);
-			return row;
 		},
 
 		tmLabelEditable : function($tmLabelCell, editable) {
@@ -259,9 +259,7 @@ define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "un
 		},
 		_showErrorMessage : function(message) {
 			this.error.find('span').html(message);
-			/* Second error message ? */
-			//this.error.popupError('show');
-			this.$el.formDialog('close');
+			this.error.popupError('show');
 		},
 		_buildAndDisplayProjectList : function(json) {
 			if (json.length > 0) {
