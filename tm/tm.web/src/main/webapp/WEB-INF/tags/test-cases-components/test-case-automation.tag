@@ -130,6 +130,7 @@
        </div>
        <%--== invisible field==--%>
         <input type="hidden" id="finalStatusConfiged" name="finalStatusConfiged" value=${ finalStatusConfiged }>
+        <input type="hidden" id="remoteStatus" name="remoteStatus" value=${ remoteReqStatusLabel }>
 
        <div class="display-table-row test-case-remote-automation-request-block">
         <label class="display-table-cell" for="test-case-automatisable">

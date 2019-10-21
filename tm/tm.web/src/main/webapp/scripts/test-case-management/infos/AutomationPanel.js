@@ -34,6 +34,8 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					self.initAutomationRequestBlock(isRemoteAutomationWorkflowUsed);
 					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
+					self.updateAutomatedStatus();
+
 					eventBus.onContextual("test-case.transmitted", function(evt, data) {
           	// query the newly created AutomationRequest and its potential RemoteAutomationRequestExtender
 						if(isRemoteAutomationWorkflowUsed){
@@ -149,11 +151,21 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						method: 'POST'
 					});
 			  },
+			  updateAutomatedStatus: function(){
+			  	var finalStatusConfiged = $("#finalStatusConfiged").val();
+			  	var remoteStatus =   $("#remoteStatus").val();
+
+			  		if(remoteStatus.toLowerCase() == finalStatusConfiged.toLowerCase()){
+							$("#test-case-automatisable").text("Oui");
+						}else{
+							$("#test-case-automatisable").text("Non");
+						}
+			  },
 
 				updateAutomationRequestBlockInfos: function(automationRequest) {
 					// status
 					var automReqStatusInput = $("#automation-request-status");
-					var finalStatusConfiged = $("#finalStatusConfiged");
+					var finalStatusConfiged = $("#finalStatusConfiged").val();
 					var automatedTestCase = $("#test-case-automatisable");
 					var remoteRequestStatus = automationRequest.remoteAutomationRequestExtender.remoteRequestStatus;
 					var remoteReqUrl = automationRequest.remoteAutomationRequestExtender.remoteRequestUrl;
@@ -164,7 +176,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					// remoteStatus
 					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
 
-					if(remoteRequestStatus == finalStatusConfiged){
+					if(remoteRequestStatus.toLowerCase() == finalStatusConfiged.toLowerCase()){
 							$("#test-case-automatisable").text("Oui");
 						}else{
 							$("#test-case-automatisable").text("Non");
