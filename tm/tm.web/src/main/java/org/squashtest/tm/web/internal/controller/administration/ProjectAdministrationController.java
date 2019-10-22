@@ -241,7 +241,9 @@ public class ProjectAdministrationController {
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
 		Map<Long, String> comboDataMap = new HashMap<>();
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
-			comboDataMap.put(b.getId(), HtmlUtils.htmlEscape(b.getName()));
+			if(!b.getKind().equals("jira.xsquash")) {
+				comboDataMap.put(b.getId(), HtmlUtils.htmlEscape(b.getName()));
+			}
 		}
 		comboDataMap.put(-1L, internationalizationHelper.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale));
 		return comboDataMap;
