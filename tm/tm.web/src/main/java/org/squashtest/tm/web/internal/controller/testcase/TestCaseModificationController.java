@@ -138,6 +138,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
@@ -340,7 +341,7 @@ public class TestCaseModificationController {
 					RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
 					mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
 					mav.addObject("remoteIssueKey", remoteAutomReq.getRemoteIssueKey());
-					mav.addObject("remoteReqAssignedTo",(!remoteAutomReq.getRemoteAssignedTo().equals(null)? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("remoteReqAssignedTo",(!isBlank(remoteAutomReq.getRemoteAssignedTo())? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
 					mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
 					mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
 					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "Oui":
