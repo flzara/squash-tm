@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.translator", "squash.configmanager",
-		"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/ws/squashtm.notification", "app/util/StringUtil", "jquery.squash.jeditable"],
-		function($, Backbone, _, eventBus, translator, confman, SimpleJEditable, SelectJEditable, notification, StringUtils) {
+define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.translator", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable", "app/ws/squashtm.notification", "app/util/StringUtil", "jquery.squash.jeditable"],
+		function($, Backbone, _, eventBus, translator, confman, SimpleJEditable, SelectJEditable, notification, StringUtils ) {
 
 			var AutomationPanel = Backbone.View.extend({
 
@@ -35,7 +34,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					self.initAutomationRequestBlock(isRemoteAutomationWorkflowUsed);
 					var automatableRadio = $("input[type=radio][name=test-case-automatable]");
 
-					if (isRemoteAutomationWorkflowUsed) {
+					if(isRemoteAutomationWorkflowUsed){
 						self.updateAutomatedStatus();
 					}
 
@@ -154,17 +153,16 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						method: 'POST'
 					});
 			  },
-
 			  updateAutomatedStatus: function(){
 			  	var finalStatusConfiged = $("#finalStatusConfiged").val();
 			  	var remoteStatus =   $("#remoteStatus").val();
 
-			  	if(StringUtils.isBlank(finalStatusConfiged) && StringUtils.isBlank(remoteStatus)) {
-			  		$("#test-case-automatisable").text("-");
-					} else {
-						if (remoteStatus.toLowerCase() == finalStatusConfiged.toLowerCase()) {
+					if (StringUtils.isBlank(finalStatusConfiged) && StringUtils.isBlank(remoteStatus) ){
+							$("#test-case-automatisable").text("-");
+					}else{
+			  		if(remoteStatus.toLowerCase() == finalStatusConfiged.toLowerCase()){
 							$("#test-case-automatisable").text("Oui");
-						} else {
+						}else{
 							$("#test-case-automatisable").text("Non");
 						}
 					}
