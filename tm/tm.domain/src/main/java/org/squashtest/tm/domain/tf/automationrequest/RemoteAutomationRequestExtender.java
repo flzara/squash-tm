@@ -80,6 +80,10 @@ public class RemoteAutomationRequestExtender {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastSyncDate;
 
+	@Column(name = "SENT_VALUE_FOR_SYNC")
+	private String sentValueForSync;
+
+
 	public String getRemoteIssueKey() {
 		return remoteIssueKey;
 	}
@@ -136,5 +140,13 @@ public class RemoteAutomationRequestExtender {
 
 	public void setLastSyncDate(Date lastSyncDate) {
 		this.lastSyncDate = lastSyncDate;
+	}
+
+	public String getSentValueForSync() {
+		return sentValueForSync;
+	}
+
+	public void setSentValueForSync(String sentValueForSync) {
+		this.sentValueForSync = sentValueForSync;
 	}
 }

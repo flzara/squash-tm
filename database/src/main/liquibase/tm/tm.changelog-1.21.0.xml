@@ -180,4 +180,16 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.21.0-TM-211-sent-value-for-sync" author="amk">
+
+    <comment>add new column SENT_VALUE_FOR_SYNC into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
+
+    <addColumn tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER">
+      <column name="SENT_VALUE_FOR_SYNC" type="VARCHAR(255)" defaultValue=""  remarks="The values ​​of the test case fields sent during synchronization." >
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+
 </databaseChangeLog>
