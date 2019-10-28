@@ -185,7 +185,7 @@
     <comment>add new column SENT_VALUE_FOR_SYNC into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
 
     <addColumn tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER">
-      <column name="SENT_VALUE_FOR_SYNC" type="CLOB" defaultValue=""  remarks="The values ​​of the test case fields sent during synchronization." >
+      <column name="SENT_VALUE_FOR_SYNC" type="CLOB" defaultValue="NULL"  remarks="The values ​​of the test case fields sent during synchronization." >
       </column>
     </addColumn>
 
