@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "jeditable.simpleJEditable", "app/lnf/Forms", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton"],
+	require(["jquery", "squash.translator", "jeditable.simpleJEditable", "app/lnf/Forms", "app/ws/squashtm.workspace", "jquery.switchButton"],
 			function($, msg, SimpleJEditable, Forms) {
 		"use strict";
 				$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
