@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.customexport;
 
+import jdk.nashorn.internal.runtime.options.LoggingOption;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.squashtest.tm.domain.EntityReference;
@@ -27,12 +28,16 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateExecutionStepDao;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.inject.Inject;
+import javax.swing.text.html.parser.Entity;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +63,8 @@ public class CustomExportCSVHelper {
 	private InternationalizationHelper translator;
 	private Locale locale;
 
+	@Inject
+	private HibernateExecutionStepDao executionStepDao;
 
 	public CustomExportCSVHelper(CustomReportCustomExportCSVService csvService, CustomFieldFinderService cufService, CustomFieldValueFinderService cufValueService, InternationalizationHelper translator, Locale locale) {
 		this.csvService = csvService;
@@ -221,6 +228,25 @@ public class CustomExportCSVHelper {
 			// Custom fields content
 			long cufId = column.getCufId();
 			EntityType entityType = label.getEntityType();
+
+	/***************************************************************************************************************************************************/
+
+			if (entityType.equals(EntityType.TEST_STEP)) {
+				Long executionStepId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(EntityType.EXECUTION_STEP));
+				ExecutionStep executionStep = executionStepDao.findById(executionStepId);
+				Long testStepId = executionStep.getReferencedTestStep().getId();
+
+				if(testStepId != null){
+					EntityReference entityReference = new EntityReference(EntityType.TEST_STEP, testStepId);
+					Map<Long, Object> cufValuesMap = cufMap.get(entityReference);
+					if(cufValuesMap != null) {
+						value = computeRichValue(cufValuesMap.get(cufId));
+					}
+				}
+
+			} else{
+	/***************************************************************************************************************************************************/
+
 			Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
 			// entityId can be null if left joined with a non-existent entity
 			if(entityId != null) {
@@ -232,7 +258,7 @@ public class CustomExportCSVHelper {
 					value = computeRichValue(cufValuesMap.get(cufId));
 				}
 			}
-		}
+		} }
 		if(value != null && CustomExportColumnLabel.getCustomizableTextFieldsSet().contains(label)) {
 			value = replaceDoubleQuotes(value.toString());
 		}
@@ -259,5 +285,4 @@ public class CustomExportCSVHelper {
 	private String replaceDoubleQuotes(String text) {
 		return text.replaceAll("\"", "\'");
 	}
-
 }

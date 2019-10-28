@@ -56,6 +56,7 @@ import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
 
@@ -262,7 +263,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		}
 		if(cufQueryDepth > 4) {
 			fromQuery.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
-				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID));
+				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
+			.leftJoin(TEST_STEP).on(TEST_STEP.TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID));
+
 		}
 		return fromQuery;
 	}
@@ -290,6 +293,8 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		}
 		if(cufQueryDepth > 4) {
 			fieldList.add(EXECUTION_STEP.EXECUTION_STEP_ID);
+			fieldList.add(EXECUTION_STEP.TEST_STEP_ID); /***********************************************************************************************/
+			fieldList.add(TEST_STEP.TEST_STEP_ID);  /***********************************************************************************************/
 		}
 		return fieldList;
 	}
@@ -300,7 +305,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @return The depth of the Query
 	 */
 	private int getDepthOfEntitiesQuery(Set<EntityType> entityTypeList) {
-		if(entityTypeList.contains(EntityType.EXECUTION_STEP))
+		if(entityTypeList.contains(EntityType.EXECUTION_STEP)||entityTypeList.contains(EntityType.TEST_STEP))
 			return 5;
 		if(entityTypeList.contains(EntityType.EXECUTION))
 			return 4;

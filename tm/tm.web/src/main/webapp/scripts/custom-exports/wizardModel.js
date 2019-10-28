@@ -104,7 +104,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				EXECUTION_STEP_EXECUTION_DATE: 'iteration.executions.table.column-header.execution-date.label',
 				EXECUTION_STEP_COMMENT: 'executions.steps.table.column-header.comment.label',
 				EXECUTION_STEP_LINKED_REQUIREMENTS_NUMBER: 'custom-export.column.LINKED_REQUIREMENTS_COUNT',
-				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS'
+				EXECUTION_STEP_LINKED_REQUIREMENTS_IDS: 'custom-export.column.EXECUTION_STEP_LINKED_REQUIREMENTS_IDS',
+				//TEST_STEP_CUF: ''
+
+				//ajouter colonne TEST_STEP CUF + label
+
 			}
 		},
 		ISSUE: {
@@ -126,7 +130,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 			var customExportDef = data.customExportDef;
 
 			this.set({ entityMap: entityMap });
-			this.set({ entityWithCuf: ["CAMPAIGN", "ITERATION", "TEST_SUITE", "TEST_CASE", "EXECUTION", "EXECUTION_STEP"]});
+			this.set({ entityWithCuf: ["CAMPAIGN", "ITERATION", "TEST_SUITE", "TEST_CASE", "EXECUTION", "EXECUTION_STEP", "TEST_STEP"]});
 
 			this.set({ parentId: squashtm.customExport.parentId });
 

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView","../custom-report-workspace/utils","./customFieldPopup"],
-	function($, backbone, _, Handlebars, AbstractStepView,chartUtils,CustomFieldPopup) {
+	function($, backbone, _, Handlebars, AbstractStepView,chartUtils,CustomFieldPopup, module) {
 	"use strict";
 
 	var attributesStepView = AbstractStepView.extend({
@@ -161,4 +161,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		}
 	});
 	return attributesStepView;
+
+	function initCufsDidi(){
+		 var config = module.config();
+
+	}
+
 });

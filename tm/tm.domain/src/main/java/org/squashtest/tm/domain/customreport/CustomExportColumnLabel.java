@@ -44,6 +44,7 @@ import static org.jooq.impl.DSL.val;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
+import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
@@ -446,6 +447,13 @@ public enum CustomExportColumnLabel implements Internationalizable {
 		EntityType.EXECUTION_STEP
 	),
 
+	TEST_STEP_CUF(
+		null,
+		null,
+		null,
+		EntityType.TEST_STEP
+	),
+
 	// --- ISSUE ---
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER(
 		"custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES_COUNT",
@@ -550,13 +558,14 @@ public enum CustomExportColumnLabel implements Internationalizable {
 
 	// Initialize unmodifiable ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP
 	static {
-		Map<EntityType, TableField<?, Long>> initialMap = new HashMap<>(6);
+		Map<EntityType, TableField<?, Long>> initialMap = new HashMap<>(7);
 		initialMap.put(EntityType.CAMPAIGN, CAMPAIGN.CLN_ID);
 		initialMap.put(EntityType.ITERATION, Tables.ITERATION.ITERATION_ID);
 		initialMap.put(EntityType.TEST_SUITE, Tables.TEST_SUITE.ID);
 		initialMap.put(EntityType.TEST_CASE, TEST_CASE.TCLN_ID);
 		initialMap.put(EntityType.EXECUTION, EXECUTION.EXECUTION_ID);
 		initialMap.put(EntityType.EXECUTION_STEP, EXECUTION_STEP.EXECUTION_STEP_ID);
+		initialMap.put(EntityType.TEST_STEP, EXECUTION_STEP.EXECUTION_STEP_ID);
 		ENTITY_TYPE_TO_ID_TABLE_FIELD_MAP = Collections.unmodifiableMap(initialMap);
 	}
 
@@ -641,7 +650,6 @@ public enum CustomExportColumnLabel implements Internationalizable {
 				.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID))
 				.where(TEST_SUITE.as("suite_itpi_total").ID.eq(TEST_SUITE.ID))
 				.asField();
-
 		private final static Field TEST_SUITE_PROGRESS_STATUS = concat(
 			DSL.round(FIELD_TEST_SUITE_ITPI_DONE_COUNT.div(nullif(FIELD_TEST_SUITE_ITPI_TOTAL_COUNT, 0)).mul(100L), 2)
 				.cast(SQLDataType.VARCHAR(5)),
