@@ -1070,6 +1070,9 @@
 					"where server.id = :serverId and sc.contentType = 'CONF' " +
 					"and sc.authenticatedUser is null"),
 
+	@NamedQuery(name="StoredCredentials.deleteAllUserCredentialsByUserId",
+		query = "delete from StoredCredentials sc where sc.authenticatedUser.id = :userId"),
+
 	// ScmServers
 	@NamedQuery(name="ScmServer.isServerNameAlreadyInUse", query="select case when (count(s) > 0) then true else false end from ScmServer s where s.name = :name"),
 	@NamedQuery(name="ScmServer.isOneServerBoundToProject", query="select case when (count(s) > 0) then true else false end from GenericProject p join p.scmRepository r join r.scmServer s where s.id in (:scmServerIds)"),

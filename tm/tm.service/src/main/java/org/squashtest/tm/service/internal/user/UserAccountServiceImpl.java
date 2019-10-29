@@ -207,19 +207,19 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public void setCurrentUserPassword(String oldPass, String newPass) {
-		internalSetCurrentUserPassword(  () -> authService.changeAuthenticatedUserPassword(oldPass, newPass) ); 
-		
+		internalSetCurrentUserPassword(  () -> authService.changeAuthenticatedUserPassword(oldPass, newPass) );
+
 	}
-	
+
 
 	@Override
 	public void setCurrentUserPassword(String newPasswd) {
 		internalSetCurrentUserPassword( () -> authService.resetAuthenticatedUserPassword(newPasswd));
 	}
-	
-	
+
+
 	// note : the function type Runnable is unfortunate because it suggests we expect a result.
-	// Actually we expect nothing, but there is currently 
+	// Actually we expect nothing, but there is currently
 	// no functional interface that accepts no arg and return nothing
 	private void internalSetCurrentUserPassword(Runnable action){
 		if (!authService.canModifyUser()) {
@@ -232,8 +232,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 			throw new WrongPasswordException("wrong password", bce);
 		}
 	}
-	
-	
+
+
 
 	@Override
 	public boolean hasCurrentUserPasswordDefined() {
@@ -297,6 +297,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		unassignUserFromAllTestPlan(userId);
 		teamModificationService.removeMemberFromAllTeams(userId);
 		projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
+		storedCredentialsManager.deleteAllUserCredentials(userId);
 
 	}
 

@@ -86,11 +86,12 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 	private static final String FIND_SERVER_AUTH_CONF = "StoredCredentials.findServerAuthConfByServerId";
 	private static final String FIND_APP_LEVEL_CREDENTIALS = "StoredCredentials.findAppLevelCredentialsByServerId";
 	private static final String FIND_USER_CREDENTIALS = "StoredCredentials.findUserCredentialsByServerId";
+	private static final String DELETE_ALL_USER_CREDENTIALS = "StoredCredentials.deleteAllUserCredentialsByUserId";
 
 
 	private static final String JACKSON_TYPE_ID_ATTR = "@class";
 
-	private static final Logger LOGGER= LoggerFactory.getLogger(StoredCredentialsManagerImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StoredCredentialsManagerImpl.class);
 
 	private static final Map<Class<?>, ContentType> CONTENT_TYPE_BY_CLS;
 
@@ -191,6 +192,11 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 		deleteContent(serverId, username, ContentType.CRED);
 	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteAllUserCredentials(long userId) {
+		deleteAllUserCredentialsById(userId);
+	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -474,6 +480,13 @@ public class StoredCredentialsManagerImpl implements StoredCredentialsManager{
 												FIND_APP_LEVEL_CREDENTIALS;
 
 		return queryStr;
+	}
+
+	private void deleteAllUserCredentialsById(long userId) {
+		LOGGER.info("Deleting all user credentials for user #{}", userId);
+		Query query = em.createNamedQuery(DELETE_ALL_USER_CREDENTIALS);
+		query.setParameter("userId", userId);
+		query.executeUpdate();
 	}
 
 	private RuntimeException investigateDeserializationError(String failedDeser, Throwable cause){

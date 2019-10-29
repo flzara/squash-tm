@@ -110,6 +110,13 @@ public interface StoredCredentialsManager {
 	 */
 	void deleteUserCredentials(long serverId, String username);
 
+	/**
+	 * Will remove all the stored credentials of given user.
+	 *
+	 * @param userId the id of user to delete
+	 */
+	void deleteAllUserCredentials(long userId);
+
 
 	// ****************** Application-level credentials management *******************
 
