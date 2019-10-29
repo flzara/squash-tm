@@ -424,9 +424,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 					if(displayedWorkflow === undefined || displayedWorkflow === null) {
 						displayedWorkflow = self.automationWorkflows['NONE'];
 					}
-					$('#project-workflows-select').remove();
-					var newDiv = $("<div id ='project-workflows-select' style='display: inline'>" + displayedWorkflow + "</div>");
-					$('#project-workflows-select-container').append(newDiv);
+					$('#project-workflows-select').text(displayedWorkflow);
 				},
 
 				toggleScmPanel: function(shouldShowPanel) {
@@ -440,7 +438,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 				initTable : function(){
 					var self = this;
-					
+
 					this.table = $("#ta-projects-table").squashTable({}, {
 						buttons:[{
 								tdSelector:"td.edit-job-button",
@@ -449,7 +447,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 									var row = cell.parentNode.parentNode;
 									var jobId = table.getODataId(row);
 									var data = table.getDataById(jobId);
-									
+
 									// coerce string to boolean if needed
 									// indeed "canRunScript" can be a stringified boolean because the initial table model is read from html as string by default
 									var canRunScript = data['canRunScript'];
