@@ -31,7 +31,11 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
 public interface TestCaseModificationService extends CustomTestCaseModificationService, TestCaseFinder {
-
+	/**
+	 * chage description
+	 * @param testCaseId test case id
+	 * @param newDescription new description
+	 */
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeDescription(long testCaseId, String newDescription);
 
