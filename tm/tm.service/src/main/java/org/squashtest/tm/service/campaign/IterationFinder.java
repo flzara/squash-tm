@@ -43,6 +43,12 @@ public interface IterationFinder extends EntityFinder<Iteration> {
 	 */
 	List<Execution> findAllExecutions(long iterationId);
 
+	/**
+	 * Find all Executions of a given IterationTestPlan.
+	 * @param iterationId The Id of the
+	 * @param testPlanId The id of the IterationTestPlan
+	 * @return The List of the Executions for the given IterationTestPlan
+	 */
 	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
 
 	List<TestCase> findPlannedTestCases(long iterationId);
