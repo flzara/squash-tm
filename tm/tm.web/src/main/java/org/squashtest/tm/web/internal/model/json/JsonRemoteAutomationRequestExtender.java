@@ -30,15 +30,19 @@ public class JsonRemoteAutomationRequestExtender {
 	private String remoteRequestStatus;
 	private String remoteRequestUrl;
 	private String remoteIssueKey;
+	private String remoteAssignedTo;
 
 	public JsonRemoteAutomationRequestExtender(RemoteAutomationRequestExtender remoteAutomationRequestExtender) {
-		String remoteStatus = remoteAutomationRequestExtender.getRemoteRequestStatus();
+		String remoteStatus = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteRequestStatus(): "";
 		this.remoteRequestStatus = Strings.isNotBlank(remoteStatus) ? remoteStatus : DASH;
-		String remoteUrl = remoteAutomationRequestExtender.getRemoteRequestUrl();
+		String remoteUrl =  remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteRequestUrl(): "";
 		this.remoteRequestUrl = Strings.isNotBlank(remoteUrl) ? remoteUrl : DASH;
-		String remoteIssueKey = remoteAutomationRequestExtender.getRemoteIssueKey();
+		String remoteIssueKey = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteIssueKey(): "";
 		this.remoteIssueKey = Strings.isNotBlank(remoteIssueKey) ? remoteIssueKey : DASH;
+		String remoteAssignedTo = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteAssignedTo(): "";
+		this.remoteAssignedTo = Strings.isNotBlank(remoteAssignedTo) ? remoteAssignedTo : DASH;
 	}
+
 
 	public String getRemoteRequestStatus() {
 		return remoteRequestStatus;
@@ -61,4 +65,8 @@ public class JsonRemoteAutomationRequestExtender {
 	public void setRemoteIssueKey(String remoteIssueKey) {
 		this.remoteIssueKey = remoteIssueKey;
 	}
+
+	public String getRemoteAssignedTo() {	return remoteAssignedTo;	}
+
+	public void setRemoteAssignedTo(String remoteAssignedTo) {	this.remoteAssignedTo = remoteAssignedTo;	}
 }

@@ -199,7 +199,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 						$("#remote-automation-request-url").text(automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
 					}
 					//assignedTo
-					$("#remote-automation-request-assignedTo").text(automationRequest.remoteAutomationRequestExtender.remoteRequestAssignedTo);
+					$("#remote-automation-request-assignedTo").text(automationRequest.remoteAutomationRequestExtender.remoteAssignedTo);
 					// date transmission
 					$("#automation-last-transmitted-on").text(automationRequest.transmissionDate);
 				}
