@@ -30,6 +30,11 @@ public interface IterationFinder extends EntityFinder<Iteration> {
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
+	/**
+	 * Find all Iterations by their Ids.
+	 * @param iterationIds The ids of the Iterations
+	 * @return The List of Iterations
+	 */
 	List<Iteration> findAllByIds(List<Long> iterationIds);
 
 	/**
