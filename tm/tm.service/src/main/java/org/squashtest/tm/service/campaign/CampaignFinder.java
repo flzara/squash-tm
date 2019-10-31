@@ -35,9 +35,19 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 public interface CampaignFinder {
 
+	/**
+	 * Find a Campaign by its Id.
+	 * @param campaignId The campaign id
+	 * @return The Campaign
+	 */
 	@PostAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)
 	Campaign findById(long campaignId);
 
+	/**
+	 *
+	 * @param campaignIds
+	 * @return
+	 */
 	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<Campaign> findAllByIds(List<Long> campaignIds);
 
