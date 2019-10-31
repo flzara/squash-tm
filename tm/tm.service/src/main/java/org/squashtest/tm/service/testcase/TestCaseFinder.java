@@ -49,7 +49,7 @@ public interface TestCaseFinder extends CustomTestCaseFinder {
 	/**
 	 * Fetches all the test cases matching the given list of ids.
 	 * 
-	 * @param ids
+	 * @param ids list test case ids
 	 * @return
 	 */
 	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
