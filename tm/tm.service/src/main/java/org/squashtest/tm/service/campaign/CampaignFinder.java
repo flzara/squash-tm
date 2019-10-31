@@ -44,9 +44,9 @@ public interface CampaignFinder {
 	Campaign findById(long campaignId);
 
 	/**
-	 *
-	 * @param campaignIds
-	 * @return
+	 * Find all the Campaigns by their ids
+	 * @param campaignIds The ids of the Campaigns
+	 * @return The List of Campaigns
 	 */
 	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<Campaign> findAllByIds(List<Long> campaignIds);
