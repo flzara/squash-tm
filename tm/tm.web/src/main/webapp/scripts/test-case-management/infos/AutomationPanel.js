@@ -85,6 +85,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 								eventBus.trigger("test-case.transmitted");
 								self.trySquashTAScriptAssociation();
 								$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
+								self.doGetAutomationRequestInfos();
 							});
 						});
 
@@ -190,7 +191,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					// url
 					$("#urlTicket").prop("href",automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
 					if(remoteReqUrl != '-'){
-						$("#urlTicket").remove();
+						$("#remote-automation-request-url").text("");
 						var newHref= "<a id='urlTicket' href='" + remoteReqUrl + "' target='_blank'>" + remoteIssueKey + "</a>";
 						$("#remote-automation-request-url").append(newHref);
 					}
