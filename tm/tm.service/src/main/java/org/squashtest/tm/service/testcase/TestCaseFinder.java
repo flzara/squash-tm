@@ -38,7 +38,11 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Transactional(readOnly = true)
 public interface TestCaseFinder extends CustomTestCaseFinder {
 
-
+	/**
+	 * find test case by id
+	 * @param testCaseId
+	 * @return
+	 */
 	@PostAuthorize("hasPermission(returnObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	TestCase findById(long testCaseId);
 
