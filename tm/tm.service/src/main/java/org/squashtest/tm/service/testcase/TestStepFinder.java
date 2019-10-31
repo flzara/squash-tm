@@ -25,5 +25,10 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 @Transactional(readOnly = true)
 public interface TestStepFinder extends CustomTestStepFinder{
+	/**
+	 * find test step by id
+	 * @param id id test step
+	 * @return
+	 */
 	TestStep findById(long id);
 }
