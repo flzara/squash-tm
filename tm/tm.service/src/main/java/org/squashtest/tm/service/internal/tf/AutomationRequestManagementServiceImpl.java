@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -295,9 +296,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		}
 
 		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds, automationRequestStatus));
+		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds,automationRequestStatus, AutomationWorkflowType.REMOTE_WORKFLOW));
 		List<TestCase> listTestCases = testCaseDao.findAllByIds(tcIds);
 		for (TestCase tc: listTestCases) {
-			eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds,automationRequestStatus, tc.getProject().getAutomationWorkflowType()));
 			auditModificationService.updateAuditable((AuditableMixin)tc);
 		}
 
