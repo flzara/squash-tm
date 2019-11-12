@@ -299,7 +299,7 @@ define(
 					var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
 					updateTAScript([data['entity-id']]).done(function(map){
-						if (map[data['entity-id']] !== undefined){
+						if (map.unlaunchableIds[data['entity-id']] !== undefined){
 							$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 						} else {
 							$.ajax({
@@ -474,7 +474,7 @@ define(
 										var url = window.squashtm.app.contextRoot + "automated-suites/preview";
 
 									  updateTAScript([tpiId]).done(function(map){
-										  if (map[tpiId] !== undefined){
+										  if (map.unlaunchableIds[tpiId] !== undefined){
 												table.refresh();
 											  $.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 										  } else {
