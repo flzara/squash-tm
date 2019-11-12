@@ -50,7 +50,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 			} else {
 				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
 				unlaunchableTest = Object.keys(map.unlaunchableIds).map(function(e) {
-					return map[e];
+					return map.unlaunchableIds[e];
 				});
 				// TM-862
 				sendPreview(launchableIds).done(function(preview) {
@@ -74,7 +74,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 				} else {
 					//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
 					unlaunchableTest = Object.keys(map.unlaunchableIds).map(function(e) {
-						return map[e];
+						return map.unlaunchableIds[e];
 					}).filter(function(value, index, self){
 						return self.indexOf(value) === index;
 					});
