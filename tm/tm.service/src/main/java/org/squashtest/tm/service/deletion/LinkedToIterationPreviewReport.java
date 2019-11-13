@@ -50,6 +50,7 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 				secondMessageKey = WHY_SINGLE_MESSAGE_KEY;
 			}
 			builder.append(source.getMessage(firstMessageKey, null, locale));
+			builder.append(" ");
 			builder.append(setToString(nodeNames));
 			builder.append("<br/>");
 
