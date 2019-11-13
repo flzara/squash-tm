@@ -58,9 +58,9 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="body">
-	<div id="test-case-automation-table" class="display-table" style="width: 80%">
+	<div id="test-case-automation-table" class="display-table" style="width:100%;word-break:break-all;">
 
-<div class="div-test-case-automatable" style="float:left;width:500px;">
+<div class="div-test-case-automatable" style="float:left;width:50%;">
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-automation-indicator"><f:message key="test-case.automation-indicator.label"/></label>
 			<div class="display-table-cell" id="test-case-automation-indicator">
@@ -119,7 +119,7 @@
 
      <%-- When the automation workflow is the native one, the fields are editable, but not with the remote ones --%>
      <%--== If remote Automation Workflow is used ==--%>
-<div class="div-test-case-automatable1" style="float:right;width:500px;">
+<div class="div-test-case-automatable1" style="float:right;width:50%;">
      <div class="display-table-row test-case-remote-automation-request-block">
        <label class="display-table-cell" for="remote-automation-request-status">
          <f:message key="test-case.automation-status-remote.label" />
