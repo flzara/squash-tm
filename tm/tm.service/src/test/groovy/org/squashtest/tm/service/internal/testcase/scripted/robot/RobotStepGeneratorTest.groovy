@@ -21,40 +21,42 @@
 package org.squashtest.tm.service.internal.testcase.scripted.robot
 
 import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseStatus
 import spock.lang.Specification
 
-class RobotTestCaseParserTest extends Specification {
+class RobotStepGeneratorTest extends Specification {
 
 	RobotStepGenerator stepGenerator = new RobotStepGenerator()
-	RobotTestCaseParser parser = new RobotTestCaseParser(stepGenerator)
 
-	def "#populateExecution(Execution) - Should create one unique execution step containing the script"() {
+	def "#populateExecution(Execution, ScriptedTestCaseExtender) - Should populate the Execution with one Step containing the script"() {
 		given:
-			def scriptedTestCaseExtender = Mock(ScriptedTestCaseExtender)
-			scriptedTestCaseExtender.getScript() >> " This is the script content !"
-
-			def testCase = Mock(TestCase)
-			testCase.getScriptedTestCaseExtender() >> scriptedTestCaseExtender
-			testCase.getImportance() >> TestCaseImportance.MEDIUM
-			testCase.getStatus() >> TestCaseStatus.UNDER_REVIEW
-			testCase.getNature() >> Mock(InfoListItem)
-			testCase.getType() >> Mock(InfoListItem)
-
 			Execution exec = new Execution()
-			exec.setReferencedTestCase(testCase)
-
+		and:
+			ScriptedTestCaseExtender scriptExtender = Mock()
+			scriptExtender.getScript() >>
+				"*** Settings ***\r\n" +
+				"Library           SeleniumLibrary\r\n" +
+				"\r\n" +
+				"*** Variables ***\r\n" +
+				"\${BROWSER}        Firefox\r\n" +
+				"\r\n" +
+				"*** Keywords ***\r\n" +
+				"Login Page Should Be Open\r\n" +
+				"    Title Should Be    Login Page"
 		when:
-			parser.populateExecution(exec)
-
+			stepGenerator.populateExecution(exec, scriptExtender)
 		then:
 			exec.getSteps().size() == 1
 			def uniqueStep = exec.getSteps().get(0)
 			uniqueStep != null
-			uniqueStep.getAction() == " This is the script content !"
+			uniqueStep.getAction() == "*** Settings ***<br/>" +
+				"Library           SeleniumLibrary<br/>" +
+				"<br/>" +
+				"*** Variables ***<br/>" +
+				"\${BROWSER}        Firefox<br/>" +
+				"<br/>" +
+				"*** Keywords ***<br/>" +
+				"Login Page Should Be Open<br/>" +
+				"    Title Should Be    Login Page"
 	}
 }

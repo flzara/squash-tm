@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
+import org.squashtest.tm.service.internal.testcase.scripted.robot.RobotStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.robot.RobotTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
@@ -51,7 +52,7 @@ public class ScriptedExecutionConfiguration {
 			case GHERKIN:
 				return new GherkinTestCaseParser(gherkinStepGenerator());
 			case ROBOT:
-				return new RobotTestCaseParser();
+				return new RobotTestCaseParser(robotStepGenerator());
 			default:
 				throw new IllegalArgumentException("No parser defined for script of language : " + language.name());
 		}
@@ -61,6 +62,12 @@ public class ScriptedExecutionConfiguration {
 	@Scope(value = "prototype")
 	public GherkinStepGenerator gherkinStepGenerator(){
 		return new GherkinStepGenerator();
+	}
+
+	@Bean
+	@Scope(value = "prototype")
+	public RobotStepGenerator robotStepGenerator() {
+		return new RobotStepGenerator();
 	}
 
 }

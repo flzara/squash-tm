@@ -23,27 +23,20 @@ package org.squashtest.tm.service.internal.testcase.scripted.robot;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
-public class RobotTestCaseParser implements ScriptedTestCaseParser {
+/**
+ * A class that generates SquashTM execution steps from a Robot script.
+ */
+public class RobotStepGenerator {
 
-	private RobotStepGenerator stepGenerator;
+	public void populateExecution(Execution execution, ScriptedTestCaseExtender scriptExtender) {
+		ExecutionStep newExecutionStep = new ExecutionStep();
+		String script = scriptExtender.getScript();
 
-	public RobotTestCaseParser(RobotStepGenerator stepGenerator) {
-		this.stepGenerator = stepGenerator;
+		// There is no Robot parser for the moment so we just replace the carriage returns
+		newExecutionStep.setAction(script.replace("\r\n", "<br/>"));
+
+		execution.getSteps().add(newExecutionStep);
 	}
 
-	@Override
-	public void populateExecution(Execution execution) {
-		TestCase referencedTestCase = execution.getReferencedTestCase();
-		ScriptedTestCaseExtender scriptExtender = referencedTestCase.getScriptedTestCaseExtender();
-
-		stepGenerator.populateExecution(execution, scriptExtender);
-	}
-
-	@Override
-	public void validateScript(ScriptedTestCaseExtender extender) {
-		// NOOP
-	}
 }
