@@ -143,10 +143,7 @@ public class ExecutionRunnerControllerHelper {
 		int total = execution.getSteps().size();
 
 		Set<Attachment> attachments = Collections.emptySet();
-		User user = userService.findCurrentUser();
-		Party party = userService.getParty(user.getId());
-		Map<String, String> map = preferenceService.findPreferences(party);
-		String bugtrackerMode = map.get("squash.bug.tracker.mode");
+		String bugtrackerMode = getBugTrackerModeFromUserPreferences();
 
 		boolean hasDenormFields = false;
 		boolean hasCustomFields = false;
@@ -330,10 +327,7 @@ public class ExecutionRunnerControllerHelper {
 		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
 		boolean hasCustomFields = customFieldValueFinderService.hasCustomFields(execution);
 		boolean hasDenormFields = denormalizedFieldValueFinder.hasDenormalizedFields(execution);
-		User user = userService.findCurrentUser();
-		Party party = userService.getParty(user.getId());
-		Map<String, String> map = preferenceService.findPreferences(party);
-		String bugtrackerMode = map.get("squash.bug.tracker.mode");
+		String bugtrackerMode = getBugTrackerModeFromUserPreferences();
 
 		runnerState.setOptimized(optimized);
 		runnerState.setPrologue(true);
@@ -354,6 +348,13 @@ public class ExecutionRunnerControllerHelper {
 			model.addAttribute("verifiedReqVersions", requirementVersions);
 		}
 
+	}
+
+	private String getBugTrackerModeFromUserPreferences() {
+		User user = userService.findCurrentUser();
+		Party party = userService.getParty(user.getId());
+		Map<String, String> map = preferenceService.findPreferences(party);
+		return map.get("squash.bug.tracker.mode");
 	}
 
 }
