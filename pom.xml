@@ -26,8 +26,13 @@
     <!-- aspectj version - should be syncd w/ spring boot version -->
     <!-- yet we're stuck at 1.8.5 - won't compile with newer versions -->
     <aspectj.version>1.8.5</aspectj.version>
+    <!--
+      Some modules require an alternate version of groovy eclipse batch, each for their
+      own reasons (tm.service, integration-tests)
+    -->
+    <groovy-eclipse-batch.alternate.version>2.4.17-02</groovy-eclipse-batch.alternate.version>
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
-    <groovy-eclipse-compiler.version>3.0.0-01</groovy-eclipse-compiler.version>
+    <groovy-eclipse-compiler.version>3.3.0-01</groovy-eclipse-compiler.version>
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.4.7</groovy.version>
 
@@ -632,19 +637,6 @@
     </repository>
   </repositories>
 
-  <!--
-    groovy-bintray is required (for now) because of the groovy eclipse extensions for the Maven Compiler,
-    at those specific version. Todo : update them to a version that are hosted on the Maven Central repository
-    and cut this one, which is particularly slow and/ord unavailable sometimes.
-  -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>groovy-bintray</id>
-      <name>Groovy Bintray</name>
-      <url>https://dl.bintray.com/groovy/maven</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <distributionManagement>
     <repository>
       <id>squash-release-deploy-repo</id>
@@ -774,7 +766,6 @@
         </plugins>
       </build>
     </profile>
-
 
     <profile>
       <!--

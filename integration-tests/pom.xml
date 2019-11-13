@@ -38,7 +38,7 @@
       However setting it in the parent pom would crash the compilation of core.api.
 
     -->
-    <groovy-eclipse-batch.version>2.4.15-01</groovy-eclipse-batch.version>
+    <!--groovy-eclipse-batch.version>2.4.15-01</groovy-eclipse-batch.version-->
     <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
 
     <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
@@ -225,6 +225,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <!--
+              Using the alternate version because the test wouldn't compile
+              due to a bug in Eclipse jdt (I lost the reference, sorry)
+            -->
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>${groovy-eclipse-batch.alternate.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <goals>

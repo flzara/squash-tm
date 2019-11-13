@@ -290,6 +290,15 @@
           <generatedSourcesDirectory>${project.build.outputDirectory}/META-INF</generatedSourcesDirectory>
         </configuration>
         <dependencies>
+          <!--
+            Here we use a different version of groovy-eclipse-batch to work around
+            a bytecode inconsistency with a class in QueryDSL core
+          -->
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>${groovy-eclipse-batch.alternate.version}</version>
+          </dependency>
           <dependency>
             <!-- This dependency triggers DynamicManager anotations processing through APT -->
             <!-- TODO assess if we really need this in tm.domain -->

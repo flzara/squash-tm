@@ -85,8 +85,8 @@ class ProjectionPlanner {
 	private InternalQueryModel internalQueryModel;
 	private ExtendedHibernateQuery<?> query;
 	private QuerydslToolbox utils;
-	
-	
+
+
 	// internal state properties
 	private ColumnAliasing columnAliasing;
 
@@ -135,7 +135,7 @@ class ProjectionPlanner {
 
 		// for the rest no problem
 		default:
-			// convert all our columns into selectable expressions. The column is rendered and given an alias, 
+			// convert all our columns into selectable expressions. The column is rendered and given an alias,
 			// the alias can then be refered to in the groupBy and sortBy clauses.
 			projections =
 				columnAliasing.getProjectedColumns()
@@ -191,16 +191,16 @@ class ProjectionPlanner {
 
 	/**
 	 * <p>
-	 * The purpose of this class is to address a problem with select distinct that is 
+	 * The purpose of this class is to address a problem with select distinct that is
 	 * sorted on columns with datatable LEVEL_ENUM (see below), by detecting the potentially
-	 * problematic situation and resolving the actual projections, aggregation and sorting 
+	 * problematic situation and resolving the actual projections, aggregation and sorting
 	 * required for this query. ProjectionPlanner consumes the result of this pre-processing
-	 * in order to generate the QueryDsl clauses.   
+	 * in order to generate the QueryDsl clauses.
 	 * </p>
-	 * 
+	 *
 	 <p>
-		In the context of a generated query the expression is fetched with .distinct(). 
-		It has the desirable effect of eliminating possible duplicates, which can occur 
+		In the context of a generated query the expression is fetched with .distinct().
+		It has the desirable effect of eliminating possible duplicates, which can occur
 		eg when the filter's where clauses cause the same projection columns to be found
 		multiple times.
 	 </p>
@@ -212,7 +212,7 @@ class ProjectionPlanner {
 			<li>because it is a level enum we need to use a case-when construct to sort it.</li>
 		 </ol>
 	 </p>
-	 
+
 	 <p>
 		The second point would turn the actual enum data into the level we used to sort it,
 		which make the result set incorrect. To reconcile both requirements we have to
@@ -228,7 +228,10 @@ class ProjectionPlanner {
 	 	</ul>
 	 </p>
 	 */
-	private static final class ColumnAliasing{
+	/*
+
+	 */
+	static final class ColumnAliasing{
 
 
 		// see comment on that hack at the top of the class
@@ -251,7 +254,7 @@ class ProjectionPlanner {
 
 
 
-		private ColumnAliasing(QuerydslToolbox utils, InternalQueryModel queryModel) {
+		ColumnAliasing(QuerydslToolbox utils, InternalQueryModel queryModel) {
 
 			this.utils = utils;
 
