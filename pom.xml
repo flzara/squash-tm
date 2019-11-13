@@ -586,6 +586,24 @@
   </scm>
 
   <repositories>
+
+    <!--
+      Redeclaring the default Maven Central repository, as declared by mvn help:effective-pom.
+      This way we ensure it will be queried first, and hopefully would speed up the initial build
+      of the project.
+    -->
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+
+    <!--
+      Declaration of the Squash official repositories
+    -->
     <repository>
       <snapshots>
         <enabled>false</enabled>
@@ -593,6 +611,7 @@
       <id>squash-release-repo</id>
       <url>http://repo.squashtest.org/maven2/releases</url>
     </repository>
+
     <repository>
       <releases>
         <enabled>false</enabled>
@@ -603,12 +622,21 @@
       <id>squash-snapshot-repo</id>
       <url>http://repo.squashtest.org/maven2/snapshots</url>
     </repository>
+
+    <!--
+      Jasper Reports hold unique artifacts in there
+    -->
     <repository>
       <id>jasper-reports</id>
       <url>http://jasperreports.sourceforge.net/maven2</url>
     </repository>
   </repositories>
 
+  <!--
+    groovy-bintray is required (for now) because of the groovy eclipse extensions for the Maven Compiler,
+    at those specific version. Todo : update them to a version that are hosted on the Maven Central repository
+    and cut this one, which is particularly slow and/ord unavailable sometimes.
+  -->
   <pluginRepositories>
     <pluginRepository>
       <id>groovy-bintray</id>
