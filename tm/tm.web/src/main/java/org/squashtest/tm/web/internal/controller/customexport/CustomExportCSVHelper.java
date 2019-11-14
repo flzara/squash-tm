@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -64,14 +65,21 @@ public class CustomExportCSVHelper {
 	private Locale locale;
 
 	@Inject
-	private HibernateExecutionStepDao executionStepDao;
+	private ExecutionStepDao executionStepDao;
 
-	public CustomExportCSVHelper(CustomReportCustomExportCSVService csvService, CustomFieldFinderService cufService, CustomFieldValueFinderService cufValueService, InternationalizationHelper translator, Locale locale) {
-		this.csvService = csvService;
+	public CustomExportCSVHelper(
+		CustomReportCustomExportCSVService csvService,
+		CustomFieldFinderService cufService,
+		CustomFieldValueFinderService cufValueService,
+		InternationalizationHelper translator,
+		Locale locale,
+		ExecutionStepDao executionStepDao) {
+                this.csvService = csvService;
 		this.cufService = cufService;
 		this.cufValueService = cufValueService;
 		this.translator = translator;
 		this.locale = locale;
+		this.executionStepDao = executionStepDao;
 	}
 
 	/**
@@ -228,25 +236,6 @@ public class CustomExportCSVHelper {
 			// Custom fields content
 			long cufId = column.getCufId();
 			EntityType entityType = label.getEntityType();
-
-	/***************************************************************************************************************************************************/
-
-			if (entityType.equals(EntityType.TEST_STEP)) {
-				Long executionStepId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(EntityType.EXECUTION_STEP));
-				ExecutionStep executionStep = executionStepDao.findById(executionStepId);
-				Long testStepId = executionStep.getReferencedTestStep().getId();
-
-				if(testStepId != null){
-					EntityReference entityReference = new EntityReference(EntityType.TEST_STEP, testStepId);
-					Map<Long, Object> cufValuesMap = cufMap.get(entityReference);
-					if(cufValuesMap != null) {
-						value = computeRichValue(cufValuesMap.get(cufId));
-					}
-				}
-
-			} else{
-	/***************************************************************************************************************************************************/
-
 			Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
 			// entityId can be null if left joined with a non-existent entity
 			if(entityId != null) {
@@ -258,7 +247,7 @@ public class CustomExportCSVHelper {
 					value = computeRichValue(cufValuesMap.get(cufId));
 				}
 			}
-		} }
+		}
 		if(value != null && CustomExportColumnLabel.getCustomizableTextFieldsSet().contains(label)) {
 			value = replaceDoubleQuotes(value.toString());
 		}
