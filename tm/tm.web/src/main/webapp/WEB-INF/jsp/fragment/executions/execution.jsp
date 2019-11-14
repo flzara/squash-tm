@@ -56,6 +56,7 @@
 
 <c:set var="automated" value="${ execution.executionMode == 'AUTOMATED' }"/>
 <c:set var="taDisassociated" value="${ automated and execution.automatedExecutionExtender.projectDisassociated}"/>
+<c:set var="refTcIsScripted" value="${execution.isScripted()}" />
 
 <f:message var="taDisassociatedLabel" key="squashtm.itemdeleted"/>
 <f:message var="confirmLabel" key="label.Confirm"/>
@@ -159,7 +160,7 @@
                      open="true">
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
-      <c:if test="${execution.isScripted()}">
+      <c:if test="${refTcIsScripted and not (execution.scriptedExecutionExtender.language.name() == 'ROBOT')}">
          <div class="display-table-row">
            <label class="display-table-cell" for="testcase-script-name"><f:message key="${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}"/></label>
            <div id="testcase-script-name" class="display-table-cell"><c:out value="${ execution.scriptedExecutionExtender.scriptName }"/> </div>
@@ -253,17 +254,19 @@
 
   <%----------------------------------- Prerequisites -----------------------------------------------%>
 
-  <comp:toggle-panel id="execution-prerequisite-panel"
-                     titleKey="generics.prerequisite.title"
-                     open="${ not empty hu:clean(execution.prerequisite) }">
-		<jsp:attribute name="body">
-		<div id="execution-prerequisite-table" class="display-table">
-      <div class="display-table-row">
-        <div class="display-table-cell">${ hu:clean(execution.prerequisite) }</div>
+  <c:if test="${not refTcIsScripted or (refTcIsScripted and not (execution.scriptedExecutionExtender.language.name() == 'ROBOT'))}">
+    <comp:toggle-panel id="execution-prerequisite-panel"
+                       titleKey="generics.prerequisite.title"
+                       open="${ not empty hu:clean(execution.prerequisite) }">
+      <jsp:attribute name="body">
+      <div id="execution-prerequisite-table" class="display-table">
+        <div class="display-table-row">
+          <div class="display-table-cell">${ hu:clean(execution.prerequisite) }</div>
+        </div>
       </div>
-    </div>
-	</jsp:attribute>
-  </comp:toggle-panel>
+    </jsp:attribute>
+    </comp:toggle-panel>
+  </c:if>
 
   <%----------------------------------- Verified Requirements -----------------------------------------------%>
   <comp:toggle-panel id="execution-verified-requirement-panel"
