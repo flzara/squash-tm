@@ -23,9 +23,8 @@ package org.squashtest.tm.service.internal.repository
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.EntityReference
 import org.squashtest.tm.domain.EntityType
-
-import org.squashtest.tm.service.internal.repository.CustomCustomFieldValueDao
-
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateExecutionStepDao
 import spock.unitils.UnitilsSupport
 
 import org.unitils.dbunit.annotation.DataSet
@@ -38,19 +37,21 @@ class CustomCustomFieldValueDaoIT extends DbunitDaoSpecification {
 	@Inject
 	CustomCustomFieldValueDao customFieldValueDao
 
-	def "#getCufValuesMapByEntityReference(EntityReference, Map<EntityType, List<Long>>) - Should get the CufValues Map of a Camapaign"() {
-		given:
-			EntityReference scope = new EntityReference(EntityType.CAMPAIGN, -1L)
-		and:
-			Map<EntityType, List<Long>> requestedCufMap = new HashMap<>()
-			requestedCufMap.put(EntityType.CAMPAIGN, [-1L] as List)
-		when:
-			Map<EntityReference, Map<Long, Object>> resultMap = customFieldValueDao.getCufValuesMapByEntityReference(scope, requestedCufMap)
-		then:
-			resultMap != null
-			Map<Long, Object> campaignCufMap = resultMap.get(scope)
-			campaignCufMap != null
-			campaignCufMap.get(-1L).toString() == "Hello"
-	}
+	@Inject
+	HibernateExecutionStepDao executionStepDao
 
+	def "#getCufValuesMapByEntityReference(EntityReference, Map<EntityType, List<Long>>) - Should get the CufValues Map of a Campaign"() {
+		given: "scope"
+		EntityReference scope = new EntityReference(EntityType.CAMPAIGN, -1L)
+		and: "my requested cufs"
+		Map<EntityType, List<Long>> requestedCufMap = new HashMap<>()
+		requestedCufMap.put(EntityType.CAMPAIGN, [-1L] as List)
+		when:
+		Map<EntityReference, Map<Long, Object>> resultMap = customFieldValueDao.getCufValuesMapByEntityReference(scope, requestedCufMap)
+		then:
+		resultMap != null
+		Map<Long, Object> campaignCufMap = resultMap.get(scope)
+		campaignCufMap != null
+		campaignCufMap.get(-1L).toString() == "Hello"
+	}
 }

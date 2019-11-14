@@ -77,7 +77,9 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 				var allSelectedInputs =
 					_.filter($("input[type=checkbox][name!='entity'][data-cuf]:checked"), function(input) {
 						if(input.id.includes('_CUF-')) {
-							return _.contains(selectedEntities, input.id.split('_CUF-')[0]);
+							var casGeneral =  _.contains(selectedEntities, input.id.split('_CUF-')[0]);
+							var casTestStep = selectedEntities.includes("EXECUTION_STEP")&&input.id.includes("TEST_STEP");
+							return casGeneral || casTestStep;
 						} else {
 							return _.contains(allAvailableAttributesOfCheckedEntities, input.id);
 						}
@@ -119,7 +121,12 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 			openCufPopup: function(event) {
 				var entityType = event.target.getAttribute("data-entity");
 				var cufToDisplay = this.model.get('availableCustomFields')[entityType];
+
+				if (entityType==("EXECUTION_STEP")) {
+					var cufTestStep = this.model.get('availableCustomFields')["TEST_STEP"];
+				}
 				this.model.set({ cufToDisplay: cufToDisplay });
+				this.model.set({ cuf: cufTestStep });
 
 				var cufPopup = new CustomFieldPopup(this.model);
 			},

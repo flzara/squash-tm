@@ -25,6 +25,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectOrderByStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -41,13 +42,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.groupConcat;
+import static org.jooq.impl.DSL.val;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
+import static org.squashtest.tm.jooq.domain.Tables.DENORMALIZED_FIELD_VALUE;
+import static org.squashtest.tm.jooq.domain.Tables.DENORMALIZED_FIELD_VALUE_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
@@ -62,17 +65,29 @@ import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
 
 public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
+	private static final String IS_DENORMALIZED_CUF = "isDenormalizedCuf";
+
 	@Inject
 	private DSLContext Dsl;
 
 	private final static Field CUSTOM_FIELD_VALUE_TAG_VALUE =
 		groupConcat(CUSTOM_FIELD_VALUE_OPTION.LABEL).separator(", ");
 
+	private final static Field DENORMALIZED_FIELD_VALUE_TAG_VALUE =
+		groupConcat(DENORMALIZED_FIELD_VALUE_OPTION.LABEL).separator(", ");
+
 	private final static Field CUSTOM_FIELD_VALUE_COMPUTED =
 		DSL.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("CF"), CUSTOM_FIELD_VALUE.VALUE)
 			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("RTF"), CUSTOM_FIELD_VALUE.LARGE_VALUE)
 			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("NUM"), cast(CUSTOM_FIELD_VALUE.NUMERIC_VALUE, SQLDataType.VARCHAR))
 			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("TAG"), CUSTOM_FIELD_VALUE_TAG_VALUE)
+			.as("COMPUTED_VALUE");
+
+	private final static Field DENORMALIZED_FIELD_VALUE_COMPUTED =
+		DSL.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("CF"), DENORMALIZED_FIELD_VALUE.VALUE)
+			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("RTF"), DENORMALIZED_FIELD_VALUE.LARGE_VALUE)
+			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("NUM"), cast(DENORMALIZED_FIELD_VALUE.NUMERIC_VALUE, SQLDataType.VARCHAR))
+			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("MFV"), DENORMALIZED_FIELD_VALUE_TAG_VALUE)
 			.as("COMPUTED_VALUE");
 
 	@Override
@@ -83,7 +98,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 			return null;
 		}
 		// Build cuf Query
-		SelectSelectStep query = buildCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
+		SelectOrderByStep query = buildCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
 		// Execute the cuf Query
 		Iterator<Record> queryResult = query.fetch().iterator();
 		// Build the resulting map
@@ -98,14 +113,25 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	private Map<EntityReference, Map<Long, Object>> buildResultMapFromQueryResult(Iterator<Record> queryResult) {
 		Map<EntityReference, Map<Long, Object>> resultMap = new HashMap<>();
 		queryResult.forEachRemaining(record -> {
-			// Create the EntityReference
-			EntityReference entity = new EntityReference(
-				EntityType.valueOf(record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE)),
-				record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
+			EntityReference entity;
+			Object cufValue;
+			// Create the EntityReference with denormalized_cuf
+			if(record.get(IS_DENORMALIZED_CUF).equals(true)){
+				entity = new EntityReference(
+					EntityType.TEST_STEP,
+					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
+					// Get the value
+					cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
+			} else {
+				//Create the EntityReference
+				entity = new EntityReference(
+					EntityType.valueOf(record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE)),
+					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
+					// Get the value
+					cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
+			}
 			// Get the Cuf id
 			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
-			// Get the value
-			Object cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
 			// Store these data in the result Map
 			Map<Long, Object> currentEntityMap = resultMap.get(entity);
 			if(currentEntityMap == null) {
@@ -123,23 +149,39 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param allRequestedEntitiesInCampaign The Set of all the EntityReferences which CustomFieldValues are to retrieve
 	 * @return The Query to retrieve all requested CustomFieldValues of all requested Entities
 	 */
-	private SelectSelectStep buildCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
-		SelectSelectStep query =
+	private SelectOrderByStep buildCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+		SelectSelectStep query1 =
 			Dsl.select(
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE,
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID,
 				CUSTOM_FIELD_VALUE.CF_ID,
-				CUSTOM_FIELD_VALUE_COMPUTED);
+				CUSTOM_FIELD_VALUE_COMPUTED,
+				val(false).as(IS_DENORMALIZED_CUF)
+				);
 
-		query.from(CUSTOM_FIELD_VALUE)
+		query1.from(CUSTOM_FIELD_VALUE)
 			.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID));
 
-		query.where(
+		query1.where(
 			buildWhereConditionOfCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
 
-		query.groupBy(CUSTOM_FIELD_VALUE.CFV_ID);
+		query1.groupBy(CUSTOM_FIELD_VALUE.CFV_ID);
 
-		return query;
+		SelectSelectStep query2 = Dsl.select(
+				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE,
+				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID,
+				CUSTOM_FIELD_VALUE.CF_ID,
+				DENORMALIZED_FIELD_VALUE_COMPUTED,
+				val(true).as(IS_DENORMALIZED_CUF)
+			);
+		query2.from(DENORMALIZED_FIELD_VALUE)
+			.leftJoin(DENORMALIZED_FIELD_VALUE_OPTION).on(DENORMALIZED_FIELD_VALUE_OPTION.DFV_ID.eq(DENORMALIZED_FIELD_VALUE.DFV_ID))
+			.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
+
+		query2.where(buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
+		query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID);
+
+		return query1.union(query2);
 	}
 
 	/**
@@ -159,6 +201,32 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				whereCondition = currentCondition;
 			} else {
 				whereCondition = whereCondition.or(currentCondition);
+			}
+		}
+		return whereCondition;
+	}
+
+	/**
+	 * Build the Where condition of the DenormalizedCustomFieldValues Query.
+	 * @param entityTypeToCufIdsListMap The Map of Cuf ids List by EntityType
+	 * @param allRequestedEntitiesInCampaign All the EntityReferences which CustomFieldValues are requested
+	 * @return The Where condition of the DenormalizedCustomFieldValues Query
+	 */
+	private Condition buildWhereConditionOfDenormalizedCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+		Condition whereCondition = null;
+
+		for(EntityReference entityReference: allRequestedEntitiesInCampaign) {
+
+			if(EntityType.EXECUTION_STEP.equals(entityReference.getType())) {
+				Condition currentCondition =
+					DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE.eq("EXECUTION_STEP")
+						.and(DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID.eq(entityReference.getId()))
+						.and(CUSTOM_FIELD_VALUE.CF_ID.in(entityTypeToCufIdsListMap.get(EntityType.TEST_STEP)));
+				if(whereCondition == null) {
+					whereCondition = currentCondition;
+				} else {
+					whereCondition = whereCondition.or(currentCondition);
+				}
 			}
 		}
 		return whereCondition;
@@ -224,10 +292,12 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		queryResult.forEachRemaining(record -> {
 			for(EntityType entityType : entityTypesWithoutCampaign) {
-				Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
-				// The id could be null if left joined with a non existent entity
-				if(entityId != null) {
-					entityReferenceSet.add(new EntityReference(entityType, entityId));
+				if(!EntityType.TEST_STEP.equals(entityType)){
+					Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
+					// The id could be null if left joined with a non existent entity
+					if(entityId != null) {
+						entityReferenceSet.add(new EntityReference(entityType, entityId));
+					}
 				}
 			}
 		});

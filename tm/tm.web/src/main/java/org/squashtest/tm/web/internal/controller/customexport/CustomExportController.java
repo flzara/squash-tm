@@ -49,6 +49,7 @@ import org.squashtest.tm.service.customreport.CustomReportCustomExportService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.dto.CustomFieldBindingModel;
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -96,6 +97,8 @@ public class CustomExportController {
 	private CustomFieldFinderService cufService;
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
+	@Inject
+	private ExecutionStepDao executionStepDao;
 
 
 	@RequestMapping("/wizard/{parentId}")
@@ -155,7 +158,7 @@ public class CustomExportController {
 	private File createCustomExportFile(CustomReportCustomExport customExport, Locale locale) {
 		File file;
 		PrintWriter writer = null;
-		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService,cufService, cufValueService, i18nHelper, locale);
+		CustomExportCSVHelper csvHelper = new CustomExportCSVHelper(csvExportService,cufService, cufValueService, i18nHelper, locale, executionStepDao);
 
 		try {
 			file = File.createTempFile("custom-export", "tmp");
