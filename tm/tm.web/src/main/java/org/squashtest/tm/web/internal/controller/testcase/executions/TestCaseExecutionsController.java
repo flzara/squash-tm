@@ -35,7 +35,9 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -73,7 +75,18 @@ public class TestCaseExecutionsController {
 	private ExecutionFinder executionFinder;
 
 	@Inject
+	private TestCaseFinder testCaseFinder;
+
+	@Inject
 	private InternationalizationHelper internationalizationHelper;
+
+	/**
+	 * @param executionFinder the executionFinder to set
+	 */
+	@Inject
+	public void setExecutionFinder(ExecutionFinder executionFinder) {
+		this.executionFinder = executionFinder;
+	}
 
 	/**
 	 * Returns the
@@ -86,21 +99,16 @@ public class TestCaseExecutionsController {
 		Paging paging = Pagings.DEFAULT_PAGING;
 
 		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
+		TestCase testCase = testCaseFinder.findById(testCaseId);
 
 		model.addAttribute("executionsPageSize", paging.getPageSize());
 		model.addAttribute("testCaseId", testCaseId);
 		model.addAttribute("execs", executions);
+		model.addAttribute("isTcScripted", testCase.isScripted());
 
 		return "test-cases-tabs/executions-tab.html";
 	}
 
-	/**
-	 * @param executionFinder the executionFinder to set
-	 */
-	@Inject
-	public void setExecutionFinder(ExecutionFinder executionFinder) {
-		this.executionFinder = executionFinder;
-	}
 
 	@RequestMapping(params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
