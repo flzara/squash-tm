@@ -691,6 +691,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Map<String, String> getPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId) {
+		return doGetPluginConfiguration(projectId, workspace, pluginId);
+	}
+
+	@Override
+	public Map<String, String> getPluginConfigurationWithoutCheck(long projectId, WorkspaceType workspace, String pluginId) {
+		return doGetPluginConfiguration(projectId, workspace, pluginId);
+	}
+
+	private Map<String, String> doGetPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
 		if (binding != null) {

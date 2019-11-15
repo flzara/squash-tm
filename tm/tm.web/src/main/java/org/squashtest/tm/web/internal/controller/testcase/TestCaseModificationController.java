@@ -329,8 +329,8 @@ public class TestCaseModificationController {
 
 		//if the remote workflow is used, search for the plug-in used to retrieve the final configuration of the state
 		if (workflowType.equals(AutomationWorkflowType.REMOTE_WORKFLOW.getI18nKey())){
-			LibraryPluginBinding  lpb = projectDao.findPluginForProject(testCase.getProject().getId(),PluginType.AUTOMATION );
-			Map<String,String> pluginConfiguration =  projectManager.getPluginConfiguration(testCase.getProject().getId(), WorkspaceType.TEST_CASE_WORKSPACE, lpb.getPluginId());
+			LibraryPluginBinding lpb = projectDao.findPluginForProject(testCase.getProject().getId(),PluginType.AUTOMATION);
+			Map<String,String> pluginConfiguration = projectManager.getPluginConfigurationWithoutCheck(testCase.getProject().getId(), WorkspaceType.TEST_CASE_WORKSPACE, lpb.getPluginId());
 			finalStatusConfiged = pluginConfiguration.get(FINAL_STATE);
 
 			AutomationRequest automReq = testCase.getAutomationRequest();
@@ -343,7 +343,7 @@ public class TestCaseModificationController {
 					mav.addObject("remoteIssueKey", remoteAutomReq.getRemoteIssueKey());
 					mav.addObject("remoteReqAssignedTo",(!isBlank(remoteAutomReq.getRemoteAssignedTo())? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
 					mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
-					mav.addObject("automReqLastTransmittedOn",(!automReq.getTransmissionDate().equals(null)? automReq.getTransmissionDate():internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("automReqLastTransmittedOn",(automReq.getTransmissionDate() != null ? automReq.getTransmissionDate() : internationalizationHelper.internationalize("squashtm.nodata", locale)));
 					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "Oui":
 																		(remoteAutomReq.getRemoteRequestStatus()==null?internationalizationHelper.internationalize("squashtm.nodata", locale):"Non")));
 					mav.addObject("finalStatusConfiged",finalStatusConfiged);

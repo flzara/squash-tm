@@ -199,6 +199,13 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	Map<String, String> getPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId);
 
 	/**
+	 * TM-926
+	 * Returns the configuration of a given plugin for a given project without authorizations check.
+	 * Returns an empty map if the plugin is not bound to this project.
+	 */
+	Map<String, String> getPluginConfigurationWithoutCheck(long projectId, WorkspaceType workspace, String pluginId);
+
+	/**
 	 * Applies the given configuration to a plugin for a given project. If the plugin wasn't enabled for this project
 	 * already, it will be during the process.
 	 *
