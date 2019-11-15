@@ -460,12 +460,13 @@
 	<div id="detail">
 		<span style="font-weight:normal"><f:message key="message.disabled.plugin" /></span>
 		<p>
-			<input type="checkbox" id="save-conf" />
+			<input type="checkbox" id="save-conf" checked />
 			<span style="font-weight:normal"><f:message key="message.save.conf" /></span>
 		</p>
+		<span style="font-weight:normal; white-space: pre-line"><f:message key="message.disabled.plugins" /></span>
 		<p>
-      <span style="font-weight:bold"><f:message key="message.disabled.plugin.confirm" /> </span>
-    </p>
+      		<span style="font-weight:bold"><f:message key="message.disabled.plugin.confirm" /> </span>
+    	</p>
 	</div>
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm" />
