@@ -29,7 +29,6 @@
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 
-
 <%--
   requires some things in the context, including :
   - milestoneConf : an instance of MilestoneFeatureConfiguration
@@ -168,7 +167,8 @@
       verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }"
       verifiedRequirementsUrl="${verifiedRequirementsUrl }"
       containerId="contextual-content"
-      milestoneConf="${milestoneConf}"/>
+      milestoneConf="${milestoneConf}"
+      isTcScripted="${testCase.isScripted()}"/>
 
       <div id="add-summary-dialog" class="not-displayed"
            title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">

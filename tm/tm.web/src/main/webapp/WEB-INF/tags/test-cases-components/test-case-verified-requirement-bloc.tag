@@ -77,7 +77,8 @@
                                             verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" 
                                             verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
                                             containerId="contextual-content" 
-                                            milestoneConf="${milestoneConf}"/>
+                                            milestoneConf="${milestoneConf}"
+                                            isTcScripted="${testCase.isScripted()}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 </div>

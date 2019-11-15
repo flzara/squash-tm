@@ -37,6 +37,8 @@
 			  description="boolean that says if the table must include indirectly verified requirements" %>
 <%@ attribute name="milestoneConf" required="true" description="an instance of MilestoneFeatureConfiguration"
 			  type="java.lang.Object" %>
+<%@ attribute name="isTcScripted" required="true" description="whether the related test case is scripted or not"
+        type="java.lang.Boolean"%>
 
 
 <s:url var="tableLanguageUrl" value="/datatables/messages"/>
@@ -98,7 +100,9 @@
 			key="requirement-version.version-number.label"/></th>
 		<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
 		<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
-		<th data-def='map=verifyingSteps'><f:message key="label.test-step.short"/></th>
+    <c:if test="${not isTcScripted}">
+      <th data-def='map=verifyingSteps'><f:message key="label.test-step.short"/></th>
+    </c:if>
 		<th data-def='unbind-button,narrow,  map=empty-delete-holder'>&nbsp;</th>
 		<th data-def="map=milestone, invisible"></th>
 	</tr>
