@@ -56,7 +56,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			var genericCufLabel = translator.get("label.customField");
 			var linkcuf = translator.get("label.fromTestCase");
 			Handlebars.registerHelper("cuf-label", function(prototype) {
-				var html
+				var html;
 				if(this.id.indexOf("TEST_STEP")){
 						html = prototype +" <span class='small txt-discreet'> (" + genericCufLabel + ")</span>";
 				} else {
