@@ -180,7 +180,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
 
 			query2.where(buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
-			query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID);
+			query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID, CUSTOM_FIELD_VALUE.CFV_ID);
 			if(query1==null){
 				return query2;
 			}
