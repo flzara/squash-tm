@@ -54,4 +54,27 @@ class CustomCustomFieldValueDaoIT extends DbunitDaoSpecification {
 		campaignCufMap != null
 		campaignCufMap.get(-1L).toString() == "Hello"
 	}
+
+	def "should get the CufValues Map for a test step related execution step"() {
+
+		given:
+		EntityReference scope = new EntityReference(EntityType.CAMPAIGN, -1L)
+		and:
+		Map<EntityType, List<Long>> requestedCufMap = new HashMap<>()
+		requestedCufMap.put(EntityType.TEST_STEP, [-2L] as List)
+		and:
+		EntityReference testStep = new EntityReference(EntityType.TEST_STEP, -2L)
+		when:
+		Map<EntityReference, Map<Long, Object>> resultMap = customFieldValueDao.getCufValuesMapByEntityReference(scope, requestedCufMap)
+		then:
+		resultMap != null
+		Map<Long, Object> testStepCuf = resultMap.get(testStep)
+		testStepCuf != null
+		testStepCuf.get(-2L).toString() == "Plop"
+	}
+
+	def "should get the CufValues of all EntityTypes"() {
+
+	}
+
 }

@@ -167,21 +167,27 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		query1.groupBy(CUSTOM_FIELD_VALUE.CFV_ID);
 
-		SelectSelectStep query2 = Dsl.select(
+		if (entityTypeToCufIdsListMap.containsKey(EntityType.TEST_STEP)) {
+			SelectSelectStep query2 = Dsl.select(
 				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE,
 				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID,
 				CUSTOM_FIELD_VALUE.CF_ID,
 				DENORMALIZED_FIELD_VALUE_COMPUTED,
 				val(true).as(IS_DENORMALIZED_CUF)
 			);
-		query2.from(DENORMALIZED_FIELD_VALUE)
-			.leftJoin(DENORMALIZED_FIELD_VALUE_OPTION).on(DENORMALIZED_FIELD_VALUE_OPTION.DFV_ID.eq(DENORMALIZED_FIELD_VALUE.DFV_ID))
-			.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
+			query2.from(DENORMALIZED_FIELD_VALUE)
+				.leftJoin(DENORMALIZED_FIELD_VALUE_OPTION).on(DENORMALIZED_FIELD_VALUE_OPTION.DFV_ID.eq(DENORMALIZED_FIELD_VALUE.DFV_ID))
+				.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
 
-		query2.where(buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
-		query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID);
-
-		return query1.union(query2);
+			query2.where(buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
+			query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID);
+			if(query1==null){
+				return query2;
+			}
+			return query1.union(query2);
+		} else {
+			return query1;
+		}
 	}
 
 	/**
@@ -193,10 +199,13 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	private Condition buildWhereConditionOfCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
 		Condition whereCondition = null;
 		for(EntityReference entityReference: allRequestedEntitiesInCampaign) {
-			Condition currentCondition =
-				CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityReference.getType().toString())
-					.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityReference.getId()))
-					.and(CUSTOM_FIELD_VALUE.CF_ID.in(entityTypeToCufIdsListMap.get(entityReference.getType())));
+			List<Long> cufIdList = entityTypeToCufIdsListMap.get(entityReference.getType());
+				Condition currentCondition = null;
+			if(cufIdList!= null){
+				currentCondition =	CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityReference.getType().toString())
+						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityReference.getId()))
+						.and(CUSTOM_FIELD_VALUE.CF_ID.in(cufIdList));
+			}
 			if(whereCondition == null) {
 				whereCondition = currentCondition;
 			} else {
@@ -292,13 +301,16 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		queryResult.forEachRemaining(record -> {
 			for(EntityType entityType : entityTypesWithoutCampaign) {
-				if(!EntityType.TEST_STEP.equals(entityType)){
 					Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
 					// The id could be null if left joined with a non existent entity
 					if(entityId != null) {
-						entityReferenceSet.add(new EntityReference(entityType, entityId));
+						if(EntityType.TEST_STEP.equals(entityType)) {
+							entityReferenceSet.add(new EntityReference(EntityType.EXECUTION_STEP, entityId));
+						} else{
+							entityReferenceSet.add(new EntityReference(entityType, entityId));
+
+						}
 					}
-				}
 			}
 		});
 		return entityReferenceSet;
@@ -363,8 +375,8 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		}
 		if(cufQueryDepth > 4) {
 			fieldList.add(EXECUTION_STEP.EXECUTION_STEP_ID);
-			fieldList.add(EXECUTION_STEP.TEST_STEP_ID); /***********************************************************************************************/
-			fieldList.add(TEST_STEP.TEST_STEP_ID);  /***********************************************************************************************/
+			fieldList.add(EXECUTION_STEP.TEST_STEP_ID);
+			fieldList.add(TEST_STEP.TEST_STEP_ID);
 		}
 		return fieldList;
 	}

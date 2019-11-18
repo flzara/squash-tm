@@ -57,10 +57,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "sq
 			var linkcuf = translator.get("label.fromTestCase");
 			Handlebars.registerHelper("cuf-label", function(prototype) {
 				var html;
-				if(this.id.indexOf("TEST_STEP")){
-						html = prototype +" <span class='small txt-discreet'> (" + genericCufLabel + ")</span>";
+				if(this.id.includes("TEST_STEP")){
+						html = prototype +" <span class='small txt-discreet'> (" + linkcuf + ")</span>";
 				} else {
-						html = prototype + "<span class='small txt-discreet'> (" + linkcuf + ")</span>";
+						html = prototype + "<span class='small txt-discreet'> (" + genericCufLabel + ")</span>";
 				}
 				return new Handlebars.SafeString(html);
 			});
