@@ -44,8 +44,12 @@ define(["jquery", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCusto
 						'mDataProp': "denormalizedFields." + code + ".value",
 						'sClass': 'denormalized-field-value denormalized-field-' + code + " cft-" + type,
 						'sWidth': "5em",
-						'aTargets': ['denormalized-field-' + code]
+						'aTargets': ['denormalized-field-' + code],
+						'contentEditable' : 'false'
+
+
 					};
+
 				} else {
 					newColumn = {
 						'bVisible': true,
@@ -177,18 +181,21 @@ define(["jquery", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCusto
 				for (var code in defMap) {
 					if (defMap.hasOwnProperty(code)) {
 						var def = defMap[code];
-
 						var cufselts;
+						var denormalizedCuf;
 						if (def.itype === "TAG") {
-							cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');
+							cufselts = table.find('td.custom-field-' + code + '>span>ul');
+							denormalizedCuf = table.find('td.denormalized-field-' + code + '>span>ul');
 						}
 						else {
-							cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
+							cufselts = table.find('td.custom-field-' + code + '>span');
+							denormalizedCuf = table.find('td.denormalized-field-' + code + '>span>ul');
 						}
 
 						if (isEditable) {
 							var postFunction = makePostFunction(code, table);
 							cufselts.jeditableCustomfield(def, postFunction);
+							denormalizedCuf.staticCustomfield(def);
 						}
 						else {
 							cufselts.staticCustomfield(def);

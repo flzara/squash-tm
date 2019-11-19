@@ -103,8 +103,12 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 
 					case "jeditable":
 						escapeCustomFieldOptions(cufValue);
+						if(cufValue.binding.customField.denormalized === true){
+							elt.staticCustomfield(cufValue.binding.customField);
+						}else{
 						elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
 						elt.parent().addClass('editable');
+						}
 						break;
 				}
 			}
