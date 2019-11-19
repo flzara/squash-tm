@@ -20,25 +20,24 @@
  */
 package org.squashtest.tm.web.internal.controller.customexport;
 
-import jdk.nashorn.internal.runtime.options.LoggingOption;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
 import org.squashtest.tm.domain.customreport.CustomReportCustomExportColumn;
-import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateExecutionStepDao;
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
-import javax.swing.text.html.parser.Entity;
+import javax.persistence.EntityNotFoundException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +49,8 @@ import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST
 import static org.squashtest.tm.domain.customreport.CustomExportColumnLabel.TEST_CASE_TYPE;
 
 public class CustomExportCSVHelper {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomExportCSVHelper.class);
 
 	private static final char SEPARATOR = ';';
 
@@ -74,7 +75,7 @@ public class CustomExportCSVHelper {
 		InternationalizationHelper translator,
 		Locale locale,
 		ExecutionStepDao executionStepDao) {
-                this.csvService = csvService;
+		this.csvService = csvService;
 		this.cufService = cufService;
 		this.cufValueService = cufValueService;
 		this.translator = translator;
@@ -120,10 +121,15 @@ public class CustomExportCSVHelper {
 		if(column.getCufId() == null) {
 			return translator.internationalize(column.getLabel().getI18nKey(), locale);
 		} else {
-			return cufService.findById(column.getCufId()).getLabel();
+			try {
+				return cufService.findById(column.getCufId()).getLabel();
+			} catch (EntityNotFoundException ex) {
+				// [TM-933] If the column references a deleted cuf
+				LOGGER.info("Custom Field of ID " + column.getCufId() + " was deleted and will be written as such.");
+				return translator.internationalize("squashtm.itemdeleted", locale);
+			}
 		}
 	}
-
 
 	/**
 	 * Build the String which will compose the data of the export csv file.
