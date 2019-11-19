@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportCustomExport;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +48,8 @@ import java.util.Map;
 @Component("customReport.customExportBuilder")
 @Scope("prototype")
 public class JsonCustomExportBuilder {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(JsonCustomExportBuilder.class);
 
 	private static final String I18N_KEY_DATE_FORMAT = "squashtm.dateformat";
 
@@ -101,7 +106,12 @@ public class JsonCustomExportBuilder {
 			if (cufId == null) {
 				entityTypeToLabelList.get(entityType).add(i18nHelper.internationalize(label.getI18nKey(), locale));
 			} else {
-				entityTypeToLabelList.get(entityType).add(cufFinder.findById(column.getCufId()).getLabel());
+				try {
+					entityTypeToLabelList.get(entityType).add(cufFinder.findById(column.getCufId()).getLabel());
+				} catch(EntityNotFoundException ex) {
+					LOGGER.info("Custom Field of ID " + column.getCufId() + " was deleted and cannot be displayed.");
+					entityTypeToLabelList.get(entityType).add(i18nHelper.internationalize("squashtm.itemdeleted", locale));
+				}
 			}
 		}
 		jsonCustomExport.setColumns(entityTypeToLabelList);
