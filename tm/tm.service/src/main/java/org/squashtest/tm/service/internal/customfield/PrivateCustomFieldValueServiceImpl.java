@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -39,7 +38,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.audit.AuditModificationService;
@@ -55,9 +53,7 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +80,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
-
 
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
@@ -170,7 +165,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	// same : no sec, a gesture of mercy for the database
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities,
-	                                                       Collection<CustomField> restrictedToThoseCustomfields) {
+														   Collection<CustomField> restrictedToThoseCustomfields) {
 
 		// first, because the entities might be of different kind we must segregate them.
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
@@ -231,7 +226,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity, Project project) {
 
-		LOGGER.debug("creating customfield values for entity {}#{}", entity.getBoundEntityType(), entity.getBoundEntityId());
+		LOGGER.debug(
+			"creating customfield values for entity {}#{}",
+			entity.getBoundEntityType(),
+			entity.getBoundEntityId());
 
 		if (project == null) {
 			project = entity.getProject();
@@ -358,7 +356,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
-		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
+		return customFieldValueDao.findAllForEntityAndRenderingLocation(
+			boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
 	}
 
 
@@ -468,8 +467,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(EntityReference entity, Map<EntityType, List<Long>> cufIdsMapByEntityType) {
-		return customFieldValueDao.getCufValuesMapByEntityReference(entity, cufIdsMapByEntityType);
+	public Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(
+		EntityReference scopeEntity, Map<EntityType, List<Long>> cufIdsMapByEntityType) {
+		return customFieldValueDao.getCufValuesMapByEntityReference(scopeEntity, cufIdsMapByEntityType);
 	}
 
 	// *********************** private convenience methods ********************

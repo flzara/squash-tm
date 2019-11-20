@@ -107,16 +107,24 @@ public interface CustomFieldValueFinderService {
 	boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity);
 
 
-	List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation);
+	List<CustomFieldValue> findAllForEntityAndRenderingLocation(
+		BoundEntity boundEntity, RenderingLocation renderingLocation);
 
 	/**
-	 * Given a campaignId and a Map of the requested CustomField ids Lists mapped by EntityType,
+	 * Given a scope represented by an EntityReference,
+	 * and a Map of the requested CustomField ids Lists mapped by EntityType,
 	 * return a Map which keys are all the entities contained in the Campaign as EntityReferences
 	 * and values are Maps listing CustomFieldValues mapped by CustomField ids.
-	 * @param campaignId The Campaign id
-	 * @param cufIdsMapByEntityType The Map of the CustomField ids lists mapped by EntityType.
-	 * @return The Map<EntityReference, Map<Long, Object>> where the keys are the entities contained in the Campaign and
+	 * @param scopeEntity The EntityReference representing the scope entity
+	 * @param cufIdsMapByEntityType The Map of the requested CustomField ids lists mapped by EntityType.
+	 * @return The Map<EntityReference, Map<Long, Object>> where the keys are the entities contained in the scope and
 	 * the values are Maps of CustomFieldValues mapped by CustomField ids.
+	 * <b>
+	 *     Careful: It is possible to request denormalized CustomFieldValues of ExecutionSteps
+	 * by adding the EntityType.TEST_STEP in the <i>cufMapByEntityType</i> parameter. In this case, the resulting Map
+	 * will contain EntityReferences of type TEST_STEP but with the ID corresponding to the referenced EXECUTION_STEP.
+	 * </b>
 	 */
-	Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(EntityReference entity, Map<EntityType, List<Long>> cufIdsMapByEntityType);
+	Map<EntityReference, Map<Long, Object>> getCufValueMapByEntityRef(
+		EntityReference scopeEntity, Map<EntityType, List<Long>> cufIdsMapByEntityType);
 }

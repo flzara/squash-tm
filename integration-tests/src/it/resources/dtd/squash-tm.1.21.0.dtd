@@ -55,6 +55,7 @@
 	CUSTOM_FIELD_OPTION*,
 	CUSTOM_FIELD_RENDERING_LOCATION*,
 	CUSTOM_FIELD_VALUE*,
+	CUSTOM_FIELD_VALUE_OPTION*,
 	CUSTOM_REPORT_CHART_BINDING*,
 	CUSTOM_REPORT_CUSTOM_EXPORT*,
 	CUSTOM_REPORT_FOLDER*,
@@ -180,6 +181,7 @@
 	custom_field_option?,
 	custom_field_rendering_location?,
 	custom_field_value?,
+	custom_field_value_option?,
 	custom_report_chart_binding?,
 	custom_report_folder?,
 	custom_report_dashboard?,
@@ -685,6 +687,13 @@
 		FIELD_TYPE CDATA #REQUIRED
 		NUMERIC_VALUE CDATA #IMPLIED
 		>
+
+	<!ELEMENT CUSTOM_FIELD_VALUE_OPTION EMPTY>
+	<!ATTLIST CUSTOM_FIELD_VALUE_OPTION
+		CFV_ID CDATA #REQUIRED
+		LABEL CDATA #REQUIRED
+		POSITION CDATA #REQUIRED
+	>
 
 	<!ELEMENT CUSTOM_REPORT_LIBRARY_NODE EMPTY>
 	<!ATTLIST CUSTOM_REPORT_LIBRARY_NODE
@@ -1428,6 +1437,7 @@
 	<!ELEMENT custom_field_option EMPTY>
 	<!ELEMENT custom_field_rendering_location EMPTY>
 	<!ELEMENT custom_field_value EMPTY>
+	<!ELEMENT custom_field_value_option EMPTY>
 	<!ELEMENT custom_report_library EMPTY>
 	<!ELEMENT custom_report_chart_binding EMPTY>
 	<!ELEMENT custom_report_folder EMPTY>

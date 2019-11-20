@@ -38,6 +38,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -131,6 +132,7 @@ public class CustomExportCSVHelper {
 		}
 	}
 
+
 	/**
 	 * Build the String which will compose the data of the export csv file.
 	 * @param customExport The CustomReportCustomExport than is to be exported
@@ -164,16 +166,27 @@ public class CustomExportCSVHelper {
 	}
 
 	/**
-	 * Given a CustomExport, extract a Map which keys are all EntityReferences involved in the export
+	 * Given a CustomExport and a Map of the requested CustomFields ids mapped by EntityTypes,
+	 * extract a Map which keys are all EntityReferences involved in the export
 	 * and values are Maps of all the CustomFieldValues mapped by CustomField ids.
 	 * @param customExport The CustomExport
+	 * @param entityTypeToCufIdsListMap The Map of the requested CustomFields ids mapped by EntityTypes
 	 * @return A Map<EntityReference, Map<Long, Object>> where the second Map gives CustomFieldValues
 	 * mapped by CustomField ids.
+	 * <br/>
+	 * <b>
+	 *     Careful: It is possible to request denormalized CustomFieldValues of ExecutionSteps
+	 * by adding the EntityType.TEST_STEP in the <i>cufMapByEntityType</i> parameter. In this case, the resulting Map
+	 * will contain EntityReferences of type TEST_STEP but with the ID corresponding to the referenced EXECUTION_STEP.
+	 * </b>
 	 */
-	private Map<EntityReference, Map<Long, Object>> getEntityRefToCufValuesMapMap(CustomReportCustomExport customExport, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
+	private Map<EntityReference, Map<Long, Object>> getEntityRefToCufValuesMapMap(
+		CustomReportCustomExport customExport,
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
+
 		// If no CustomFields were requested, nothing else is to do
 		if(entityTypeToCufIdsListMap.isEmpty()) {
-			return null;
+			return new HashMap<>();
 		}
 		EntityReference entity = customExport.getScope().get(0);
 		return cufValueService.getCufValueMapByEntityRef(entity, entityTypeToCufIdsListMap);
@@ -188,7 +201,12 @@ public class CustomExportCSVHelper {
 	 * @param campaignProgressRate The scope Campaign progress rate
 	 * @return
 	 */
-	private String buildResultString(Iterator<Record> resultSet, List<CustomReportCustomExportColumn> selectedColumns, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignProgressRate) {
+	private String buildResultString(
+		Iterator<Record> resultSet,
+		List<CustomReportCustomExportColumn> selectedColumns,
+		Map<EntityReference, Map<Long, Object>> cufMap,
+		Object campaignProgressRate) {
+
 		StringBuilder dataBuilder = new StringBuilder();
 		resultSet.forEachRemaining(record -> {
 				for (CustomReportCustomExportColumn column : selectedColumns) {
@@ -209,7 +227,6 @@ public class CustomExportCSVHelper {
 		return dataBuilder.toString();
 	}
 
-
 	/**
 	 * Get the value corresponding to the given CustomReportCustomExportColumn among the given Record.
 	 * @param record The Record, representing a Row of fetched data
@@ -217,7 +234,12 @@ public class CustomExportCSVHelper {
 	 * @param cufMap The Map containing the CustomFieldValues
 	 * @return The value corresponding to the given column among the given Record
 	 */
-	private Object computeOutputValue(Record record, CustomReportCustomExportColumn column, Map<EntityReference, Map<Long, Object>> cufMap, Object campaignSuccessRate) {
+	private Object computeOutputValue(
+		Record record,
+		CustomReportCustomExportColumn column,
+		Map<EntityReference, Map<Long, Object>> cufMap,
+		Object campaignSuccessRate) {
+
 		CustomExportColumnLabel label = column.getLabel();
 		Field columnField = label.getJooqTableField();
 		Object value = null;

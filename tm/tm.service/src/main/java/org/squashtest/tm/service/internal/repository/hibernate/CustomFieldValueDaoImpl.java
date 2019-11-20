@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.groupConcat;
 import static org.jooq.impl.DSL.val;
@@ -91,9 +92,12 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 			.as("COMPUTED_VALUE");
 
 	@Override
-	public Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(EntityReference entity, Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
+	public Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(
+		EntityReference scopeEntity,
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap) {
+
 		// Fetch all the Entities involved in the Campaign which cuf were requested
-		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(entity, entityTypeToCufIdsListMap.keySet());
+		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(scopeEntity, entityTypeToCufIdsListMap.keySet());
 		if(allRequestedEntitiesInCampaign.isEmpty()) {
 			return null;
 		}
@@ -120,15 +124,15 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				entity = new EntityReference(
 					EntityType.TEST_STEP,
 					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
-					// Get the value
-					cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
+				// Get the value
+				cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
 			} else {
 				//Create the EntityReference
 				entity = new EntityReference(
 					EntityType.valueOf(record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE)),
 					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
-					// Get the value
-					cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
+				// Get the value
+				cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
 			}
 			// Get the Cuf id
 			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
@@ -149,7 +153,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param allRequestedEntitiesInCampaign The Set of all the EntityReferences which CustomFieldValues are to retrieve
 	 * @return The Query to retrieve all requested CustomFieldValues of all requested Entities
 	 */
-	private SelectOrderByStep buildCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+	private SelectOrderByStep buildCufQuery(
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+
 		SelectSelectStep query1 =
 			Dsl.select(
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE,
@@ -157,7 +163,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				CUSTOM_FIELD_VALUE.CF_ID,
 				CUSTOM_FIELD_VALUE_COMPUTED,
 				val(false).as(IS_DENORMALIZED_CUF)
-				);
+			);
 
 		query1.from(CUSTOM_FIELD_VALUE)
 			.leftJoin(CUSTOM_FIELD_VALUE_OPTION).on(CUSTOM_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE_OPTION.CFV_ID));
@@ -196,15 +202,17 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param allRequestedEntitiesInCampaign All the EntityReferences which CustomFieldValues are requested
 	 * @return The Where condition of the CustomFieldValues Query
 	 */
-	private Condition buildWhereConditionOfCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+	private Condition buildWhereConditionOfCufQuery(
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+
 		Condition whereCondition = null;
 		for(EntityReference entityReference: allRequestedEntitiesInCampaign) {
 			List<Long> cufIdList = entityTypeToCufIdsListMap.get(entityReference.getType());
-				Condition currentCondition = null;
+			Condition currentCondition = null;
 			if(cufIdList!= null){
 				currentCondition =	CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE.eq(entityReference.getType().toString())
-						.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityReference.getId()))
-						.and(CUSTOM_FIELD_VALUE.CF_ID.in(cufIdList));
+					.and(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID.eq(entityReference.getId()))
+					.and(CUSTOM_FIELD_VALUE.CF_ID.in(cufIdList));
 			}
 			if(whereCondition == null) {
 				whereCondition = currentCondition;
@@ -221,7 +229,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param allRequestedEntitiesInCampaign All the EntityReferences which CustomFieldValues are requested
 	 * @return The Where condition of the DenormalizedCustomFieldValues Query
 	 */
-	private Condition buildWhereConditionOfDenormalizedCufQuery(Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+	private Condition buildWhereConditionOfDenormalizedCufQuery(
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
+
 		Condition whereCondition = null;
 
 		for(EntityReference entityReference: allRequestedEntitiesInCampaign) {
@@ -256,24 +266,27 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 	/**
 	 * Build the complete Query to retrieve all the requested EntityReferences from a Campaign.
-	 * @param entity The Campaign Id
-	 * @param entityTypes The EntityType of the requested EntityReferences
+	 * @param scopeEntity The EntityReference representing the scope
+	 * @param requestedEntityTypes The EntityType of the requested EntityReferences
 	 * @return The Query to retrieve all the requested EntityReferences from the Campaign
 	 */
-	private SelectJoinStep buildEntityReferencesQuery(EntityReference entity, Set<EntityType> entityTypes) {
-		int cufQueryDepth = getDepthOfEntitiesQuery(entityTypes);
-		boolean isTestSuiteRequested = entityTypes.contains(EntityType.TEST_SUITE);
-		boolean isIterationSelected = EntityType.ITERATION.equals(entity.getType());
-		boolean isTestSuiteSelected = EntityType.TEST_SUITE.equals(entity.getType());
+	private SelectJoinStep buildEntityReferencesQuery(
+		EntityReference scopeEntity, Set<EntityType> requestedEntityTypes) {
 
-		List<Field<?>> fieldList = buildFieldsListOfEntitiesQuery(cufQueryDepth, isTestSuiteRequested, isIterationSelected, isTestSuiteSelected);
+		int cufQueryDepth = getDepthOfEntitiesQuery(requestedEntityTypes);
+		boolean isTestSuiteRequested = requestedEntityTypes.contains(EntityType.TEST_SUITE);
+		boolean isIterationSelected = EntityType.ITERATION.equals(scopeEntity.getType());
+		boolean isTestSuiteSelected = EntityType.TEST_SUITE.equals(scopeEntity.getType());
+
+		List<Field<?>> fieldList = buildFieldsListOfEntitiesQuery(
+			cufQueryDepth, isTestSuiteRequested, isIterationSelected, isTestSuiteSelected);
 
 		SelectSelectStep selectQuery = Dsl.select(fieldList);
 		SelectJoinStep fromQuery = buildFromClauseOfEntitiesQuery(selectQuery, cufQueryDepth, isTestSuiteRequested);
-		switch(entity.getType()) {
-			case CAMPAIGN: fromQuery.where(CAMPAIGN.CLN_ID.eq(entity.getId())); break;
-			case ITERATION: fromQuery.where(ITERATION.ITERATION_ID.eq(entity.getId())); break;
-			default: fromQuery.where(TEST_SUITE.ID.eq(entity.getId()));
+		switch(scopeEntity.getType()) {
+			case CAMPAIGN: fromQuery.where(CAMPAIGN.CLN_ID.eq(scopeEntity.getId())); break;
+			case ITERATION: fromQuery.where(ITERATION.ITERATION_ID.eq(scopeEntity.getId())); break;
+			default: fromQuery.where(TEST_SUITE.ID.eq(scopeEntity.getId()));
 		}
 
 		return fromQuery;
@@ -286,7 +299,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param queryResult The Results of the Query
 	 * @return The Set of all EntityReferences in the Campaign based on the Query Results
 	 */
-	private Set<EntityReference> buildEntityReferencesSetFromQueryResult(EntityReference entity, Set<EntityType> entityTypes, Iterator<Record> queryResult) {
+	private Set<EntityReference> buildEntityReferencesSetFromQueryResult(
+		EntityReference entity, Set<EntityType> entityTypes, Iterator<Record> queryResult) {
+
 		Set<EntityReference> entityReferenceSet = new HashSet<>();
 
 		Set<EntityType> entityTypesWithoutCampaign = new HashSet(entityTypes);
@@ -301,16 +316,16 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		queryResult.forEachRemaining(record -> {
 			for(EntityType entityType : entityTypesWithoutCampaign) {
-					Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
-					// The id could be null if left joined with a non existent entity
-					if(entityId != null) {
-						if(EntityType.TEST_STEP.equals(entityType)) {
-							entityReferenceSet.add(new EntityReference(EntityType.EXECUTION_STEP, entityId));
-						} else{
-							entityReferenceSet.add(new EntityReference(entityType, entityId));
+				Long entityId = record.get(CustomExportColumnLabel.getEntityTypeToIdTableFieldMap().get(entityType));
+				// The id could be null if left joined with a non existent entity
+				if(entityId != null) {
+					if(EntityType.TEST_STEP.equals(entityType)) {
+						entityReferenceSet.add(new EntityReference(EntityType.EXECUTION_STEP, entityId));
+					} else{
+						entityReferenceSet.add(new EntityReference(entityType, entityId));
 
-						}
 					}
+				}
 			}
 		});
 		return entityReferenceSet;
@@ -323,7 +338,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param isTestSuiteRequested If at least one TestSuite CustomField is requested
 	 * @return The From clause of the Query
 	 */
-	private SelectJoinStep buildFromClauseOfEntitiesQuery(SelectSelectStep selectQuery, int cufQueryDepth, boolean isTestSuiteRequested) {
+	private SelectJoinStep buildFromClauseOfEntitiesQuery(
+		SelectSelectStep selectQuery, int cufQueryDepth, boolean isTestSuiteRequested) {
+
 		SelectJoinStep fromQuery = selectQuery.from(CAMPAIGN);
 
 		if(cufQueryDepth > 1) {
@@ -346,8 +363,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		if(cufQueryDepth > 4) {
 			fromQuery.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
-			.leftJoin(TEST_STEP).on(TEST_STEP.TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID));
-
+				.leftJoin(TEST_STEP).on(TEST_STEP.TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID));
 		}
 		return fromQuery;
 	}
@@ -358,7 +374,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	 * @param isTestSuiteRequested If at least one TestSuite Cuf is requested
 	 * @return The List of Fields the Cuf Query have to select
 	 */
-	private List<Field<?>> buildFieldsListOfEntitiesQuery(int cufQueryDepth, boolean isTestSuiteRequested, boolean isIterationSelected, boolean isTestSuiteSelected) {
+	private List<Field<?>> buildFieldsListOfEntitiesQuery(
+		int cufQueryDepth, boolean isTestSuiteRequested, boolean isIterationSelected, boolean isTestSuiteSelected) {
+
 		List<Field<?>> fieldList = new ArrayList<>();
 		if(cufQueryDepth > 1 || isIterationSelected) {
 			fieldList.add(ITERATION.ITERATION_ID);

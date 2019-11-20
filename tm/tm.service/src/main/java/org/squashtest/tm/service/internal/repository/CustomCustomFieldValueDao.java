@@ -30,12 +30,20 @@ import java.util.Set;
 public interface CustomCustomFieldValueDao {
 
 	/**
-	 * Given a Campaign Id and a Map listing all the CustomField ids requested mapped by EntityType,
+	 * Given a scope represented by an EntityReference
+	 * and a Map listing all the CustomField ids requested mapped by EntityType,
 	 * get a Map which keys are EntityReferences contained in the Campaign and values are
 	 * Maps containing CustomFieldValues mapped by CustomField id.
-	 * @param entity The id of the Campaign
+	 * @param scopeEntity The EntityReference representing the scope
 	 * @param cufMapByEntityType A Map containing the list of requested CustomField ids mapped by EntityType
 	 * @return A Map which keys are EntityReferences and values are Maps containing CustomFieldValues mapped by CustomField id.
+	 * <br/>
+	 * <b>
+	 *     Careful: It is possible to request denormalized CustomFieldValues of ExecutionSteps
+	 * by adding the EntityType.TEST_STEP in the <i>cufMapByEntityType</i> parameter. In this case, the resulting Map
+	 * will contain EntityReferences of type TEST_STEP but with the ID corresponding to the referenced EXECUTION_STEP.
+	 * </b>
 	 */
-	Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(EntityReference entity, Map<EntityType, List<Long>> cufMapByEntityType);
+	Map<EntityReference, Map<Long, Object>> getCufValuesMapByEntityReference(
+		EntityReference scopeEntity, Map<EntityType, List<Long>> cufMapByEntityType);
 }
