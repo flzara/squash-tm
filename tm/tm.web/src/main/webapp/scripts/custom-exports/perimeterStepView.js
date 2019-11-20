@@ -84,7 +84,6 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 											};
 										});
 									}).value();
-							availableCustomFields['EXECUTION_STEP'] = availableCustomFields['EXECUTION_STEP'].concat(availableCustomFields['TEST_STEP']);
 							self.model.set({ availableCustomFields: availableCustomFields });
 						});
 

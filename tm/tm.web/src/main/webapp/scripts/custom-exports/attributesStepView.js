@@ -121,8 +121,8 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
 			openCufPopup: function(event) {
 				var entityType = event.target.getAttribute("data-entity");
 				var cufToDisplay = this.model.get('availableCustomFields')[entityType];
+				this.model.set({ entityWhichCufAreDisplayed: entityType });
 				this.model.set({ cufToDisplay: cufToDisplay });
-
 
 				var cufPopup = new CustomFieldPopup(this.model);
 			},

@@ -60,22 +60,39 @@
     <div class="tg-body">
       <div class="criterion-block">
         <div id="{{entityKey}}-inputs">
+          <!-- Standard Attributes -->
           {{#each this.attributes as |attrValue attrKey|}}
           <div style="float: left; min-width:240px;">
             <input id="{{attrKey}}" name="{{attrKey}}" type="checkbox" data-cuf="false"/>
             <label for="{{attrKey}}" class="ui-helper-reset">{{i18n attrValue}}</label>
           </div>
           {{/each}}
+          <!-- Custom Fields Attributes -->
           {{#each (lookup ../attributes.availableCustomFields entityKey)}}
             <div id="wrapper-{{id}}" class="chart-wizard-hidden" style="float: left; min-width:240px;">
               <input id="{{id}}" name="{{id}}" type="checkbox" data-cuf="true"
                      {{#if (contains ../attributes.selectedCufAttributes id)}}
                       checked="checked"
-                    {{/if}}
+                     {{/if}}
               />
               {{cuf-label label}}
             </div>
           {{/each}}
+          <!-- Specific TEST_STEP related Custom Fields -->
+          {{#ifequals entityKey "EXECUTION_STEP"}}
+            {{#ifnotempty ../attributes.availableCustomFields.TEST_STEP}}
+              {{#each ../attributes.availableCustomFields.TEST_STEP}}
+              <div id="wrapper-{{id}}" class="chart-wizard-hidden" style="float: left; min-width:240px;">
+                <input id="{{id}}" name="{{id}}" type="checkbox" data-cuf="true"
+                       {{#if (contains ../attributes.selectedCufAttributes id)}}
+                        checked="checked"
+                        {{/if}}
+                />
+                {{cuf-label label}}
+              </div>
+              {{/each}}
+            {{/ifnotempty}}
+          {{/ifequals}}
         </div>
       </div>
     </div>
@@ -89,10 +106,11 @@
 </div>
 
 <div th:fragment="custom-export-custom-fields-popup">
+
   <table>
     <thead>
     <tr>
-      <th width="25px" class="th-check ui-state-default"></th>
+      <th class="th-check ui-state-default"></th>
       <th class="th-name ui-state-default" th:text="#{label.Label}">Label</th>
       <th class="th-name ui-state-default" th:text="#{label.code}">Code</th>
       <th class="th-name ui-state-default" th:text="#{label.Type}">Cuf type</th>
@@ -101,19 +119,45 @@
     <tbody class="available-fields">
     {{#each attributes.cufToDisplay}}
     <tr>
-      <td>
+      <td width="25px" >
         <input type="checkbox" class="cuf-checkbox"
                id="cuf-checkbox-{{id}}" name="cuf" value="{{id}}"
                {{#if (contains ../attributes.selectedCufAttributes id)}} checked="checked" {{/if}}
         />
       </td>
-      <td>{{label}}</td>
-      <td>{{code}}</td>
+      <td width="200px">{{label}}</td>
+      <td width="175px">{{code}}</td>
       <td>{{type}}</td>
-      {{/each}}
     </tr>
+    {{/each}}
     </tbody>
   </table>
+
+  {{#ifequals attributes.entityWhichCufAreDisplayed "EXECUTION_STEP"}}
+  {{#ifnotempty attributes.availableCustomFields.TEST_STEP}}
+  <br/>
+  <div class="ui-state-default" style="text-align: center" th:text="#{label.fromTestStepTitle}">Issus des Pas de Test</div>
+
+  <table>
+    <tbody>
+      {{#each attributes.availableCustomFields.TEST_STEP}}
+      <tr>
+        <td width="25px">
+          <input type="checkbox" class="cuf-checkbox"
+                 id="cuf-checkbox-{{id}}" name="cuf" value="{{id}}"
+                 {{#if (contains ../attributes.selectedCufAttributes id)}} checked="checked" {{/if}}
+          />
+        </td>
+        <td width="200px">{{label}}</td>
+        <td width="175px">{{code}}</td>
+        <td>{{type}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/ifnotempty}}
+  {{/ifequals}}
+
   <div class="unsnap not-displayed"></div>
   <div class="popup-dialog-buttonpane">
     <input type="button" th:value="#{label.Confirm}" />

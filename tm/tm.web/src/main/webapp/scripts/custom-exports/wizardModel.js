@@ -199,7 +199,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				_.chain(selectedCufAttributes)
 					.map(function(attr) {
 						// Deduce entity name from the computed cuf name
-						return attr.split('-')[0].split('_')[0];
+						return attr.split('_CUF-')[0];
 					}).uniq()
 					.value();
 			return _.union(selectedEntitiesFromStandard, selectedEntitiesFromCufs);

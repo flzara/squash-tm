@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- define(["jquery", "backbone", 'handlebars', 'squash.translator', 'jquery.squash.confirmdialog'],
- 	function($, Backbone, Handlebars, translator) {
+ define(['jquery', 'backbone', 'underscore', 'handlebars', 'squash.translator', 'jquery.squash.confirmdialog'],
+ 	function($, Backbone, _, Handlebars, translator) {
  	"use strict";
 
  	var View = Backbone.View.extend({
@@ -59,10 +59,17 @@
  				+ translator.get('generics.customfieldvalues.title') + "' />");
  		},
 
- 		confirm: function(event) {
+ 		confirm: function() {
  			var selectedCufAttributes = this.model.get('selectedCufAttributes') || [];
  			var checkedCufAttributes = this.getSelectedCheckboxes();
  			var currentDisplayedCufIds = _.pluck(this.model.get('cufToDisplay'), 'id');
+
+ 			// If it concerns Execution Steps Custom Fields, we also add TEST_STEP related cufs
+ 			if(this.model.get('entityWhichCufAreDisplayed') === 'EXECUTION_STEP') {
+ 				var testStepAvailableCufs = _.pluck(this.model.get('availableCustomFields')['TEST_STEP'], 'id');
+ 				currentDisplayedCufIds = currentDisplayedCufIds.concat(testStepAvailableCufs);
+			}
+
  			// remove the cuf related to this entity
  			selectedCufAttributes = _.reject(selectedCufAttributes, function(id) {
  				return _.contains(currentDisplayedCufIds, id);
