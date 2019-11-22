@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.requirement;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.apache.commons.collections.Predicate;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -444,6 +445,25 @@ public class RequirementVersionModificationController {
 
 		DataTableModel auditTrailModel = builder.buildDataModel(auditTrail, "1");
 		mav.addObject("auditTrailDatas", auditTrailModel.getAaData());
+
+		//==============LINK REQUIREMENT
+
+		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
+		DataTableModel linkedReqVersionsModel = getLinkedReqVersionsModel(requirementVersion);
+		mav.addObject("linkRequirement", linkedReqVersionsModel.getAaData());
+
+
+		//==============COVERAGE INDICATORS
+
+
+		//==============MILESTONE
+		Collection<Milestone> milestones = requirementVersionManager.findAllMilestones(requirementVersionId);
+		mav.addObject("milestone", milestones);
+
+		//=============ISSUE
+
+
+
 		return mav;
 	}
 

@@ -169,7 +169,7 @@
 				dapi bus. Fusce eu ante sapien</div>
 		</div>
 
-
+    <!--==========================================COVERAGE INDICATORS============================================-->
 
 
 		<!-- ===========================================TEST CASES ===================================================-->
@@ -202,32 +202,41 @@
 				</tbody>
 			</table>
 		</div>
-		<!-- ===========================================ATTACHMENTS ===================================================-->
-		<div id="attachment-tab" class="tab">
-			<h3 th:text="#{label.Attachments}">Attachments</h3>
-			<table id="attachment-detail-table"  class="greystyle-table">
-				<thead>
-					<tr>
-						<th class="small">#</th>
-						<th th:text="#{label.Name}">Name</th>
-						<th th:text="#{label.SizeMb}">Size</th>
-						<th th:text="#{label.AddedOn}">Added on</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						th:each="attachment, iterStat: ${requirementVersion.attachmentList.allAttachments}"
-						th:object="${attachment}">
-						<td th:text="${iterStat.count}">1</td>
-						<td th:text="*{name}">nom de la pièce jointe blablabla</td>
-						<td th:text="*{formattedSize}">10</td>
-						<td
-							th:text="*{addedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(addedOn,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
- 		<!-- ===========================================HISTORY ===================================================-->
+
+    <!--==========================================LINK REQUIREMENT=====================================================-->
+
+    <div id="link-requirement-tab" class="tab">
+      <h3 th:text="#{requirement-version.linked-requirement-version.panel.title}"/>
+
+      <table id="link-requirements-table" class="greystyle-table">
+        <thead>
+        <tr>
+          <th class="small">#</th>
+          <th th:text="#{label.project}">Project</th>
+          <th th:text="#{label.reference}">Ref</th>
+          <th th:text="#{label.requirement}">Requirement</th>
+          <th th:text="#{requirement-version.version-number.label}">n° version</th>
+          <th th:text="#{requirement-version.linked-requirement-version.table.col-header.role  }">Role</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="linkReq, iterStat: ${linkRequirement}"
+            th:object="${linkReq}">
+          <td th:text="${iterStat.count}">1</td>
+          <td th:text="*{['project-name']}">Project B</td>
+          <td th:text="*{['rv-reference']}">Ref</td>
+          <td th:text="*{['rv-name']}">Exigence</td>
+          <td th:text="*{['rv-version']}">num version</td>
+          <td th:text="*{['rv-role']}">role</td>
+
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- ===========================================HISTORY ===================================================-->
 		<div id="history-tab" class="tab">
 			<h3 th:text="#{title.EditHistory}">Historique des modifications</h3>
 			<table id="requirement-audit-trail-table"  class="greystyle-table">
@@ -265,7 +274,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="siblingVersion : ${siblingVersions}" th:object="${siblingVersion}"
+					<tr th:each="siblingVersion : ${siblingVersions}"
+              th:object="${siblingVersion}"
 						th:class="${requirementVersion.id == siblingVersion.id} ? 'selected' : ''"
                         th:with="catLabel = ${#messages.msgOrNull('__${siblingVersion.category.label}__')}">
 						<td th:text="*{versionNumber}">1</td>
@@ -278,6 +288,68 @@
 				</tbody>
 			</table>
 		</div>
+
+    <!--==========================================MILESTONE=====================================================-->
+    <div id="milestone" class="tab">
+      <h3 th:text="#{label.Milestones }"/>
+
+      <table id="jalon-table" class="greystyle-table">
+        <thead>
+        <tr>
+          <th class="small">#</th>
+          <th th:text="#{chart.column.EXECUTION_LABEL}">Libelle</th>
+          <th th:text="#{chart.column.REQUIREMENT_VERSION_STATUS}">Status</th>
+          <th th:text="#{label.EndDate}">Date</th>
+          <th th:text="#{label.Description}">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="milestone, iterStat : ${milestone}"
+            th:object="${milestone}">
+
+          <td th:text="${iterStat.count}">1</td>
+          <td th:text="*{label}">Libelle</td>
+          <td th:text="*{status}">Statut</td>
+          <td th:text="*{endDate}">date d'echeance</td>
+          <td th:text="*{description}">Description</td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===========================================ATTACHMENTS ===================================================-->
+    <div id="attachment-tab" class="tab">
+      <h3 th:text="#{label.Attachments}">Attachments</h3>
+      <table id="attachment-detail-table"  class="greystyle-table">
+        <thead>
+        <tr>
+          <th class="small">#</th>
+          <th th:text="#{label.Name}">Name</th>
+          <th th:text="#{label.SizeMb}">Size</th>
+          <th th:text="#{label.AddedOn}">Added on</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+          th:each="attachment, iterStat: ${requirementVersion.attachmentList.allAttachments}"
+          th:object="${attachment}">
+          <td th:text="${iterStat.count}">1</td>
+          <td th:text="*{name}">nom de la pièce jointe blablabla</td>
+          <td th:text="*{formattedSize}">10</td>
+          <td
+            th:text="*{addedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(addedOn,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- ===========================================ANOMALIES ===================================================-->
+
+
+    <!--==============================================END=======================================================-->
 	</div>
 </body>
 </html>
