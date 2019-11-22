@@ -33,6 +33,7 @@ import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.QProject;
@@ -63,6 +64,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -154,26 +156,26 @@ public class ScriptedTestCaseEventListener {
 			// Synchronize repository
 			synchronizeRepository(scm, credentials);
 		}
+
+		/*Pour les projets avec REMOTE_WORKFLOW lancer le processuss de création de ticket jira */
+		remoteRemoteTickets(new ArrayList<>(requestIds));
 	}
 	/**
 	 * If Remote workflow automation is actif and newStatus is TRANSMITTED then create a new jira ticket and add remoteAutomationREquestExtender
 	 **/
-	@Order(11)
-	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".TRANSMITTED and " +
-		"#event.workflowType == " + TYPE_WORKFLOW + ".REMOTE_WORKFLOW")
-	public void remoteRemoteTickets(AutomationRequestStatusChangeEvent event) {
+
+	private void remoteRemoteTickets(List<Long> requestIds) {
 		String remoteIssueKey;
 
 		LOGGER.debug("request status changed and type workflow isremote : create a new jira ticket and remoteRAE");
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("changed request ids : '{}'", event.getAutomationRequestIds());
+			LOGGER.trace("changed request ids : '{}'", requestIds);
 		}
 
-		List<Long> requestIds = event.getAutomationRequestIds();
 		List<TestCase> listTestCase = testCaseDao.findTestCaseByAutomationRequestIds(requestIds);
 		for(TestCase tc: listTestCase){
 			//workflow d'automatisation active
-			if(tc.getProject().isAllowAutomationWorkflow()){
+			if(tc.getProject().isAllowAutomationWorkflow() && AutomationWorkflowType.REMOTE_WORKFLOW.equals(tc.getProject().getAutomationWorkflowType())){
 				//select plugin which is attach în project
 				LibraryPluginBinding lpb= projectDao.findPluginForProject(tc.getProject().getId(), PluginType.AUTOMATION);
 				for(AutomationWorkflow plugin: plugins){

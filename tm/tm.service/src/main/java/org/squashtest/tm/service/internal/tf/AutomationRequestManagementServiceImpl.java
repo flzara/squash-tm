@@ -294,7 +294,6 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		}
 
 		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds, automationRequestStatus));
-		eventPublisher.publishEvent(new AutomationRequestStatusChangeEvent(reqIds,automationRequestStatus, AutomationWorkflowType.REMOTE_WORKFLOW));
 		List<TestCase> listTestCases = testCaseDao.findAllByIds(tcIds);
 		for (TestCase tc: listTestCases) {
 			auditModificationService.updateAuditable((AuditableMixin)tc);
