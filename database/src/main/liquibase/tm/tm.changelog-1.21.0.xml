@@ -114,7 +114,7 @@
 
   </changeSet>
 
-    <changeSet id="tm-1.21.0-TM-211-active" author="amk">
+  <changeSet id="tm-1.21.0-TM-211-active" author="amk">
 
     <comment>add new column ACTIVE into LIBRARY_PLUGIN_BINDING</comment>
 
@@ -161,6 +161,7 @@
   </changeSet>
 
   <changeSet id="tm-1.21.0-TM-725-add-committer-mail-in-scm-server" author="jlor">
+
     <comment>Add column COMMITTER_MAIL in SCM_SERVER</comment>
 
     <addColumn tableName="SCM_SERVER">
@@ -201,6 +202,7 @@
     </addColumn>
 
   </changeSet>
+
   <changeSet id="tm-1.21.0-TM-875-last-sync-date-squash" author="amk">
 
     <comment>add new column LAST-SYNC-DATE into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
@@ -212,6 +214,337 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.21.0-TM-846.1-mysql" author="jlor" dbms="mysql">
 
+    <comment>MySQL - Add unique constraint on order column for iterations in campaign</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists CAMPAIGN_ITERATION_TMP;
+
+        create table CAMPAIGN_ITERATION_TMP
+          (select
+            CAMPAIGN_ID,
+            ITERATION_ID,
+            min(ITERATION_ORDER) ITERATION_ORDER
+          from CAMPAIGN_ITERATION
+          group by CAMPAIGN_ID, ITERATION_ID);
+
+        create index idx1 on CAMPAIGN_ITERATION_TMP(CAMPAIGN_ID, ITERATION_ID);
+
+        update CAMPAIGN_ITERATION_TMP t1,
+          (select
+            CAMPAIGN_ID,
+            ITERATION_ID,
+            (select count(*)
+            from CAMPAIGN_ITERATION_TMP b
+            where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+            and a.ITERATION_ORDER >= b.ITERATION_ORDER) line
+          from CAMPAIGN_ITERATION_TMP a) t2
+        set ITERATION_ORDER = t2.line - 1
+        where t1.CAMPAIGN_ID = t2.CAMPAIGN_ID
+        and t1.ITERATION_ID = t2.ITERATION_ID;
+
+        truncate table CAMPAIGN_ITERATION;
+
+        insert into CAMPAIGN_ITERATION
+        select
+          a.CAMPAIGN_ID,
+          a.ITERATION_ID,
+          a.ITERATION_ORDER + 1 - (select count(*)
+                              from CAMPAIGN_ITERATION_TMP b
+                              where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                              and a.ITERATION_ORDER = b.ITERATION_ORDER
+                              and a.ITERATION_ID <= b.ITERATION_ID
+                              group by
+                                b.CAMPAIGN_ID,
+                                b.ITERATION_ORDER) ITERATION_ORDER
+          from CAMPAIGN_ITERATION_TMP a;
+
+        drop table CAMPAIGN_ITERATION_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="CAMPAIGN_ITERATION" columnNames="CAMPAIGN_ID, ITERATION_ORDER" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-846.2-mysql" author="jlor" dbms="mysql">
+
+    <comment>MySQL - Add unique constraint on order column for executions in itpi</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists ITEM_TEST_PLAN_EXECUTION_TMP;
+
+        create table ITEM_TEST_PLAN_EXECUTION_TMP
+          (select
+            ITEM_TEST_PLAN_ID,
+            EXECUTION_ID,
+            min(EXECUTION_ORDER) EXECUTION_ORDER
+          from ITEM_TEST_PLAN_EXECUTION
+          group by ITEM_TEST_PLAN_ID, EXECUTION_ID);
+
+        create index idx1 on ITEM_TEST_PLAN_EXECUTION_TMP(ITEM_TEST_PLAN_ID, EXECUTION_ID);
+
+        update ITEM_TEST_PLAN_EXECUTION_TMP t1,
+          (select
+            ITEM_TEST_PLAN_ID,
+            EXECUTION_ID,
+            (select count(*)
+            from ITEM_TEST_PLAN_EXECUTION_TMP b
+            where a.ITEM_TEST_PLAN_ID = b.ITEM_TEST_PLAN_ID
+            and a.EXECUTION_ORDER >= b.EXECUTION_ORDER) line
+          from ITEM_TEST_PLAN_EXECUTION_TMP a) t2
+        set EXECUTION_ORDER = t2.line - 1
+        where t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
+        and t1.EXECUTION_ID = t2.EXECUTION_ID;
+
+        truncate table ITEM_TEST_PLAN_EXECUTION;
+
+        insert into ITEM_TEST_PLAN_EXECUTION
+        select
+          a.ITEM_TEST_PLAN_ID,
+          a.EXECUTION_ID,
+          a.EXECUTION_ORDER + 1 - (select count(*)
+                              from ITEM_TEST_PLAN_EXECUTION_TMP b
+                              where a.ITEM_TEST_PLAN_ID = b.ITEM_TEST_PLAN_ID
+                              and a.EXECUTION_ORDER = b.EXECUTION_ORDER
+                              and a.EXECUTION_ID <= b.EXECUTION_ID
+                              group by
+                                b.ITEM_TEST_PLAN_ID,
+                                b.EXECUTION_ORDER) EXECUTION_ORDER
+          from ITEM_TEST_PLAN_EXECUTION_TMP a;
+
+        drop table ITEM_TEST_PLAN_EXECUTION_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="ITEM_TEST_PLAN_EXECUTION" columnNames="ITEM_TEST_PLAN_ID, EXECUTION_ORDER" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-846.3-mysql" author="jlor" dbms="mysql">
+
+    <comment>MySQL - Add unique constraint on order column for steps in execution</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists EXECUTION_EXECUTION_STEPS_TMP;
+
+        create table EXECUTION_EXECUTION_STEPS_TMP
+          (select
+            EXECUTION_ID,
+            EXECUTION_STEP_ID,
+            min(EXECUTION_STEP_ORDER) STEP_ORDER
+          from EXECUTION_EXECUTION_STEPS
+          group by EXECUTION_ID, EXECUTION_STEP_ID);
+
+        create index idx1 on EXECUTION_EXECUTION_STEPS_TMP(EXECUTION_ID, EXECUTION_STEP_ID);
+
+        update EXECUTION_EXECUTION_STEPS_TMP t1,
+          (select
+            EXECUTION_ID,
+            EXECUTION_STEP_ID,
+            (select count(*)
+            from EXECUTION_EXECUTION_STEPS_TMP b
+            where a.EXECUTION_ID = b.EXECUTION_ID
+            and a.STEP_ORDER >= b.STEP_ORDER) line
+          from EXECUTION_EXECUTION_STEPS_TMP a) t2
+        set STEP_ORDER = t2.line - 1
+        where t1.EXECUTION_ID = t2.EXECUTION_ID
+        and t1.EXECUTION_STEP_ID = t2.EXECUTION_STEP_ID;
+
+        truncate table EXECUTION_EXECUTION_STEPS;
+
+        insert into EXECUTION_EXECUTION_STEPS
+        select
+          a.EXECUTION_ID,
+          a.EXECUTION_STEP_ID,
+          a.STEP_ORDER + 1 - (select count(*)
+                              from EXECUTION_EXECUTION_STEPS_TMP b
+                              where a.EXECUTION_ID = b.EXECUTION_ID
+                              and a.STEP_ORDER = b.STEP_ORDER
+                              and a.EXECUTION_STEP_ID <= b.EXECUTION_STEP_ID
+                              group by
+                                b.EXECUTION_ID,
+                                b.STEP_ORDER) STEP_ORDER
+          from EXECUTION_EXECUTION_STEPS_TMP a;
+
+        drop table EXECUTION_EXECUTION_STEPS_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="EXECUTION_EXECUTION_STEPS" columnNames="EXECUTION_ID, EXECUTION_STEP_ORDER" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-846.1-postgresql" author="jlor" dbms="postgresql">
+
+    <comment>PostgreSQL - Add unique constraint on order column for iterations in campaign</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists CAMPAIGN_ITERATION_TMP;
+
+        create table CAMPAIGN_ITERATION_TMP AS
+          (select
+            CAMPAIGN_ID,
+            ITERATION_ID,
+            min(ITERATION_ORDER) ITERATION_ORDER
+          from CAMPAIGN_ITERATION
+          group by CAMPAIGN_ID, ITERATION_ID);
+
+        create index idx1 on CAMPAIGN_ITERATION_TMP(CAMPAIGN_ID, ITERATION_ID);
+
+        update CAMPAIGN_ITERATION_TMP t1
+        set ITERATION_ORDER = t2.line - 1
+        from (
+          select
+            CAMPAIGN_ID,
+            ITERATION_ID,
+            (select count(*)
+            from CAMPAIGN_ITERATION_TMP b
+            where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+            and a.ITERATION_ORDER >= b.ITERATION_ORDER) line
+          from CAMPAIGN_ITERATION_TMP a) t2
+          where t1.CAMPAIGN_ID = t2.CAMPAIGN_ID
+          and t1.ITERATION_ID = t2.ITERATION_ID;
+
+        truncate table CAMPAIGN_ITERATION;
+
+        insert into CAMPAIGN_ITERATION
+        select
+          a.CAMPAIGN_ID,
+          a.ITERATION_ID,
+          a.ITERATION_ORDER + 1 - (select count(*)
+                              from CAMPAIGN_ITERATION_TMP b
+                              where a.CAMPAIGN_ID = b.CAMPAIGN_ID
+                              and a.ITERATION_ORDER = b.ITERATION_ORDER
+                              and a.ITERATION_ID <= b.ITERATION_ID
+                              group by
+                                b.CAMPAIGN_ID,
+                                b.ITERATION_ORDER) ITERATION_ORDER
+          from CAMPAIGN_ITERATION_TMP a;
+
+        drop table CAMPAIGN_ITERATION_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="CAMPAIGN_ITERATION" columnNames="CAMPAIGN_ID, ITERATION_ORDER" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-846.2-postgresql" author="jlor" dbms="postgresql">
+
+    <comment>PostgreSQL - Add unique constraint on order column for executions in itpi</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists ITEM_TEST_PLAN_EXECUTION_TMP;
+
+        create table ITEM_TEST_PLAN_EXECUTION_TMP AS
+          (select
+            ITEM_TEST_PLAN_ID,
+            EXECUTION_ID,
+            min(EXECUTION_ORDER) EXECUTION_ORDER
+          from ITEM_TEST_PLAN_EXECUTION
+          group by ITEM_TEST_PLAN_ID, EXECUTION_ID);
+
+        create index idx1 on ITEM_TEST_PLAN_EXECUTION_TMP(ITEM_TEST_PLAN_ID, EXECUTION_ID);
+
+        update ITEM_TEST_PLAN_EXECUTION_TMP t1
+        set EXECUTION_ORDER = t2.line - 1
+        from (
+          select
+            ITEM_TEST_PLAN_ID,
+            EXECUTION_ID,
+            (select count(*)
+            from ITEM_TEST_PLAN_EXECUTION_TMP b
+            where a.ITEM_TEST_PLAN_ID = b.ITEM_TEST_PLAN_ID
+            and a.EXECUTION_ORDER >= b.EXECUTION_ORDER) line
+          from ITEM_TEST_PLAN_EXECUTION_TMP a) t2
+          where t1.ITEM_TEST_PLAN_ID = t2.ITEM_TEST_PLAN_ID
+          and t1.EXECUTION_ID = t2.EXECUTION_ID;
+
+        truncate table ITEM_TEST_PLAN_EXECUTION;
+
+        insert into ITEM_TEST_PLAN_EXECUTION
+        select
+          a.ITEM_TEST_PLAN_ID,
+          a.EXECUTION_ID,
+          a.EXECUTION_ORDER + 1 - (select count(*)
+                              from ITEM_TEST_PLAN_EXECUTION_TMP b
+                              where a.ITEM_TEST_PLAN_ID = b.ITEM_TEST_PLAN_ID
+                              and a.EXECUTION_ORDER = b.EXECUTION_ORDER
+                              and a.EXECUTION_ID <= b.EXECUTION_ID
+                              group by
+                                b.ITEM_TEST_PLAN_ID,
+                                b.EXECUTION_ORDER) EXECUTION_ORDER
+          from ITEM_TEST_PLAN_EXECUTION_TMP a;
+
+        drop table ITEM_TEST_PLAN_EXECUTION_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="ITEM_TEST_PLAN_EXECUTION" columnNames="ITEM_TEST_PLAN_ID, EXECUTION_ORDER" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-846.3-postgresql" author="jlor" dbms="postgresql">
+
+    <comment>PostgreSQL - Add unique constraint on order column for steps in execution</comment>
+
+    <sql>
+      <![CDATA[
+        drop table if exists EXECUTION_EXECUTION_STEPS_TMP;
+
+        create table EXECUTION_EXECUTION_STEPS_TMP AS
+          (select
+            EXECUTION_ID,
+            EXECUTION_STEP_ID,
+            min(EXECUTION_STEP_ORDER) STEP_ORDER
+          from EXECUTION_EXECUTION_STEPS
+          group by EXECUTION_ID, EXECUTION_STEP_ID);
+
+        create index idx1 on EXECUTION_EXECUTION_STEPS_TMP(EXECUTION_ID, EXECUTION_STEP_ID);
+
+        update EXECUTION_EXECUTION_STEPS_TMP t1
+        set STEP_ORDER = t2.line - 1
+        from (
+          select
+            EXECUTION_ID,
+            EXECUTION_STEP_ID,
+            (select count(*)
+            from EXECUTION_EXECUTION_STEPS_TMP b
+            where a.EXECUTION_ID = b.EXECUTION_ID
+            and a.STEP_ORDER >= b.STEP_ORDER) line
+          from EXECUTION_EXECUTION_STEPS_TMP a) t2
+          where t1.EXECUTION_ID = t2.EXECUTION_ID
+          and t1.EXECUTION_STEP_ID = t2.EXECUTION_STEP_ID;
+
+        truncate table EXECUTION_EXECUTION_STEPS;
+
+        insert into EXECUTION_EXECUTION_STEPS
+        select
+          a.EXECUTION_ID,
+          a.EXECUTION_STEP_ID,
+          a.STEP_ORDER + 1 - (select count(*)
+                              from EXECUTION_EXECUTION_STEPS_TMP b
+                              where a.EXECUTION_ID = b.EXECUTION_ID
+                              and a.STEP_ORDER = b.STEP_ORDER
+                              and a.EXECUTION_STEP_ID <= b.EXECUTION_STEP_ID
+                              group by
+                                b.EXECUTION_ID,
+                                b.STEP_ORDER) STEP_ORDER
+          from EXECUTION_EXECUTION_STEPS_TMP a;
+
+        drop table EXECUTION_EXECUTION_STEPS_TMP;
+      ]]>
+    </sql>
+
+    <addUniqueConstraint tableName="EXECUTION_EXECUTION_STEPS" columnNames="EXECUTION_ID, EXECUTION_STEP_ORDER" />
+
+  </changeSet>
 
 </databaseChangeLog>
