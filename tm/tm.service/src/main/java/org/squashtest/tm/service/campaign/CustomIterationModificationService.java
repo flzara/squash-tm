@@ -58,7 +58,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	void rename(long iterationId, String newName);
 
-	Execution addExecution(long testPlanItemId);
+	Execution addExecution(@Id long testPlanItemId);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
@@ -74,7 +74,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	List<TestSuite> findAllTestSuites(long iterationId);
 
 
-	void changeTestSuitePosition(long iterationId, int newIndex, List<Long>itemIds);
+	void changeTestSuitePosition(@Id long iterationId, int newIndex, List<Long>itemIds);
 
 	/**
 	 * <p>

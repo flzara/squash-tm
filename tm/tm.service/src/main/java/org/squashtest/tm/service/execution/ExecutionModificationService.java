@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 import java.util.List;
@@ -70,6 +71,6 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	 *            the execution to be updated
 	 * @return the index of the first modified (not deleted) step in the new execution or -1
 	 */
-	long updateSteps(long executionId);
+	long updateSteps(@Id long executionId);
 
 }

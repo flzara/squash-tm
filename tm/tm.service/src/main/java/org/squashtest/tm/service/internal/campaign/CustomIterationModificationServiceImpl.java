@@ -265,7 +265,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 */
 	@Override
 	@PreAuthorize(EXECUTE_ITPI_OR_ROLE_ADMIN)
-	public Execution addExecution(long testPlanItemId) {
+	@PreventConcurrent(entityType=IterationTestPlanItem.class)
+	public Execution addExecution(@Id long testPlanItemId) {
 		IterationTestPlanItem item = testPlanDao.findById(testPlanItemId);
 		return addExecution(item);
 	}
@@ -323,7 +324,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	public void changeTestSuitePosition(long iterationId, int newIndex, List<Long> itemIds) {
+	@PreventConcurrent(entityType = Iteration.class)
+	public void changeTestSuitePosition(@Id long iterationId, int newIndex, List<Long> itemIds) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
 

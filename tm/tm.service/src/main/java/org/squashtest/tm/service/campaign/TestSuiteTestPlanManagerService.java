@@ -59,7 +59,7 @@ public interface TestSuiteTestPlanManagerService {
 	void changeTestPlanPosition(long testSuiteId, int newIndex, List<Long>itemIds);
 	
 	
-	void reorderTestPlan(long iterationId, MultiSorting newSorting);
+	void reorderTestPlan(@Id long iterationId, MultiSorting newSorting);
 	
 	/**
 	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. As usual, they

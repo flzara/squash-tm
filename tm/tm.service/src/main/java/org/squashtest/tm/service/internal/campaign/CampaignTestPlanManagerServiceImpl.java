@@ -49,6 +49,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -175,7 +177,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
-	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, long campaignId) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void addTestCasesToCampaignTestPlan(final List<Long> testCasesIds, @Id long campaignId) {
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(testCasesIds);
 
@@ -224,7 +227,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
-	public void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, long campaignId) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, @Id long campaignId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -293,14 +297,16 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 */
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
-	public void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void moveTestPlanItems(@Id long campaignId, int targetIndex, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.moveTestPlanItems(targetIndex, itemIds);
 	}
 
 	@Override
 	@PreAuthorize(CAN_REORDER_TEST_PLAN)
-	public void reorderTestPlan(long campaignId, MultiSorting newSorting) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void reorderTestPlan(@Id long campaignId, MultiSorting newSorting) {
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 
@@ -318,7 +324,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 */
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
-	public void removeTestPlanItem(long campaignId, long itemId) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void removeTestPlanItem(@Id long campaignId, long itemId) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItem(itemId);
 	}
@@ -328,7 +335,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 */
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
-	public void removeTestPlanItems(long campaignId, List<Long> itemIds) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public void removeTestPlanItems(@Id long campaignId, List<Long> itemIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.removeTestPlanItems(itemIds);
 	}

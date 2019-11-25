@@ -90,10 +90,10 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	void copyTestPlanItems(List<Long> iterationTestPlanIds, @Id long iterationId);
 
-	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
+	void changeTestPlanPosition(@Id long iterationId, int newPosition, List<Long> itemIds);
 
 
-	void reorderTestPlan( long iterationId, MultiSorting newSorting);
+	void reorderTestPlan(@Id long iterationId, MultiSorting newSorting);
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed

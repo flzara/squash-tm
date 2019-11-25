@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
@@ -163,7 +165,8 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@Transactional(readOnly = false)
-	public long updateSteps(long executionId) {
+	@PreventConcurrent(entityType = Execution.class)
+	public long updateSteps(@Id long executionId) {
 		Execution execution = executionDao.getOne(executionId);
 		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
 

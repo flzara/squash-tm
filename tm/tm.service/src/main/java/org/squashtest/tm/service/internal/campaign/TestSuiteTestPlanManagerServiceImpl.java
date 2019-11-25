@@ -187,7 +187,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Override
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public void reorderTestPlan(long suiteId, MultiSorting newSorting) {
+	@PreventConcurrent(entityType = TestSuite.class)
+	public void reorderTestPlan(@Id long suiteId, MultiSorting newSorting) {
 
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);

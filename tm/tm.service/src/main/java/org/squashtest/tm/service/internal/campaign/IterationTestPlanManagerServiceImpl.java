@@ -296,7 +296,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
+	@PreventConcurrent(entityType = Iteration.class)
+	public void changeTestPlanPosition(@Id long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(itemIds);
 
@@ -305,7 +306,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize(LINK_ITERATION_OR_ROLE_ADMIN)
-	public void reorderTestPlan(long iterationId, MultiSorting newSorting) {
+	@PreventConcurrent(entityType = Iteration.class)
+	public void reorderTestPlan(@Id long iterationId, MultiSorting newSorting) {
 
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);

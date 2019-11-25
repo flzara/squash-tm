@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.annotation.Id;
 
 import java.util.List;
 
@@ -67,7 +68,7 @@ public interface CampaignTestPlanManagerService {
 	 * @param testCaseIds
 	 * @param campaignId
 	 */
-	void addTestCasesToCampaignTestPlan(List<Long> testCaseIds, long campaignId);
+	void addTestCasesToCampaignTestPlan(List<Long> testCaseIds, @Id long campaignId);
 
 	/**
 	 * Will add the given test case, with the given test plan, to the test plan of the given campaign.
@@ -76,7 +77,7 @@ public interface CampaignTestPlanManagerService {
 	 * @param datasetId, may be null
 	 * @param campaignId
 	 */
-	void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, long campaignId);
+	void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, @Id long campaignId);
 
 	/**
 	 * Get Users with Execute Access for a campaign and his test plans.
@@ -123,10 +124,10 @@ public interface CampaignTestPlanManagerService {
 	 * @param itemIds
 	 *            the ids of the items we want to move.
 	 */
-	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
+	void moveTestPlanItems(@Id long campaignId, int targetIndex, List<Long> itemIds);
 
 
-	void reorderTestPlan(long campaignId, MultiSorting newSorting);
+	void reorderTestPlan(@Id long campaignId, MultiSorting newSorting);
 
 	/**
 	 * @param campaignId
@@ -134,14 +135,14 @@ public interface CampaignTestPlanManagerService {
 	 * @param itemId
 	 *            id of the test plan item we want to remove
 	 */
-	void removeTestPlanItem(long campaignId, long itemId);
+	void removeTestPlanItem(@Id long campaignId, long itemId);
 
 	/**
 	 * @param campaignId
 	 *            id of the campaign which test plan we will remove items from
-	 * @param itemId
+	 * @param itemIds
 	 */
-	void removeTestPlanItems(long campaignId, List<Long> itemIds);
+	void removeTestPlanItems(@Id long campaignId, List<Long> itemIds);
 
 	/**
 	 * @param itemId
