@@ -20,27 +20,27 @@
  */
 package org.squashtest.tm.web.internal.plugins.manager.automationworkflow;
 
-	import org.slf4j.Logger;
-	import org.slf4j.LoggerFactory;
-	import org.springframework.beans.factory.annotation.Autowired;
-	import org.springframework.stereotype.Component;
-	import org.squashtest.tm.api.plugin.PluginType;
-	import org.squashtest.tm.api.plugin.PluginValidationException;
-	import org.squashtest.tm.api.wizard.AutomationWorkflow;
-	import org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard;
-	import org.squashtest.tm.api.wizard.WorkspaceWizard;
-	import org.squashtest.tm.api.workspace.WorkspaceType;
-	import org.squashtest.tm.domain.project.AutomationWorkflowType;
-	import org.squashtest.tm.service.project.GenericProjectManagerService;
-	import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-	import javax.inject.Inject;
-	import java.util.ArrayList;
-	import java.util.Collection;
-	import java.util.Collections;
-	import java.util.LinkedHashMap;
-	import java.util.List;
-	import java.util.Locale;
-	import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.api.plugin.PluginType;
+import org.squashtest.tm.api.plugin.PluginValidationException;
+import org.squashtest.tm.api.wizard.AutomationWorkflow;
+import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.project.AutomationWorkflowType;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
 public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPluginManager {
@@ -54,10 +54,8 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	private static final String I18N_KEY_REMOTE = "label.Remote";
 	private static final String I18N_KEY_NATIVE = "label.Native";
 
-	public static final int DEFAULT_DELAY = 30;
-
 	@Inject
-	InternationalizationHelper i18nHelper;
+	private InternationalizationHelper i18nHelper;
 	@Inject
 	private GenericProjectManagerService projectManager;
 
@@ -82,8 +80,9 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		Map<String, String> result = new LinkedHashMap<>();
 		result.put(NONE, i18nHelper.internationalize(I18N_KEY_NONE, locale));
 		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
-		if(plugins.size()!=0) result.put(REMOTE, i18nHelper.internationalize(I18N_KEY_REMOTE, locale));
-
+		if (!plugins.isEmpty()) {
+			result.put(REMOTE, i18nHelper.internationalize(I18N_KEY_REMOTE, locale));
+		}
 
 		return result;
 	}
@@ -93,7 +92,7 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		List<String> result = new ArrayList<>();
 		result.add(NONE);
 		result.add(NATIVE);
-		for(AutomationWorkflow workflow : plugins) {
+		for (AutomationWorkflow workflow : plugins) {
 			result.add(workflow.getId());
 		}
 		return result;
@@ -104,7 +103,9 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		List<AutomationWorkflowType> result = new ArrayList<>();
 		result.add(AutomationWorkflowType.NONE);
 		result.add(AutomationWorkflowType.NATIVE);
-		if(plugins.size()!=0) result.add(AutomationWorkflowType.REMOTE_WORKFLOW);
+		if (!plugins.isEmpty()) {
+			result.add(AutomationWorkflowType.REMOTE_WORKFLOW);
+		}
 
 		return result;
 	}
@@ -112,11 +113,10 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	@Override
 	public void enableRemoteAutomationWorkflowPlugin( String automationWorkflowtype, long projectId) {
 		for (AutomationWorkflow plugin : plugins) {
-			if (plugin.getPluginType().equals(PluginType.AUTOMATION)==true) {
+			if (PluginType.AUTOMATION.equals(plugin.getPluginType())) {
 				projectManager.enablePluginForWorkspace(projectId, WorkspaceType.TEST_CASE_WORKSPACE, plugin.getId(), plugin.getPluginType());
-
-			}else{
-				String msg = "Aucun plugin d'automatisation n'existe.";
+			} else {
+				String msg = i18nHelper.internationalize("label.no.automation.workflow.plugin", LocaleContextHolder.getLocale());
 				throw new PluginValidationException(msg);
 			}
 		}
