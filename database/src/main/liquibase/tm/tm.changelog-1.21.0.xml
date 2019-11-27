@@ -191,4 +191,27 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.21.0-TM-916-918-synchronizable-issue-status" author="amk">
+
+    <comment>add new column SYNCHRONIZABLE_ISSUE_STATUS into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
+
+    <addColumn tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER">
+      <column name="SYNCHRONIZABLE_ISSUE_STATUS" type="VARCHAR(25)" remarks="this column can be set to: TO SYNCHRONIZE, DELETED, MOVED_PROJECT and MOVED_ISSUE_TYPE ; and it is updated after each synchronization." >
+      </column>
+    </addColumn>
+
+  </changeSet>
+  <changeSet id="tm-1.21.0-TM-875-last-sync-date-squash" author="amk">
+
+    <comment>add new column LAST-SYNC-DATE into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
+
+    <addColumn tableName="REMOTE_AUTOMATION_REQUEST_EXTENDER">
+      <column name="LAST_SYNC_DATE_SQUASH" type="DATETIME" defaultValue="NULL"  remarks="Date of the last synchronisation squash to remote server." >
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+
+
 </databaseChangeLog>

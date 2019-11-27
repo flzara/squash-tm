@@ -21,9 +21,12 @@
 package org.squashtest.tm.domain.tf.automationrequest;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.plugin.PluginType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -80,9 +83,32 @@ public class RemoteAutomationRequestExtender {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastSyncDate;
 
+	@Column(name = "LAST_SYNC_DATE_SQUASH")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastSyncDateSquash;
+
 	@Column(name = "SENT_VALUE_FOR_SYNC")
 	private String sentValueForSync;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "SYNCHRONIZABLE_ISSUE_STATUS")
+	private SynchronizableIssueStatus synchronizableIssueStatus=SynchronizableIssueStatus.TO_SYNCHRONIZE;
+
+	public SynchronizableIssueStatus getSynchronizableIssueStatus() {
+		return synchronizableIssueStatus;
+	}
+
+	public Date getLastSyncDateSquash() {
+		return lastSyncDateSquash;
+	}
+
+	public void setLastSyncDateSquash(Date lastSyncDateSquash) {
+		this.lastSyncDateSquash = lastSyncDateSquash;
+	}
+
+	public void setSynchronizableIssueStatus(SynchronizableIssueStatus synchronizableIssueStatus) {
+		this.synchronizableIssueStatus = synchronizableIssueStatus;
+	}
 
 	public String getRemoteIssueKey() {
 		return remoteIssueKey;
