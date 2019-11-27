@@ -169,10 +169,36 @@
 				dapi bus. Fusce eu ante sapien</div>
 		</div>
 
-    <!--==========================================COVERAGE INDICATORS============================================-->
+    <!--==========================================COVERAGE INDICATORS  RECUPERER LES BONNES DONNEES============================================-->
 
+    <!--<div id="coverage-indicators" class="tab">
+      <h3 th:text="#{requirement.rate.panel.title}"/>
 
-		<!-- ===========================================TEST CASES ===================================================-->
+      <div class="display-table-row">
+        <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.perimeter}"/>
+        <div class="display-table-cell" id="requirement-version-id"
+             th:text="${requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE PERIMETRE DES TAUX======================&ndash;&gt;
+      </div>
+
+      <div class="display-table-row">
+        <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.cover}"/>
+        <div class="display-table-cell" id="requirement-version-id"
+             th:text="${requirementVersion.requirement.id }">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE COUVERTURE=======================&ndash;&gt;
+      </div>
+      <div class="display-table-row">
+        <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.verification}"/>
+        <div class="display-table-cell" id="requirement-version-id"
+             th:text="${ requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE VERIFICATION=======================&ndash;&gt;
+      </div>
+      <div class="display-table-row">
+        <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.validation}"/>
+        <div class="display-table-cell" id="requirement-version-id"
+             th:text="${ requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE VALIDATION=======================&ndash;&gt;
+      </div>
+
+    </div>-->
+
+    <!-- ===========================================TEST CASES ===================================================-->
 
 		<div id="verifying-test-cases-tab" class="tab">
 			<h3 th:text="#{requirement.verifying_test-case.panel.title}">Cas
@@ -348,8 +374,45 @@
 
     <!-- ===========================================ANOMALIES ===================================================-->
 
+    <div id="issue" class="tab">
+      <h3 th:text="#{tabs.label.issues}"/>
+
+      <table id="issue-table" class="greystyle-table">
+        <thead>
+        <tr>
+          <th th:text="#{label.key}">Clé</th>
+          <th th:text="#{bugtracker.project}">Projet BT</th>
+          <th th:text="#{label.Summary}">Resumé</th>
+          <th th:text="#{label.priority}">Priorité</th>
+          <th th:text="#{report.requirementexport.status}">Statut</th>
+          <th th:text="#{label.assigned}">Assigné à</th>
+          <th th:text="#{test-case.issues.table.column-header.reportedin.label}">Rapportée dans l'execution</th>
+          <th th:text="#{requirement-version.issues.table.column-header.reference.label}">référence de l'exigence</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="issueModel, iterStat : ${issueModel}"
+            th:object="${issueModel}">
+
+          <td th:text="${iterStat.count}">Cle</td>
+          <td th:text="*{['BtProject']}">Projet</td>
+          <td th:text="*{['issue-summary']}">resumé</td>
+          <td th:text="*{['issue-priority']}">priorite</td>
+          <td th:text="*{['issue-status']}">statut</td>
+          <td th:text="*{['issue-assignee']}">assigne a</td>
+          <td th:text="*{['issue-owner']}">rapportée dans l'exection</td>
+          <td th:text="*{['requirement-reference']}">reference de l'exigence</td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!--==============================================END=======================================================-->
+
+
 	</div>
 </body>
 </html>
+

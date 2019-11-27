@@ -76,8 +76,31 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			// print button
 			$("#print-requirement-version-button").click(function () {
 				var url = routing.buildURL('requirementversions', config.basic.currentVersionId);
-				window.open(url + "?format=printable", "_blank");
+				var key = config.basic.requirementVersion;
+
+				var storage = getStorage();
+				if(storage != null) {
+					var getValue = JSON.parse(storage);
+					var value = getValue.data.id;
+					var data = {
+						perimeter: value
+					};
+
+					$.ajax({
+						url: url + "?format=printable" + "&perimeter",
+						method: "GET",
+						data: data
+					});
+				}
+
+				window.open(url + "?format=printable"+"&perimeter", "_blank");
 			});
+
+			function getStorage(){
+				var key = config.basic.projectId;
+				var storage = localStorage.getItem("requirement-coverage-stat-perimeter-"+ key);
+				return storage;
+			}
 
 			// milestone count notifier
 			milestoneNotifier.newHandler(config.basic.identity);
@@ -635,7 +658,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			var model = new modelConstructor();
 
 			new CoveverageStatView({
-				model: model
+				model: model,
 			});
 		}
 
@@ -731,6 +754,5 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			basicwidg.init();
 			Frag.init();
 		}
-
 
 	});

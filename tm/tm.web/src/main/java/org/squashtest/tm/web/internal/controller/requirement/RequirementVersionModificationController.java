@@ -22,12 +22,16 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.acls.domain.IdentityUnavailableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,16 +44,21 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.LinkedRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
@@ -59,6 +68,9 @@ import org.squashtest.tm.domain.synchronisation.SynchronisationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
+import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -66,14 +78,17 @@ import org.squashtest.tm.service.internal.dto.json.JsonInfoList;
 import org.squashtest.tm.service.requirement.LinkedRequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementBulkUpdate;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
+import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -152,6 +167,21 @@ public class RequirementVersionModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private BugTrackerControllerHelper bugTrackerControllerHelper;
+
+
+	@Inject
+	private BugTrackersLocalService bugTrackersLocalService;
+
+	@Inject
+	VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+
+	@Inject
+	private CampaignModificationService campaignModificationService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionModificationController.class);
 
 
 	public RequirementVersionModificationController() {
@@ -292,6 +322,13 @@ public class RequirementVersionModificationController {
 		return new LinkedRequirementVersionsTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
+	private DataTableModel getKnownIssuesDataForRequirementVersion(String entityType, Long id, String panelSource, PagingAndSorting paging, String sEcho) {
+
+		PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForRequirmentVersion(id, panelSource, paging);
+
+		return bugTrackerControllerHelper.createModelBuilderForRequirementVersion().buildDataModel(filteredCollection, sEcho);
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody
@@ -420,8 +457,8 @@ public class RequirementVersionModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.GET, params = "format=printable")
-	public ModelAndView printRequirementVersion(@PathVariable long requirementVersionId, Locale locale) {
+	@RequestMapping(method = RequestMethod.GET, params = {"format=printable", "perimeter"})
+	public ModelAndView printRequirementVersion(@PathVariable long requirementVersionId, Locale locale, @RequestParam String perimeter) {
 		ModelAndView mav = new ModelAndView("print-requirement-version.html");
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
 		if (version == null) {
@@ -454,6 +491,8 @@ public class RequirementVersionModificationController {
 
 
 		//==============COVERAGE INDICATORS
+		RequirementCoverageStat stat = getCoverageStat(requirementVersionId, perimeter);
+		mav.addObject("stat", stat.getRates());
 
 
 		//==============MILESTONE
@@ -462,9 +501,58 @@ public class RequirementVersionModificationController {
 
 		//=============ISSUE
 
+		DataTableModel issueModel = getKnownIssuesDataForRequirementVersion("requirement-version", requirementVersionId,"all", new DefaultPagingAndSorting(), "0");
+		mav.addObject("issueModel", issueModel.getAaData());
+
 
 
 		return mav;
+	}
+
+	/********************************************************************************
+	*
+	* Coverage
+	*
+	* *****************************************************************************/
+
+	private static final String campaign_name = "Campaign";
+	private static final String iteration_name = "Iteration";
+
+	private List<Long> getIterationsIdsForCampagain(
+		Campaign campaign) {
+		List<Long> iterationIds = new ArrayList<>();
+		for (Iteration it : campaign.getIterations()) {
+			iterationIds.add(it.getId());
+		}
+		return iterationIds;
+	}
+
+	private RequirementCoverageStat getCoverageStat( long requirementVersionId, String perimeter) {
+		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
+		List<Long> iterationIds = new ArrayList<>();
+		RequirementCoverageStat stat = new RequirementCoverageStat();
+
+		if (mapIdsByType.containsKey(campaign_name)) {
+			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
+			try {
+				//Only one selected node for v1.13...
+				Campaign campaign = campaignModificationService.findCampaigWithExistenceCheck(ids.get(0));
+				if (campaign != null) {
+					iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+				} else {
+					stat.setCorruptedPerimeter(true);
+				}
+			} catch (IdentityUnavailableException e) {
+				LOGGER.debug("Unavailable Identity", e);
+				stat.setCorruptedPerimeter(true);
+			}
+		}
+		if (mapIdsByType.containsKey(iteration_name)) {
+			List<Long> ids = (List<Long>) mapIdsByType.get(iteration_name);
+			iterationIds.addAll(ids);
+		}
+		verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, iterationIds, stat);
+		return stat;
 	}
 
 	/* **********************************************************************

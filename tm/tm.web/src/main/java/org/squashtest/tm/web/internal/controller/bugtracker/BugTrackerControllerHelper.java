@@ -335,7 +335,7 @@ public final class BugTrackerControllerHelper {
 	 *
 	 ***************************************************************** */
 
-	DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> createModelBuilderForRequirementVersion() {
+	public DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> createModelBuilderForRequirementVersion() {
 
 		DataTableModelBuilder<RequirementVersionIssueOwnership<RemoteIssueDecorator>> builder;
 
