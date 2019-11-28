@@ -152,6 +152,9 @@
        <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
          <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
+        <c:if test="${not empty synchronizableIssueStatus }">
+		      <span id="synchronizableIssueStatus" style="color:red; margin-left: 50px"> ${ synchronizableIssueStatus } </span>
+			  </c:if>
        </div>
      </div>
       <div class="display-table-row test-case-remote-automation-request-block">
