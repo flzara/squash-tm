@@ -1,5 +1,5 @@
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.21.0.dtd">
 
 <dataset>
 
@@ -13,8 +13,8 @@
 	
 	<!-- ............. configure the test automation part ................ -->
 	
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-1" REMOTE_NAME="first project" SERVER_ID="-1" LABEL="first" 		TM_PROJECT_ID="-1"/>
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-2" REMOTE_NAME="second project" SERVER_ID="-1" LABEL="second" 	TM_PROJECT_ID="-1"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-1" REMOTE_NAME="first project" SERVER_ID="-1" LABEL="first" TM_PROJECT_ID="-1" CAN_RUN_SCRIPT="false"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-2" REMOTE_NAME="second project" SERVER_ID="-1" LABEL="second" TM_PROJECT_ID="-1" CAN_RUN_SCRIPT="false"/>
 	
 	<!--  executed : just executed. bound : just bound to a tc. both : both. neither : neither -->
 	

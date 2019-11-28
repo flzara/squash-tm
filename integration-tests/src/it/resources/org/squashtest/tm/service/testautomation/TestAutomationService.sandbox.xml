@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.21.0.dtd">
 <dataset>
 	
 	<!-- test automation servers  -->
@@ -40,13 +40,13 @@
 
 	<!-- test automation projects -->
 	
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-11" TM_PROJECT_ID="-1" REMOTE_NAME="roberto1" LABEL="Project Roberto 1" SERVER_ID="-1" />
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-12" TM_PROJECT_ID="-1" REMOTE_NAME="roberto2" LABEL="Project Roberto 2"  SERVER_ID="-1" />
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-13" TM_PROJECT_ID="-1" REMOTE_NAME="roberto3" LABEL="Project Roberto 3"  SERVER_ID="-1" />
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-11" TM_PROJECT_ID="-1" REMOTE_NAME="roberto1" LABEL="Project Roberto 1" SERVER_ID="-1" CAN_RUN_SCRIPT="false"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-12" TM_PROJECT_ID="-1" REMOTE_NAME="roberto2" LABEL="Project Roberto 2"  SERVER_ID="-1" CAN_RUN_SCRIPT="false"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-13" TM_PROJECT_ID="-1" REMOTE_NAME="roberto3" LABEL="Project Roberto 3"  SERVER_ID="-1" CAN_RUN_SCRIPT="false"/>
 	
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-21" TM_PROJECT_ID="-2"  REMOTE_NAME="mike1" SERVER_ID="-2" LABEL="Project Mike 1"/>
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-22" TM_PROJECT_ID="-2"  REMOTE_NAME="mike2" SERVER_ID="-2" LABEL="Project Mike 2"/>
-	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-23" TM_PROJECT_ID="-2"  REMOTE_NAME="roberto3" SERVER_ID="-2" LABEL="Project RobertMike 3"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-21" TM_PROJECT_ID="-2"  REMOTE_NAME="mike1" SERVER_ID="-2" LABEL="Project Mike 1" CAN_RUN_SCRIPT="false"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-22" TM_PROJECT_ID="-2"  REMOTE_NAME="mike2" SERVER_ID="-2" LABEL="Project Mike 2" CAN_RUN_SCRIPT="false"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-23" TM_PROJECT_ID="-2"  REMOTE_NAME="roberto3" SERVER_ID="-2" LABEL="Project RobertMike 3" CAN_RUN_SCRIPT="false"/>
 	
 	
 	
