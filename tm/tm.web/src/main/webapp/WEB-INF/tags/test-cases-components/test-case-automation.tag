@@ -44,6 +44,7 @@
 <f:message var="labelAutomation" key="label.automation" />
 <f:message var="transmitLabel" key="automation.label.to_transmit" />
 <f:message var="displayDateFormat" key="squashtm.dateformat" />
+<f:message var="labelHelp" key="workflow.automation.remote.issue.deleted.doc" />
 
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
@@ -153,7 +154,8 @@
          <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
         <c:if test="${not empty synchronizableIssueStatus }">
-		      <span id="synchronizableIssueStatus" style="color:red; margin-left: 50px"> ${ synchronizableIssueStatus } </span>
+		      <span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> ${ synchronizableIssueStatus } </span>
+		      <span class="icon-helper"  title='${labelHelp}'></span>
 			  </c:if>
        </div>
      </div>
