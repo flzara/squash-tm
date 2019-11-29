@@ -27,7 +27,6 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
-import org.squashtest.tm.service.internal.testcase.scripted.robot.RobotTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 import java.util.function.Function;
@@ -47,12 +46,9 @@ public class ScriptedExecutionConfiguration {
 	@Scope(value = "prototype")
 	public ScriptedTestCaseParser parser(ScriptedTestCaseExtender extender) {
 		ScriptedTestCaseLanguage language = extender.getLanguage();
-		switch (language) {
-			case GHERKIN:
-				return new GherkinTestCaseParser(gherkinStepGenerator());
-			case ROBOT:
-				return new RobotTestCaseParser();
-			default:
+		if(language.equals(ScriptedTestCaseLanguage.GHERKIN)) {
+			return new GherkinTestCaseParser(gherkinStepGenerator());
+		}else {
 				throw new IllegalArgumentException("No parser defined for script of language : " + language.name());
 		}
 	}
