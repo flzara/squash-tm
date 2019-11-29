@@ -31,8 +31,7 @@
 	   title = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
 	   		#{title.ExecutionPopupWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
 	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
-	   titlePrerequisite = ${execution.isScripted()} ? #{label.Background} : #{generics.prerequisite.title},
-	   refTcIsScripted = ${execution.isScripted()}
+	   titlePrerequisite = ${execution.isScripted()} ? #{label.Background} : #{generics.prerequisite.title}
 ">
 <head>
   <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -119,7 +118,7 @@ documentation :
         <td><h2 th:text="${title}">Exec #3 : test interface</h2></td>
         <td class="cf">
           <div class="btn-toolbar right">
-            <button th:if="${execution.project.allowTcModifDuringExec() and !refTcIsScripted}" id="edit-tc" th:title="#{execution.execute.modify.testcase}"
+            <button th:if="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}" id="edit-tc" th:title="#{execution.execute.modify.testcase}"
                     class="sq-btn std-btn control-button ">
               <span class="ui-icon ui-icon-pencil"/>
             </button>
@@ -138,11 +137,11 @@ documentation :
 
           <div class="display-table">
 
-            <div th:if="${refTcIsScripted and not (execution.scriptedExecutionExtender.language.name() == 'ROBOT')}" class="display-table-row">
+            <div th:if="${execution.isScripted()}" class="display-table-row">
 
               <label class="display-table-cell" th:text="#{${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}}">Feature</label>
-              <div id="testcase-script-name" class="display-table-cell" th:text="${execution.scriptedExecutionExtender.scriptName}">Name of the Script</div>
 
+              <div id="testcase-script-name" class="display-table-cell" th:text="${execution.scriptedExecutionExtender.scriptName}">REF01</div>
             </div>
 
 
@@ -235,7 +234,7 @@ documentation :
   			</div>
   			</div>
 
-    <div class="sq-tg expand" th:if="${not refTcIsScripted or (refTcIsScripted and not (execution.scriptedExecutionExtender.language.name() == 'ROBOT'))}">
+    <div class="sq-tg expand">
         <div class="tg-head">
           <h3 th:text="${titlePrerequisite}"></h3>
         </div>
