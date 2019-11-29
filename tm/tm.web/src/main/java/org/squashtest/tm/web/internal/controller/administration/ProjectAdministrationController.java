@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +48,6 @@ import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
@@ -73,7 +71,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -199,8 +196,6 @@ public class ProjectAdministrationController {
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 		mav.addObject("allowedStatuses", allowedStatuses);
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
-		mav.addObject("chosenScriptType", adminProject.getTestCaseScriptType().toString());
-		mav.addObject("availableScriptTypes", createComboDataForTcScriptTypes());
 		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
 		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
@@ -208,14 +203,6 @@ public class ProjectAdministrationController {
 		mav.addObject("availableAutomationWorkflows", automationWorkflows);
 
 		return mav;
-	}
-
-	private Map<String, String> createComboDataForTcScriptTypes() {
-		Map<String, String> tcScriptTypesMap = new HashMap<>();
-		for(ScriptedTestCaseLanguage scriptType : ScriptedTestCaseLanguage.values()) {
-			tcScriptTypesMap.put(scriptType.toString(), StringUtils.capitalize(scriptType.toString().toLowerCase()));
-		}
-		return tcScriptTypesMap;
 	}
 
 	/**

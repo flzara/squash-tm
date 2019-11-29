@@ -23,10 +23,10 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestCaseKind implements Internationalizable {
-	STANDARD, GHERKIN, ROBOT;
+	STANDARD, GHERKIN;
 
 	public boolean isScripted() {
-		return this.equals(GHERKIN) || this.equals(ROBOT);
+		return this.equals(GHERKIN);
 	}
 
 	public static TestCaseKind getFromString(String kind){

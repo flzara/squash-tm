@@ -65,7 +65,6 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -1203,13 +1202,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			check = true;
 		}
 		return check;
-	}
-
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	@Override
-	public void changeTcScriptType(long projectId, String tcScriptType) {
-		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		genericProject.setTcScriptType(ScriptedTestCaseLanguage.valueOf(tcScriptType));
 	}
 
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)

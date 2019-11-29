@@ -612,13 +612,6 @@ public class GenericProjectController {
 		projectManager.changeAutomationWorkflow(projectId, active);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-tc-script-type", VALUE})
-	@ResponseBody
-	public void changeTcScriptType(@PathVariable long projectId, @RequestParam(VALUE) String tcScriptType) {
-		ScriptedTestCaseLanguage scriptType = ScriptedTestCaseLanguage.valueOf(tcScriptType);
-		projectManager.changeTcScriptType(projectId, tcScriptType);
-	}
-
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=change-automation-workflow", VALUE})
 	@ResponseBody
 	public void changeAutomationWorkflow(@PathVariable long projectId, @RequestParam(VALUE) String automationWorkflowtype) {

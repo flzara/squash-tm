@@ -299,7 +299,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * This action implies copying CustomFields, InfoLists, ExeParams and ExecStatuses from the Template. */
 	void associateToTemplate(long projectId, long templateId);
 
-	void changeTcScriptType(long projectId, String tcScriptType);
 
 	void changeAllowTcModifDuringExec(long projectId, boolean active);
 

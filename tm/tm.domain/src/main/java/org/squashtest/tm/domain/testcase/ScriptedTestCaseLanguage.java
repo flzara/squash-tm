@@ -21,8 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 public enum ScriptedTestCaseLanguage {
-	GHERKIN,
-	ROBOT;
+	GHERKIN;
 
 	public String i18nScriptNameKey(){
 		return "execution.script.name." + this.name().toLowerCase();
