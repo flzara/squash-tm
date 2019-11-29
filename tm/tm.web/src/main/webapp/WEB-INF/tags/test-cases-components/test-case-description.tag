@@ -65,10 +65,6 @@
         </c:otherwise>
       </c:choose>
 			</div>
-      <c:if test="${scripted and not (scriptLanguage eq testCase.project.tcScriptType)}">
-        <div class="display-table-cell test-case-format-warning"><f:message key="test-case.format.warning-message"/></div>
-      </c:if>
-
 		</div>
 
 		<div class="display-table-row">
