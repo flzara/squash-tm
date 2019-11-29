@@ -44,7 +44,7 @@ public interface TestAutomationProjectManagerService extends TestAutomationProje
 	 */
 	void changeSlaves(long projectId, String slaveList);
 	
-	void changeCanRunScript(long projectId, boolean canRunScript);
+	void changeCanRunGherking(long projectId, boolean canRunGherkin);
 
 	/**
 	 * Will edit the label, jobName and slaves properties of the {@link TestAutomationProject} matching the given id

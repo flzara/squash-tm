@@ -259,8 +259,8 @@ public class ScriptedTestCaseEventListener {
 
 		/*
 		 * Find the candidate test cases. As per the method findCandidatesForAutobind,
-		 * the returned test cases are Script-read (ie their project have a scm and a
-		 * Script-able test automation project)
+		 * the returned test cases are Gherkin-read (ie their project have a scm and a
+		 * Gherkin-able test automation project)
 		 */
 		List<TestCase> candidates = findCandidatesForAutobind(requestIds);
 
@@ -316,8 +316,8 @@ public class ScriptedTestCaseEventListener {
 
 		ScmRepositoryManifest manifest = new ScmRepositoryManifest(scm);
 
-		// look for a Script-able project
-		Optional<TestAutomationProject> maybeGherkin = findFirstScriptProject(testCases);
+		// look for a Gherkin-able project
+		Optional<TestAutomationProject> maybeGherkin = findFirstGherkinProject(testCases);
 
 
 		if (maybeGherkin.isPresent()){
@@ -357,7 +357,7 @@ public class ScriptedTestCaseEventListener {
 	}
 
 	// assumes that all the test cases belong to the same tm project
-	private Optional<TestAutomationProject> findFirstScriptProject(List<TestCase> tcs) {
+	private Optional<TestAutomationProject> findFirstGherkinProject(List<TestCase> tcs) {
 		if (tcs.isEmpty()){
 			return Optional.empty();
 		}
@@ -367,7 +367,7 @@ public class ScriptedTestCaseEventListener {
 		return tc.getProject()
 			.getTestAutomationProjects()
 			.stream()
-			.filter(TestAutomationProject::isCanRunScript)
+			.filter(TestAutomationProject::isCanRunGherkin)
 			.sorted(Comparator.comparing(TestAutomationProject::getLabel))
 			.findFirst();
 	}
@@ -401,9 +401,9 @@ public class ScriptedTestCaseEventListener {
 	 * Returns the test cases that :
 	 * - cond 1 : are the object of the automation requests (in arguments),
 	 * - cond 2 : are scripted test cases
-	 * ---- cond 3 : don't have an AutomatedTest bound yet, - this condition was removed to handle TC renaming ----
+	 * - cond 3 : don't have an AutomatedTest bound yet,
 	 * - cond 4 : belong to a project that is connected to a SCM
-	 * - cond 5 : belong to a project that have a (at least one) Script-able TestAutomationProject
+	 * - cond 5 : belong to a project that have a (at least one) Gherkin-able TestAutomationProject
 	 */
 	private List<TestCase> findCandidatesForAutobind(Collection<Long> automationRequestIds){
 
@@ -426,7 +426,7 @@ public class ScriptedTestCaseEventListener {
 			.join(project.scmRepository, scm) 								// condition 4
 			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
 				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-								.and(automationProject.canRunScript.isTrue())		// condition 5
+								.and(automationProject.canRunGherkin.isTrue())		// condition 4
 			)
 			.fetch();
 

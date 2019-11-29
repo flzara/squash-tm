@@ -147,8 +147,8 @@
               <th data-def="map=url, link-new-tab={url}">
                <f:message key="label.testAutomationProject.url" />
               </th>
-              <th data-def="map=canRunScript, sWidth=8em, render-yesno">
-              	<f:message key="label.canRunScript"/>
+              <th data-def="map=gherkin, sWidth=8em, render-yesno">
+              	<f:message key="label.canRunGherkin"/>
               </th>
               <th data-def="map=empty-edit-holder, narrow, sClass=edit-job-button">&nbsp;</th>
               <th data-def="map=empty-delete-holder, unbind-button=#ta-projects-unbind-popup">&nbsp;</th>
@@ -163,7 +163,7 @@
               <td><c:out value="${taproj.label}" escapeXml="true" /></td>
               <td><c:out value="${taproj.jobName}" escapeXml="true" /></td>
               <td>${jobUrls[taproj.jobName]}</td>
-              <td>${taproj.canRunScript}</td>
+              <td>${taproj.canRunGherkin}</td>
               <td> </td>
               <td> </td>
             </tr>
@@ -338,7 +338,7 @@
     </div>
 
     <div class="display-table-row">
-      <label for="ta-project-jobName">
+      <label class="display-table-cell" for="ta-project-jobName">
         <f:message key="label.job.input" />
       </label>
       <div class="display-table-cell">
@@ -348,15 +348,15 @@
 
     <div class="display-table-row">
       <label for="ta-project-cangherkin">
-        <f:message key="label.canRunScript" />
+        <f:message key="label.canRunGherkin" />
       </label>
       <div class="display-table-cell">
-        <input type="checkbox" id="ta-project-cangherkin" name="canRunScript"/>
+        <input type="checkbox" id="ta-project-cangherkin" name="canRunGherkin"/>
       </div>
     </div>
 
     <div class="control-group">
-      <label for="ta-project-slaves">
+      <label for="slaves">
         <f:message key="label.slaves.input" />
       </label>
       <div>

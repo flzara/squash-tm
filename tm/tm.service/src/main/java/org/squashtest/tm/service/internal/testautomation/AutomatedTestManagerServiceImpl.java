@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -302,25 +301,17 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 				   .collect(Collectors.groupingBy(this::identifyProjectTechnology));
 	}
 
-	// naive classifier here !
 	private TestCaseKind identifyTestKind(String testPath){
-		if(testPath.endsWith(ScriptToFileStrategy.GHERKIN_STRATEGY.getExtension())) {
-			return TestCaseKind.GHERKIN;
-		} else if(testPath.endsWith(ScriptToFileStrategy.ROBOT_STRATEGY.getExtension())) {
-			return TestCaseKind.ROBOT;
-		} else {
-			return TestCaseKind.STANDARD;
-		}
+		return isTestGherkin(testPath) ? TestCaseKind.GHERKIN : TestCaseKind.STANDARD;
+	}
+
+	// naive classifier here !
+	private boolean isTestGherkin(String testPath){
+		return testPath.endsWith(ScriptToFileStrategy.GHERKIN_STRATEGY.getExtension());
 	}
 
 	private TestCaseKind identifyProjectTechnology(TestAutomationProjectContent projectContent){
-		TestAutomationProject testAutoProject = projectContent.getProject();
-		if(!testAutoProject.isCanRunScript()) {
-			return TestCaseKind.STANDARD;
-		} else {
-			ScriptedTestCaseLanguage scriptLanguage = testAutoProject.getTmProject().getTcScriptType();
-			return TestCaseKind.valueOf(scriptLanguage.name());
-		}
+		return (projectContent.getProject().isCanRunGherkin()) ? TestCaseKind.GHERKIN : TestCaseKind.STANDARD;
 	}
 
 

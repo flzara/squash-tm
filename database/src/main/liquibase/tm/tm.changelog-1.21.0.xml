@@ -144,11 +144,6 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.21.0-rename-can_run_gherkin-column" author="jlor">
-    <comment>Rename CAN_RUN_GHERKIN column to CAN_RUN_SCRIPT</comment>
-    <renameColumn tableName="TEST_AUTOMATION_PROJECT" oldColumnName="CAN_RUN_GHERKIN" newColumnName="CAN_RUN_SCRIPT" />
-  </changeSet>
-
   <changeSet id="tm-1.21.0-TM-211-last-sync-date" author="amk">
 
     <comment>add new column LAST-SYNC-DATE into REMOTE_AUTOMATION_REQUEST_EXTENDER</comment>
@@ -546,5 +541,6 @@
     <addUniqueConstraint tableName="EXECUTION_EXECUTION_STEPS" columnNames="EXECUTION_ID, EXECUTION_STEP_ORDER" />
 
   </changeSet>
+
 
 </databaseChangeLog>

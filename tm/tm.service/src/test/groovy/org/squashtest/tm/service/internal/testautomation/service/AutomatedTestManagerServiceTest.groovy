@@ -21,12 +21,10 @@
 package org.squashtest.tm.service.internal.testautomation.service
 
 import org.apache.commons.io.FileUtils
-import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.service.internal.testautomation.*
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
@@ -55,10 +53,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 	@Shared
 	ScmRepository repo2 = new MockFactory().mockScmRepository(20L, "ATMSTest2_", "scripts"){
 		dir("scripts"){
-			file "789_robottest1.robot"
+			file "789_ghertest1.feature"
 			file "1642_whatsis.dunno"
 			dir("nested"){
-				file "159_robot2.robot"
+				file "159_ghertest2.feature"
 			}
 		}
 	}
@@ -191,26 +189,18 @@ class AutomatedTestManagerServiceTest extends Specification {
 	def "group automation projects by technology and make them AutomationProjectContent"(){
 
 		given :
-		def proj1 = new Project(tcScriptType: ScriptedTestCaseLanguage.GHERKIN)
-		def proj2 = new Project(tcScriptType: ScriptedTestCaseLanguage.ROBOT)
-
-		def reg1 = new TestAutomationProject(label: "regular 1", canRunScript: false)
-		reg1.setTmProject(proj1)
-		def gher1 = new TestAutomationProject(label: "gherkin 1", canRunScript: true)
-		gher1.setTmProject(proj1)
-		def reg2 = new TestAutomationProject(label: "regular 2", canRunScript: false)
-		reg2.setTmProject(proj2)
-		def rob1 = new TestAutomationProject(label: "robot 1", canRunScript: true)
-		rob1.setTmProject(proj2)
+		def reg1 = new TestAutomationProject(label: "regular 1", canRunGherkin: false)
+		def gher1 = new TestAutomationProject(label: "gherkin 1", canRunGherkin: true)
+		def reg2 = new TestAutomationProject(label: "regular 2", canRunGherkin: false)
+		def gher2 = new TestAutomationProject(label: "gherkin 2", canRunGherkin: true)
 
 		when :
-		def res = service.groupProjectsByTechnology([rob1, reg1, reg2, gher1])
+		def res = service.groupProjectsByTechnology([gher2, reg1, reg2, gher1])
 
 		then :
 		res.values().flatten().every {it.class == TestAutomationProjectContent }
 		res[TestCaseKind.STANDARD].collect {it.project} == [reg1, reg2]
-		res[TestCaseKind.GHERKIN].collect {it.project} == [gher1]
-		res[TestCaseKind.ROBOT].collect {it.project} == [rob1]
+		res[TestCaseKind.GHERKIN].collect {it.project} == [gher1, gher2]
 
 	}
 
@@ -218,22 +208,22 @@ class AutomatedTestManagerServiceTest extends Specification {
 	def "should create the automation project contents for 2 scms"(){
 
 		given : "the projects"
-		def projectWithScm1 = new Project(scmRepository: repo1, tcScriptType: ScriptedTestCaseLanguage.GHERKIN)
-		def projectWithScm2 = new Project(scmRepository: repo2, tcScriptType: ScriptedTestCaseLanguage.ROBOT)
+		def projectWithScm1 = new Project(scmRepository: repo1)
+		def projectWithScm2 = new Project(scmRepository: repo2)
 		def projectWithoutScm = new Project(scmRepository: null)
 
 		and : "the automation projects"
-		def gher1 = new TestAutomationProject(label: "gherkin 1", tmProject: projectWithScm1, canRunScript: true)
-		def reg1 = new TestAutomationProject(label: "regular 1",tmProject: projectWithScm1, canRunScript: false)
+		def gher1 = new TestAutomationProject(label: "gherkin 1", tmProject: projectWithScm1, canRunGherkin: true)
+		def reg1 = new TestAutomationProject(label: "regular 1",tmProject: projectWithScm1, canRunGherkin: false)
 
-		def reg2 = new TestAutomationProject(label: "regular 2", tmProject: projectWithScm2, canRunScript: false)
-		def rob1 = new TestAutomationProject(label: "robot 1", tmProject: projectWithScm2, canRunScript: true)
+		def reg2 = new TestAutomationProject(label: "regular 2", tmProject: projectWithScm2, canRunGherkin: false)
+		def gher2 = new TestAutomationProject(label: "gherkin 2", tmProject: projectWithScm2, canRunGherkin: true)
 
 		def noscm = new TestAutomationProject(tmProject: projectWithoutScm)
 
 
 		when :
-		def contents = service.listTestsFromScm([rob1, reg1, noscm, reg2, gher1])
+		def contents = service.listTestsFromScm([gher2, reg1, noscm, reg2, gher1])
 
 		then :
 
@@ -257,10 +247,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 		]
 
 		// gher2 contains gherkin tests from scm2
-		def contentRob1 = contents.find {it.project == rob1 }
-		contentRob1.tests.collect {it.fullLabel }.sort() == [
-			"/robot 1/789_robottest1.robot",
-			"/robot 1/nested/159_robot2.robot"
+		def contentGher2 = contents.find {it.project == gher2 }
+		contentGher2.tests.collect {it.fullLabel }.sort() == [
+			"/gherkin 2/789_ghertest1.feature",
+			"/gherkin 2/nested/159_ghertest2.feature"
 		]
 
 		// and no result for the "no scm" project

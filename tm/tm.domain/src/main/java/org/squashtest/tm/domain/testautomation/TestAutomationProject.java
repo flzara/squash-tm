@@ -91,8 +91,8 @@ public class TestAutomationProject implements Identified {
 	 * Says whether this one
 	 *
 	 */
-	@Column(name = "CAN_RUN_SCRIPT")
-	private boolean canRunScript = false;
+	@Column(name = "CAN_RUN_GHERKIN")
+	private boolean canRunGherkin = false;
 
 
 	public TestAutomationProject() {
@@ -177,12 +177,12 @@ public class TestAutomationProject implements Identified {
 		this.slaves = slaves;
 	}
 
-	public boolean isCanRunScript() {
-		return canRunScript;
+	public boolean isCanRunGherkin() {
+		return canRunGherkin;
 	}
 
-	public void setCanRunScript(boolean canRunScript) {
-		this.canRunScript = canRunScript;
+	public void setCanRunGherkin(boolean canRunGherkin) {
+		this.canRunGherkin = canRunGherkin;
 	}
 
 	// wrote this under protest : a Job should have been a proper concept, not this
