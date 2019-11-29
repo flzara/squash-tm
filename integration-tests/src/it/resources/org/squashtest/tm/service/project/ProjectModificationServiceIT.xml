@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.21.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.19.0.dtd">
 <dataset>
 	
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/>
@@ -31,7 +31,7 @@
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/>
 	<REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
-	<PROJECT PROJECT_ID="-1" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="foo" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-432" TC_SCRIPT_TYPE="GHERKIN" />
+	<PROJECT PROJECT_ID="-1" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="foo" CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-432"/>
 
   <THIRD_PARTY_SERVER SERVER_ID="-1" URL="url" NAME="name" />
   <THIRD_PARTY_SERVER SERVER_ID="-2" URL="url2" NAME=""/>

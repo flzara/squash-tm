@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
@@ -92,26 +91,5 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 
 	}
 
-	@DataSet("ProjectModificationServiceIT.xml")
-	def "should update the tcScriptType from GHERKIN to ROBOT of the Project"() {
-		given:
-		Project project = findEntity(Project.class, -1L)
-		project.getTcScriptType() == ScriptedTestCaseLanguage.GHERKIN
-		when:
-		modService.changeTcScriptType(-1L, "ROBOT")
-		then:
-		project.getTcScriptType() == ScriptedTestCaseLanguage.ROBOT
-	}
-
-	@DataSet("ProjectModificationServiceIT.xml")
-	def "should throw an IllegalArgumentException when trying to change the tcScriptType with an invalid type"() {
-		given:
-		Project project = findEntity(Project.class, -1L)
-		project.getTcScriptType() == ScriptedTestCaseLanguage.GHERKIN
-		when:
-		modService.changeTcScriptType(-1L, "INVALID_TYPE")
-		then:
-		thrown IllegalArgumentException
-	}
 
 }
