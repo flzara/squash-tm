@@ -140,7 +140,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 				PROJECT.NAME,
 				PROJECT.LABEL,
 				PROJECT.ALLOW_AUTOMATION_WORKFLOW,
-				PROJECT.TC_SCRIPT_TYPE,
 				count(selectLibraryContentLibraryId()).as("COUNT_CHILD"))
 			.from(getLibraryTable())
 			.join(PROJECT).using(selectLibraryId())
@@ -164,7 +163,6 @@ public abstract class AbstractWorkspaceDisplayService implements WorkspaceDispla
 
 				if ("test-case-libraries".equals(getResType())) {
 					attr.put("allowAutomWorkflow", r.get(PROJECT.ALLOW_AUTOMATION_WORKFLOW));
-					attr.put("tcScriptType", r.get(PROJECT.TC_SCRIPT_TYPE));
 				}
 
 				Integer countChild = r.get("COUNT_CHILD", Integer.class);
