@@ -86,13 +86,13 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 					//must do it before using enableBasicAutoCompletion: true
 					//because we need that auto completion is enabled to have the snippet ONLY
 					langTools.setCompleters([langTools.snippetCompleter]);
-					that.originalScript = serverModel.scriptExtender.script;
+					that.originalScript = serverModel.scriptExender.script;
 					//now that editor and session are properly initialized we can init the value
 					editor.session.setValue(that.originalScript);
 					editor.getSession().setUseWrapMode(true);
 					editor.getSession().setWrapLimitRange(160, 160);
 					//now that editor and session are properly initialized we can init the mode (ie the script language that the editor will know)
-					that._initialize_editor_mode(editor, serverModel);
+					that._initialize_editor_mode(editor);
 					editor.setTheme(theme);
 					editor.setOptions({
 						// Has to set this one to true if i want snippets, but basic auto completion is disabled above
@@ -132,24 +132,15 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 			this.model = new ScriptedTestCseModel();
 		},
 
-		_initialize_editor_mode: function (editor, serverModel) {
+		_initialize_editor_mode: function (editor) {
 			this.locale = this._findScriptLocale();
 
 			var aceEditorMode;
-			switch (serverModel.scriptExtender.language) {
-				case 'GHERKIN':
-					if (this.locale === "en") {
-						aceEditorMode = "ace/mode/gherkin";
-					} else {
-						aceEditorMode = "ace/mode/gherkin-" + this.locale;
-					}
-					break;
-
-				case 'ROBOT':
-				default:
-					aceEditorMode = "ace/mode/plain_text"
+			if (this.locale === "en") {
+				aceEditorMode = "ace/mode/gherkin";
+			} else {
+				aceEditorMode = "ace/mode/gherkin-" + this.locale;
 			}
-
 			editor.session.setMode(aceEditorMode);
 		},
 

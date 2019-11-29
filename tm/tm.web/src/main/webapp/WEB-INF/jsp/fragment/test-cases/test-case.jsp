@@ -112,9 +112,6 @@
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
-<c:if test="${scripted}">
-  <c:set var="scriptLanguage" value="${testCase.scriptedTestCaseExtender.language}"/>
-</c:if>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
@@ -216,7 +213,7 @@
 
       <%------------------------------ Script Editor Only for scripted test case ---------------------------------------------%>
     <c:if test="${scripted}">
-      <tc:test-case-scripted-editor writable="${writable}" language="${scriptedLanguage}"/>
+      <tc:test-case-scripted-editor writable="${writable}"/>
     </c:if>
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
@@ -278,7 +275,7 @@
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
-          , scriptExtender: ${json:serialize(testCase.scriptedTestCaseExtender)}
+          , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
           </c:if>
           <c:if test="${not empty milestoneConf.activeMilestone}">
           , milestone: ${json:serialize(milestoneConf.activeMilestone)}

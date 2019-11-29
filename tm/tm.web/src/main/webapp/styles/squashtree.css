@@ -92,18 +92,6 @@ li[rel="test-case"][kind="gherkin"] > a.jstree-clicked {
 	color: white;
 }
 
-li[rel="test-case"][kind="robot"] > a {
-	color: #006c96;
-}
-
-li[rel="test-case"][kind="robot"] > a.jstree-hovered {
-	color: white;
-}
-
-li[rel="test-case"][kind="robot"] > a.jstree-clicked {
-	color: white;
-}
-
 
 @import url("testCaseTreeIcons.css");
 

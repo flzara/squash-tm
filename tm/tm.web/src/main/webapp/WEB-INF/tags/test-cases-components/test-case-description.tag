@@ -24,7 +24,6 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
@@ -39,9 +38,6 @@
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 <c:set var="scripted" value="${testCase.isScripted()}"/>
-<c:if test="${scripted}">
-  <c:set var="scriptLanguage" value="${testCase.scriptedTestCaseExtender.language}"/>
-</c:if>
 
 <f:message var="labelDescription" key="label.Description"/>
 
@@ -58,7 +54,7 @@
 			<div class="display-table-cell" id="test-case-format">
 				  <c:choose>
         <c:when test="${scripted}">
-				<f:message key="test-case.format.${fn:toLowerCase(scriptLanguage)}"/>
+				<f:message key="test-case.format.gherkin"/>
 		</c:when>
         <c:otherwise>
 				<f:message key="test-case.format.standard"/>

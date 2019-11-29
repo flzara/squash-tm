@@ -70,8 +70,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 
 		var i18nFormat = translator.get({
 			"GHERKIN": "test-case.format.gherkin",
-			"STANDARD": "test-case.format.standard",
-			"ROBOT": "test-case.format.robot"
+			"STANDARD": "test-case.format.standard"
 		});
 
 		// Added to cancel the open if no rights

@@ -27,7 +27,6 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceTreeMenu
 			"#new-folder-tree-button",
 			"#new-test-case-tree-button",
 			"#new-test-case-gherkin-tree-button",
-			"#new-test-case-robot-tree-button",
 			"#copy-node-tree-button",
 			"#paste-node-tree-button",
 			"#rename-node-tree-button",
