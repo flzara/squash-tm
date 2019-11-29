@@ -185,20 +185,10 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 			if (isCrossProject) {
 				var msg = translator.get('message.warnCopyToDifferentLibrary');
 
-				var addendum;
-
-				var haveDifferentTestCaseScriptType = projects.haveDifferentTestCaseScriptType(srcProjects, targetProject);
-
-				if (haveDifferentTestCaseScriptType){
-					addendum = translator.get('message.warnCopyToDifferentLibrary.scriptTypeDiffer');
-					// we append the addendum by manipulating the html directly
-					// it is so because first creating the js element then appending
-					// will give poor results
-					msg = msg.replace('</ul>', addendum + '</ul>');
-				}
 				// if cross-project, also check whether
 				// the nature/type/category settings are different
 				var areInfoListsDifferent = projects.haveDifferentInfolists(srcProjects.concat(targetProject));
+				var addendum;
 
 				if (areInfoListsDifferent){
 					addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');

@@ -40,8 +40,6 @@ public class JsonProject {
 	private String uri;
 	private String name;
 
-	private String testCaseScriptType;
-
 	private Map<String, List<CustomFieldBindingModel>> customFieldBindings;
 
 	private Set<JsonMilestone> milestones;
@@ -62,7 +60,6 @@ public class JsonProject {
 		res.id = project.getId();
 		res.uri = "/projects/" + res.id;
 		res.name = HtmlUtils.htmlUnescape(project.getName());
-		res.testCaseScriptType = project.getTcScriptType().name();
 		return res;
 	}
 
@@ -149,11 +146,4 @@ public class JsonProject {
 		this.milestones = milestones;
 	}
 
-	public String getTestCaseScriptType() {
-		return testCaseScriptType;
-	}
-
-	public void setTestCaseScriptType(String testCaseScriptType) {
-		this.testCaseScriptType = testCaseScriptType;
-	}
 }
