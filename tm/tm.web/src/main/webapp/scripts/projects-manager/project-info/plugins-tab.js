@@ -70,6 +70,7 @@ define(
 			function configureLink($row, data){
 				var confcell = $row.find('.plugin-configure');
 				confcell.text(translator.get('label.Configure'));
+
 			}
 
 			function noNavigation(evt){
@@ -120,6 +121,9 @@ define(
 						// 'configure' link placeholder if plugin is configurable
 						if(!!data.configUrl) {
 							configureLink($row, data);
+						}else{
+								$("#tr-config").hide();
+								row.cells[5].hidden = true;
 						}
 					}
 				},{});

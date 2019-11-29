@@ -1160,6 +1160,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			copyBugtrackerSettings(target, source);
 		}
 		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
+		target.setAutomationWorkflowType(source.getAutomationWorkflowType());
 		if(target.getTestAutomationServer() == null) {
 			copyTestAutomationSettings(target, source);
 		}

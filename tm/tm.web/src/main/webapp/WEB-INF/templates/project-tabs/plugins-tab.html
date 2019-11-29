@@ -54,7 +54,7 @@
                   <th th:text="#{label.Type}" data-def="map=type, sClass=plugin-type"></th>
                   <th th:text="#{label.PluginName}" data-def="map=name, sClass=plugin-name"></th>
                   <th th:text="#{label.Status}" data-def="map=status, center, sClass=plugin-status"></th>
-                  <th th:text="#{label.Configure}" data-def="map=configUrl, link={configUrl}, sClass=plugin-configure"></th>
+                  <th th:id= "tr-config" th:text="#{label.Configure}" data-def="map=configUrl, link={configUrl}, sClass=plugin-configure"></th>
                   </tr>
                 </thead>
                

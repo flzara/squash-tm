@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
@@ -260,13 +261,15 @@ public class ProjectAdministrationController {
 
 		Collection<WorkspaceWizard> plugins = pluginManager.findAll();
 
+		Boolean isTemplate = ProjectHelper.isTemplate(project);
+
 		Collection<String> enabledPlugins = new ArrayList<>();
 		enabledPlugins.addAll(project.getTestCaseLibrary().getEnabledPlugins());
 		enabledPlugins.addAll(project.getRequirementLibrary().getEnabledPlugins());
 		enabledPlugins.addAll(project.getCampaignLibrary().getEnabledPlugins());
 
 		String context = request.getServletContext().getContextPath();
-		Collection<ProjectPluginModel> models = toPluginModel(context, projectId, plugins, enabledPlugins);
+		Collection<ProjectPluginModel> models = toPluginModel(context, projectId, plugins, isTemplate);
 
 		model.addAttribute("plugins", models);
 		model.addAttribute(RequestParams.PROJECT_ID, projectId);
@@ -276,7 +279,7 @@ public class ProjectAdministrationController {
 	}
 
 
-	private Collection<ProjectPluginModel> toPluginModel(String servContext, long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
+	private Collection<ProjectPluginModel> toPluginModel(String servContext, long projectId, Collection<WorkspaceWizard> plugins, Boolean isTemplate) {
 
 		List<ProjectPluginModel> output = new ArrayList<>(plugins.size());
 
@@ -296,11 +299,11 @@ public class ProjectAdministrationController {
 
 			String url = plugin.getConfigurationPath(context);
 
-			if(url != null) {
+			if(url != null && !isTemplate) {
 				url = url.startsWith("/") ? url : "/" + url;
 
 				model.setConfigUrl(servContext + url);
-			}
+			}else model.setConfigUrl("");
 
 			// that should be refactored too once the API is updated
 			try{
