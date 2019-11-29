@@ -135,14 +135,6 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.21.0-test-case-script-type" author="jlor">
-    <comment>Add a new column TC_SCRIPT_TYPE</comment>
-    <addColumn tableName="PROJECT">
-      <column name="TC_SCRIPT_TYPE" type="VARCHAR(25)" defaultValue="GHERKIN" remarks="This column specifies the type of scripted test cases used in the project">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
 
   <changeSet id="tm-1.21.0-TM-211-last-sync-date" author="amk">
 
@@ -539,7 +531,6 @@
     </sql>
 
     <addUniqueConstraint tableName="EXECUTION_EXECUTION_STEPS" columnNames="EXECUTION_ID, EXECUTION_STEP_ORDER" />
-
   </changeSet>
 
 
