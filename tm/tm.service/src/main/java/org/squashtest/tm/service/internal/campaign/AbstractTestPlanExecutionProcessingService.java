@@ -194,9 +194,6 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 			case GHERKIN:
 				ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
 				return extender != null && extender.getScript() != null && !extender.getScript().isEmpty() && hasScenarios(extender);
-			case ROBOT:
-				ScriptedTestCaseExtender robotExtender = testCase.getScriptedTestCaseExtender();
-				return robotExtender != null && robotExtender.getScript() != null && !robotExtender.getScript().isEmpty();
 			default:
 				return false;
 		}
