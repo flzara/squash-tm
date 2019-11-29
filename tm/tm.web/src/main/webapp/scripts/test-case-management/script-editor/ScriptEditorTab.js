@@ -144,8 +144,10 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 						aceEditorMode = "ace/mode/gherkin-" + this.locale;
 					}
 					break;
+
+				case 'ROBOT':
 				default:
-					aceEditorMode = "ace/mode/plain_text";
+					aceEditorMode = "ace/mode/plain_text"
 			}
 
 			editor.session.setMode(aceEditorMode);
