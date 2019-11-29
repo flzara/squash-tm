@@ -30,31 +30,31 @@ import spock.lang.Specification
 
 class RobotTestCaseParserTest extends Specification {
 
-	RobotStepGenerator stepGenerator = new RobotStepGenerator()
-	RobotTestCaseParser parser = new RobotTestCaseParser(stepGenerator)
+	RobotTestCaseParser parser = new RobotTestCaseParser()
 
 	def "#populateExecution(Execution) - Should create one unique execution step containing the script"() {
 		given:
-			def scriptedTestCaseExtender = Mock(ScriptedTestCaseExtender)
-			scriptedTestCaseExtender.getScript() >> " This is the script content !"
+		def scriptedTestCaseExtender = Mock(ScriptedTestCaseExtender)
+		scriptedTestCaseExtender.getScript() >> " This is the script content !"
 
-			def testCase = Mock(TestCase)
-			testCase.getScriptedTestCaseExtender() >> scriptedTestCaseExtender
-			testCase.getImportance() >> TestCaseImportance.MEDIUM
-			testCase.getStatus() >> TestCaseStatus.UNDER_REVIEW
-			testCase.getNature() >> Mock(InfoListItem)
-			testCase.getType() >> Mock(InfoListItem)
+		def testCase = Mock(TestCase)
+		testCase.getScriptedTestCaseExtender() >> scriptedTestCaseExtender
+		testCase.getImportance() >> TestCaseImportance.MEDIUM
+		testCase.getStatus() >> TestCaseStatus.UNDER_REVIEW
+		testCase.getNature() >> Mock(InfoListItem)
+		testCase.getType() >> Mock(InfoListItem)
 
-			Execution exec = new Execution()
-			exec.setReferencedTestCase(testCase)
+		Execution exec = new Execution()
+		exec.setReferencedTestCase(testCase)
 
 		when:
-			parser.populateExecution(exec)
+		parser.populateExecution(exec)
 
 		then:
-			exec.getSteps().size() == 1
-			def uniqueStep = exec.getSteps().get(0)
-			uniqueStep != null
-			uniqueStep.getAction() == " This is the script content !"
+		exec.getSteps().size() == 1
+		def uniqueStep = exec.getSteps().get(0)
+		uniqueStep != null
+		uniqueStep.getAction() == " This is the script content !"
+
 	}
 }

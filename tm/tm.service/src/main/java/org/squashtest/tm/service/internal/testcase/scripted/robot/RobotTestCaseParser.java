@@ -28,18 +28,14 @@ import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 public class RobotTestCaseParser implements ScriptedTestCaseParser {
 
-	private RobotStepGenerator stepGenerator;
-
-	public RobotTestCaseParser(RobotStepGenerator stepGenerator) {
-		this.stepGenerator = stepGenerator;
-	}
-
 	@Override
 	public void populateExecution(Execution execution) {
 		TestCase referencedTestCase = execution.getReferencedTestCase();
 		ScriptedTestCaseExtender scriptExtender = referencedTestCase.getScriptedTestCaseExtender();
 
-		stepGenerator.populateExecution(execution, scriptExtender);
+		ExecutionStep newExecutionStep = new ExecutionStep();
+		newExecutionStep.setAction(scriptExtender.getScript());
+		execution.getSteps().add(newExecutionStep);
 	}
 
 	@Override
