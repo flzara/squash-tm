@@ -37,8 +37,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
@@ -76,51 +74,17 @@ public final class BugTrackerControllerHelper {
 	}
 
 	/**
-	 * Will build a String that shows all steps before the bugged step + the bugged step itself.<br/>
-	 * The String for a Step will differ whether the referenced TestCase is a Scripted TestCase or a Standard one.
-	 * @param buggedStep the bugged step where the issue will be declared
-	 * @param locale the locale used
-	 * @param messageSource the messages
-	 * @return the build String
-	 */
-	public static String getAdditionalInformation(
-		ExecutionStep buggedStep,
-		Locale locale,
-		MessageSource messageSource) {
-
-		Execution execution = buggedStep.getExecution();
-		TestCaseKind testCaseKind = execution.getReferencedTestCase().getKind();
-
-		List<ExecutionStep> executionSteps = execution.getSteps();
-		int totalStepNumber = executionSteps.size();
-		long buggedStepId = buggedStep.getId();
-
-		switch(testCaseKind) {
-			case STANDARD:
-				return getAdditionalInformationForStandardTestCase(
-					executionSteps, buggedStepId, totalStepNumber, locale, messageSource);
-			case GHERKIN:
-			case ROBOT:
-				return getAdditionalInformationForScriptedTestCase(
-					executionSteps, buggedStepId, totalStepNumber, locale, messageSource);
-			default:
-				throw new IllegalArgumentException("The Kind " + testCaseKind + " for a Test Case does not exist.");
-		}
-	}
-
-	/**
-	 * For a Standard TestCase,
-	 * build the String that shows all ExecutionSteps before the bugged step + the bugged step itself.<br/>
+	 * Will build a string that shows all steps before the bugged step + the bugged step itself.<br>
 	 * The string will look like this : <br/>
 	 * <br>
-	 * <em>
+	 * <entityManager>
 	 * 	=============================================<br>
 	 *  |    Step 1/N<br>
 	 *  =============================================<br>
-	 * 	--- Action ---<br>
+	 * 	-Action-<br>
 	 * 	action description<br>
 	 * 	<br>
-	 * 	--- Expected Result ----<br>
+	 * 	Expected Result-<br>
 	 * 	expected result description<br>
 	 * 	<br>
 	 * 	<br>
@@ -128,86 +92,28 @@ public final class BugTrackerControllerHelper {
 	 * 	|    Step 2/N<br>
 	 * 	=============================================<br>
 	 * 	...<br>
-	 * 	<br></em>
+	 * 	<br></entityManager>
 	 *
-	 * @param executionSteps the list of Steps in the Execution
-	 * @param buggedStepId the id of the bugged Step
-	 * @param totalStepNumber the total number of Steps
-	 * @param locale the locale
-	 * @param messageSource the messageSource
-	 * @return the built String as described
+	 * @param buggedStep
+	 *            the bugged step where the issue will be declared
+	 * @return the built string as described
 	 */
-	private static String getAdditionalInformationForStandardTestCase(
-		List<ExecutionStep> executionSteps,
-		long buggedStepId,
-		int totalStepNumber,
-		Locale locale,
-		MessageSource messageSource) {
-
+	public static String getDefaultAdditionalInformations(ExecutionStep buggedStep, Locale locale,
+														  MessageSource messageSource) {
+		Execution execution = buggedStep.getExecution();
+		List<ExecutionStep> steps = execution.getSteps();
+		int totalStepNumber = steps.size();
 		StringBuilder builder = new StringBuilder();
-		for (ExecutionStep step : executionSteps) {
-			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
-
+		for (ExecutionStep step : steps) {
 			String actionText = HTMLCleanupUtils.htmlToText(step.getAction());
 			String expectedResult = HTMLCleanupUtils.htmlToText(step.getExpectedResult());
-
+			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.action", null, locale));
 			builder.append(actionText);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale));
 			builder.append(expectedResult);
 			builder.append("\n\n\n");
-			if (step.getId().equals(buggedStepId)) {
-				break;
-			}
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * For a Scripted TestCase,
-	 * build the String that shows all ExecutionSteps before the bugged step + the bugged step itself.<br/>
-	 * The String will look like this : <br/>
-	 * <br/>
-	 * <em>
-	 * 	=============================================<br>
-	 *  |    Step 1/N<br>
-	 *  =============================================<br>
-	 *  --- Script ---<br/>
-	 *  script text<br/>
-	 *  <br/>
-	 *  <br/>
-	 * 	=============================================<br>
-	 * 	|    Step 2/N<br>
-	 * 	=============================================<br>
-	 *  --- Script ---<br/>
-	 *  script text<br/>
-	 * 	...<br>
-	 * <br/>
-	 * </em>
-	 *
-	 * @param executionSteps the list of Steps in the Execution
-	 * @param buggedStepId the id of the bugged Step
-	 * @param totalStepNumber the total number of Steps
-	 * @param locale the locale
-	 * @param messageSource the messageSource
-	 * @return the built String as described
-	 */
-	private static String getAdditionalInformationForScriptedTestCase(
-		List<ExecutionStep> executionSteps,
-		long buggedStepId,
-		int totalStepNumber,
-		Locale locale,
-		MessageSource messageSource) {
-
-		StringBuilder builder = new StringBuilder();
-		for(ExecutionStep step : executionSteps) {
-			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
-
-			String scriptText = HTMLCleanupUtils.htmlToText(step.getAction());
-			builder.append(messageSource.getMessage("issue.default.additionalInformation.script", null, locale));
-			builder.append(scriptText);
-			builder.append("\n\n\n");
-			if(step.getId().equals(buggedStepId)) {
+			if (step.getId().equals(buggedStep.getId())) {
 				break;
 			}
 		}
@@ -228,10 +134,10 @@ public final class BugTrackerControllerHelper {
 	/**
 	 * Will build a default description String that will look like this : <br/>
 	 * <br/>
-	 * <em># Test Case : [Reference] test case name <br/>
+	 * <entityManager># Test Case : [Reference] test case name <br/>
 	 * # Execution : execution link <br/>
 	 * <br/>
-	 * # Issue description :<br/></em>
+	 * # Issue description :<br/></entityManager>
 	 *
 	 * @param execution
 	 *            an execution where the issue will be declared
@@ -249,11 +155,11 @@ public final class BugTrackerControllerHelper {
 	/**
 	 * Will build a default description String that will look like this : <br/>
 	 * <br/>
-	 * <em># Test Case : [Reference] test case name <br/>
+	 * <entityManager># Test Case : [Reference] test case name <br/>
 	 * # Execution : execution link <br/>
 	 * # Concerned Step : step n�/total step nb<br/>
 	 * <br/>
-	 * # Issue description :<br/></em>
+	 * # Issue description :<br/></entityManager>
 	 *
 	 * @param step
 	 *            an execution step where the issue will be declared

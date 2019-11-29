@@ -784,7 +784,7 @@ public class BugTrackerController {
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
 											 Locale locale, String projectName) {
 		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription, projectName);
-		String comment = BugTrackerControllerHelper.getAdditionalInformation(step, locale, messageSource);
+		String comment = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
 		emptyIssue.setComment(comment);
 		return emptyIssue;
 	}
