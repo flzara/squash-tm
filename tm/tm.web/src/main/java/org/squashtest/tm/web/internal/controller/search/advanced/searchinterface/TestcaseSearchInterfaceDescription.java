@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
-import static org.squashtest.tm.domain.testcase.TestCaseKind.ROBOT;
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 @Component
@@ -82,7 +81,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey(STANDARD.getI18nKey()).optionKey(STANDARD.name()).selected().build());
 		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey(GHERKIN.getI18nKey()).optionKey(GHERKIN.name()).selected().build());
-		testCaseKind.addPossibleValue(optionBuilder(locale).labelI18nKey(ROBOT.getI18nKey()).optionKey(ROBOT.name()).selected().build());
 
 		return panel;
 	}
