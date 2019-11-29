@@ -65,16 +65,12 @@
         </c:otherwise>
       </c:choose>
 			</div>
+      <c:if test="${scripted and not (scriptLanguage eq testCase.project.tcScriptType)}">
+        <div class="display-table-cell test-case-format-warning"><f:message key="test-case.format.warning-message"/></div>
+      </c:if>
+
 		</div>
-    <c:if test="${scripted and not (scriptLanguage eq testCase.project.tcScriptType)}">
-      <div class="display-table-row">
-        <!-- Empty div needed to simulate a table cell and have correct display of the message -->
-        <div class="display-table-cell"></div>
-        <div class="display-table-cell test-case-format-warning">
-          <f:message key="test-case.format.warning-message"/>
-        </div>
-      </div>
-    </c:if>
+
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-reference"><f:message
 				key="test-case.reference.label"/></label>

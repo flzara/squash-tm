@@ -18,18 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', "workspace.tree-node-copier", 'squash.translator', 'jquery.squash.formdialog'],
-	function ($, zetree, eventBus, rules, copier, translator) {
+define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', "workspace.tree-node-copier", 'jquery.squash.formdialog'],
+	function ($, zetree, eventBus, rules, copier) {
 
 		function init() {
 
 			var dialog = $("#create-from-requirement-dialog").formDialog();
 
 			var tree = zetree.get();
-
-			dialog.on('formdialogopen', function(){
-				populateFormatSelect(dialog);
-			});
 
 			dialog.on('formdialogconfirm', function () {
 				pasteFromReqToTcIfOk(tree);
@@ -55,31 +51,6 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', "worksp
 				var why = rules.whyCantCreateTcFromReq(nodes);
 				showError(why);
 			}
-		}
-
-		function populateFormatSelect(dialog) {
-			var formatList = ["STANDARD", dialog.data('test-case-script-language')];
-
-			var testFormatSelect = dialog.find("#create-from-requirement-format");
-			testFormatSelect.empty();
-
-			formatList.forEach(function(format) {
-				createOption(testFormatSelect, format);
-			});
-
-		}
-
-		function createOption(testFormatSelect, tcFormat) {
-
-			var i18nFormat = translator.get({
-				"GHERKIN": "test-case.format.gherkin",
-				"STANDARD": "test-case.format.standard",
-				"ROBOT": "test-case.format.robot"
-			});
-			var formatOption = $("<option></option>").val(tcFormat);
-			var formatLabel = $("<span></span>").text(i18nFormat[tcFormat]);
-			formatOption.append(formatLabel);
-			testFormatSelect.append(formatOption);
 		}
 
 
