@@ -221,10 +221,6 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				$("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog("open");
 			});
 
-			$("#export-robot-tree-button").on("click", function () {
-				$("#export-robot-test-case-dialog").exportRobotScriptDialog("open");
-			});
-
 		  // ******************* automation ********************
 			if (zetree.get(':library').filter('[allowautomworkflow="true"]').length === 0) {
 				$("#transmit-for-automation-tree-button").hide();
