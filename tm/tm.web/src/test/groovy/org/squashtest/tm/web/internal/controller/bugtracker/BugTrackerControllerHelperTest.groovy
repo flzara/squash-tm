@@ -24,6 +24,7 @@ import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseKind
 
 import javax.servlet.http.HttpServletRequest
 
@@ -95,33 +96,75 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		result == "# Test Case: [Reference] test case name\n# Execution: url\n# Concerned Step: 1/5\n\n# Issue description :\n"
 	}
 
-	def "should get default comment for execution step"(){
-		given:
-		ExecutionStep buggedStep = Mock()
-		buggedStep.getAction()>> "action description"
-		buggedStep.getExpectedResult()>>"expected result description"
-		Execution execution = Mock()
-		buggedStep.getId() >>1
-		buggedStep.getExecutionStepOrder()>>0
-		List<ExecutionStep> steps = [buggedStep]
-		buggedStep.getExecution()>> execution
-		execution.getSteps() >> steps
-		Locale locale = new Locale("en");
-		MessageSource messageSource = Mock()
-		messageSource.getMessage("issue.default.additionalInformation.action", null, locale) >> "-------------------Action---------------------\n"
-		messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale) >> "\n\n----------------Expected Result---------------\n"
-		messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
+	def "should get comment for execution step from a TestCase of kind Standard"(){
+		given: "a bugged Step"
+			ExecutionStep buggedStep = Mock()
+			buggedStep.getAction()>> "action description"
+			buggedStep.getExpectedResult()>>"expected result description"
+			buggedStep.getId() >>1
+			buggedStep.getExecutionStepOrder()>>0
+
+		and: "an Execution"
+			Execution execution = Mock()
+			buggedStep.getExecution()>> execution
+
+			List<ExecutionStep> steps = [buggedStep]
+			execution.getSteps() >> steps
+
+		and: "a referenced TestCase of kind Standard"
+			TestCase referencedTestCase = Mock()
+			referencedTestCase.getKind() >> TestCaseKind.STANDARD
+			execution.getReferencedTestCase() >> referencedTestCase
+
+		and: "other things"
+			Locale locale = new Locale("en")
+			MessageSource messageSource = Mock()
+			messageSource.getMessage("issue.default.additionalInformation.action", null, locale) >> "-------------------Action---------------------\n"
+			messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale) >> "\n\n----------------Expected Result---------------\n"
+			messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
 
 		when:
-		def result = BugTrackerControllerHelper.getDefaultAdditionalInformations (buggedStep, locale, messageSource)
+			def result = BugTrackerControllerHelper.getAdditionalInformation(buggedStep, locale, messageSource)
 
 		then:
-		result == "=============================================\n"+
+			result == "=============================================\n"+
+					"|    Step 1/1\n"+
+					"=============================================\n"+
+					"-------------------Action---------------------\n"+
+					"action description"+
+					"\n\n----------------Expected Result---------------\n"+
+					"expected result description\n\n\n"
+	}
+
+	def "should get comment for execution step from a TestCase of kind Gherkin/Robot"() {
+		given: "a bugged Step"
+			ExecutionStep buggedStep = Mock()
+			buggedStep.getAction() >> "the script"
+			buggedStep.getId() >> 2
+			buggedStep.getExecutionStepOrder() >> 0
+		and: "an Execution"
+			Execution execution = Mock()
+			buggedStep.getExecution() >> execution
+
+			List<ExecutionStep> steps = [buggedStep]
+			execution.getSteps() >> steps
+		and: "a referenced TestCase of kind Gherkin"
+			TestCase referencedTestCase = Mock()
+			referencedTestCase.getKind() >> TestCaseKind.GHERKIN
+			execution.getReferencedTestCase() >> referencedTestCase
+
+		and: "other things"
+			Locale locale = new Locale("en")
+			MessageSource messageSource = Mock()
+			messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
+			messageSource.getMessage("issue.default.additionalInformation.script", null, locale) >> "-------------------Script---------------------\n"
+		when:
+			def result = BugTrackerControllerHelper.getAdditionalInformation(buggedStep, locale, messageSource)
+		then:
+			result == "=============================================\n"+
 				"|    Step 1/1\n"+
 				"=============================================\n"+
-				"-------------------Action---------------------\n"+
-				"action description"+
-				"\n\n----------------Expected Result---------------\n"+
-				"expected result description\n\n\n"
+				"-------------------Script---------------------\n"+
+				"the script\n\n\n"
 	}
 }
