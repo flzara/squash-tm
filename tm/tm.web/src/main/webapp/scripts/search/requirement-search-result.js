@@ -18,14 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
-        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification", "workspace.storage",
-        "workspace.projects", "./milestone-mass-modif-popup","./req-export-popup",
-        "jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ],
-		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
+define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil","workspace.routing",
+	"workspace.event-bus", "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+	"workspace.storage", "workspace.projects", "./milestone-mass-modif-popup","./req-export-popup", "jquery.squash",
+	"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
+	"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.milestoneDialog"],
+	function($, Backbone, Handlebars, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
 				translator, notification, storage, projects, milestoneMassModif,reqExport) {
 
 	var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
@@ -94,6 +92,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			self._restoreSelect();}
 			);
 		},
+
 		editMilestone : function(){
 			var self = this;
 			var table = $('#requirement-search-result-table').squashTable();
@@ -131,41 +130,68 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 
 		associateSelection : function(){
-			var table = $('#requirement-search-result-table').dataTable();
-			var ids = table.squashTable().getSelectedIds();
+			var table = $('#requirement-search-result-table').squashTable();
+			var ids = table.getSelectedIds();
+
 			if(ids.length === 0){
 				notification.showError(translator.get('message.noLinesSelected'));
 				return;
 			}
+
+			var selectedData = table.getDataById(ids[0])['requirement-label'];
 			
 			var id = this.associationId;
-			var  targetUrl = "";
-			var  returnUrl = "";
-			
-			switch(this.associationType){
-			case "test-case" : 
-				targetUrl =  squashtm.app.contextRoot + "test-cases/" + id + "/verified-requirements"; 
-				break;
-			case "teststep" : 
-				targetUrl = squashtm.app.contextRoot + "test-steps/" + id + "/verified-requirements"; 
-				break;
-			/*
-			 * [Issue 7692]
-			 * You might wonder, "hey where is the code for relating to another requirement ?" I'd say it was never implemented in the first place, also not my bug.  
-			 */
-			default :
-				notification.showError('This is a programming error : the association context '+this.associationType+
-						' is not supported. Please report this anomaly to the Squash TM support.');
-				return;
-			}
 
-			$.ajax({
-				type: "POST",
-				url :targetUrl,
-				data : { "requirementsIds[]" : ids }
-			}).done(function() {
-				$("#back").click();
-			});
+			if ("requirement" === this.associationType) {
+				var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
+				var linkCreateTypeDialog = tmpLinkTypeCreate({
+					dialogId : "create-link-type-dialog",
+					selectedData: selectedData
+				});
+				this.$el.append(linkCreateTypeDialog);
+				var linkTypeDialog = $("#create-link-type-dialog");
+				linkTypeDialog.data('reqVersionId', id);
+				linkTypeDialog.data('relatedReqNodeId', ids);
+				linkTypeDialog.data('isRelatedIdANodeId', true);
+				linkTypeDialog.formDialog({});
+
+				linkTypeDialog.formDialog("open");
+
+				linkTypeDialog.on('formdialogclose', function(){
+					 linkTypeDialog.formDialog('destroy');
+					 linkTypeDialog.remove();
+				});
+
+			}
+			else {
+				var  targetUrl = "";
+				var  returnUrl = "";
+
+				switch(this.associationType){
+				case "test-case" :
+					targetUrl =  squashtm.app.contextRoot + "test-cases/" + id + "/verified-requirements";
+					break;
+				case "teststep" :
+					targetUrl = squashtm.app.contextRoot + "test-steps/" + id + "/verified-requirements";
+					break;
+				/*
+				 * [Issue 7692]
+				 * You might wonder, "hey where is the code for relating to another requirement ?" I'd say it was never implemented in the first place, also not my bug.
+				 */
+				default :
+					notification.showError('This is a programming error : the association context '+this.associationType+
+							' is not supported. Please report this anomaly to the Squash TM support.');
+					return;
+				}
+
+				$.ajax({
+					type: "POST",
+					url :targetUrl,
+					data : { "requirementsIds[]" : ids }
+				}).done(function() {
+					$("#back").click();
+				});
+			}
 
 		},
 

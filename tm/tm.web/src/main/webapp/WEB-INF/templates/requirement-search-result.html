@@ -363,6 +363,48 @@
 
 
 		    <!--  ================= /EXPORT REQ POPUP ======================= -->
+
+        <script type="text/x-handlebars-template" id="create-link-type-dialog-tpl">
+          <div id="{{dialogId}}" class="not-displayed popup-dialog" th:title="#{requirement-version.link.type.dialog.title}"
+               style="margin: 5px; width: auto; display: block; min-height: 57px; height: auto;" >
+
+            <div data-def="state=confirm" class="popup-dialog-state-confirm" style="display: block;">
+              <table id="involved-req-versions" style="table-layout: fixed;">
+                <tr>
+                  <td style="width: 45%; overflow: hidden; float: left; word-wrap: break-word;">
+                    <span style="font-weight: bold; float: left;" >
+                        {{selectedData}}
+                    </span>
+                  </td>
+                  <td style="width: 45%; overflow: hidden; float: right;">
+                    <span id="relatedRequirementName" style="font-weight: bold; float: right;" th:text="Right"></span>
+                  </td>
+                </tr>
+
+              </table>
+
+              <div style="text-align: center; margin-top: 10px; padding-right: 10%;">
+                <label>Type du lien</label>
+                <select id="link-types-options">
+                  <option value="1_0">Relatif - Relatif</option>
+                  <option value="2_0">Parent - Enfant</option>
+                  <option value="2_1">Enfant - parent</option>
+                  <option value="3_0">Doublon - Doublon</option>
+                </select>
+              </div>
+            </div>
+
+            <div data-def="state=wait" class="popup-dialog-state-confirm" style="display: none;"></div>
+
+            <div class="popup-dialog-buttonpane ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+              <!--div class="ui-dialog-buttonset"-->
+                <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Confirmer" data-def="evt=confirm, mainbtn"/>
+                <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Fermer" data-def="evt=cancel"/>
+              <!--/div-->
+            </div>
+          </div>
+        </script>
+        <!-- -->
 			</div>
       </div>
     </div>
