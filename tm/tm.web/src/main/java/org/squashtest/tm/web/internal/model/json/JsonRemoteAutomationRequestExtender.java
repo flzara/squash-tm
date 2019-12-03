@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.apache.logging.log4j.util.Strings;
 import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
+import org.squashtest.tm.domain.tf.automationrequest.SynchronizableIssueStatus;
 
 public class JsonRemoteAutomationRequestExtender {
 
@@ -31,6 +32,7 @@ public class JsonRemoteAutomationRequestExtender {
 	private String remoteRequestUrl;
 	private String remoteIssueKey;
 	private String remoteAssignedTo;
+	private String remoteSynchronizableIssueStatus;
 
 	public JsonRemoteAutomationRequestExtender(RemoteAutomationRequestExtender remoteAutomationRequestExtender) {
 		String remoteStatus = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteRequestStatus(): "";
@@ -41,8 +43,17 @@ public class JsonRemoteAutomationRequestExtender {
 		this.remoteIssueKey = Strings.isNotBlank(remoteIssueKey) ? remoteIssueKey : DASH;
 		String remoteAssignedTo = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getRemoteAssignedTo(): "";
 		this.remoteAssignedTo = Strings.isNotBlank(remoteAssignedTo) ? remoteAssignedTo : DASH;
+		String remoteSynchronizableIssueStatus = remoteAutomationRequestExtender!=null? remoteAutomationRequestExtender.getSynchronizableIssueStatus().name(): "";
+		this.remoteSynchronizableIssueStatus = Strings.isNotBlank(remoteSynchronizableIssueStatus) ? remoteSynchronizableIssueStatus : DASH;
 	}
 
+	public String getRemoteSynchronizableIssueStatus() {
+		return remoteSynchronizableIssueStatus;
+	}
+
+	public void setRemoteSynchronizableIssueStatus(String remoteSynchronizableIssueStatus) {
+		this.remoteSynchronizableIssueStatus = remoteSynchronizableIssueStatus;
+	}
 
 	public String getRemoteRequestStatus() {
 		return remoteRequestStatus;

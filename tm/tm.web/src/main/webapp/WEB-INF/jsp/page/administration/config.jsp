@@ -154,7 +154,7 @@
               <span class="help-inline">&nbsp;</span>
               </c:if>
 
-              <c:if test="${ ² empty duplicateLogins }">
+              <c:if test="${ not empty duplicateLogins }">
               <span>
                 <c:choose>
                 <c:when test="${ caseInsensitiveLogin }">

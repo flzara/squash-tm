@@ -121,9 +121,6 @@ define(
 						// 'configure' link placeholder if plugin is configurable
 						if(!!data.configUrl) {
 							configureLink($row, data);
-						}else{
-								$("#tr-config").hide();
-								row.cells[5].hidden = true;
 						}
 					}
 				},{});

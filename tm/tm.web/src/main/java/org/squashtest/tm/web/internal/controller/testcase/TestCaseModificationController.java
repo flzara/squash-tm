@@ -347,7 +347,7 @@ public class TestCaseModificationController {
 					mav.addObject("automatedTestCase",(remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ? "Oui":
 																		(remoteAutomReq.getRemoteRequestStatus()==null?internationalizationHelper.internationalize("squashtm.nodata", locale):"Non")));
 					mav.addObject("finalStatusConfiged",finalStatusConfiged);
-					mav.addObject("synchronizableIssueStatus",getMessageSynchronizableIssuestatus(remoteAutomReq, locale));
+					mav.addObject("synchronizableIssueStatus",remoteAutomReq.getSynchronizableIssueStatus().name());
 				}
 			}else{
 				mav.addObject("remoteReqUrl", internationalizationHelper.internationalize("squashtm.nodata", locale));
@@ -1000,21 +1000,5 @@ public class TestCaseModificationController {
 		}
 	}
 
-	private String getMessageSynchronizableIssuestatus(RemoteAutomationRequestExtender rare, Locale locale){
 
-		String msg = null;
-		switch (rare.getSynchronizableIssueStatus()){
-
-			case DELETED:
-				msg = internationalizationHelper.internationalize("automation.synchronizable.issue.status.delete", locale);
-				break;
-			case NON_COMPLIANT:
-				msg = internationalizationHelper.internationalize("automation.synchronizable.issue.status.noncompliant", locale);
-				break;
-			case TO_SYNCHRONIZE:
-				msg="";
-				break;
-		}
-		return msg;
-	}
 }

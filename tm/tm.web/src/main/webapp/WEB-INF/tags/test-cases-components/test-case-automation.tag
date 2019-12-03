@@ -38,14 +38,27 @@
 <c:set var="toAutomate" 	value="${(testCase.automatable == 'Y') ? 'checked=\"checked\"' : ''}" />
 <c:set var="toNotAutomate" 	value="${(testCase.automatable == 'N') ? 'checked=\"checked\"' : ''}" />
 <c:set var="uuid" 	value="${testCase.uuid}" />
-
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
+<c:set var="labelHelp">
+    <c:if test="${synchronizableIssueStatus == 'DELETED'}"> workflow.automation.remote.issue.deleted.doc </c:if>
+    <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> workflow.automation.remote.issue.non.compliant.doc  </c:if>
+    <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE'}"></c:if>
+  </c:set>
+  <c:set var="labelSynchIssueStatus">
+      <c:if test="${synchronizableIssueStatus == 'DELETED'}"> automation.synchronizable.issue.status.delete </c:if>
+      <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> automation.synchronizable.issue.status.noncompliant </c:if>
+      <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE' }">  </c:if>
+    </c:set>
 
 <f:message var="labelAutomation" key="label.automation" />
 <f:message var="transmitLabel" key="automation.label.to_transmit" />
 <f:message var="displayDateFormat" key="squashtm.dateformat" />
-<f:message var="labelHelp" key="workflow.automation.remote.issue.deleted.doc" />
-
+<c:if test= "${labelHelp != ''}">
+  <f:message var="msgLabelHelp" key="${labelHelp}" />
+ </c:if>
+<c:if test= "${labelSynchIssueStatus != ''}">
+  <f:message var="msgSynchIssueStatus" key="${labelSynchIssueStatus}" />
+</c:if>
 <comp:toggle-panel id="test-case-automation-panel"
 				   title='${labelAutomation}'
 				   open="true">
@@ -153,11 +166,13 @@
        <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
          <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
-        <c:if test="${not empty synchronizableIssueStatus }">
-		      <span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> ${ synchronizableIssueStatus } </span>
-		      <span class="icon-helper"  title='${labelHelp}'></span>
-			  </c:if>
        </div>
+       <c:if test="${synchronizableIssueStatus != 'TO_SYNCHRONIZE'}">
+       <div id="synchroIssueStatus">
+          <span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> ${ msgSynchIssueStatus }</span>
+          <span class="icon-helper"  title='${msgLabelHelp}'></span>
+       </div>
+       </c:if>
      </div>
       <div class="display-table-row test-case-remote-automation-request-block">
         <label class="display-table-cell" for="remote-automation-request-assignedTo">
