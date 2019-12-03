@@ -174,14 +174,14 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					var automReqStatusInput = $("#automation-request-status");
 					var finalStatusConfiged = $("#finalStatusConfiged").val();
 					var automatedTestCase = $("#test-case-automatisable");
-					var remoteRequestStatus = automationRequest.remoteAutomationRequestExtender.remoteRequestStatus;
-					var synchronizableIssueStatus = automationRequest.remoteAutomationRequestExtender.remoteSynchronizableIssueStatus;
+					var remoteRequestStatus = automationRequest.remoteAutomationRequestExtender.remoteRequestStatus ;
+					var synchronizableIssueStatus =  automationRequest.remoteAutomationRequestExtender.remoteSynchronizableIssueStatus ;
 					var msgSynchissueStatus = (synchronizableIssueStatus == 'DELETED') ? 'automation.synchronizable.issue.status.delete' :
 																			(synchronizableIssueStatus == 'NON_COMPLIANT') ? 'automation.synchronizable.issue.status.noncompliant' : "";
 					var msgLabelHelp = (synchronizableIssueStatus == 'DELETED') ? 'workflow.automation.remote.issue.deleted.doc' :
 															(synchronizableIssueStatus == 'NON_COMPLIANT') ? 'workflow.automation.remote.issue.non.compliant.doc' : "";
 					var remoteReqUrl = automationRequest.remoteAutomationRequestExtender.remoteRequestUrl;
-					var remoteIssueKey = automationRequest.remoteAutomationRequestExtender.remoteIssueKey;
+					var remoteIssueKey =  automationRequest.remoteAutomationRequestExtender.remoteIssueKey;
 					automReqStatusInput.editable("disable");
 					automReqStatusInput.removeClass("editable");
 					automReqStatusInput.text(automationRequest.requestStatus);
@@ -209,10 +209,10 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					$("#automation-last-transmitted-on").text(automationRequest.transmissionDate);
 					//synchronizableIssueStatus
 					$("#synchroIssueStatus").empty();
-					if(synchronizableIssueStatus != 'TO_SYNCHRONIZE'){
-					var newSpan='<span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> '+translator.get(msgSynchissueStatus)+' </span>' +
-												'<span class="icon-helper"  title="'+translator.get(msgLabelHelp) +'"></span>';
-					$("#synchroIssueStatus").append(newSpan);
+					if(synchronizableIssueStatus != 'TO_SYNCHRONIZE'  ){
+						var newSpan='<span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> '+translator.get(msgSynchissueStatus)+' </span>' +
+													'<span class="icon-helper"  title="'+translator.get(msgLabelHelp) +'"></span>';
+						$("#synchroIssueStatus").append(newSpan);
 					}
 				}
 

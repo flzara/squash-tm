@@ -167,7 +167,7 @@
          <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
        </div>
-       <c:if test="${synchronizableIssueStatus != 'TO_SYNCHRONIZE'}">
+       <c:if test="${synchronizableIssueStatus != 'TO_SYNCHRONIZE' && not empty synchronizableIssueStatus  }">
        <div id="synchroIssueStatus">
           <span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> ${ msgSynchIssueStatus }</span>
           <span class="icon-helper"  title='${msgLabelHelp}'></span>
