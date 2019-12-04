@@ -169,34 +169,38 @@
 				dapi bus. Fusce eu ante sapien</div>
 		</div>
 
-    <!--==========================================COVERAGE INDICATORS  RECUPERER LES BONNES DONNEES============================================-->
+    <!--==========================================COVERAGE INDICATORS============================================-->
 
-    <!--<div id="coverage-indicators" class="tab">
+    <div id="coverage-indicators" class="tab">
       <h3 th:text="#{requirement.rate.panel.title}"/>
 
       <div class="display-table-row">
         <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.perimeter}"/>
-        <div class="display-table-cell" id="requirement-version-id"
-             th:text="${requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE PERIMETRE DES TAUX======================&ndash;&gt;
+        <div class="display-table-cell" id="perimeter"
+             th:text="${name}">1</div>
       </div>
-
+      <div>
       <div class="display-table-row">
         <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.cover}"/>
         <div class="display-table-cell" id="requirement-version-id"
-             th:text="${requirementVersion.requirement.id }">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE COUVERTURE=======================&ndash;&gt;
+             th:text="${stat.coverage.requirementVersionRate}"></div>%
       </div>
+      </div>
+
+      <div th:if="${stat.size()!=1}">
       <div class="display-table-row">
         <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.verification}"/>
         <div class="display-table-cell" id="requirement-version-id"
-             th:text="${ requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE VERIFICATION=======================&ndash;&gt;
+             th:text="${stat.verification.requirementVersionRate}"></div>%
       </div>
       <div class="display-table-row">
         <label class="display-table-cell" for="coverage-indicators" th:text="#{requirement.rate.validation}"/>
         <div class="display-table-cell" id="requirement-version-id"
-             th:text="${ requirementVersion.requirement.id}">1</div>  &lt;!&ndash;===========================CHANGER POUR RECUPERER LE TAUX DE VALIDATION=======================&ndash;&gt;
+             th:text="*{stat.validation.requirementVersionRate}">1</div>%
+      </div>
       </div>
 
-    </div>-->
+    </div>
 
     <!-- ===========================================TEST CASES ===================================================-->
 
@@ -410,7 +414,6 @@
     </div>
 
     <!--==============================================END=======================================================-->
-
 
 	</div>
 </body>

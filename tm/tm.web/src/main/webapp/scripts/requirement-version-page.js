@@ -76,24 +76,17 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			// print button
 			$("#print-requirement-version-button").click(function () {
 				var url = routing.buildURL('requirementversions', config.basic.currentVersionId);
-				var key = config.basic.requirementVersion;
 
 				var storage = getStorage();
+				var getValue;
+				var value="";
+				var name="";
 				if(storage != null) {
-					var getValue = JSON.parse(storage);
-					var value = getValue.data.id;
-					var data = {
-						perimeter: value
-					};
-
-					$.ajax({
-						url: url + "?format=printable" + "&perimeter",
-						method: "GET",
-						data: data
-					});
+					getValue = JSON.parse(storage);
+					value = getValue.data.id;
+					name = getValue.data.name;
 				}
-
-				window.open(url + "?format=printable"+"&perimeter", "_blank");
+				window.open(url + "?format=printable"+"&perimeter="+value + "&name="+name, "_blank");
 			});
 
 			function getStorage(){
