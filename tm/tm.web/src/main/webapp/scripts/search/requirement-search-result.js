@@ -150,7 +150,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					});
 
 					return result;
-				}
+				};
 
 				var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
 
