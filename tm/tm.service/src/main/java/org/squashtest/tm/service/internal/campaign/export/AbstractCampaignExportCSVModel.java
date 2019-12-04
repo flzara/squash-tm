@@ -31,6 +31,7 @@ import org.squashtest.tm.jooq.domain.tables.records.CallTestStepRecord;
 import org.squashtest.tm.jooq.domain.tables.records.CoreUserRecord;
 import org.squashtest.tm.jooq.domain.tables.records.DatasetRecord;
 import org.squashtest.tm.jooq.domain.tables.records.ExecutionExecutionStepsRecord;
+import org.squashtest.tm.jooq.domain.tables.records.ExecutionIssuesClosureRecord;
 import org.squashtest.tm.jooq.domain.tables.records.ExecutionRecord;
 import org.squashtest.tm.jooq.domain.tables.records.ExecutionStepRecord;
 import org.squashtest.tm.jooq.domain.tables.records.InfoListItemRecord;
@@ -73,6 +74,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE_OPTION;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
@@ -141,7 +143,7 @@ public abstract class AbstractCampaignExportCSVModel implements WritableCampaign
 
 	static final TableField<ProjectRecord, String> PROJECT_NAME = PROJECT.NAME;
 
-	static final TableField<IssueRecord, Long> ITPI_ISSUE = ISSUE.as("exec_issue").ISSUE_ID;
+	static final TableField<ExecutionIssuesClosureRecord, Long> ITPI_ISSUE = EXECUTION_ISSUES_CLOSURE.as("exec_issue").ISSUE_ID;
 
 	static final TableField<TestSuiteRecord, String> TSu_NAME = TEST_SUITE.NAME;
 

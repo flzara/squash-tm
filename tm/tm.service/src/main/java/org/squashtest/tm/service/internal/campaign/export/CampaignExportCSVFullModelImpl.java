@@ -54,6 +54,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
@@ -214,10 +215,8 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP.EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
-				.leftJoin(ISSUE_LIST.as("exec_issue_list")).on(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID).or(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID)))      // used to get execution's issues (which includes its steps issues)
-				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("exec_issue_list").ISSUE_LIST_ID))
-				.leftJoin(ISSUE_LIST.as("es_issue_list")).on(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))     // used to get only the step's issues
-				.leftJoin(ISSUE.as("es_issue")).on(ISSUE.as("es_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.as("es_issue_list").ISSUE_LIST_ID))
+				.leftJoin(EXECUTION_ISSUES_CLOSURE.as("exec_issue")).on(EXECUTION_ISSUES_CLOSURE.as("exec_issue").EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
+				.leftJoin(ISSUE.as("es_issue")).on(ISSUE.as("es_issue").ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID))
 				.leftJoin(VERIFYING_STEPS.as("es_verifying_step")).on(VERIFYING_STEPS.as("es_verifying_step").TEST_STEP_ID.eq(EXECUTION_STEP.TEST_STEP_ID))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("es_rvc")).on(ES_REQUIREMENT_VERIFIED.eq(VERIFYING_STEPS.as("es_verifying_step").REQUIREMENT_VERSION_COVERAGE_ID))
 				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
