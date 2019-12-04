@@ -138,19 +138,32 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 				return;
 			}
 
-			var selectedData = table.getDataById(ids[0])['requirement-label'];
+
 			
 			var id = this.associationId;
 
 			if ("requirement" === this.associationType) {
+				var getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
+					var result = [];
+					selectedIds.forEach(function(selectedId){
+						result.push(squashTable.getDataById(selectedId)['requirement-label']);
+					});
+
+					return result;
+				}
+
+				var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
+
+				var reqVersionId = table.getDataById(id)['requirement-label'];
+
 				var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
 				var linkCreateTypeDialog = tmpLinkTypeCreate({
 					dialogId : "create-link-type-dialog",
-					selectedData: selectedData
+					reqVersionId: reqVersionId,
+					selectedData: selectedRequirementLabel
 				});
 				this.$el.append(linkCreateTypeDialog);
 				var linkTypeDialog = $("#create-link-type-dialog");
-				linkTypeDialog.data('reqVersionId', id);
 				linkTypeDialog.data('relatedReqNodeId', ids);
 				linkTypeDialog.data('isRelatedIdANodeId', true);
 				linkTypeDialog.formDialog({});

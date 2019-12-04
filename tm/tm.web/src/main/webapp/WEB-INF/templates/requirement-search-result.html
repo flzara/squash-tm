@@ -373,11 +373,19 @@
                 <tr>
                   <td style="width: 45%; overflow: hidden; float: left; word-wrap: break-word;">
                     <span style="font-weight: bold; float: left;" >
-                        {{selectedData}}
+                      <ul class="label_list">
+                        <li>{{reqVersionId}}</li>
+                      </ul>
                     </span>
                   </td>
-                  <td style="width: 45%; overflow: hidden; float: right;">
-                    <span id="relatedRequirementName" style="font-weight: bold; float: right;" th:text="Right"></span>
+                  <td style="width: 45%; overflow: hidden; float: right; word-wrap: break-word;">
+                    <span id="relatedRequirementName" style="font-weight: bold; float: right;">
+                      <ul class="label_list">
+                        {{#each selectedData}}
+                          <li>{{this}}</li>
+                        {{/each}}
+                      </ul>
+                    </span>
                   </td>
                 </tr>
 
@@ -397,10 +405,8 @@
             <div data-def="state=wait" class="popup-dialog-state-confirm" style="display: none;"></div>
 
             <div class="popup-dialog-buttonpane ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-              <!--div class="ui-dialog-buttonset"-->
-                <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Confirmer" data-def="evt=confirm, mainbtn"/>
-                <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Fermer" data-def="evt=cancel"/>
-              <!--/div-->
+              <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Confirmer" data-def="evt=confirm, mainbtn"/>
+              <input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all squash-button-initialized" value="Fermer" data-def="evt=cancel"/>
             </div>
           </div>
         </script>
