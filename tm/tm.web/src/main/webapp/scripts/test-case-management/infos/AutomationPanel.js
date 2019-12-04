@@ -136,10 +136,12 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					}
 					// Display remote-automation-request-block according to existence of the remoteRequest
 					if(isAutomatable && isRemoteAutomationWorkflowUsed) {
+
 						$('.test-case-remote-automation-request-block').show();
 						$("#script-auto-remote-automation-request").show();
 						$("#automation-request-status-label").hide();
 						$("#automation-request-status").hide();
+
 					} else {
 						$('.test-case-remote-automation-request-block').hide();
 						$("#script-auto-remote-automation-request").hide();
@@ -169,7 +171,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					}
 			  },
 
-				updateAutomationRequestBlockInfos: function(automationRequest) {
+			updateAutomationRequestBlockInfos: function(automationRequest) {
 					// status
 					var automReqStatusInput = $("#automation-request-status");
 					var finalStatusConfiged = $("#finalStatusConfiged").val();
@@ -209,7 +211,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					$("#automation-last-transmitted-on").text(automationRequest.transmissionDate);
 					//synchronizableIssueStatus
 					$("#synchroIssueStatus").empty();
-					if(synchronizableIssueStatus != 'TO_SYNCHRONIZE'  ){
+					if(synchronizableIssueStatus != 'TO_SYNCHRONIZE'){
 						var newSpan='<span id="synchronizableIssueStatus"  style="color:red; margin-left: 50px"> '+translator.get(msgSynchissueStatus)+' </span>' +
 													'<span class="icon-helper"  title="'+translator.get(msgLabelHelp) +'"></span>';
 						$("#synchroIssueStatus").append(newSpan);

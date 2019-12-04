@@ -40,15 +40,20 @@
 <c:set var="uuid" 	value="${testCase.uuid}" />
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}" />
 <c:set var="labelHelp">
-    <c:if test="${synchronizableIssueStatus == 'DELETED'}"> workflow.automation.remote.issue.deleted.doc </c:if>
-    <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> workflow.automation.remote.issue.non.compliant.doc  </c:if>
-    <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE'}"></c:if>
-  </c:set>
-  <c:set var="labelSynchIssueStatus">
-      <c:if test="${synchronizableIssueStatus == 'DELETED'}"> automation.synchronizable.issue.status.delete </c:if>
-      <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> automation.synchronizable.issue.status.noncompliant </c:if>
-      <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE' }">  </c:if>
-    </c:set>
+  <c:if test="${synchronizableIssueStatus == 'DELETED'}"> workflow.automation.remote.issue.deleted.doc </c:if>
+  <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> workflow.automation.remote.issue.non.compliant.doc  </c:if>
+  <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE'}"></c:if>
+</c:set>
+<c:set var="labelSynchIssueStatus">
+  <c:if test="${synchronizableIssueStatus == 'DELETED'}"> automation.synchronizable.issue.status.delete </c:if>
+  <c:if test="${synchronizableIssueStatus == 'NON_COMPLIANT'}"> automation.synchronizable.issue.status.noncompliant </c:if>
+  <c:if test="${synchronizableIssueStatus == 'TO_SYNCHRONIZE' }">  </c:if>
+</c:set>
+<c:set var="remoteReqStatusLabel" 	value="${(empty remoteReqStatusLabel) ? '-' : remoteReqStatusLabel}" />
+<c:set var="automatedTestCase" 	value="${(empty automatedTestCase) ? '-' : automatedTestCase}" />
+<c:set var="remoteReqUrl" 	value="${(empty remoteReqUrl) ? '-' :  remoteReqUrl}" />
+
+<c:set var="remoteReqAssignedTo" 	value="${(empty remoteReqAssignedTo) ? '-' : remoteReqAssignedTo}" />
 
 <f:message var="labelAutomation" key="label.automation" />
 <f:message var="transmitLabel" key="automation.label.to_transmit" />
@@ -166,6 +171,7 @@
        <c:if test="${ remoteReqUrl == '-' or (empty remoteReqUrl) }">
          <span id="urlTicket"> ${ remoteReqUrl }</span>
         </c:if>
+
        </div>
        <c:if test="${synchronizableIssueStatus != 'TO_SYNCHRONIZE' && not empty synchronizableIssueStatus  }">
        <div id="synchroIssueStatus">
