@@ -36,6 +36,7 @@ import org.squashtest.tm.service.internal.repository.CustomCustomFieldValueDao;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,7 +46,6 @@ import java.util.Set;
 
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.groupConcat;
-import static org.jooq.impl.DSL.val;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD_VALUE;
@@ -65,8 +65,6 @@ import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
 
 public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
-
-	private static final String IS_DENORMALIZED_CUF = "isDenormalizedCuf";
 
 	@Inject
 	private DSLContext Dsl;
@@ -101,59 +99,88 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		if(allRequestedEntitiesInCampaign.isEmpty()) {
 			return null;
 		}
-		// Build cuf Query
-		SelectOrderByStep query = buildCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
-		// Execute the cuf Query
-		Iterator<Record> queryResult = query.fetch().iterator();
+		// Build Standard Cuf Query
+		SelectOrderByStep query = buildStandardCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
+		// Execute the Standard Cuf Query
+		Iterator<Record> standardCufqueryResult = query.fetch().iterator();
+
+		Iterator<Record> denormalizedCufQueryResult;
+
+		if (entityTypeToCufIdsListMap.containsKey(EntityType.TEST_STEP)) {
+			// Build Denormalized Cuf Query
+			SelectOrderByStep denormQuery = buildDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
+			// Execute the Denormalized Cuf Query
+			denormalizedCufQueryResult = denormQuery.fetch().iterator();
+		} else {
+			// Just create an empty iterator
+			denormalizedCufQueryResult = Collections.emptyIterator();
+		}
+
 		// Build the resulting map
-		return buildResultMapFromQueryResult(queryResult);
+		return buildResultMapFromQueryResult(standardCufqueryResult, denormalizedCufQueryResult);
 	}
 
 	/**
-	 * Exploit the Cuf Query Results to build the Map of all CustomFieldValues by EntityReference.
-	 * @param queryResult The Results of the Cuf Query
+	 * Exploit the Cuf Queries Results to build the Map of all CustomFieldValues by EntityReference.
+	 * @param standardCufQueryResult The Results of the Standard Cuf Query
+	 * @param denormalizedCufQueryResult The Results of the Denormalized Cuf Query
 	 * @return The Map of all CustomFieldValues by EntityReferences
 	 */
-	private Map<EntityReference, Map<Long, Object>> buildResultMapFromQueryResult(Iterator<Record> queryResult) {
+	private Map<EntityReference, Map<Long, Object>> buildResultMapFromQueryResult(Iterator<Record> standardCufQueryResult, Iterator<Record> denormalizedCufQueryResult) {
 		Map<EntityReference, Map<Long, Object>> resultMap = new HashMap<>();
-		queryResult.forEachRemaining(record -> {
-			EntityReference entity;
-			Object cufValue;
-			// Create the EntityReference with denormalized_cuf
-			if(record.get(IS_DENORMALIZED_CUF).equals(true)){
-				entity = new EntityReference(
-					EntityType.TEST_STEP,
-					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
-				// Get the value
-				cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
-			} else {
-				//Create the EntityReference
-				entity = new EntityReference(
-					EntityType.valueOf(record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE)),
-					record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
-				// Get the value
-				cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
-			}
+		standardCufQueryResult.forEachRemaining(record -> {
+			//Create the EntityReference
+			EntityReference entity = new EntityReference(
+				EntityType.valueOf(record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE)),
+				record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
+			// Get the value
+			Object cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
 			// Get the Cuf id
 			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
-			// Store these data in the result Map
-			Map<Long, Object> currentEntityMap = resultMap.get(entity);
-			if(currentEntityMap == null) {
-				resultMap.put(entity, new HashMap<>());
-				currentEntityMap = resultMap.get(entity);
-			}
-			currentEntityMap.put(cufId, cufValue);
+			// populate the Map
+			populateCustomFieldValuesMap(entity, cufId, cufValue, resultMap);
+		});
+		denormalizedCufQueryResult.forEachRemaining(record -> {
+			// Create the EntityReference with denormalized Cufs
+			EntityReference entity = new EntityReference(
+				EntityType.TEST_STEP,
+				record.get(DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID));
+			// Get the value
+			Object cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
+			// Get the Cuf id
+			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
+			// populate the Map
+			populateCustomFieldValuesMap(entity, cufId, cufValue, resultMap);
 		});
 		return resultMap;
 	}
 
 	/**
-	 * Build the complete Query to retrieve all requested CustomFieldValues of all requested Entities.
+	 * Given an EntityReference, the Id of the Cuf and the Value of the Cuf, populate the result Map of the CustomFields.
+	 * @param entityReference The EntityReference
+	 * @param cufValue The Cuf Value
+	 * @param resultMap The Result Map to populate
+	 */
+	private void populateCustomFieldValuesMap(
+		EntityReference entityReference,
+		Long cufId, Object cufValue,
+		Map<EntityReference, Map<Long, Object>> resultMap) {
+
+		Map<Long, Object> currentEntityMap = resultMap.get(entityReference);
+		if(currentEntityMap == null) {
+			resultMap.put(entityReference, new HashMap<>());
+			currentEntityMap = resultMap.get(entityReference);
+		}
+		currentEntityMap.put(cufId, cufValue);
+	}
+
+	/**
+	 * Build the Query to retrieve all requested Standard CustomFieldValues of all requested Entities.
 	 * @param entityTypeToCufIdsListMap The Map giving the List of CustomField ids to retrieve by EntityType
 	 * @param allRequestedEntitiesInCampaign The Set of all the EntityReferences which CustomFieldValues are to retrieve
-	 * @return The Query to retrieve all requested CustomFieldValues of all requested Entities
+	 * @return The Query to retrieve all requested Standard CustomFieldValues of all requested Entities
 	 */
-	private SelectOrderByStep buildCufQuery(
+	private SelectSelectStep buildStandardCufQuery(
 		Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInCampaign) {
 
 		SelectSelectStep query1 =
@@ -161,8 +188,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE,
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID,
 				CUSTOM_FIELD_VALUE.CF_ID,
-				CUSTOM_FIELD_VALUE_COMPUTED,
-				val(false).as(IS_DENORMALIZED_CUF)
+				CUSTOM_FIELD_VALUE_COMPUTED
 			);
 
 		query1.from(CUSTOM_FIELD_VALUE)
@@ -173,27 +199,35 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		query1.groupBy(CUSTOM_FIELD_VALUE.CFV_ID);
 
-		if (entityTypeToCufIdsListMap.containsKey(EntityType.TEST_STEP)) {
-			SelectSelectStep query2 = Dsl.select(
-				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE,
-				DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID,
-				CUSTOM_FIELD_VALUE.CF_ID,
-				DENORMALIZED_FIELD_VALUE_COMPUTED,
-				val(true).as(IS_DENORMALIZED_CUF)
-			);
-			query2.from(DENORMALIZED_FIELD_VALUE)
-				.leftJoin(DENORMALIZED_FIELD_VALUE_OPTION).on(DENORMALIZED_FIELD_VALUE_OPTION.DFV_ID.eq(DENORMALIZED_FIELD_VALUE.DFV_ID))
-				.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
+		return query1;
+	}
 
-			query2.where(buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign));
-			query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID, CUSTOM_FIELD_VALUE.CFV_ID);
-			if(query1==null){
-				return query2;
-			}
-			return query1.union(query2);
-		} else {
-			return query1;
-		}
+	/**
+	 * Build the Query to retrieve all requested Denormalized CustomFieldValues of all requested Entities
+	 * (but only the TestSteps will be relevant here).
+	 * @param entityTypeToCufIdsListMap The Map giving the List of CustomField ids to retrieve by EntityType
+	 * @param allRequestedEntitiesInScope The Set of all the EntityReferences which CustomFieldValues are to retrieve
+	 * @return The Query to retrieve all requested Denormalized CustomFieldValues of all requested Entities.
+	 */
+	private SelectSelectStep buildDenormalizedCufQuery(
+		Map<EntityType, List<Long>> entityTypeToCufIdsListMap, Set<EntityReference> allRequestedEntitiesInScope) {
+
+		SelectSelectStep query2 = Dsl.select(
+			DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE,
+			DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID,
+			CUSTOM_FIELD_VALUE.CF_ID,
+			DENORMALIZED_FIELD_VALUE_COMPUTED
+		);
+		query2.from(DENORMALIZED_FIELD_VALUE)
+			.leftJoin(DENORMALIZED_FIELD_VALUE_OPTION).on(DENORMALIZED_FIELD_VALUE_OPTION.DFV_ID.eq(DENORMALIZED_FIELD_VALUE.DFV_ID))
+			.innerJoin(CUSTOM_FIELD_VALUE).on(DENORMALIZED_FIELD_VALUE.CFV_ID.eq(CUSTOM_FIELD_VALUE.CFV_ID));
+
+		query2.where(
+			buildWhereConditionOfDenormalizedCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInScope));
+
+		query2.groupBy(DENORMALIZED_FIELD_VALUE.DFV_ID, CUSTOM_FIELD_VALUE.CFV_ID);
+
+		return query2;
 	}
 
 	/**
