@@ -169,7 +169,7 @@ define(
 						var url = urlPlugin(projectId, pluginId);
 						var method = (btn[0].checked) ? 'POST' : 'DELETE';
 						var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
-						if(checked===false){
+						if(checked===false&& pluginId!="squash.tm.wizard.campaignassistant"){
 							 disabledPluginPopup.formDialog("open");
 							 disablePlugin(url, checked, btn, data);
 						}else{
