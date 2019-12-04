@@ -417,6 +417,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					}
 				};
 
+				//TODO
 				chooseLinkTypeDialog.on('formdialogopen', function () {
 
 					var self = $(this);
