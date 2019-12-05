@@ -405,11 +405,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 					}
 
-					text = translator.get("chart.wizard.label.filter") + " " + operation + " " + values.join(" ; ");
+					text = translator.get("chart.wizard.label.filter") + " " + operation + " " + translator.get("requirement.status."+values);
 
 				} else {
 					text = translator.get("chart.wizard.label.filter") + " " + translator.get("chart.wizard.label.filter.none");
 				}
+
 				$("#filter-" + axis).text(text);
 
 			},
