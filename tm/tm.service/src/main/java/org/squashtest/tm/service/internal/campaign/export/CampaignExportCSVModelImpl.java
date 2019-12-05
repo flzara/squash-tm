@@ -49,6 +49,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
@@ -159,8 +160,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				.leftJoin(EXECUTION).on(EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
 				.leftJoin(EXECUTION_EXECUTION_STEPS).on(EXECUTION_EXECUTION_STEPS.EXECUTION_ID.eq(EXECUTION_ID))
 				.leftJoin(EXECUTION_STEP).on(EXECUTION_STEP_ID.eq(EXECUTION_EXECUTION_STEPS.EXECUTION_STEP_ID))
-				.leftJoin(ISSUE_LIST).on(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION.ISSUE_LIST_ID).or(ISSUE_LIST.ISSUE_LIST_ID.eq(EXECUTION_STEP.ISSUE_LIST_ID)))
-				.leftJoin(ISSUE.as("exec_issue")).on(ISSUE.as("exec_issue").ISSUE_LIST_ID.eq(ISSUE_LIST.ISSUE_LIST_ID))
+				.leftJoin(EXECUTION_ISSUES_CLOSURE.as("exec_issue")).on(EXECUTION_ISSUES_CLOSURE.as("exec_issue").EXECUTION_ID.eq(EXECUTION.EXECUTION_ID))
 				.leftJoin(TEST_SUITE_TEST_PLAN_ITEM).on(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.eq(ITPI_ID))
 				.leftJoin(TEST_SUITE).on(TEST_SUITE.ID.eq(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID))
 				.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TC_ID))
