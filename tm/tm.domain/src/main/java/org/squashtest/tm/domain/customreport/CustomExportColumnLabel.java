@@ -48,6 +48,7 @@ import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
+import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
@@ -457,14 +458,14 @@ public enum CustomExportColumnLabel implements Internationalizable {
 	// --- ISSUE ---
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_NUMBER(
 		"custom-export.wizard.attributes.ISSUE.ALL_LINKED_ISSUES_COUNT",
-		countDistinct(ISSUE.as("exec_issue").ISSUE_ID).as("exec_and_es_issue_number"),
+		countDistinct(EXECUTION_ISSUES_CLOSURE.as("exec_issue").ISSUE_ID).as("exec_and_es_issue_number"),
 		null,
 		EntityType.ISSUE
 	),
 
 	ISSUE_EXECUTION_AND_EXECUTION_STEP_ISSUES_IDS(
 		"label.Execution",
-		groupConcatDistinct(ISSUE.as("exec_issue").ISSUE_ID).separator(", ").as("exec_and_es_issue_ids"),
+		groupConcatDistinct(EXECUTION_ISSUES_CLOSURE.as("exec_issue").ISSUE_ID).separator(", ").as("exec_and_es_issue_ids"),
 		null,
 		EntityType.ISSUE),
 
