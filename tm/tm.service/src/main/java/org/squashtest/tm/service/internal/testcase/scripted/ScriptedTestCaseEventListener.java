@@ -24,7 +24,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
@@ -69,6 +71,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -112,8 +115,16 @@ public class ScriptedTestCaseEventListener {
 	@Inject
 	private GenericProjectManagerService projectManager;
 
+	@Inject
+	private MessageSource i18nHelper;
+
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
+
+	private String getMessage(String i18nKey) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return i18nHelper.getMessage(i18nKey, null, locale);
+	}
 
 	/**
 	 * If the new status is suitable for commit (eg, TRANSMITTED),
@@ -191,13 +202,11 @@ public class ScriptedTestCaseEventListener {
 		}
 	}
 
-
 	/**
 	 * Check first if the credentials for the given ScmRepository have been set, if the protocol is valid,
-	 * and then check the validity of the credentials.
+	 * and then check the validity of the credentials for the remote repository.
 	 * @param scm The ScmRepository whose connection is to test
 	 * @return The credentials if everything is fine
-	 * @throws
 	 */
 	private Credentials testScmCredentials(ScmRepository scm) {
 		ScmServer server = scm.getScmServer();
@@ -207,10 +216,10 @@ public class ScriptedTestCaseEventListener {
 
 		Supplier<ScmNoCredentialsException> throwIfNull = () -> {
 			throw new ScmNoCredentialsException(
-				"Cannot authenticate to the remote server containing the repository '" + scm.getName() + "' " +
-					"because no valid credentials were found for authentication. " +
-					"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
-					+ "Please contact your administrator in order to fix the situation.");
+				String.format(
+					getMessage("message.scmRepository.noCredentials"),
+					scm.getName())
+			);
 		};
 
 		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
@@ -220,10 +229,11 @@ public class ScriptedTestCaseEventListener {
 			throw new UnsupportedAuthenticationModeException(protocol.toString());
 		}
 
-		// fix the error here
+		connector.testCredentials(credentials);
 
 		return credentials;
 	}
+
 	/**
 	 * Try to synchronise the local repository with the remote one using the given Credentials.
 	 * @param scm The ScmRepository to synchronize
@@ -426,7 +436,7 @@ public class ScriptedTestCaseEventListener {
 			.join(project.scmRepository, scm) 								// condition 4
 			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
 				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-								.and(automationProject.canRunGherkin.isTrue())		// condition 4
+				.and(automationProject.canRunGherkin.isTrue())		// condition 4
 			)
 			.fetch();
 

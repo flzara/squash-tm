@@ -85,4 +85,10 @@ public interface ScmConnector {
 	 */
 	void synchronize(Credentials credentials) throws IOException;
 
+	/**
+	 * Tests the given credentials to connect to the remote repository.
+	 * Returns normally if the credentials are valid, throws a ScmException otherwise.
+	 * @param credentials The credentials to be tested
+	 */
+	void testCredentials(Credentials credentials);
 }
