@@ -235,7 +235,7 @@ public class CustomReportCustomExportCSVServiceImpl implements CustomReportCusto
 	private int getQueryDepth(List<EntityType> entityTypeList) {
 		if(entityTypeList.contains(EntityType.ISSUE))
 			return 6;
-		if(entityTypeList.contains(EntityType.EXECUTION_STEP))
+		if(entityTypeList.contains(EntityType.EXECUTION_STEP) || entityTypeList.contains(EntityType.TEST_STEP))
 			return 5;
 		if(entityTypeList.contains(EntityType.EXECUTION))
 			return 4;
