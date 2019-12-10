@@ -26,7 +26,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 	function ($, Backbone, Handlebars, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
 						translator, notification, storage, projects, milestoneMassModif, reqExport) {
 
-		const SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
+		var SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
 
 		translator.load([
 			"requirement-version.linked-requirement-versions.rejection.already-linked-rejection",
@@ -75,9 +75,9 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 			// [Issue 7692] : the model should be read from the #searchModel element in the page.
 			// If it is not available, attempt to reload it from the store instead.
 			loadSearchModel: function () {
-				let searchDomain = $("#searchDomain").text();
+				var searchDomain = $("#searchDomain").text();
 				// first load from dom
-				let strModel = $("#searchModel").text();
+				var strModel = $("#searchModel").text();
 				//if absent, load from storage
 				if (StringUtil.isBlank(strModel)) {
 					strModel = storage.get(SEARCH_MODEL_STORAGE_KEY_PREFIX + searchDomain);
@@ -116,9 +116,9 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					});
 					$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 				} else {
-					let requirementVersionIds = this._getRequirementVersionIdSelectedTableRowList(table);
+					var requirementVersionIds = this._getRequirementVersionIdSelectedTableRowList(table);
 
-					let dialogOptions = {
+					var dialogOptions = {
 						tableSource: routing.buildURL('search-reqV.mass-change.associable-milestone', requirementVersionIds),
 						milestonesURL: routing.buildURL('search-reqV.mass-change.bindmilestones', requirementVersionIds),
 						requirementVersionIds: requirementVersionIds,
@@ -143,7 +143,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					return;
 				}
 
-				let id = this.associationId;
+				var id = this.associationId;
 
 				function removeFormDialog(dialog, deselectTable) {
 					dialog.formDialog('destroy');
@@ -168,12 +168,12 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 				//for requirement linked to other requirement(s)
 				if ("requirement" === this.associationType) {
-					const configureParams = function (self) {
+					var configureParams = function (self) {
 						table.deselectRows();
-						const selectedKey = $(self).find('option:selected').val();
-						const selectedTypeIdAndDirection = selectedKey.split("_");
-						const selectedTypeId = parseInt(selectedTypeIdAndDirection[0]);
-						const selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
+						var selectedKey = $(self).find('option:selected').val();
+						var selectedTypeIdAndDirection = selectedKey.split("_");
+						var selectedTypeId = parseInt(selectedTypeIdAndDirection[0]);
+						var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
 						return {
 							reqVersionLinkTypeId: selectedTypeId,
 							reqVersionLinkTypeDirection: selectedTypeDirection
@@ -181,8 +181,8 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					};
 
 					//get all selected requirement row labels
-					let getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
-						let result = [];
+					var getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
+						var result = [];
 						selectedIds.forEach(function (selectedId) {
 							result.push(squashTable.getDataById(selectedId)['requirement-label']);
 						});
@@ -190,10 +190,10 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						return result;
 					};
 
-					let selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
+					var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
 
 					//get current requirement label
-					let reqVersionLabel = table.getDataById(id)['requirement-label'];
+					var reqVersionLabel = table.getDataById(id)['requirement-label'];
 
 					//create Popup dialog with label values with Handlebars for Thymeleaf
 					var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
@@ -236,16 +236,16 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						});
 					});
 
-					let displayCombo = function (self, typesList) {
-						let comboBox = self.find("#link-types-options");
+					var displayCombo = function (self, typesList) {
+						var comboBox = self.find("#link-types-options");
 
-						for (let i = 0; i < typesList.length; i++) {
-							let type = typesList[i];
-							let id = type.id, role1 = type.role1, role2 = type.role2;
-							let optionKey_1 = id + "_" + 0;
-							let optionLabel_1 = role1 + " - " + role2;
-							let def = type.default;
-							let o;
+						for (var i = 0; i < typesList.length; i++) {
+							var type = typesList[i];
+							var id = type.id, role1 = type.role1, role2 = type.role2;
+							var optionKey_1 = id + "_" + 0;
+							var optionLabel_1 = role1 + " - " + role2;
+							var def = type.default;
+							var o;
 
 							if (def) {
 								o = new Option(optionLabel_1, optionKey_1, true, true);
@@ -256,8 +256,8 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 							}
 
 							if (role1 !== role2) {
-								let optionKey_2 = id + "_" + 1;
-								let optionLabel_2 = role2 + " - " + role1;
+								var optionKey_2 = id + "_" + 1;
+								var optionLabel_2 = role2 + " - " + role1;
 								if (type.default) {
 									o = new Option(optionLabel_2, optionKey_2, true, true);
 									comboBox.append(o);
@@ -284,7 +284,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					//when the button confirm in create link type is pressed...
 					linkTypeDialog.on('formdialogconfirm', function () {
 						var self = linkTypeDialog;
-						let params = configureParams(self);
+						var params = configureParams(self);
 
 						var apiUrl = squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions";
 
@@ -296,7 +296,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 								showAddSummary(rejections);
 							} else {
 								//then navigate to the "manager page" of the updated requirement
-								let newApiUrl = apiUrl + "/manager";
+								var newApiUrl = apiUrl + "/manager";
 								window.location.replace(newApiUrl);
 							}
 						});
@@ -349,7 +349,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					//open link type popup
 					linkTypeDialog.formDialog('open');
 				} else {
-					let targetUrl = "";
+					var targetUrl = "";
 
 					switch (this.associationType) {
 						case "test-case" :
@@ -402,7 +402,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 			},
 
 			modifySearch: function () {
-				let token = $("meta[name='_csrf']").attr("content");
+				var token = $("meta[name='_csrf']").attr("content");
 				if (this.isAssociation) {
 					this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&associationId=" + this.associationId + "&associationType=" + this.associationType, {
 						searchModel: JSON.stringify(this.model),
@@ -418,7 +418,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 			},
 
 			post: function (URL, PARAMS) {
-				let temp = document.createElement("form");
+				var temp = document.createElement("form");
 				temp.action = URL;
 				temp.method = "POST";
 				temp.style.display = "none";
@@ -467,7 +467,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 				if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 					var rows = table.fnGetNodes();
 					$(rows).filter(function () {
-						let rId = table.fnGetData(this)["requirement-version-id"];
+						var rId = table.fnGetData(this)["requirement-version-id"];
 						return $.inArray(rId, selectedIds) !== -1;
 					}).addClass('ui-state-row-selected');
 				}
@@ -476,8 +476,8 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 			_containsDuplicate: function containsDuplicate(arr) {
 				arr.sort();
-				let last = arr[0];
-				for (let i = 1; i < arr.length; i++) {
+				var last = arr[0];
+				for (var i = 1; i < arr.length; i++) {
 					if (arr[i] === last) {
 						return true;
 					}
@@ -559,21 +559,21 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 				$(".mass-change-infolist-combo").prop('disabled', false);
 
 				// find the selected projects unique ids
-				let selectedProjects = [];
+				var selectedProjects = [];
 				rows.each(function (indx, row) {
 					selectedProjects.push(table.fnGetData(row)['project-id']);
 				});
 				selectedProjects = _.uniq(selectedProjects);
 
 				// check for conflicts
-				let difCat = projects.haveDifferentInfolists(selectedProjects, ["category"]);
+				var difCat = projects.haveDifferentInfolists(selectedProjects, ["category"]);
 
 				function populateCombo(select, infolistName) {
 					var p = projects.findProject(selectedProjects[0]);
 					select.empty();
 
-					for (let i = 0; i < p[infolistName].items.length; i++) {
-						let item = p[infolistName].items[i];
+					for (var i = 0; i < p[infolistName].items.length; i++) {
+						var item = p[infolistName].items[i];
 						var opt = $('<option/>', {
 							value: item.code,
 							html: item.friendlyLabel
@@ -616,11 +616,11 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						dataType: 'json'
 					})
 						.success(function (json) {
-							let combo = $("<select/>"),
+							var combo = $("<select/>"),
 								comboCell = $("#" + comboname);
 
 							$.each(json, function (key, value) {
-								let option = $("<option/>", {
+								var option = $("<option/>", {
 									value: key,
 									html: value
 								});
@@ -641,7 +641,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 
 				addModifyResultDialog.on('change', ':checkbox', function (evt) {
-					let cbx = $(evt.currentTarget),
+					var cbx = $(evt.currentTarget),
 						state = cbx.prop('checked'),
 						select = cbx.parent().siblings().last().find('select');
 
@@ -655,10 +655,10 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					var table = $('#requirement-search-result-table').dataTable();
 					var ids = self.getVersionIdsOfSelectedTableRowList(table);
 					var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
-					let columns = ["criticality", "category", "status"];
+					var columns = ["criticality", "category", "status"];
 					var index = 0;
 
-					let bulkUpdate = {};
+					var bulkUpdate = {};
 					for (index = 0; index < columns.length; index++) {
 						if ($("#" + columns[index] + "-checkbox").prop('checked')) {
 							var attr = columns[index];
