@@ -474,7 +474,7 @@ require(["common"], function() {
       $(function(){
         var chosenAutomationWorkflow = "${chosenAutomationWorkflow}";
         var availableAutomationWorkflows = "${availableAutomationWorkflows}";
-        if(!availableAutomationWorkflows.includes(chosenAutomationWorkflow)){
+        if (availableAutomationWorkflows.indexOf(chosenAutomationWorkflow) === -1) {
             chosenAutomationWorkflow = "NATIVE";
         }
 
@@ -484,7 +484,7 @@ require(["common"], function() {
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
- 	  chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
           availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };
 
