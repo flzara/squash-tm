@@ -44,8 +44,8 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		var unlaunchableTest;
 		updateTAScript().done(function(map){
 			// No arrow function in IE 11 ...
-			var launchableIds = Object.keys(map.launchableIds);
-			if (launchableIds.length === 0){
+			var launchableIds = map.launchableIds !== undefined ? Object.keys(map.launchableIds) : [];
+			if (launchableIds.length === 0) {
 				$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 			} else {
 				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
@@ -68,7 +68,7 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		} else {
 			updateTAScript(ids).done(function(map){
 				// No arrow function in IE 11 ...
-				var launchableIds = Object.keys(map.launchableIds);
+				var launchableIds = map.launchableIds !== undefined ? Object.keys(map.launchableIds) : [];
 				if (launchableIds.length === 0){
 					$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 				} else {
