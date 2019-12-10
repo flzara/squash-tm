@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.scmserver
 
+import org.springframework.context.MessageSource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -44,6 +45,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 	private ScmServerDao scmServerDao = Mock()
 	private CredentialsProvider credentialsProvider = Mock()
 	private ScmRepositoryFilesystemService scmRepositoryFileSystemService = Mock()
+	private MessageSource i18nHelper = Mock()
 
 	def setup() {
 		scmRepositoryManagerService.scmRepositoryDao = scmRepositoryDao
@@ -51,6 +53,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		scmRepositoryManagerService.scmRegistry = scmRegistry
 		scmRepositoryManagerService.credentialsProvider = credentialsProvider
 		scmRepositoryManagerService.scmRepositoryFileSystemService = scmRepositoryFileSystemService
+		scmRepositoryManagerService.i18nHelper = i18nHelper
 	}
 
 	def "#findByScmServerOrderByPath(Long) - [Nominal] Should find all ScmRepositories ordered by path"() {
@@ -189,6 +192,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			scmServerDao.getOne(serverId) >> server
 			scmRepositoryDao.save(repo) >> repo
 			credentialsProvider.getAppLevelCredentials(server) >> Optional.empty()
+			i18nHelper.getMessage(_, _, _) >> "Mock message with repo name : %s"
 		when:
 			scmRepositoryManagerService.createNewScmRepository(serverId, repo)
 		then:
@@ -258,6 +262,7 @@ class ScmRepositoryManagerServiceTest extends Specification {
 		and:
 			scmRepositoryDao.getOne(repo.id) >> repo
 			credentialsProvider.getAppLevelCredentials(server) >> Optional.empty()
+			i18nHelper.getMessage(_, _, _) >> "Mock message with repo name : %s"
 		when:
 			scmRepositoryManagerService.updateBranch(repo.id, "develop")
 		then:
