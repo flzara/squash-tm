@@ -289,11 +289,38 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						var apiUrl = squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions";
 
 						var bind = bindingActionCallback(apiUrl, "POST");
+
+						var showSummary = function(summary){
+							if (summary) {
+								var summaryMessages = {
+									alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
+									notLinkableRejections: translator.get("requirement-version.linked-requirement-versions.rejection.not-linkable-rejection"),
+									sameRequirementRejections: translator.get("requirement-version.linked-requirement-versions.rejection.same-requirement-rejection")
+								};
+
+								//open link type popup
+								summaryDialog.formDialog('open');
+
+								var summaryRoot = $("#add-summary-dialog-error-msg");
+								summaryRoot.empty();
+								summaryRoot.append('<ul>');
+								for (var rejectionType in summary) {
+									if (summary.hasOwnProperty(rejectionType)) {
+										var message = summaryMessages[rejectionType];
+										if (message) {
+											summaryRoot.append('<li>' + message + '</li>');
+										}
+									}
+								}
+								summaryRoot.append('</ul>');
+							}
+						};
+
 						bind(ids, params).success(function (rejections) {
 							removeFormDialog(linkTypeDialog, true);
 							//show error popup if any
 							if (Object.keys(rejections).length > 0) {
-								showAddSummary(rejections);
+								showSummary(rejections);
 							} else {
 								//then navigate to the "manager page" of the updated requirement
 								var newApiUrl = apiUrl + "/manager";
@@ -319,32 +346,6 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						var apiUrl = squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions/manager";
 						window.location.replace(apiUrl);
 					});
-
-					function showAddSummary(summary) {
-						if (summary) {
-							var summaryMessages = {
-								alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
-								notLinkableRejections: translator.get("requirement-version.linked-requirement-versions.rejection.not-linkable-rejection"),
-								sameRequirementRejections: translator.get("requirement-version.linked-requirement-versions.rejection.same-requirement-rejection")
-							};
-
-							//open link type popup
-							summaryDialog.formDialog('open');
-
-							var summaryRoot = $("#add-summary-dialog-error-msg");
-							summaryRoot.empty();
-							summaryRoot.append('<ul>');
-							for (var rejectionType in summary) {
-								if (summary.hasOwnProperty(rejectionType)) {
-									var message = summaryMessages[rejectionType];
-									if (message) {
-										summaryRoot.append('<li>' + message + '</li>');
-									}
-								}
-							}
-							summaryRoot.append('</ul>');
-						}
-					}
 
 					//open link type popup
 					linkTypeDialog.formDialog('open');
