@@ -20,13 +20,21 @@
  */
 define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil", "workspace.routing",
 		"workspace.event-bus", "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
-		"workspace.storage", "workspace.projects", "./milestone-mass-modif-popup", "./req-export-popup", "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
+		"workspace.storage", "workspace.projects", "./milestone-mass-modif-popup", "./req-export-popup",
+		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.milestoneDialog"],
 	function ($, Backbone, Handlebars, _, StringUtil, routing, eventBus, RequirementSearchResultTable,
-						translator, notification, storage, projects, milestoneMassModif, reqExport, LinkedReqVersionsPanel) {
+						translator, notification, storage, projects, milestoneMassModif, reqExport) {
 
 		const SEARCH_MODEL_STORAGE_KEY_PREFIX = "search-model-";
+
+		translator.load([
+			"requirement-version.linked-requirement-versions.rejection.already-linked-rejection",
+			"requirement-version.linked-requirement-versions.rejection.not-linkable-rejection",
+			"requirement-version.linked-requirement-versions.rejection.same-requirement-rejection",
+			"label.Unbind",
+			"message.SelectOneRequirement"
+		]);
 
 		return Backbone.View.extend({
 
@@ -137,10 +145,25 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 				let id = this.associationId;
 
-				function removeFormDialog() {
-					linkTypeDialog.formDialog('destroy');
-					linkTypeDialog.remove();
-					table.deselectRows();
+				function removeFormDialog(dialog, deselectTable) {
+					dialog.formDialog('destroy');
+					dialog.remove();
+					if (deselectTable) {
+						table.deselectRows();
+					}
+				}
+
+				function bindingActionCallback(apiUrl, method) {
+					return function (ids, data) {
+						var url = apiUrl + "/" + (_.isArray(ids) ? ids.join(',') : ids);
+
+						return $.ajax({
+							url: url,
+							type: method,
+							dataType: 'json',
+							data: data
+						});
+					};
 				}
 
 				//for requirement linked to other requirement(s)
@@ -153,8 +176,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						const selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
 						return {
 							reqVersionLinkTypeId: selectedTypeId,
-							reqVersionLinkTypeDirection: selectedTypeDirection,
-							isRelatedIdANodeId: false
+							reqVersionLinkTypeDirection: selectedTypeDirection
 						};
 					};
 
@@ -174,8 +196,8 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					let reqVersionLabel = table.getDataById(id)['requirement-label'];
 
 					//create Popup dialog with label values with Handlebars for Thymeleaf
-					let tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
-					let linkCreateTypeDialog = tmpLinkTypeCreate({
+					var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
+					var linkCreateTypeDialog = tmpLinkTypeCreate({
 						dialogId: "create-link-type-dialog",
 						reqVersionLabel: reqVersionLabel,
 						selectedData: selectedRequirementLabel
@@ -184,13 +206,23 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					//add this Popup into the HTML page
 					this.$el.append(linkCreateTypeDialog);
 
-					//now we display the popup
-					var linkTypeDialog = $("#create-link-type-dialog");
-
 					// init the popup
+					var linkTypeDialog = $("#create-link-type-dialog");
 					linkTypeDialog.formDialog();
 
-					//when the popup dialog is open, send a request to get all requirement-versions-link-types
+					var createSummaryDialogFunction = Handlebars.compile($("#create-summary-dialog-tpl").html());
+					var createSummaryDialog = createSummaryDialogFunction({
+						summaryDialogId: "add-summary-dialog"
+					});
+
+					//add this Popup into the HTML page
+					this.$el.append(createSummaryDialog);
+
+					// init the popup
+					var summaryDialog = $("#add-summary-dialog");
+					summaryDialog.formDialog();
+
+					//when the create link type popup dialog is open, send a request to get all requirement-versions-link-types
 					linkTypeDialog.on('formdialogopen', function () {
 						var self = linkTypeDialog;
 						self.formDialog('setState', 'wait');
@@ -239,17 +271,82 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						self.formDialog('setState', 'confirm');
 					};
 
-					//when the popup dialog is close, remove the element from the html page
+					//when the create link type popup dialog is close, remove the element from the html page
 					linkTypeDialog.on('formdialogclose', function () {
-						removeFormDialog();
+						removeFormDialog(linkTypeDialog, true);
 					});
 
-					//when the popup dialog is cancel, remove the element from the html page
+					//when the create link type popup dialog is cancel, remove the element from the html page
 					linkTypeDialog.on('formdialogcancel', function () {
-						removeFormDialog();
+						removeFormDialog(linkTypeDialog, true);
 					});
 
-					//open popup
+					//when the button confirm in create link type is pressed...
+					linkTypeDialog.on('formdialogconfirm', function () {
+						var self = linkTypeDialog;
+						let params = configureParams(self);
+
+						var apiUrl = squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions";
+
+						var bind = bindingActionCallback(apiUrl, "POST");
+						bind(ids, params).success(function (rejections) {
+							removeFormDialog(linkTypeDialog, true);
+							//show error popup if any
+							if (Object.keys(rejections).length > 0) {
+								showAddSummary(rejections);
+							} else {
+								//then navigate to the "manager page" of the updated requirement
+								let newApiUrl = apiUrl + "/manager";
+								window.location.replace(newApiUrl);
+							}
+						});
+					});
+
+					//when the error msg popup dialog is close, remove the element from the html page
+					summaryDialog.on('formdialogclose', function () {
+						removeFormDialog(summaryDialog, false);
+					});
+
+					//when the error msg popup dialog is confirm, close the popup, remove the element from the html page
+					summaryDialog.on('formdialogconfirm', function () {
+						removeFormDialog(summaryDialog, false);
+					});
+
+					//when the error msg popup dialog is navigated, close the popup, remove the element from the html page
+					//and navigate to the updated requirement manager page
+					summaryDialog.on('formdialognavigate', function () {
+						removeFormDialog(summaryDialog, false);
+						var apiUrl = squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions/manager";
+						window.location.replace(apiUrl);
+					});
+
+					function showAddSummary(summary) {
+						if (summary) {
+							var summaryMessages = {
+								alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
+								notLinkableRejections: translator.get("requirement-version.linked-requirement-versions.rejection.not-linkable-rejection"),
+								sameRequirementRejections: translator.get("requirement-version.linked-requirement-versions.rejection.same-requirement-rejection")
+							};
+
+							//open link type popup
+							summaryDialog.formDialog('open');
+
+							var summaryRoot = $("#add-summary-dialog-error-msg");
+							summaryRoot.empty();
+							summaryRoot.append('<ul>');
+							for (var rejectionType in summary) {
+								if (summary.hasOwnProperty(rejectionType)) {
+									var message = summaryMessages[rejectionType];
+									if (message) {
+										summaryRoot.append('<li>' + message + '</li>');
+									}
+								}
+							}
+							summaryRoot.append('</ul>');
+						}
+					}
+
+					//open link type popup
 					linkTypeDialog.formDialog('open');
 				} else {
 					let targetUrl = "";
