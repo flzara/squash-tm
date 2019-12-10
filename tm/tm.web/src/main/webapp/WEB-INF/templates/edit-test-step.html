@@ -63,6 +63,13 @@
           th:src="@{/scripts/require-min.js}">
 
   </script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
   <link rel="stylesheet" type="text/css" media="all"
         href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
   <link rel="shortcut icon" type="image/x-icon" media="all"

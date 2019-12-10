@@ -76,6 +76,9 @@
     };
   </script>
   <script th:remove="all">
+    requirejs.config({
+        waitSeconds: 0
+    });
     require(["common"], function (common) {
       require(["jquery", "domReady", "./verified-requirements/TestStepVerifiedRequirementsPanel"], function ($, domReady, TestStepVerifiedRequirementsPanel) {
         domReady(function () {

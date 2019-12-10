@@ -85,6 +85,13 @@
 
 <script data-main="../../scripts/requirement-workspace.js" th:attr="data-main=@{/scripts/requirement-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    requirejs.config({
+        waitSeconds: 0
+    });
+    /* ]]> */
+</script>
 
 <!--  initialize the wizards -->
 <div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='requirement')"/>

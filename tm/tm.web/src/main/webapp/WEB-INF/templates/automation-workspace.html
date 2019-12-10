@@ -71,6 +71,13 @@
 
   <script data-main="../../scripts/automation-workspace.js" th:attr="data-main=@{/scripts/automation-workspace.js}" src="../../scripts/require.js"
     th:src="@{/scripts/require-min.js}"></script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 </head>
 
 <body>

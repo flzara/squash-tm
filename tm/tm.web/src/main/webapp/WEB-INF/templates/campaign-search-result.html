@@ -84,6 +84,13 @@
 	<script data-main="../../scripts/campaign-search-result.js" th:attr="data-main=@{/scripts/campaign-search-result.js}"
 	 src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 	</script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 
 	<script type="text/javascript">
 		publish("reload.auto-suite-overview-popup");
@@ -280,14 +287,14 @@
 	<div class="collapse sq-tl" data-loaded="false">
       <h5 class="tl-head">
         <span class="tl-state-icon"></span>
-		[[#{message.automatedTestsList}]] ({{testCount}} [[#{label.testCases.lower}]]) 
+		[[#{message.automatedTestsList}]] ({{testCount}} [[#{label.testCases.lower}]])
       </h5>
 
 		<div class="tl-body">
-			<!-- populated by ajax --> 
+			<!-- populated by ajax -->
 			<div class="please-wait-message waiting-loading minimal-height"></div>
 		</div>
-      
+
     </div>
     {{#unless orderGuaranteed}}
       <p class="error-message" ><label class="error-message">[[#{label.warning}]]</label>[[#{message.orderNonGuaranteed}]]</p>
@@ -300,19 +307,19 @@
 
 
 	<!-- *************************POPUP*********************** -->
-	<div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}" 
+	<div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}"
 		th:attr="data-def='url=' + @{/automated-suites}+ ', height=490'">
-	
-		
+
+
 	   <div data-def="state=preview">
 	      <div id="node-selector-pnl">
 	      </div>
 	    </div>
-	    
+
 	    <div data-def="state=preparation">
 	    	<div th:replace="fragments-utils/static-panels :: large-please-wait"/>
 	    </div>
-		
+
 		<div data-def="state=processing">
 			<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
 				<table class="display-table dataTable" style="width:100%">
@@ -340,29 +347,29 @@
 
 			</div>
 		</div>
-		
+
 		<div data-def="state=quit">
 			<span th:utext="#{message.CloseAutomatedSuiteOverview}"></span>
 		</div>
-	
-	    
+
+
 		<div class="popup-dialog-buttonpane">
 			<!--  preview buttons -->
 		    <input type="button" th:value="#{label.Confirm}" data-def="evt=previewConfirm, state=preview"/>
 		    <input type="button" th:value="#{label.Cancel}" data-def="evt=previewCancel, state=preview"/>
-		    
+
 		    <!--  preparation button -->
 		    <input type="button" th:value="#{label.Close}" data-def="evt=preparationClose, state=preparation, mainbtn=preparation"/>
-		    	    
+
 		    <!--  processing button -->
 			<input type="button" th:value="#{label.Close}" data-def="evt=processingClose, state=processing, mainbtn=processing"/>
-			
+
 			<!-- quit overview buttons -->
 			<input type="button" th:value="#{label.Confirm}" data-def="evt=quitConfirm, state=quit"/>
-			<input type="button" th:value="#{label.Cancel}" data-def="evt=quitCancel, state=quit, mainbtn=quit"/>	
+			<input type="button" th:value="#{label.Cancel}" data-def="evt=quitCancel, state=quit, mainbtn=quit"/>
 		</div>
 	</div>
-	
+
 
 
 </body>

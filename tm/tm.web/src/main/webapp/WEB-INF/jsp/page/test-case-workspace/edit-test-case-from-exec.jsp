@@ -57,6 +57,7 @@
 
   <script type="text/javascript">
 	requirejs.config({
+      waitSeconds: 0,
 	    config : {
 	        'edit-test-case-from-exec' : {
 	        		execId : ${execId},

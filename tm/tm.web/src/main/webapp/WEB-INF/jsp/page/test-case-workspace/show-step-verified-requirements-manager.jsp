@@ -42,6 +42,9 @@
 
 		<c:url var="addVerifiedRequirementsUrl" value="/test-steps/${ testStep.id }/verified-requirements"/>
 		<script type="text/javascript">
+      requirejs.config({
+        waitSeconds: 0
+      });
       require(["common"], function () {
         require(["jquery", "squash.translator", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.messagedialog", "datatables", "app/ws/squashtm.workspace"], function ($, msg, notification) {
 

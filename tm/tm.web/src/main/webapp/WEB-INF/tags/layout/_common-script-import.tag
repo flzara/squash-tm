@@ -45,6 +45,11 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <c:choose>
   <c:when test="${ not empty main }">
 <script  charset="utf-8" src="<c:url value='/scripts/require-min.js' />" data-main="${ main }"></script>
+<script type="text/javascript">
+  requirejs.config({
+    waitSeconds: 0
+  });
+</script>
   </c:when>
   <c:otherwise>
 <script  charset="utf-8" src="<c:url value='/scripts/require-min.js' />"  data-main="legacy-ws-page"></script>

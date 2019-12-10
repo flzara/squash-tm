@@ -103,6 +103,9 @@
 	</c:if>
 
 	<script type="text/javascript">
+  requirejs.config({
+    waitSeconds: 0
+  });
 	require(["common"], function() {
 		require(["jquery", "squash.basicwidgets",'custom-field-values', 'workspace.routing',
 

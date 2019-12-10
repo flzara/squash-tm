@@ -52,6 +52,7 @@
     <script type="text/javascript">
 
     requirejs.config({
+        waitSeconds: 0,
         config : {
           'oer-main-page' : ${json:serialize(config)}
         }

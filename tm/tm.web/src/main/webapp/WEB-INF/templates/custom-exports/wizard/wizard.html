@@ -70,6 +70,13 @@
 
   <script data-main="../../../../scripts/custom-export-wizard.js" th:attr="data-main=@{/scripts/custom-export-wizard.js}"
           src="../../../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 
 </head>
 

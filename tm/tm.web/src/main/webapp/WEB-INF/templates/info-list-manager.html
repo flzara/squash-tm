@@ -47,6 +47,13 @@
   <script data-main="../../scripts/info-list-manager.js" th:attr="data-main=@{/scripts/info-list-manager.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 
   <script id="name-cell-tpl" type="text/x-handlebars-template" th:inline="text">
   <a href="{{url}}">{{text}}</a>

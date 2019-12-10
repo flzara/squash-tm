@@ -106,6 +106,7 @@
 
 
       requirejs.config({
+        waitSeconds: 0,
         config: {
           'execution-dialog-main': {
             model: {

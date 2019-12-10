@@ -43,6 +43,7 @@ if (window.squashtm !== undefined && window.squashtm.app !== undefined && window
 var CKEDITOR_BASEPATH = contextRoot + "scripts/ckeditor/";
 
 requirejs.config({
+	waitSeconds: 0,
 	packages: [
 		{
 			name: 'contextual-content-handlers',
