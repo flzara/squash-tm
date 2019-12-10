@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.scmserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +47,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -67,6 +70,13 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	private CredentialsProvider credentialsProvider;
 	@Inject
 	private ScmRepositoryFilesystemService scmRepositoryFileSystemService;
+	@Inject
+	private MessageSource i18nHelper;
+
+	private String getMessage(String i18nKey) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return i18nHelper.getMessage(i18nKey, null, locale);
+	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -123,10 +133,9 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
 		Supplier<ScmNoCredentialsException> throwIfNull = () -> {
 			throw new ScmNoCredentialsException(
-				"Cannot authenticate to the remote server containing the repository '" + scmRepository.getName() + "' " +
-					"because no valid credentials were found for authentication. " +
-					"Squash-TM is supposed to use application-level credentials for that and it seems they were not configured properly. "
-					+ "Please contact your administrator in order to fix the situation.");
+				String.format(
+					getMessage("message.scmRepository.noCredentials"),
+					scmRepository.getName()));
 		};
 		return maybeCredentials.orElseThrow(throwIfNull);
 	}
