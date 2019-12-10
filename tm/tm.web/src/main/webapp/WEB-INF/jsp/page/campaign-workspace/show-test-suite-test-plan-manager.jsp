@@ -137,6 +137,9 @@
   <jsp:attribute name="foot">
 
   <script type="text/javascript">
+  requirejs.config({
+    waitSeconds: 0
+  });
   require(["common"], function() {
     require(["jquery", "tree", "workspace.event-bus", "squash.translator", "app/ws/squashtm.notification", "app/ws/squashtm.workspace" ], function($, zetree, eventBus, msg, notification) {
       $(function(){

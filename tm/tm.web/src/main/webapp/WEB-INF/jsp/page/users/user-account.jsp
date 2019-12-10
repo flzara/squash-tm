@@ -59,6 +59,9 @@
   <jsp:attribute name="informationContent">
 
 	<script type="text/javascript">
+    requirejs.config({
+      waitSeconds: 0
+    });
     require(["common"], function () {
       require(["jquery", "squash.basicwidgets"], function ($, basic) {
         $(function () {

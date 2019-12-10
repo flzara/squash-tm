@@ -52,6 +52,13 @@
 	th:attr="data-main=@{/scripts/print.js}" src="../../scripts/require.js"
 	th:src="@{/scripts/require-min.js}"></script>
 </head>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    requirejs.config({
+        waitSeconds: 0
+    });
+    /* ]]> */
+</script>
 <body>
 
 	<!--=============================================TITLE================================================== -->

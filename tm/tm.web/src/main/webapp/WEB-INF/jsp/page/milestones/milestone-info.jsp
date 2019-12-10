@@ -427,6 +427,7 @@
 
 
 requirejs.config({
+  waitSeconds: 0,
   config : {
     'milestone-manager/milestone-info' : {
       urls: {

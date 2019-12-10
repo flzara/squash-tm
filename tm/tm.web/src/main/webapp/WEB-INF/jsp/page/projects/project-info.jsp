@@ -631,6 +631,10 @@ var adminproject = {};
 adminproject.isDeletable = ${adminproject.deletable};
 adminproject.isBound = ${adminproject.project.template != null};
 
+requirejs.config({
+  waitSeconds: 0
+});
+
 require(["common"], function() {
 
 	require(["jquery", "projects-manager","squash.configmanager", "jquery.squash.fragmenttabs", "squash.attributeparser",

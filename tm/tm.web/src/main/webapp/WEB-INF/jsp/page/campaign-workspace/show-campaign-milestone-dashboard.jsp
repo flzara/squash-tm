@@ -60,6 +60,13 @@
     <layout:_common-lang/>
   </script>
   <script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 
 </head>
 

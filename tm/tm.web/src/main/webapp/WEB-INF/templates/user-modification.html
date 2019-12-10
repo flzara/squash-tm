@@ -89,6 +89,13 @@
 </script>
 <script data-main="../../scripts/user-page.js" th:attr="data-main=@{/scripts/user-page.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    requirejs.config({
+        waitSeconds: 0
+    });
+    /* ]]> */
+</script>
 </head>
 
 <body>

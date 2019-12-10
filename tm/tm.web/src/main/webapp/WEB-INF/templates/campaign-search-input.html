@@ -94,6 +94,13 @@
 
 <script data-main="../../scripts/campaign-search.js" th:attr="data-main=@{/scripts/campaign-search.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+    /* ]]> */
+</script>
 
 
 

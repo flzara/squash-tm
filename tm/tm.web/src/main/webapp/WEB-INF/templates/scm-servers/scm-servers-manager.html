@@ -49,6 +49,13 @@
           src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 
   </script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('')">NAVBAR</div>

@@ -52,6 +52,9 @@
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
 		<script type="text/javascript">
+    requirejs.config({
+      waitSeconds: 0
+    });
 		require([ "common" ], function() {
 			require([ "domReady", "jquery" ], function(domReady, $) {
 

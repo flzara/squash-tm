@@ -138,9 +138,9 @@
 
 
 			<%----------------------------------- BEGIN AUTHENTICATION MGNT -----------------------------------------------%>
-			
+
 			<tpserver:credentials-manager authConf="${authConf}"/>
-			
+
 			<%----------------------------------- END AUTHENTICATION MGNT -----------------------------------------------%>
 
 			</div>
@@ -190,6 +190,7 @@
 <script type="text/javascript">
 
   requirejs.config({
+   waitSeconds: 0,
 	 config :{
 		 'bugtracker-manager/bugtracker-info': {
 			 backUrl : "${admBugtrackerUrl}",

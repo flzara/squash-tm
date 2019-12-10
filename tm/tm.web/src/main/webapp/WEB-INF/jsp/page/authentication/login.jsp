@@ -43,6 +43,13 @@
   </script>
   <script src="<c:url value='/scripts/pubsub-boot.js' />"></script>
   <script src="<c:url value='/scripts/require-min.js' />" data-main="scripts/login-page"></script>
+  <script type="text/javascript" th:inline="javascript">
+      /* <![CDATA[ */
+      requirejs.config({
+          waitSeconds: 0
+      });
+      /* ]]> */
+  </script>
 </head>
 <body class="nav-up-layout">
 <div id="nav-bar" class="ui-helper-clearfix">

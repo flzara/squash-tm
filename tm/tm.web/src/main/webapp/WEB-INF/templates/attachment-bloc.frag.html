@@ -81,6 +81,9 @@
 
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
+      requirejs.config({
+          waitSeconds: 0
+      });
 			require(["common"], function(){
 				require(["jquery", "domReady", "file-upload"], function($, domReady, upload){
 					domReady(function(){
