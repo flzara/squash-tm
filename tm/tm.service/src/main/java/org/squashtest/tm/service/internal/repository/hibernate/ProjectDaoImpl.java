@@ -28,7 +28,11 @@ import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +47,9 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 
 	@Inject
 	private DSLContext DSL;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public long countNonFoldersInProject(long projectId) {
@@ -155,6 +162,13 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 		javax.persistence.Query query = entityManager.createNativeQuery(NativeQueries.DELETE_LIBRARY_PLUGING_PINDING_PROPERTY);
 		query.setParameter("libraryPluginBindingId", libraryPluginBindingId);
 		query.executeUpdate();
+	}
+
+	@Override
+	public BigInteger countActivePluginInProject(long projectId) {
+		Query query = em.createNativeQuery(NativeQueries.COUNT_ACTIVE_PLUGIN_IN_PROJECT);
+		query.setParameter("projectId", projectId);
+		return (BigInteger) query.getSingleResult();
 	}
 
 }

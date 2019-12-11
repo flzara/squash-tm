@@ -45,4 +45,6 @@ public interface ProjectDeletionHandler {
 	void deleteAllLibrariesContent(GenericProject genericProject);
 
 	void removeProjectFromFilters(Project project);
+
+	void checkProjectHasActivePlugin(Project project);
 }

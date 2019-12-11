@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.exception.library.CannotDeleteProjectException;
@@ -48,6 +49,7 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
+import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
@@ -58,6 +60,7 @@ import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,14 +90,13 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private EntityManager em;
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
-
 	@Inject
 	private CustomReportLibraryNodeService crlnService;
-
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
 	@Inject private MilestoneBindingManagerService milestoneBindingManager;
-
+	@Inject
+	private RemoteSynchronisationDao remoteSynchronisationDao;
 	@Inject
 	ProjectFilterDao projectFilterDao;
 
@@ -147,6 +149,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		deleteAllLibrariesContent(project);
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
 		deleteCustomReportLibrary(customReportLibrary);
+		/*Tm-903*/
+		removeRemoteSynchronisation(projectId);
 
 		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.getOne(projectId);
@@ -242,11 +246,24 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		});
 	}
 
+	private void removeRemoteSynchronisation(Long projectId){
+		List<RemoteSynchronisation> listRemoteSync = remoteSynchronisationDao.findByProjectId(projectId);
+		listRemoteSync.forEach(remoteSync-> remoteSynchronisationDao.delete(remoteSync));
+	}
+
 	@Override
 	public void removeProjectFromFilters(Project project) {
 		List<ProjectFilter> projectFilters = projectFilterDao.findByProjectsId(project.getId());
 		for (ProjectFilter projectFilter : projectFilters) {
 			projectFilter.removeProject(project);
+		}
+	}
+
+	@Override
+	public void checkProjectHasActivePlugin(Project project) {
+		BigInteger numberActivePlugin = projectDao.countActivePluginInProject(project.getId());
+		if ((numberActivePlugin.longValue()) > 0l) {
+			throw new CannotDeleteProjectException("Active plugins exist in the project");
 		}
 	}
 

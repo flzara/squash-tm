@@ -52,6 +52,7 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 		boolean isDeletable = true;
 		try {
 			projectDeletionHandler.checkProjectContainsOnlyFolders(project);
+			projectDeletionHandler.checkProjectHasActivePlugin(project);
 		} catch (CannotDeleteProjectException e) { // NOSONAR : this exception is part of the nominal use case
 			isDeletable = false;
 		}

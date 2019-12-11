@@ -242,6 +242,7 @@ public final class NativeQueries {
 			"on clos.ancestor_id = rln.rln_id "+
 			"where clos.descendant_id = :nodeId "+
 			"order by clos.depth desc";
+	public static final String COUNT_ACTIVE_PLUGIN_IN_PROJECT = "Select count(*) from Library_Plugin_Binding where Library_id = :projectId and active = true";
 
 
 	private NativeQueries() {
