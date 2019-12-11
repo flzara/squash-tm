@@ -170,8 +170,12 @@ define(
 						var method = (btn[0].checked) ? 'POST' : 'DELETE';
 						var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
 						if(checked===false&& pluginId!="squash.tm.wizard.campaignassistant"){
-							 disabledPluginPopup.formDialog("open");
-							 disablePlugin(url, checked, btn, data);
+								if(data['hasConf']===true){
+									disabledPluginPopup.formDialog("open");
+									disablePluginWithConf(url, checked, btn, data);
+								}else{
+									disablePluginWithoutConf(url, checked, btn, data);
+								}
 						}else{
 								$.ajax({url : url, type : 'POST'}).success(function() {
 								/*when we activate or deactivate the plugin, we update the automation workflow list*/
@@ -190,36 +194,43 @@ define(
 
 				});
 				/**/
-				function disablePlugin(url, checked, btn, data){
 
-				 	var disabledPluginPopup = $("#disabled-plugin").formDialog();
+				function disablePlugin(url, checked, btn, data, saveConf){
+								var $row = btn.parents('tr').first();
+								var pluginType = table.fnGetData($row.get(0))['pluginType'];
+								var projectId = conf.projectId;
+								var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+								$.ajax({url : url, type : 'DELETE', data: {saveConf : saveConf}}).success(function() {
+								/*when we activate or deactivate the plugin, we update the automation workflow list*/
+										if(pluginType === 'AUTOMATION'){
+												updateAutomationWorkflowSelect(checked, projectId);
+												eventBus.trigger("project.plugin.toggled", newType);
+										}
+										data['enabled'] = false;
 
-					disabledPluginPopup.on("formdialogconfirm", function() {
-							var saveConf = $("#saveConf").prop("checked");
-							var $row = btn.parents('tr').first();
-							var pluginType = table.fnGetData($row.get(0))['pluginType'];
-							var projectId = conf.projectId;
-							var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+									}).error(function(event) {
+										putBackButtonSwitch(btn,checked, data, event);
+									});
 
-							$.ajax({url : url, type : 'DELETE', data: {saveConf : saveConf}}).success(function() {
-							/*when we activate or deactivate the plugin, we update the automation workflow list*/
-									if(pluginType === 'AUTOMATION'){
-											updateAutomationWorkflowSelect(checked, projectId);
-											eventBus.trigger("project.plugin.toggled", newType);
-									}
-									data['enabled'] = false;
-
-								}).error(function(event) {
-								 	putBackButtonSwitch(btn,checked, data, event);
-								});
-
-							disabledPluginPopup.formDialog("close");
-					});
-
-					disabledPluginPopup.on("formdialogcancel", function() {
-						putBackButtonSwitch(btn,checked, data, event);
-						disabledPluginPopup.formDialog("close");
-					});
 				}
+				function disablePluginWithConf(url, checked, btn, data){
+						var disabledPluginPopup = $("#disabled-plugin").formDialog();
+
+						disabledPluginPopup.on("formdialogconfirm", function() {
+								var saveConf = $("#saveConf").prop("checked");
+	 							disablePlugin(url, checked, btn, data, saveConf);
+								disabledPluginPopup.formDialog("close");
+						});
+
+						disabledPluginPopup.on("formdialogcancel", function() {
+							putBackButtonSwitch(btn,checked, data, event);
+							disabledPluginPopup.formDialog("close");
+						});
+				}
+
+			function disablePluginWithoutConf(url, checked, btn, data){
+							var saveConf = false;
+							disablePlugin(url, checked, btn, data, saveConf);
+			}
 			};
 });

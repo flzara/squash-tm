@@ -100,6 +100,8 @@ public interface WorkspaceWizardManager {
 
 	Boolean isActivePlugin(WorkspaceWizard plugin, long projectId);
 
+	Boolean isHasConfiguration(WorkspaceWizard plugin, long projectId);
+
 
 }
 

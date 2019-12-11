@@ -28,6 +28,7 @@ import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -137,10 +138,16 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 
 	@Override
 	public LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType) {
+		LibraryPluginBinding lpb;
 		javax.persistence.Query query = entityManager.createNamedQuery("Project.findPluginForProject");
 		query.setParameter("projectId", projectId);
 		query.setParameter("pluginType",pluginType);
-		return (LibraryPluginBinding) query.getSingleResult();
+		try{
+			lpb = (LibraryPluginBinding) query.getSingleResult();
+		}catch(NoResultException nre){
+			return null;
+		}
+		return lpb;
 	}
 
 	@Override

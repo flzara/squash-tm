@@ -35,6 +35,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.plugin.PluginValidationException;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -46,6 +47,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.scm.ScmServer;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
@@ -53,7 +55,9 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -121,6 +125,9 @@ public class ProjectAdministrationController {
 	@Inject
 	private ConfigurationService configurationService;
 
+	@Inject
+	private ProjectDao projectDao;
+
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 	@ModelAttribute("projectsPageSize")
@@ -142,7 +149,7 @@ public class ProjectAdministrationController {
 
 	@RequestMapping(value = "{projectId}/info", method = RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
-
+		boolean pluginAutomHasConf;
 		AdministrableProject adminProject = projectFinder.findAdministrableProjectById(projectId);
 
 		// user permissions data
@@ -158,6 +165,13 @@ public class ProjectAdministrationController {
 
 		// Automation workflows
 		Map<String, String> automationWorkflows = getAvailableWorkflows(projectId, locale);
+		//if the automation plugin used checks if there is a configuration
+		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
+		if(lpb!=null){
+			WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
+			pluginAutomHasConf = pluginManager.isHasConfiguration(plugin, projectId);
+		}else pluginAutomHasConf = false;
+
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
@@ -201,6 +215,7 @@ public class ProjectAdministrationController {
 		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
 		mav.addObject("userLicenseInformationData", userLicenseInformation);
 		mav.addObject("availableAutomationWorkflows", automationWorkflows);
+		mav.addObject("pluginAutomHasConf", pluginAutomHasConf);
 
 		return mav;
 	}
@@ -275,12 +290,13 @@ public class ProjectAdministrationController {
 		int loop=1;
 		for (WorkspaceWizard plugin : plugins) {
 
-		boolean enabled = pluginManager.isActivePlugin(plugin, projectId);
-
+			boolean enabled = pluginManager.isActivePlugin(plugin, projectId);
+			boolean hasConf = pluginManager.isHasConfiguration(plugin, projectId);
 			ProjectPluginModel model = new ProjectPluginModel(plugin);
 
 			model.setIndex(loop++);
 			model.setEnabled(enabled);
+			model.setHasConf(hasConf);
 
 			model.setPluginType(plugin.getPluginType());
 

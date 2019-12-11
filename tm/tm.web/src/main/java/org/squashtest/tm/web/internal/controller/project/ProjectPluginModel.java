@@ -35,6 +35,7 @@ public class ProjectPluginModel {
 	private String configUrl;
 	/*Automation workflow*/
 	private PluginType pluginType;
+	private boolean hasConf;
 
 	public int getIndex() {
 		return index;
@@ -66,6 +67,14 @@ public class ProjectPluginModel {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean isHasConf() {
+		return hasConf;
+	}
+
+	public void setHasConf(boolean hasConf) {
+		this.hasConf = hasConf;
 	}
 
 	public String getName() {

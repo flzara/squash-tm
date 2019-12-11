@@ -194,6 +194,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					this.automationWorkflows = conf.availableAutomationWorkflows;
 					this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
+					this.pluginAutomHasConf = conf.pluginAutomHasConf;
 					this.workflowSelector = this.initAutomationWorkflowSelect();
 
 					this.automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
@@ -252,12 +253,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					disabledPluginWAPopup.on("formdialogconfirm", function() {
 							var saveConf = $("#save-conf").prop("checked");
-							var url = conf.tmProjectURL + '/plugins' ;
-							/*disable the plugin with or without keeping the configuration*/
-              $.ajax({url : url, type : 'DELETE', data : {saveConf : saveConf} }).success(function(){
-								/*save change*/
-								self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
-              });
+							self.disablePlugin(self, saveConf);
 							disabledPluginWAPopup.formDialog("close");
 					});
 
@@ -266,6 +262,15 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						self.reloadWorkflowsComboBox(self, self.chosenAutomationWorkflow);
 					});
 
+				},
+
+				disablePlugin: function(self, saveConf){
+					var url = self.changeUrl + '/plugins' ;
+					/*disable the plugin with or without keeping the configuration*/
+					$.ajax({url : url, type : 'DELETE', data : {saveConf : saveConf} }).success(function(){
+						/*save change*/
+						self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
+					});
 				},
 
 				events : {
@@ -299,7 +304,12 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 								 var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 							//if NONE or SQUASH disabled plugin
 							if(value!=="REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW"){
-								var res = disabledPluginWAPopup.formDialog("open");
+								if(self.pluginAutomHasConf === "true"){
+									disabledPluginWAPopup.formDialog("open");
+								}else {
+									self.disablePlugin(self, false);
+								}
+
 							}else{
 								self.saveChangeAutomationWorkflow(value);
 							}

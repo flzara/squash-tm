@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -62,6 +64,8 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	@Inject
 	private GenericProjectFinder projectFinder;
+	@Inject
+	private GenericProjectManagerService projectManager;
 
 	@PostConstruct
 	public void registerWizards() {
@@ -164,6 +168,12 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 		PluginReferencer<?> library = findLibrary(projectId, plugin.getDisplayWorkspace());
 		LibraryPluginBinding binding = library.getPluginBinding(plugin.getId());
 		return (binding!= null? binding.getActive() : false);
+	}
+
+	@Override
+	public Boolean isHasConfiguration(WorkspaceWizard plugin, long projectId) {
+		Map<String,String> pluginConfiguration =  projectManager.getPluginConfiguration(projectId, plugin.getDisplayWorkspace(), plugin.getId());
+		return pluginConfiguration.size()!=0;
 	}
 
 // ******************************** private stuffs *************************

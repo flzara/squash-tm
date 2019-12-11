@@ -485,6 +485,7 @@ require(["common"], function() {
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
           chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          pluginAutomHasConf:"${pluginAutomHasConf}",
           availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
         };
 
