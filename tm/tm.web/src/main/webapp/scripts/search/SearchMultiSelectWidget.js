@@ -20,13 +20,20 @@
  */
 define(["jquery", "jqueryui"], function($){
 
+	if (!String.prototype.startsWith){
+		String.prototype.startsWith = function (searchString, position) {
+			position = position || 0;
+			return this.substring(position, searchString.length) === searchString;
+		};
+	}
+
 	var searchwidget = $.widget("search.searchMultiSelectWidget", {
 		options : {},
-		
+
 		_create : function(){
 			this._super();
 		},
-		
+
 		fieldvalue : function(value){
 			if(!value){
 				var text = $(this.element.children()[0]).val();
