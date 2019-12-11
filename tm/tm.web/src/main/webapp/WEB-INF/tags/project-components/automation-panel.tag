@@ -346,7 +346,7 @@
     </div>
 
     <div class="display-table-row">
-      <label class="display-table-cell" for="ta-project-jobName">
+      <label for="ta-project-jobName">
         <f:message key="label.job.input" />
       </label>
       <div class="display-table-cell">
