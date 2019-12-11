@@ -152,7 +152,7 @@
 
   <jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back"/>
-		<input type="button" class="button" value="${ backButtonLabel }" onClick="window.location.href = '${rootctxt}/test-case-workspace/';"/>
+		<input type="button" class="button" value="${ backButtonLabel }" onClick="window.location.href = '${rootctxt}/test-steps/${ testStep.id }';"/>
 	</jsp:attribute>
 
   <jsp:attribute name="tablePane">
