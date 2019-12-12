@@ -83,7 +83,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			});
 		},
 
-
+		
 		automatedHandler : function() {
 
 			var row =$("#campaign-search-result-table").squashTable().fnGetData($(this).parent().parent());
@@ -100,7 +100,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			};
 
 			updateTAScript(itId, tpid).done(function(map){
-				if (map.unlaunchableIds[tpid] !== undefined){
+				if (map[tpid] !== undefined){
 					$("#campaign-search-result-table").squashTable().refresh();
 					$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 				} else {

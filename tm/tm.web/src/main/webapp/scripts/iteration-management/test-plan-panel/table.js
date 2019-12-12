@@ -326,7 +326,7 @@ define(
 
 
 					updateTAScript([data['entity-id']]).done(function(map){
-						if (map.unlaunchableIds[data['entity-id']] !== undefined){
+						if (map[data['entity-id']] !== undefined){
 							table.refresh();
 							$.squash.openMessage(translator.get("popup.title.error"), translator.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 						} else {

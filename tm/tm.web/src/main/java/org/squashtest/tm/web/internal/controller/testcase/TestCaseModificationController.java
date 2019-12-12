@@ -382,7 +382,6 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(status, locale);
 	}
 
-
 	@RequestMapping(value="/associate-TA-script", method = RequestMethod.POST)
 	@ResponseBody
 	public void resolveTAScriptAssociation(@PathVariable long testCaseId){
