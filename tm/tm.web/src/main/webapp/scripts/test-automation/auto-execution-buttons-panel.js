@@ -40,22 +40,24 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 	});
 
 	function executeAll() {
-		console.log("execute all automated tests");
 		var unlaunchableTest;
 		updateTAScript().done(function(map){
 			// No arrow function in IE 11 ...
-			var launchableIds = map.launchableIds !== undefined ? Object.keys(map.launchableIds) : [];
-			if (launchableIds.length === 0) {
+			var launchableIds = findTpiIdsWithAutomaticExecutionMode().done(function(tpiIdsWithAutomaticExecutionMode) {
+				tpiIdsWithAutomaticExecutionMode.filter(function(id){
+					return map[id] === undefined;
+				});
+			});
+			if (launchableIds.length === 0){
 				$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 			} else {
 				//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
-				unlaunchableTest = Object.keys(map.unlaunchableIds).map(function(e) {
-					return map.unlaunchableIds[e];
+				unlaunchableTest = Object.keys(map).map(function(e) {
+					return map[e];
 				});
-				// TM-862
 				sendPreview(launchableIds).done(function(preview) {
-            openAutosuiteOverview(preview, unlaunchableTest);
-        });
+					openAutosuiteOverview(preview, unlaunchableTest);
+				});
 			}
 		});
 	}
@@ -68,13 +70,15 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		} else {
 			updateTAScript(ids).done(function(map){
 				// No arrow function in IE 11 ...
-				var launchableIds = map.launchableIds !== undefined ? Object.keys(map.launchableIds) : [];
+				var launchableIds = ids.filter(function(id){
+					return map[id] === undefined;
+				});
 				if (launchableIds.length === 0){
 					$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
 				} else {
 					//Alternative which work with IE. The "better" version but not compatible IE is unlaunchableTest = Object.values(map);
-					unlaunchableTest = Object.keys(map.unlaunchableIds).map(function(e) {
-						return map.unlaunchableIds[e];
+					unlaunchableTest = Object.keys(map).map(function(e) {
+						return map[e];
 					}).filter(function(value, index, self){
 						return self.indexOf(value) === index;
 					});
@@ -135,6 +139,20 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 			dataType : "json",
 			data : data,
 			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+	}
+
+	function findTpiIdsWithAutomaticExecutionMode() {
+		var context = {
+			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
+			id : squashtm.page.identity.resid
+		};
+		return $.ajax({
+			type: 'POST',
+			url: $("#auto-exec-btns-panel").data("suites-url") + "/automated-tpi-ids",
+			dataType: 'json',
+			data : JSON.stringify(context),
+			contentType : 'application/json'
 		});
 	}
 

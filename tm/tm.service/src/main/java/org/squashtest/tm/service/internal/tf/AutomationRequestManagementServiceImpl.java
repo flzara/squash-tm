@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.tf;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -87,12 +86,15 @@ import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestSta
 public class AutomationRequestManagementServiceImpl implements AutomationRequestFinderService, AutomationRequestModificationService {
 
 	private static final String CAN_READ_REQUEST_OR_ADMIN = "hasPermission(#requestId, 'org.squashtest.tm.domain.tf.automationrequest.AutomationRequest', 'READ') " + Authorizations.OR_HAS_ROLE_ADMIN;
+
 	private static final String CAN_READ_TESTCASE_OR_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + Authorizations.OR_HAS_ROLE_ADMIN;
+
 	private static final String STATUS_NOT_PERMITTED = "Unknown status";
+
 	private static final String WRITE_AS_FUNCTIONAL = "WRITE_AS_FUNCTIONAL";
+
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
-	private static final String LAUNCHABLE_IDS = "launchableIds";
-	private static final String UNLAUNCHABLE_IDS = "unlaunchableIds";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestManagementServiceImpl.class);
 
 	@Inject
@@ -439,9 +441,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 
 	/*TM-13:update automatic script before execution */
 	@Override
-	public Map<String, Map<Long, String>> updateTAScriptForIteration(Long iterationId) {
+	public Map<Long, String> updateTAScriptForIteration(Long iterationId) {
 		LOGGER.debug("Update TA script for following iteration's ITPI: {}", iterationId.toString());
-		Map<String, Map<Long, String>> result = new HashMap<>();
+		Map<Long, String> result = new HashMap<>();
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIterationIdWithTCAutomated(iterationId);
 		if (!items.isEmpty()){
@@ -452,9 +454,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public Map<String, Map<Long, String>> updateTAScriptForTestSuite(Long testSuiteId) {
+	public Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId) {
 		LOGGER.debug("Update TA script for following test suite's ITPI: {}", testSuiteId.toString());
-		Map<String, Map<Long, String>> result = new HashMap<>();
+		Map<Long, String> result = new HashMap<>();
 
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByTestSuiteIdWithTCAutomated(testSuiteId);
 		if (!items.isEmpty()){
@@ -465,9 +467,9 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 	}
 
 	@Override
-	public Map<String, Map<Long, String>> updateTAScriptForItems(List<Long> testPlanIds) {
+	public Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds) {
 		LOGGER.debug("Update TA script of the following ITPI: {}", testPlanIds.toString());
-		Map<String, Map<Long, String>> result = new HashMap<>();
+		Map<Long, String> result = new HashMap<>();
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByItemsIdWithTCAutomated(testPlanIds);
 		if (!items.isEmpty()){
 			result = doItpiTAScriptUpdate(items);
@@ -475,23 +477,18 @@ public class AutomationRequestManagementServiceImpl implements AutomationRequest
 		return result;
 	}
 
-	private Map<String, Map<Long, String>> doItpiTAScriptUpdate(List<IterationTestPlanItem> itpisToUpdate) {
+	private Map<Long, String> doItpiTAScriptUpdate(List<IterationTestPlanItem> itpisToUpdate) {
 		List<Long> tcIds = getListTcIdsFromListItems(itpisToUpdate);
 
 		Map<Long, String> mapTcIdTcNameInConflict = updateTAScript(tcIds);
 		return getListItpiIdNameTc(itpisToUpdate, mapTcIdTcNameInConflict);
 	}
 
-	private Map<String, Map<Long, String>>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
-		Map<String, Map<Long, String>> mapItpiIdTcNameInConflict = new HashMap<>();
-		mapItpiIdTcNameInConflict.put(LAUNCHABLE_IDS, new HashMap<>());
-		mapItpiIdTcNameInConflict.put(UNLAUNCHABLE_IDS, new HashMap<>());
+	private Map<Long, String>  getListItpiIdNameTc(List<IterationTestPlanItem> items, Map<Long, String> mapTcIdTcNameInConflict){
+		Map<Long, String> mapItpiIdTcNameInConflict = new HashMap<>();
 		items.forEach(itpi->{
 			if(mapTcIdTcNameInConflict.containsKey(itpi.getReferencedTestCase().getId())){
-				mapItpiIdTcNameInConflict.get(UNLAUNCHABLE_IDS).put(itpi.getId(), mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
-			} else {
-				// TM-862
-				mapItpiIdTcNameInConflict.get(LAUNCHABLE_IDS).put(itpi.getId(), StringUtils.EMPTY);
+				mapItpiIdTcNameInConflict.put(itpi.getId(),mapTcIdTcNameInConflict.get(itpi.getReferencedTestCase().getId()));
 			}
 		});
 		return  mapItpiIdTcNameInConflict;

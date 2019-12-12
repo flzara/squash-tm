@@ -341,7 +341,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		def result = service.updateTAScriptForIteration(-1L).get("unlaunchableIds")
+		def result = service.updateTAScriptForIteration(-1L)
 
 		then:
 		result.size() == 1
@@ -405,7 +405,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		def result = service.updateTAScriptForTestSuite(-21L).get("unlaunchableIds")
+		def result = service.updateTAScriptForTestSuite(-21L)
 
 		then:
 		result.size() == 1
@@ -473,7 +473,7 @@ class AutomationRequestManagementServiceImplTest extends Specification {
 		taService.listTestsFromRemoteServers(_) >> createAssignableTestList()
 
 		when:
-		def result = service.updateTAScriptForItems([-11L,  -12L]).get("unlaunchableIds")
+		def result = service.updateTAScriptForItems([-11L,  -12L])
 
 		then:
 		result.size() == 1

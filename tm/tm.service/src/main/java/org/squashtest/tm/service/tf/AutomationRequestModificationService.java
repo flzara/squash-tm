@@ -52,33 +52,24 @@ public interface AutomationRequestModificationService extends AutomationRequestF
 	 * Given an {@link org.squashtest.tm.domain.campaign.Iteration}'s id,
 	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
 	 * @param iterationId : an {@link org.squashtest.tm.domain.campaign.Iteration}'s id
-	 * @return a 2 String entry {@link Map}, keys are "unlaunchableIds"
-	 * ({@link Map} which keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "lost"
-	 * their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name)
-	 * and "launchableIds".
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "losed" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
 	 */
-	Map<String, Map<Long, String>> updateTAScriptForIteration(Long iterationId);
+	Map<Long, String> updateTAScriptForIteration(Long iterationId);
 
 	/**
 	 * Given an {@link org.squashtest.tm.domain.campaign.TestSuite}'s id,
 	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
 	 * @param testSuiteId : a {@link org.squashtest.tm.domain.campaign.TestSuite}'s id
-	 * @return a 2 String entry {@link Map}, keys are "unlaunchableIds"
-	 * ({@link Map} which keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "lost"
-	 * their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name)
-	 * and "launchableIds".
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "losed" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
 	 */
-	Map<String, Map<Long, String>> updateTAScriptForTestSuite(Long testSuiteId);
+	Map<Long, String> updateTAScriptForTestSuite(Long testSuiteId);
 
 	/**
 	 * Given alist of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}'s id,
 	 * will try to update value of TA script of ITPI whom test case is automated and is part of a project allowing automation workflow
 	 * @param testPlanIds : a list of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem}'s id
-	 * @return a 2 String entry {@link Map}, keys are "unlaunchableIds"
-	 * ({@link Map} which keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "lost"
-	 * their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name)
-	 * and "launchableIds".
+	 * @return a {@link Map} whom keys are ids of {@link org.squashtest.tm.domain.campaign.IterationTestPlanItem} which "lost" their TA script in the process and values are the corresponding {@link org.squashtest.tm.domain.testcase.TestCase}'s name.
 	 */
-	Map<String, Map<Long, String>> updateTAScriptForItems(List<Long> testPlanIds);
+	Map<Long, String> updateTAScriptForItems(List<Long> testPlanIds);
 
 }

@@ -107,28 +107,28 @@ public class AutomationModificationController {
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {ITERATION_ID}, produces = APPLICATION_JSON)
 	@ResponseBody
-	public Map<String, Map<Long, String>> resolveTAScriptAssociationForIteration(@RequestParam(ITERATION_ID) long iterationId) {
+	public Map<Long, String> resolveTAScriptAssociationForIteration(@RequestParam(ITERATION_ID) long iterationId) {
 
 		return automationRequestModificationService.updateTAScriptForIteration(iterationId);
 	}
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_SUITE_ID, "!testPlanItemsIds[]"}, produces = APPLICATION_JSON)
 	@ResponseBody
-	public Map<String, Map<Long, String>> resolveTAScriptAssociationForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
+	public Map<Long, String> resolveTAScriptAssociationForTestSuite(@RequestParam(TEST_SUITE_ID) long testSuiteId) {
 
 		return automationRequestModificationService.updateTAScriptForTestSuite(testSuiteId);
 	}
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, ITERATION_ID}, produces = APPLICATION_JSON)
 	@ResponseBody
-	public Map<String, Map<Long, String>> resolveTAScriptAssociationForIterationItems
+	public Map<Long, String> resolveTAScriptAssociationForIterationItems
 		(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
 		return automationRequestModificationService.updateTAScriptForItems(testPlanIds);
 	}
 
 	@RequestMapping(value = "/associate-TA-script", method = RequestMethod.POST, params = {TEST_PLAN_ITEMS_IDS, TEST_SUITE_ID}, produces = APPLICATION_JSON)
 	@ResponseBody
-	public Map<String, Map<Long, String>> resolveTAScriptAssociationForTestSuiteItems(
+	public Map<Long, String> resolveTAScriptAssociationForTestSuiteItems(
 		@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
 		return automationRequestModificationService.updateTAScriptForItems(testPlanIds);
 	}

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
@@ -70,6 +71,12 @@ public class AutomatedSuiteManagementController {
 	@ResponseBody
 	public AutomatedSuitePreview generateSuitePreview(@RequestBody AutomatedSuiteCreationSpecification specification){
 		return service.preview(specification);
+	}
+
+	@RequestMapping(value = "/automated-tpi-ids", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+	@ResponseBody
+	public List<Long> findTpiIdsWithAutomaticExecutionMode(@RequestBody EntityReference entityReference){
+		return service.findTpiIdsWithAutomaticExecutionMode(entityReference);
 	}
 
 	@RequestMapping(value = "/preview/test-list", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON, params = "auto-project-id")

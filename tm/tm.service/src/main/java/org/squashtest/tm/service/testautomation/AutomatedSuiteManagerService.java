@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.testautomation;
 
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -37,11 +38,18 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Finds a suite given its id.
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	AutomatedSuite findById(String id);
+
+	/**
+	 * Finds all automated test plan list item ids from an iteration or a test suite
+	 * @param entityReference an iteration or a test suite
+	 * @return an arrayList of automated test plan list item ids
+	 */
+	List<Long> findTpiIdsWithAutomaticExecutionMode(EntityReference entityReference);
 
 	/**
 	 * Given a specification about a desired automated suite, returns a summary of what it would
@@ -84,7 +92,7 @@ public interface AutomatedSuiteManagerService {
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */
@@ -93,7 +101,7 @@ public interface AutomatedSuiteManagerService {
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of a {@link TestSuite}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */
@@ -106,7 +114,7 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Given the id of an {@link AutomatedSuite}, returns its content as tests grouped by projects.
-	 * 
+	 *
 	 * @param autoSuiteId
 	 * @return
 	 */
@@ -114,7 +122,7 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Given an {@link AutomatedSuite}, returns its content as tests grouped by projects.
-	 * 
+	 *
 	 * @param suite
 	 * @return
 	 */
@@ -123,7 +131,7 @@ public interface AutomatedSuiteManagerService {
 	/**
 	 * Runs the given AutomatedSuite, equivalent to {@link #start(AutomatedSuite, Collection)} with
 	 * an empty configuration.
-	 * 
+	 *
 	 * @param suite
 	 */
 	void start(AutomatedSuite suite);
@@ -138,7 +146,7 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Runs an automatedSuite with the given configuration.
-	 * 
+	 *
 	 * @param suite
 	 * @param configuration
 	 */
@@ -147,7 +155,7 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Runs an automatedSuite given its ID with the given configuration.
-	 * 
+	 *
 	 * @param suite
 	 * @param configuration
 	 */
@@ -155,7 +163,7 @@ public interface AutomatedSuiteManagerService {
 
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.
-	 * 
+	 *
 	 * @param automatedTestSuiteId
 	 * @return
 	 */
@@ -165,7 +173,7 @@ public interface AutomatedSuiteManagerService {
 	/**
 	 * Creates a new AutomatedSuite based on a collection of {@link IterationTestPlanItem}, given their ID. Only automated tests will
 	 * be included. The automated executions are ordered according to the iteration's test plan.
-	 * 
+	 *
 	 * @param testPlanIds
 	 * @param iterationId
 	 * @return
@@ -176,7 +184,7 @@ public interface AutomatedSuiteManagerService {
 	/**
 	 * Creates a new AutomatedSuite based on a collection of {@link IterationTestPlanItem}, given their ID. Only automated tests will
 	 * be included. The automated executions are ordered according to the test suite's test plan.
-	 * 
+	 *
 	 * @param testPlanIds
 	 * @param testSuiteId
 	 * @return
