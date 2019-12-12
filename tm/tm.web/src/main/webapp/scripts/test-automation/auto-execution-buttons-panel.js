@@ -40,17 +40,13 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 	});
 
 	function executeAll() {
-		console.log("execute all automated tests");
-		var tpiIdsWithAutomaticExecutionMode = $(".test-plan-table").squashTable().fnGetData().filter(function(row){
-			return row['exec-mode'] === 'A';
-		}).map(function(row){
-			return row['entity-id'];
-		});
 		var unlaunchableTest;
 		updateTAScript().done(function(map){
 			// No arrow function in IE 11 ...
-			var launchableIds = tpiIdsWithAutomaticExecutionMode.filter(function(id){
-				return map[id] === undefined;
+			var launchableIds = findTpiIdsWithAutomaticExecutionMode().done(function(tpiIdsWithAutomaticExecutionMode) {
+				tpiIdsWithAutomaticExecutionMode.filter(function(id){
+					return map[id] === undefined;
+				});
 			});
 			if (launchableIds.length === 0){
 				$.squash.openMessage(messages.get("popup.title.error"), messages.get("dialog.execution.auto.overview.error.noneAfterScriptUpdate"));
@@ -143,6 +139,20 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 			dataType : "json",
 			data : data,
 			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+	}
+
+	function findTpiIdsWithAutomaticExecutionMode() {
+		var context = {
+			type : squashtm.page.identity.restype === "iterations" ? "ITERATION" : "TEST_SUITE",
+			id : squashtm.page.identity.resid
+		};
+		return $.ajax({
+			type: 'POST',
+			url: $("#auto-exec-btns-panel").data("suites-url") + "/automated-tpi-ids",
+			dataType: 'json',
+			data : JSON.stringify(context),
+			contentType : 'application/json'
 		});
 	}
 

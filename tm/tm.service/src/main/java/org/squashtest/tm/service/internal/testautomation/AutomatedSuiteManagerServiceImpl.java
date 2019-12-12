@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -47,6 +48,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.jooq.domain.tables.ItemTestPlanList;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -161,6 +163,19 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	public AutomatedSuite findById(String id) {
 		return autoSuiteDao.findById(id);
+	}
+
+	@Override
+	public List<Long> findTpiIdsWithAutomaticExecutionMode(EntityReference entityReference) {
+		if (EntityType.ITERATION.equals(entityReference.getType())) {
+			Iteration iteration = iterationDao.findById(entityReference.getId());
+			return doFindTpiIdsWithAutomaticExecutionMode(iteration.getTestPlans());
+		} else if (EntityType.TEST_SUITE.equals(entityReference.getType())) {
+			TestSuite suite = testSuiteDao.getOne(entityReference.getId());
+			return doFindTpiIdsWithAutomaticExecutionMode(suite.getTestPlan());
+		} else {
+			throw new IllegalArgumentException("An iteration or a test suite was expected");
+		}
 	}
 
 	@Override
@@ -498,6 +513,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	}
 
+	private List<Long> doFindTpiIdsWithAutomaticExecutionMode(List<IterationTestPlanItem> itpis) {
+		return itpis.stream()
+					.filter(IterationTestPlanItem::isAutomated)
+					.map(IterationTestPlanItem::getId)
+					.collect(Collectors.toList());
+	}
+
 
 	// ******************* execute suite private methods **************************
 
@@ -615,7 +637,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 			// rem : previous impl relied on a HashMap, which broke the tests on java 8. as I have no damn clue about
 			// the desired order, let's retort to keys natural order using a TreeMap
-			extendersByKind = new TreeMap();
+			extendersByKind = new TreeMap<>();
 
 			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()) {
 
