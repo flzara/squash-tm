@@ -1099,11 +1099,19 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	private void copyPlugins(GenericProject target, GenericProject source) {
+		PluginType pluginType;
 		for(String pluginId : source.getRequirementLibrary().getEnabledPlugins()) {
 			target.getRequirementLibrary().enablePlugin(pluginId);
 		}
 		for(String pluginId : source.getTestCaseLibrary().getEnabledPlugins()) {
 			target.getTestCaseLibrary().enablePlugin(pluginId);
+			LibraryPluginBinding lpb = source.getTestCaseLibrary().getPluginBinding(pluginId);
+			if(lpb!=null) {
+				pluginType = lpb.getPluginType();
+				if (pluginType != null) {
+					target.getTestCaseLibrary().getPluginBinding(pluginId).setPluginType(pluginType);
+				}
+			}
 		}
 		for(String pluginId : source.getCampaignLibrary().getEnabledPlugins()) {
 			target.getCampaignLibrary().enablePlugin(pluginId);
