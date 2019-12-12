@@ -59,10 +59,9 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 				unlaunchableTest = Object.keys(map).map(function(e) {
 					return map[e];
 				});
-				// TM-862
-				sendPreview([]).done(function(preview) {
-            openAutosuiteOverview(preview, unlaunchableTest);
-        });
+				sendPreview(launchableIds).done(function(preview) {
+					openAutosuiteOverview(preview, unlaunchableTest);
+				});
 			}
 		});
 	}
