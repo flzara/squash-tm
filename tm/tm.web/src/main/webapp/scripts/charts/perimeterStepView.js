@@ -96,7 +96,6 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 					});
 				}
 
-				var isModifyMode = this.model.get('chartDef');
 				var initialModel =  _.chain(projects)
 					.map(function(project) {
 						var checked = _.contains(self.model.get("projectsScope"),project.id);
@@ -104,7 +103,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 							id: project.id,
 							name: StringUtil.unescape(project.name),
 							label: project.label,
-							checked : isModifyMode ? checked : false
+							checked : checked
 						};
 					})
 					.sortBy("name")
