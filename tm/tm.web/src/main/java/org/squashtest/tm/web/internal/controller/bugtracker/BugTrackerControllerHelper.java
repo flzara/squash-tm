@@ -202,7 +202,8 @@ public final class BugTrackerControllerHelper {
 		for(ExecutionStep step : executionSteps) {
 			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
 
-			String scriptText = HTMLCleanupUtils.htmlToText(step.getAction());
+			String scriptTextWithCarriageReturns = step.getAction().replaceAll("</br>", "<br/>");
+			String scriptText = HTMLCleanupUtils.htmlToText(scriptTextWithCarriageReturns);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.script", null, locale));
 			builder.append(scriptText);
 			builder.append("\n\n\n");
