@@ -247,12 +247,12 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 				List<String> escapedValues = new ArrayList<>();
 				if(rawValues != null) {
 					for (String rawValue : rawValues) {
-						escapedValues.add(HtmlUtils.htmlEscape(rawValue));
+						escapedValues.add(HTMLCleanupUtils.cleanHtml(rawValue));
 					}
 				}
 				this.values = escapedValues;
 			} else {
-				this.value = HtmlUtils.htmlEscape(value.getValue());
+				this.value = HTMLCleanupUtils.cleanHtml(value.getValue());
 			}
 		}
 	}
