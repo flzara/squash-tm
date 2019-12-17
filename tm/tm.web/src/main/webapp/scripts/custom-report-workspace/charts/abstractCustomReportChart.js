@@ -166,11 +166,20 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 					case "REQUIREMENT_VERSION_STATUS":
 					case "REQUIREMENT_STATUS":
 						return this._getI18nLegends(legends, squashtm.app.requirementStatus);
+					case "EXECUTION_ISAUTO":
+						return this._stringifyBoolean(legends);
 					default:
 						return this.truncateLegends(legends);
 				}
 
 			},
+
+			//this method is to parse all elements in a Boolean array to an array of String elements
+			_stringifyBoolean: function (legends) {
+				return _.map(legends, function (legend) {
+					return legend.toString();
+				});
+			} ,
 
 			_getI18nLegends: function (legends, i18nLegends) {
 				return _.map(legends, function (legend) {
