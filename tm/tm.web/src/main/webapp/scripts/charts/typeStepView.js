@@ -384,10 +384,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 						case "EXECUTION_STATUS":
 
-							var execStatus = _(self.model.get("executionStatus"))
+							var execStatus= _.chain(self.model.get("executionStatus"))
 								.flatten();
-
 							values = self.translateEnum(values, execStatus);
+							if(columnLabel.equal("ITEM_TEST_PLAN_STATUS")){
+								values = translator.get("shortLabel."+values);
+							}
 
 							break;
 
@@ -399,13 +401,22 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 							break;
 
+						case "REQUIREMENT_STATUS":
+						values = translator.get("requirement.status."+values);
+
+							break;
+
+						case "BOOLEAN":
+							values = translator.get("chart.filter.value."+values);
+							break;
+
 
 						default :
 						//nothing to do
 
 					}
 
-					text = translator.get("chart.wizard.label.filter") + " " + operation + " " + translator.get("requirement.status."+values);
+					text = translator.get("chart.wizard.label.filter") + " " + operation + " "+values;
 
 				} else {
 					text = translator.get("chart.wizard.label.filter") + " " + translator.get("chart.wizard.label.filter.none");
