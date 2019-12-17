@@ -6025,6 +6025,17 @@ span.span-green {
   height: 16px;
   display: block;
 }
+
+.search-milestone-icon {
+	background-position: center left;
+	background-image: url("../images/search_milestone.png");
+	/** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color: transparent;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+	height: 16px;
+	display: block;
+}
 .search-icon-automation {
   background-position: center left;
   background-image: url("../images/icon-lib/smiley_cry.png");

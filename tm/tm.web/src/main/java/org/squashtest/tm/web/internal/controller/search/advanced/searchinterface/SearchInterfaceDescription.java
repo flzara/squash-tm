@@ -274,7 +274,7 @@ public abstract class SearchInterfaceDescription {
 		panel.setOpen(true);
 		panel.setId("milestone");
 		panel.setLocation("column1");
-		panel.addCssClass("search-icon-attributes");
+		panel.addCssClass("search-milestone-icon");
 
 		OptionBuilder optionBuilder = optionBuilder(locale);
 
