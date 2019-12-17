@@ -65,6 +65,12 @@ public final class PathUtils {
 	/** the last element is the entity name */
 	private static final Pattern GENERIC_NAME_PATTERN = Pattern.compile(".*[^\\\\]\\/(.*)$");
 
+	/**
+	 * A Slash with its surrounding trailing spaces.
+	 * Note: If the slash is preceded by a backslash, then it is part of the name and has not to be cleaned.
+	 */
+	private static final String REGEX_SLASH_WITH_TRAILING_SPACES = " *(?<!\\\\)/ *";
+
 
 	private PathUtils() {
 		super();
@@ -76,6 +82,15 @@ public final class PathUtils {
 
 	public static String cleanMultipleSlashes(String path) {
 		return path.replaceAll(CORRECT_MUTLTIPLE_SLASHE, "/");
+	}
+
+	/**
+	 * Removes trailing spaces around the slashes in the given String and returns the result String.
+	 * @param path The String representing the path to clean.
+	 * @return The given path whose trailing spaces surrounding slashes were removed.
+	 */
+	public static String removeTrailingSpacesSurroundingSlashes(String path) {
+		return path.replaceAll(REGEX_SLASH_WITH_TRAILING_SPACES, "/");
 	}
 
 	/**
