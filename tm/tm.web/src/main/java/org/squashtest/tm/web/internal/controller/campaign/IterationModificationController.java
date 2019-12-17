@@ -256,6 +256,29 @@ public class IterationModificationController {
 		return jsonUsers;
 	}
 
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	public ModelAndView refreshStats(@PathVariable long iterationId) {
+		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
+
+		TestPlanStatistics iterationStatistics = iterationModService.findIterationStatistics(iterationId);
+		mav.addObject("statisticsEntity", iterationStatistics);
+
+		Iteration iteration = iterationModService.findById(iterationId);
+		mav.addObject(
+			"allowsSettled",
+			iteration
+				.getProject()
+				.getCampaignLibrary()
+				.allowsStatus(ExecutionStatus.SETTLED));
+		mav.addObject(
+			"allowsUntestable",
+			iteration
+				.getProject()
+				.getCampaignLibrary()
+				.allowsStatus(ExecutionStatus.UNTESTABLE));
+		return mav;
+	}
+
 	//URL should have been /statistics, but that was already used by another method in this controller
 	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
