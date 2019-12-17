@@ -77,8 +77,10 @@ public class TestCaseTarget implements Target, WithPath {
 	private void setPathPrivately(String pathParam) {
 		//Issue 5480.
 		//We must trim the path to avoid nasty null pointer exception
-		String sanitizedPath = pathParam.trim();
-		this.path = PathUtils.cleanMultipleSlashes(sanitizedPath);
+		String trimmedPath = pathParam.trim();
+		String cleanedPath = PathUtils.cleanMultipleSlashes(trimmedPath);
+		// [TM-784] Removing trailing spaces surrounding slashes
+		this.path = PathUtils.removeTrailingSpacesSurroundingSlashes(cleanedPath);
 	}
 
 	public Integer getOrder() {
