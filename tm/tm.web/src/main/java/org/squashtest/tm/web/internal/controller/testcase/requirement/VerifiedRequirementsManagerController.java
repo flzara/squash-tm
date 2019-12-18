@@ -138,7 +138,7 @@ public class VerifiedRequirementsManagerController {
 		.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
 		.mapAttribute("criticality", "criticality", RequirementVersion.class)
 		.mapAttribute("category", "category", RequirementVersion.class)
-		.map("milestone", "label");
+		.map("milestone-dates", "endDate");
 
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
