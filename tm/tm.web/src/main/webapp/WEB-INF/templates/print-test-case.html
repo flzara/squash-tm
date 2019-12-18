@@ -341,7 +341,7 @@
 						<th th:text="#{requirement-version.version-number.label}">Version</th>
 						<th th:text="#{requirement.criticality.label}">Criticality</th>
 						<th th:text="#{requirement.category.label}">Category</th>
-						<th th:text="#{label.test-step.short}">Step</th>
+            <th th:text="#{label.test-step.short}" th:if="${!testCase.isScripted()}">Step</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -359,7 +359,7 @@
 						<td th:text="${(catLabel != null) ? catLabel : verifReq.category.label}">cat</td>
 						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :
 										#sets.size(verifReq.verifyingSteps) > 1  ? '*' :
-										verifReq.verifyingSteps[0].index + 1}">0</td>
+										verifReq.verifyingSteps[0].index + 1}"  th:if="${!testCase.isScripted()}">0</td>
 					</tr>
 				</tbody>
 			</table>
