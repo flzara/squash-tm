@@ -26,7 +26,9 @@ define(["jquery", "jqueryui"], function($){
 			return this.substring(position, searchString.length) === searchString;
 		};
 	}
-
+	function startsWith(str, word) {
+				return str.lastIndexOf(word, 0) === 0;
+	}
 	var searchwidget = $.widget("search.searchMultiSelectWidget", {
 		options : {},
 
@@ -39,7 +41,7 @@ define(["jquery", "jqueryui"], function($){
 				var text = $(this.element.children()[0]).val();
 				var id = $(this.element).attr("id");
 				var max = $(this.element.children()[0]).find("option").length;
-				if (text && text.length === max && !id.startsWith("milestone")){
+				if (text && text.length === max && !startsWith(id, "milestone")){
 					text = [];
 				}
 				return {"type" : "LIST", "values" : text};
