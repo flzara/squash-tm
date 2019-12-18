@@ -118,7 +118,7 @@ public class AttachmentController {
 			// file type checking
 			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
-				summary.add(new UploadSummary(HtmlUtils.htmlEscape(upload.getName()), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
+				summary.add(new UploadSummary(upload.getName(), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
 					UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
 				attachmentManagerService.addAttachment(attachListId, upload);
