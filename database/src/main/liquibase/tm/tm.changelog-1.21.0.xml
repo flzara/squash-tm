@@ -158,7 +158,7 @@
     </addColumn>
 
   </changeSet>
-  
+
   <changeSet id="tm-1.21.0-TM-713-add-axis_and_measure-to-execution_is_auto" author="abo">
 
     <sql>
@@ -531,6 +531,14 @@
     </sql>
 
     <addUniqueConstraint tableName="EXECUTION_EXECUTION_STEPS" columnNames="EXECUTION_ID, EXECUTION_STEP_ORDER" />
+  </changeSet>
+
+  <changeSet id="tm-1.21.0-TM-996-modify-entity-reference-id-type" author="jprioux">
+
+    <comment>Modify ENTITY_REFERENCE_ID data type in CHART_SCOPE</comment>
+
+    <modifyDataType tableName="CHART_SCOPE" columnName="ENTITY_REFERENCE_ID" newDataType="BIGINT"/>
+
   </changeSet>
 
 
