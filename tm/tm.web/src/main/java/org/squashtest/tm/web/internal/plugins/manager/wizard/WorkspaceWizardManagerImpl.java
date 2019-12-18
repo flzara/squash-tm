@@ -172,8 +172,14 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	@Override
 	public Boolean isHasConfiguration(WorkspaceWizard plugin, long projectId) {
-		Map<String,String> pluginConfiguration =  projectManager.getPluginConfiguration(projectId, plugin.getDisplayWorkspace(), plugin.getId());
-		return pluginConfiguration.size()!=0;
+		WorkspaceType workspaceType;
+		if("squash.tm.plugin.jirasync".equals(plugin.getId())){
+			workspaceType = WorkspaceType.REQUIREMENT_WORKSPACE;
+		}else workspaceType = plugin.getDisplayWorkspace();
+
+		Map<String,String> pluginConfiguration =  projectManager.getPluginConfiguration(projectId, workspaceType, plugin.getId());
+		boolean hasRemoteSynchro = projectManager.hasProjectRemoteSynchronisation(projectId);
+		return pluginConfiguration.size()!=0 || hasRemoteSynchro;
 	}
 
 // ******************************** private stuffs *************************
