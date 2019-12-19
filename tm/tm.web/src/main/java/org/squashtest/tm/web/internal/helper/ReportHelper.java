@@ -200,17 +200,15 @@ public class ReportHelper {
 	private void getAttributesFromChexBoxesGroup(Map<String, List<String>> attributes, Input input, Map<String, Criteria> criteriaMap ) {
 		CheckboxesGroup checkboxesGroup = (CheckboxesGroup) input;
 		MultiOptionsCriteria moCrit = (MultiOptionsCriteria) criteriaMap.get(checkboxesGroup.getName());
-		List<String> targets = new ArrayList<>();
 		checkboxesGroup.getOptions().forEach(optionInput ->
 			moCrit.getSelectedOptions().forEach(selectedOption -> {
 				if (optionInput.getValue().equalsIgnoreCase(selectedOption.toString())) {
-					if (attributes.get(checkboxesGroup.getLabel()) == null) {
-						attributes.put(checkboxesGroup.getLabel(), Arrays.asList(optionInput.getLabel()));
-					} else {
-						targets.addAll(attributes.get(checkboxesGroup.getLabel()));
-						targets.add(optionInput.getLabel());
-						attributes.put(checkboxesGroup.getLabel(), targets);
+					List<String> checkedAttributes = attributes.get(checkboxesGroup.getLabel());
+					if (checkedAttributes == null) {
+						checkedAttributes = new ArrayList<>();
+						attributes.put(checkboxesGroup.getLabel(), checkedAttributes);
 					}
+					checkedAttributes.add(optionInput.getLabel());
 				}
 			})
 		);
@@ -238,7 +236,7 @@ public class ReportHelper {
 		}
 	}
 
-		private void getAttributesFromOptionInput(Map<String, List<String>> attributes, OptionInput optionInput, Map<String, Criteria> criteriaMap) {
+	private void getAttributesFromOptionInput(Map<String, List<String>> attributes, OptionInput optionInput, Map<String, Criteria> criteriaMap) {
 		List<String> options = new ArrayList<>();
 		if (optionInput instanceof ContainerOption) {
 			ContainerOption containerOption = (ContainerOption) optionInput;
