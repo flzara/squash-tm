@@ -954,6 +954,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName) {
 			return bindAutomatedTest(testCaseId, taProjectId, testName);
 	}

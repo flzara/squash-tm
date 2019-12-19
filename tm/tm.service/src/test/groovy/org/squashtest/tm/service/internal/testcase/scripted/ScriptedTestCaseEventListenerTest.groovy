@@ -126,7 +126,7 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 		listener.autoBindWithScm(scm, [testCase])
 
 		then :
-		1 * tcService.bindAutomatedTest(123L, 10L, "123_ghertest.feature")
+		1 * tcService.bindAutomatedTestAutomatically(123L, 10L, "123_ghertest.feature")
 
 	}
 

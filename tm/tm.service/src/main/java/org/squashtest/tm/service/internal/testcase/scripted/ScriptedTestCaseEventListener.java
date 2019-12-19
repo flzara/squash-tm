@@ -348,7 +348,7 @@ public class ScriptedTestCaseEventListener {
 						LOGGER.trace("autobinding test case [{}:{}] to script file '{}'", tc.getId(), tc.getName(),  normalizedName);
 					}
 
-					tcService.bindAutomatedTest(tc.getId(), gherkinProject.getId(), normalizedName);
+					tcService.bindAutomatedTestAutomatically(tc.getId(), gherkinProject.getId(), normalizedName);
 
 				}
 				else{
