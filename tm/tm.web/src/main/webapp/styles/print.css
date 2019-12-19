@@ -6038,7 +6038,7 @@ span.span-green {
 }
 .search-icon-automation {
   background-position: center left;
-  background-image: url("../images/icon-lib/smiley_cry.png");
+  background-image: url("../images/search_automation.png");
   /** sprite-ref: sprites-icons; sprite-alignment: left; */
   background-color: transparent;
   background-repeat: no-repeat;

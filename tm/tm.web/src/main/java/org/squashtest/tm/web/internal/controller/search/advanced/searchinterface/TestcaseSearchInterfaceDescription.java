@@ -278,6 +278,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setOpen(true);
 		panel.setId("automation");
 		panel.setLocation(COLUMN_1);
+		panel.addCssClass("search-icon-automation");
 
 		SearchInputFieldModel automationField = new SearchInputFieldModel("automatable", getMessageSource()
 			.internationalize("test-case.automation-indicator.label", locale), MULTISELECT);
