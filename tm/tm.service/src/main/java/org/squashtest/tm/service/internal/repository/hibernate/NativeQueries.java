@@ -185,8 +185,8 @@ public final class NativeQueries {
 	/******************************LIBRARY_PLUGIN_PINDING********************************************/
 
 	public static final String  DELETE_LIBRARY_PLUGING_PINDING_PROPERTY= "delete from LIBRARY_PLUGIN_BINDING_PROPERTY where PLUGIN_BINDING_ID = :libraryPluginBindingId";
-	public static final String COUNT_ACTIVE_PLUGIN_IN_PROJECT = "Select count(*) from Library_Plugin_Binding lpb INNER JOIN Library_Plugin_Binding_PROPERTY as lpbp ON lpb.plugin_binding_id = lpbp.plugin_binding_id " +
-																" where Library_id = :projectId and active = true";
+	public static final String COUNT_ACTIVE_PLUGIN_IN_PROJECT = "Select count(*) from LIBRARY_PLUGIN_BINDING lpb INNER JOIN LIBRARY_PLUGIN_BINDING_PROPERTY as lpbp ON lpb.plugin_binding_id = lpbp.plugin_binding_id " +
+																" where library_id = :projectId and active = true";
 
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
