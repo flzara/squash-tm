@@ -131,11 +131,17 @@ publish("reload.oer.panelsready");
 				<td class="centered">
 					<input type="button" id="open-address-dialog-button" class="sq-btn" value="${gotoTitle}"/>
 					<span class="step-paging"></span>
-					<button class="sq-btn ui-button execute-previous-step" title="${prevTitle}" >
+
+					<button class="sq-btn ui-button execute-previous-step" title="${previousTitle}" >
+
                       <span class="ui-icon ui-icon-triangle-1-w"></span>
+
                     </button>
+
 					<button class="sq-btn ui-button execute-next-step" title="${nextTitle}">
+
                       <span class="ui-icon ui-icon-triangle-1-e"></span>
+
                     </button>
 				</td>
 				<td class="centered not-displayed execute-next-test-case-panel">
