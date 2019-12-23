@@ -75,7 +75,7 @@ class RequirementExcelExporterIT extends DbunitServiceSpecification{
 		
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>([-11,-21,-31,-41]).collect{it as Long});
 		when :
-		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds, false);
 		exporter.appendToWorkbook(exportModel, true);
 		then :
 	

@@ -295,7 +295,10 @@ public class ExportDao {
 	}*/
 
 	private Map<Long, Long> findIdRequirementAndNumCurrentVersionNotObsolete(List<Long> versionIds) {
-		Map<Long, Long> mapIdRequirementNumVersion ;
+		Map<Long, Long> mapIdRequirementNumVersion = null;
+		if(versionIds.size()==0){
+			return mapIdRequirementNumVersion;			
+		}
 		javax.persistence.Query query = em.createNativeQuery(FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE);
 		query.setParameter("versionIds", versionIds);
 
