@@ -265,7 +265,7 @@
       <div id="execute-evaluation-leftside">
         <c:if test="${editable}">
           <c:set var="descrRicheditAttributes"
-                 value="class='editable rich-editable' data-def='url=${executeComment}'"/>
+                 value="class='editable rich-editable' load-links-right-frame data-def='url=${executeComment}'"/>
         </c:if>
         <comp:toggle-panel id="execution-comment-panel"
                            titleKey="execute.panel.comment.title"
