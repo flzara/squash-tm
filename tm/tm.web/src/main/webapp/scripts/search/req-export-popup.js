@@ -76,16 +76,25 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(nodes){
+			var marshalledSearchModel = self.$("#searchModel").text();
+			var searchModel = {};
+
+			if (marshalledSearchModel) {
+				searchModel = JSON.parse(marshalledSearchModel).fields;
+			}
+
 			var url = window.squashtm.app.contextRoot + 'requirement-browser/searchExports';
 			var filename = this.$el.find("#export-name-input").val();
 			var keepRte = this.$el.find("#export-keepRteFormat").prop('checked');
 			var type = this.$el.find('input[name="format"]:checked').data('val');
+			var isCurrentVersion = !(searchModel["isCurrentVersion"] === undefined);
 
 			var params = {
 				'filename' : filename,
 				'nodes' : nodes.join(),
 				'keep-rte-format' : keepRte,
-				'type' : type
+				'type' : type,
+				'isCurrentVersion' : isCurrentVersion
 
 			};
 

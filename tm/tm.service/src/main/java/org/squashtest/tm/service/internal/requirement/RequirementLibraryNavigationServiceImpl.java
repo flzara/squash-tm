@@ -663,7 +663,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public File exportRequirementAsExcel(List<Long> libraryIds,
 	                                     List<Long> nodeIds, boolean keepRteFormat,
-	                                     MessageSource messageSource) {
+	                                     MessageSource messageSource,Boolean isCurrentVersion) {
 		//1. Check permissions for all librairies and all nodes selecteds
 		PermissionsUtils.checkPermission(permissionService, libraryIds, EXPORT, RequirementLibrary.class.getName());
 		PermissionsUtils.checkPermission(permissionService, nodeIds, EXPORT, RequirementLibraryNode.class.getName());
@@ -676,7 +676,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<>(reqIds));
 
 		//4. Get exportModel from database
-		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds,isCurrentVersion);
 
 		//5. Instantiate a fresh exporter, append model to excel file and return
 		RequirementExcelExporter exporter = exporterProvider.get();
@@ -686,25 +686,24 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	public File searchExportRequirementAsExcel(List<Long> nodeIds,
-	                                           boolean keepRteFormat, MessageSource messageSource, String type) {
+	                                           boolean keepRteFormat, MessageSource messageSource, String type, Boolean isCurrentVersion) {
 
 		PermissionsUtils.checkPermission(permissionService, nodeIds, EXPORT, RequirementLibraryNode.class.getName());
 
 		Set<Long> reqIds = new HashSet<>();
 		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
-
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<>(reqIds));
-		RequirementExportModel exportModel = new RequirementExportModel();
+		RequirementExportModel exportModel;
 		File file;
 		if(type.equals(SIMPLE)){
-			exportModel =exportDao.findAllSearchRequirementModel(reqVersionIds);
+			exportModel =exportDao.populateRequirementExportModel(reqVersionIds,isCurrentVersion);
 			SearchSimpleRequirementExcelExporter exporter = searchSimpleExporterProvider.get();
 			exporter.getMessageSource(messageSource);
 			exporter.appendToWorkbook(exportModel, keepRteFormat);
 			file =  exporter.print();
 
 		}else {
-			exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+			exportModel = exportDao.findAllRequirementModel(reqVersionIds, isCurrentVersion);
 			SearchRequirementExcelExporter exporter = searchExporterProvider.get();
 			exporter.appendToWorkbook(exportModel, keepRteFormat);
 			file =  exporter.print();

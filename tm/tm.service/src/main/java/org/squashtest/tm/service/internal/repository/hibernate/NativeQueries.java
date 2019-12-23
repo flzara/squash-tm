@@ -218,6 +218,7 @@ public final class NativeQueries {
 
 	public static final String REQUIREMENT_SQL_REMOVE_TEST_STEP_BY_COVERAGE_ID = "delete from VERIFYING_STEPS where requirement_version_coverage_id = :covId";
 
+	public static final String FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE ="Select  requirement_id, max(version_number) from REQUIREMENT_VERSION where requirement_status!= 'OBSOLETE' AND res_id in (:versionIds) GROUP BY requirement_id";
 	/* ********************************************* tree path queries ********************************************************************* */
 	private static final String CLN_FIND_SORTED_PARENTS = " from CAMPAIGN_LIBRARY_NODE cln "+
 			"inner join CLN_RELATIONSHIP_CLOSURE clos "+

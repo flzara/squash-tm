@@ -177,7 +177,18 @@
 			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cf.id,cfv.id"),
 
-	 @NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
+	@NamedQuery(name= "requirement.findAllRequirementIdsFromMilestones", query= "Select Distinct req.id From Requirement req Join req.versions reqVer Join reqVer.milestones milestones Where milestones.id in (:milestoneIds)"),
+
+	@NamedQuery(name = "requirement.findCurrentVersionsModels", query = "select rv.id,r.id,p.id,p.name,rv.versionNumber,rv.reference,rv.name,rv.criticality,listItem.code,rv.status,rv.description "
+							+ ",(select count(distinct coverages) from RequirementVersion rv2 join rv2.requirementVersionCoverages coverages where rv2.id=rv.id) "
+							+ ",(select count(distinct requirementVersion) from RequirementVersion requirementVersion join requirementVersion.requirement req where req.id=rv.requirement.id) "
+							+ ",(select count(distinct attachments) from RequirementVersion rv3 join rv3.attachmentList attachmentList left join attachmentList.attachments attachments where rv3.id=rv.id) "
+							+ ",rv.audit.createdOn, rv.audit.createdBy, rv.audit.lastModifiedOn, rv.audit.lastModifiedBy "
+							+ ",(select group_concat(milestones.label, 'order by', milestones, 'asc', '|') from RequirementVersion rv4 join rv4.milestones milestones where rv4.id=rv.id) "
+							+ " from RequirementVersion rv "
+							+ " join rv.requirement r join r.project p join rv.category listItem "
+							+ " where rv.id in (:versionIds) "),
+
 	// Synchronized requirements
 	@NamedQuery(name = "RequirementSyncExtender.retrieveByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement req where sync.remoteReqId = :id and req.project.id = :pId"),
 	@NamedQuery(name = "RequirementSyncExtender.retrieveByRemoteKeyAndSyncId", query = "select sync from RequirementSyncExtender sync join fetch sync.remoteSynchronisation remoteSynchronisation where sync.remoteReqId = :id and remoteSynchronisation.id = :remoteSynchronisationId"),

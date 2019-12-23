@@ -138,6 +138,9 @@ public class RequirementExportModel {
 		private String milestonesLabels;
 		private List<CustomField> cufs = new LinkedList<>();
 
+		public RequirementModel() {
+		}
+
 		// That monster constructor will be used by Hibernate in a hql query.
 		// Note that attributes not present in the hql request mustn't be in this constructor
 		// as Hibernate use index to map the result set to this object attribute.

@@ -256,12 +256,12 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/exports", method = RequestMethod.GET)
 	public FileSystemResource exportRequirementExcel(@RequestParam(FILENAME) String filename,
 													 @RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
-													 @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response) {
+													 @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,@RequestParam(RequestParams.IS_CURRENT_VERSION) Boolean isCurrentVersion, HttpServletResponse response) {
 
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		File export = requirementLibraryNavigationService.exportRequirementAsExcel(libraryIds, nodeIds, keepRteFormat, getMessageSource());
+		File export = requirementLibraryNavigationService.exportRequirementAsExcel(libraryIds, nodeIds, keepRteFormat, getMessageSource(), isCurrentVersion);
 
 		return new FileSystemResource(export);
 	}
@@ -269,11 +269,11 @@ public class RequirementLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/searchExports", method = RequestMethod.GET)
 	public FileSystemResource searchExportRequirementExcel(@RequestParam(FILENAME) String filename,
-														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @RequestParam(RequestParams.TYPE) String type, HttpServletResponse response) {
+														   @RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @RequestParam(RequestParams.TYPE) String type, @RequestParam(RequestParams.IS_CURRENT_VERSION) Boolean isCurrentVersion, HttpServletResponse response) {
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel(nodeIds, keepRteFormat, getMessageSource(), type);
+		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel(nodeIds, keepRteFormat, getMessageSource(), type, isCurrentVersion);
 
 		return new FileSystemResource(export);
 	}

@@ -25,6 +25,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
@@ -40,14 +41,19 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
+import static org.squashtest.tm.service.internal.repository.hibernate.NativeQueries.FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE;
+
 
 @Repository
 public class ExportDao {
@@ -66,34 +72,50 @@ public class ExportDao {
 		super();
 	}
 
+	public RequirementExportModel findAllRequirementModel(List<Long> versionIds,  Boolean isCurrentVersion) {
 
-	public RequirementExportModel findAllRequirementModel(List<Long> versionIds) {
+		RequirementExportModel model;
+		model = populateRequirementExportModel(versionIds, isCurrentVersion);
 
-		RequirementExportModel model = new RequirementExportModel();
-
-		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
 		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);
+
 		List<RequirementLinkModel> linkModels = findRequirementLinksModel(versionIds);
 
 		setPathForCoverage(coverageModels);
 
 		model.setCoverages(coverageModels);
-		model.setRequirementsModels(requirementsModel);
+
 		model.setReqLinks(linkModels);
 
 		return model;
 	}
 
-	public RequirementExportModel findAllSearchRequirementModel(List<Long> versionIds) {
+	public RequirementExportModel populateRequirementExportModel (List<Long> versionIds, Boolean isCurrentVersion) {
 
 		RequirementExportModel model = new RequirementExportModel();
 
-		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
+		Map<Long, Long> mapRequirementNumVersion;
+		List<RequirementModel> tmpRequirementsModel;
+		List<RequirementModel> requirementsModel = new ArrayList<>() ;
+		if(isCurrentVersion){
+			mapRequirementNumVersion =  findIdRequirementAndNumCurrentVersionNotObsolete(versionIds);
+
+			tmpRequirementsModel = findRequirementModelForCurrentVersion(versionIds );
+			for (RequirementModel reqModel :  tmpRequirementsModel) {
+				for (Long idRequirement : mapRequirementNumVersion.keySet()) {
+					if (idRequirement.equals(reqModel.getRequirementId()) && mapRequirementNumVersion.get(idRequirement) == (reqModel.getRequirementVersionNumber())) {
+						requirementsModel.add(reqModel);
+					}
+				}
+			}
+		}else  requirementsModel = findRequirementModel(versionIds);
 
 		model.setRequirementsModels(requirementsModel);
 
 		return model;
 	}
+
+
 
 
 	public ExportModel findModel(List<Long> tclnIds) {
@@ -260,6 +282,31 @@ public class ExportDao {
 		getOtherProperties(requirementModels);
 		return requirementModels;
 	}
+	private List<RequirementModel> findRequirementModelForCurrentVersion(List<Long> versionIds) {
+		List<RequirementModel> requirementModels = loadModels("requirement.findCurrentVersionsModels", versionIds, VERSION_IDS,
+			RequirementModel.class);
+		getOtherProperties(requirementModels);
+		return requirementModels;
+	}
+	/*private List<Couple> findIdRequirementAndNumCurrentVersionNotObsolete(List<Long> versionIds) {
+		List<Couple> listIdRequirementNumVersion = loadModels("requirement.findIdRequirementAndNumCurrentVersionNotObsolete", versionIds, VERSION_IDS,
+			Couple.class);
+		return listIdRequirementNumVersion;
+	}*/
+
+	private Map<Long, Long> findIdRequirementAndNumCurrentVersionNotObsolete(List<Long> versionIds) {
+		Map<Long, Long> mapIdRequirementNumVersion ;
+		javax.persistence.Query query = em.createNativeQuery(FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE);
+		query.setParameter("versionIds", versionIds);
+
+		List<Object[]> pairIdOffset = query.getResultList();
+		mapIdRequirementNumVersion = buildMapOfOffsetAndIds(pairIdOffset);
+		return mapIdRequirementNumVersion;
+	}
+
+
+
+
 
 	private void getOtherProperties(List<RequirementModel> requirementModels) {
 		for (RequirementModel requirementModel : requirementModels) {
@@ -385,6 +432,15 @@ public class ExportDao {
 		q.setParameterList(paramName, ids, LongType.INSTANCE);
 		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
 		return q.list();
+	}
+
+	private Map<Long, Long> buildMapOfOffsetAndIds(List<Object[]> list) {
+		Map<Long, Long> result = new HashMap<>();
+
+		for (Object[] pair : list) {
+			result.put(((BigInteger) pair[0]).longValue(),((Integer) pair[1]).longValue());
+		}
+		return result;
 	}
 
 

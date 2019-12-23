@@ -65,6 +65,7 @@ public final class RequestParams {
 	public static final String NODE_IDS = "nodeIds";
 	public static final String CAMPAIGN_ID = "campaignId";
 	public static final String EXECUTION_ID = "executionId";
+	public static final String IS_CURRENT_VERSION = "isCurrentVersion";
 
 
 	private RequestParams() {
