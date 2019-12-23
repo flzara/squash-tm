@@ -193,7 +193,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
 
 					//get current requirement label
-					var reqVersionLabel = table.getDataById(ids)['requirement-label'];
+					var reqVersionLabel = getRequirementLabelArrayByItsId(table, ids);
 
 					//create Popup dialog with label values with Handlebars for Thymeleaf
 					var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
