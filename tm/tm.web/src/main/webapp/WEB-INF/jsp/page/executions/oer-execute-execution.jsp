@@ -260,23 +260,28 @@
 		</comp:toggle-panel>
     </c:if>
 
-		<div id="execute-evaluation">
+    <div id="execute-evaluation">
 
-			<div id="execute-evaluation-leftside">
+      <div id="execute-evaluation-leftside">
+        <c:if test="${editable}">
+          <c:set var="descrRicheditAttributes"
+                 value="class='editable rich-editable' data-def='url=${executeComment}'"/>
+        </c:if>
+        <comp:toggle-panel id="execution-comment-panel"
+                           titleKey="execute.panel.comment.title"
+                           open="true">
+							<jsp:attribute name="body">
+								<div id="execution-comment" ${descrRicheditAttributes}>${hu:clean(executionStep.comment)}</div>
+							</jsp:attribute>
+        </comp:toggle-panel>
+      </div>
 
-				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title"  open="true">
-					<jsp:attribute name="body">
-						<div id="execution-comment"  class="editable rich-editable load-links-right-frame"
-                        data-def="url=${executeComment}">
-                          ${hu:clean(executionStep.comment)}
-                        </div>
-					</jsp:attribute>
-				</comp:toggle-panel>
-			</div>
-			<div style="clear:both;visibility:hidden"></div>
-		</div>
-
-
+      <div id="execute-evaluation-rightside">
+        <comp:step-information-panel auditableEntity="${executionStep}" entityUrl="${executeInfos}"/>
+      </div>
+      <div style="clear: both; visibility: hidden"></div>
+    </div>
+    
 		<%------------------------------ Attachments bloc ---------------------------------------------%>
 
 		<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />
