@@ -96,13 +96,22 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 
 		// Fetch all the Entities involved in the Campaign which cuf were requested
 		Set<EntityReference> allRequestedEntitiesInCampaign = getEntityReferencesFromCampaign(scopeEntity, entityTypeToCufIdsListMap.keySet());
+
+		Iterator<Record> standardCufQueryResult;
+
 		if(allRequestedEntitiesInCampaign.isEmpty()) {
 			return null;
 		}
-		// Build Standard Cuf Query
-		SelectOrderByStep query = buildStandardCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
-		// Execute the Standard Cuf Query
-		Iterator<Record> standardCufqueryResult = query.fetch().iterator();
+
+		if(entityTypeToCufIdsListMap.keySet().size() == 1 && entityTypeToCufIdsListMap.keySet().contains(EntityType.TEST_STEP)) {
+			// If only TEST_STEP cufs were requested, no need to query the Standard Cufs
+			standardCufQueryResult = Collections.emptyIterator();
+		} else {
+			// Build Standard Cuf Query
+			SelectOrderByStep query = buildStandardCufQuery(entityTypeToCufIdsListMap, allRequestedEntitiesInCampaign);
+			// Execute the Standard Cuf Query
+			standardCufQueryResult = query.fetch().iterator();
+		}
 
 		Iterator<Record> denormalizedCufQueryResult;
 
@@ -117,7 +126,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		}
 
 		// Build the resulting map
-		return buildResultMapFromQueryResult(standardCufqueryResult, denormalizedCufQueryResult);
+		return buildResultMapFromQueryResult(standardCufQueryResult, denormalizedCufQueryResult);
 	}
 
 	/**
