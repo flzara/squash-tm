@@ -214,6 +214,7 @@ define(
 
 				}
 				function disablePluginWithConf(url, checked, btn, data){
+						$("#saveConf").prop("checked", true);
 						var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
 						disabledPluginPopup.on("formdialogconfirm", function() {
