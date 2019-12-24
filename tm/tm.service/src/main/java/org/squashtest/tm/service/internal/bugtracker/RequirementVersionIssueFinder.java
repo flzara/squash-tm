@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+import org.squashtest.tm.api.widget.InternationalizedMenuItem;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -43,6 +47,8 @@ import java.util.stream.Collectors;
 @Component
 class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedMenuItem.class);
+
 	@Inject
 	private IssueDao issueDao;
 	@Inject
@@ -54,7 +60,7 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 	public PagedCollectionHolder<List<RequirementVersionIssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, String panelSource, PagingAndSorting sorter) {
 
 		RequirementVersion currentReqVer = requirementVersionManagerService.findById(entityId);
-
+		IssueOwnership<RemoteIssueDecorator> issueOwnership;
 		List<RequirementVersion> versions = new ArrayList<>();
 		List<RequirementVersionIssueOwnership<RemoteIssueDecorator>> requirementVersionIssueOwnerships = new ArrayList<>();
 
@@ -78,8 +84,16 @@ class RequirementVersionIssueFinder extends TestCaseIssueFinder {
 
 		for (RequirementIssueSupport support : executionIssuePairsByRequirementVersions) {
 			Pair<Execution, Issue> pair = new Pair<>(support.getExecution(), support.getIssue());
-			IssueOwnership<RemoteIssueDecorator> issueOwnership = findRemoteIssues(Arrays.asList(pair)).get(0);
-			requirementVersionIssueOwnerships.add(new RequirementVersionIssueOwnership<>(issueOwnership.getIssue(), issueOwnership.getOwner(), support.getRequirementVersion()));
+			try{
+				issueOwnership = findRemoteIssues(Arrays.asList(pair)).get(0);
+			}catch(BugTrackerRemoteException e){
+				LOGGER.debug("Cannot authenticate because no valid credentials were found for authentication on the remote server.");
+				issueOwnership = null;
+			}
+			if(issueOwnership != null){
+				requirementVersionIssueOwnerships.add(new RequirementVersionIssueOwnership<>(issueOwnership.getIssue(), issueOwnership.getOwner(), support.getRequirementVersion()));
+			}
+
 		}
 
 		long nbIssues = versions.stream().mapToLong(rv -> countIssues(rv)).sum();
