@@ -58,25 +58,26 @@ define(['jquery', 'tree',
 		_createName : function(){
 			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
-		
+
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(nodes, name, keepRteFormat){
 			var url = squashtm.app.contextRoot + 'requirement-browser/exports';
-			
+
 			var libIds = nodes.filter(':library').map(function(){
 				return $(this).attr('resid');
 			}).get().join(',');
 			var nodeIds = nodes.not(':library').map(function(){
 				return $(this).attr('resid');
 			}).get().join(',');
-			
+
 			var params = {
 				'filename' : $('#export-name-input').val(),
 				'libraries' : libIds,
 				'nodes' : nodeIds,
-				'keep-rte-format' : keepRteFormat
+				'keep-rte-format' : keepRteFormat,
+				'isCurrentVersion' : false
 			};
-			
+
 			return url+"?"+$.param(params);
 
 		},
