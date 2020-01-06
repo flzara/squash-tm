@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -193,6 +194,13 @@ public class RequirementVersionModificationController {
 	public String showRequirementVersionInfos(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "page/requirement-workspace/show-requirement-version";
+	}
+
+	@ResponseBody
+	@GetMapping(value="/name",  produces = "text/plain")
+	public String getRequirementVersionFullName(@PathVariable long requirementVersionId){
+		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
+		return version.getName();
 	}
 
 	@ResponseBody
