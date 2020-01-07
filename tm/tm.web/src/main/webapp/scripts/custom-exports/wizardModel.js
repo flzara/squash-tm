@@ -136,7 +136,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 
 			// Reload customExportDef into this model if it is a modification of an existing CustomExport
 			if (customExportDef) {
-				// put the name of the scope campaign in the scope attribute
+				// put the name of the scope entity in the scope attribute
 				customExportDef.scope[0].name = customExportDef.scopeEntityName;
 				this.set({ scope: customExportDef.scope });
 				this.set({ selectedTreeNodes: [{ id: "Campaign-" + customExportDef.scope[0].id }] });
@@ -199,7 +199,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil"], function($,
 				_.chain(selectedCufAttributes)
 					.map(function(attr) {
 						// Deduce entity name from the computed cuf name
-						return attr.split('_CUF-')[0];
+						var entityType = attr.split('_CUF-')[0];
+						// If a TEST_STEP attribute is checked, it is the EXECUTION_STEP entity that has to be checked
+						if (entityType === 'TEST_STEP') {
+							return "EXECUTION_STEP";
+						}
+						return entityType;
 					}).uniq()
 					.value();
 			return _.union(selectedEntitiesFromStandard, selectedEntitiesFromCufs);
