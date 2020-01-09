@@ -164,9 +164,9 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 							$("#test-case-automatisable").text("-");
 					}else{
 			  		if(remoteStatus.toLowerCase() == finalStatusConfiged.toLowerCase()){
-							$("#test-case-automatisable").text("Oui");
+							$("#test-case-automatisable").text(translator.get('label.Yes'));
 						}else{
-							$("#test-case-automatisable").text("Non");
+							$("#test-case-automatisable").text(translator.get('label.No'));
 						}
 					}
 			  },
@@ -191,10 +191,10 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 					$("#remote-automation-request-status").text(automationRequest.remoteAutomationRequestExtender.remoteRequestStatus);
 
 					if(remoteRequestStatus.toLowerCase() == finalStatusConfiged.toLowerCase()){
-							$("#test-case-automatisable").text("Oui");
-						}else{
-							$("#test-case-automatisable").text("Non");
-						}
+							$("#test-case-automatisable").text(translator.get('label.Yes'));
+					} else {
+							$("#test-case-automatisable").text(translator.get('label.No'));
+					}
 					// url
 					$("#urlTicket").prop("href",automationRequest.remoteAutomationRequestExtender.remoteRequestUrl);
 					if(remoteReqUrl != '-'){
