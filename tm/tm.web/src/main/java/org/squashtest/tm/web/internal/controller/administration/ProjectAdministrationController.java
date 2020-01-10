@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
@@ -38,7 +37,6 @@ import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.plugin.PluginValidationException;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
@@ -57,7 +55,6 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectFinder;
-import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -166,12 +163,9 @@ public class ProjectAdministrationController {
 		// Automation workflows
 		Map<String, String> automationWorkflows = getAvailableWorkflows(projectId, locale);
 		//if the automation plugin used checks if there is a configuration
-		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
-		if(lpb!=null){
-			WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
-			pluginAutomHasConf = pluginManager.isHasConfiguration(plugin, projectId);
-		}else pluginAutomHasConf = false;
-
+		LibraryPluginBinding lpb = projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
+		WorkspaceWizard plugin = lpb != null ? pluginManager.findAll().stream().filter(it -> it.getId().equals(lpb.getPluginId())).findAny().orElse(null) : null;
+		pluginAutomHasConf = plugin != null ? pluginManager.isHasConfiguration(plugin, projectId) : false;
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
