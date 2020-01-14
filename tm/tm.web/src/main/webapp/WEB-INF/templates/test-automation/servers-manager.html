@@ -96,7 +96,7 @@
       </div>
 
       <div id="sub-page-content" class="sub-page-content">
-        <div class="fragment-body unstyled">
+        <div class="fragment-body unstyled" th:with="dateFormat=#{squashtm.dateformat}">
           <div id="test-automation-server-table-pane">
             <div class="toolbar">
 				<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}"
@@ -135,9 +135,9 @@
                     <td th:text="${iterStat.count}">1</td>
                     <td th:text="*{name}">TAS XX</td>
                     <td th:text="*{baseURL}">Label XX</td>
-                    <td th:text="*{createdOn}">16/05/2014 21:00</td>
+                    <td th:text="${#dates.format(tas.createdOn, dateFormat)}">16/05/2014 21:00</td>
                     <td th:text="*{createdBy}">foo</td>
-                    <td th:text="*{lastModifiedOn}">16/05/2014 21:28</td>
+                    <td th:text="${#dates.format(tas.lastModifiedOn, dateFormat)}">16/05/2014 21:28</td>
                     <td th:text="*{lastModifiedBy}">bar</td>
                     <td></td>
                   </tr>
