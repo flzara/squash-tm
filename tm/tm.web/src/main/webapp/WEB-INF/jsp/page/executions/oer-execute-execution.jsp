@@ -275,11 +275,6 @@
 							</jsp:attribute>
         </comp:toggle-panel>
       </div>
-
-      <div id="execute-evaluation-rightside">
-        <comp:step-information-panel auditableEntity="${executionStep}" entityUrl="${executeInfos}"/>
-      </div>
-      <div style="clear: both; visibility: hidden"></div>
     </div>
     
 		<%------------------------------ Attachments bloc ---------------------------------------------%>
