@@ -603,40 +603,56 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				var selectedInTree = $("#tree").jstree('get_selected');
 
 				//because we don't have time, we can select only one type of node in the tree, so the following will work fine.
-				// BE CAREFULL : This won't work anymore if multiple node type can be selected.
-				var type = selectedInTree.attr('restype');
+				//BE CAREFUL : This won't work anymore if multiple node type can be selected.
+				//Note: solution for bug TM-324 can handle multiple node type selection
 
-				switch (type) {
+				//FIX: [TM-324] access to selected elements in tree by JQuery object via the 'toData' function that contains
+				//the id of the selected campaign folder
+				var selectedInTreeData = selectedInTree.toData();
 
-					case 'campaign-libraries' :
-						key = "project.id";
-						break;
-					case 'campaign-folders' :
-						selectedInTree = selectedInTree.find("[restype=campaigns]"); //select sub campaign for folders
-						key = "campaign.id";
-						break;
-					case 'campaigns' :
-						key = "campaign.id";
-						break;
-					case 'iterations' :
-						key = "iteration.id";
-						break;
-					case 'test-suites' :
-						key = "testSuites.id";
-						break;
-				}
+				selectedInTreeData.forEach(function(elt){
+					var type = elt.restype;
 
-				var attrName = key == 'project.id' ? 'project' : 'resid';
+					switch (type) {
+						case 'campaign-libraries' :
+							key = "project.id";
+							break;
+						case 'campaign-folders' :
+							key = "campaign.folder.id";
+							break;
+						case 'campaigns' :
+							key = "campaign.id";
+							break;
+						case 'iterations' :
+							key = "iteration.id";
+							break;
+						case 'test-suites' :
+							key = "testSuites.id";
+							break;
+						default :
+							break;
+					}
 
-				var ids = _.map(selectedInTree, function (node) {
-					return $(node).attr(attrName);
+					var ids;
+
+					//The 'project' node exists only in the 'selectedInTree' but not 'selectedInTreeData'
+					if (key == 'project.id') {
+						ids = _.map(selectedInTree, function (node) {
+							return $(node).attr('project');
+						});
+					} else {
+						ids = _.map(selectedInTreeData, function (node) {
+							return $(node).attr('resid');
+						});
+					}
+
+					if (ids !== undefined && ids.length > 0) {
+						jsonVariable[key] = {type: "LIST", values: ids};
+					} else {
+						jsonVariable["project.id"] = {type: "LIST", values: []};
+					}
+
 				});
-				if (ids !== undefined && ids.length > 0) {
-					jsonVariable[key] = {type: "LIST", values: ids};
-				} else {
-					jsonVariable["project.id"] = {type: "LIST", values: []};
-				}
-
 
 			}
 

@@ -36,6 +36,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.DataType;
@@ -71,6 +73,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -96,6 +99,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchQueryModelToConfiguredQueryConverter.class);
 
 	private static final String PROJECT_FILTER_NAME = "project.id";
+
+	private static final String CAMPAIGN_FOLDER_ID= "campaign.folder.id";
 
 	private static final int LIST_MAX_SIZE = 1000;
 
@@ -144,8 +149,8 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 	}
 
 	/**
-	 * Returns the query that will list the entities of interest. 
-	 * The result is returned as a Tuple, the first element of which are the entities (the rest of 
+	 * Returns the query that will list the entities of interest.
+	 * The result is returned as a Tuple, the first element of which are the entities (the rest of
 	 * the tuple exists for technical purposes, see documentation of {@link #createMappedProjections()}).
 	 *
 	 *
@@ -163,7 +168,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 	/**
 	 * Prepares the query as a count query. It removes the pagination
-	 * and should be invoked using 'selectCount()'. The query requires to be 
+	 * and should be invoked using 'selectCount()'. The query requires to be
 	 * given a session.
 	 *
 	 * @return
@@ -174,7 +179,7 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 
 		ExtendedHibernateQuery<Tuple> countQuery = basePrepareQuery();
 
-		// neutralize the paging 
+		// neutralize the paging
 		countQuery.limit(Long.MAX_VALUE);
 		countQuery.offset(0);
 
@@ -210,9 +215,23 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		// Create queryModel
 		QueryModel query = createBaseQueryModel();
 
+
 		// Configure the Query
 		ConfiguredQuery configuredQuery = new ConfiguredQuery();
 		configuredQuery.setQueryModel(query);
+
+		//FIX [TM-324]: create a custom scope to do the research if a campaign folder is selected
+		Map<String, AdvancedSearchFieldModel> advancedSearchFormModelFieldMap = advancedSearchQueryModel.getSearchFormModel().getFields();
+		if (advancedSearchFormModelFieldMap.containsKey(CAMPAIGN_FOLDER_ID)){
+			AdvancedSearchListFieldModel advancedSearchFieldModel = (AdvancedSearchListFieldModel) advancedSearchFormModelFieldMap.get(CAMPAIGN_FOLDER_ID);
+			List<String> folderIds = advancedSearchFieldModel.getValues();
+			List<EntityReference> scope = new ArrayList<>();
+			folderIds.forEach(item ->{
+				scope.add(new EntityReference(EntityType.CAMPAIGN_FOLDER, Long.parseLong(item)));
+			});
+			configuredQuery.setScope(scope);
+		}
+
 		configuredQuery.setPaging(advancedSearchQueryModel.getPageable());
 
 		return configuredQuery;
@@ -388,14 +407,16 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 		// now process
 		for (String key : processableKeys) {
 
-			AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
+			//FIX [TM-324]: we dont have a column named "campaign.folder.id" in database, so it MUST be removed from the column filtration
+			if (!CAMPAIGN_FOLDER_ID.equals(key)) {
+				AdvancedSearchFieldModel fieldModel = model.getFields().get(key);
 
-			// [TM-769] Tags is a specially handled key in custom fields keys.
-			if (fieldModel.isSet() && !fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)) {
-				QueryFilterColumn filter = createFilterColumn(fieldModel, key);
-				filters.add(filter);
+				// [TM-769] Tags is a specially handled key in custom fields keys.
+				if (fieldModel.isSet() && !fieldModel.getType().equals(AdvancedSearchFieldModelType.TAGS)) {
+					QueryFilterColumn filter = createFilterColumn(fieldModel, key);
+					filters.add(filter);
+				}
 			}
-
 		}
 		filters.addAll(tooManyFilters);
 		return filters;
