@@ -341,7 +341,13 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					var getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
 						var result = [];
 						selectedIds.forEach(function (selectedId) {
-							result.push(squashTable.getDataById(selectedId)['requirement-label']);
+							var selectedReq = squashTable.getDataById(selectedId)['requirement-label'];
+							var transformerEncodage = function (encodedString) {
+								var textArea = document.createElement('textarea');
+								textArea.innerHTML = encodedString;
+								return textArea.value;
+							}
+							result.push(transformerEncodage(selectedReq));
 						});
 
 						return result;
