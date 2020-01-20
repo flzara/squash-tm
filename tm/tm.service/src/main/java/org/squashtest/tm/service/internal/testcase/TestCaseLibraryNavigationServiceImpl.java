@@ -443,16 +443,16 @@ public class TestCaseLibraryNavigationServiceImpl
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} else {
-			if (position != null) {
-				folder.addContent(testCase, position);
-			} else {
-				folder.addContent(testCase);
-			}
-			replaceInfoListReferences(testCase);
-			testCaseDao.safePersist(testCase);
-			createCustomFieldValuesForTestCase(testCase);
 		}
+		if (position != null) {
+			folder.addContent(testCase, position);
+		} else {
+			folder.addContent(testCase);
+		}
+		replaceInfoListReferences(testCase);
+		testCaseDao.safePersist(testCase);
+		createCustomFieldValuesForTestCase(testCase);
+
 	}
 
 	@Override
