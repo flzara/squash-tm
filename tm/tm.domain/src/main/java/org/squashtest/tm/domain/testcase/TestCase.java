@@ -58,6 +58,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -88,6 +89,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
+
+	public static final boolean KEYWORD_ENABLED = true;
+	public static final boolean KEYWORD_DISABLED = false;
+
 	public static final int MAX_REF_SIZE = 50;
 	@Column(updatable = false)
 	private final int version = 1;
@@ -181,6 +186,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
 	private String uuid;
 
+	@Column
+	private boolean supportKeyword = KEYWORD_DISABLED;
+
 	// *************************** CODE *************************************
 
 	public TestCase(Date createdOn, String createdBy) {
@@ -194,6 +202,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		super();
 		UUID uuid = UUID.randomUUID();
 		setUuid(uuid.toString());
+	}
+
+	public TestCase(boolean supportKeyword) {
+		this();
+		this.supportKeyword = supportKeyword;
 	}
 
 	public int getVersion() {
@@ -829,6 +842,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return result;
 	}
 
+	public static TestCase createKeywordTestCase() {
+		return new TestCase(KEYWORD_ENABLED);
+	}
+
 	/**
 	 * Creates a test case which non-collection, non-primitive type fields are set to null.
 	 *
@@ -869,6 +886,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public boolean isModifiable() {
 		return milestonesAllowEdit();
+	}
+
+	public boolean isKeywordTestCase() {
+		return supportKeyword;
 	}
 
 	private boolean milestonesAllowEdit() {
@@ -914,6 +935,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public void extendWithScript(String scriptLanguage, String locale) {
+		if(this.isKeywordTestCase()) {
+			throw new IllegalExtensionException("Keyword Test Case cannot be extended into Scripted Test Case.");
+		}
 		TestCaseKind tcKind = TestCaseKind.getFromString(scriptLanguage);
 		if (tcKind.isScripted()) {
 			ScriptedTestCaseExtender scriptedTCExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);

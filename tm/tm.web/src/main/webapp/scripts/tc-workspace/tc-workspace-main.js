@@ -19,48 +19,66 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['tree', './tc-treemenu', './popups/init-all', './init-actions',
-        'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace',
-        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
-		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu) {
+		'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace',
+		'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
+	function (tree, treemenu, popups, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu) {
 
 
-	function initResizer(){
-		var conf = {
-			leftSelector : "#tree-panel-left",
-			rightSelector : "#contextual-content"
-		};
-		resizer.init(conf);
-	}
-	function initTabbedPane() {
-		$("#tabbed-pane").tabs();
-	}
-
-	function initMilestoneMenu(){
-		if (mstoneManager.isEnabled()){
-			mstoneTreeMenu.init();
+		function initResizer() {
+			var conf = {
+				leftSelector: "#tree-panel-left",
+				rightSelector: "#contextual-content"
+			};
+			resizer.init(conf);
 		}
-	}
-	function resizeLeftPanel(){
-		$("#tree-panel-left").css('width',localStorage.getItem("leftWidth"));
-		var pos = parseInt(localStorage.getItem("leftWidth"))+ 10;
-		$("#contextual-content").css('left',pos+"px");
-	}
 
-	function init(settings){
-		resizeLeftPanel();
-		initResizer();
-		initTabbedPane();
-		initMilestoneMenu();
-		ToggleWorkspace.init(settings.toggleWS);
-		tree.initWorkspaceTree(settings.tree);
-		treemenu.init(settings.treemenu);
-		popups.init();
-		actions.init();
-	}
+		function initTabbedPane() {
+			$("#tabbed-pane").tabs();
+		}
+
+		function initMilestoneMenu() {
+			if (mstoneManager.isEnabled()) {
+				mstoneTreeMenu.init();
+			}
+		}
+
+		function resizeLeftPanel() {
+			$("#tree-panel-left").css('width', localStorage.getItem("leftWidth"));
+			var pos = parseInt(localStorage.getItem("leftWidth")) + 10;
+			$("#contextual-content").css('left', pos + "px");
+		}
+
+		function init(settings) {
+			resizeLeftPanel();
+			initResizer();
+			initTabbedPane();
+			initMilestoneMenu();
+
+			//add it now and move it somewhere later
+			$('#new-keyword-test-case-tree-button').on('click', function () {
+				$.ajax({
+					type: 'POST',
+					url: '/squash/test-case-browser/drives/14/content/new-test-case',
+					data: JSON.stringify({
+						name: 'toto',
+						supportKeyword: true,
+						reference: '',
+						description: ''
+					}),
+					contentType: 'application/json'
+				})
+			});
+
+			ToggleWorkspace.init(settings.toggleWS);
+			tree.initWorkspaceTree(settings.tree);
+			treemenu.init(settings.treemenu);
+			popups.init();
+			actions.init();
+		}
 
 
-	return {
-		init : init
-	};
+		return {
+			init: init
+		};
 
-});
+	});

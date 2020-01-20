@@ -53,6 +53,7 @@ public class TestCaseFormModel {
 	private String reference;
 	private String description;
 
+	private boolean supportKeyword = TestCase.KEYWORD_DISABLED;
 	private String scriptLanguage;
 
 
@@ -95,6 +96,14 @@ public class TestCaseFormModel {
 		return scriptLanguage;
 	}
 
+	public boolean isSupportKeyword() {
+		return supportKeyword;
+	}
+
+	public void setSupportKeyword(boolean supportKeyword) {
+		this.supportKeyword = supportKeyword;
+	}
+
 	public void setScriptLanguage(String scriptLanguage) {
 		this.scriptLanguage = scriptLanguage;
 	}
@@ -105,7 +114,7 @@ public class TestCaseFormModel {
 
 
 	public TestCase getTestCase() {
-		TestCase newTC = new TestCase();
+		TestCase newTC = new TestCase(this.supportKeyword);
 		newTC.setName(name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);

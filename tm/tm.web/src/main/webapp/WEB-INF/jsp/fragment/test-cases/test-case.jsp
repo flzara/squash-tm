@@ -112,6 +112,7 @@
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
+<c:set var="isKeywordTest" value="${testCase.isKeywordTestCase()}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
@@ -140,6 +141,11 @@
         <c:when test="${scripted}">
           <li>
             <a href="#tab-tc-script-editor"><f:message key="label.Script"/></a>
+          </li>
+        </c:when>
+        <c:when test="${isKeywordTest}">
+          <li>
+            <a href="#tab-tc-keyword-steps"><f:message key="tabs.label.steps"/></a>
           </li>
         </c:when>
         <c:otherwise>
@@ -188,7 +194,9 @@
 
         <%-- ------------------------- Automation Panel ------------------------- --%>
       <c:if test="${allowAutomationWorkflow}">
-        <tc:test-case-automation testCase="${testCase}" isRemoteAutomationWorkflowUsed="${isRemoteAutomationWorkflowUsed}" writable="${writable}"/>
+        <tc:test-case-automation testCase="${testCase}"
+                                 isRemoteAutomationWorkflowUsed="${isRemoteAutomationWorkflowUsed}"
+                                 writable="${writable}"/>
       </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
@@ -217,6 +225,12 @@
     </c:if>
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
+
+        <c:if test="${isKeywordTest}">
+          <div id="tab-tc-keyword-steps">
+            YOUPI !!!!
+          </div>
+        </c:if>
 
       <%------------------------------ Attachments  ---------------------------------------------%>
 

@@ -31,6 +31,8 @@ import spock.lang.Unroll
 
 import java.lang.reflect.Modifier
 
+import static org.squashtest.tm.domain.testcase.TestCase.createKeywordTestCase
+
 class TestCaseTest extends Specification {
 
 	MockFactory mockFactory = new MockFactory()
@@ -295,4 +297,19 @@ class TestCaseTest extends Specification {
 
 	}
 
+	def "should create keyword test case"() {
+		def testCase = createKeywordTestCase()
+
+		expect:
+		testCase.isKeywordTestCase()
+	}
+
+	def "should throw exception if extend keyword test into scripted test"() {
+		given:
+		def testCase = createKeywordTestCase()
+		when:
+		testCase.extendWithScript("gherkin", "fr")
+		then:
+		thrown IllegalExtensionException
+	}
 }
