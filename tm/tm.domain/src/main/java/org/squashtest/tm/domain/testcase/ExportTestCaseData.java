@@ -199,7 +199,11 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		String action = "Calls : "+visited.getCalledTestCase().getName();
 		String result = "";
 		lastBuildStepData = new ExportTestStepData(action, result);
+	}
 
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
 	}
 
 	public String getLastModifiedBy() {

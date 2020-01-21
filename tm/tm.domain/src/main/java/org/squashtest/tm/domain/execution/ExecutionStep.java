@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -304,6 +305,8 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		expectedResult = valueParams(originalExpectedResult);
 	}
 
+
+
 	private String valueParams(String content){
 
 		String result = null;
@@ -356,6 +359,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public void visit(CallTestStep visited) {
 		// FIXME naive implementation so that app don't break
 		action = visited.getCalledTestCase().getName();
+	}
+
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

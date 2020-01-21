@@ -602,6 +602,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			// noop
 		}
 
+		@Override
+		public void visit(KeywordTestStep visited) {
+			// NOOP
+		}
 	}
 
 	// =====================Requirement verifying section====================

@@ -538,6 +538,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			public void visit(CallTestStep visited) {
 
 			}
+
+			@Override
+			public void visit(KeywordTestStep visited) {
+				throw new UnsupportedOperationException();
+			}
 		};
 
 		for (TestStep original : originals) {
@@ -1269,6 +1274,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			// NOPE
 		}
 
+		@Override
+		public void visit(KeywordTestStep visited) {
+			// NOOP
+		}
 	}
 
 	private List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds) {

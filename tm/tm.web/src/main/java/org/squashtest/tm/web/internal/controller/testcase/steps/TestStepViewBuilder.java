@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
@@ -52,8 +53,10 @@ class TestStepViewBuilder implements TestStepVisitor {
 	@Override
 	public void visit(CallTestStep visited) {
 		testStepView = new TestStepView(visited);
-
 	}
 
-
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
+	}
 }

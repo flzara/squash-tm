@@ -50,4 +50,8 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 		// NOOP
 	}
 
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
+	}
 }

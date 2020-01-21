@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -166,6 +167,11 @@ public class TreeNodeUpdater implements NodeVisitor {
 			@Override
 			public void visit(ActionTestStep visited) {
 				updateCustomFields(visited);
+			}
+
+			@Override
+			public void visit(KeywordTestStep visited) {
+				throw new UnsupportedOperationException();
 			}
 		};
 		for (TestStep step : testCase.getSteps()) {
