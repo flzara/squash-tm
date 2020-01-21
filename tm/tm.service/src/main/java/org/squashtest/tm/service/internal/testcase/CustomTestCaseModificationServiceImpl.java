@@ -267,7 +267,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStep(long parentTestCaseId, KeywordTestStep newKeywordTestStep) {
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newKeywordTestStep) {
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		parentTestCase.addStep(newKeywordTestStep);
