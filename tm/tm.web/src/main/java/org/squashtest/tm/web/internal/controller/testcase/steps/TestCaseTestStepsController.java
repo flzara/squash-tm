@@ -28,6 +28,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,8 +40,10 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.keyword.Keyword;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -192,6 +195,13 @@ public class TestCaseTestStepsController {
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 			+ step.getExpectedResult());
 		return addActionTestStep.getId();
+	}
+
+	@PostMapping(value = "/add-keyword", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStep(@RequestBody String keyword, @PathVariable long testCaseId) {
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword);
+		return step.getId();
 	}
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})

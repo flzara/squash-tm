@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.keyword.Keyword;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -267,12 +268,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newKeywordTestStep) {
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword) {
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		parentTestCase.addStep(newKeywordTestStep);
-		testStepDao.persist(newKeywordTestStep);
-		return newKeywordTestStep;
+		//TODO: verify if the given keyword exists in db
+		Keyword givenKeyword = new Keyword(keyword);
+		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword);
+		parentTestCase.addStep(keywordTestStep);
+		testStepDao.persist(keywordTestStep);
+		return keywordTestStep;
 	}
 
 	@Override

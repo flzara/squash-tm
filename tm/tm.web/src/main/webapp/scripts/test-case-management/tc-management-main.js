@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters/ParametersTab", "./infos/InfosTab","./script-editor/ScriptEditorTab"],
-		function($, structure, stepTablePanel, ParametersTab, InfosTab, ScriptEditorTab) {
+define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters/ParametersTab", "./infos/InfosTab","./script-editor/ScriptEditorTab", './keyword-steps/keyword-step-table-panel'],
+		function($, structure, stepTablePanel, ParametersTab, InfosTab, ScriptEditorTab, KeywordStepTablePanel) {
 
 	function initStructure(settings){
 		structure.init(settings);
@@ -41,11 +41,17 @@ define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters
 		new ScriptEditorTab({settings : settings});
 	};
 
+	var initKeywordStepTablePanel = function(settings){
+		new KeywordStepTablePanel({settings : settings});
+	};
+
+
 	return {
 		initStructure : initStructure,
 		initStepTablePanel : initStepTablePanel,
 		initParametersTab: initParametersTab,
 		initInfosTab : initInfosTab,
-		initScriptEditorTab : initScriptEditorTab
+		initScriptEditorTab : initScriptEditorTab,
+		initKeywordStepTablePanel : initKeywordStepTablePanel
 	};
 });

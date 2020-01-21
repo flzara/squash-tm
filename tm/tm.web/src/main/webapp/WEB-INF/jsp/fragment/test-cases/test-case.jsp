@@ -226,11 +226,26 @@
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
 
+      <%------------------------------ Keyword Test Steps ------------------------------------------%>
         <c:if test="${isKeywordTest}">
           <div id="tab-tc-keyword-steps">
-            YOUPI !!!!
+            <div>
+              This is the Keyword Test Steps Page.
+            </div>
+            <br/>
+            <div>
+              <label>Add your keyword test step here: (255 characters max) </label>
+              <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
+              <button id="add-keyword-test-step-btn" type="submit">Add Keyword</button>
+            </div>
+            <br/>
+            <div id="add-keyword-test-step-result">
+
+            </div>
           </div>
         </c:if>
+      <%------------------------------ /Keyword Test Steps ------------------------------------------%>
+
 
       <%------------------------------ Attachments  ---------------------------------------------%>
 
@@ -287,7 +302,8 @@
           hasBugtracker: ${testCase.project.bugtrackerConnected},
           isAutomated: ${testCase.project.testAutomationEnabled},
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
-          isScripted: ${scripted}
+          isScripted: ${scripted},
+          isKeywordTest: ${isKeywordTest}
           <c:if test="${scripted}">
           , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
           </c:if>
@@ -301,6 +317,9 @@
           testCaseManagement.initInfosTab(settings);
           if (settings.isScripted) {
             testCaseManagement.initScriptEditorTab(settings);
+          }
+          if(settings.isKeywordTest) {
+            testCaseManagement.initKeywordStepTablePanel(settings);
           }
         });
 

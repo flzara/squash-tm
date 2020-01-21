@@ -96,15 +96,15 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			parentTestCase.addStep(firstStep)
 
 		and:
-			def newKeywordTestStep = new KeywordTestStep(new Keyword("last"))
 			testCaseDao.findById(parentTestCaseId) >> parentTestCase
 
 		when:
-			service.addKeywordTestStep(parentTestCaseId, newKeywordTestStep)
+			service.addKeywordTestStep(parentTestCaseId, "last")
 
 		then:
-			1 * testStepDao.persist(newKeywordTestStep)
-			parentTestCase.getSteps() == [firstStep, newKeywordTestStep]
+			1 * testStepDao.persist(_)
+			parentTestCase.getSteps().size() == 2
+			parentTestCase.getSteps()[1].keyword.word == "last"
 	}
 
 	def "should find test case and add a step at last position"() {

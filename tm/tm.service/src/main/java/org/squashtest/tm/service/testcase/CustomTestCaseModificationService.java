@@ -60,10 +60,10 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	/**
 	 * Inserts the given {@link KeywordTestStep} in last position of the {@link TestCase} identified by the given id.
 	 * @param parentTestCaseId The id of the parent TestCase
-	 * @param newTestStep The new KeywordTestStep
+	 * @param keyword The inserted keyword
 	 * @return The created KeywordTestStep
 	 */
-	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep);
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.
