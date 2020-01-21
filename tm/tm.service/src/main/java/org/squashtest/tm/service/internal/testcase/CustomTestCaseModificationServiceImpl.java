@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -262,6 +263,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	/* *************** TestStep section ***************************** */
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(long parentTestCaseId, KeywordTestStep newKeywordTestStep) {
+		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
+		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
+		parentTestCase.addStep(newKeywordTestStep);
+		// TODO - Persist the KeywordTestStep
+		return newKeywordTestStep;
+	}
 
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)

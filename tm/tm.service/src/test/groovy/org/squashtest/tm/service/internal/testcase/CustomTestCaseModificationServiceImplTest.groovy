@@ -22,20 +22,16 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.keyword.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.exception.InconsistentInfoListItemException
-
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
@@ -88,6 +84,26 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
 		service.eventPublisher = eventPublisher
+	}
+
+	def "should find test case and add a keyword step at last position"() {
+		given:
+			long parentTestCaseId = 2
+			TestCase parentTestCase = new TestCase(TestCase.KEYWORD_ENABLED)
+
+		and:
+			def firstStep = new KeywordTestStep(new Keyword("first"))
+			parentTestCase.addStep(firstStep)
+
+		and:
+			def newKeywordTestStep = new KeywordTestStep(new Keyword("last"))
+			testCaseDao.findById(parentTestCaseId) >> parentTestCase
+
+		when:
+			service.addKeywordTestStep(parentTestCaseId, newKeywordTestStep)
+
+		then:
+			parentTestCase.getSteps() == [firstStep, newKeywordTestStep]
 	}
 
 	def "should find test case and add a step at last position"() {
