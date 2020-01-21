@@ -44,4 +44,36 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-174-keyword-table" author="jlor">
+    <comment>Add keyword table</comment>
+
+    <createTable tableName="KEYWORD">
+
+      <column name="KEYWORD_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="WORD" type="VARCHAR(255)">
+        <constraints nullable="false" unique="true"/>
+
+      </column>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-174-keyword-test-step-table" author="jlor" >
+    <comment>Add keyword test step table</comment>
+
+    <createTable tableName="KEYWORD_TEST_STEP">
+      <column name="TEST_STEP_ID" type="BIGINT" remarks="Shared key with TEST_STEP table">
+        <constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_keyword_step"
+                     foreignKeyName="fk_keyword_step_test_step"/>
+      </column>
+
+      <column name="KEYWORD_ID" type="BIGINT" remarks="The keyword this test step uses">
+        <constraints nullable="false" foreignKeyName="fk_keyword_test_step_keyword_id" references="KEYWORD (KEYWORD_ID)"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

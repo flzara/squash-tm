@@ -23,11 +23,21 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.keyword.Keyword;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Entity
+@PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class KeywordTestStep extends TestStep {
 
+	@NotNull
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "KEYWORD_ID")
 	private Keyword keyword;
 
 	KeywordTestStep() {

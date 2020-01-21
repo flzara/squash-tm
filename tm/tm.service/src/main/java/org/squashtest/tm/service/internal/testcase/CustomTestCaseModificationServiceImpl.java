@@ -271,7 +271,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		parentTestCase.addStep(newKeywordTestStep);
-		// TODO - Persist the KeywordTestStep
+		testStepDao.persist(newKeywordTestStep);
 		return newKeywordTestStep;
 	}
 

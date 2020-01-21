@@ -22,9 +22,25 @@ package org.squashtest.tm.domain.keyword;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+@Entity
 public class Keyword {
 
 	private static final int KEYWORD_MAX_LENGTH = 255;
+
+	@Id
+	@Column(name = "KEYWORD_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "keyword_keyword_id_seq")
+	@SequenceGenerator(name = "keyword_keyword_id_seq", sequenceName = "keyword_keyword_id_seq", allocationSize = 1)
+	private Long id;
+
+	@Column(name = "WORD")
 	private String word;
 
 	Keyword() {

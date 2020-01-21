@@ -25,6 +25,8 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.testcase.KeywordTestStep
+import org.squashtest.tm.domain.keyword.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -534,5 +536,20 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def stepsResults = result.getSteps().collect({ it.getAction() })
 		stepsResults == expectedActionList
 
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step to test case"() {
+		given:
+
+			Keyword keyword = new Keyword("hello")
+			KeywordTestStep keywordTestStep = new KeywordTestStep(keyword)
+		when:
+			service.addKeywordTestStep(-4L, keywordTestStep)
+		then:
+			keywordTestStep != null
+			keywordTestStep.id != null
+			keywordTestStep.keyword == keyword
+			keywordTestStep.keyword.id != null
 	}
 }

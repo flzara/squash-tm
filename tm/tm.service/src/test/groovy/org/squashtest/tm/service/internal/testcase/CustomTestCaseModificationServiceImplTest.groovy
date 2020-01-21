@@ -103,6 +103,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			service.addKeywordTestStep(parentTestCaseId, newKeywordTestStep)
 
 		then:
+			1 * testStepDao.persist(newKeywordTestStep)
 			parentTestCase.getSteps() == [firstStep, newKeywordTestStep]
 	}
 
