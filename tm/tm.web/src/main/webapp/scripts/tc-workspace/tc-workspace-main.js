@@ -66,7 +66,7 @@ define(['tree', './tc-treemenu', './popups/init-all', './init-actions',
 						description: ''
 					}),
 					contentType: 'application/json'
-				})
+				});
 			});
 
 			ToggleWorkspace.init(settings.toggleWS);
