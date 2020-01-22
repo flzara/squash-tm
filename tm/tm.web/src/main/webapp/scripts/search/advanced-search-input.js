@@ -638,13 +638,23 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 					//The 'project' node exists only in the 'selectedInTree' but not 'selectedInTreeData'
 					if (key == 'project.id') {
 						ids = _.map(selectedInTree, function (node) {
+							//if ($(node).attr('restype') == '')
 							return $(node).attr('project');
 						});
 					} else {
 						ids = _.map(selectedInTreeData, function (node) {
-							return $(node).attr('resid');
+							var temp = $(node).attr('restype');
+							if ( temp == type){
+								return $(node).attr('resid');
+							} else {
+								return null;
+							}
+						}).filter(function (el) {
+							//remove null elements in ids
+							return el != null;
 						});
 					}
+
 
 					if (ids !== undefined && ids.length > 0) {
 						jsonVariable[key] = {type: "LIST", values: ids};
