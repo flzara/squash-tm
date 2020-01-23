@@ -1,0 +1,79 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:remove="all">
+  <!--
+        This snippet of html describes the template for the keyword test step panel of the tab panel of a keyword test case.
+        Required data :
+            - stepsData : a list of KeywordTestSteps.
+     -->
+</div>
+
+<div id="tab-tc-keyword-steps" class="table-tab">
+
+  <div>
+    <h4>This is the Keyword Test Steps Page.</h4>
+  </div>
+  <br/>
+  <div>
+    <label>Add your keyword test step here: (255 characters max) </label>
+    <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
+    <button id="add-keyword-test-step-btn" type="submit">Add Keyword</button>
+  </div>
+  <br/>
+  <div id="add-keyword-test-step-result">
+
+  </div>
+  <br/>
+  <div class="step-list">
+    <h4>- Step List- </h4>
+    <div th:each="step: ${stepsData}" class="step">
+      <li>ID: <span th:text="${step.id}" /> - StepWord: <span th:text="${step.keyword}" /></li>
+
+    </div>
+
+    <span th:text="${stepList}"></span>
+  </div>
+
+  <script type="text/javascript" th:inline="javascript">
+  /*<![CDATA[*/
+  requirejs.config({
+    waitSeconds: 0
+  });
+  require([ "common" ], function(common) {
+    require(["domReady", "test-case-management"], function(domReady, testCaseManagement){
+      domReady(function(){
+
+        var settings = {
+          stepList : /*[[${stepsData}]]*/[],
+          testCaseId : /*[[${testCase.id}]]*/1,
+          language : {},
+          permissions : {}
+        };
+        testCaseManagement.initKeywordStepTablePanel(settings);
+      });
+    });
+  });
+  /*]]>*/
+</script>
+
+</div>

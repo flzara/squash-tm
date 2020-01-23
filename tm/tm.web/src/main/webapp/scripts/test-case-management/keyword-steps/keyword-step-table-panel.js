@@ -39,9 +39,7 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				type: "POST",
 				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword",
 				contentType: 'application/json',
-				data: JSON.stringify({
-					keyword: inputKeyword
-				})
+				data: inputKeyword
 			}).done(function(id){
 				var displayDiv = $('#add-keyword-test-step-result');
 				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputKeyword);

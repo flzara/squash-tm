@@ -49,6 +49,7 @@
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 <c:url var="executionsTabUrl" value="/test-cases/${testCase.id}/executions?tab="/>
 <c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel"/>
+<c:url var="keywordStepTabUrl" value="/test-cases/${testCase.id}/steps/keyword-panel"/>
 <c:url var="importanceAutoUrl" value="/test-cases/${testCase.id}/importanceAuto"/>
 <c:url var="customFieldsValuesURL" value="/custom-fields/values"/>
 <c:url var="btEntityUrl" value="/bugtracker/test-case/${testCase.id}"/>
@@ -145,7 +146,7 @@
         </c:when>
         <c:when test="${isKeywordTest}">
           <li>
-            <a href="#tab-tc-keyword-steps"><f:message key="tabs.label.steps"/></a>
+            <a href="${keywordStepTabUrl}"><f:message key="tabs.label.steps"/></a>
           </li>
         </c:when>
         <c:otherwise>
@@ -226,27 +227,6 @@
 
       <%------------------------------ /Script Editor  ---------------------------------------------%>
 
-      <%------------------------------ Keyword Test Steps ------------------------------------------%>
-        <c:if test="${isKeywordTest}">
-          <div id="tab-tc-keyword-steps">
-            <div>
-              This is the Keyword Test Steps Page.
-            </div>
-            <br/>
-            <div>
-              <label>Add your keyword test step here: (255 characters max) </label>
-              <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
-              <button id="add-keyword-test-step-btn" type="submit">Add Keyword</button>
-            </div>
-            <br/>
-            <div id="add-keyword-test-step-result">
-
-            </div>
-          </div>
-        </c:if>
-      <%------------------------------ /Keyword Test Steps ------------------------------------------%>
-
-
       <%------------------------------ Attachments  ---------------------------------------------%>
 
     <at:attachment-tab tabId="tabs-tc-attachments" entity="${ testCase }" editable="${ attachable }"
@@ -302,8 +282,7 @@
           hasBugtracker: ${testCase.project.bugtrackerConnected},
           isAutomated: ${testCase.project.testAutomationEnabled},
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
-          isScripted: ${scripted},
-          isKeywordTest: ${isKeywordTest}
+          isScripted: ${scripted}
           <c:if test="${scripted}">
           , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
           </c:if>
@@ -317,9 +296,6 @@
           testCaseManagement.initInfosTab(settings);
           if (settings.isScripted) {
             testCaseManagement.initScriptEditorTab(settings);
-          }
-          if(settings.isKeywordTest) {
-            testCaseManagement.initKeywordStepTablePanel(settings);
           }
         });
 

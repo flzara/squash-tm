@@ -72,4 +72,8 @@ public class KeywordTestStep extends TestStep {
 		}
 		super.setTestCase(testCase);
 	}
+
+	public Keyword getKeyword() {
+		return keyword;
+	}
 }

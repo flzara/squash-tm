@@ -40,7 +40,6 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.keyword.Keyword;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -195,6 +194,55 @@ public class TestCaseTestStepsController {
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 			+ step.getExpectedResult());
 		return addActionTestStep.getId();
+	}
+
+	@RequestMapping(value = "/keyword-panel")
+	public String getKeywordTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		List<TestStep> steps = testCase.getSteps();
+		model.addAttribute(TEST_CASE, testCase);
+		model.addAttribute("stepsData", transformKeywordTestStepsToKeywordTestStepsDto(steps));
+		return "test-cases-tabs/keyword-test-steps-tab.html";
+	}
+
+	private KeywordTestStepDto transformTestStepToKeywordTestStepDto(TestStep testStep) {
+		KeywordTestStep keywordTestStep = (KeywordTestStep) testStep;
+		return new KeywordTestStepDto(
+			keywordTestStep.getId(),
+			keywordTestStep.getKeyword().getWord());
+	}
+
+	private List<KeywordTestStepDto> transformKeywordTestStepsToKeywordTestStepsDto(List<TestStep> testSteps) {
+		List<KeywordTestStepDto> result = new ArrayList();
+		for (TestStep testStep : testSteps) {
+			result.add(transformTestStepToKeywordTestStepDto(testStep));
+		}
+		return result;
+	}
+
+	private class KeywordTestStepDto {
+
+		private Long id;
+		private String keyword;
+
+		public KeywordTestStepDto(Long id, String keyword) {
+			this.id = id;
+			this.keyword = keyword;
+		}
+
+		public Long getId() {
+			return id;
+		}
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getKeyword() {
+			return keyword;
+		}
+		public void setKeyword(String keyword) {
+			this.keyword = keyword;
+		}
 	}
 
 	@PostMapping(value = "/add-keyword", consumes = "application/json")
