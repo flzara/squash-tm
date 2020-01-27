@@ -73,6 +73,8 @@ public enum ExtOps implements Operator {
 	//Fulltext operator
 	FULLTEXT(Boolean.class),
 
+	IS_CLASS(Boolean.class),
+
 	LIKE_INSENSITIVE(Boolean.class);
 
 	private final Class<?> type;

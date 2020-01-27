@@ -218,7 +218,7 @@ order by col_0_0_ asc"""
 				"""select distinct testCase.id as col_0_0_, s_sum((select distinct s_count(testStep_sub.id) as col_0_0_sub
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where testStep_sub.class = ?1 and testCase = testCase_sub)) as col_1_0_
+where type(testStep_sub) = ?1 and testCase = testCase_sub)) as col_1_0_
 from TestCase testCase
 group by col_0_0_
 order by col_0_0_ asc"""
@@ -275,7 +275,7 @@ from Requirement requirement
 where exists (select 1
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where testStep_sub.class = ?1 and testCase = testCase_sub
+where type(testStep_sub) = ?1 and testCase = testCase_sub
 group by testCase_sub.id
 having s_count(testStep_sub.id) > ?2)
 group by col_0_0_

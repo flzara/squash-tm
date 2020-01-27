@@ -36,6 +36,7 @@ import static org.squashtest.tm.domain.query.Operation.FULLTEXT;
 import static org.squashtest.tm.domain.query.Operation.GREATER;
 import static org.squashtest.tm.domain.query.Operation.GREATER_EQUAL;
 import static org.squashtest.tm.domain.query.Operation.IN;
+import static org.squashtest.tm.domain.query.Operation.IS_CLASS;
 import static org.squashtest.tm.domain.query.Operation.IS_NULL;
 import static org.squashtest.tm.domain.query.Operation.LIKE;
 import static org.squashtest.tm.domain.query.Operation.LOWER;
@@ -79,7 +80,8 @@ public enum DataType {
 	ENUM(EQUALS, IN, COUNT, NONE),
 
 	// type ENTITY means that columns of that datatype represent the entity itself rather than one of its attributes.
-	ENTITY(EQUALS, IN, COUNT, NONE),
+	// IN, COUNT, NONE were not used for the type ENTITY
+	ENTITY(IS_CLASS/*, IN, COUNT, NONE*/),
 	// @formatter:on
 
 	TEXT(LIKE, FULLTEXT, NONE);

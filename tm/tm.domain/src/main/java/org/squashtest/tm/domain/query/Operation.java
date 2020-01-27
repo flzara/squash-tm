@@ -44,6 +44,7 @@ public enum Operation {
 	BY_WEEK,
 	BY_MONTH,
 	BY_YEAR,
-	FULLTEXT;
+	FULLTEXT,
+	IS_CLASS;
 	// @formatter:on
 }
