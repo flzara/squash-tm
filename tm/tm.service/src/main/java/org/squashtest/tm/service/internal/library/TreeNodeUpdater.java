@@ -39,8 +39,8 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -170,7 +170,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 			}
 
 			@Override
-			public void visit(KeywordTestStep visited) {
+			public void visit(BehaviorTestStep visited) {
 				throw new UnsupportedOperationException();
 			}
 		};

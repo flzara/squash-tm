@@ -21,8 +21,8 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
@@ -30,9 +30,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ParameterNamesFinder implements TestStepVisitor{
-	
+
 	private Set<String> result = new HashSet<>();
-	
+
 	public Set<String> findParametersNamesInActionAndExpectedResult(TestStep step){
 		step.accept(this);
 		return result;
@@ -49,7 +49,7 @@ public class ParameterNamesFinder implements TestStepVisitor{
 	}
 
 	@Override
-	public void visit(KeywordTestStep visited) {
+	public void visit(BehaviorTestStep visited) {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -25,14 +25,14 @@ import spock.lang.Specification
 
 class TestCaseFormModelTest extends Specification {
 
-	def "should create keyword test"() {
+	def "should create behavior test"() {
 		given:
 		TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
-		testCaseFormModel.setSupportKeyword(TestCase.KEYWORD_ENABLED)
+		testCaseFormModel.setBehaviorTestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
 		when:
 		def testCase = testCaseFormModel.getTestCase()
 		then:
-		testCase.isKeywordTestCase()
+		testCase.isBehaviorTestCase()
 	}
 
 }

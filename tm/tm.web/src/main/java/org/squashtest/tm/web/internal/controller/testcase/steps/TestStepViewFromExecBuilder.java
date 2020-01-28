@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
@@ -66,7 +66,7 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 	}
 
 	@Override
-	public void visit(KeywordTestStep visited) {
+	public void visit(BehaviorTestStep visited) {
 		throw new UnsupportedOperationException();
 	}
 

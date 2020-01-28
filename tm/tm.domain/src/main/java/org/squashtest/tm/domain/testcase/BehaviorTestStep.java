@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.keyword.Keyword;
+import org.squashtest.tm.domain.bdd.BehaviorPhrase;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,21 +33,21 @@ import java.util.List;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class KeywordTestStep extends TestStep {
+public class BehaviorTestStep extends TestStep {
 
 	@NotNull
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "KEYWORD_ID")
-	private Keyword keyword;
+	@JoinColumn(name = "BEHAVIOR_PHRASE_ID")
+	private BehaviorPhrase behaviorPhrase;
 
-	KeywordTestStep() {
+	BehaviorTestStep() {
 	}
 
-	public KeywordTestStep(Keyword keyword) {
-		if(keyword == null) {
-			throw new IllegalArgumentException("Keyword cannot be null");
+	public BehaviorTestStep(BehaviorPhrase paramBehaviorPhrase) {
+		if(paramBehaviorPhrase == null) {
+			throw new IllegalArgumentException("Behavior phrase cannot be null.");
 		}
-		this.keyword = keyword;
+		this.behaviorPhrase = paramBehaviorPhrase;
 	}
 
 	@Override
@@ -67,13 +67,13 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public void setTestCase(@NotNull TestCase testCase) {
-		if(!testCase.isKeywordTestCase()) {
-			throw new IllegalArgumentException("Cannot add a Keyword Step");
+		if(!testCase.isBehaviorTestCase()) {
+			throw new IllegalArgumentException("Cannot add a Behavior Test Step");
 		}
 		super.setTestCase(testCase);
 	}
 
-	public Keyword getKeyword() {
-		return keyword;
+	public BehaviorPhrase getBehaviorPhrase() {
+		return behaviorPhrase;
 	}
 }

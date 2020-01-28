@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters/ParametersTab", "./infos/InfosTab","./script-editor/ScriptEditorTab", './keyword-steps/keyword-step-table-panel'],
-		function($, structure, stepTablePanel, ParametersTab, InfosTab, ScriptEditorTab, KeywordStepTablePanel) {
+define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters/ParametersTab", "./infos/InfosTab","./script-editor/ScriptEditorTab", './behavior-steps/behavior-step-table-panel'],
+		function($, structure, stepTablePanel, ParametersTab, InfosTab, ScriptEditorTab, BehaviorStepTablePanel) {
 
 	function initStructure(settings){
 		structure.init(settings);
@@ -41,8 +41,8 @@ define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters
 		new ScriptEditorTab({settings : settings});
 	};
 
-	var initKeywordStepTablePanel = function(settings){
-		new KeywordStepTablePanel({settings : settings});
+	var initBehaviorStepTablePanel = function(settings){
+		new BehaviorStepTablePanel({settings : settings});
 	};
 
 
@@ -52,6 +52,6 @@ define([ "jquery", "./main-structure", "./steps/step-table-panel", "./parameters
 		initParametersTab: initParametersTab,
 		initInfosTab : initInfosTab,
 		initScriptEditorTab : initScriptEditorTab,
-		initKeywordStepTablePanel : initKeywordStepTablePanel
+		initBehaviorStepTablePanel : initBehaviorStepTablePanel
 	};
 });

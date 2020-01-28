@@ -22,32 +22,30 @@
 -->
 <div th:remove="all">
   <!--
-        This snippet of html describes the template for the keyword test step panel of the tab panel of a keyword test case.
+        This snippet of html describes the template for the behavior test step panel of the tab panel of a behavior test case.
         Required data :
-            - stepsData : a list of KeywordTestSteps.
+            - stepsData : a list of BehaviorTestSteps.
      -->
 </div>
 
-<div id="tab-tc-keyword-steps" class="table-tab">
+<div id="tab-tc-behavior-steps" class="table-tab">
 
   <div>
-    <h4>This is the Keyword Test Steps Page.</h4>
+    <h4>This is the Behavior Test Steps Page.</h4>
   </div>
   <br/>
   <div>
-    <label>Add your keyword test step here: (255 characters max) </label>
-    <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
-    <button id="add-keyword-test-step-btn" type="submit">Add Keyword</button>
+    <label>Add your behavior test step here: (255 characters max) </label>
+    <input id="add-behavior-test-step-input" type="text" placeholder="New behavior test step..." maxlength="255" width="auto"/>
+    <button id="add-behavior-test-step-btn" type="submit">Add Behavior</button>
   </div>
   <br/>
-  <div id="add-keyword-test-step-result">
-
-  </div>
+  <div id="add-behavior-test-step-result"></div>
   <br/>
   <div class="step-list">
     <h4>- Step List- </h4>
     <div th:each="step: ${stepsData}" class="step">
-      <li>ID: <span th:text="${step.id}" /> - StepWord: <span th:text="${step.keyword}" /></li>
+      <li>ID: <span th:text="${step.id}" /> - StepWord: <span th:text="${step.behaviorPhrase}" /></li>
 
     </div>
 
@@ -69,7 +67,7 @@
           language : {},
           permissions : {}
         };
-        testCaseManagement.initKeywordStepTablePanel(settings);
+        testCaseManagement.initBehaviorStepTablePanel(settings);
       });
     });
   });

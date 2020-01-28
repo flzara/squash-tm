@@ -35,25 +35,25 @@
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-171" author="jthebault">
-    <comment>Add keyword testing</comment>
+    <comment>Add behavior testing</comment>
 
     <addColumn tableName="TEST_CASE">
-      <column name="SUPPORT_KEYWORD" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case supports keyword feature">
+      <column name="IS_BEHAVIOR_TEST_CASE" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case is a behavior TC.">
         <constraints nullable="false" />
       </column>
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-174-keyword-table" author="jlor">
-    <comment>Add keyword table</comment>
+  <changeSet id="tm-1.22.0-SQUASH-174-behavior-phrase-table" author="jlor">
+    <comment>Add behavior phrase table</comment>
 
-    <createTable tableName="KEYWORD">
+    <createTable tableName="BEHAVIOR_PHRASE">
 
-      <column name="KEYWORD_ID" type="BIGINT" autoIncrement="true">
+      <column name="BEHAVIOR_PHRASE_ID" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
 
-      <column name="WORD" type="VARCHAR(255)">
+      <column name="PHRASE" type="VARCHAR(255)">
         <constraints nullable="false" unique="true"/>
 
       </column>
@@ -61,23 +61,24 @@
     </createTable>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-174-keyword-test-step-table" author="jlor" >
-    <comment>Add keyword test step table</comment>
+  <changeSet id="tm-1.22.0-SQUASH-174-behavior-test-step-table" author="jlor" >
+    <comment>Add behavior test step table</comment>
 
-    <createTable tableName="KEYWORD_TEST_STEP">
+    <createTable tableName="BEHAVIOR_TEST_STEP">
       <column name="TEST_STEP_ID" type="BIGINT" remarks="Shared key with TEST_STEP table">
-        <constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_keyword_step"
-                     foreignKeyName="fk_keyword_step_test_step"/>
+        <constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_behavior_step"
+                     foreignKeyName="fk_behavior_step_test_step"/>
       </column>
 
-      <column name="KEYWORD_ID" type="BIGINT" remarks="The keyword this test step uses">
-        <constraints nullable="false" foreignKeyName="fk_keyword_test_step_keyword_id" references="KEYWORD (KEYWORD_ID)"/>
+      <column name="BEHAVIOR_PHRASE_ID" type="BIGINT" remarks="The behavior phrase which this test step uses">
+        <constraints nullable="false" foreignKeyName="fk_behavior_test_step_behavior_phrase_id" references="BEHAVIOR_PHRASE (BEHAVIOR_PHRASE_ID)"/>
       </column>
     </createTable>
+
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
-    <comment>Changes in QueryBuilder related tables concerning TEST_CASE_CALLSTEPCOUNT prototype column: adding a new subclass of TestStep (KeywordTestStep) broke the QueryBuilder</comment>
+    <comment>Changes in QueryBuilder related tables concerning TEST_CASE_CALLSTEPCOUNT prototype column: adding a new subclass of TestStep (BehaviorTestStep) broke the QueryBuilder</comment>
     <sql>update QUERY_FILTER_VALUES set FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' where QUERY_FILTER_ID=1;</sql>
     <sql>update QUERY_FILTER_COLUMN set QUERY_COLUMN_ID=134, FILTER_OPERATION='IS_CLASS' where QUERY_FILTER_ID=1;</sql>
   </changeSet>

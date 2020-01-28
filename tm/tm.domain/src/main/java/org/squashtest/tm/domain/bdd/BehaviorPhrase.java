@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.keyword;
+package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,34 +30,34 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class Keyword {
+public class BehaviorPhrase {
 
-	private static final int KEYWORD_MAX_LENGTH = 255;
+	private static final int BEHAVIOR_PHRASE_MAX_LENGTH = 255;
 
 	@Id
-	@Column(name = "KEYWORD_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "keyword_keyword_id_seq")
-	@SequenceGenerator(name = "keyword_keyword_id_seq", sequenceName = "keyword_keyword_id_seq", allocationSize = 1)
+	@Column(name = "BEHAVIOR_PHRASE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "behavior_phrase_behavior_phrase_id_seq")
+	@SequenceGenerator(name = "behavior_phrase_behavior_phrase_id_seq", sequenceName = "behavior_phrase_behavior_phrase_id_seq", allocationSize = 1)
 	private Long id;
 
-	@Column(name = "WORD")
-	private String word;
+	@Column(name = "PHRASE")
+	private String phrase;
 
-	Keyword() {
+	BehaviorPhrase() {
 	}
 
-	public Keyword(String word) {
-		if(StringUtils.isBlank(word)) {
-			throw new IllegalArgumentException("Keyword cannot be blank");
+	public BehaviorPhrase(String phrase) {
+		if(StringUtils.isBlank(phrase)) {
+			throw new IllegalArgumentException("Behavior phrase cannot be blank.");
 		}
-		String trimmedWord = word.trim();
-		if(trimmedWord.length() > KEYWORD_MAX_LENGTH) {
-			throw new IllegalArgumentException("Keyword length cannot exceed 255 characters");
+		String trimmedWord = phrase.trim();
+		if(trimmedWord.length() > BEHAVIOR_PHRASE_MAX_LENGTH) {
+			throw new IllegalArgumentException("Behavior phrase length cannot exceed 255 characters.");
 		}
-		this.word = trimmedWord;
+		this.phrase = trimmedWord;
 	}
 
-	public String getWord() {
-		return word;
+	public String getPhrase() {
+		return phrase;
 	}
 }

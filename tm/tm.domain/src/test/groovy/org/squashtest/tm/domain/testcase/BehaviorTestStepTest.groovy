@@ -18,36 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.keyword
+package org.squashtest.tm.domain.testcase
 
+import org.squashtest.tm.domain.bdd.BehaviorPhrase
 import spock.lang.Specification
-import spock.lang.Unroll
 
-class KeywordTest extends Specification {
+class BehaviorTestStepTest extends Specification {
 
-	@Unroll
-	def "should create a keyword"() {
+	def "should associate a valid TestCase"() {
+		given:
+		TestCase testCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
+		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(new BehaviorPhrase("hello"))
 		when:
-		Keyword keyword = new Keyword(word)
-
+		behaviorTestStep.setTestCase(testCase)
 		then:
-		keyword.getWord() == expectedWord
+		behaviorTestStep.testCase == testCase
 
-		where:
-		word 			|| expectedWord
-		"hello" 		|| "hello"
-		" hello   " 	|| "hello"
 	}
-
-	@Unroll
-	def "should reject invalid keyword"() {
+	def "should reject an invalid TestCase"() {
+		given:
+		TestCase testcase = new TestCase()
+		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(new BehaviorPhrase("hello"))
 		when:
-		new Keyword(word)
-
+		behaviorTestStep.setTestCase(testcase)
 		then:
 		thrown IllegalArgumentException
-
-		where:
-		word << [null, "", "   ", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 	}
 }

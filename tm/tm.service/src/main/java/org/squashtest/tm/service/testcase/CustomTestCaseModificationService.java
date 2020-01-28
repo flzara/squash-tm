@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -58,12 +58,12 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void changeImportance(long testCaseId, TestCaseImportance importance);
 
 	/**
-	 * Inserts the given {@link KeywordTestStep} in last position of the {@link TestCase} identified by the given id.
+	 * Inserts the given {@link BehaviorTestStep} in last position of the {@link TestCase} identified by the given id.
 	 * @param parentTestCaseId The id of the parent TestCase
-	 * @param keyword The inserted keyword
-	 * @return The created KeywordTestStep
+	 * @param behaviorPhrase The inserted behaviorPhrase
+	 * @return The created BehaviorTestStep
 	 */
-	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword);
+	BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String behaviorPhrase);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.

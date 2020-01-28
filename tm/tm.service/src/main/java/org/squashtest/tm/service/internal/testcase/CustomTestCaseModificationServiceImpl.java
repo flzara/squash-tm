@@ -44,7 +44,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.keyword.Keyword;
+import org.squashtest.tm.domain.bdd.BehaviorPhrase;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -52,8 +52,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -65,7 +65,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -268,15 +267,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword) {
-		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
+	public BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String behaviorPhrase) {
+		LOGGER.debug("adding a new behavior test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		//TODO: verify if the given keyword exists in db
-		Keyword givenKeyword = new Keyword(keyword);
-		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword);
-		parentTestCase.addStep(keywordTestStep);
-		testStepDao.persist(keywordTestStep);
-		return keywordTestStep;
+		//TODO: verify if the given behavior phrase exists in db
+		BehaviorPhrase givenBehaviorPhrase = new BehaviorPhrase(behaviorPhrase);
+		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenBehaviorPhrase);
+		parentTestCase.addStep(behaviorTestStep);
+		testStepDao.persist(behaviorTestStep);
+		return behaviorTestStep;
 	}
 
 	@Override
@@ -544,7 +543,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 
 			@Override
-			public void visit(KeywordTestStep visited) {
+			public void visit(BehaviorTestStep visited) {
 				throw new UnsupportedOperationException();
 			}
 		};
@@ -1279,7 +1278,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 		@Override
-		public void visit(KeywordTestStep visited) {
+		public void visit(BehaviorTestStep visited) {
 			// NOOP
 		}
 	}

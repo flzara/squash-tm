@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.domain.testcase.BehaviorTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -196,38 +196,38 @@ public class TestCaseTestStepsController {
 		return addActionTestStep.getId();
 	}
 
-	@RequestMapping(value = "/keyword-panel")
-	public String getKeywordTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+	@RequestMapping(value = "/behavior-step-panel")
+	public String getBehaviorTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<TestStep> steps = testCase.getSteps();
 		model.addAttribute(TEST_CASE, testCase);
-		model.addAttribute("stepsData", transformKeywordTestStepsToKeywordTestStepsDto(steps));
-		return "test-cases-tabs/keyword-test-steps-tab.html";
+		model.addAttribute("stepsData", transformBehaviorTestStepsToBehaviorTestStepsDto(steps));
+		return "test-cases-tabs/behavior-test-steps-tab.html";
 	}
 
-	private KeywordTestStepDto transformTestStepToKeywordTestStepDto(TestStep testStep) {
-		KeywordTestStep keywordTestStep = (KeywordTestStep) testStep;
-		return new KeywordTestStepDto(
-			keywordTestStep.getId(),
-			keywordTestStep.getKeyword().getWord());
+	private BehaviorTestStepDto transformTestStepToBehaviorTestStepDto(TestStep testStep) {
+		BehaviorTestStep behaviorTestStep = (BehaviorTestStep) testStep;
+		return new BehaviorTestStepDto(
+			behaviorTestStep.getId(),
+			behaviorTestStep.getBehaviorPhrase().getPhrase());
 	}
 
-	private List<KeywordTestStepDto> transformKeywordTestStepsToKeywordTestStepsDto(List<TestStep> testSteps) {
-		List<KeywordTestStepDto> result = new ArrayList();
+	private List<BehaviorTestStepDto> transformBehaviorTestStepsToBehaviorTestStepsDto(List<TestStep> testSteps) {
+		List<BehaviorTestStepDto> result = new ArrayList();
 		for (TestStep testStep : testSteps) {
-			result.add(transformTestStepToKeywordTestStepDto(testStep));
+			result.add(transformTestStepToBehaviorTestStepDto(testStep));
 		}
 		return result;
 	}
 
-	private class KeywordTestStepDto {
+	private class BehaviorTestStepDto {
 
 		private Long id;
-		private String keyword;
+		private String behaviorPhrase;
 
-		public KeywordTestStepDto(Long id, String keyword) {
+		public BehaviorTestStepDto(Long id, String behaviorPhrase) {
 			this.id = id;
-			this.keyword = keyword;
+			this.behaviorPhrase = behaviorPhrase;
 		}
 
 		public Long getId() {
@@ -237,18 +237,18 @@ public class TestCaseTestStepsController {
 			this.id = id;
 		}
 
-		public String getKeyword() {
-			return keyword;
+		public String getBehaviorPhrase() {
+			return behaviorPhrase;
 		}
-		public void setKeyword(String keyword) {
-			this.keyword = keyword;
+		public void setBehaviorPhrase(String behaviorPhrase) {
+			this.behaviorPhrase = behaviorPhrase;
 		}
 	}
 
-	@PostMapping(value = "/add-keyword", consumes = "application/json")
+	@PostMapping(value = "/add-behavior-phrase", consumes = "application/json")
 	@ResponseBody
-	public Long addKeywordTestStep(@RequestBody String keyword, @PathVariable long testCaseId) {
-		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword);
+	public Long addBehaviorTestStep(@RequestBody String behaviorPhrase, @PathVariable long testCaseId) {
+		BehaviorTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, behaviorPhrase);
 		return step.getId();
 	}
 

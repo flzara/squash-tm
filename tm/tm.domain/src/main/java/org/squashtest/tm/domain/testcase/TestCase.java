@@ -58,7 +58,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -90,8 +89,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
-	public static final boolean KEYWORD_ENABLED = true;
-	public static final boolean KEYWORD_DISABLED = false;
+	public static final boolean IS_BEHAVIOR_TEST_CASE = true;
+	public static final boolean IS_NOT_BEHAVIOR_TEST_CASE = false;
 
 	public static final int MAX_REF_SIZE = 50;
 	@Column(updatable = false)
@@ -187,7 +186,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String uuid;
 
 	@Column
-	private boolean supportKeyword = KEYWORD_DISABLED;
+	private boolean isBehaviorTestCase = IS_NOT_BEHAVIOR_TEST_CASE;
 
 	// *************************** CODE *************************************
 
@@ -204,9 +203,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		setUuid(uuid.toString());
 	}
 
-	public TestCase(boolean supportKeyword) {
+	public TestCase(boolean isBehaviorTestCase) {
 		this();
-		this.supportKeyword = supportKeyword;
+		this.isBehaviorTestCase = isBehaviorTestCase;
 	}
 
 	public int getVersion() {
@@ -603,7 +602,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 
 		@Override
-		public void visit(KeywordTestStep visited) {
+		public void visit(BehaviorTestStep visited) {
 			// NOOP
 		}
 	}
@@ -846,8 +845,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return result;
 	}
 
-	public static TestCase createKeywordTestCase() {
-		return new TestCase(KEYWORD_ENABLED);
+	public static TestCase createBehaviorTestCase() {
+		return new TestCase(IS_BEHAVIOR_TEST_CASE);
 	}
 
 	/**
@@ -892,8 +891,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return milestonesAllowEdit();
 	}
 
-	public boolean isKeywordTestCase() {
-		return supportKeyword;
+	public boolean isBehaviorTestCase() {
+		return isBehaviorTestCase;
 	}
 
 	private boolean milestonesAllowEdit() {
@@ -939,8 +938,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public void extendWithScript(String scriptLanguage, String locale) {
-		if(this.isKeywordTestCase()) {
-			throw new IllegalExtensionException("Keyword Test Case cannot be extended into Scripted Test Case.");
+		if(this.isBehaviorTestCase()) {
+			throw new IllegalExtensionException("Behavior Test Case cannot be extended into Scripted Test Case.");
 		}
 		TestCaseKind tcKind = TestCaseKind.getFromString(scriptLanguage);
 		if (tcKind.isScripted()) {

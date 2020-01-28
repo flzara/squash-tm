@@ -26,5 +26,5 @@ public interface TestStepVisitor {
 
 	void visit(CallTestStep visited);
 
-	void visit(KeywordTestStep visited);
+	void visit(BehaviorTestStep visited);
 }

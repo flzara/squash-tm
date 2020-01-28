@@ -25,8 +25,8 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
-import org.squashtest.tm.domain.testcase.KeywordTestStep
-import org.squashtest.tm.domain.keyword.Keyword
+import org.squashtest.tm.domain.testcase.BehaviorTestStep
+import org.squashtest.tm.domain.bdd.BehaviorPhrase
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -538,16 +538,16 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	}
 
-	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
-	def "should add a keyword test step to test case"() {
+	@DataSet("TestCaseModificationServiceImplIT.behavior test cases.xml")
+	def "should add a behavior test step to test case"() {
 		when:
-			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "hello")
+			BehaviorTestStep createdBehaviorTestStep = service.addBehaviorTestStep(-4L, "hello")
 		then:
-			createdKeywordTestStep != null
-			createdKeywordTestStep.id != null
+			createdBehaviorTestStep != null
+			createdBehaviorTestStep.id != null
 
-			Keyword keyword = createdKeywordTestStep.keyword
-			keyword.id != null
-			keyword.word == "hello"
+			BehaviorPhrase behaviorPhrase = createdBehaviorTestStep.behaviorPhrase
+			behaviorPhrase.id != null
+			behaviorPhrase.phrase == "hello"
 	}
 }

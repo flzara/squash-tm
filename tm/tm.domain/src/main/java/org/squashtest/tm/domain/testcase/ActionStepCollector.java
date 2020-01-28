@@ -46,7 +46,7 @@ public final class ActionStepCollector implements TestStepVisitor {
 	}
 
 	@Override
-	public void visit(KeywordTestStep visited) {
+	public void visit(BehaviorTestStep visited) {
 		// NOOP
 	}
 }

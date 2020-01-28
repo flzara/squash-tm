@@ -22,12 +22,12 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.domain.bdd.BehaviorPhrase
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.keyword.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.*
@@ -86,25 +86,25 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.eventPublisher = eventPublisher
 	}
 
-	def "should find test case and add a keyword step at last position"() {
+	def "should find test case and add a behavior step at last position"() {
 		given:
 			long parentTestCaseId = 2
-			TestCase parentTestCase = new TestCase(TestCase.KEYWORD_ENABLED)
+			TestCase parentTestCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
 
 		and:
-			def firstStep = new KeywordTestStep(new Keyword("first"))
+			def firstStep = new BehaviorTestStep(new BehaviorPhrase("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:
 			testCaseDao.findById(parentTestCaseId) >> parentTestCase
 
 		when:
-			service.addKeywordTestStep(parentTestCaseId, "last")
+			service.addBehaviorTestStep(parentTestCaseId, "last")
 
 		then:
 			1 * testStepDao.persist(_)
 			parentTestCase.getSteps().size() == 2
-			parentTestCase.getSteps()[1].keyword.word == "last"
+			parentTestCase.getSteps()[1].behaviorPhrase.getPhrase() == "last"
 	}
 
 	def "should find test case and add a step at last position"() {

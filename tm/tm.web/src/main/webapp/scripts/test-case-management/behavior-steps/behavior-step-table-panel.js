@@ -20,9 +20,9 @@
  */
 define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 
-	var KeywordStepTablePanel = Backbone.View.extend({
+	var BehaviorStepTablePanel = Backbone.View.extend({
 
-		el : "#tab-tc-keyword-steps",
+		el : "#tab-tc-behavior-steps",
 
 		initialize : function(options) {
 			var self = this;
@@ -30,22 +30,22 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 		},
 
 		events : {
-			"click #add-keyword-test-step-btn" : "addKeywordTestStep"
+			"click #add-behavior-test-step-btn" : "addBehaviorTestStep"
 		},
 
-		addKeywordTestStep: function() {
-			var inputKeyword = $('#add-keyword-test-step-input').val();
+		addBehaviorTestStep: function() {
+			var inputBehaviorPhrase = $('#add-behavior-test-step-input').val();
 			$.ajax({
 				type: "POST",
-				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword",
+				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-behavior-phrase",
 				contentType: 'application/json',
-				data: inputKeyword
+				data: inputBehaviorPhrase
 			}).done(function(id){
-				var displayDiv = $('#add-keyword-test-step-result');
-				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputKeyword);
+				var displayDiv = $('#add-behavior-test-step-result');
+				displayDiv.text("The behavior test step has been successfully created with id : "+id+" and name : "+inputBehaviorPhrase);
 			});
 		}
 
 	});
-	return KeywordStepTablePanel;
+	return BehaviorStepTablePanel;
 });
