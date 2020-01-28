@@ -78,8 +78,8 @@
 
   <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
     <comment>Changes in QueryBuilder related tables concerning TEST_CASE_CALLSTEPCOUNT prototype column: adding a new subclass of TestStep (KeywordTestStep) broke the QueryBuilder</comment>
-    <sql>update query_filter_values set filter_value='org.squashtest.tm.domain.testcase.CallTestStep' where query_filter_id=1;</sql>
-    <sql>update query_filter_column set query_column_id=134, filter_operation='IS_CLASS' where query_filter_id=1;</sql>
+    <sql>update QUERY_FILTER_VALUES set FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' where QUERY_FILTER_ID=1;</sql>
+    <sql>update QUERY_FILTER_COLUMN set QUERY_COLUMN_ID=134, FILTER_OPERATION='IS_CLASS' where QUERY_FILTER_ID=1;</sql>
   </changeSet>
 
 </databaseChangeLog>
