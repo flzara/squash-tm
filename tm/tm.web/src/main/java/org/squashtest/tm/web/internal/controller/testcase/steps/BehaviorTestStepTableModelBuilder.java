@@ -34,6 +34,7 @@ public class BehaviorTestStepTableModelBuilder extends DataTableModelBuilder<Tes
 		Map<String, String> item = new HashMap<>(3);
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-id", String.valueOf(behaviorTestStep.getId()));
+		item.put("step-keyword", String.valueOf(behaviorTestStep.getKeyword()));
 		item.put("step-phrase", behaviorTestStep.getBehaviorPhrase().getPhrase());
 		return item;
 	}

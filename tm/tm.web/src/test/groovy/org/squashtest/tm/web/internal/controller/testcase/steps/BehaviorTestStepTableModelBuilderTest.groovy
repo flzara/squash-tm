@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase.steps
 
 import org.squashtest.tm.domain.bdd.BehaviorPhrase
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.BehaviorTestStep
 import org.squashtest.tm.domain.testcase.TestStep
 import spock.lang.Specification
@@ -33,12 +34,15 @@ class BehaviorTestStepTableModelBuilderTest extends Specification {
 		given:
 		def testStep = Mock(BehaviorTestStep)
 		testStep.getId() >> 8
+		testStep.getKeyword() >> Keyword.GIVEN
 		testStep.getBehaviorPhrase() >> new BehaviorPhrase("goodbye")
 		when:
 		Map<String, String> resultItem = builder.buildItemData(testStep)
 		then:
+		resultItem.size() == 4
 		resultItem.get("step-index") == "0"
 		resultItem.get("step-id") == "8"
+		resultItem.get("step-keyword") == "GIVEN"
 		resultItem.get("step-phrase") == "goodbye"
 	}
 }
