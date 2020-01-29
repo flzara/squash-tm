@@ -73,6 +73,11 @@
       <column name="BEHAVIOR_PHRASE_ID" type="BIGINT" remarks="The behavior phrase which this test step uses">
         <constraints nullable="false" foreignKeyName="fk_behavior_test_step_behavior_phrase_id" references="BEHAVIOR_PHRASE (BEHAVIOR_PHRASE_ID)"/>
       </column>
+
+      <!-- SQUASH-175 - Add KEYWORD column in BEHAVIOR_TEST_STEP table -->
+      <column name="KEYWORD" type="java.sql.Types.VARCHAR(20)" remarks="A behavior test step keyword">
+        <constraints nullable="false" />
+      </column>
     </createTable>
 
   </changeSet>

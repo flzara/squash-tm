@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.bdd.BehaviorPhrase;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,17 +38,26 @@ import java.util.List;
 public class BehaviorTestStep extends TestStep {
 
 	@NotNull
+	@Column
+	private Keyword keyword;
+
+	@NotNull
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "BEHAVIOR_PHRASE_ID")
 	private BehaviorPhrase behaviorPhrase;
 
+
 	BehaviorTestStep() {
 	}
 
-	public BehaviorTestStep(BehaviorPhrase paramBehaviorPhrase) {
+	public BehaviorTestStep(Keyword paramKeyword, BehaviorPhrase paramBehaviorPhrase) {
+		if(paramKeyword == null) {
+			throw new IllegalArgumentException("Keyword cannot be null.");
+		}
 		if(paramBehaviorPhrase == null) {
 			throw new IllegalArgumentException("Behavior phrase cannot be null.");
 		}
+		this.keyword = paramKeyword;
 		this.behaviorPhrase = paramBehaviorPhrase;
 	}
 
@@ -71,6 +82,10 @@ public class BehaviorTestStep extends TestStep {
 			throw new IllegalArgumentException("Cannot add a Behavior Test Step");
 		}
 		super.setTestCase(testCase);
+	}
+
+	public Keyword getKeyword() {
+		return keyword;
 	}
 
 	public BehaviorPhrase getBehaviorPhrase() {

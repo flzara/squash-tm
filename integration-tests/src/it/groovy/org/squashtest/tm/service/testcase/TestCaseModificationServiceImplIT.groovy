@@ -27,6 +27,7 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.testcase.BehaviorTestStep
 import org.squashtest.tm.domain.bdd.BehaviorPhrase
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -541,10 +542,13 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.behavior test cases.xml")
 	def "should add a behavior test step to test case"() {
 		when:
-			BehaviorTestStep createdBehaviorTestStep = service.addBehaviorTestStep(-4L, "hello")
+			BehaviorTestStep createdBehaviorTestStep = service.addBehaviorTestStep(-4L, "WHEN", "hello")
 		then:
 			createdBehaviorTestStep != null
 			createdBehaviorTestStep.id != null
+
+			Keyword keyword = createdBehaviorTestStep.keyword
+			Keyword.WHEN == keyword
 
 			BehaviorPhrase behaviorPhrase = createdBehaviorTestStep.behaviorPhrase
 			behaviorPhrase.id != null

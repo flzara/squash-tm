@@ -212,7 +212,9 @@ public class TestCaseTestStepsController {
 	@PostMapping(value = "/add-behavior-phrase", consumes = "application/json")
 	@ResponseBody
 	public Long addBehaviorTestStep(@RequestBody String behaviorPhrase, @PathVariable long testCaseId) {
-		BehaviorTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, behaviorPhrase);
+		// TODO - THIS IS A TEMPORARY MOCK
+		String keywordMock = "GIVEN";
+		BehaviorTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, keywordMock, behaviorPhrase);
 		return step.getId();
 	}
 

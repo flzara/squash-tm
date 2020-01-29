@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.testcase
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.bdd.BehaviorPhrase
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -92,14 +93,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			TestCase parentTestCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
 
 		and:
-			def firstStep = new BehaviorTestStep(new BehaviorPhrase("first"))
+			def firstStep = new BehaviorTestStep(Keyword.GIVEN, new BehaviorPhrase("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:
 			testCaseDao.findById(parentTestCaseId) >> parentTestCase
 
 		when:
-			service.addBehaviorTestStep(parentTestCaseId, "last")
+			service.addBehaviorTestStep(parentTestCaseId, "THEN", "last")
 
 		then:
 			1 * testStepDao.persist(_)

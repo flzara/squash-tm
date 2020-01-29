@@ -40,6 +40,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -267,13 +268,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String behaviorPhrase) {
+	public BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String keyword, String behaviorPhrase) {
 		LOGGER.debug("adding a new behavior test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		// TODO: 1 - verify if the parent test case is a behavior test case
 		// TODO: 2 - verify if the given behavior phrase already exists in db and reuse it if exists
 		BehaviorPhrase givenBehaviorPhrase = new BehaviorPhrase(behaviorPhrase);
-		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenBehaviorPhrase);
+		Keyword givenKeyword = Keyword.valueOf(keyword);
+		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenKeyword, givenBehaviorPhrase);
 		parentTestCase.addStep(behaviorTestStep);
 		testStepDao.persist(behaviorTestStep);
 		return behaviorTestStep;
