@@ -63,7 +63,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -687,6 +686,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 
 			Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
+
+			// SQUASH-209 - boolean must be updated when manual association with automation workflow
+			AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
+			if(automationRequest.getProject().isAllowAutomationWorkflow()
+				&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
+				requestDao.updateIsManual(testCaseId, true);
+			}
 
 			// once it's okay we commit the test association
 			return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
