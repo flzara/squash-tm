@@ -713,7 +713,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 			// SQUASH-209 - boolean must be updated when manual association with automation workflow
 			AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
-			if(automationRequest.getProject().isAllowAutomationWorkflow()
+			if(automationRequest != null && automationRequest.getProject().isAllowAutomationWorkflow()
 				&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 				requestDao.updateIsManual(testCaseId, true);
 			}
