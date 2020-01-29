@@ -27,18 +27,22 @@ import org.squashtest.tm.domain.bdd.BehaviorPhrase;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class BehaviorTestStep extends TestStep {
 
 	@NotNull
-	@Column
+	@Enumerated(STRING)
+	@Column(name = "KEYWORD")
 	private Keyword keyword;
 
 	@NotNull
