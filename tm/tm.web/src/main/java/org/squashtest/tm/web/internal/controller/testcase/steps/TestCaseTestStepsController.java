@@ -201,48 +201,12 @@ public class TestCaseTestStepsController {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<TestStep> steps = testCase.getSteps();
 		model.addAttribute(TEST_CASE, testCase);
-		model.addAttribute("stepsData", transformBehaviorTestStepsToBehaviorTestStepsDto(steps));
+
+		//create behavior test step table model
+		BehaviorTestStepTableModelBuilder builder = new BehaviorTestStepTableModelBuilder();
+		Collection<Object> stepData = builder.buildRawModel(steps, 1);
+		model.addAttribute("stepData", stepData);
 		return "test-cases-tabs/behavior-test-steps-tab.html";
-	}
-
-	private BehaviorTestStepDto transformTestStepToBehaviorTestStepDto(TestStep testStep) {
-		BehaviorTestStep behaviorTestStep = (BehaviorTestStep) testStep;
-		return new BehaviorTestStepDto(
-			behaviorTestStep.getId(),
-			behaviorTestStep.getBehaviorPhrase().getPhrase());
-	}
-
-	private List<BehaviorTestStepDto> transformBehaviorTestStepsToBehaviorTestStepsDto(List<TestStep> testSteps) {
-		List<BehaviorTestStepDto> result = new ArrayList();
-		for (TestStep testStep : testSteps) {
-			result.add(transformTestStepToBehaviorTestStepDto(testStep));
-		}
-		return result;
-	}
-
-	private class BehaviorTestStepDto {
-
-		private Long id;
-		private String behaviorPhrase;
-
-		public BehaviorTestStepDto(Long id, String behaviorPhrase) {
-			this.id = id;
-			this.behaviorPhrase = behaviorPhrase;
-		}
-
-		public Long getId() {
-			return id;
-		}
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public String getBehaviorPhrase() {
-			return behaviorPhrase;
-		}
-		public void setBehaviorPhrase(String behaviorPhrase) {
-			this.behaviorPhrase = behaviorPhrase;
-		}
 	}
 
 	@PostMapping(value = "/add-behavior-phrase", consumes = "application/json")

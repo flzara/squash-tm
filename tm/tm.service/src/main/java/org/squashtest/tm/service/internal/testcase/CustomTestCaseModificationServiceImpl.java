@@ -270,7 +270,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String behaviorPhrase) {
 		LOGGER.debug("adding a new behavior test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		//TODO: verify if the given behavior phrase exists in db
+		// TODO: 1 - verify if the parent test case is a behavior test case
+		// TODO: 2 - verify if the given behavior phrase already exists in db and reuse it if exists
 		BehaviorPhrase givenBehaviorPhrase = new BehaviorPhrase(behaviorPhrase);
 		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenBehaviorPhrase);
 		parentTestCase.addStep(behaviorTestStep);

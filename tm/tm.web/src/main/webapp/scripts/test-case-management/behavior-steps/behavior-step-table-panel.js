@@ -27,10 +27,20 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 		initialize : function(options) {
 			var self = this;
 			this.settings = options.settings;
+			this.initBehaviorStepTable(options.settings);
 		},
 
 		events : {
 			"click #add-behavior-test-step-btn" : "addBehaviorTestStep"
+		},
+
+		initBehaviorStepTable : function(settings) {
+			var table = $("#behavior-test-step-table-" + settings.testCaseId);
+			table.squashTable(
+				{
+					bServerSide: false,
+					aaData : settings.stepData
+				}, {});
 		},
 
 		addBehaviorTestStep: function() {

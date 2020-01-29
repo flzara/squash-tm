@@ -31,7 +31,7 @@
 <div id="tab-tc-behavior-steps" class="table-tab">
 
   <div>
-    <h4>This is the Behavior Test Steps Page.</h4>
+    <h4>This is the Behavior Test Step Page.</h4>
   </div>
   <br/>
   <div>
@@ -41,16 +41,24 @@
   </div>
   <br/>
   <div id="add-behavior-test-step-result"></div>
-  <br/>
-  <div class="step-list">
-    <h4>- Step List- </h4>
-    <div th:each="step: ${stepsData}" class="step">
-      <li>ID: <span th:text="${step.id}" /> - StepWord: <span th:text="${step.behaviorPhrase}" /></li>
 
-    </div>
+  <!-- ==================== table definition =================== -->
+  <div class="table-tab-wrap jstree-drop" style="position: relative;">
+    <table th:id="'behavior-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table ">
+      <thead>
+      <tr>
+        <th data-def="map=step-index, select">#</th>
+        <th th:text="#{label.id}" data-def="map=step-id"> </th>
+        <th th:text="#{label.Name}" data-def="map=step-phrase, sortable"> </th>
 
-    <span th:text="${stepList}"></span>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- eager-loaded through data property of table -->
+      </tbody>
+    </table>
   </div>
+  <!-- ==================== /table definition =================== -->
 
   <script type="text/javascript" th:inline="javascript">
   /*<![CDATA[*/
@@ -62,7 +70,7 @@
       domReady(function(){
 
         var settings = {
-          stepList : /*[[${stepsData}]]*/[],
+          stepData : /*[[${stepData}]]*/[],
           testCaseId : /*[[${testCase.id}]]*/1,
           language : {},
           permissions : {}
