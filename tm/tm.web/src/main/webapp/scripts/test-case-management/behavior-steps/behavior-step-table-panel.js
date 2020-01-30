@@ -40,7 +40,11 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				{
 					bServerSide: false,
 					aaData : settings.stepData
-				}, {});
+				}, {
+					deleteButtons: {
+						tooltip: {}
+					}
+				});
 		},
 
 		addBehaviorTestStep: function() {
