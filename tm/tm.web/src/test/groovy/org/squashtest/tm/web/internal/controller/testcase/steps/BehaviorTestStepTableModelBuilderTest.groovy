@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps
 
-import org.squashtest.tm.domain.bdd.BehaviorPhrase
+
+import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.BehaviorTestStep
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -34,7 +35,7 @@ class BehaviorTestStepTableModelBuilderTest extends Specification {
 		given:
 			def testStep = Mock(BehaviorTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
-			testStep.getBehaviorPhrase() >> new BehaviorPhrase("goodbye")
+			testStep.getActionWord() >> new ActionWord("goodbye")
 		when:
 			Map<String, String> resultItem1 = builder.buildItemData(testStep)
 		then:
@@ -49,11 +50,11 @@ class BehaviorTestStepTableModelBuilderTest extends Specification {
 		given:
 			def testStep = Mock(BehaviorTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
-			testStep.getBehaviorPhrase() >> new BehaviorPhrase("hello")
+			testStep.getActionWord() >> new ActionWord("hello")
 		and:
 			def testStep2 = Mock(BehaviorTestStep)
 			testStep2.getKeyword() >> Keyword.THEN
-			testStep2.getBehaviorPhrase() >> new BehaviorPhrase("goodbye")
+			testStep2.getActionWord() >> new ActionWord("goodbye")
 		when:
 			List<Object> resultCollection = builder.buildRawModel([testStep,testStep2],1)
 		then:

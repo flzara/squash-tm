@@ -40,12 +40,12 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.bdd.BehaviorPhrase;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -273,9 +273,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		// TODO: 1 - verify if the parent test case is a behavior test case
 		// TODO: 2 - verify if the given behavior phrase already exists in db and reuse it if exists
-		BehaviorPhrase givenBehaviorPhrase = new BehaviorPhrase(behaviorPhrase);
+		ActionWord givenActionWord = new ActionWord(behaviorPhrase);
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenKeyword, givenBehaviorPhrase);
+		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenKeyword, givenActionWord);
 		parentTestCase.addStep(behaviorTestStep);
 		testStepDao.persist(behaviorTestStep);
 		return behaviorTestStep;

@@ -30,9 +30,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class BehaviorPhrase {
+public class ActionWord {
 
-	private static final int BEHAVIOR_PHRASE_MAX_LENGTH = 255;
+	private static final int ACTION_WORD_MAX_LENGTH = 255;
 
 	@Id
 	@Column(name = "BEHAVIOR_PHRASE_ID")
@@ -41,23 +41,23 @@ public class BehaviorPhrase {
 	private Long id;
 
 	@Column(name = "PHRASE")
-	private String phrase;
+	private String word;
 
-	BehaviorPhrase() {
+	ActionWord() {
 	}
 
-	public BehaviorPhrase(String phrase) {
-		if(StringUtils.isBlank(phrase)) {
-			throw new IllegalArgumentException("Behavior phrase cannot be blank.");
+	public ActionWord(String word) {
+		if(StringUtils.isBlank(word)) {
+			throw new IllegalArgumentException("Action word cannot be blank.");
 		}
-		String trimmedWord = phrase.trim();
-		if(trimmedWord.length() > BEHAVIOR_PHRASE_MAX_LENGTH) {
-			throw new IllegalArgumentException("Behavior phrase length cannot exceed 255 characters.");
+		String trimmedWord = word.trim();
+		if(trimmedWord.length() > ACTION_WORD_MAX_LENGTH) {
+			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
 		}
-		this.phrase = trimmedWord;
+		this.word = trimmedWord;
 	}
 
-	public String getPhrase() {
-		return phrase;
+	public String getWord() {
+		return word;
 	}
 }

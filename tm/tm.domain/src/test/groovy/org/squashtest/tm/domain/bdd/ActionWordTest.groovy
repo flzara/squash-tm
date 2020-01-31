@@ -23,15 +23,15 @@ package org.squashtest.tm.domain.bdd
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class BehaviorPhraseTest extends Specification {
+class ActionWordTest extends Specification {
 
 	@Unroll
 	def "should create a behavior phrase"() {
 		when:
-		BehaviorPhrase behaviorPhrase = new BehaviorPhrase(phrase)
+		ActionWord behaviorPhrase = new ActionWord(phrase)
 
 		then:
-		behaviorPhrase.getPhrase() == expectedPhrase
+		behaviorPhrase.getWord() == expectedPhrase
 
 		where:
 		phrase || expectedPhrase
@@ -42,7 +42,7 @@ class BehaviorPhraseTest extends Specification {
 	@Unroll
 	def "should reject invalid behavior phrase"() {
 		when:
-		new BehaviorPhrase(phrase)
+		new ActionWord(phrase)
 
 		then:
 		thrown IllegalArgumentException

@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.domain.bdd.BehaviorPhrase
+import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -93,7 +93,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			TestCase parentTestCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
 
 		and:
-			def firstStep = new BehaviorTestStep(Keyword.GIVEN, new BehaviorPhrase("first"))
+			def firstStep = new BehaviorTestStep(Keyword.GIVEN, new ActionWord("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:
@@ -105,7 +105,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 			1 * testStepDao.persist(_)
 			parentTestCase.getSteps().size() == 2
-			parentTestCase.getSteps()[1].behaviorPhrase.getPhrase() == "last"
+			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
 	}
 
 	def "should find test case and add a step at last position"() {
