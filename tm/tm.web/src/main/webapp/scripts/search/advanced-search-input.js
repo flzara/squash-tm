@@ -594,6 +594,12 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 			var fields = this.$el.find("div.search-input");
 			var jsonVariable = {};
 
+			function initIfNeeded(key){
+				if (jsonVariable[key] === undefined || jsonVariable[key] === null){
+					jsonVariable[key] = { type: "LIST", values : []};
+				}
+			}
+
 			// A little hack for the jstree if it exists (campaign only on july 2015)
 			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable
 			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
@@ -602,72 +608,49 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				var key;
 				var selectedInTree = $("#tree").jstree('get_selected');
 
-				//because we don't have time, we can select only one type of node in the tree, so the following will work fine.
-				//BE CAREFUL : This won't work anymore if multiple node type can be selected.
-				//Note: solution for bug TM-324 can handle multiple node type selection
+				if (selectedInTree.length === 0) {
+					jsonVariable["project.id"] = {type: "LIST", values: []};
+				} else {
+					//because we don't have time, we can select only one type of node in the tree, so the following will work fine.
+					//BE CAREFUL : This won't work anymore if multiple node type can be selected.
+					//Note: solution for bug TM-324 can handle multiple selection but only one type at a time
 
-				//FIX: [TM-324] access to selected elements in tree by JQuery object via the 'toData' function that contains
-				//the id of the selected campaign folder
-				var selectedInTreeData = selectedInTree.toData();
+					//FIX: [TM-324] access to selected elements in tree by JQuery object via the 'toData' function that contains
+					//the id of the selected campaign folder
+					var selectedInTreeData = selectedInTree.toData();
 
-				selectedInTreeData.forEach(function(elt){
-					var type = elt.restype;
+					selectedInTreeData.forEach(function(elt){
+						var type = elt.restype;
 
-					switch (type) {
-						case 'campaign-libraries' :
-							key = "project.id";
-							break;
-						case 'campaign-folders' :
-							key = "campaign.folder.id";
-							break;
-						case 'campaigns' :
-							key = "campaign.id";
-							break;
-						case 'iterations' :
-							key = "iteration.id";
-							break;
-						case 'test-suites' :
-							key = "testSuites.id";
-							break;
-						default :
-							break;
-					}
+						switch (type) {
+							case 'campaign-libraries' :
+								key = "project.id";
+								break;
+							case 'campaign-folders' :
+								key = "campaign.folder.id";
+								break;
+							case 'campaigns' :
+								key = "campaign.id";
+								break;
+							case 'iterations' :
+								key = "iteration.id";
+								break;
+							case 'test-suites' :
+								key = "testSuites.id";
+								break;
+							default :
+								break;
+						}
 
-					var ids;
-
-					//The 'project' node exists only in the 'selectedInTree' but not 'selectedInTreeData'
-					if (key == 'project.id') {
-						ids = _.map(selectedInTree, function (node) {
-							//if ($(node).attr('restype') == '')
-							return $(node).attr('project');
-						});
-					} else {
-						ids = _.map(selectedInTreeData, function (node) {
-							var temp = $(node).attr('restype');
-							if ( temp == type){
-								return $(node).attr('resid');
-							} else {
-								return null;
-							}
-						}).filter(function (el) {
-							//remove null elements in ids
-							return el != null;
-						});
-					}
-
-
-					if (ids !== undefined && ids.length > 0) {
-						jsonVariable[key] = {type: "LIST", values: ids};
-					} else {
-						jsonVariable["project.id"] = {type: "LIST", values: []};
-					}
-
-				});
-
+						id = parseInt(elt.resid);
+						initIfNeeded(key);
+						jsonVariable[key].values.push(id);
+					});
+				}
 			}
 
 
-			// Looking for informations in all the widgets to check if there's something to add to the model
+			// Looking for information in all the widgets to check if there's something to add to the model
 
 			for (var k = 0, $field; k < fields.length; k++) {
 				$field = $(fields[k]);
@@ -758,7 +741,6 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "squash.translato
 				queryString += "&associationType=" + associationType + "&associationId=" + associationId;
 			}
 
-			// now post
 			this.post(squashtm.app.contextRoot + "advanced-search/results" + queryString, data);
 		},
 
