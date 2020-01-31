@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -105,7 +105,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 	@Override
-	public void visit(BehaviorTestStep visited) {
+	public void visit(KeywordTestStep visited) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -35,12 +35,12 @@ public class ActionWord {
 	private static final int ACTION_WORD_MAX_LENGTH = 255;
 
 	@Id
-	@Column(name = "BEHAVIOR_PHRASE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "behavior_phrase_behavior_phrase_id_seq")
-	@SequenceGenerator(name = "behavior_phrase_behavior_phrase_id_seq", sequenceName = "behavior_phrase_behavior_phrase_id_seq", allocationSize = 1)
+	@Column(name = "ACTION_WORD_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "action_word_action_word_id_seq")
+	@SequenceGenerator(name = "action_word_action_word_id_seq", sequenceName = "action_word_action_word_id_seq", allocationSize = 1)
 	private Long id;
 
-	@Column(name = "PHRASE")
+	@Column(name = "WORD")
 	private String word;
 
 	ActionWord() {

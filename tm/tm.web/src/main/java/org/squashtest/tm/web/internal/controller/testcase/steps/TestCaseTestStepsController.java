@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -214,7 +214,7 @@ public class TestCaseTestStepsController {
 	public Long addBehaviorTestStep(@RequestBody String behaviorPhrase, @PathVariable long testCaseId) {
 		// TODO - THIS IS A TEMPORARY MOCK
 		String keywordMock = "GIVEN";
-		BehaviorTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, keywordMock, behaviorPhrase);
+		KeywordTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, keywordMock, behaviorPhrase);
 		return step.getId();
 	}
 

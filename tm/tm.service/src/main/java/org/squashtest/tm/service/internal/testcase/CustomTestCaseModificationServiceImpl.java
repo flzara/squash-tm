@@ -53,7 +53,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -268,17 +268,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public BehaviorTestStep addBehaviorTestStep(@Id long parentTestCaseId, String keyword, String behaviorPhrase) {
+	public KeywordTestStep addBehaviorTestStep(@Id long parentTestCaseId, String keyword, String behaviorPhrase) {
 		LOGGER.debug("adding a new behavior test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		// TODO: 1 - verify if the parent test case is a behavior test case
 		// TODO: 2 - verify if the given behavior phrase already exists in db and reuse it if exists
 		ActionWord givenActionWord = new ActionWord(behaviorPhrase);
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(givenKeyword, givenActionWord);
-		parentTestCase.addStep(behaviorTestStep);
-		testStepDao.persist(behaviorTestStep);
-		return behaviorTestStep;
+		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, givenActionWord);
+		parentTestCase.addStep(keywordTestStep);
+		testStepDao.persist(keywordTestStep);
+		return keywordTestStep;
 	}
 
 	@Override
@@ -546,7 +546,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 
 			@Override
-			public void visit(BehaviorTestStep visited) {
+			public void visit(KeywordTestStep visited) {
 				throw new UnsupportedOperationException();
 			}
 		};
@@ -1288,7 +1288,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 		@Override
-		public void visit(BehaviorTestStep visited) {
+		public void visit(KeywordTestStep visited) {
 			// NOOP
 		}
 	}

@@ -23,17 +23,17 @@ package org.squashtest.tm.web.internal.controller.testcase.steps
 
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
-import org.squashtest.tm.domain.testcase.BehaviorTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import spock.lang.Specification
 
-class BehaviorTestStepTableModelBuilderTest extends Specification {
+class KeywordTestStepTableModelBuilderTest extends Specification {
 
 	BehaviorTestStepTableModelBuilder builder = new BehaviorTestStepTableModelBuilder()
 
 	def "should build an item data from a BehaviorTestStep"() {
 		given:
-			def testStep = Mock(BehaviorTestStep)
+			def testStep = Mock(KeywordTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
 			testStep.getActionWord() >> new ActionWord("goodbye")
 		when:
@@ -48,11 +48,11 @@ class BehaviorTestStepTableModelBuilderTest extends Specification {
 
 	def "should build a raw model from 2 BehaviorTestSteps"() {
 		given:
-			def testStep = Mock(BehaviorTestStep)
+			def testStep = Mock(KeywordTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
 			testStep.getActionWord() >> new ActionWord("hello")
 		and:
-			def testStep2 = Mock(BehaviorTestStep)
+			def testStep2 = Mock(KeywordTestStep)
 			testStep2.getKeyword() >> Keyword.THEN
 			testStep2.getActionWord() >> new ActionWord("goodbye")
 		when:

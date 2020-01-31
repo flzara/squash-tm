@@ -602,7 +602,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 
 		@Override
-		public void visit(BehaviorTestStep visited) {
+		public void visit(KeywordTestStep visited) {
 			// NOOP
 		}
 	}

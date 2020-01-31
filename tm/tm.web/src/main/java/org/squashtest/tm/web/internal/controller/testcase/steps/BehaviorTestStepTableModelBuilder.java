@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -31,11 +31,11 @@ import java.util.Map;
 public class BehaviorTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
 	@Override
 	protected Object buildItemData(TestStep step) {
-		BehaviorTestStep behaviorTestStep = (BehaviorTestStep) step;
+		KeywordTestStep keywordTestStep = (KeywordTestStep) step;
 		Map<String, String> item = new HashMap<>(4);
 		item.put("step-index", String.valueOf(getCurrentIndex()));
-		item.put("step-keyword", String.valueOf(behaviorTestStep.getKeyword()));
-		item.put("step-phrase", behaviorTestStep.getActionWord().getWord());
+		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
+		item.put("step-phrase", keywordTestStep.getActionWord().getWord());
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

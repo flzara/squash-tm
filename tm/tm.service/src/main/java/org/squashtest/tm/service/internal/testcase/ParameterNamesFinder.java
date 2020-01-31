@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -49,7 +49,7 @@ public class ParameterNamesFinder implements TestStepVisitor{
 	}
 
 	@Override
-	public void visit(BehaviorTestStep visited) {
+	public void visit(KeywordTestStep visited) {
 		throw new UnsupportedOperationException();
 	}
 }

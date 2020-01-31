@@ -24,18 +24,18 @@ import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
 import spock.lang.Specification
 
-class BehaviorTestStepTest extends Specification {
+class KeywordTestStepTest extends Specification {
 
 	def "should throw IllegalArgumentException for null keyword"() {
 		when:
-		new BehaviorTestStep(null, new ActionWord("hello"))
+		new KeywordTestStep(null, new ActionWord("hello"))
 		then:
 		thrown IllegalArgumentException
 	}
 
 	def "should throw IllegalArgumentException for null behavior phrase"() {
 		when:
-		new BehaviorTestStep(Keyword.GIVEN, null)
+		new KeywordTestStep(Keyword.GIVEN, null)
 		then:
 		thrown IllegalArgumentException
 	}
@@ -43,7 +43,7 @@ class BehaviorTestStepTest extends Specification {
 	def "should associate a valid TestCase"() {
 		given:
 		TestCase testCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
-		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		KeywordTestStep behaviorTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
 		when:
 		behaviorTestStep.setTestCase(testCase)
 		then:
@@ -54,7 +54,7 @@ class BehaviorTestStepTest extends Specification {
 	def "should reject an invalid TestCase"() {
 		given:
 		TestCase testcase = new TestCase()
-		BehaviorTestStep behaviorTestStep = new BehaviorTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		KeywordTestStep behaviorTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
 		when:
 		behaviorTestStep.setTestCase(testcase)
 		then:

@@ -93,7 +93,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			TestCase parentTestCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
 
 		and:
-			def firstStep = new BehaviorTestStep(Keyword.GIVEN, new ActionWord("first"))
+			def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:

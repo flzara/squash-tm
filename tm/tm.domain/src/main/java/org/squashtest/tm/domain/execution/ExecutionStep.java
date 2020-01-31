@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.BehaviorTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
@@ -362,7 +362,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	@Override
-	public void visit(BehaviorTestStep visited) {
+	public void visit(KeywordTestStep visited) {
 		throw new UnsupportedOperationException();
 	}
 

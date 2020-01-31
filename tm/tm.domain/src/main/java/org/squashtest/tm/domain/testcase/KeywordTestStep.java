@@ -38,7 +38,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class BehaviorTestStep extends TestStep {
+public class KeywordTestStep extends TestStep {
 
 	@NotNull
 	@Enumerated(STRING)
@@ -47,19 +47,19 @@ public class BehaviorTestStep extends TestStep {
 
 	@NotNull
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "BEHAVIOR_PHRASE_ID")
+	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
 
-	BehaviorTestStep() {
+	KeywordTestStep() {
 	}
 
-	public BehaviorTestStep(Keyword paramKeyword, ActionWord paramActionWord) {
+	public KeywordTestStep(Keyword paramKeyword, ActionWord paramActionWord) {
 		if(paramKeyword == null) {
 			throw new IllegalArgumentException("Keyword cannot be null.");
 		}
 		if(paramActionWord == null) {
-			throw new IllegalArgumentException("Behavior phrase cannot be null.");
+			throw new IllegalArgumentException("Action word cannot be null.");
 		}
 		this.keyword = paramKeyword;
 		this.actionWord = paramActionWord;
@@ -83,7 +83,7 @@ public class BehaviorTestStep extends TestStep {
 	@Override
 	public void setTestCase(@NotNull TestCase testCase) {
 		if(!testCase.isBehaviorTestCase()) {
-			throw new IllegalArgumentException("Cannot add a Behavior Test Step");
+			throw new IllegalArgumentException("Cannot add a Keyword Test Step");
 		}
 		super.setTestCase(testCase);
 	}
