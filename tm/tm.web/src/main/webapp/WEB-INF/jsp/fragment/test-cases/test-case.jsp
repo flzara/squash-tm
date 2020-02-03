@@ -49,7 +49,7 @@
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 <c:url var="executionsTabUrl" value="/test-cases/${testCase.id}/executions?tab="/>
 <c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel"/>
-<c:url var="behaviorStepTabUrl" value="/test-cases/${testCase.id}/steps/behavior-step-panel"/>
+<c:url var="keywordTestStepTabUrl" value="/test-cases/${testCase.id}/steps/keyword-test-step-panel"/>
 <c:url var="importanceAutoUrl" value="/test-cases/${testCase.id}/importanceAuto"/>
 <c:url var="customFieldsValuesURL" value="/custom-fields/values"/>
 <c:url var="btEntityUrl" value="/bugtracker/test-case/${testCase.id}"/>
@@ -113,7 +113,7 @@
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
 <c:set var="scripted" value="${testCase.isScripted()}"/>
-<c:set var="isBehaviorTest" value="${testCase.isBehaviorTestCase()}"/>
+<c:set var="isKeywordTest" value="${testCase.isKeywordTestCase()}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
@@ -144,9 +144,9 @@
             <a href="#tab-tc-script-editor"><f:message key="label.Script"/></a>
           </li>
         </c:when>
-        <c:when test="${isBehaviorTest}">
+        <c:when test="${isKeywordTest}">
           <li>
-            <a href="${behaviorStepTabUrl}"><f:message key="tabs.label.steps"/></a>
+            <a href="${keywordTestStepTabUrl}"><f:message key="tabs.label.steps"/></a>
           </li>
         </c:when>
         <c:otherwise>

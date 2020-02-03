@@ -53,7 +53,7 @@ public class TestCaseFormModel {
 	private String reference;
 	private String description;
 
-	private boolean isBehaviorTestCase = TestCase.IS_NOT_BEHAVIOR_TEST_CASE;
+	private boolean isKeywordTestCase = TestCase.IS_NOT_KEYWORD_TEST_CASE;
 	private String scriptLanguage;
 
 
@@ -96,12 +96,8 @@ public class TestCaseFormModel {
 		return scriptLanguage;
 	}
 
-	public boolean isBehaviorTestCase() {
-		return isBehaviorTestCase;
-	}
-
-	public void setIsBehaviorTestCase(boolean behaviorTestCase) {
-		isBehaviorTestCase = behaviorTestCase;
+	public boolean isKeywordTestCase() {
+		return isKeywordTestCase;
 	}
 
 	public void setScriptLanguage(String scriptLanguage) {
@@ -112,9 +108,12 @@ public class TestCaseFormModel {
 		this.customFields = customFields;
 	}
 
+	public void setIsKeywordTestCase(boolean keywordTestCase) {
+		isKeywordTestCase = keywordTestCase;
+	}
 
 	public TestCase getTestCase() {
-		TestCase newTC = new TestCase(this.isBehaviorTestCase);
+		TestCase newTC = new TestCase(this.isKeywordTestCase);
 		newTC.setName(name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);

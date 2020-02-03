@@ -22,34 +22,34 @@
 -->
 <div th:remove="all">
   <!--
-        This snippet of html describes the template for the behavior test step panel of the tab panel of a behavior test case.
+        This snippet of html describes the template for the keyword test step panel of the tab panel of a keyword test case.
         Required data :
-            - stepsData : a list of BehaviorTestSteps.
+            - stepsData : a list of KeywordTestSteps.
      -->
 </div>
 
-<div id="tab-tc-behavior-steps" class="table-tab">
+<div id="tab-tc-keyword-test-steps" class="table-tab">
 
   <div>
-    <h4>This is the Behavior Test Step Page.</h4>
+    <h4>This is the Keyword Test Step Page.</h4>
   </div>
   <br/>
   <div>
-    <label>Add your behavior test step here: (255 characters max) </label>
-    <input id="add-behavior-test-step-input" type="text" placeholder="New behavior test step..." maxlength="255" width="auto"/>
-    <button id="add-behavior-test-step-btn" type="submit">Add Behavior</button>
+    <label>Add your keyword test step here: (255 characters max) </label>
+    <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
+    <button id="add-keyword-test-step-btn" type="submit">Add keyword test step</button>
   </div>
   <br/>
-  <div id="add-behavior-test-step-result"></div>
+  <div id="add-keyword-test-step-result"></div>
 
   <!-- ==================== table definition =================== -->
   <div class="table-tab-wrap jstree-drop" style="position: relative;">
-    <table th:id="'behavior-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table ">
+    <table th:id="'keyword-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table ">
       <thead>
       <tr>
         <th data-def="map=step-index, select">#</th>
         <th th:text="#{label.Keyword}" data-def="map=step-keyword"> </th>
-        <th th:text="#{label.action}" data-def="map=step-phrase, sortable"> </th>
+        <th th:text="#{label.action}" data-def="map=step-action-word, sortable"> </th>
         <th th:attr="data-def='delete-button, map=empty-delete-holder'"></th>
       </tr>
       </thead>
@@ -75,7 +75,7 @@
           language : {},
           permissions : {}
         };
-        testCaseManagement.initBehaviorStepTablePanel(settings);
+        testCaseManagement.initKeywordTestStepTablePanel(settings);
       });
     });
   });

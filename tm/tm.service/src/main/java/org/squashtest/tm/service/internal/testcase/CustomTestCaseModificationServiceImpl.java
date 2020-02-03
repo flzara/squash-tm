@@ -268,12 +268,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addBehaviorTestStep(@Id long parentTestCaseId, String keyword, String behaviorPhrase) {
-		LOGGER.debug("adding a new behavior test step to test case #{}", parentTestCaseId);
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord) {
+		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		// TODO: 1 - verify if the parent test case is a behavior test case
-		// TODO: 2 - verify if the given behavior phrase already exists in db and reuse it if exists
-		ActionWord givenActionWord = new ActionWord(behaviorPhrase);
+		// TODO: 1 - verify if the parent test case is a keyword test case
+		// TODO: 2 - verify if the given ActionWord already exists in db and reuse it if exists
+		ActionWord givenActionWord = new ActionWord(actionWord);
 		Keyword givenKeyword = Keyword.valueOf(keyword);
 		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, givenActionWord);
 		parentTestCase.addStep(keywordTestStep);

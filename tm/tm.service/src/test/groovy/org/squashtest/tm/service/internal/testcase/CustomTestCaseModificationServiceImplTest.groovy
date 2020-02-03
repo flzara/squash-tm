@@ -87,10 +87,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.eventPublisher = eventPublisher
 	}
 
-	def "should find test case and add a behavior step at last position"() {
+	def "should find test case and add a keyword step at last position"() {
 		given:
 			long parentTestCaseId = 2
-			TestCase parentTestCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
+			TestCase parentTestCase = new TestCase(TestCase.IS_KEYWORD_TEST_CASE)
 
 		and:
 			def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
@@ -100,7 +100,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			testCaseDao.findById(parentTestCaseId) >> parentTestCase
 
 		when:
-			service.addBehaviorTestStep(parentTestCaseId, "THEN", "last")
+			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
 
 		then:
 			1 * testStepDao.persist(_)

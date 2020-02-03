@@ -20,22 +20,22 @@
  */
 define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 
-	var BehaviorStepTablePanel = Backbone.View.extend({
+	var KeywordTestStepTablePanel = Backbone.View.extend({
 
-		el : "#tab-tc-behavior-steps",
+		el : "#tab-tc-keyword-test-steps",
 
 		initialize : function(options) {
 			var self = this;
 			this.settings = options.settings;
-			this.initBehaviorStepTable(options.settings);
+			this.initKeywordTestStepTable(options.settings);
 		},
 
 		events : {
-			"click #add-behavior-test-step-btn" : "addBehaviorTestStep"
+			"click #add-keyword-test-step-btn" : "addKeywordTestStep"
 		},
 
-		initBehaviorStepTable : function(settings) {
-			var table = $("#behavior-test-step-table-" + settings.testCaseId);
+		initKeywordTestStepTable : function(settings) {
+			var table = $("#keyword-test-step-table-" + settings.testCaseId);
 			table.squashTable(
 				{
 					bServerSide: false,
@@ -47,19 +47,19 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				});
 		},
 
-		addBehaviorTestStep: function() {
-			var inputBehaviorPhrase = $('#add-behavior-test-step-input').val();
+		addKeywordTestStep: function() {
+			var inputActionWord = $('#add-keyword-test-step-input').val();
 			$.ajax({
 				type: "POST",
-				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-behavior-phrase",
+				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step",
 				contentType: 'application/json',
-				data: inputBehaviorPhrase
+				data: inputActionWord
 			}).done(function(id){
-				var displayDiv = $('#add-behavior-test-step-result');
-				displayDiv.text("The behavior test step has been successfully created with id : "+id+" and name : "+inputBehaviorPhrase);
+				var displayDiv = $('#add-keyword-test-step-result');
+				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputActionWord);
 			});
 		}
 
 	});
-	return BehaviorStepTablePanel;
+	return KeywordTestStepTablePanel;
 });

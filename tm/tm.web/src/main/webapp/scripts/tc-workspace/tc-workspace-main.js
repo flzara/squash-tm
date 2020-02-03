@@ -55,13 +55,13 @@ define(['tree', './tc-treemenu', './popups/init-all', './init-actions',
 			initMilestoneMenu();
 
 			//add it now and move it somewhere later
-			$('#new-behavior-test-case-tree-button').on('click', function () {
+			$('#new-keyword-test-case-tree-button').on('click', function () {
 				$.ajax({
 					type: 'POST',
 					url: '/squash/test-case-browser/drives/14/content/new-test-case',
 					data: JSON.stringify({
 						name: 'toto',
-						isBehaviorTestCase: true,
+						isKeywordTestCase: true,
 						reference: '',
 						description: ''
 					}),

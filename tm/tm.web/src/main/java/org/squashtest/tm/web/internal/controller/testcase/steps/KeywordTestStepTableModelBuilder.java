@@ -28,14 +28,14 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BehaviorTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
+public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
 	@Override
 	protected Object buildItemData(TestStep step) {
 		KeywordTestStep keywordTestStep = (KeywordTestStep) step;
 		Map<String, String> item = new HashMap<>(4);
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
-		item.put("step-phrase", keywordTestStep.getActionWord().getWord());
+		item.put("step-action-word", keywordTestStep.getActionWord().getWord());
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

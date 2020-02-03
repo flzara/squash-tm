@@ -29,9 +29,9 @@ import spock.lang.Specification
 
 class KeywordTestStepTableModelBuilderTest extends Specification {
 
-	BehaviorTestStepTableModelBuilder builder = new BehaviorTestStepTableModelBuilder()
+	KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder()
 
-	def "should build an item data from a BehaviorTestStep"() {
+	def "should build an item data from a KeywordTestStep"() {
 		given:
 			def testStep = Mock(KeywordTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
@@ -42,11 +42,11 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 			resultItem1.size() == 4
 			resultItem1.get("step-index") == "0"
 			resultItem1.get("step-keyword") == "GIVEN"
-			resultItem1.get("step-phrase") == "goodbye"
+			resultItem1.get("step-action-word") == "goodbye"
 			resultItem1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 	}
 
-	def "should build a raw model from 2 BehaviorTestSteps"() {
+	def "should build a raw model from 2 KeywordTestStep"() {
 		given:
 			def testStep = Mock(KeywordTestStep)
 			testStep.getKeyword() >> Keyword.GIVEN
@@ -65,13 +65,13 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 			item1.size() == 4
 			item1.get("step-index") == "1"
 			item1.get("step-keyword") == "GIVEN"
-			item1.get("step-phrase") == "hello"
+			item1.get("step-action-word") == "hello"
 			item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
 			item2.size() == 4
 			item2.get("step-index") == "2"
 			item2.get("step-keyword") == "THEN"
-			item2.get("step-phrase") == "goodbye"
+			item2.get("step-action-word") == "goodbye"
 			item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 	}
 }

@@ -26,28 +26,28 @@ import spock.lang.Unroll
 class ActionWordTest extends Specification {
 
 	@Unroll
-	def "should create a behavior phrase"() {
+	def "should create an ActionWord"() {
 		when:
-		ActionWord behaviorPhrase = new ActionWord(phrase)
+		ActionWord actionWord = new ActionWord(word)
 
 		then:
-		behaviorPhrase.getWord() == expectedPhrase
+		actionWord.getWord() == expectedWord
 
 		where:
-		phrase || expectedPhrase
+		word 			|| expectedWord
 		"hello" 		|| "hello"
 		" hello   " 	|| "hello"
 	}
 
 	@Unroll
-	def "should reject invalid behavior phrase"() {
+	def "should reject invalid ActionWord"() {
 		when:
-		new ActionWord(phrase)
+		new ActionWord(word)
 
 		then:
 		thrown IllegalArgumentException
 
 		where:
-		phrase << [null, "", "   ", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+		word << [null, "", "   ", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 	}
 }

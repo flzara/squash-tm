@@ -31,7 +31,7 @@ import spock.lang.Unroll
 
 import java.lang.reflect.Modifier
 
-import static org.squashtest.tm.domain.testcase.TestCase.createBehaviorTestCase
+import static org.squashtest.tm.domain.testcase.TestCase.createKeywordTestCase
 
 class TestCaseTest extends Specification {
 
@@ -297,16 +297,16 @@ class TestCaseTest extends Specification {
 
 	}
 
-	def "should create behavior test case"() {
-		def testCase = createBehaviorTestCase()
+	def "should create keyword test case"() {
+		def testCase = createKeywordTestCase()
 
 		expect:
-		testCase.isBehaviorTestCase()
+		testCase.isKeywordTestCase()
 	}
 
-	def "should throw exception if extend behavior test into scripted test"() {
+	def "should throw exception if extend keyword test into scripted test"() {
 		given:
-		def testCase = createBehaviorTestCase()
+		def testCase = createKeywordTestCase()
 		when:
 		testCase.extendWithScript("gherkin", "fr")
 		then:

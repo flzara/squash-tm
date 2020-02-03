@@ -38,7 +38,7 @@
     <comment>Add keyword testing</comment>
 
     <addColumn tableName="TEST_CASE">
-      <column name="IS_BEHAVIOR_TEST_CASE" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case is a keyword TC.">
+      <column name="IS_KEYWORD_TEST_CASE" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case is a keyword TC.">
         <constraints nullable="false" />
       </column>
     </addColumn>

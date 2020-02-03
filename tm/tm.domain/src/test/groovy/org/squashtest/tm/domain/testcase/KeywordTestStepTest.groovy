@@ -26,14 +26,14 @@ import spock.lang.Specification
 
 class KeywordTestStepTest extends Specification {
 
-	def "should throw IllegalArgumentException for null keyword"() {
+	def "should throw IllegalArgumentException for null Keyword"() {
 		when:
 		new KeywordTestStep(null, new ActionWord("hello"))
 		then:
 		thrown IllegalArgumentException
 	}
 
-	def "should throw IllegalArgumentException for null behavior phrase"() {
+	def "should throw IllegalArgumentException for null ActionWord"() {
 		when:
 		new KeywordTestStep(Keyword.GIVEN, null)
 		then:
@@ -42,21 +42,21 @@ class KeywordTestStepTest extends Specification {
 
 	def "should associate a valid TestCase"() {
 		given:
-		TestCase testCase = new TestCase(TestCase.IS_BEHAVIOR_TEST_CASE)
-		KeywordTestStep behaviorTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		TestCase testCase = new TestCase(TestCase.IS_KEYWORD_TEST_CASE)
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
 		when:
-		behaviorTestStep.setTestCase(testCase)
+		keywordTestStep.setTestCase(testCase)
 		then:
-		behaviorTestStep.testCase == testCase
+		keywordTestStep.testCase == testCase
 
 	}
 
 	def "should reject an invalid TestCase"() {
 		given:
 		TestCase testcase = new TestCase()
-		KeywordTestStep behaviorTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
 		when:
-		behaviorTestStep.setTestCase(testcase)
+		keywordTestStep.setTestCase(testcase)
 		then:
 		thrown IllegalArgumentException
 	}

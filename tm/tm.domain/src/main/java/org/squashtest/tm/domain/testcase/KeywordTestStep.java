@@ -82,7 +82,7 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public void setTestCase(@NotNull TestCase testCase) {
-		if(!testCase.isBehaviorTestCase()) {
+		if(!testCase.isKeywordTestCase()) {
 			throw new IllegalArgumentException("Cannot add a Keyword Test Step");
 		}
 		super.setTestCase(testCase);

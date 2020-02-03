@@ -196,25 +196,25 @@ public class TestCaseTestStepsController {
 		return addActionTestStep.getId();
 	}
 
-	@RequestMapping(value = "/behavior-step-panel")
-	public String getBehaviorTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+	@RequestMapping(value = "/keyword-test-step-panel")
+	public String getKeywordTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<TestStep> steps = testCase.getSteps();
 		model.addAttribute(TEST_CASE, testCase);
 
-		//create behavior test step table model
-		BehaviorTestStepTableModelBuilder builder = new BehaviorTestStepTableModelBuilder();
+		//create keyword test step table model
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("stepData", stepData);
-		return "test-cases-tabs/behavior-test-steps-tab.html";
+		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 
-	@PostMapping(value = "/add-behavior-phrase", consumes = "application/json")
+	@PostMapping(value = "/add-keyword-test-step", consumes = "application/json")
 	@ResponseBody
-	public Long addBehaviorTestStep(@RequestBody String behaviorPhrase, @PathVariable long testCaseId) {
+	public Long addKeywordTestStep(@RequestBody String actionWord, @PathVariable long testCaseId) {
 		// TODO - THIS IS A TEMPORARY MOCK
 		String keywordMock = "GIVEN";
-		KeywordTestStep step = testCaseModificationService.addBehaviorTestStep(testCaseId, keywordMock, behaviorPhrase);
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keywordMock, actionWord);
 		return step.getId();
 	}
 
