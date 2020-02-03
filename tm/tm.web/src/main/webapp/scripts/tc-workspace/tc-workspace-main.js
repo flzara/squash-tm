@@ -54,21 +54,6 @@ define(['tree', './tc-treemenu', './popups/init-all', './init-actions',
 			initTabbedPane();
 			initMilestoneMenu();
 
-			//add it now and move it somewhere later
-			$('#new-keyword-test-case-tree-button').on('click', function () {
-				$.ajax({
-					type: 'POST',
-					url: '/squash/test-case-browser/drives/14/content/new-test-case',
-					data: JSON.stringify({
-						name: 'toto',
-						isKeywordTestCase: true,
-						reference: '',
-						description: ''
-					}),
-					contentType: 'application/json'
-				});
-			});
-
 			ToggleWorkspace.init(settings.toggleWS);
 			tree.initWorkspaceTree(settings.tree);
 			treemenu.init(settings.treemenu);

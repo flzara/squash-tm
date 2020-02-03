@@ -32,6 +32,11 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 			scriptLanguage : dialog.data('test-case-script-language')
 		};
 
+		if (params.scriptLanguage === "BDD"){
+			params.isKeywordTestCase = true;
+			params.scriptLanguage = "";
+		}
+
 		var cufParams = dialog.data('cuf-values-support').readValues();
 
 		$.extend(params, cufParams);
@@ -70,7 +75,8 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 
 		var i18nFormat = translator.get({
 			"GHERKIN": "test-case.format.gherkin",
-			"STANDARD": "test-case.format.standard"
+			"STANDARD": "test-case.format.standard",
+			"BDD": "test-case.format.bdd"
 		});
 
 		// Added to cancel the open if no rights
