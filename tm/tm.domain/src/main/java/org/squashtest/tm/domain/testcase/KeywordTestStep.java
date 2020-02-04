@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -77,7 +78,10 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
-		throw new UnsupportedOperationException();
+		List<ExecutionStep> res = new ArrayList<>(1);
+		ExecutionStep executionStep = new ExecutionStep(this);
+		res.add(executionStep);
+		return res;
 	}
 
 	@Override

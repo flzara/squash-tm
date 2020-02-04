@@ -118,11 +118,13 @@ class ExecutionTest extends Specification {
 		testCase.type >> new UserListItem(code:"SOME_TYPE", infoList:Mock(InfoList))
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDatasets() >> []
+		testCase.isKeywordTestCase() >> true
 
 		when:
 		Execution res = new Execution(testCase)
 
 		then:
+		res.isKeywordExecution()
 		notThrown NullArgumentException
 
 	}

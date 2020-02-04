@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.execution.ExecutionStep
 import spock.lang.Specification
 
 class KeywordTestStepTest extends Specification {
@@ -59,5 +60,17 @@ class KeywordTestStepTest extends Specification {
 		keywordTestStep.setTestCase(testcase)
 		then:
 		thrown IllegalArgumentException
+	}
+
+	def "should create an execution step" () {
+		given:
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		when:
+		def res = keywordTestStep.createExecutionSteps(null)
+		then:
+		res != null
+		res.size() == 1
+		ExecutionStep executionStep = res.get(0)
+		executionStep.action == "GIVEN hello"
 	}
 }

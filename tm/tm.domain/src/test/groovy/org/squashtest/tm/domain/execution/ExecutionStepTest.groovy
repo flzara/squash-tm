@@ -21,7 +21,10 @@
 package org.squashtest.tm.domain.execution
 
 import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import spock.lang.Specification
 import spock.lang.Timeout
 
@@ -42,6 +45,16 @@ class ExecutionStepTest extends Specification {
 		execStep.expectedResult == actionStep.expectedResult
 		execStep.referencedTestStep == actionStep
 		execStep.attachmentList.getAllAttachments().size() == 1
+	}
+
+	def "Should create an execution step for an KeywordTestStep"() {
+		given:
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		when:
+		ExecutionStep execStep = new ExecutionStep(keywordTestStep)
+		then:
+		execStep.action == "GIVEN hello"
+		execStep.referencedTestStep == keywordTestStep
 	}
 	
 	def "Should replace the parameters"(){
