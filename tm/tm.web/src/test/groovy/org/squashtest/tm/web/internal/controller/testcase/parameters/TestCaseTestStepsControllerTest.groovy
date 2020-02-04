@@ -23,8 +23,11 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
@@ -140,6 +143,54 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 
 	}
+
+	def "should build table model for keyword test case steps"() {
+		given:
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step1, to: 1L
+		}
+
+		and:
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, new ActionWord("how are you ?"))
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step2, to: 2L
+		}
+
+		and:
+		TestCase tc = Mock()
+		tc.getSteps() >> [step1, step2]
+		testCaseModificationService.findById(7L) >> tc
+
+		and:
+		DataTableDrawParameters params = new DataTableDrawParameters();
+		params.setiDisplayLength(10);
+		params.setiDisplayStart(0)
+		params.setsEcho("echo");
+
+		when:
+		def res = controller.getKeywordTestStepTableModel(7L, params)
+
+		then:
+		res.sEcho == "echo"
+		res.aaData ==[
+			[
+				"step-keyword":'GIVEN',
+				"step-index":'1',
+				"empty-delete-holder":null,
+				"step-action-word":'hello'
+			],
+			[
+				"step-keyword":'AND',
+				"step-index":'2',
+				"empty-delete-holder":null,
+				"step-action-word":'how are you ?'
+			]]
+
+
+	}
+
+
 	def "should change step index"() {
 		given:
 

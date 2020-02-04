@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -162,6 +163,22 @@ public class TestCaseTestStepsController {
 		// generate the model
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(cufValues);
+		return builder.buildDataModel(holder, params.getsEcho());
+
+	}
+
+	@RequestMapping(value = "/keyword-test-step-table", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getKeywordTestStepTableModel (@PathVariable long testCaseId, DataTableDrawParameters params) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		List<TestStep> steps = testCase.getSteps();
+
+		Paging filter = new DataTablePaging(params);
+
+		PagedCollectionHolder<List<TestStep>> holder = new PagingBackedPagedCollectionHolder<>(filter, steps.size(), steps);
+
+		// generate the model
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		return builder.buildDataModel(holder, params.getsEcho());
 
 	}

@@ -35,11 +35,14 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 		},
 
 		initKeywordTestStepTable : function(settings) {
-			var table = $("#keyword-test-step-table-" + settings.testCaseId);
+			var testCaseId = settings.testCaseId;
+			var table = $("#keyword-test-step-table-" + testCaseId);
 			table.squashTable(
 				{
-					bServerSide: false,
-					aaData : settings.stepData
+					bServerSide: true,
+					aaData : settings.stepData,
+					iDeferLoading: settings.stepData.length,
+					sAjaxSource: '/squash/test-cases/'+testCaseId+'/steps/keyword-test-step-table'
 				}, {
 					deleteButtons: {
 						tooltip: {}
@@ -47,19 +50,24 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				});
 		},
 
+		refresh: function () {
+			$("#keyword-test-step-table-" + this.settings.testCaseId).squashTable().refreshRestore();
+		},
+
 		addKeywordTestStep: function() {
+			var self = this;
 			var inputActionWord = $('#add-keyword-test-step-input').val();
 			$.ajax({
 				type: "POST",
 				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step",
 				contentType: 'application/json',
 				data: inputActionWord
-			}).done(function(id){
+			}).done(function(id) {
 				var displayDiv = $('#add-keyword-test-step-result');
 				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputActionWord);
+				self.refresh();
 			});
 		}
-
 	});
 	return KeywordTestStepTablePanel;
 });
