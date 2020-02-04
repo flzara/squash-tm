@@ -55,8 +55,8 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 		},
 
 		cleanInputs: function() {
-			$("#keyword-input").clean();
-			$("#action-word-input").clean();
+			$("#keyword-input").val('GIVEN');
+			$("#action-word-input").val('');
 		},
 
 		addKeywordTestStep: function() {
