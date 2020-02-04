@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
+define([ "jquery", "backbone", "underscore", 'workspace.event-bus'], function($, Backbone, _, eventBus) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
@@ -78,6 +78,7 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputActionWord);
 				self.refresh();
 				self.cleanInputs();
+				eventBus.trigger('testStepsTable.stepAdded');
 			});
 		}
 	});
