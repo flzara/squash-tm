@@ -35,9 +35,12 @@
   </div>
   <br/>
   <div>
-    <label>Add your keyword test step here: (255 characters max) </label>
-    <input id="add-keyword-test-step-input" type="text" placeholder="New keyword test step..." maxlength="255" width="auto"/>
-    <button id="add-keyword-test-step-btn" type="submit">Add keyword test step</button>
+    <label>Add your keyword test step</label>
+    <select id="keyword-input">
+      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given</option>
+    </select>
+    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto"/>
+    <button id="add-keyword-test-step-btn" type="submit">Add</button>
   </div>
   <br/>
   <div id="add-keyword-test-step-result"></div>

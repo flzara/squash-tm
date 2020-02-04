@@ -54,18 +54,30 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 			$("#keyword-test-step-table-" + this.settings.testCaseId).squashTable().refreshRestore();
 		},
 
+		cleanInputs: function() {
+			$("#keyword-input").clean();
+			$("#action-word-input").clean();
+		},
+
 		addKeywordTestStep: function() {
 			var self = this;
-			var inputActionWord = $('#add-keyword-test-step-input').val();
+			var inputActionWord = $('#action-word-input').val();
+			var inputKeyword = $('#keyword-input').val();
+			var objectData = {
+				keyword : inputKeyword,
+				actionWord : inputActionWord
+			};
+
 			$.ajax({
 				type: "POST",
 				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step",
 				contentType: 'application/json',
-				data: inputActionWord
+				data: JSON.stringify(objectData)
 			}).done(function(id) {
 				var displayDiv = $('#add-keyword-test-step-result');
 				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputActionWord);
 				self.refresh();
+				self.cleanInputs();
 			});
 		}
 	});

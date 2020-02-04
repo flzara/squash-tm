@@ -34,6 +34,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestCaseTestStepsController
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
@@ -142,6 +143,21 @@ class TestCaseTestStepsControllerTest extends Specification {
 			]]
 
 
+	}
+
+	def "should add a keyword test step with given keyword and actionWord" (){
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("BUT");
+		testStepModel.setActionWord("add a BDD test step");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step") >> testStep
+
+		expect:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
 	def "should build table model for keyword test case steps"() {

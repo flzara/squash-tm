@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -223,15 +224,16 @@ public class TestCaseTestStepsController {
 		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("stepData", stepData);
+		model.addAttribute("keywordList", Keyword.values());
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 
 	@PostMapping(value = "/add-keyword-test-step", consumes = "application/json")
 	@ResponseBody
-	public Long addKeywordTestStep(@RequestBody String actionWord, @PathVariable long testCaseId) {
-		// TODO - THIS IS A TEMPORARY MOCK
-		String keywordMock = "GIVEN";
-		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keywordMock, actionWord);
+	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) {
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		return step.getId();
 	}
 
