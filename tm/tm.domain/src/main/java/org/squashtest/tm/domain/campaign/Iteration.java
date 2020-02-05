@@ -81,6 +81,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.UUID;
+import javax.validation.constraints.Pattern;
 
 @Auditable
 @Entity
@@ -118,7 +120,15 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Embedded
 	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
-
+        
+        /**
+         * Adding an iteration UUID for external reference (ex: from Squash TF) as per story SQUASH-167.
+         */
+        @NotNull
+        @Column(name = "UUID")
+        @Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
+        private String uuid;
+        
 	/*
 	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
 	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
@@ -158,6 +168,14 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private List<TestSuite> testSuites = new ArrayList<>();
 
+        /**
+         * Default constructor : any iteration shall have an UUID (Story SQUASH-167).
+         */
+        public Iteration(){
+            UUID newUUID=UUID.randomUUID();
+            this.uuid=newUUID.toString();
+        }
+        
 	/**
 	 * flattened list of the executions
 	 */
@@ -933,5 +951,16 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return allowed;
 	}
 
-	;
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @deprecated : this ONLY exists for hibernate. Updating UUID has NO meaning so please NEVER call this from business code.
+     */
+    @Deprecated
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
 }
