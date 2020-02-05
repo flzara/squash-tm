@@ -175,7 +175,7 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		try {
 			Files.delete(Paths.get(folderPath + attachmentContentId));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to delete attachment {} from list {} stored in path {}",attachmentContentId,attachmentListId,folderPath);
 		}
 	}
 }
