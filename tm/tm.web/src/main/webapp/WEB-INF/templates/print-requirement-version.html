@@ -387,7 +387,7 @@
 
     <div id="issue" class="tab">
       <h3 th:text="#{tabs.label.issues}"/>
-      <div th:if="${issueModel.size()!=0}">
+      <div>
         <table id="issue-table" class="greystyle-table">
         <thead>
         <tr>
@@ -418,9 +418,6 @@
         </tr>
         </tbody>
       </table>
-      </div>
-      <div th:if="${issueModel.size()==0}">
-        <th th:text="#{issue.panel.needscredentials.label.print}"/>
       </div>
     </div>
 
