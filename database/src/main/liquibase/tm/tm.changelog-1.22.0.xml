@@ -97,4 +97,19 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-TEST_CASE_DISCRIMINATOR" author="jlor">
+    <comment>Adds a type discriminator column on TEST_CASE</comment>
+    <addColumn tableName="TEST_CASE">
+      <column name="DISCRIMINATOR" type="CHAR" defaultValue="C" remarks="C: classic, S: scripted, K: keyword">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+
+    <createTable tableName="KEYWORD_TEST_CASE">
+      <column name="TCLN_ID" type="BIGINT">
+        <constraints primaryKey="true" />
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

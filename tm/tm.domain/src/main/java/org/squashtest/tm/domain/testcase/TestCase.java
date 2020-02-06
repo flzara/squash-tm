@@ -45,9 +45,13 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -83,6 +87,9 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
  * @author Gregory Fouquet
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DISCRIMINATOR")
+@DiscriminatorValue("C")
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -980,5 +987,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+
+	public void accept(TestCaseVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }
 
