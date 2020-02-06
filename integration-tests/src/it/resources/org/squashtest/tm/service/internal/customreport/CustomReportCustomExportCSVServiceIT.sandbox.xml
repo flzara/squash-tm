@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.22.0.dtd">
 
 <dataset>
 
@@ -136,8 +136,8 @@
 
   <MILESTONE_CAMPAIGN MILESTONE_ID="-1" CAMPAIGN_ID="-1" />
 
-  <ITERATION ITERATION_ID="-1" NAME="iteration-1" CREATED_BY="admin" CREATED_ON="2019-05-01" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" />
-  <ITERATION ITERATION_ID="-2" NAME="iteration-2" CREATED_BY="admin" CREATED_ON="2019-05-01" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" />
+  <ITERATION ITERATION_ID="-1" NAME="iteration-1" CREATED_BY="admin" CREATED_ON="2019-05-01" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" UUID="c0223e16-8a9f-468e-a65b-9fa6ac498f30"/>
+  <ITERATION ITERATION_ID="-2" NAME="iteration-2" CREATED_BY="admin" CREATED_ON="2019-05-01" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" UUID="e737eeab-fcb2-4c72-b658-5e386d9e0335"/>
 
   <CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ID="-1" ITERATION_ORDER="0" />
   <CAMPAIGN_ITERATION CAMPAIGN_ID="-1" ITERATION_ID="-2" ITERATION_ORDER="1" />

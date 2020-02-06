@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
 
 <dataset>
 
@@ -54,8 +54,8 @@
 	<call_test_step/>
 	<test_case_steps/>
 
-	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2011-08-30" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="-153" NAME="it1" ATTACHMENT_LIST_ID="-5"/>
-	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2011-08-30" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="-2" NAME="it2" ATTACHMENT_LIST_ID="-6"/>
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2011-08-30" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="-153" NAME="it1" ATTACHMENT_LIST_ID="-5" UUID="f1a5ff09-ea9b-49bf-98c8-a460d643b93a"/>
+	<ITERATION ACTUAL_START_AUTO="false" CREATED_ON="2011-08-30" CREATED_BY="IT" ACTUAL_END_AUTO="false" ITERATION_ID="-2" NAME="it2" ATTACHMENT_LIST_ID="-6" UUID="f1a5ff09-ea9b-49bf-98c8-a460d643b93b"/>
 
 
 	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-11" CREATED_ON="2011-08-31" CREATED_BY="IT" TCLN_ID="-1"/>

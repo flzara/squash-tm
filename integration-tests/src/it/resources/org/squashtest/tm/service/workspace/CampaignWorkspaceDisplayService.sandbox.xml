@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 
   <!-- ========================== teams ================================ -->
@@ -221,7 +221,8 @@
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-130" />
   <ITERATION NAME="Iteration - 1" ITERATION_ID="-83" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
              ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
-             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-130" />
+             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-130" 
+             UUID="53a72cb4-b60d-437b-8be1-e65b93c79cc9"/>
 
   <!-- Test Project-1 > Folder Test 1 > Campaign Test 1 > Iteration - 1 > Test Suite 1-->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-159"/>
@@ -232,13 +233,15 @@
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-131" />
   <ITERATION NAME="ite1" ITERATION_ID="-85" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
              ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
-             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-131" />
+             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-131" 
+             UUID="53a72cb4-b60d-437b-8be1-e65b93c79cca"/>
 
   <!-- Projet 1 > Dossier campagne > campagne > ite4 -->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-132" />
   <ITERATION NAME="ite4" ITERATION_ID="-87" ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE"
              ACTUAL_START_DATE="2011-01-01" ACTUAL_END_DATE="2011-01-02" SCHEDULED_START_DATE="2011-01-01" SCHEDULED_END_DATE="2011-01-02"
-             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-132" />
+             CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-132" 
+             UUID="53a72cb4-b60d-437b-8be1-e65b93c79ccb"/>
 
   <!-- TESTCASE  -->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-157" />

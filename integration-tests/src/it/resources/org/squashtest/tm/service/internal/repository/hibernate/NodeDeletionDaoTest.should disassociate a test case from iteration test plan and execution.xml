@@ -5,7 +5,7 @@
 
  -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 
 
@@ -102,7 +102,7 @@
 		
 	
 	<ITERATION ITERATION_ID="-41" NAME="test case 1" CREATED_BY="IT" CREATED_ON="2011-08-08" 
-			ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ATTACHMENT_LIST_ID="-41"/>
+			ACTUAL_END_AUTO="FALSE" ACTUAL_START_AUTO="FALSE" ATTACHMENT_LIST_ID="-41" UUID="f1a5ff09-ea9b-49bf-98c8-a460d643b939"/>
 			
 	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="-51"  CREATED_BY="IT" CREATED_ON="2011-08-08"
 			TCLN_ID="-11" />

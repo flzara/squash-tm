@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.20.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
@@ -32,7 +32,8 @@
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-7" />
 
   	<!-- ITERATION 1 -->
-	<ITERATION NAME="iter1" ITERATION_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-01" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0" ATTACHMENT_LIST_ID="-1" />
+	<ITERATION NAME="iter1" ITERATION_ID="-1" CREATED_BY="DBU" CREATED_ON="2012-02-01" ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0" ATTACHMENT_LIST_ID="-1" 
+        UUID="5445f750-34a9-42bd-9721-fd89e8c5392d"/>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>
 	<PROJECT PROJECT_ID="-1" NAME="mon projet" DESCRIPTION="ma description" CREATED_ON="2012-02-09" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-432"/>
 

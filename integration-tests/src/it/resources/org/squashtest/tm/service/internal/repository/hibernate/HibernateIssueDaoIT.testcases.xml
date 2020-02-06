@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="100000889"/>
 
@@ -132,8 +155,8 @@
   <EXECUTION_STEP EXECUTION_STEP_ID="100000276" ACTION="" EXPECTED_RESULT="" ISSUE_LIST_ID="100000383" CREATED_BY="admin" CREATED_ON="2016-03-17 17:15:46.94"/>
   <EXECUTION_STEP EXECUTION_STEP_ID="100000277" ACTION="" EXPECTED_RESULT="" ISSUE_LIST_ID="100000384" CREATED_BY="admin" CREATED_ON="2016-03-17 17:15:46.94"/>
 
-  <ITERATION ITERATION_ID="10000083" DESCRIPTION="" NAME="Iteration - 1" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:34:38.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2016-03-17 16:16:24.445" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0" ATTACHMENT_LIST_ID="100000889" REFERENCE="1"/>
-  <ITERATION ITERATION_ID="10000084" DESCRIPTION="" NAME="Iteration - 1-Copie1" CREATED_BY="admin" CREATED_ON="2016-03-17 17:16:15.73" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2016-03-17 17:16:15.769" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0" ATTACHMENT_LIST_ID="100000889" REFERENCE="1"/>
+  <ITERATION ITERATION_ID="10000083" DESCRIPTION="" NAME="Iteration - 1" CREATED_BY="User-1" CREATED_ON="2011-09-30 10:34:38.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2016-03-17 16:16:24.445" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0" ATTACHMENT_LIST_ID="100000889" REFERENCE="1" UUID="c14d3e1d-a421-4a3d-8c7d-e237ff9972f8"/>
+  <ITERATION ITERATION_ID="10000084" DESCRIPTION="" NAME="Iteration - 1-Copie1" CREATED_BY="admin" CREATED_ON="2016-03-17 17:16:15.73" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2016-03-17 17:16:15.769" ACTUAL_END_AUTO="false" ACTUAL_START_AUTO="false" SCHEDULED_END_DATE="2011-09-30 00:00:00.0" SCHEDULED_START_DATE="2011-09-01 00:00:00.0" ATTACHMENT_LIST_ID="100000889" REFERENCE="1" UUID="4aab75f4-bcb8-44dd-8e97-3bacf6eeef76"/>
 
   <ISSUE ISSUE_ID="1000001" REMOTE_ISSUE_ID="100000324" ISSUE_LIST_ID="100000311" BUGTRACKER_ID="1000001"/>
   <ISSUE ISSUE_ID="1000002" REMOTE_ISSUE_ID="100000325" ISSUE_LIST_ID="100000311" BUGTRACKER_ID="1000001"/>
