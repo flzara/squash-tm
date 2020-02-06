@@ -175,6 +175,8 @@ public class FileSystemAttachmentRepository implements AttachmentRepository {
 		try {
 			Files.delete(Paths.get(folderPath + attachmentContentId));
 		} catch (IOException e) {
+                    // TODO : reassess this exception "handling" logic, as pushing filures under the rug smells rather bad...
+                    // FIXME  : at first look, this feels like we're silent failing to remove files, thus leaking dead files...
 			LOGGER.error("Failed to delete attachment {} from list {} stored in path {}",attachmentContentId,attachmentListId,folderPath);
 		}
 	}
