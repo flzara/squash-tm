@@ -63,4 +63,5 @@
   <include file="tm/tm.changelog-migration-1.18.0-test.xml" relativeToChangelogFile="true" />
   <include file="tm/tm.changelog-migration-1.19.0-test.xml" relativeToChangelogFile="true" />
   <include file="tm/tm.changelog-migration-1.20.0-test.xml" relativeToChangelogFile="true" />
+  <include file="tm/tm.changelog-migration-1.22.0-test.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
