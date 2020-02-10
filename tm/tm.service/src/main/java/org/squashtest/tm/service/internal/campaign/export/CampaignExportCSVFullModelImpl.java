@@ -58,7 +58,6 @@ import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
-import static org.squashtest.tm.jooq.domain.Tables.ISSUE_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
@@ -228,7 +227,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
-				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
+				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()).and(ES_TS_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID).or(ES_TS_ID.isNull()))) // TMSUP-1925 - Thanks to JPJ
 				.orderBy(ITERATION_ID, ITPI_ID, EXECUTION_ID, ES_ORDER)
 				.fetch().iterator();
 	}
