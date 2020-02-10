@@ -33,6 +33,9 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 
 public interface AutomatedSuiteManagerService {
 
@@ -88,7 +91,16 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification);
 
-
+/**
+	 * Creates a new AutomatedSuite based on a given {@link IterationTestPlanItem} list. Only automated tests planned in the
+	 * test plan will be included. The automated executions are ordered according to the test plan.
+	 *
+	 * @param itpi
+	 * @return
+	 */
+	AutomatedSuite createFromIterationTestPlanItems(List<IterationTestPlanItem> items);
+        
+        
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
@@ -160,13 +172,22 @@ public interface AutomatedSuiteManagerService {
 	 * @param configuration
 	 */
 	void start(String suiteId, Collection<SuiteExecutionConfiguration> configuration);
-
+        
+        /**
+	 * Creates a test list with parameters (dataset and cufs) from an automated suite.
+	 *
+	 * @param suite
+	 * @param configuration
+	 */
+        Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite);
+        
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.
 	 *
 	 * @param automatedTestSuiteId
 	 * @return
 	 */
+
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 
 

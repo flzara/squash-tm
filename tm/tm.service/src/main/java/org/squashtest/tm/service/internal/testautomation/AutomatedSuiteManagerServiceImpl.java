@@ -278,6 +278,16 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		PermissionsUtils.checkPermission(permissionService, singleId, EXECUTE, clazz.getName());
 	}
 
+        /**
+	 *
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlanObject(List<IterationTestPlanItem>)
+	 */
+	@Override
+	@PreAuthorize(EXECUTE_ITERATION_OR_ROLE_ADMIN)
+	public AutomatedSuite createFromIterationTestPlanItems(List<IterationTestPlanItem> items) {
+		return createFromItems(items);
+	}
+        
 	/**
 	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
@@ -466,6 +476,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		}
 	}
 
+	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite) {
+		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
+                return collectAutomatedExecs(suite.getExecutionExtenders());
+	}    
+        
 
 	// ******************* create suite private methods ***************************
 
