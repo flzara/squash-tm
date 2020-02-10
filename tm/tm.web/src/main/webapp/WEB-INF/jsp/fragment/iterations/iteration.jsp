@@ -257,6 +257,10 @@
                          open="true">
         <jsp:attribute name="body">
               <div class="display-table-row">
+                <label for="iteration-uuid" class="display-table-cell"><f:message key="iteration.uuid.label"/></label>
+                <span id="iteration-uuid"><c:out value="${iteration.uuid}" /></span>
+              </div>
+              <div class="display-table-row">
                 <label for="iteration-reference" class="display-table-cell"><f:message key="label.Reference"/></label>
 
                 <div class="display-table-cell" id="iteration-reference"><c:out value="${ iteration.reference }"/></div>
@@ -285,7 +289,7 @@
               key="iteration.progress_status.label"/></label>
             <span id="iteration-progress-status"><f:message key="${ statistics.status.i18nKey }"/></span>
           </div>
-
+          
 		</jsp:attribute>
       </comp:toggle-panel>
 
