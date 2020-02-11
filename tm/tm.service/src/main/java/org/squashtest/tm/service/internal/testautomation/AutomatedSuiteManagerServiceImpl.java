@@ -476,6 +476,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		}
 	}
 
+        @Override
 	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite) {
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
                 return collectAutomatedExecs(suite.getExecutionExtenders());
@@ -503,10 +504,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		Execution execution = item.createAutomatedExecution();
+                Execution execution = item.createAutomatedExecution();
 
 		executionDao.save(execution);
-		item.addExecution(execution);
+                item.addExecution(execution);
 
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
