@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;
@@ -33,5 +34,5 @@ public interface CustomScmRepositoryDao {
 	 * @param testCaseIds The Collection of Test Case ids.
 	 * @return A Map of Test Case Sets mapped by ScmRepository
 	 */
-	Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
+	Map<ScmRepository, Set<ScriptedTestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
 }

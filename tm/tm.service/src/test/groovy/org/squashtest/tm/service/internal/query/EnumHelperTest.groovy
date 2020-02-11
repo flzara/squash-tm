@@ -54,7 +54,7 @@ class EnumHelperTest extends Specification{
 		value			|	constant                            | 	column
 
 		"VERY_HIGH"		|	TestCaseImportance.VERY_HIGH        |	proto(TEST_CASE, "importance")
-		"STANDARD"		|	TestCaseKind.STANDARD               |	proto(TEST_CASE, "kind")
+//		"STANDARD"		|	TestCaseKind.STANDARD               |	proto(TEST_CASE, "kind")
 		"OBSOLETE"		|	TestCaseStatus.OBSOLETE             |	proto(TEST_CASE, "status")
 		"APPROVED"		|	RequirementStatus.APPROVED          |	proto(REQUIREMENT_VERSION, "status")
 		"MINOR"			|	RequirementCriticality.MINOR 		|	proto(REQUIREMENT_VERSION, "criticality")

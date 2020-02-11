@@ -46,7 +46,9 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.QScriptedTestCase;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
@@ -153,12 +155,12 @@ public class ScriptedTestCaseEventListener {
 		LOGGER.debug("committing test cases to their repositories");
 		LOGGER.trace("test case ids : '{}'", testCaseIds);
 
-		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedTestCasesGroupedByRepoById(testCaseIds);
+		Map<ScmRepository, Set<ScriptedTestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedTestCasesGroupedByRepoById(testCaseIds);
 
-		for (Map.Entry<ScmRepository, Set<TestCase>> entry : scriptsGroupedByScm.entrySet()) {
+		for (Map.Entry<ScmRepository, Set<ScriptedTestCase>> entry : scriptsGroupedByScm.entrySet()) {
 
 			ScmRepository scm = entry.getKey();
-			Set<TestCase> testCases = entry.getValue();
+			Set<ScriptedTestCase> testCases = entry.getValue();
 
 			// Test existence of Credentials and test them
 			Credentials credentials = testScmCredentials(scm);
@@ -268,11 +270,11 @@ public class ScriptedTestCaseEventListener {
 		Collection<Long> requestIds = event.getAutomationRequestIds();
 
 		/*
-		 * Find the candidate test cases. As per the method findCandidatesForAutobind,
+		 * Find the candidate test cases. As per the method findScriptedCandidatesForAutobind,
 		 * the returned test cases are Gherkin-read (ie their project have a scm and a
 		 * Gherkin-able test automation project)
 		 */
-		List<TestCase> candidates = findCandidatesForAutobind(requestIds);
+		List<TestCase> candidates = findScriptedCandidatesForAutobind(requestIds);
 
 		// group them by Tm Project.
 		Map<Project, List<TestCase>> testCasesByProjects = candidates.stream()
@@ -411,11 +413,10 @@ public class ScriptedTestCaseEventListener {
 	 * Returns the test cases that :
 	 * - cond 1 : are the object of the automation requests (in arguments),
 	 * - cond 2 : are scripted test cases
-	 * - cond 3 : don't have an AutomatedTest bound yet,
-	 * - cond 4 : belong to a project that is connected to a SCM
-	 * - cond 5 : belong to a project that have a (at least one) Gherkin-able TestAutomationProject
+	 * - cond 3 : belong to a project that is connected to a SCM
+	 * - cond 4 : belong to a project that have a (at least one) Gherkin-able TestAutomationProject
 	 */
-	private List<TestCase> findCandidatesForAutobind(Collection<Long> automationRequestIds){
+	private List<TestCase> findScriptedCandidatesForAutobind(Collection<Long> automationRequestIds){
 
 		if (automationRequestIds.isEmpty()){
 			return Collections.emptyList();
@@ -423,6 +424,7 @@ public class ScriptedTestCaseEventListener {
 
 		QAutomationRequest automationRequest = QAutomationRequest.automationRequest;
 		QTestCase testCase = QTestCase.testCase;
+		QScriptedTestCase scriptedTestCase = QScriptedTestCase.scriptedTestCase;
 		QProject project = QProject.project1;
 		QTestAutomationProject automationProject = QTestAutomationProject.testAutomationProject;
 		QScmRepository scm = QScmRepository.scmRepository;
@@ -431,13 +433,14 @@ public class ScriptedTestCaseEventListener {
 			.select(testCase)
 			.from(automationRequest)
 			.join(automationRequest.testCase, testCase)
+			.join(scriptedTestCase)
 			.join(testCase.project, project)
 			.join(project.testAutomationProjects, automationProject)
-			.join(project.scmRepository, scm) 								// condition 4
+			.join(project.scmRepository, scm) 								// condition 3
 			.where(automationRequest.id.in(automationRequestIds) 			// condition 1
-				.and(testCase.kind.ne(TestCaseKind.STANDARD))		// condition 2
-				.and(automationProject.canRunGherkin.isTrue())		// condition 4
-			)
+				.and(automationProject.canRunGherkin.isTrue()	// condition 4
+				.and(scriptedTestCase.id.eq(testCase.id))		// condition 2
+			))
 			.fetch();
 
 	}

@@ -24,8 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -87,11 +90,26 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		if(testCase.isScripted()){
-			//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
-			//So if we are here the user is playing with controllers...
-			throw new IllegalArgumentException("Cannot add parameters to scripted test case.");
-		}
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				// No need to make proper error message, because the IHM do not allow parameters on keyword test case.
+				//So if we are here the user is playing with controllers...
+				throw new IllegalArgumentException("Cannot add parameters to keyword test case.");
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
+				//So if we are here the user is playing with controllers...
+				throw new IllegalArgumentException("Cannot add parameters to scripted test case.");
+			}
+		};
+		testCase.accept(testCaseVisitor);
 		addNewParameterToTestCase(parameter, testCase);
 	}
 

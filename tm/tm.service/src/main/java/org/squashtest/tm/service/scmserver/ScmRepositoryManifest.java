@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.scm.api.exception.ScmException;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import java.io.File;
@@ -102,7 +103,7 @@ public final class ScmRepositoryManifest {
 	 */
 	public Optional<File> locateTest(TestCase testCase){
 
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.GHERKIN);
 		String pattern = strategy.buildFilenameMatchPattern(testCase);
 
 		Collection<File> files;

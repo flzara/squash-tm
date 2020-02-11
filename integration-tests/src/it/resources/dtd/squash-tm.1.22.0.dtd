@@ -115,7 +115,7 @@
 	RESOURCE*,
 	RLN_RELATIONSHIP*,
 	RLN_RELATIONSHIP_CLOSURE*,
-	SCRIPTED_TC_EXTENDER*,
+	SCRIPTED_TEST_CASE*,
 	SIMPLE_RESOURCE*,
 	STORED_CREDENTIALS,
 	TCLN_RELATIONSHIP*,
@@ -237,7 +237,7 @@
 	resource?,
 	rln_relationship?,
 	rln_relationship_closure?,
-	scripted_tc_extender?,
+	scripted_test_case?,
 	simple_resource?,
 	tcln_relationship?,
 	tcln_relationship_closure?,
@@ -1254,11 +1254,10 @@
 		DEPTH CDATA #REQUIRED
 		>
 
-	<!ELEMENT SCRIPTED_TC_EXTENDER EMPTY>
-	<!ATTLIST SCRIPTED_TC_EXTENDER
-		SCRIPTED_TC_EXTENDER_ID CDATA #REQUIRED
+	<!ELEMENT SCRIPTED_TEST_CASE EMPTY>
+	<!ATTLIST SCRIPTED_TEST_CASE
+		TCLN_ID CDATA #REQUIRED
 		LANGUAGE CDATA #REQUIRED
-		TEST_CASE_ID CDATA #REQUIRED
 		SCRIPT #IMPLIED
 		>
 
@@ -1517,7 +1516,7 @@
 	<!ELEMENT resource EMPTY>
 	<!ELEMENT rln_relationship EMPTY>
 	<!ELEMENT rln_relationship_closure EMPTY>
-	<!ELEMENT scripted_tc_extender EMPTY>
+	<!ELEMENT scripted_test_case EMPTY>
 	<!ELEMENT simple_resource EMPTY>
 	<!ELEMENT stored_credentials EMPTY>
 	<!ELEMENT tcln_relationship EMPTY>

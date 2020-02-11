@@ -18,13 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.scripted;
+package org.squashtest.tm.core.foundation.lang;
 
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+public class Wrapped<T> {
 
-public interface ScriptedTestCaseParser {
-	void populateExecution(Execution execution);
+	private T value;
 
-	void validateScript(ScriptedTestCase scriptedTestCase);
+	public Wrapped() {
+	}
+
+	public Wrapped(T value) {
+		this.value = value;
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T value) {
+		this.value = value;
+	}
 }

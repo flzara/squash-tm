@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.QScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.QScriptedTestCase;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.CustomScmRepositoryDao;
@@ -50,7 +51,7 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	private EntityManager em;
 
 	@Override
-	public Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
+	public Map<ScmRepository, Set<ScriptedTestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
 
 			LOGGER.debug("looking for repositories and the test cases that should be committed into them");
 
@@ -59,23 +60,20 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 				return Collections.emptyMap();
 			}
 
-			QTestCase testCase = QTestCase.testCase;
-			QScriptedTestCaseExtender script = QScriptedTestCaseExtender.scriptedTestCaseExtender;
+			QScriptedTestCase scriptedTestCase = QScriptedTestCase.scriptedTestCase;
 			QProject project = QProject.project1;
 			QScmRepository scm = QScmRepository.scmRepository;
 
 
 			return new JPAQueryFactory(em)
-				.select(scm, testCase, script)
-				.from(testCase)
-				.join(testCase.project, project)
+				.select(scm, scriptedTestCase)
+				.from(scriptedTestCase)
+				.join(scriptedTestCase.project, project)
 				.join(project.scmRepository, scm)
-				.join(testCase.scriptedTestCaseExtender, script)
 				.fetchJoin()
-				.where(testCase.id.in(testCaseIds)
-					.and(testCase.kind.ne(TestCaseKind.STANDARD)))
+				.where(scriptedTestCase.id.in(testCaseIds))
 				.transform(
-					groupBy(scm).as(set(testCase))
+					groupBy(scm).as(set(scriptedTestCase))
 				);
 
 		}

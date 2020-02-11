@@ -23,10 +23,15 @@ package org.squashtest.tm.web.internal.controller.tf;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -62,27 +67,49 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 	@Override
 	protected Object buildItemData(AutomationRequest item) {
 		final AuditableMixin auditable = (AuditableMixin) item.getTestCase();
+		final TestCase testCase = item.getTestCase();
 		Map<String, Object> data = new HashMap<>(17);
-		data.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getProject().getName()): null);
-		data.put("reference", (item.getTestCase() != null && !item.getTestCase().getReference().isEmpty()) ? item.getTestCase().getReference(): NO_DATA);
-		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getTestCase() != null ? HtmlUtils.htmlEscape(item.getTestCase().getName()): null);
-		data.put("format", item.getTestCase() != null ? messageSource.internationalize(item.getTestCase().getKind().getI18nKey(), locale) : null);
-		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getTestCase() != null ? item.getTestCase().getId() : null);
+		data.put(DataTableModelConstants.PROJECT_NAME_KEY, testCase != null ? HtmlUtils.htmlEscape(testCase.getProject().getName()): null);
+		data.put("reference", (testCase != null && !testCase.getReference().isEmpty()) ? testCase.getReference(): NO_DATA);
+		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, testCase != null ? HtmlUtils.htmlEscape(testCase.getName()): null);
+		//create visitor
+		Wrapped<String> testCaseKind = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				testCaseKind.setValue("STANDARD");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				testCaseKind.setValue("KEYWORD");
+
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				testCaseKind.setValue("GHERKIN");
+
+			}
+		};
+		testCase.accept(visitor);
+		data.put("format", testCase != null ? messageSource.internationalize(TestCaseKind.valueOf(testCaseKind.getValue()).getI18nKey(), locale) : null);
+		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, testCase != null ? testCase.getId() : null);
 		data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getLastModifiedBy());
 		data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
 		data.put("priority", item.getAutomationPriority() != null ? item.getAutomationPriority() : null);
 		data.put("assigned-on", messageSource.localizeShortDate(item.getAssignmentDate(), locale));
 		data.put("entity-index", getCurrentIndex());
 		data.put("script", populateScriptAuto(item));
-		data.put("uuid", item.getTestCase().getUuid());
+		data.put("uuid", testCase.getUuid());
 		data.put("checkbox", "");
-		data.put("tc-id", item.getTestCase() != null ? item.getTestCase().getId(): null);
+		data.put("tc-id", testCase != null ? testCase.getId(): null);
 		data.put("requestId", item.getId());
 		data.put("assigned-to", item.getAssignedTo() != null ? item.getAssignedTo().getLogin() : NO_DATA);
 		data.put("status", messageSource.internationalize(item.getRequestStatus().getI18nKey(), locale));
-		data.put("listScriptConflict",  item.getTestCase() != null && item.getTestCase().getAutomationRequest() != null ? convertChaineToList(item.getTestCase().getAutomationRequest().getConflictAssociation()) : null);
-		data.put("writable", isWritable(item.getTestCase(), true));
-		data.put("writableAutom", isWritable(item.getTestCase(), false));
+		data.put("listScriptConflict",  testCase != null && testCase.getAutomationRequest() != null ? convertChaineToList(testCase.getAutomationRequest().getConflictAssociation()) : null);
+		data.put("writable", isWritable(testCase, true));
+		data.put("writableAutom", isWritable(testCase, false));
 		data.put("isManual", item.isManual());
 
 		return data;
@@ -97,15 +124,31 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 	}
 	// Issue 7880
 	private String populateScriptAuto(AutomationRequest item) {
+		//extract the test case and visit it
+		TestCase testCase = item.getTestCase();
 		if (item.getProject().hasTestAutomationProjects()) {
 			if (hasScriptAuto(item)) {
-				return item.getTestCase().getAutomatedTest().getFullLabel();
+				return testCase.getAutomatedTest().getFullLabel();
 			} else {
-				if (GHERKIN.equals(item.getTestCase().getKind())) {
-					return NO_DATA;
-				} else {
-					return null;
-				}
+				Wrapped<String> result = new Wrapped<>();
+				TestCaseVisitor visitor = new TestCaseVisitor() {
+					@Override
+					public void visit(TestCase testCase) {
+						result.setValue(null);
+					}
+
+					@Override
+					public void visit(KeywordTestCase keywordTestCase) {
+						result.setValue(null);
+					}
+
+					@Override
+					public void visit(ScriptedTestCase scriptedTestCase) {
+						result.setValue(NO_DATA);
+					}
+				};
+				testCase.accept(visitor);
+				return result.getValue();
 			}
 		} else {
 			return NO_DATA;

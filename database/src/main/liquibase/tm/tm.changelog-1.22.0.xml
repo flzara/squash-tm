@@ -110,6 +110,15 @@
         <constraints primaryKey="true" />
       </column>
     </createTable>
+
+    <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
+
+    <renameTable newTableName="SCRIPTED_TEST_CASE" oldTableName="SCRIPTED_TC_EXTENDER" />
+
+    <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
+
+    <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
+
   </changeSet>
 
 </databaseChangeLog>

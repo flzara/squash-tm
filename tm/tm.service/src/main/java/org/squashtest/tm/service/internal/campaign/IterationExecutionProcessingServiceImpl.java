@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
@@ -47,7 +47,7 @@ public class IterationExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Inject
 	private IterationDao iterationDao;
 
-	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory) {
+	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory) {
 		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory);
 	}
 

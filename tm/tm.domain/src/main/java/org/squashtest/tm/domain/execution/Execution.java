@@ -26,6 +26,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -52,10 +53,13 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
@@ -378,7 +382,23 @@ DenormalizedFieldHolder, BoundEntity {
 
 		referencedTestCase = testCase;
 
-		this.isKeywordExecution = testCase.isKeywordTestCase();
+		Wrapped<Boolean> isKeywordExecution = new Wrapped<>(false);
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				isKeywordExecution.setValue(true);
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+			}
+		};
+		testCase.accept(testCaseVisitor);
+		this.isKeywordExecution = isKeywordExecution.getValue();
 
 		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());

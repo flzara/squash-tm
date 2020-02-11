@@ -32,6 +32,7 @@ import javax.persistence.SecondaryTable;
 })
 public class KeywordTestCase extends TestCase {
 
+	@Override
 	public void accept(TestCaseVisitor visitor) {
 		visitor.visit(this);
 	}

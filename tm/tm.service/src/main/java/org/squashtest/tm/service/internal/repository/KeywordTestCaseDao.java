@@ -21,18 +21,8 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
-import java.util.Collection;
-import java.util.List;
+public interface KeywordTestCaseDao extends JpaRepository<KeywordTestCase, Long> {
 
-public interface ScriptedTestCaseExtenderDao extends JpaRepository<ScriptedTestCaseExtender,Long>{
-
-	@Query("select ext from ScriptedTestCaseExtender ext inner join fetch ext.testCase tc where tc.id=:testCaseId")
-	ScriptedTestCaseExtender findByTestCase_Id(@Param("testCaseId") Long testCaseId);
-
-	List<ScriptedTestCaseExtender> findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage language, Collection<Long> testCaseIds);
 }

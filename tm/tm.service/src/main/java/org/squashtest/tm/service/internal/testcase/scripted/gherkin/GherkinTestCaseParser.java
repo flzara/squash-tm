@@ -27,10 +27,14 @@ import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.exception.testcase.ScriptParsingException;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
+
+import static java.util.Objects.nonNull;
 
 public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 
@@ -45,24 +49,43 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 	@Override
 	public void populateExecution(Execution execution) {
 		TestCase referencedTestCase = execution.getReferencedTestCase();
-		ScriptedTestCaseExtender scriptExtender = referencedTestCase.getScriptedTestCaseExtender();
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
+		if(nonNull(referencedTestCase)){
+			TestCaseVisitor testCaseVisitor = new TestCaseVisitor(){
+
+				@Override
+				public void visit(TestCase testCase) {
+					throw new IllegalArgumentException("GherkinTestCaseParser is dedicated to ScriptedTestCase.");
+				}
+
+				@Override
+				public void visit(KeywordTestCase keywordTestCase) {
+					throw new IllegalArgumentException("GherkinTestCaseParser is dedicated to ScriptedTestCase.");
+				}
+
+				@Override
+				public void visit(ScriptedTestCase scriptedTestCase) {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
+					}
+					GherkinDocument gherkinDocument = parseToGherkinDocument(scriptedTestCase);
+					stepGenerator.populateExecution(execution, gherkinDocument);
+				}
+			};
+			referencedTestCase.accept(testCaseVisitor);
 		}
-		GherkinDocument gherkinDocument = parseToGherkinDocument(scriptExtender);
-		stepGenerator.populateExecution(execution, gherkinDocument);
+
 	}
 
 	@Override
-	public void validateScript(ScriptedTestCaseExtender extender) {
-		parseToGherkinDocument(extender);
+	public void validateScript(ScriptedTestCase scriptedTestCase) {
+		parseToGherkinDocument(scriptedTestCase);
 	}
 
-	public GherkinDocument parseToGherkinDocument(ScriptedTestCaseExtender scriptExtender) {
+	public GherkinDocument parseToGherkinDocument(ScriptedTestCase scriptedTestCase) {
 		Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
 		GherkinDocument gherkinDocument = null;
 		try {
-			gherkinDocument = parser.parse(scriptExtender.getScript());
+			gherkinDocument = parser.parse(scriptedTestCase.getScript());
 		} catch (ParserException e) {
 			throw new ScriptParsingException(e);
 		}

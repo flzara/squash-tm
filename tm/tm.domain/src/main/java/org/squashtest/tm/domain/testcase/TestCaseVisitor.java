@@ -26,4 +26,6 @@ public interface TestCaseVisitor {
 
 	void visit(KeywordTestCase keywordTestCase);
 
+	void visit(ScriptedTestCase scriptedTestCase);
+
 }

@@ -26,9 +26,10 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.IterationDao
@@ -49,7 +50,7 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 	UserAccountService userService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	CampaignNodeDeletionHandler campaignNodeDeletionHandler = Mock()
-	Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory = Mock()
+	Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory = Mock()
 
 	def setup() {
 		manager = new IterationExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory)
@@ -118,8 +119,7 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		iterationDao.findById(10) >> iteration
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.STANDARD
+		TestCase testCase = new TestCase()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -151,8 +151,7 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		iterationDao.findById(10L) >> iteration
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.STANDARD
+		TestCase testCase = new TestCase()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -175,11 +174,8 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		iterationDao.findById(10) >> iteration
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.GHERKIN
-		ScriptedTestCaseExtender extender = Mock()
-		extender.getScript() >> "script"
-		testCase.getScriptedTestCaseExtender() >> extender
+		ScriptedTestCase testCase = new ScriptedTestCase()
+		testCase.setScript("script")
 
 		and:
 		GherkinTestCaseParser parser = Mock()
@@ -189,9 +185,9 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		List<ScenarioDefinition> scenarios = [scenario]
 		feature.getChildren() >> scenarios
 		document.getFeature() >> feature
-		parser.parseToGherkinDocument(extender) >> document
+		parser.parseToGherkinDocument(testCase) >> document
 
-		parserFactory.apply(extender) >> parser
+		parserFactory.apply(testCase) >> parser
 
 
 		and:
@@ -217,11 +213,8 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		iterationDao.findById(10) >> iteration
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.GHERKIN
-		ScriptedTestCaseExtender extender = Mock()
-		extender.getScript() >> "script"
-		testCase.getScriptedTestCaseExtender() >> extender
+		ScriptedTestCase testCase = new ScriptedTestCase()
+		testCase.setScript("script")
 
 		and:
 		GherkinTestCaseParser parser = Mock()
@@ -231,9 +224,9 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 		List<ScenarioDefinition> scenarios = [background]
 		feature.getChildren() >> scenarios
 		document.getFeature() >> feature
-		parser.parseToGherkinDocument(extender) >> document
+		parser.parseToGherkinDocument(testCase) >> document
 
-		parserFactory.apply(extender) >> parser
+		parserFactory.apply(testCase) >> parser
 
 
 		and:
@@ -258,6 +251,7 @@ class IterationExecutionProcessingServiceImplTest extends Specification {
 
 		ids.each { id ->
 			TestCase testCase = Mock()
+			testCase.accept(_) >> { TestCaseVisitor visitor -> visitor.visit(testCase) }
 			testCase.getKind() >> TestCaseKind.STANDARD
 			TestStep testStep = Mock()
 			testCase.getSteps() >> [testStep]

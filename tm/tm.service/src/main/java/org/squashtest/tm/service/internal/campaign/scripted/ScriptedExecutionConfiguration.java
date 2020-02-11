@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.campaign.scripted;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
@@ -38,14 +38,14 @@ public class ScriptedExecutionConfiguration {
 	//This bean is only a singleton factory method
 	//As the called method is a spring managed prototype bean, these will be like a Provider but with arguments
 	@Bean
-	public Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> scriptedTestCaseParserFactory() {
+	public Function<ScriptedTestCase, ScriptedTestCaseParser> scriptedTestCaseParserFactory() {
 		return this::parser; //just return the function that will instantiate the bean when called
 	}
 
 	@Bean
 	@Scope(value = "prototype")
-	public ScriptedTestCaseParser parser(ScriptedTestCaseExtender extender) {
-		ScriptedTestCaseLanguage language = extender.getLanguage();
+	public ScriptedTestCaseParser parser(ScriptedTestCase scriptedTestCase) {
+		ScriptedTestCaseLanguage language = scriptedTestCase.getLanguage();
 		if(language.equals(ScriptedTestCaseLanguage.GHERKIN)) {
 			return new GherkinTestCaseParser(gherkinStepGenerator());
 		}else {

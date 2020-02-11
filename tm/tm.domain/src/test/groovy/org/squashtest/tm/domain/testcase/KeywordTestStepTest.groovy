@@ -43,7 +43,7 @@ class KeywordTestStepTest extends Specification {
 
 	def "should associate a valid TestCase"() {
 		given:
-		TestCase testCase = new TestCase(TestCase.IS_KEYWORD_TEST_CASE)
+		KeywordTestCase testCase = new KeywordTestCase()
 		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
 		when:
 		keywordTestStep.setTestCase(testCase)

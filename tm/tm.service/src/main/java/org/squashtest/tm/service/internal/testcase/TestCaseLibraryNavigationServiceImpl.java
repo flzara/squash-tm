@@ -45,8 +45,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -77,7 +76,7 @@ import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
@@ -145,7 +144,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
 	@Inject
-	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
+	private ScriptedTestCaseDao scriptedTestCaseDao;
 
 	@Inject
 	private TestCaseImporter testCaseImporter;
@@ -656,7 +655,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	private File doGherkinExport(Collection<Long> ids) {
-		List<ScriptedTestCaseExtender> extenders = scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage.GHERKIN, ids);
+		List<ScriptedTestCase> scriptedTestCases = scriptedTestCaseDao.findAllById(ids);
 
 		FileOutputStream fileOutputStream = null;
 		try {
@@ -666,11 +665,11 @@ public class TestCaseLibraryNavigationServiceImpl
 
 			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
 
-			for (ScriptedTestCaseExtender extender : extenders) {
-				String name = "tc_" + extender.getTestCaseId();
+			for (ScriptedTestCase scriptedTestCase : scriptedTestCases) {
+				String name = "tc_" + scriptedTestCase.getId();
 				ZipArchiveEntry entry = new ZipArchiveEntry(name + ".feature");
 				archive.putArchiveEntry(entry);
-				archive.write(extender.getScript().getBytes(Charset.forName("UTF-8")));
+				archive.write(scriptedTestCase.getScript().getBytes(Charset.forName("UTF-8")));
 				archive.closeArchiveEntry();
 			}
 

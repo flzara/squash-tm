@@ -25,20 +25,19 @@ import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
-import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.nio.file.Files
 
@@ -271,16 +270,13 @@ go home quickly before someone notices that the ITs are broken"""
 """
 
 		and: "the test case"
-		def tcExtender = new ScriptedTestCaseExtender(script:script)
 
-		def tc = new TestCase(
-			kind: TestCaseKind.GHERKIN,
+		def tc = new ScriptedTestCase(
 			importance: TestCaseImportance.MEDIUM,
 			automationRequest: new AutomationRequest(automationPriority: 2, requestStatus: AutomationRequestStatus.SUSPENDED),
-			scriptedTestCaseExtender: tcExtender
+			script:script
 		)
 
-		tcExtender.setTestCase(tc)
 
 		when:
 		service.printToFile(testfile, tc)
@@ -324,33 +320,30 @@ go home quickly before someone notices that the ITs are broken"""
 			isUseTreeStructureInScmRepo() >> false
 			getScmRepository() >> scmRepo
 		}
-		def newTcExtender = new ScriptedTestCaseExtender(script:script1)
-		def newTc = Mock(TestCase){
+
+		ScriptedTestCase newTc = Mock(ScriptedTestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
 			getImportance() >> TestCaseImportance.HIGH
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> newTcExtender
 			getAutomationRequest() >>
 				new AutomationRequest(automationPriority: 1, requestStatus: AutomationRequestStatus.AUTOMATED)
 			getProject() >> project
+			getScript() >> script1
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
+			computeScriptWithAppendedMetadata() >> metadata1 + script1
 		}
-		newTcExtender.setTestCase(newTc)
 
-		def updateTcExtender = new ScriptedTestCaseExtender(script:script2)
-		def updateTc = Mock(TestCase){
+		ScriptedTestCase updateTc = Mock(ScriptedTestCase){
 			getId() >> 456L
 			getName() >> "lame pun"
 			getImportance() >> TestCaseImportance.LOW
-			getKind() >> TestCaseKind.GHERKIN
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> updateTcExtender
 			getAutomationRequest() >>
 				new AutomationRequest(automationPriority: 3, requestStatus: AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
 			getProject() >> project
+			getScript() >> script2
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
+			computeScriptWithAppendedMetadata() >> metadata2 + script2
 		}
-		updateTcExtender.setTestCase(updateTc)
 
 		when:
 		service.createOrUpdateScriptFile(scm, [updateTc, newTc])

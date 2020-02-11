@@ -22,8 +22,11 @@ package org.squashtest.tm.domain.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,10 +74,24 @@ public class ScriptedExecutionExtender {
 	public ScriptedExecutionExtender(Execution execution) {
 		this.execution = execution;
 		TestCase referencedTestCase = execution.getReferencedTestCase();
-		if (referencedTestCase == null || !referencedTestCase.isScripted()){
-			throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
-		}
-		this.language = referencedTestCase.getScriptedTestCaseExtender().getLanguage();
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+			}
+		};
+		referencedTestCase.accept(testCaseVisitor);
+
+		this.language = ((ScriptedTestCase)referencedTestCase).getLanguage();
 	}
 
 	public Long getId() {

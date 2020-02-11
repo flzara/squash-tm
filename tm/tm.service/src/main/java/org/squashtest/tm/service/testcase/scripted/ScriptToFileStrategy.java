@@ -21,9 +21,12 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 
 
 /**
@@ -46,12 +49,13 @@ public enum ScriptToFileStrategy {
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
 			if (! canHandle(testCase)){
-				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but current test case is of kind "+testCase.getKind());
+				throw new IllegalArgumentException("This strategy can only handle scripted test cases.");
 			}
 
-			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+			//NOSONAR : type is checked before
+			ScriptedTestCase scriptedTestCase = (ScriptedTestCase) testCase;
 
-			return extender.computeScriptWithAppendedMetadata();
+			return scriptedTestCase.computeScriptWithAppendedMetadata();
 		}
 	};
 
@@ -125,9 +129,24 @@ public enum ScriptToFileStrategy {
 	 * @return
 	 */
 	public boolean canHandle(TestCase testCase){
-		TestCaseKind kind = testCase.getKind();
-		return testCase.isScripted() &&
-				   kind == getHandledKind();
+		Wrapped<Boolean> canHandle = new Wrapped<>(false);
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor(){
+
+			@Override
+			public void visit(TestCase testCase) {
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				canHandle.setValue(true);
+			}
+		};
+		testCase.accept(testCaseVisitor);
+		return canHandle.getValue();
 	}
 
 	/**

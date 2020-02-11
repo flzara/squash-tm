@@ -25,11 +25,14 @@ import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanOwner;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -61,12 +64,12 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Named("scriptedTestCaseParserFactory")
-	Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory;
+	Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory;
 
 	// Injection is made through constructor to allow simple mock injection in unit test.
 	@Inject
 	AbstractTestPlanExecutionProcessingService(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager,
-											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory){
+											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory){
 		this.campaignDeletionHandler = campaignDeletionHandler;
 		this.testPlanManager = testPlanManager;
 		this.userService = userService;
@@ -188,20 +191,31 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 	}
 
 	private boolean testCaseHasSteps(TestCase testCase) {
-		switch (testCase.getKind()){
-			case STANDARD:
-				return testCase.getSteps() != null && !testCase.getSteps().isEmpty();
-			case GHERKIN:
-				ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
-				return extender != null && extender.getScript() != null && !extender.getScript().isEmpty() && hasScenarios(extender);
-			default:
-				return false;
-		}
+		Wrapped<Boolean> hasSteps = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				hasSteps.setValue(testCase.getSteps() != null && !testCase.getSteps().isEmpty());
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				hasSteps.setValue(testCase.getSteps() != null && !testCase.getSteps().isEmpty());
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				hasSteps.setValue(scriptedTestCase.getScript() != null && !scriptedTestCase.getScript().isEmpty() && hasScenarios(scriptedTestCase));
+			}
+		};
+		testCase.accept(visitor);
+		return hasSteps.getValue();
+
 	}
 
-	private boolean hasScenarios(ScriptedTestCaseExtender extender){
-		GherkinTestCaseParser gherkinParser = (GherkinTestCaseParser) parserFactory.apply(extender);
-		GherkinDocument gherkinScript = gherkinParser.parseToGherkinDocument(extender);
+	private boolean hasScenarios(ScriptedTestCase scriptedTestCase){
+		GherkinTestCaseParser gherkinParser = (GherkinTestCaseParser) parserFactory.apply(scriptedTestCase);
+		GherkinDocument gherkinScript = gherkinParser.parseToGherkinDocument(scriptedTestCase);
 		return gherkinScript != null && gherkinScript.getFeature() != null && !gherkinScript.getFeature().getChildren().isEmpty()
 			&& gherkinScript.getFeature().getChildren().stream().anyMatch( definition -> !(definition instanceof Background));
 	}

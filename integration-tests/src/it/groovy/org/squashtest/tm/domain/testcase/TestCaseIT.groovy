@@ -48,7 +48,9 @@ class TestCaseIT extends DbunitServiceSpecification{
 	def "Should find all different test case types"(){
 
 		when :
-		def res = em.createQuery("from TestCase").getResultList()
+		def res = em
+			.createQuery("from TestCase")
+			.getResultList()
 		then :
 		res.size() == 2
 	}
@@ -108,6 +110,9 @@ class TestCaseIT extends DbunitServiceSpecification{
 			@Override
 			void visit(KeywordTestCase testCase) {
 				res[1] = "keywordTestCase"
+			}
+
+			void visit(ScriptedTestCase scriptedTestCase) {
 			}
 		}
 		and:

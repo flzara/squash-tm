@@ -18,21 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.json;
+package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.squashtest.tm.domain.testcase.TestCase;
-
-/**
- * @author Julien Thebault
- *
- */
-@JsonAutoDetect
-public interface ScriptedTestCaseExtenderMixin {
-
-	@JsonIgnore
-	TestCase getTestCase();
+public interface ScriptedTestCaseDao extends JpaRepository<ScriptedTestCase, Long> {
 
 }

@@ -29,7 +29,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
@@ -81,7 +83,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	@Override
-	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
+	public void createOrUpdateScriptFile(ScmRepository scm, Collection<ScriptedTestCase> testCases) {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("committing {} files to repository '{}'", testCases.size(), scm.getName());
 		}
@@ -220,7 +222,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @return The relative path with the Standard name
 	 */
 	private String buildTestCaseStandardRelativePath(String foldersPath, TestCase testCase) {
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.GHERKIN);
 		String standardName = strategy.createFilenameFor(testCase);
 		return foldersPath + standardName;
 	}
@@ -232,7 +234,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @return The relative path with the Standard name
 	 */
 	private String buildTestCaseBackUpRelativePath(String foldersPath, TestCase testCase) {
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.GHERKIN);
 		String standardName = strategy.backupFilenameFor(testCase);
 		return foldersPath + standardName;
 	}
@@ -321,7 +323,8 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	private void printToFile(File dest, TestCase testCase) throws IOException{
-		ScriptToFileStrategy strategy = strategyFor(testCase.getKind());
+		//TODO: strategy is not necessary
+		ScriptToFileStrategy strategy = strategyFor(TestCaseKind.GHERKIN);
 		String content = strategy.getWritableFileContent(testCase);
 
 		try {

@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.bugtracker
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseKind
 
@@ -112,8 +113,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 			execution.getSteps() >> steps
 
 		and: "a referenced TestCase of kind Standard"
-			TestCase referencedTestCase = Mock()
-			referencedTestCase.getKind() >> TestCaseKind.STANDARD
+			TestCase referencedTestCase = new TestCase()
 			execution.getReferencedTestCase() >> referencedTestCase
 
 		and: "other things"
@@ -136,7 +136,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 					"expected result description\n\n\n"
 	}
 
-	def "should get comment for execution step from a TestCase of kind Gherkin/Robot"() {
+	def "should get comment for execution step from a TestCase of kind Gherkin"() {
 		given: "a bugged Step"
 			ExecutionStep buggedStep = Mock()
 			buggedStep.getAction() >> "the script"
@@ -149,8 +149,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 			List<ExecutionStep> steps = [buggedStep]
 			execution.getSteps() >> steps
 		and: "a referenced TestCase of kind Gherkin"
-			TestCase referencedTestCase = Mock()
-			referencedTestCase.getKind() >> TestCaseKind.GHERKIN
+			TestCase referencedTestCase = new ScriptedTestCase()
 			execution.getReferencedTestCase() >> referencedTestCase
 
 		and: "other things"
