@@ -346,7 +346,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 								var textArea = document.createElement('textarea');
 								textArea.innerHTML = encodedString;
 								return textArea.value;
-							}
+							};
 							result.push(transformerEncodage(selectedReq));
 						});
 
