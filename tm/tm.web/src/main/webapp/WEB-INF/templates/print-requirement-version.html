@@ -261,9 +261,9 @@
         <tr th:each="linkReq, iterStat: ${linkRequirement}"
             th:object="${linkReq}">
           <td th:text="${iterStat.count}">1</td>
-          <td th:text="*{['project-name']}">Project B</td>
-          <td th:text="*{['rv-reference']}">Ref</td>
-          <td th:text="*{['rv-name']}">Exigence</td>
+          <td th:utext="*{['project-name']}">Project B</td>
+          <td th:utext="*{['rv-reference']}">Ref</td>
+          <td th:utext="*{['rv-name']}">Exigence</td>
           <td th:text="*{['rv-version']}">num version</td>
           <td th:text="*{['rv-role']}">role</td>
 
@@ -409,10 +409,10 @@
           <td th:text="${iterStat.count}">Cle</td>
           <td th:text="*{['BtProject']}">Projet</td>
           <td th:text="*{['issue-summary']}">resumé</td>
-          <td th:text="*{['issue-priority']}">priorite</td>
-          <td th:text="*{['issue-status']}">statut</td>
-          <td th:text="*{['issue-assignee']}">assigne a</td>
-          <td th:text="*{['issue-owner']}">rapportée dans l'exection</td>
+          <td th:utext="*{['issue-priority']}">priorite</td>
+          <td th:utext="*{['issue-status']}">statut</td>
+          <td th:utext="*{['issue-assignee']}">assigne a</td>
+          <td th:utext="*{['issue-owner']}">rapportée dans l'exection</td>
           <td th:text="*{['requirement-reference']}">reference de l'exigence</td>
 
         </tr>
