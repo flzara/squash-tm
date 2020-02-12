@@ -302,6 +302,7 @@ class TestCaseTest extends Specification {
 
 		expect:
 		testCase.isKeywordTestCase()
+		testCase.getKind() == TestCaseKind.KEYWORD
 	}
 
 	def "should throw exception if extend keyword test into scripted test"() {
