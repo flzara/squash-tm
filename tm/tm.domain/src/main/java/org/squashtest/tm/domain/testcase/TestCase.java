@@ -206,6 +206,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public TestCase(boolean isKeywordTestCase) {
 		this();
 		this.isKeywordTestCase = isKeywordTestCase;
+		if (isKeywordTestCase) {
+			this.kind = TestCaseKind.KEYWORD;
+		}
 	}
 
 	public int getVersion() {

@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestCaseKind implements Internationalizable {
-	STANDARD, GHERKIN;
+	STANDARD, GHERKIN, KEYWORD;
 
 	public boolean isScripted() {
 		return this.equals(GHERKIN);
