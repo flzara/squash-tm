@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
@@ -411,22 +410,22 @@ public final class BugTrackerControllerHelper {
 
 			RemoteIssue issue = ownership.getIssue();
 			RequirementVersion requirementVersion = ownership.getRequirementVersion();
-			String strUrl = HTMLCleanupUtils.cleanHtml(service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm());
+			String strUrl = HTMLCleanupUtils.cleanAndUnescapeHTML(service.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm());
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
-			String reqRef = HTMLCleanupUtils.cleanHtml(requirementVersion.getReference());
+			String reqRef = HTMLCleanupUtils.cleanAndUnescapeHTML(requirementVersion.getReference());
 			String reqId = String.valueOf(requirementVersion.getRequirement().getId());
 			String reqVersionId = String.valueOf(requirementVersion.getId());
 
 			result.put(ISSUE_URL, strUrl);
 			result.put("issue-id", issue.getId());
-			result.put("issue-summary", HtmlUtils.htmlUnescape(HTMLCleanupUtils.cleanHtml(issue.getSummary())));
+			result.put("issue-summary", HTMLCleanupUtils.cleanAndUnescapeHTML(issue.getSummary()));
 			result.put("issue-priority", findPriority(issue));
 			result.put("issue-status", findStatus(issue));
 			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
-			result.put(BT_PROJECT, HTMLCleanupUtils.cleanHtml(issue.getProject().getName()));
+			result.put(BT_PROJECT, HTMLCleanupUtils.cleanAndUnescapeHTML(issue.getProject().getName()));
 			result.put("requirement-reference", reqRef);
 			result.put("requirement-id", reqId);
 			result.put("current-version-id", reqVersionId);
