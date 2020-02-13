@@ -23,7 +23,9 @@ package org.squashtest.tm.service.testautomation
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.unitils.dbunit.annotation.DataSet
@@ -39,7 +41,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	AutomatedSuiteManagerService service
-        
+
         @Inject
         IterationTestPlanDao itpiDao
 
@@ -59,16 +61,40 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 	def getProject(id){
 		return getSession().load(GenericProject.class, id)
 	}
-        
-//        @DataSet("TestAutomationService.TFtrigger.xml")
-//        def "should return automated test suite associated to an iteration given a test plan items list"() {
-//                given:
-//                def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
-//
-//                when:
-//				AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList)
-//
-//                then:
-//				suite.executionExtenders[0].id == -1L
-//        }
+
+	@DataSet("TestAutomationService.TFtrigger.xml")
+    def "should return automated test suite associated to an iteration given a test plan items list"() {
+    	given:
+        def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
+
+        when:
+		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList)
+
+        then:
+		suite.executionExtenders.size() == 3
+		suite.executionExtenders[0].id == 1L
+		suite.executionExtenders[0].automatedTest.id == -71L
+	}
+
+	@DataSet("TestAutomationService.TFtrigger.xml")
+	def "should return collection of tests with params"() {
+		given:
+		def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
+
+		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList)
+
+		when:
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
+
+		then:
+		executionOrder.size() == 3
+		executionOrder[0].a1.execution.referencedTestCase.uuid == "5bb09a58-72fd-4630-95fa-1b4651052c6a"
+		executionOrder[0].a1.automatedTest.name == "test 1"
+
+		executionOrder[0].a2.containsKey("TC_UUID")
+		executionOrder[0].a2.get("TC_UUID") == "5bb09a58-72fd-4630-95fa-1b4651052c6a"
+
+		executionOrder[0].a2.containsKey("TC_REFERENCE")
+		executionOrder[0].a2.get("TC_REFERENCE") == "ref"
+	}
 }
