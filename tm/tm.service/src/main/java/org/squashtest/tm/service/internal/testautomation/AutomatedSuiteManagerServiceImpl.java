@@ -279,8 +279,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
         /**
-	 * 
-         * 
+	 *
+         *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlanObject(List<IterationTestPlanItem>)
 	 */
 	@Override
@@ -290,10 +290,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
                                 throw new IllegalArgumentException("All items must belong to the same selected iteration");
                         }
                 }
-                permissionService.hasPermissionOnObject(EXECUTE_ITERATION_OR_ROLE_ADMIN, idIteration, EXECUTE);
+                permissionService.hasPermissionOnObject(EXECUTE, idIteration, Iteration.class.getName());
 		return createFromItems(items);
 	}
-        
+
 	/**
 	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
@@ -486,8 +486,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite) {
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
                 return collectAutomatedExecs(suite.getExecutionExtenders());
-	}    
-        
+	}
+
 
 	// ******************* create suite private methods ***************************
 
