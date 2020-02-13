@@ -68,7 +68,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
         def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
 
         when:
-		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList)
+		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList.get(0).getIteration().getId(), testItemsList)
 
         then:
 		suite.executionExtenders.size() == 3
@@ -81,7 +81,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		given:
 		def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
 
-		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList)
+		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList.get(0).getIteration().getId(), testItemsList)
 
 		when:
 		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
