@@ -279,12 +279,18 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
         /**
-	 *
+	 * 
+         * 
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlanObject(List<IterationTestPlanItem>)
 	 */
 	@Override
-	@PreAuthorize(EXECUTE_ITERATION_OR_ROLE_ADMIN)
-	public AutomatedSuite createFromIterationTestPlanItems(List<IterationTestPlanItem> items) {
+	public AutomatedSuite createFromIterationTestPlanItems(Long idIteration, List<IterationTestPlanItem> items) {
+                for (IterationTestPlanItem item : items) {
+                        if(!item.getIteration().getId().equals(idIteration)) {
+                                throw new IllegalArgumentException("All items must belong to the same selected iteration");
+                        }
+                }
+                permissionService.hasPermissionOnObject(EXECUTE_ITERATION_OR_ROLE_ADMIN, idIteration, EXECUTE);
 		return createFromItems(items);
 	}
         

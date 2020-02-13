@@ -94,11 +94,13 @@ public interface AutomatedSuiteManagerService {
 /**
 	 * Creates a new AutomatedSuite based on a given {@link IterationTestPlanItem} list. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
-	 *
+         * 
+         * @param iterationId
 	 * @param itpi
+         * @throws IllegalArgumentException All test plan items must belong to the selected iteration
 	 * @return
 	 */
-	AutomatedSuite createFromIterationTestPlanItems(List<IterationTestPlanItem> items);
+	AutomatedSuite createFromIterationTestPlanItems(Long idIteration, List<IterationTestPlanItem> items);
         
         
 	/**

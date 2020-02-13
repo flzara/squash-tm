@@ -308,28 +308,34 @@ class AutomatedSuiteManagerServiceTest extends Specification {
         def "should create automated suite from ITPI list"() {
                 given:
                 List<IterationTestPlanItem> items = mockITPIList()
-                
+        
                 when:
-                AutomatedSuite suite = service.createFromIterationTestPlanItems(items)
+                AutomatedSuite suite = service.createFromIterationTestPlanItems(1L, items)
 
                 then: 
-                suite.executionExtenders.size == 5
+                suite.executionExtenders.size() == 5
         }
         
         private List<IterationTestPlanItem> mockITPIList() {
             List<IterationTestPlanItem> itpiList = new ArrayList<>()
             5.times { num -> itpiList.add(mockITPI()) }
             return itpiList
-
         }
         
         private IterationTestPlanItem mockITPI() {
             IterationTestPlanItem itpi = Mock()
             itpi.isAutomated() >> true
+            itpi.getIteration() >> mockIteration()
             itpi.createAutomatedExecution() >> Mock(Execution) {
                 getAutomatedExecutionExtender() >> Mock(AutomatedExecutionExtender)
             }
             return itpi
+        }
+        
+        private Iteration mockIteration() {
+            Iteration iter = Mock()
+            iter.getId() >> 1L
+            return iter
         }
 
         
