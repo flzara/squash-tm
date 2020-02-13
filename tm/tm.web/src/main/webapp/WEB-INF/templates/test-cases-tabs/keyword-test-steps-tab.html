@@ -60,6 +60,18 @@
       <!-- eager-loaded through data property of table -->
       </tbody>
     </table>
+
+    <!-- script -->
+    <br/>
+    <div>
+      <span>Generated script:</span>
+      <br/>
+      <br/>
+      <div style="background-color:#FDFDFD;">
+        <span style="font-family: monospace; font-size:20px;" th:utext="${#strings.replace(#strings.escapeXml(generated_script),'&#10;','&lt;br&gt;')}"></span>
+      </div>
+
+    </div>
   </div>
   <!-- ==================== /table definition =================== -->
 
