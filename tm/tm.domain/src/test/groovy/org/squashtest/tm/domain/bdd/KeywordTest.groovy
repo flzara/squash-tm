@@ -18,13 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.bdd;
+package org.squashtest.tm.domain.bdd
 
-public enum Keyword {
-	//these keywords MUST be displayed in this order (SQUASH-177)
-	GIVEN,
-	WHEN,
-	THEN,
-	AND,
-	BUT
+import spock.lang.Specification
+import static org.squashtest.tm.domain.bdd.Keyword.GIVEN;
+import static org.squashtest.tm.domain.bdd.Keyword.WHEN;
+import static org.squashtest.tm.domain.bdd.Keyword.THEN;
+import static org.squashtest.tm.domain.bdd.Keyword.AND;
+import static org.squashtest.tm.domain.bdd.Keyword.BUT;
+
+class KeywordTest extends Specification {
+
+	def "should display keyword list in good order"() {
+		expect:
+		Keyword.values() == [GIVEN, WHEN, THEN, AND, BUT]
+	}
+
 }
