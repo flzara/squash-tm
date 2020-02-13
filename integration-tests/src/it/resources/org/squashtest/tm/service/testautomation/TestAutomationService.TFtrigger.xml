@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+    	<TEST_AUTOMATION_SERVER NAME="Roberto-1" SERVER_ID="-1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins" CREATED_BY="Axel" CREATED_ON="2014-05-15"/>
+        
+        <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+        
+        <PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2014-05-15" CREATED_BY="Axel" NAME="project 1" TA_SERVER_ID="-1" ALLOW_AUTOMATION_WORKFLOW="1"/>
+        
+        <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-1" TM_PROJECT_ID="-1" REMOTE_NAME="roberto1" LABEL="Project Roberto 1" SERVER_ID="-1" />
+
+        
+        <TEST_CASE_LIBRARY_NODE TCLN_ID="-71" NAME="lib" CREATED_BY="Axel" CREATED_ON="2020-02-12 11:11:11" PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1"/>
+        <AUTOMATED_TEST TEST_ID="-71" PROJECT_ID="-1" NAME="test 1"/>
+        <TEST_CASE TCLN_ID="-71" VERSION="0" PREREQUISITE="None" REFERENCE="ref" TA_TEST="-71" AUTOMATABLE="Y" UUID="5bb09a58-72fd-4630-95fa-1b4651052c6a"/>
+        
+        
+        <AUTOMATION_REQUEST PROJECT_ID="-1" TEST_CASE_ID="-71" REQUEST_STATUS="WORK_IN_PROGRESS" IS_MANUAL="0"/>
+    
+<!--        <DATASET DATASET_ID="-1" NAME="ds1" TEST_CASE_ID="-11"/>
+        <DATASET DATASET_ID="-2" NAME="ds2" TEST_CASE_ID="-12"/>
+        <DATASET DATASET_ID="-3" NAME="ds3" TEST_CASE_ID="-13"/>-->
+    
+        <ITERATION_TEST_PLAN_ITEM CREATED_BY="Axel" CREATED_ON="2020-02-12 11:11:11" ITEM_TEST_PLAN_ID="-201" TCLN_ID="-71"/>
+        <ITERATION_TEST_PLAN_ITEM CREATED_BY="Axel" CREATED_ON="2020-02-12 11:11:11" ITEM_TEST_PLAN_ID="-202" TCLN_ID="-71"/>
+        <ITERATION_TEST_PLAN_ITEM CREATED_BY="Axel" CREATED_ON="2020-02-12 11:11:11" ITEM_TEST_PLAN_ID="-203" TCLN_ID="-71"/>
+    
+        <ITERATION ACTUAL_END_AUTO="0" ACTUAL_START_AUTO="0" ATTACHMENT_LIST_ID="-1" CREATED_BY="Axel" CREATED_ON="2020-02-12 11:11:11" ITERATION_ID="-11" ITERATION_STATUS="UNDEFINED" NAME="Iter-test" UUID="1334aaa5-3fca-4b05-856e-eaba4cd130ad"/>
+    
+        <ITEM_TEST_PLAN_LIST ITERATION_ID="-11" ITEM_TEST_PLAN_ID="-201" ITEM_TEST_PLAN_ORDER="0"/>
+        <ITEM_TEST_PLAN_LIST ITERATION_ID="-11" ITEM_TEST_PLAN_ID="-202" ITEM_TEST_PLAN_ORDER="1"/>
+        <ITEM_TEST_PLAN_LIST ITERATION_ID="-11" ITEM_TEST_PLAN_ID="-203" ITEM_TEST_PLAN_ORDER="2"/>
+    
+        <EXECUTION PREREQUISITE="" EXECUTION_ID="-40" CREATED_BY="Axel" CREATED_ON="2014-05-15" NAME="EX1"/>
+        <AUTOMATED_EXECUTION_EXTENDER MASTER_EXECUTION_ID="-40" TEST_ID="-71"/>
+    
+    
+<!--	 test automation projects -->
+	
+<!--
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-12" TM_PROJECT_ID="-1" REMOTE_NAME="roberto2" LABEL="Project Roberto 2"  SERVER_ID="-1" />
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-13" TM_PROJECT_ID="-1" REMOTE_NAME="roberto3" LABEL="Project Roberto 3"  SERVER_ID="-1" />
+	
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-21" TM_PROJECT_ID="-2"  REMOTE_NAME="mike1" SERVER_ID="-2" LABEL="Project Mike 1"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-22" TM_PROJECT_ID="-2"  REMOTE_NAME="mike2" SERVER_ID="-2" LABEL="Project Mike 2"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-23" TM_PROJECT_ID="-2"  REMOTE_NAME="roberto3" SERVER_ID="-2" LABEL="Project RobertMike 3"/>
+	
+	
+	
+	 automated test 
+-->	<!--
+	<AUTOMATED_TEST TEST_ID="-51" PROJECT_ID="-23" NAME="test 2"/>
+-->	
+	
+	 <!--executions--> 
+<!--	
+	<EXECUTION PREREQUISITE="" EXECUTION_ID="-41"  CREATED_BY="admin" CREATED_ON="2014-05-15" NAME="EX2"/>-->
+	
+	 <!--automated execution extenders--> 
+<!--	
+	<AUTOMATED_EXECUTION_EXTENDER EXTENDER_ID="-31" SUITE_ID="suite1" MASTER_EXECUTION_ID="-41" TEST_ID="-51" EXECUTION_EXTENDER_ORDER="1"/>-->
+	
+	
+</dataset>
