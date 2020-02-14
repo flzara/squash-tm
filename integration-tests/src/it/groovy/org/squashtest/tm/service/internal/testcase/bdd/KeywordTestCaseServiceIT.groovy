@@ -37,8 +37,22 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 	@Inject
 	KeywordTestCaseService keywordTestCaseService
 
+	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
+		expect:
+		keywordTestCaseService.writeScriptFromTestCase(-6L) ==
+			"# language: en\n" +
+			"Feature: empty test"
+	}
+
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		expect:
-		keywordTestCaseService.writeScriptFromTestCase(-4L) == "# language: en\nFeature: Disconnection test"
+		keywordTestCaseService.writeScriptFromTestCase(-4L) ==
+"""# language: en
+Feature: Disconnection test
+
+	Scenario: Disconnection test
+		GIVEN I am connected
+		WHEN I sign oùt
+		THEN Je suis déconnecté"""
 	}
 }

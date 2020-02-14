@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase.bdd;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -43,25 +44,43 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		// get Testcase by Id
 		TestCase testCase = testCaseDao.findById(keywordTestCaseId);
 
-		//TODO: get Testcase's project
-
-		//TODO: get project language
+		//TODO: get Testcase's project for further functions: get project techno and language
 		String language = "en";
 
-		//get test case name
 		String testCaseName = testCase.getName();
 
-		// get all keyword test steps in test case
 		List<TestStep> testSteps = testCase.getSteps();
 
-		// generate script content as String
-		return generatedScript(testCaseName, language);
+		String stepScript = generateStepScript(testSteps, testCaseName);
+		return generateScript(testCaseName, stepScript, language);
 	}
 
-	private String generatedScript(String testCaseName, String language) {
+	private String generateStepScript(List<TestStep> testSteps, String testCaseName) {
+		if (testSteps.isEmpty()) {
+			return "";
+		}
 		StringBuilder builder = new StringBuilder();
-		builder.append("# language: ").append(language).append("\n");
-		builder.append("Feature: ").append(testCaseName);
+		builder.append("\n\n");
+		builder.append("\tScenario: ").append(testCaseName).append("\n");
+		for(TestStep step : testSteps) {
+			KeywordTestStep keywordStep = (KeywordTestStep) step;
+			builder
+				.append("\t\t")
+				.append(keywordStep.getKeyword())
+				.append(" ")
+				.append(keywordStep.getActionWord().getWord())
+				.append("\n");
+		}
+		String testStepScript = builder.toString();
+		return testStepScript.substring(0, testStepScript.length()-1);
+	}
+
+	private String generateScript(String testCaseName, String stepScript, String language) {
+		StringBuilder builder = new StringBuilder();
+		builder
+			.append("# language: ").append(language).append("\n")
+			.append("Feature: ").append(testCaseName)
+			.append(stepScript);
 		return builder.toString();
 	}
 }

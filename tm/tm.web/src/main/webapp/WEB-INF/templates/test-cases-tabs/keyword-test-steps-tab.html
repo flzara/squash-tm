@@ -37,7 +37,7 @@
   <div>
     <label>Add your keyword test step</label>
     <select id="keyword-input">
-      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given</option>
+      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
     </select>
     <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto"/>
     <button id="add-keyword-test-step-btn" type="submit">Add</button>
@@ -68,7 +68,7 @@
       <br/>
       <br/>
       <div style="background-color:#FDFDFD;">
-        <span style="font-family: monospace; font-size:20px;" th:utext="${#strings.replace(#strings.escapeXml(generated_script),'&#10;','&lt;br&gt;')}"></span>
+        <span style="font-family: monospace; font-size:18px;" th:utext="${#strings.replace(#strings.replace(generated_script,'&#9;','&emsp;&emsp;'),'&#10;','&lt;br&gt;')}"></span>
       </div>
 
     </div>

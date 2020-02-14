@@ -37,14 +37,29 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		keywordTestCaseService.testCaseDao = testCaseDao
 	}
 
+	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
+		given:
+		TestCase keywordTestCase = TestCase.createKeywordTestCase()
+		keywordTestCase.setName("Disconnection test")
+
+		and:
+		testCaseDao.findById(-4L) >> keywordTestCase
+
+		when:
+		String result = keywordTestCaseService.writeScriptFromTestCase(-4L)
+
+		then:
+		result == "# language: en\nFeature: Disconnection test"
+	}
+
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		given:
 		TestCase keywordTestCase = TestCase.createKeywordTestCase()
 		keywordTestCase.setName("Disconnection test")
 
-		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("I am connected"))
-		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, new ActionWord("I sign out"))
-		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, new ActionWord("I am disconnected"))
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("I am connécted"))
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, new ActionWord("I sign oùt"))
+		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, new ActionWord("I am dîsconnect&d"))
 
 		keywordTestCase.addStep(step1)
 		keywordTestCase.addStep(step2)
@@ -57,6 +72,13 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		String result = keywordTestCaseService.writeScriptFromTestCase(-4L)
 
 		then:
-		result == "# language: en\nFeature: Disconnection test"
+		result ==
+"""# language: en
+Feature: Disconnection test
+
+	Scenario: Disconnection test
+		GIVEN I am connécted
+		WHEN I sign oùt
+		THEN I am dîsconnect&d"""
 	}
 }
