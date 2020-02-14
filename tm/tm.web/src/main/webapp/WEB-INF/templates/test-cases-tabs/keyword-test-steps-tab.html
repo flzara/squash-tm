@@ -39,7 +39,7 @@
     <select id="keyword-input">
       <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
     </select>
-    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto"/>
+    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
     <button id="add-keyword-test-step-btn" type="submit">Add</button>
   </div>
   <br/>
