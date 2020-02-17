@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -50,6 +51,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.management.relation.RoleStatus;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -116,7 +118,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	@Transactional(readOnly = true)
 	public List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity) {
-		if (!permissionService.canRead(boundEntity)) {
+		if (!permissionService.canRead(boundEntity)&&!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT)) {
 			throw new AccessDeniedException("Access is denied");
 		}
 		return customFieldValueDao

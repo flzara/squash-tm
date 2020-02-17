@@ -52,7 +52,6 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 	TestAutomationConnectorRegistry connectorRegistry
 	AutomatedSuiteManagerServiceImpl service
-        AutomatedSuiteManagerServiceImpl serviceWithDao
 	PermissionEvaluationService permService
 
 
@@ -70,6 +69,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		permService = Mock()
 		permService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		permService.hasRoleOrPermissionOnObject(_, _, _, _) >> true
+		permService.hasRole(_) >> true
 
 		service = new AutomatedSuiteManagerServiceImpl(autoSuiteDao: autoSuiteDaoMock,
                                                                 executionDao: executionDaoMock,
@@ -82,7 +82,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		builderProvider.get() >> { return new TaParametersBuilder()}
 		service.paramBuilder = builderProvider
                 
-                autoSuiteDaoMock.createNewSuite() >> new AutomatedSuite()
+		autoSuiteDaoMock.createNewSuite() >> new AutomatedSuite()
 	}
 
 

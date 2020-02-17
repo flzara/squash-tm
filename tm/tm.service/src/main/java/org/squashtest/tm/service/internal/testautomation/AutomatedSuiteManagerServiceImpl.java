@@ -26,12 +26,14 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
@@ -278,6 +280,17 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		PermissionsUtils.checkPermission(permissionService, singleId, EXECUTE, clazz.getName());
 	}
 
+	private void checkPermissionOnIteration(Long idIteration){
+		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT) && !permissionService.hasRoleOrPermissionOnObject(Roles.ROLE_ADMIN, EXECUTE, idIteration, Iteration.class.getName())) {
+			throw new AccessDeniedException("Access is denied");
+		}
+	}
+
+	private void checkPermissionOnExecuteAutomatedSuite(AutomatedSuite automatedSuite){
+		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT)) {
+			throw new AccessDeniedException("Access is denied");
+		}
+	}
         /**
 	 *
          *
@@ -285,12 +298,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 */
 	@Override
 	public AutomatedSuite createFromIterationTestPlanItems(Long idIteration, List<IterationTestPlanItem> items) {
-                for (IterationTestPlanItem item : items) {
-                        if(!item.getIteration().getId().equals(idIteration)) {
-                                throw new IllegalArgumentException("All items must belong to the same selected iteration");
-                        }
-                }
-                permissionService.hasPermissionOnObject(EXECUTE, idIteration, Iteration.class.getName());
+		for (IterationTestPlanItem item : items) {
+			if(!item.getIteration().getId().equals(idIteration)) {
+				throw new IllegalArgumentException("All items must belong to the same selected iteration");
+			}
+		}
+		checkPermissionOnIteration(idIteration);
 		return createFromItems(items);
 	}
 
@@ -481,11 +494,16 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		}
 	}
-
-        @Override
+	/*
+	 * [SQUASH-142]
+	 * This method is only used by an automation server hence the permission check
+	 */
+	@Override
 	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite) {
-		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
-                return collectAutomatedExecs(suite.getExecutionExtenders());
+		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT)) {
+			throw new AccessDeniedException("Access is denied");
+		}
+		return collectAutomatedExecs(suite.getExecutionExtenders());
 	}
 
 
