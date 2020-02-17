@@ -57,6 +57,7 @@ public final class NativeQueries {
 
 	public static final String TESTSTEP_SQL_REMOVEACTIONSTEPS = "delete from ACTION_TEST_STEP where test_step_id in (:testStepIds)";
 	public static final String TESTSTEP_SQL_REMOVECALLSTEPS = "delete from CALL_TEST_STEP where test_step_id in (:testStepIds)";
+	public static final String TESTSTEP_SQL_REMOVEKEYWORDSTEPS = "delete from KEYWORD_TEST_STEP where test_step_id in (:testStepIds)";
 	public static final String TESTSTEP_SQL_REMOVETESTSTEPS = "delete from TEST_STEP where test_step_id in (:testStepIds)";
 
 	public static final String REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT = "select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds)";
