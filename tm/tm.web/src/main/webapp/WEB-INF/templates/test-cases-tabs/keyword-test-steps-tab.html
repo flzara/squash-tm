@@ -43,7 +43,7 @@
       <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
     </select>
     <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
-    <button id="add-keyword-test-step-btn" type="submit">Add</button>
+    <button id="add-keyword-test-step-btn" class="button" type="submit">Add</button>
   </div>
   <br/>
   <div id="add-keyword-test-step-result"></div>
@@ -53,7 +53,7 @@
     <span class="group" th:if="${isWritable}">
 			<button id="delete-all-steps-button"
               data-icon="ui-icon-trash"
-              class="button test-step-toolbar-button"
+              class="button"
               th:text="#{test-case.step.delete.button}"
               th:title="#{test-case.step.delete.button}">
 					 remove selected steps

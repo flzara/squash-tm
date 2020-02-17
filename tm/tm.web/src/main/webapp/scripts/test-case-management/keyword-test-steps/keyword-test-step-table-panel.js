@@ -25,6 +25,7 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"],
 		el : "#tab-tc-keyword-test-steps",
 
 		initialize : function(options) {
+			$.squash.decorateButtons();
 			var self = this;
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
