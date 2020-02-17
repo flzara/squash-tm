@@ -42,7 +42,8 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"],
 		},
 
 		events : {
-			"click #add-keyword-test-step-btn" : "addKeywordTestStep"
+			"click #add-keyword-test-step-btn" : "addKeywordTestStep",
+			"click #delete-all-steps-button" : "deleteSelectedTestSteps"
 		},
 
 		initKeywordTestStepTable : function(settings) {
@@ -92,6 +93,10 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"],
 				self.cleanInputs();
 				eventBus.trigger('testStepsTable.stepAdded');
 			});
+		},
+
+		deleteSelectedTestSteps: function() {
+			$("#delete-keyword-test-step-dialog").formDialog('open');
 		},
 
 		makeTableUrls: function(conf){

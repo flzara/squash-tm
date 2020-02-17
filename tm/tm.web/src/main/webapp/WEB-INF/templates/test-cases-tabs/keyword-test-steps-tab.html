@@ -48,8 +48,23 @@
   <br/>
   <div id="add-keyword-test-step-result"></div>
 
+  <!-- ==================== toolbar definition =================== -->
+  <div class="toolbar">
+    <span class="group" th:if="${isWritable}">
+			<button id="delete-all-steps-button"
+              data-icon="ui-icon-trash"
+              class="button test-step-toolbar-button"
+              th:text="#{test-case.step.delete.button}"
+              th:title="#{test-case.step.delete.button}">
+					 remove selected steps
+			</button>
+		</span>
+  </div>
+
+  <!-- ==================== /toolbar definition =================== -->
+
   <!-- ==================== table definition =================== -->
-  <div class="table-tab-wrap jstree-drop" style="position: relative;">
+  <div class="table-tab-wrap jstree-drop" style="position: relative; top:10px;">
     <table th:id="'keyword-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table">
       <thead>
       <tr>
