@@ -34,12 +34,13 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 	def "should build an item data from a KeywordTestStep"() {
 		given:
 			def testStep = Mock(KeywordTestStep)
+			testStep.getId() >> -68L
 			testStep.getKeyword() >> Keyword.GIVEN
 			testStep.getActionWord() >> new ActionWord("goodbye")
 		when:
 			Map<String, String> resultItem1 = builder.buildItemData(testStep)
 		then:
-			resultItem1.size() == 4
+			resultItem1.size() == 5
 			resultItem1.get("step-index") == "0"
 			resultItem1.get("step-keyword") == "GIVEN"
 			resultItem1.get("step-action-word") == "goodbye"
@@ -49,10 +50,12 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 	def "should build a raw model from 2 KeywordTestStep"() {
 		given:
 			def testStep = Mock(KeywordTestStep)
+			testStep.getId() >> -99L
 			testStep.getKeyword() >> Keyword.GIVEN
 			testStep.getActionWord() >> new ActionWord("hello")
 		and:
 			def testStep2 = Mock(KeywordTestStep)
+			testStep2.getId() >> -77L
 			testStep2.getKeyword() >> Keyword.THEN
 			testStep2.getActionWord() >> new ActionWord("goodbye")
 		when:
@@ -62,13 +65,13 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 			def item1 = resultCollection[0]
 			def item2 = resultCollection[1]
 
-			item1.size() == 4
+			item1.size() == 5
 			item1.get("step-index") == "1"
 			item1.get("step-keyword") == "GIVEN"
 			item1.get("step-action-word") == "hello"
 			item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
-			item2.size() == 4
+			item2.size() == 5
 			item2.get("step-index") == "2"
 			item2.get("step-keyword") == "THEN"
 			item2.get("step-action-word") == "goodbye"

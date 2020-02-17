@@ -551,6 +551,25 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * deletionHandler.deleteStep(tc, step2)
 	}
 
+	def "should remove a bunch of keyword steps"(){
+
+		given:
+		def tc = Mock(TestCase)
+		def step1 = Mock(KeywordTestStep)
+		def step2 = Mock(KeywordTestStep)
+
+		and:
+		testCaseDao.findById(10L) >> tc
+		testStepDao.findById(_) >>> [step1, step2]
+
+		when:
+		service.removeListOfSteps(10L, [1L, 2L])
+
+		then:
+		1 * deletionHandler.deleteStep(tc, step1)
+		1 * deletionHandler.deleteStep(tc, step2)
+	}
+
 
 	def "should return a page list of steps"(){
 		given:
