@@ -270,12 +270,14 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
 		persistTestCase(copyTestCase);
-		copyCustomFields(source, copyTestCase);
 		copyRequirementVersionCoverage(source, copyTestCase);
-		copyContentsOnExternalRepository (copyTestCase);
-
-		copyTestCase.getActionSteps().forEach(this::copyContentsOnExternalRepository );
-
+		copyContentsOnExternalRepository(copyTestCase);
+		if(source.isKeywordTestCase()) {
+			//TODO someday, when we decide to play with custom fields in Keyword Test Case, fill this block of code
+		} else {
+			copyCustomFields(source, copyTestCase);
+			copyTestCase.getActionSteps().forEach(this::copyContentsOnExternalRepository);
+		}
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
 			flush();

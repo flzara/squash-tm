@@ -73,4 +73,24 @@ class KeywordTestStepTest extends Specification {
 		ExecutionStep executionStep = res.get(0)
 		executionStep.action == "GIVEN hello"
 	}
+
+	def "shoud copy a KeywordTestStep"() {
+		given:
+			ActionWord actionWord = Mock(ActionWord)
+			actionWord.getId() >> 78L
+			actionWord.getWord() >> "Halo!"
+			KeywordTestStep keywordTestStep = new KeywordTestStep(
+				Keyword.BUT,
+				actionWord)
+		when:
+			KeywordTestStep copy = keywordTestStep.createCopy()
+		then:
+			copy != keywordTestStep
+			copy.getKeyword() == keywordTestStep.getKeyword()
+			def originalWord = keywordTestStep.getActionWord()
+			def copyWord = copy.actionWord
+			copyWord.getId() == originalWord.getId()
+			copyWord.getWord() == originalWord.getWord()
+
+	}
 }
