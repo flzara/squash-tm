@@ -47,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
@@ -65,12 +66,17 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -300,7 +306,18 @@ public class TestCaseModificationController {
 			ot.setValue(executionMode.toString());
 			executionModes.add(ot);
 		}
+
+
 		mav.addObject(TEST_CASE, testCase);
+
+		IsScriptedTestCaseVisitor isScriptedTestCaseVisitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(isScriptedTestCaseVisitor);
+		mav.addObject("isScriptedTestCase", isScriptedTestCaseVisitor.isScripted());
+
+		IsKeywordTestCaseVisitor isKeywordTestCaseVisitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(isKeywordTestCaseVisitor);
+		mav.addObject("isKeywordTestCase", isKeywordTestCaseVisitor.isKeyword());
+
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
@@ -783,6 +800,10 @@ public class TestCaseModificationController {
 		}
 		ModelAndView mav = new ModelAndView("print-test-case.html");
 		mav.addObject(TEST_CASE, testCase);
+
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(visitor);
+		mav.addObject("isTcScripted", visitor.isScripted());
 
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {

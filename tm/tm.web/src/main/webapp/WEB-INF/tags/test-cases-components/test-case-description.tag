@@ -35,9 +35,12 @@
 <%@ attribute name="testCaseImportanceLabel" required="true" type="java.lang.String"
 			  description="a label related to test case importance, not sure to remember what." %>
 
+<%@ attribute name="isScriptedTc" required="true" type="java.lang.Boolean"
+        description="whether the test case is scripted" %>
+
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
-<c:set var="scripted" value="${testCase.isScripted()}"/>
+<c:set var="scripted" value="${isScriptedTc}"/>
 
 <f:message var="labelDescription" key="label.Description"/>
 

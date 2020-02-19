@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -382,23 +383,9 @@ DenormalizedFieldHolder, BoundEntity {
 
 		referencedTestCase = testCase;
 
-		Wrapped<Boolean> isKeywordExecution = new Wrapped<>(false);
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-			}
-
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-				isKeywordExecution.setValue(true);
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-			}
-		};
-		testCase.accept(testCaseVisitor);
-		this.isKeywordExecution = isKeywordExecution.getValue();
+		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(visitor);
+		this.isKeywordExecution = visitor.isKeyword();
 
 		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());

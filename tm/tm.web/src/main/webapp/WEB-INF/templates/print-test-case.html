@@ -178,7 +178,7 @@
 		</div>
 
 
-<div th:if="!${testCase.isScripted()}" id="prerequisite-panel" class="tab">
+<div th:if="!${isTcScripted}" id="prerequisite-panel" class="tab">
 				<h4 th:text="#{generics.prerequisite.title}">Prerequisite</h4>
 				<p id="test-case-prerequisite" sq:unsafe-html="${testCase.prerequisite}">Lorem ipsum dolor sit amet,
 					consectetur adipiscing elit. Nullam felis ante, accumsan quis
@@ -194,7 +194,7 @@
 					semper ac gravida risus dapi bus. Fusce eu ante sapien.</p>
 			</div>
     <!-- ===========================================GHERKIN_STRATEGY SCRIPT ===================================================-->
-    <div th:if="${testCase.isScripted()}" id="test-case-script-panel" class="tab">
+    <div th:if="${isTcScripted}" id="test-case-script-panel" class="tab">
       <h3 th:text="#{label.Script}">Script</h3>
       <div id="test-case-script-table" class="display-table">
         <div class="display-table-row">
@@ -218,7 +218,7 @@
 
 
 		<!-- ===========================================STEPS ===================================================-->
-		<div th:if="!${testCase.isScripted()}" id="step-tab" class="tab">
+		<div th:if="!${isTcScripted}" id="step-tab" class="tab">
 			<h3 th:text="#{tabs.label.steps}">Steps</h3>
 
 			<table id="test-steps-table" class="greystyle-table">
@@ -280,7 +280,7 @@
 			</table>
 		</div>
 		<!-- ===========================================PARAMETERS ===================================================-->
-		<div th:if="!${testCase.isScripted()}" id="parameters-tab" class="tab">
+		<div th:if="!${isTcScripted}" id="parameters-tab" class="tab">
 			<h3 th:text="#{label.parameters}">Parameters</h3>
 
 			<table id="parameters-table" class="greystyle-table">
@@ -307,7 +307,7 @@
 		</div>
 			<!-- ===========================================PARAMETERS ===================================================-->
 
-		<div th:if="!${testCase.isScripted()}" id="datasets-tab" class="tab">
+		<div th:if="!${isTcScripted}" id="datasets-tab" class="tab">
 			<h3 th:text="#{label.datasets}">Datasets</h3>
 
 			<table id="datasets-table" class="greystyle-table">
@@ -348,7 +348,7 @@
 						<th th:text="#{requirement-version.version-number.label}">Version</th>
 						<th th:text="#{requirement.criticality.label}">Criticality</th>
 						<th th:text="#{requirement.category.label}">Category</th>
-            <th th:text="#{label.test-step.short}" th:if="${!testCase.isScripted()}">Step</th>
+            <th th:text="#{label.test-step.short}" th:if="${!isTcScripted}">Step</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -366,14 +366,14 @@
 						<td th:text="${(catLabel != null) ? catLabel : verifReq.category.label}">cat</td>
 						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :
 										#sets.size(verifReq.verifyingSteps) > 1  ? '*' :
-										verifReq.verifyingSteps[0].index + 1}"  th:if="${!testCase.isScripted()}">0</td>
+										verifReq.verifyingSteps[0].index + 1}"  th:if="${!isTcScripted}">0</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
 		<!-- ===========================================CALLING TEST CASES ===================================================-->
-		<div th:if="!${testCase.isScripted()}" id="calling-test-case-tab" class="tab">
+		<div th:if="!${isTcScripted}" id="calling-test-case-tab" class="tab">
 			<h3 th:text="#{test-case.calling-test-cases.panel.title}">Calling
 				test cases</h3>
 			<table id="calling-test-case-table" class="greystyle-table">

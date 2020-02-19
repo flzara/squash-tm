@@ -21,12 +21,10 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 
 
 /**
@@ -129,24 +127,9 @@ public enum ScriptToFileStrategy {
 	 * @return
 	 */
 	public boolean canHandle(TestCase testCase){
-		Wrapped<Boolean> canHandle = new Wrapped<>(false);
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor(){
-
-			@Override
-			public void visit(TestCase testCase) {
-			}
-
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				canHandle.setValue(true);
-			}
-		};
-		testCase.accept(testCaseVisitor);
-		return canHandle.getValue();
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(visitor);
+		return visitor.isScripted();
 	}
 
 	/**

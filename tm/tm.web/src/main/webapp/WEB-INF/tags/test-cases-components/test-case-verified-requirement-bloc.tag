@@ -31,7 +31,7 @@
 <%@ attribute name="linkable" 	    required="true" description="boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
 <%@ attribute name="testCase" 	    required="true" description="the test case" type="java.lang.Object"%>
 <%@ attribute name="milestoneConf"  required="true" description="an instance of MilestoneFeatureConfiguration"   type="java.lang.Object"%>
-
+<%@ attribute name="isScriptedTc" required="true" type="java.lang.Boolean" description="whether the test case is scripted" %>
 
 <c:url var="root" value="/" />
 <c:url var="verifiedRequirementsTableUrl"	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
@@ -78,7 +78,7 @@
                                             verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
                                             containerId="contextual-content" 
                                             milestoneConf="${milestoneConf}"
-                                            isTcScripted="${testCase.isScripted()}"/>
+                                            isTcScripted="${isScriptedTc}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 </div>

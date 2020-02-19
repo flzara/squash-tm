@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -274,31 +275,17 @@ public class TestCaseFacility extends EntityFacilitySupport {
 	}
 
 	private void doUpdateTestCaseScriptExtender(TestCase testCase, TestCase orig) {
-		Wrapped<Boolean> isScripted = new Wrapped(false);
-		TestCaseVisitor visitor = new TestCaseVisitor() {
-
-			@Override
-			public void visit(TestCase testCase) {
-
-			}
-
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				isScripted.setValue(true);
-			}
-		};
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
 		testCase.accept(visitor);
+		boolean isScripted = visitor.isScripted();
 
-		if(isScripted.getValue()) {
+		if(isScripted) {
 			orig.accept(visitor);
 		}
 
-		if (isScripted.getValue()) {
+		// isScripted could have been modified after orig.accept(visitor)
+		// merging the two conditions should be an error !!
+		if (isScripted) {
 			String newScript = ((ScriptedTestCase) testCase).getScript();
 			if (StringUtils.isNoneBlank(newScript)) {
 				((ScriptedTestCase)orig).setScript(newScript);
