@@ -53,6 +53,29 @@ public enum ScriptToFileStrategy {
 
 			return extender.computeScriptWithAppendedMetadata();
 		}
+	},
+
+	KEYWORD_STRATEGY(){
+		@Override
+		public TestCaseKind getHandledKind() {
+			return TestCaseKind.KEYWORD;
+		}
+
+		@Override
+		public String getExtension(){
+			return "feature";
+		}
+
+		@Override
+		public String getWritableFileContent(TestCase testCase) {
+			if (TestCaseKind.KEYWORD.equals(testCase.getKind())){
+				throw new IllegalArgumentException("This strategy handles Keyword test cases, but current test case is of kind "+testCase.getKind());
+			}
+
+			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+
+			return extender.computeScriptWithAppendedMetadata();
+		}
 	};
 
 
@@ -76,6 +99,7 @@ public enum ScriptToFileStrategy {
 		ScriptToFileStrategy strategy = null;
 		switch(kind){
 			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
+			case KEYWORD: strategy = GHERKIN_STRATEGY; break;
 			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;

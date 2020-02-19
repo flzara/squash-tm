@@ -50,10 +50,9 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	private EntityManager em;
 
 	@Override
-	public Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
+	public Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
 
-			LOGGER.debug("looking for repositories and the test cases that should be committed into them");
-
+			LOGGER.debug("looking for test cases and repositories which are corresponding to these test cases' projects to commit into");
 
 			if (testCaseIds.isEmpty()){
 				return Collections.emptyMap();
@@ -66,14 +65,13 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 
 
 			return new JPAQueryFactory(em)
-				.select(scm, testCase, script)
+				.select(scm, testCase)
 				.from(testCase)
 				.join(testCase.project, project)
 				.join(project.scmRepository, scm)
-				.join(testCase.scriptedTestCaseExtender, script)
-				.fetchJoin()
+				//.join(testCase.scriptedTestCaseExtender, script)
 				.where(testCase.id.in(testCaseIds)
-					.and(testCase.kind.ne(TestCaseKind.STANDARD)))
+					.and(testCase.kind.eq(TestCaseKind.KEYWORD).or(testCase.kind.eq(TestCaseKind.GHERKIN))))
 				.transform(
 					groupBy(scm).as(set(testCase))
 				);

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.testcase.bdd;
 
+import org.squashtest.tm.domain.testcase.TestCase;
+
 public interface KeywordTestCaseService {
 	String writeScriptFromTestCase(Long keywordTestCaseId);
 }

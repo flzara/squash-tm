@@ -153,7 +153,7 @@ public class ScriptedTestCaseEventListener {
 		LOGGER.debug("committing test cases to their repositories");
 		LOGGER.trace("test case ids : '{}'", testCaseIds);
 
-		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedTestCasesGroupedByRepoById(testCaseIds);
+		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedAndKeywordTestCasesGroupedByRepoById(testCaseIds);
 
 		for (Map.Entry<ScmRepository, Set<TestCase>> entry : scriptsGroupedByScm.entrySet()) {
 

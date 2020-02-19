@@ -34,6 +34,7 @@ import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
@@ -61,6 +62,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	@Inject
 	private PathService pathService;
+
+	@Inject
+	private KeywordTestCaseService keywordTestCaseService;
 
 	@Override
 	public void createWorkingFolderIfAbsent(ScmRepository scm) {
@@ -321,8 +325,15 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	private void printToFile(File dest, TestCase testCase) throws IOException{
-		ScriptToFileStrategy strategy = strategyFor(testCase.getKind());
-		String content = strategy.getWritableFileContent(testCase);
+		ScriptToFileStrategy strategy;
+		String content="";
+
+		if (testCase.isScripted()){
+			strategy = strategyFor(testCase.getKind());
+			content = strategy.getWritableFileContent(testCase);
+		} else if (testCase.isKeywordTestCase()) {
+			content = keywordTestCaseService.writeScriptFromTestCase(testCase.getId());
+		}
 
 		try {
 			// try first with UTF-8
