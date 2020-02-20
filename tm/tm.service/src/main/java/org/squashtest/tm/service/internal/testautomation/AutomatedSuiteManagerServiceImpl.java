@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.Transformer;
@@ -48,7 +49,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.jooq.domain.tables.ItemTestPlanList;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -74,17 +74,11 @@ import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
@@ -146,6 +140,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 
 	public int getTimeoutMillis() {
@@ -264,8 +261,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Override
 	public AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification) {
+		LOGGER.debug("START CREATING EXECUTIONS " + new Date());
 		AutomatedSuite suite = createFromSpecification(specification);
+		LOGGER.debug("END CREATING EXECUTIONS " + new Date());
+		LOGGER.debug("START SENDING EXECUTIONS " + new Date());
 		start(suite, specification.getExecutionConfigurations());
+		LOGGER.debug("END SENDING EXECUTIONS " + new Date());
 		return suite;
 	}
 
@@ -433,11 +434,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	// security handled in the code
 	public void start(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
-
+		LOGGER.debug("- START CHECKING EXECUTIONS PERMISSIONS " + new Date());
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
-
+		LOGGER.debug("- END CHECKING EXECUTIONS PERMISSIONS " + new Date());
+		LOGGER.debug("- START SORTING EXECUTIONS " + new Date());
 		ExtenderSorter sorter = new ExtenderSorter(suite, configuration);
-
+		LOGGER.debug("- END SORTING EXECUTIONS " + new Date());
+		LOGGER.debug("- START COLLECTING AND SENDING ALL AUTOMATED EXECUTIONS " + new Date());
 		TestAutomationCallbackService securedCallback = new CallbackServiceSecurityWrapper(callbackService);
 
 		while (sorter.hasNext()) {
@@ -448,9 +451,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 			try {
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
+				LOGGER.debug("-- START COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
 					.getValue());
+				LOGGER.debug("-- END COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
+				LOGGER.debug("-- START SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
+				LOGGER.debug("-- END SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 			} catch (UnknownConnectorKind ex) {
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error("Test Automation : unknown connector :", ex);
@@ -464,6 +471,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 			}
 
 		}
+		LOGGER.debug("- END COLLECTING AND SENDING ALL EXECUTIONS " + new Date());
 	}
 
 
@@ -471,19 +479,39 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 
 	private AutomatedSuite createFromItems(List<IterationTestPlanItem> items) {
+		List<Long> itemIds = items.stream().map(IterationTestPlanItem::getId).collect(Collectors.toList());
+		String newSuiteId = createSuiteAndClearSession();
+		createExecutionsAndClearSession(itemIds, newSuiteId);
+		// session is cleared we must fetch again the automated suite
+		return entityManager.find(AutomatedSuite.class, newSuiteId);
+	}
 
+	private void createExecutionsAndClearSession(List<Long> itemIds, String newSuiteId) {
+		List<List<Long>> partitionedIds = Lists.partition(itemIds, 10);
+		for (List<Long> ids : partitionedIds) {
+			AutomatedSuite reloadedSuite = entityManager.find(AutomatedSuite.class, newSuiteId);
+			List<IterationTestPlanItem> items = testPlanDao.findAllByIdIn(ids);
+			createOneBatchOfExecution(items, reloadedSuite);
+			entityManager.flush();
+			entityManager.clear();
+		}
+	}
+
+	private String createSuiteAndClearSession() {
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+		entityManager.flush();
+		String newSuiteId = newSuite.getId();
+		entityManager.clear();
+		return newSuiteId;
+	}
 
+	private void createOneBatchOfExecution(List<IterationTestPlanItem> items, AutomatedSuite newSuite) {
 		for (IterationTestPlanItem item : items) {
 			if (item.isAutomated()) {
 				Execution exec = addAutomatedExecution(item);
 				newSuite.addExtender(exec.getAutomatedExecutionExtender());
 			}
 		}
-
-
-		return newSuite;
-
 	}
 
 	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
