@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
@@ -74,6 +75,8 @@ public class ScriptedExecutionExtender {
 	public ScriptedExecutionExtender(Execution execution) {
 		this.execution = execution;
 		TestCase referencedTestCase = execution.getReferencedTestCase();
+
+		Wrapped<ScriptedTestCaseLanguage> script = new Wrapped<>();
 		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
 			@Override
 			public void visit(TestCase testCase) {
@@ -87,11 +90,12 @@ public class ScriptedExecutionExtender {
 
 			@Override
 			public void visit(ScriptedTestCase scriptedTestCase) {
+				script.setValue(scriptedTestCase.getLanguage());
 			}
 		};
 		referencedTestCase.accept(testCaseVisitor);
-
-		this.language = ((ScriptedTestCase)referencedTestCase).getLanguage();
+		ScriptedTestCaseLanguage theScript = script.getValue();
+		this.language = theScript;
 	}
 
 	public Long getId() {

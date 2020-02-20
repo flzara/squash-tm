@@ -47,7 +47,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
@@ -66,9 +65,9 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.GetKindTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -76,7 +75,6 @@ import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
@@ -98,6 +96,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseFinder;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
@@ -235,6 +234,10 @@ public class TestCaseModificationController {
 
 	@Inject
 	private GenericProjectManagerService projectManager;
+
+	@Inject
+	private ScriptedTestCaseFinder scriptedTestCaseFinder;
+
 	@Inject
 	private ProjectDao projectDao;
 
@@ -312,7 +315,14 @@ public class TestCaseModificationController {
 
 		IsScriptedTestCaseVisitor isScriptedTestCaseVisitor = new IsScriptedTestCaseVisitor();
 		testCase.accept(isScriptedTestCaseVisitor);
-		mav.addObject("isScriptedTestCase", isScriptedTestCaseVisitor.isScripted());
+		boolean isScriptedTestCase = isScriptedTestCaseVisitor.isScripted();
+
+		mav.addObject("isScriptedTestCase", isScriptedTestCase);
+
+		if(isScriptedTestCase) {
+			ScriptedTestCase scriptedTestCase = scriptedTestCaseFinder.findById(testCase.getId());
+			mav.addObject("scriptContent", scriptedTestCase.getScript());
+		}
 
 		IsKeywordTestCaseVisitor isKeywordTestCaseVisitor = new IsKeywordTestCaseVisitor();
 		testCase.accept(isKeywordTestCaseVisitor);
@@ -801,9 +811,16 @@ public class TestCaseModificationController {
 		ModelAndView mav = new ModelAndView("print-test-case.html");
 		mav.addObject(TEST_CASE, testCase);
 
-		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
-		testCase.accept(visitor);
-		mav.addObject("isTcScripted", visitor.isScripted());
+		IsScriptedTestCaseVisitor isScriptedVisitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(isScriptedVisitor);
+		mav.addObject("isTcScripted", isScriptedVisitor.isScripted());
+
+		GetKindTestCaseVisitor kindVisitor = new GetKindTestCaseVisitor();
+		testCase.accept(kindVisitor);
+
+		mav.addObject("tcKind", kindVisitor.getKind());
+
+
 
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {

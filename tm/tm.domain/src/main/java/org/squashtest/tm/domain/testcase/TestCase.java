@@ -96,9 +96,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
-	public static final boolean IS_KEYWORD_TEST_CASE = true;
-	public static final boolean IS_NOT_KEYWORD_TEST_CASE = false;
-
 	public static final int MAX_REF_SIZE = 50;
 	@Column(updatable = false)
 	private final int version = 1;

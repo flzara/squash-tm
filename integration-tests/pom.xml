@@ -106,6 +106,13 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>core.testautomation.api</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

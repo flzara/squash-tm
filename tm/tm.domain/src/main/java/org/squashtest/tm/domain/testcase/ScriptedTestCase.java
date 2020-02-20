@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
 import javax.persistence.DiscriminatorValue;
@@ -63,9 +64,10 @@ public class ScriptedTestCase extends TestCase {
 		super();
 	}
 
-	public ScriptedTestCase(@NotNull ScriptedTestCaseLanguage language, String script) {
-		this.language = language;
-		this.script = script;
+	public ScriptedTestCase(String name) {
+		super();
+		this.setName(name);
+		populateInitialScript(LocaleContextHolder.getLocale().getLanguage());
 	}
 
 	//	public ScriptedTestCase(String scriptLanguage, String locale) {
@@ -84,8 +86,8 @@ public class ScriptedTestCase extends TestCase {
 
 	//For SquashTM 1.18 this is for Gherkin only for now
 	//if sometime another script language need to be handled, you will probably need to subclass with a discriminator column...
-	private void populateInitialScript(String scriptLanguage, String locale) {
-		LOGGER.info("Try to populate script with script language {} and locale {}.", scriptLanguage, locale);
+	private void populateInitialScript(String locale) {
+		LOGGER.info("Try to populate script with script language {} and locale {}.", locale);
 		StringBuilder sb = new StringBuilder();
 		sb.append(LANGUAGE_TAG)
 			.append(locale)

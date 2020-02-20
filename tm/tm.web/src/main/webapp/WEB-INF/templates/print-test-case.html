@@ -104,7 +104,7 @@
         <div class="display-table-row">
           <label class="display-table-cell" for="test-case-format" th:text="#{test-case.format.label}">Format</label>
           <div class="display-table-cell" id="test-case-format"
-               th:text="#{${ testCase.kind.i18nKey }}">Classique</div>
+               th:text="#{${ tcKind.i18nKey }}">Classique</div>
         </div>
 
 				<div class="display-table-row">
@@ -201,7 +201,7 @@
           <label for="test-case-script-language" class="display-table-cell"
                  th:text="#{ test-case.scripted.language.label }">Langage de Scripting</label>
           <div class="display-table-cell" id="test-case-script-language"
-               th:text="#{${testCase.kind.getI18nKey()}}">Gherkin</div>
+               th:text="#{${tcKind.getI18nKey()}}">Gherkin</div>
         </div>
         <div class="display-table-row">
           <label for="test-case-script" class="display-table-cell"

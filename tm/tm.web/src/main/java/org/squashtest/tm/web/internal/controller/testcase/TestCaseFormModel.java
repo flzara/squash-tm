@@ -118,7 +118,7 @@ public class TestCaseFormModel {
 				newTC = new KeywordTestCase();
 				break;
 			case GHERKIN:
-				newTC = new ScriptedTestCase();
+				newTC = new ScriptedTestCase(name);
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid test case type");

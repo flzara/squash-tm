@@ -58,7 +58,8 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 
 	@Override
 	public void validateScript(Long testCaseId, String script, ScriptedTestCaseLanguage language) {
-		ScriptedTestCase scriptedTestCase = new ScriptedTestCase(language, script);
+		ScriptedTestCase scriptedTestCase = new ScriptedTestCase();
+		scriptedTestCase.setScript(script);
 		ScriptedTestCaseParser parser = parserFactory.apply(scriptedTestCase);
 		parser.validateScript(scriptedTestCase);
 	}

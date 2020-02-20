@@ -285,7 +285,7 @@
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
-          , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
+          , script: ${json:serialize(scriptContent)}
           </c:if>
           <c:if test="${not empty milestoneConf.activeMilestone}">
           , milestone: ${json:serialize(milestoneConf.activeMilestone)}

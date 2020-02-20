@@ -86,7 +86,7 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 					//must do it before using enableBasicAutoCompletion: true
 					//because we need that auto completion is enabled to have the snippet ONLY
 					langTools.setCompleters([langTools.snippetCompleter]);
-					that.originalScript = serverModel.scriptExender.script;
+					that.originalScript = serverModel.script;
 					//now that editor and session are properly initialized we can init the value
 					editor.session.setValue(that.originalScript);
 					editor.getSession().setUseWrapMode(true);

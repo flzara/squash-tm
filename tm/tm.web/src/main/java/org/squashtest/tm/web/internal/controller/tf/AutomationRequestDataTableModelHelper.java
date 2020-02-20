@@ -27,6 +27,7 @@ import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.testcase.GetKindTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -72,28 +73,11 @@ public class AutomationRequestDataTableModelHelper extends DataTableModelBuilder
 		data.put(DataTableModelConstants.PROJECT_NAME_KEY, testCase != null ? HtmlUtils.htmlEscape(testCase.getProject().getName()): null);
 		data.put("reference", (testCase != null && !testCase.getReference().isEmpty()) ? testCase.getReference(): NO_DATA);
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, testCase != null ? HtmlUtils.htmlEscape(testCase.getName()): null);
-		//create visitor
-		Wrapped<String> testCaseKind = new Wrapped<>();
-		TestCaseVisitor visitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-				testCaseKind.setValue("STANDARD");
-			}
 
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-				testCaseKind.setValue("KEYWORD");
-
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				testCaseKind.setValue("GHERKIN");
-
-			}
-		};
+		GetKindTestCaseVisitor visitor = new GetKindTestCaseVisitor();
 		testCase.accept(visitor);
-		data.put("format", testCase != null ? messageSource.internationalize(TestCaseKind.valueOf(testCaseKind.getValue()).getI18nKey(), locale) : null);
+		data.put("format", testCase != null ? messageSource.internationalize(visitor.getKind().getI18nKey(), locale) : null);
+
 		data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, testCase != null ? testCase.getId() : null);
 		data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getLastModifiedBy());
 		data.put("transmitted-on", messageSource.localizeShortDate(item.getTransmissionDate(), locale));
