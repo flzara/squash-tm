@@ -87,9 +87,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
  * @author Gregory Fouquet
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "DISCRIMINATOR")
-@DiscriminatorValue("C")
+@Inheritance(strategy = InheritanceType.JOINED)
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);

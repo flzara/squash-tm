@@ -42,10 +42,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
-@DiscriminatorValue("S")
-@SecondaryTable(name="SCRIPTED_TEST_CASE", pkJoinColumns={
-	@PrimaryKeyJoinColumn(name="TCLN_ID", referencedColumnName="TCLN_ID")
-})
+@PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class ScriptedTestCase extends TestCase {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScriptedTestCase.class);

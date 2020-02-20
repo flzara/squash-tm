@@ -26,10 +26,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 
 @Entity
-@DiscriminatorValue("K")
-@SecondaryTable(name="KEYWORD_TEST_CASE", pkJoinColumns={
-	@PrimaryKeyJoinColumn(name="TCLN_ID", referencedColumnName="TCLN_ID")
-})
+@PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class KeywordTestCase extends TestCase {
 
 	@Override
