@@ -24,6 +24,7 @@ import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -32,6 +33,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.testautomation.*
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExtenderSorter
 import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
@@ -49,6 +51,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 	TestAutomationConnectorRegistry connectorRegistry
 	AutomatedSuiteManagerServiceImpl service
 	PermissionEvaluationService permService
+	AutomatedSuiteDao autoSuiteDao;
 
 
 	CustomFieldValueFinderService finder = Mock()
@@ -59,6 +62,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 		connectorRegistry = Mock()
 		permService = Mock()
+		autoSuiteDao = Mock()
 		permService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		permService.hasRoleOrPermissionOnObject(_, _, _, _) >> true
 
@@ -69,6 +73,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		service.customFieldValueFinder = finder
 		builderProvider.get() >> { return new TaParametersBuilder()}
 		service.paramBuilder = builderProvider
+		service.autoSuiteDao = autoSuiteDao
 	}
 
 
@@ -104,6 +109,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		def qcConnector = Mock(TestAutomationConnector)
 
 		and:
+		autoSuiteDao.findAndFetchForAutomatedExecutionCreation(_) >> []
 		finder.findAllCustomFieldValues(_) >> []
 
 		when :
@@ -137,6 +143,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		connectorRegistry.getConnectorForKind("qc") >> { throw new UnknownConnectorKind("connector unknown") }
 
 		and:
+		autoSuiteDao.findAndFetchForAutomatedExecutionCreation(_) >> suite.executionExtenders
 		finder.findAllCustomFieldValues(_) >> []
 
 		and:
@@ -264,9 +271,14 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		binding.customField >> field
 
 		finder.findAllCustomFieldValues(_) >> [value]
+		AutomatedSuiteManagerServiceImpl.CustomFieldValuesForExec cufValues = Mock()
+		cufValues.getValueForTestcase(_) >> [value]
+		cufValues.getValueForIteration(_) >> [value]
+		cufValues.getValueForCampaign(_) >> [value]
+		cufValues.getValueForTestSuite(_) >> [value]
 
 		when:
-		Couple couple = service.createAutomatedExecAndParams(extender)
+		Couple couple = service.createAutomatedExecAndParams(extender, cufValues)
 
 		then:
 		couple.a1 == extender
@@ -282,11 +294,16 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 		AutomatedTest automatedTest = Mock()
 		extender.getAutomatedTest() >> automatedTest
-
 		Execution exec = Mock()
-		exec.iteration >> Mock(Iteration)
-		exec.testPlan >> Mock(IterationTestPlanItem)
+		Iteration iteration = Mock()
+
+		exec.iteration >>iteration
+		def iterationTestPlanItem = Mock(IterationTestPlanItem)
+		exec.testPlan >> iterationTestPlanItem
 		exec.campaign >> Mock(Campaign)
+		iterationTestPlanItem.getIteration() >> iteration
+		iterationTestPlanItem.getTestSuites() >> new ArrayList<TestSuite>()
+		iteration.getTestSuites() >> new ArrayList<TestSuite>()
 
 		extender.getExecution() >> exec
 
