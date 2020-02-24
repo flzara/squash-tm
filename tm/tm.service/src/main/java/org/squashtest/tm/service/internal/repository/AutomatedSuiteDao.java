@@ -73,7 +73,7 @@ public interface AutomatedSuiteDao{
 
 	/**
 	 * retrieve all the {@link AutomatedExecutionExtender} that this suite is bound to.
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -81,7 +81,7 @@ public interface AutomatedSuiteDao{
 
 	/**
 	 * retrieve all the extenders of executions currently waiting to be run by their test automation servers, for a given {@link AutomatedSuite}
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -89,7 +89,7 @@ public interface AutomatedSuiteDao{
 
 	/**
 	 * retrieve all the extenders of executions currently being run by their test automation servers, for a given {@link AutomatedSuite}
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -97,7 +97,7 @@ public interface AutomatedSuiteDao{
 
 	/**
 	 * retrieve all the extenders of executions which had been ran their test automation servers, for a given {@link AutomatedSuite}
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -105,11 +105,10 @@ public interface AutomatedSuiteDao{
 
 	/**
 	 * retrieve all the extenders of executions which status is one of the supplied status, for a given {@link AutomatedSuite}
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId, Collection<ExecutionStatus> statusList);
 
-	List<AutomatedExecutionExtender> findAndFetchForAutomatedExecutionCreation(String id);
 }

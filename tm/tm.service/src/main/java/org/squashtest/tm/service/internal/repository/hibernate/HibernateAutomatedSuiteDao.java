@@ -139,13 +139,6 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return query.getResultList();
 	}
 
-	@Override
-	public List<AutomatedExecutionExtender> findAndFetchForAutomatedExecutionCreation(String suiteId) {
-		Query query = em.createNamedQuery("automatedSuite.fetchForAutomationExecution");
-		query.setParameter("suiteId", suiteId);
-		return query.getResultList();
-	}
-
 	// TODO : either make it private (core Squash at least doesn't call it anywhere but here), either declare it in the interface
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId,
 			ExecutionStatus... statusArray) {

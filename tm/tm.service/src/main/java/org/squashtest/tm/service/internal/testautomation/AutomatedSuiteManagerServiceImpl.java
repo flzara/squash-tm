@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -82,7 +81,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
@@ -156,6 +154,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#findById(java.lang.String)
 	 */
 	@Override
@@ -196,18 +195,18 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		boolean hasSlaves = projects.stream().anyMatch(couple -> couple.getA1().getServer().isManualSlaveSelection());
 
 		Collection<AutomatedSuitePreview.TestAutomationProjectPreview> projectPreview =
-			projects.stream().map(
-				couple -> {
-					TestAutomationProject taProject = couple.getA1();
-					Long testCount = couple.getA2();
-					return new AutomatedSuitePreview.TestAutomationProjectPreview(
-						taProject.getId(),
-						taProject.getLabel(),
-						taProject.getServer().getName(),
-						taProject.getSlaves(),
-						testCount
-					);
-				}).collect(Collectors.toList());
+					projects.stream().map(
+						couple -> {
+							TestAutomationProject taProject = couple.getA1();
+							Long testCount = couple.getA2();
+							return new AutomatedSuitePreview.TestAutomationProjectPreview(
+								taProject.getId(),
+								taProject.getLabel(),
+								taProject.getServer().getName(),
+								taProject.getSlaves(),
+								testCount
+							);
+						}).collect(Collectors.toList());
 
 
 		preview.setManualSlaveSelection(hasSlaves);
@@ -239,16 +238,19 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<Long> subset = specification.getTestPlanSubsetIds();
 		boolean hasTestPlanSubset = (subset != null && !subset.isEmpty());
 
-		if (specification.getContext().getType() == EntityType.ITERATION) {
-			if (hasTestPlanSubset) {
+		if (specification.getContext().getType() == EntityType.ITERATION){
+			if (hasTestPlanSubset){
 				suite = createFromItemsAndIteration(subset, contextId);
-			} else {
+			}
+			else{
 				suite = createFromIterationTestPlan(contextId);
 			}
-		} else {
-			if (hasTestPlanSubset) {
+		}
+		else{
+			if (hasTestPlanSubset){
 				suite = createFromItemsAndTestSuite(subset, contextId);
-			} else {
+			}
+			else{
 				suite = createFromTestSuiteTestPlan(contextId);
 			}
 		}
@@ -269,7 +271,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	// assumes that the specification was validated first
-	private void checkPermission(AutomatedSuiteCreationSpecification specification) {
+	private void checkPermission(AutomatedSuiteCreationSpecification specification){
 		List<Long> singleId = new ArrayList<>();
 		singleId.add(specification.getContext().getId());
 
@@ -278,6 +280,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
 	 */
 	@Override
@@ -289,6 +292,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlan(long)
 	 */
 	@Override
@@ -300,7 +304,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 
+
+
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(java.lang.String)
 	 */
 	@Override
@@ -312,6 +319,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(org.squashtest.tm.domain.testautomation.AutomatedSuite)
 	 */
 
@@ -355,6 +363,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(java.lang.String)
 	 */
 	@Override
@@ -365,6 +374,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(org.squashtest.tm.domain.testautomation.AutomatedSuite)
 	 */
 	@SuppressWarnings("unchecked")
@@ -424,12 +434,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	// security handled in the code
 	public void start(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
-		LOGGER.debug("- START FETCHING OPTIMIZED " + new Date());
-		List<AutomatedExecutionExtender> executionExtenders = autoSuiteDao.findAndFetchForAutomatedExecutionCreation(suite.getId());
-		LOGGER.debug("- FETCHED " + executionExtenders.size());
-		LOGGER.debug("- END FETCHING OPTIMIZED " + new Date());
 		LOGGER.debug("- START CHECKING EXECUTIONS PERMISSIONS " + new Date());
-		PermissionsUtils.checkPermission(permissionService, executionExtenders, EXECUTE);
+		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
 		LOGGER.debug("- END CHECKING EXECUTIONS PERMISSIONS " + new Date());
 		LOGGER.debug("- START SORTING EXECUTIONS " + new Date());
 		ExtenderSorter sorter = new ExtenderSorter(suite, configuration);
@@ -445,13 +451,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 			try {
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
-				LOGGER.debug("-- START COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
+				LOGGER.debug("-- START COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
 					.getValue());
-				LOGGER.debug("-- END COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
-				LOGGER.debug("-- START SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
+				LOGGER.debug("-- END COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
+				LOGGER.debug("-- START SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
-				LOGGER.debug("-- END SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
+				LOGGER.debug("-- END SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey()  + " " + new Date());
 			} catch (UnknownConnectorKind ex) {
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error("Test Automation : unknown connector :", ex);
@@ -537,9 +543,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private List<Long> doFindTpiIdsWithAutomaticExecutionMode(List<IterationTestPlanItem> itpis) {
 		return itpis.stream()
-			.filter(IterationTestPlanItem::isAutomated)
-			.map(IterationTestPlanItem::getId)
-			.collect(Collectors.toList());
+					.filter(IterationTestPlanItem::isAutomated)
+					.map(IterationTestPlanItem::getId)
+					.collect(Collectors.toList());
 	}
 
 
@@ -551,84 +557,39 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<>(
 			extenders.size());
 
-		CustomFieldValuesForExec customFieldValuesForExec = fetchCustomFieldValues(extenders);
 		for (AutomatedExecutionExtender extender : extenders) {
-			tests.add(createAutomatedExecAndParams(extender, customFieldValuesForExec));
+			tests.add(createAutomatedExecAndParams(extender));
 		}
+
 		return tests;
 
 	}
 
-	private CustomFieldValuesForExec fetchCustomFieldValues(Collection<AutomatedExecutionExtender> extenders) {
-		Map<Long, List<CustomFieldValue>> testCaseCfv = fetchTestCaseCfv(extenders);
-		Map<Long, List<CustomFieldValue>> iterationCfv = fetchIterationCfv(extenders);
-		Map<Long, List<CustomFieldValue>> campaignCfv = fetchTestCaseCfv(extenders);
-		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestCaseCfv(extenders);
-		return new CustomFieldValuesForExec(testCaseCfv, iterationCfv, campaignCfv, testSuiteCfv);
-	}
-
-	private Map<Long, List<CustomFieldValue>> fetchTestCaseCfv(Collection<AutomatedExecutionExtender> extenders) {
-		List<TestCase> testCases = extenders.stream()
-			.map(extender -> extender
-				.getExecution()
-				.getReferencedTestCase())
-			.collect(Collectors.toList());
-		return customFieldValueFinder.findAllCustomFieldValues(testCases).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
-	}
-
-	private Map<Long, List<CustomFieldValue>> fetchIterationCfv(Collection<AutomatedExecutionExtender> extenders) {
-		List<Iteration> iterations = extenders.stream()
-			.map(extender -> extender
-				.getExecution()
-				.getTestPlan()
-				.getIteration())
-			.collect(Collectors.toList());
-		return customFieldValueFinder.findAllCustomFieldValues(iterations).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
-	}
-
-	private Map<Long, List<CustomFieldValue>> fetchCampaignCfv(Collection<AutomatedExecutionExtender> extenders) {
-		List<Campaign> iterations = extenders.stream()
-			.map(extender -> extender
-				.getExecution()
-				.getTestPlan()
-				.getIteration()
-				.getCampaign())
-			.collect(Collectors.toList());
-		return customFieldValueFinder.findAllCustomFieldValues(iterations).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
-	}
-
-	private Map<Long, List<CustomFieldValue>> fetchTestSuiteCfv(Collection<AutomatedExecutionExtender> extenders) {
-		List<TestSuite> testSuites = extenders.stream()
-			.map(extender -> extender
-				.getExecution()
-				.getTestPlan()
-				.getTestSuites())
-			.flatMap(Collection::stream)
-			.collect(Collectors.toList());
-		return customFieldValueFinder.findAllCustomFieldValues(testSuites).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
-	}
-
-	private Couple<AutomatedExecutionExtender, Map<String, Object>> createAutomatedExecAndParams(AutomatedExecutionExtender extender, CustomFieldValuesForExec customFieldValuesForExec) {
+	private Couple<AutomatedExecutionExtender, Map<String, Object>> createAutomatedExecAndParams(AutomatedExecutionExtender extender) {
 		Execution execution = extender.getExecution();
 
-		Collection<CustomFieldValue> tcFields = customFieldValuesForExec.getValueForTestcase(execution.getReferencedTestCase().getId());
-		Collection<CustomFieldValue> iterFields = customFieldValuesForExec.getValueForIteration(execution.getIteration().getId());
-		Collection<CustomFieldValue> campFields = customFieldValuesForExec.getValueForCampaign(execution.getCampaign().getId());
-		Collection<CustomFieldValue> testSuiteFields = execution
-			.getTestPlan()
-			.getTestSuites()
-			.stream()
-			.map(TestSuite::getId)
-			.map(customFieldValuesForExec::getValueForTestSuite)
-			.flatMap(Collection::stream)
-			.collect(Collectors.toList());
+		Collection<CustomFieldValue> tcFields = customFieldValueFinder.findAllCustomFieldValues(execution
+			.getReferencedTestCase());
+		Collection<CustomFieldValue> iterFields = customFieldValueFinder.findAllCustomFieldValues(execution
+			.getIteration());
+		Collection<CustomFieldValue> campFields = customFieldValueFinder.findAllCustomFieldValues(execution
+			.getCampaign());
+
+		Collection<CustomFieldValue> testSuiteFields = customFieldValueFinder.findAllCustomFieldValues(execution
+			.getTestPlan().getTestSuites());
+
+		Dataset dataset = null;
+
+		if(execution.getDatasetLabel() != null && !execution.getDatasetLabel().isEmpty()){
+			 dataset = datasetDao.findByTestCaseIdAndNameWithDatasetParamValues(execution.getReferencedTestCase().getId(), execution.getDatasetLabel());
+		}
 
 		Map<String, Object> params = paramBuilder.get().testCase().addEntity(
 			execution.getReferencedTestCase()).addCustomFields(tcFields).
 			iteration().addCustomFields(iterFields).
 			campaign().addCustomFields(campFields).
 			testSuite().addCustomFields(testSuiteFields).
-			dataset().addEntity(execution.getTestPlan().getReferencedDataset())
+			dataset().addEntity(dataset)
 			.build();
 
 		return new Couple<>(extender, params);
@@ -647,6 +608,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * thread that requires its services.
 	 *
 	 * @author bsiri
+	 *
 	 */
 	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService {
 
@@ -775,34 +737,4 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		return createFromItems(items);
 	}
 
-	public static class CustomFieldValuesForExec {
-		Map<Long, List<CustomFieldValue>> testCaseCfv;
-		Map<Long, List<CustomFieldValue>> iterationCfv;
-		Map<Long, List<CustomFieldValue>> campaignCfv;
-		Map<Long, List<CustomFieldValue>> suiteCfv;
-
-		public CustomFieldValuesForExec(Map<Long, List<CustomFieldValue>> testCaseCfv, Map<Long, List<CustomFieldValue>> iterationCfv, Map<Long, List<CustomFieldValue>> campaignCfv, Map<Long, List<CustomFieldValue>> suiteCfv) {
-			this.testCaseCfv = testCaseCfv;
-			this.iterationCfv = iterationCfv;
-			this.campaignCfv = campaignCfv;
-			this.suiteCfv = suiteCfv;
-		}
-
-		public List<CustomFieldValue> getValueForTestcase(Long testCaseId) {
-			return this.testCaseCfv.getOrDefault(testCaseId, emptyList());
-		}
-
-		public List<CustomFieldValue> getValueForIteration(Long iterationId) {
-			return this.iterationCfv.getOrDefault(iterationId, emptyList());
-		}
-
-		public List<CustomFieldValue> getValueForCampaign(Long campaignId) {
-			return this.campaignCfv.getOrDefault(campaignId, emptyList());
-		}
-
-		public List<CustomFieldValue> getValueForTestSuite(Long suiteId) {
-			return this.suiteCfv.getOrDefault(suiteId, emptyList());
-		}
-
-	}
 }

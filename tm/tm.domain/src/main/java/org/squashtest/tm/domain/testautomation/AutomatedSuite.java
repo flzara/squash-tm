@@ -37,43 +37,22 @@ import java.util.Collection;
 import java.util.List;
 
 @NamedQueries({
-	@NamedQuery(name = "automatedSuite.findAll", query = "from AutomatedSuite"),
-	@NamedQuery(name = "automatedSuite.findAllById", query = "from AutomatedSuite where id in (:suiteIds)"),
-	@NamedQuery(name = "automatedSuite.findAllExtenders", query = "select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
-	@NamedQuery(name = "automatedSuite.findAllExtendersHavingStatus", query = "select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)"),
-	// Fetching mass to prevent massive N + 1 that lead to exponential execution time
-	@NamedQuery(name = "automatedSuite.fetchForAutomationExecution", query = "select distinct ext from AutomatedExecutionExtender ext " +
-		"join fetch ext.execution exec " +
-		"left join fetch exec.scriptedExecutionExtender " +
-		"join fetch exec.issueList " +
-		"join fetch exec.attachmentList " +
-		"join fetch exec.testPlan itpi  " +
-		"join fetch itpi.referencedTestCase tc " +
-		"join fetch tc.automatedTest autoTest " +
-		"join fetch tc.nature nat " +
-		"join fetch nat.infoList " +
-		"left join fetch tc.parameters " +
-		"left join fetch tc.scriptedTestCaseExtender " +
-		"left join fetch tc.automationRequest " +
-		// can be null
-		"left join fetch itpi.referencedDataset dataset " +
-		//  it's a set so hibernate should be able to perform reconciliation properly
-		"left join fetch dataset.parameterValues " +
-		"join fetch itpi.iteration it " +
-		"join fetch it.campaign " +
-		"where ext.automatedSuite.id = :suiteId " +
-		"order by ext.id asc")
+	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),
+	@NamedQuery(name="automatedSuite.findAllById", query="from AutomatedSuite where id in (:suiteIds)"),
+	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
 })
 @Entity
-public class AutomatedSuite {
+public class AutomatedSuite  {
 
 	@Id
 	@Column(name = "SUITE_ID")
 	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	@GenericGenerator(name="system-uuid", strategy = "uuid")
 	private String id;
 
-	@OneToMany(mappedBy = "automatedSuite", cascade = {CascadeType.ALL})
+	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
+	@OrderColumn(name = "EXECUTION_EXTENDER_ORDER")
 	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<>();
 
 	/**
@@ -81,7 +60,7 @@ public class AutomatedSuite {
 	 */
 	private transient Boolean manualSlaveSelection;
 
-	public String getId() {
+	public String getId(){
 		return id;
 	}
 
@@ -90,33 +69,33 @@ public class AutomatedSuite {
 	}
 
 	public void setExecutionExtenders(
-		List<AutomatedExecutionExtender> executionExtenders) {
+			List<AutomatedExecutionExtender> executionExtenders) {
 		this.executionExtenders = executionExtenders;
 	}
 
-	public void addExtender(AutomatedExecutionExtender extender) {
+	public void addExtender(AutomatedExecutionExtender extender){
 		executionExtenders.add(extender);
 		extender.setAutomatedSuite(this);
 	}
 
-	public void addExtenders(Collection<AutomatedExecutionExtender> extenders) {
-		for (AutomatedExecutionExtender extender : extenders) {
+	public void addExtenders(Collection<AutomatedExecutionExtender> extenders){
+		for (AutomatedExecutionExtender extender : extenders){
 			executionExtenders.add(extender);
 		}
 	}
 
-	public boolean hasStarted() {
-		for (AutomatedExecutionExtender extender : executionExtenders) {
-			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY) {
+	public boolean hasStarted(){
+		for (AutomatedExecutionExtender extender : executionExtenders){
+			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY){
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean hasEnded() {
-		for (AutomatedExecutionExtender extender : executionExtenders) {
-			if (!extender.getExecution().getExecutionStatus().isTerminatedStatus()) {
+	public boolean hasEnded(){
+		for (AutomatedExecutionExtender extender : executionExtenders){
+			if (! extender.getExecution().getExecutionStatus().isTerminatedStatus()){
 				return false;
 			}
 		}
@@ -126,7 +105,7 @@ public class AutomatedSuite {
 	/**
 	 * Tells if the suite requires manual node selection. A manual node selection is required when at least 1 server is
 	 * configured with manual selection.
-	 *
+	 * 
 	 * @return
 	 */
 	public boolean isManualNodeSelection() {
