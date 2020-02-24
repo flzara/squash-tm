@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -155,10 +156,12 @@ public class IterationTestPlanManagerController {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
-		List<Long> linkableRequirementLibraryIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
-			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		List<Long> projectIds = iterationTestPlanManagerService.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getProject)
+			.map(GenericProject::getId)
+			.collect(Collectors.toList());
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
