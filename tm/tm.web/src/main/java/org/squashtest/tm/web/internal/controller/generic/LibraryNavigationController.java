@@ -369,11 +369,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 	}
 
-	protected List<JsTreeNode> createLinkableLibrariesModel(List<Long> linkableLibraries) {
+	protected List<JsTreeNode> createLinkableLibrariesModel(List<Long> projectIds) {
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = workspaceDisplayService().findAllLibraries(linkableLibraries, currentUser, new MultiValueMap(), activeMilestoneId.get());
+		Collection<JsTreeNode> linkableLibrariesModel = workspaceDisplayService().findAllLibraries(projectIds, currentUser, new MultiValueMap(), activeMilestoneId.get());
 
 		return new ArrayList<>(linkableLibrariesModel);
 	}
