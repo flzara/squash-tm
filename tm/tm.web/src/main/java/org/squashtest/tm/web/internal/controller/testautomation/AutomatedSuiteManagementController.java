@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +40,11 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.squashtest.tm.web.internal.controller.RequestParams.ITERATION_ID;
 import static org.squashtest.tm.web.internal.controller.RequestParams.TEST_PLAN_ITEMS_IDS;
@@ -55,8 +57,6 @@ import static org.squashtest.tm.web.internal.http.ContentTypes.APPLICATION_JSON;
 public class AutomatedSuiteManagementController {
 
 	private static final String SLASH_NEW = "/new";
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AutomatedSuiteManagementController.class);
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -90,12 +90,7 @@ public class AutomatedSuiteManagementController {
 	@ResponseBody
 	public AutomatedSuiteOverview createAndExecute(@RequestBody AutomatedSuiteCreationSpecification specification, Locale locale){
 		AutomatedSuite suite = service.createAndExecute(specification);
-		Date startDate = new Date();
-		LOGGER.info("START CREATING AUTOMATED SUITE OVERVIEW " + startDate);
-		AutomatedSuiteOverview automatedSuiteOverview = AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-		Date endDate = new Date();
-		LOGGER.info("END CREATING AUTOMATED SUITE OVERVIEW " + endDate);
-		return automatedSuiteOverview;
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	@RequestMapping(value = SLASH_NEW, method = RequestMethod.POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
