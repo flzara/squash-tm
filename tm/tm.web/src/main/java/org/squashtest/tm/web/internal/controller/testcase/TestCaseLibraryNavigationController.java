@@ -39,6 +39,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Workspace;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -235,10 +236,12 @@ public class TestCaseLibraryNavigationController extends
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
 
-		List<Long> linkableTestCaseLibraryIds = testCaseLibraryFinderService.findLinkableTestCaseLibraries().stream()
-			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		List<Long> projectId = testCaseLibraryFinderService.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getProject)
+			.map(GenericProject::getId)
+			.collect(Collectors.toList());
 
-		return createLinkableLibrariesModel(linkableTestCaseLibraryIds);
+		return createLinkableLibrariesModel(projectId);
 	}
 
 

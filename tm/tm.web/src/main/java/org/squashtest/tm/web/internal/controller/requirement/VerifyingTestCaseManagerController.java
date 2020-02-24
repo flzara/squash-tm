@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -161,10 +162,12 @@ public class VerifyingTestCaseManagerController {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
-		List<Long> linkableRequirementLibraryIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
-			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		List<Long> projectIds = verifyingTestCaseManager.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getProject)
+			.map(GenericProject::getId)
+			.collect(Collectors.toList());
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableRequirementLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(projectIds, currentUser, expansionCandidates, activeMilestoneId.get());
 
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
