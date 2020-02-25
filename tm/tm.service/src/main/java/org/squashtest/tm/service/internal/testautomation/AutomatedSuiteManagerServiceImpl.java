@@ -54,12 +54,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
@@ -142,6 +137,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
+
+	@Inject
+	private ProjectDao projectDao;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -259,12 +257,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Override
 	public AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification) {
-		LOGGER.debug("START CREATING EXECUTIONS " + new Date());
+		LOGGER.info("START CREATING EXECUTIONS " + new Date());
 		AutomatedSuite suite = createFromSpecification(specification);
-		LOGGER.debug("END CREATING EXECUTIONS " + new Date());
-		LOGGER.debug("START SENDING EXECUTIONS " + new Date());
+		LOGGER.info("END CREATING EXECUTIONS " + new Date());
+		LOGGER.info("START SENDING EXECUTIONS " + new Date());
 		start(suite, specification.getExecutionConfigurations());
-		LOGGER.debug("END SENDING EXECUTIONS " + new Date());
+		LOGGER.info("END SENDING EXECUTIONS " + new Date());
 		return suite;
 	}
 
@@ -474,18 +472,17 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private AutomatedSuite createFromItems(List<IterationTestPlanItem> items) {
 		List<Long> itemIds = items.stream().map(IterationTestPlanItem::getId).collect(Collectors.toList());
+		Long projectId = items.get(0).getProject().getId();
 		String newSuiteId = createSuiteAndClearSession();
-		createExecutionsAndClearSession(itemIds, newSuiteId);
+		createExecutionsAndClearSession(itemIds, newSuiteId, projectId);
 		// session is cleared we must fetch again the automated suite
 		return entityManager.find(AutomatedSuite.class, newSuiteId);
 	}
 
-	private void createExecutionsAndClearSession(List<Long> itemIds, String newSuiteId) {
+	private void createExecutionsAndClearSession(List<Long> itemIds, String newSuiteId, Long projectId) {
 		List<List<Long>> partitionedIds = Lists.partition(itemIds, 10);
 		for (List<Long> ids : partitionedIds) {
-			AutomatedSuite reloadedSuite = entityManager.find(AutomatedSuite.class, newSuiteId);
-			List<IterationTestPlanItem> items = testPlanDao.findAllByIdIn(ids);
-			createOneBatchOfExecution(items, reloadedSuite);
+			createOneBatchOfExecution(ids, newSuiteId, projectId);
 			entityManager.flush();
 			entityManager.clear();
 		}
@@ -499,11 +496,19 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		return newSuiteId;
 	}
 
-	private void createOneBatchOfExecution(List<IterationTestPlanItem> items, AutomatedSuite newSuite) {
+	private void createOneBatchOfExecution(List<Long> ids, String newSuiteId, Long projectId) {
+		// prefetch the project to avoid auto proxy queries
+		projectDao.fetchForAutomatedExecutionCreation(projectId);
+		AutomatedSuite automatedSuite = entityManager.find(AutomatedSuite.class, newSuiteId);
+		List<IterationTestPlanItem> items = testPlanDao.fetchForAutomatedExecutionCreation(ids);
 		for (IterationTestPlanItem item : items) {
 			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+				Execution execution = item.createAutomatedExecution();
+				executionDao.save(execution);
+				item.addExecution(execution);
+				createCustomFieldsForExecutionAndExecutionSteps(execution);
+				createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
+				automatedSuite.addExtender(execution.getAutomatedExecutionExtender());
 			}
 		}
 	}

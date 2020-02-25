@@ -91,10 +91,10 @@ public class AutomatedSuiteManagementController {
 	public AutomatedSuiteOverview createAndExecute(@RequestBody AutomatedSuiteCreationSpecification specification, Locale locale){
 		AutomatedSuite suite = service.createAndExecute(specification);
 		Date startDate = new Date();
-		LOGGER.info("START CREATING AUTOMATED SUITE OVERVIEW " + startDate);
+		LOGGER.debug("START CREATING AUTOMATED SUITE OVERVIEW " + startDate);
 		AutomatedSuiteOverview automatedSuiteOverview = AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 		Date endDate = new Date();
-		LOGGER.info("END CREATING AUTOMATED SUITE OVERVIEW " + endDate);
+		LOGGER.debug("END CREATING AUTOMATED SUITE OVERVIEW " + endDate);
 		return automatedSuiteOverview;
 	}
 

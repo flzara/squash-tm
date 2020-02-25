@@ -24,12 +24,23 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import static org.squashtest.tm.domain.project.Project.PROJECT_TYPE;
 
 @Entity
 @DiscriminatorValue(PROJECT_TYPE)
-public class Project extends GenericProject  {
+@NamedQueries({
+	@NamedQuery(name = "Project.fetchForAutomatedExecutionCreation", query = "select distinct p " +
+		"from Project p " +
+		"left join fetch p.bugtrackerBinding " +
+		"left join fetch p.testAutomationProjects " +
+		"left join fetch p.testAutomationServer " +
+		"left join fetch p.testCaseNatures " +
+		"where p.id=:projectId")
+})
+public class Project extends GenericProject {
 
 	public static final String PROJECT_TYPE = "P";
 
@@ -53,7 +64,7 @@ public class Project extends GenericProject  {
 
 	@Override
 	public BindableEntity getBoundEntityType() {
-		return  BindableEntity.PROJECT;
+		return BindableEntity.PROJECT;
 	}
 
 	@Override
