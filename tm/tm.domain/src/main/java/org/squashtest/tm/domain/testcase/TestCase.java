@@ -830,7 +830,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	public static TestCase createBlankTestCase() {
 		TestCase res = new TestCase();
+		setAttributesAsNullForBlankTestCase(res);
+		return res;
+	}
 
+	protected static void setAttributesAsNullForBlankTestCase(TestCase res) {
 		res.importanceAuto = null;
 		res.prerequisite = null;
 		res.reference = null;
@@ -840,8 +844,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.status = null;
 		res.automatable = null;
 		res.uuid = null;
-
-		return res;
 	}
 
 	/**

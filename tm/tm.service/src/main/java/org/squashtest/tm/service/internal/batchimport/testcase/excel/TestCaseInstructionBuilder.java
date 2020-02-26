@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -62,8 +63,11 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 			case GHERKIN:
 				testCase = getBlankScriptedTestCase(row);
 				break;
-				default:
-					throw new IllegalArgumentException("Unknown TestCaseKind: " + testCaseKind);
+			case KEYWORD:
+				testCase = KeywordTestCase.createBlankKeywordTestCase();
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown TestCaseKind: " + testCaseKind);
 		}
 		return new TestCaseInstruction(new TestCaseTarget(), testCase);
 	}

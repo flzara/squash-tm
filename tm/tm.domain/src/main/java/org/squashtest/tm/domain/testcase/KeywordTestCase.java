@@ -20,16 +20,20 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class KeywordTestCase extends TestCase {
 
-	@Override
+	public static KeywordTestCase createBlankKeywordTestCase() {
+		KeywordTestCase res = new KeywordTestCase();
+		setAttributesAsNullForBlankTestCase(res);
+		return res;
+	}
+
+    @Override
 	public void accept(TestCaseVisitor visitor) {
 		visitor.visit(this);
 	}

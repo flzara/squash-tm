@@ -133,15 +133,7 @@ public class ScriptedTestCase extends TestCase {
 	 */
 	public static ScriptedTestCase createBlankScriptedTestCase(ScriptedTestCaseLanguage language, String script) {
 		ScriptedTestCase res = new ScriptedTestCase();
-		res.importanceAuto = null;
-		res.prerequisite = null;
-		res.reference = null;
-		res.nature = null;
-		res.type = null;
-		res.importance = null;
-		res.status = null;
-		res.automatable = null;
-		res.uuid = null;
+		setAttributesAsNullForBlankTestCase(res);
 		res.language = language;
 		res.script = script;
 		return res;
