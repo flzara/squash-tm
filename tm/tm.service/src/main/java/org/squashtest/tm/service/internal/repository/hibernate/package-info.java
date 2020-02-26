@@ -326,53 +326,6 @@
 			"or tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
 			"ver join ver.milestones milestones where milestones.status in (:statuses)))" ),
 
-	// NOTE : Hibernate ignores any grouped entity when it is not projected
-	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
-	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
-	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
-	"select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
-	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
-	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
-	+ "("
-	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
-	+ "), "
-	+ "("
-	+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
-	+ "), "
-	+ "("
-	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
-	+ "), "
-		+ "("
-		+ "select count(distinct it) from Iteration it join it.testPlans tps where tps.referencedTestCase = tc.id"
-		+ "), "
-	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy, tc.kind, scExt.language, scExt.script "
-	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p left join tc.milestones milestones left join tc.scriptedTestCaseExtender scExt "
-	+ " join tc.nature nat join tc.type type"
-	+ " where content.id = tc.id and tc.id in (:testCaseIds) "
-	+ " group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id, tc.kind, scExt.language, scExt.script "
-	),
-
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.uuid, tc.reference, content.name, "
-	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
-	+ "type, tc.status, tc.automatable, content.description, tc.prerequisite, "
-	+ "("
-	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
-	+ "), "
-	+ "("
-	+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
-	+ "), "
-	+ "("
-	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
-	+ "), "
-		+ "("
-		+ "select count(distinct it) from Iteration it join it.testPlans tps where tps.referencedTestCase = tc.id"
-		+ "), "
-	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy, tc.kind, scExt.language, scExt.script "
-	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p left join tc.milestones milestones left join tc.scriptedTestCaseExtender scExt "
-	+ " join tc.nature nat join tc.type type "
-	+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
-	+ "group by p.id, tc.id, index(content)+1 , content.id, nat.id, type.id, tc.kind, scExt.language, scExt.script "),
-
 	@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.id, cfv.id"),
