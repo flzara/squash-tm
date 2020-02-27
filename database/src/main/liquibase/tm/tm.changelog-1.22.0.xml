@@ -121,4 +121,9 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-325-update-tc-kind-column-prototype" author="jlor">
+    <comment>In QueryColumnPrototype table, at TestCaseKind line, change data_type column value from Level_enum to Entity</comment>
+    <sql>update QUERY_COLUMN_PROTOTYPE set DATA_TYPE='ENTITY', COLUMN_TYPE='ENTITY' where QUERY_COLUMN_ID=184;</sql>
+  </changeSet>
+
 </databaseChangeLog>
