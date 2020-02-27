@@ -77,7 +77,7 @@ class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
 		TestCaseLibrary library = findEntity(TestCaseLibrary.class, -10L)
 	}
 
-	@DataSet("TestCaseExcelBatchImporter.should import one test case of each type.xml")
+	@DataSet("TestCaseExcelBatchImporter.should import test case in library.xml")
 	def "should import one test case of each type"() {
 		given :
 		URL url = TestCaseExcelBatchImporter.class.getClassLoader().getResource("import/import one test case of each type.xls")
