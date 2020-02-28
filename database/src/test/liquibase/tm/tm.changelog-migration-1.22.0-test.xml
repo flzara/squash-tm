@@ -30,6 +30,18 @@
   <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml" relativeToChangelogFile="true" />
   <!-- ========================================================================================================= -->
 
+  <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_VALUES where FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_COLUMN where QUERY_COLUMN_ID=134 and FILTER_OPERATION='IS_CLASS' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+    </preConditions>
+    <comment>Check QUERY_FILTER_VALUES and QUERY_FILTER_COLUMN were successfully updated.</comment>
+  </changeSet>
+  
   <changeSet id="tm-1.22.0-drop-temp_execution_extender_order-table" author="jlor">
     <preConditions>
       <not>
