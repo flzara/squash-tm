@@ -54,6 +54,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -87,6 +88,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
+
+	@Inject
+	private KeywordTestCaseService keywordTestCaseService;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
@@ -225,6 +229,7 @@ public class TestCaseTestStepsController {
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordList", Keyword.values());
+		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(testCaseId));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 

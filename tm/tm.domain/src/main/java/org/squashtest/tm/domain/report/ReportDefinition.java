@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.report;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
@@ -30,6 +31,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,12 +41,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "REPORT_DEFINITION")
@@ -89,6 +94,10 @@ public class ReportDefinition implements TreeEntity{
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
+
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="report", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<CustomReportReportBinding> reportBindings = new HashSet<>();
 
 	public Long getId() {
 		return id;

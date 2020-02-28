@@ -34,5 +34,5 @@ public interface CustomScmRepositoryDao {
 	 * @param testCaseIds The Collection of Test Case ids.
 	 * @return A Map of Test Case Sets mapped by ScmRepository
 	 */
-	Map<ScmRepository, Set<ScriptedTestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
+	Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
 }

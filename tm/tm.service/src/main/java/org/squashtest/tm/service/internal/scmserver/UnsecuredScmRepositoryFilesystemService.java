@@ -36,6 +36,7 @@ import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
@@ -63,6 +64,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	@Inject
 	private PathService pathService;
+
+	@Inject
+	private KeywordTestCaseService keywordTestCaseService;
 
 	@Override
 	public void createWorkingFolderIfAbsent(ScmRepository scm) {

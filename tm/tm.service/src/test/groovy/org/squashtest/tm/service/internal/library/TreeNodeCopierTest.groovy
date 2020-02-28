@@ -166,4 +166,18 @@ public class TreeNodeCopierTest extends Specification {
 		result.collect { it.name } == ["NX_OHNOZ"]
 
 	}
+
+	def "should copy a node of type KeywordTestCase"() {
+		given:
+			TestCase tcOrig = new TestCase(true);
+			tcOrig.setName("hello tc")
+			tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
+		and: "the folder"
+			TestCaseFolder folder = Mock()
+			folder.isContentNameAvailable(_) >> true
+		when:
+			def result = copier.performOperation(tcOrig, folder, null)
+		then:
+			result.collect { it.name } == ["hello tc"]
+	}
 }

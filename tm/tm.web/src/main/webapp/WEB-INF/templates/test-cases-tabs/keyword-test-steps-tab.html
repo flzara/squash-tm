@@ -28,26 +28,44 @@
      -->
 </div>
 
-<div id="tab-tc-keyword-test-steps" class="table-tab">
+<div id="tab-tc-keyword-test-steps" class="table-tab"
+  th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE'))},
+           isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK'))},
+           isAttachable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH'))}">
 
   <div>
     <h4>This is the Keyword Test Step Page.</h4>
   </div>
   <br/>
-  <div>
+  <div th:if="${isWritable}">
     <label>Add your keyword test step</label>
     <select id="keyword-input">
-      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given</option>
+      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
     </select>
-    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto"/>
-    <button id="add-keyword-test-step-btn" type="submit">Add</button>
+    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
+    <button id="add-keyword-test-step-btn" class="button" type="submit">Add</button>
   </div>
   <br/>
   <div id="add-keyword-test-step-result"></div>
 
+  <!-- ==================== toolbar definition =================== -->
+  <div class="toolbar">
+    <span class="group" th:if="${isWritable}">
+			<button id="delete-all-steps-button"
+              data-icon="ui-icon-trash"
+              class="button"
+              th:text="#{test-case.step.delete.button}"
+              th:title="#{test-case.step.delete.button}">
+					 remove selected steps
+			</button>
+		</span>
+  </div>
+
+  <!-- ==================== /toolbar definition =================== -->
+
   <!-- ==================== table definition =================== -->
-  <div class="table-tab-wrap jstree-drop" style="position: relative;">
-    <table th:id="'keyword-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table ">
+  <div class="table-tab-wrap jstree-drop" style="position: relative; top:10px;">
+    <table th:id="'keyword-test-step-table-'+${testCase.id}" class="unstyled-table test-steps-table">
       <thead>
       <tr>
         <th data-def="map=step-index, select">#</th>
@@ -60,8 +78,40 @@
       <!-- eager-loaded through data property of table -->
       </tbody>
     </table>
+
+    <!-- script -->
+    <br/>
+    <div>
+      <span>Generated script:</span>
+      <br/>
+      <br/>
+      <div style="background-color:#FDFDFD;">
+        <span style="font-family: monospace; font-size:18px;" th:utext="${#strings.replace(#strings.replace(generated_script,'&#9;','&emsp;&emsp;'),'&#10;','&lt;br&gt;')}"></span>
+      </div>
+
+    </div>
   </div>
   <!-- ==================== /table definition =================== -->
+
+  <!-- ==================== Remove Keyword Test Step Row Dialog ==================== -->
+  <div id="delete-keyword-test-step-dialog" class="not-displayed popup-dialog" th:title="#{dialog.delete-step.title}">
+    <div class="display-table-row">
+      <div class="display-table-cell warning-cell">
+        <div class="generic-error-signal"></div>
+      </div>
+      <div class="display-table-cell">
+        <span data-def="state=single-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-step.message}">remove row ?</span>
+        <span data-def="state=multiple-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-step.message}">remove all selected ?</span>
+        <span data-def="state=empty-selec" th:text="#{message.EmptyTableSelection}">no selection</span>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/>
+      <input type="button" th:value="#{label.Close}" data-def="state=empty-selec, evt=cancel"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="state=single-tp multiple-tp, evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Remove Keyword Test Step Row Dialog ==================== -->
 
   <script type="text/javascript" th:inline="javascript">
   /*<![CDATA[*/
@@ -73,10 +123,18 @@
       domReady(function(){
 
         var settings = {
+          testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
+          rootContext : /*[[@{/}]]*/"/squash",
           stepData : /*[[${stepData}]]*/[],
           testCaseId : /*[[${testCase.id}]]*/1,
-          language : {},
-          permissions : {}
+          language : {
+            deleteTitle : /*[[#{dialog.delete-step.title}]]*/"delete"
+          },
+          permissions : {
+            isWritable : /*[[${isWritable}]]*/true,
+            isLinkable : /*[[${isLinkable}]]*/true,
+            isAttachable : /*[[${isAttachable}]]*/true
+          }
         };
         testCaseManagement.initKeywordTestStepTablePanel(settings);
       });

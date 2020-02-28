@@ -25,12 +25,12 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
-import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
@@ -416,6 +416,21 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		then:
 		obj.size() == 2
 		obj*.action.containsAll(["action2", "action4"])
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should remove some keyword steps.xml")
+	def "should remove a list of keyword steps"() {
+		given:
+			def toRemove = [-1L, -2L]
+		when:
+			service.removeListOfSteps(-1L, toRemove);
+			def obj = service.findStepsByTestCaseId(-1L)
+		then:
+			obj.size() == 1
+			KeywordTestStep keywordTestStep = obj[0];
+			keywordTestStep.getId() == -3L
+			keywordTestStep.getKeyword() == Keyword.THEN
+			keywordTestStep.getActionWord().getWord() == "GoodBye!"
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")

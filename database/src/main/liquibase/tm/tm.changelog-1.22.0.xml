@@ -97,6 +97,16 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-postgresql" author="jlor" dbms="postgresql">
+    <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for PostgreSQL</comment>
+    <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-h2" author="jlor" dbms="h2">
+    <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for h2</comment>
+    <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+  </changeSet>
+
   <changeSet id="tm-1.22.0-TEST_CASE_DISCRIMINATOR" author="jlor">
     <comment>Adds a type discriminator column on TEST_CASE</comment>
     <addColumn tableName="TEST_CASE">

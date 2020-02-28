@@ -51,7 +51,6 @@ public class KeywordTestStep extends TestStep {
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
-
 	KeywordTestStep() {
 	}
 
@@ -68,7 +67,7 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public TestStep createCopy() {
-		throw new UnsupportedOperationException();
+		return new KeywordTestStep(this.getKeyword(), this.getActionWord());
 	}
 
 	@Override

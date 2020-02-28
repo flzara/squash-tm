@@ -155,12 +155,12 @@ public class ScriptedTestCaseEventListener {
 		LOGGER.debug("committing test cases to their repositories");
 		LOGGER.trace("test case ids : '{}'", testCaseIds);
 
-		Map<ScmRepository, Set<ScriptedTestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedTestCasesGroupedByRepoById(testCaseIds);
+		Map<ScmRepository, Set<TestCase>> scriptsGroupedByScm = scmRepositoryDao.findScriptedAndKeywordTestCasesGroupedByRepoById(testCaseIds);
 
-		for (Map.Entry<ScmRepository, Set<ScriptedTestCase>> entry : scriptsGroupedByScm.entrySet()) {
+		for (Map.Entry<ScmRepository, Set<TestCase>> entry : scriptsGroupedByScm.entrySet()) {
 
 			ScmRepository scm = entry.getKey();
-			Set<ScriptedTestCase> testCases = entry.getValue();
+			Set<TestCase> testCases = entry.getValue();
 
 			// Test existence of Credentials and test them
 			Credentials credentials = testScmCredentials(scm);

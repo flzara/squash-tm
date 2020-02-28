@@ -89,8 +89,6 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 //		!found("ATTACHMENT_LIST", "attachment_list_id", -4L)
 //	}
 
-
-
 	@DataSet("NodeDeletionDaoTest.should remove a test case from its folder.xml")
 	def "should remove a test case from its folder"(){
 
@@ -105,6 +103,24 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		found ("TEST_CASE", "tcln_id", -12L)
 		!found("TEST_CASE", "tcln_id", -11L)
 
+
+		folder.content.containsExactlyIds([-12L])
+	}
+
+	@DataSet("NodeDeletionDaoTest.should remove a keyword test case from its folder.xml")
+	def "should remove a keyword test case list, one at root, other from its folder"(){
+
+		when :
+		deletionDao.removeEntities([-11L, -15L])
+		getSession().flush()
+		getSession().clear()
+
+		def folder = findEntity(TestCaseFolder.class, -1L)
+
+		then :
+		found ("TEST_CASE", "tcln_id", -12L)
+		!found("TEST_CASE", "tcln_id", -11L)
+		!found("TEST_CASE", "tcln_id", -15L)
 
 		folder.content.containsExactlyIds([-12L])
 	}

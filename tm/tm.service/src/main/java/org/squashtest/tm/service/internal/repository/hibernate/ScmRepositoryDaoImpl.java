@@ -51,29 +51,29 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	private EntityManager em;
 
 	@Override
-	public Map<ScmRepository, Set<ScriptedTestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
+	public Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
 
-			LOGGER.debug("looking for repositories and the test cases that should be committed into them");
-
+			LOGGER.debug("looking for test cases and repositories which are corresponding to these test cases' projects to commit into");
 
 			if (testCaseIds.isEmpty()){
 				return Collections.emptyMap();
 			}
 
-			QScriptedTestCase scriptedTestCase = QScriptedTestCase.scriptedTestCase;
+			QTestCase testCase = QTestCase.testCase;
 			QProject project = QProject.project1;
 			QScmRepository scm = QScmRepository.scmRepository;
 
 
 			return new JPAQueryFactory(em)
-				.select(scm, scriptedTestCase)
-				.from(scriptedTestCase)
-				.join(scriptedTestCase.project, project)
+				.select(scm, testCase)
+				.from(testCase)
+				.join(testCase.project, project)
 				.join(project.scmRepository, scm)
+				//TODO: leftJoin on scripted and keyword TC
 				.fetchJoin()
-				.where(scriptedTestCase.id.in(testCaseIds))
+				.where(testCase.id.in(testCaseIds)
 				.transform(
-					groupBy(scm).as(set(scriptedTestCase))
+					groupBy(scm).as(set(testCase))
 				);
 
 		}

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -84,10 +85,13 @@ public class CallStepManagerController {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		UserDto currentUser = userAccountService.findCurrentUserDto();
 
-		List<Long> linkableTestCaseLibraryIds = testCaseLibraryFinder.findLinkableTestCaseLibraries().stream()
-			.map(TestCaseLibrary::getId).collect(Collectors.toList());
+		List<Long> projectId = testCaseLibraryFinder.findLinkableTestCaseLibraries().stream()
+			.map(TestCaseLibrary::getProject)
+			.map(GenericProject::getId)
+			.collect(Collectors.toList());
 		Optional<Long> activeMilestoneId = activeMilestoneHolder.getActiveMilestoneId();
-		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(linkableTestCaseLibraryIds, currentUser, expansionCandidates, activeMilestoneId.get());
+
+		Collection<JsTreeNode> linkableLibrariesModel = testCaseWorkspaceDisplayService.findAllLibraries(projectId, currentUser, expansionCandidates, activeMilestoneId.get());
 
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-call-step-manager");

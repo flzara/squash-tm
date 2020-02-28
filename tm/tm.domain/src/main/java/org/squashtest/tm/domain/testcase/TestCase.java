@@ -194,6 +194,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		setUuid(uuid.toString());
 	}
 
+		if (isKeywordTestCase) {
+			this.kind = TestCaseKind.KEYWORD;
+		}
 	public int getVersion() {
 		return version;
 	}
@@ -390,6 +393,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.status = source.getStatus();
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
+		this.isKeywordTestCase = source.isKeywordTestCase();
 	}
 
 	/**

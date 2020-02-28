@@ -33,6 +33,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 	protected Object buildItemData(TestStep step) {
 		KeywordTestStep keywordTestStep = (KeywordTestStep) step;
 		Map<String, String> item = new HashMap<>(4);
+		item.put("entity-id", step.getId().toString());
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
 		item.put("step-action-word", keywordTestStep.getActionWord().getWord());

@@ -57,6 +57,10 @@ public class ActionWord {
 		this.word = trimmedWord;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
 	public String getWord() {
 		return word;
 	}

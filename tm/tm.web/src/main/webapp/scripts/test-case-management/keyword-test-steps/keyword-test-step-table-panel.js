@@ -18,20 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", 'workspace.event-bus'], function($, Backbone, _, eventBus) {
+define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"], function($, Backbone, _, eventBus, popups) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
 		el : "#tab-tc-keyword-test-steps",
 
 		initialize : function(options) {
+			$.squash.decorateButtons();
 			var self = this;
 			this.settings = options.settings;
-			this.initKeywordTestStepTable(options.settings);
+			var urls = this.makeTableUrls(this.settings);
+			this.initKeywordTestStepTable(this.settings);
+
+			//the popups
+			var conf = {};
+			conf.permissions = {};
+			conf.urls = {};
+			conf.urls.testCaseStepsUrl = urls.deleteStep;
+			conf.testCaseId = this.settings.testCaseId;
+			conf.permissions.writable = this.settings.permissions.isWritable;
+			conf.stepsTablePanel = this;
+			popups.init(conf);
 		},
 
 		events : {
-			"click #add-keyword-test-step-btn" : "addKeywordTestStep"
+			"click #add-keyword-test-step-btn" : "addKeywordTestStep",
+			"click #delete-all-steps-button" : "deleteSelectedTestSteps"
 		},
 
 		initKeywordTestStepTable : function(settings) {
@@ -45,7 +58,8 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus'], function($,
 					sAjaxSource: '/squash/test-cases/'+testCaseId+'/steps/keyword-test-step-table'
 				}, {
 					deleteButtons: {
-						tooltip: {}
+						delegate: "#delete-keyword-test-step-dialog",
+						tooltip: settings.language.deleteTitle
 					}
 				});
 		},
@@ -80,6 +94,19 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus'], function($,
 				self.cleanInputs();
 				eventBus.trigger('testStepsTable.stepAdded');
 			});
+		},
+
+		deleteSelectedTestSteps: function() {
+			$("#delete-keyword-test-step-dialog").formDialog('open');
+		},
+
+		makeTableUrls: function(conf){
+			var tcUrl =  conf.testCaseUrl;
+			var ctxUrl = conf.rootContext;
+
+			return {
+				deleteStep: tcUrl + "/steps",
+			};
 		}
 	});
 	return KeywordTestStepTablePanel;

@@ -81,14 +81,26 @@ li[rel="folder"][sync-folder-type="TARGET"][sync-status="FAILURE"] > a > .jstree
 }
 
 li[rel="test-case"][kind="gherkin"] > a {
-	color: #006c96;
-}
+	 color: #006c96;
+ }
 
 li[rel="test-case"][kind="gherkin"] > a.jstree-hovered {
 	color: white;
 }
 
 li[rel="test-case"][kind="gherkin"] > a.jstree-clicked {
+	color: white;
+}
+
+li[rel="test-case"][kind="keyword"] > a {
+	color: #5ab738;
+}
+
+li[rel="test-case"][kind="keyword"] > a.jstree-hovered {
+	color: white;
+}
+
+li[rel="test-case"][kind="keyword"] > a.jstree-clicked {
 	color: white;
 }
 

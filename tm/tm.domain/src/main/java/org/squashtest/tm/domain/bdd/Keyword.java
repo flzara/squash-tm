@@ -21,9 +21,10 @@
 package org.squashtest.tm.domain.bdd;
 
 public enum Keyword {
+	//these keywords MUST be displayed in this order (SQUASH-177)
 	GIVEN,
-	AND,
-	BUT,
 	WHEN,
-	THEN
+	THEN,
+	AND,
+	BUT
 }
