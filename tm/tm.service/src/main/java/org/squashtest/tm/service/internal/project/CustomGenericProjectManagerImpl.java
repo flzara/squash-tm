@@ -31,8 +31,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.api.wizard.AutomationWorkflow;
-import org.squashtest.tm.api.wizard.WizardPlugin;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -94,7 +92,6 @@ import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtend
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementDao;
-import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
@@ -120,7 +117,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -1205,7 +1201,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public boolean checkIfTcGherkinHaveTaScript(Long projectId) {
 		boolean check = false;
-		Integer number = testCaseDao.findAllTestCaseGherkinAssociatedToTAScriptByProject(projectId);
+		Integer number = testCaseDao.countScriptedTestCaseAssociatedToTAScriptByProject(projectId);
 		if(number > 0) {
 			check = true;
 		}

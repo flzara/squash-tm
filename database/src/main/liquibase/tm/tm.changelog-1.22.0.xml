@@ -136,4 +136,8 @@
     <sql>update QUERY_COLUMN_PROTOTYPE set DATA_TYPE='ENTITY', COLUMN_TYPE='ENTITY' where QUERY_COLUMN_ID=184;</sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-tc-kind-column" author="jlor">
+    <dropColumn tableName="TEST_CASE" columnName="TC_KIND" />
+  </changeSet>
+
 </databaseChangeLog>
