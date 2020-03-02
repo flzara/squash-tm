@@ -165,7 +165,6 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.getMilestones() >> []
 		tc.doMilestonesAllowCreation() >> Boolean.TRUE
 		tc.doMilestonesAllowEdition() >> Boolean.TRUE
-		tc.getKind() >> TestCaseKind.STANDARD
 		def visitor
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
@@ -196,7 +195,6 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.getMilestones() >> []
 		tc.doMilestonesAllowCreation() >> Boolean.TRUE
 		tc.doMilestonesAllowEdition() >> Boolean.TRUE
-		tc.getKind() >> TestCaseKind.STANDARD
 		def visitor
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS

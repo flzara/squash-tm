@@ -119,7 +119,6 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 		def testCase = Mock(TestCase){
 			getId() >> 123L
 			getProject() >> project
-			getKind() >> TestCaseKind.GHERKIN
 		}
 
 		when :

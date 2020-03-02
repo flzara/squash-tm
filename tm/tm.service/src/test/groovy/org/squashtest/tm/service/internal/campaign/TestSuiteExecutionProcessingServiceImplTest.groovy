@@ -262,7 +262,6 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		ids.each { id ->
 			TestCase testCase = Mock()
 			testCase.accept(_) >> { TestCaseVisitor visitor -> visitor.visit(testCase) }
-			testCase.getKind() >> TestCaseKind.STANDARD
 			TestStep testStep = Mock()
 			testCase.getSteps() >> [testStep]
 			IterationTestPlanItem item = new IterationTestPlanItem(testCase)

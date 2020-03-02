@@ -152,7 +152,6 @@ class ScmRepositoryManifestTest extends Specification{
 		and:
 		def tc = Mock(TestCase){
 			getId() >> 411L
-			getKind() >> TestCaseKind.GHERKIN
 			getName() >> "test"
 		}
 
@@ -176,7 +175,6 @@ class ScmRepositoryManifestTest extends Specification{
 		and:
 		def tc = Mock(TestCase){
 			getId() >> 555L
-			getKind() >> TestCaseKind.GHERKIN
 			getName() >> "test5"
 		}
 
@@ -209,7 +207,6 @@ class ScmRepositoryManifestTest extends Specification{
 		and:
 		def tc = Mock(TestCase){
 			getId() >> 411L
-			getKind() >> TestCaseKind.GHERKIN
 			getName() >> "test"
 		}
 
@@ -237,7 +234,6 @@ class ScmRepositoryManifestTest extends Specification{
 		and:
 		def tc = Mock(TestCase){
 			getId() >> 42L
-			getKind() >> TestCaseKind.GHERKIN
 			getName() >> "ahahah"
 		}
 
