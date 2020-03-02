@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase.bdd
 
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.TestCaseDao
@@ -39,7 +40,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
-		TestCase keywordTestCase = TestCase.createKeywordTestCase()
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("Disconnection test")
 
 		and:
@@ -54,7 +55,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		given:
-		TestCase keywordTestCase = TestCase.createKeywordTestCase()
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("Disconnection test")
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("I am connécted"))

@@ -148,8 +148,6 @@ class TestCaseTest extends Specification {
 		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
 
-
-
 	def "should move a list of steps to a last position"(){
 
 		given :
@@ -175,8 +173,6 @@ class TestCaseTest extends Specification {
 		then :
 		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
-
-
 
 	def "should return position of step"() {
 		given:
@@ -233,7 +229,6 @@ class TestCaseTest extends Specification {
 		"importance"    		| TestCaseImportance.HIGH
 		"status"				| TestCaseStatus.APPROVED
 		"reference"     		| "barfoo"
-		"isKeywordTestCase"		| true
 	}
 
 	def "copy of a test case should have the same steps"() {
@@ -256,7 +251,7 @@ class TestCaseTest extends Specification {
 
 	def "copy of a test case should have the same keyword steps"() {
 		given:
-		TestCase source = new TestCase(true)
+		KeywordTestCase source = new KeywordTestCase()
 		source.setName("source")
 		source.notifyAssociatedWithProject(mockFactory.mockProject())
 		ActionWord actionWord = new ActionWord("Harry Potter")
@@ -273,7 +268,6 @@ class TestCaseTest extends Specification {
 		copiedStep.actionWord == sourceStep.actionWord
 		!copiedStep.is(sourceStep)
 	}
-
 
 	def "should remove automated script link"(){
 		given :
@@ -318,7 +312,5 @@ class TestCaseTest extends Specification {
 		blankableFields.findAll({ it.get(res) != null })*.name == []
 
 	}
-
-		testCase.getKind() == TestCaseKind.KEYWORD
 
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.library
 
+import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.attachment.AttachmentManagerService
@@ -167,9 +168,9 @@ public class TreeNodeCopierTest extends Specification {
 
 	}
 
-	def "should copy a node of type KeywordTestCase"() {
+	def "should copy a node of type KeywordTestCase in a folder"() {
 		given:
-			TestCase tcOrig = new TestCase(true);
+			KeywordTestCase tcOrig = new KeywordTestCase()
 			tcOrig.setName("hello tc")
 			tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
 		and: "the folder"

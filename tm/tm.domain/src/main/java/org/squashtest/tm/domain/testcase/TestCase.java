@@ -194,9 +194,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		setUuid(uuid.toString());
 	}
 
-		if (isKeywordTestCase) {
-			this.kind = TestCaseKind.KEYWORD;
-		}
 	public int getVersion() {
 		return version;
 	}
@@ -301,6 +298,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Override
 	public TestCase createCopy() {
 		TestCase copy = new TestCase();
+		populateCopiedTestCaseAttributes(copy);
+		return copy;
+	}
+
+	protected void populateCopiedTestCaseAttributes(TestCase copy) {
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
@@ -316,7 +318,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 					this.getId(), e);
 			}
 		}
-		return copy;
 	}
 
 	/**
@@ -393,7 +394,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.status = source.getStatus();
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
-		this.isKeywordTestCase = source.isKeywordTestCase();
 	}
 
 	/**

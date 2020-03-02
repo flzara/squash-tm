@@ -22,13 +22,11 @@ package org.squashtest.tm.service.internal.scmserver
 
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ApplicationEventPublisher
-import org.squashtest.tm.domain.bdd.ActionWord
-import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
-import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseKind
@@ -121,7 +119,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		def tc = Mock(TestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
 			getProject() >> project
 		}
 
@@ -145,7 +142,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		def tc = Mock(TestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
 			getProject() >> project
 		}
 
@@ -174,7 +170,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			}
 			def tc = Mock(TestCase) {
 				getId() >> pTestCaseId
-				getKind() >> TestCaseKind.GHERKIN
 				getName() >> pTestCaseName
 				getProject() >> project
 			}
@@ -214,7 +209,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			createFileAndSubFolders(file)
 			def testCase = Mock(TestCase) {
 				getId() >> 499L
-				getKind() >> TestCaseKind.GHERKIN
 				getName() >> pTestCaseName
 				getProject() >> project
 			}
@@ -354,15 +348,14 @@ go home quickly before someone notices that the ITs are broken"""
 		}
 
 		and: "the Keyword test case"
-		def keywordTc = Mock(TestCase){
+		KeywordTestCase keywordTc = Mock(KeywordTestCase){
 			getId() >> 777L
 			getName() >> "keyword test case"
-			getKind() >> TestCaseKind.KEYWORD
 			getImportance() >> TestCaseImportance.LOW
-			isKeywordTestCase() >> true
 			getAutomationRequest() >>
 				new AutomationRequest(automationPriority: 1, requestStatus: AutomationRequestStatus.AUTOMATED)
 			getProject() >> project
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
 		}
 
 		when:

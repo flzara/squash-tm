@@ -180,7 +180,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		nodes.get(0) instanceof TestCase
 		TestCase testCaseCopy = (TestCase) nodes.get(0)
 		and: "it has copies of parameters"
-		testCaseCopy.isKeywordTestCase()
+		testCaseCopy.class.isAssignableFrom(KeywordTestCase.class)
 		def testSteps = testCaseCopy.getSteps()
 		testSteps.size() == 3
 		and: "the first test step is Harry"

@@ -100,7 +100,7 @@ public class ScriptedTestCase extends TestCase {
 		this.setScript(sb.toString());
 	}
 
-
+	@Override
 	public ScriptedTestCase createCopy() {
 		throw new UnsupportedOperationException();
 //		ScriptedTestCaseExtender copy = new ScriptedTestCaseExtender();

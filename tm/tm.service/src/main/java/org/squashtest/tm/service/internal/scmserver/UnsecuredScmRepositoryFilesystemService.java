@@ -28,10 +28,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
@@ -87,7 +90,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	@Override
-	public void createOrUpdateScriptFile(ScmRepository scm, Collection<ScriptedTestCase> testCases) {
+	public void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases) {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("committing {} files to repository '{}'", testCases.size(), scm.getName());
 		}
@@ -327,16 +330,32 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	private void printToFile(File dest, TestCase testCase) throws IOException{
-		//TODO: strategy is not necessary
-		ScriptToFileStrategy strategy = strategyFor(TestCaseKind.GHERKIN);
-		String content = strategy.getWritableFileContent(testCase);
+		Wrapped<String> content = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot print STANDARD test case to file");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				content.setValue(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase.getId()));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				ScriptToFileStrategy strategy = strategyFor(TestCaseKind.GHERKIN);
+				content.setValue(strategy.getWritableFileContent(scriptedTestCase));
+			}
+		};
+		testCase.accept(visitor);
 
 		try {
 			// try first with UTF-8
-			FileUtils.write(dest, content, Charset.forName("UTF-8"));
+			FileUtils.write(dest, content.getValue(), Charset.forName("UTF-8"));
 		} catch (UnsupportedCharsetException ex) {
 			// try again with default charset
-			FileUtils.write(dest, content);
+			FileUtils.write(dest, content.getValue());
 		}
 
 	}

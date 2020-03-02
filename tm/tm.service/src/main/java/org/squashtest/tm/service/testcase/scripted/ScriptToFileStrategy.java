@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -46,7 +48,7 @@ public enum ScriptToFileStrategy {
 
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
-			if (! canHandle(testCase)){
+			if (! canHandleScripted(testCase)){
 				throw new IllegalArgumentException("This strategy can only handle scripted test cases.");
 			}
 
@@ -70,13 +72,13 @@ public enum ScriptToFileStrategy {
 
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
-			if (TestCaseKind.KEYWORD.equals(testCase.getKind())){
-				throw new IllegalArgumentException("This strategy handles Keyword test cases, but current test case is of kind "+testCase.getKind());
+			if (! canHandleKeyword(testCase)){
+				throw new IllegalArgumentException("This strategy can only handle keyword test cases.");
 			}
 
-			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+			KeywordTestCase keywordTestCase = (KeywordTestCase) testCase;
 
-			return extender.computeScriptWithAppendedMetadata();
+			throw new UnsupportedOperationException("To be updated");
 		}
 	};
 
@@ -101,7 +103,7 @@ public enum ScriptToFileStrategy {
 		ScriptToFileStrategy strategy = null;
 		switch(kind){
 			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
-			case KEYWORD: strategy = GHERKIN_STRATEGY; break;
+			case KEYWORD: strategy = KEYWORD_STRATEGY; break;
 			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;
@@ -143,17 +145,27 @@ public enum ScriptToFileStrategy {
 
 
 	/**
-	 * Returns whether this strategy can handle that test case (ie, the test case
-	 * is a scripted test case and corresponds to the scripting language).
-	 * Is equivalent to (this == ScriptToFileStrategy.strategyFor(testCase))
+	 * Returns whether this strategy can handle a scripted test case
 	 *
 	 * @param testCase
 	 * @return
 	 */
-	public boolean canHandle(TestCase testCase){
+	public boolean canHandleScripted(TestCase testCase){
 		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
 		testCase.accept(visitor);
 		return visitor.isScripted();
+	}
+
+	/**
+	 * Returns whether this strategy can handle a keyword test case
+	 *
+	 * @param testCase
+	 * @return
+	 */
+	public boolean canHandleKeyword(TestCase testCase){
+		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(visitor);
+		return visitor.isKeyword();
 	}
 
 	/**

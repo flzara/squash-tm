@@ -37,4 +37,11 @@ public class KeywordTestCase extends TestCase {
 	public void accept(TestCaseVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	@Override
+	public KeywordTestCase createCopy() {
+		KeywordTestCase copy = new KeywordTestCase();
+		populateCopiedTestCaseAttributes(copy);
+		return copy;
+	}
 }

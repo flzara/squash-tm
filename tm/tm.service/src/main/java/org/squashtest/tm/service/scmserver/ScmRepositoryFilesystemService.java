@@ -22,7 +22,7 @@ package org.squashtest.tm.service.scmserver;
 
 
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;
 
@@ -40,7 +40,7 @@ public interface ScmRepositoryFilesystemService {
 	 * @param scm The ScmRepository on which the Test Cases will be created/updated
 	 * @param testCases The Collection of Test Cases which script files are to create/update
 	 */
-	void createOrUpdateScriptFile(ScmRepository scm, Collection<ScriptedTestCase> testCases);
+	void createOrUpdateScriptFile(ScmRepository scm, Collection<TestCase> testCases);
 
 	/**
 	 * Check if the ScmRepository working folder exists and create it with all absent parent folders if not.
