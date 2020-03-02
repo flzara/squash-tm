@@ -23,15 +23,12 @@ package org.squashtest.tm.service.internal.testcase;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.exception.ScriptedStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -119,21 +116,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(node, "READ"));
 		}
 
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-			}
+		ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(new ScriptedStepCallException());
 
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-				throw new ScriptedStepCallException();
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				throw new ScriptedStepCallException();
-			}
-		};
 		parentTestCase.accept(testCaseVisitor);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);

@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
@@ -418,22 +419,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	//For a standard test case we do that job directly in model but for scripted test case we can't
 	//the model mustn't have a parser as dependency, and we don't want to hack the original tests case by detaching him from hibernate session and add virtual steps
 	private void createExecutionStepsForScriptedTestCase(Execution execution) {
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-			}
 
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-			}
-
-			@Override
-			public void visit(ScriptedTestCase keywordTestCase) {
-				scriptedTestCaseExecutionHelper.createExecutionStepsForScriptedTestCase(execution);
-			}
-
-
-		};
+		ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
+			scriptedTestCase -> scriptedTestCaseExecutionHelper.createExecutionStepsForScriptedTestCase(execution));
 
 		execution.getReferencedTestCase().accept(testCaseVisitor);
 	}

@@ -23,11 +23,9 @@ package org.squashtest.tm.domain.execution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -77,22 +75,10 @@ public class ScriptedExecutionExtender {
 		TestCase referencedTestCase = execution.getReferencedTestCase();
 
 		Wrapped<ScriptedTestCaseLanguage> script = new Wrapped<>();
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-				throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
-			}
 
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-				throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				script.setValue(scriptedTestCase.getLanguage());
-			}
-		};
+		ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
+			scriptedTestCase -> script.setValue(scriptedTestCase.getLanguage()),
+			new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted."));
 		referencedTestCase.accept(testCaseVisitor);
 		ScriptedTestCaseLanguage theScript = script.getValue();
 		this.language = theScript;

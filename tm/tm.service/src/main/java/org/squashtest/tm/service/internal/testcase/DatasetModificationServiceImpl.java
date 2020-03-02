@@ -24,13 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.ScriptedStepCallException;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
@@ -77,25 +74,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
-			TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-				@Override
-				public void visit(TestCase testCase) {
-				}
-
-				@Override
-				public void visit(KeywordTestCase keywordTestCase) {
-					// No need to make proper error message, because the IHM do not allow parameters on keyword test case.
-					//So if we are here the user is playing with controllers...
-					throw new IllegalArgumentException("Cannot add dataset to keyword test case.");
-				}
-
-				@Override
-				public void visit(ScriptedTestCase scriptedTestCase) {
-					//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
-					//So if we are here the user is playing with controllers...
-					throw new IllegalArgumentException("Cannot add dataset to scripted test case.");
-				}
-			};
+			ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(
+				new IllegalArgumentException("Cannot add dataset outside a standard test case."));
 			testCase.accept(testCaseVisitor);
 
 			dataset.setTestCase(testCase);

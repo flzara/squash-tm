@@ -27,12 +27,16 @@ import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.exception.testcase.ScriptParsingException;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
+import sun.font.Script;
+
+import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
 
@@ -50,30 +54,20 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 	public void populateExecution(Execution execution) {
 		TestCase referencedTestCase = execution.getReferencedTestCase();
 		if(nonNull(referencedTestCase)){
-			TestCaseVisitor testCaseVisitor = new TestCaseVisitor(){
 
-				@Override
-				public void visit(TestCase testCase) {
-					throw new IllegalArgumentException("GherkinTestCaseParser is dedicated to ScriptedTestCase.");
+			Consumer<ScriptedTestCase> consumer = scriptedTestCase -> {
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
 				}
-
-				@Override
-				public void visit(KeywordTestCase keywordTestCase) {
-					throw new IllegalArgumentException("GherkinTestCaseParser is dedicated to ScriptedTestCase.");
-				}
-
-				@Override
-				public void visit(ScriptedTestCase scriptedTestCase) {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
-					}
-					GherkinDocument gherkinDocument = parseToGherkinDocument(scriptedTestCase);
-					stepGenerator.populateExecution(execution, gherkinDocument);
-				}
+				GherkinDocument gherkinDocument = parseToGherkinDocument(scriptedTestCase);
+				stepGenerator.populateExecution(execution, gherkinDocument);
 			};
+
+			ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
+				consumer,
+				new IllegalArgumentException("GherkinTestCaseParser is dedicated to ScriptedTestCase."));
 			referencedTestCase.accept(testCaseVisitor);
 		}
-
 	}
 
 	@Override

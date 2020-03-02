@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.campaign.scripted;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -30,6 +31,7 @@ import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
@@ -45,31 +47,23 @@ public class ScriptedTestCaseExecutionHelper {
 		//guard condition
 		TestCase referencedTestCase = execution.getReferencedTestCase();
 		if(nonNull(referencedTestCase)){
-			TestCaseVisitor testCaseVisitor = new TestCaseVisitor(){
 
-				@Override
-				public void visit(TestCase testCase) {
-					throw new IllegalArgumentException("ScriptedTestCaseExecutionHelper is dedicated to ScriptedTestCase.");
-				}
+			Consumer<ScriptedTestCase> consumer = scriptedTestCase -> {
+				//creating execution extender
+				execution.createScriptedExtender();
 
-				@Override
-				public void visit(KeywordTestCase keywordTestCase) {
-					throw new IllegalArgumentException("ScriptedTestCaseExecutionHelper is dedicated to ScriptedTestCase.");
-				}
+				//now we must do the step creation and everything that depend on script
+				//first we retrieve the good parser
+				ScriptedTestCaseParser testCaseParser = parserFactory.apply(scriptedTestCase);
 
-				@Override
-				public void visit(ScriptedTestCase scriptedTestCase) {
-					//creating execution extender
-					execution.createScriptedExtender();
-
-					//now we must do the step creation and everything that depend on script
-					//first we retrieve the good parser
-					ScriptedTestCaseParser testCaseParser = parserFactory.apply(scriptedTestCase);
-
-					//and we delegate to the parser
-					testCaseParser.populateExecution(execution);
-				}
+				//and we delegate to the parser
+				testCaseParser.populateExecution(execution);
 			};
+			ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
+				consumer,
+				new IllegalArgumentException("ScriptedTestCaseExecutionHelper is dedicated to ScriptedTestCase.")
+			);
+
 			referencedTestCase.accept(testCaseVisitor);
 		}
 
