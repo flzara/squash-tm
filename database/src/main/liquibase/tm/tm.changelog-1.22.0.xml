@@ -135,4 +135,9 @@
     <dropColumn tableName="TEST_CASE" columnName="TC_KIND" />
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-language-column-in-scripted-tc" author="jlor">
+    <comment>LANGUAGE is no longer necessary for ScriptedTestCase, as it is always GHERKIN.</comment>
+    <dropColumn tableName="SCRIPTED_TEST_CASE" columnName="LANGUAGE" />
+  </changeSet>
+
 </databaseChangeLog>

@@ -77,11 +77,10 @@ public class ScriptedExecutionExtender {
 		Wrapped<ScriptedTestCaseLanguage> script = new Wrapped<>();
 
 		ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
-			scriptedTestCase -> script.setValue(scriptedTestCase.getLanguage()),
+			scriptedTestCase -> {}, // NOOP
 			new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted."));
 		referencedTestCase.accept(testCaseVisitor);
-		ScriptedTestCaseLanguage theScript = script.getValue();
-		this.language = theScript;
+		this.language = ScriptedTestCaseLanguage.GHERKIN;
 	}
 
 	public Long getId() {

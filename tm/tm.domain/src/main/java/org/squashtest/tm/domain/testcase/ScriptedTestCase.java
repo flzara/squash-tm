@@ -49,10 +49,6 @@ public class ScriptedTestCase extends TestCase {
 
 	public static final String LANGUAGE_TAG = "# language: ";
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ScriptedTestCaseLanguage language = ScriptedTestCaseLanguage.GHERKIN;
-
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	private String script = "";
@@ -104,7 +100,6 @@ public class ScriptedTestCase extends TestCase {
 	public ScriptedTestCase createCopy() {
 		ScriptedTestCase copy = new ScriptedTestCase();
 		populateCopiedTestCaseAttributes(copy);
-		copy.setLanguage(this.getLanguage());
 		copy.setScript(this.getScript());
 		return copy;
 	}
@@ -128,23 +123,13 @@ public class ScriptedTestCase extends TestCase {
 	 * Creates a scripted test case which non-collection, non-primitive type fields are set to null.
 	 *
 	 * @return
-	 * @param language
 	 * @param script
 	 */
-	public static ScriptedTestCase createBlankScriptedTestCase(ScriptedTestCaseLanguage language, String script) {
+	public static ScriptedTestCase createBlankScriptedTestCase(String script) {
 		ScriptedTestCase res = new ScriptedTestCase();
 		setAttributesAsNullForBlankTestCase(res);
-		res.language = language;
 		res.script = script;
 		return res;
-	}
-
-	public ScriptedTestCaseLanguage getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(ScriptedTestCaseLanguage language) {
-		this.language = language;
 	}
 
 	public String getScript() {

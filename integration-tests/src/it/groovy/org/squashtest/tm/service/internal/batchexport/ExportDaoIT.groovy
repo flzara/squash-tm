@@ -25,7 +25,6 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.core.foundation.lang.DateUtils
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseKind
@@ -36,7 +35,6 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
-import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
 import static org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel
 
@@ -80,12 +78,9 @@ class ExportDaoIT extends DbunitServiceSpecification{
 		then :
 		testCases.size() == 2
 		standardTestCaseModel.getTestCaseKind() == STANDARD
-		standardTestCaseModel.getScriptedTestCaseLanguage() == null
 
 		scriptedTestCaseModel.getTestCaseKind() == org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
-		scriptedTestCaseModel.getScriptedTestCaseLanguage() == GHERKIN
 		scriptedTestCaseModel.getTcScript() == "Feature: three cucumbers and two tomatoes"
-
 	}
 
 
@@ -181,7 +176,6 @@ class ExportDaoIT extends DbunitServiceSpecification{
 			tcModel.getNbReq() == 2
 			tcModel.getNbIterations() == 1
 			tcModel.getNbCaller() == 2
-			tcModel.getScriptedTestCaseLanguage() == null
 			tcModel.getTcScript() == null
 			tcModel.getTestCaseKind() == TestCaseKind.STANDARD
 
@@ -215,7 +209,6 @@ class ExportDaoIT extends DbunitServiceSpecification{
 			tcModel2.getNbReq() == 0
 			tcModel2.getNbIterations() == 0
 			tcModel2.getNbCaller() == 0
-			tcModel2.getScriptedTestCaseLanguage() == ScriptedTestCaseLanguage.GHERKIN
 			tcModel2.getTcScript() == "This is Gherkin script."
 			tcModel2.getTestCaseKind() == TestCaseKind.GHERKIN
 
@@ -249,7 +242,6 @@ class ExportDaoIT extends DbunitServiceSpecification{
 		tcModel3.getNbReq() == 0
 		tcModel3.getNbIterations() == 0
 		tcModel3.getNbCaller() == 0
-		tcModel3.getScriptedTestCaseLanguage() == null
 		tcModel3.getTcScript() == null
 		tcModel3.getTestCaseKind() == TestCaseKind.KEYWORD
 	}
@@ -296,7 +288,6 @@ class ExportDaoIT extends DbunitServiceSpecification{
 		tcModel.getNbReq() == 0
 		tcModel.getNbIterations() == 0
 		tcModel.getNbCaller() == 0
-		tcModel.getScriptedTestCaseLanguage() == null
 		tcModel.getTcScript() == null
 		tcModel.getTestCaseKind() == TestCaseKind.KEYWORD
 	}

@@ -89,7 +89,7 @@
                           CREATED_BY="DBU" CREATED_ON="2010-02-01" ATTACHMENT_LIST_ID="-9"/>
   <TEST_CASE TCLN_ID="-3" VERSION="1"
              PREREQUISITE="test" UUID="2d387bac-dc8b-4648-94b0-2fa1f281f32c"/>
-  <SCRIPTED_TEST_CASE TCLN_ID="-3" LANGUAGE="GHERKIN" SCRIPT="Feature: gherk 2&#xD;Scenario: Check that the machine is available.&#xD;Given the machine is operating.&#xD;When I use my badge.&#xD;Then I can check my balance."/>
+  <SCRIPTED_TEST_CASE TCLN_ID="-3" SCRIPT="Feature: gherk 2&#xD;Scenario: Check that the machine is available.&#xD;Given the machine is operating.&#xD;When I use my badge.&#xD;Then I can check my balance."/>
 
 
 	<!-- TEST PLAN OF ITERATION -->

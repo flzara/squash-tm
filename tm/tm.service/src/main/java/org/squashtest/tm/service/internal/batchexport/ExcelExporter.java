@@ -316,7 +316,6 @@ class ExcelExporter {
 		r.createCell(cIdx++).setCellValue(testCaseKind.name());
 
 		if (testCaseKind.isScripted()) {
-			r.createCell(cIdx++).setCellValue(tcm.getScriptedTestCaseLanguage().name());
 			r.createCell(cIdx++).setCellValue(tcm.getTcScript());
 		} else {
 			r.createCell(cIdx++).setCellValue("");

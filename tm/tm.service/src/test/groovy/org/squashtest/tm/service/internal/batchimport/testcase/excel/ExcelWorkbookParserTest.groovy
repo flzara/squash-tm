@@ -287,10 +287,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 		ScriptedTestCase testCase = instruction.getTestCase()
 
-		testCase.language.equals(ScriptedTestCaseLanguage.GHERKIN)
 		testCase.script.equals("Feature: Make something")
-
-
 	}
 
 	def "should create a keyword test case"() {

@@ -213,7 +213,7 @@ public class ExportDao {
 			PROJECT.PROJECT_ID, PROJECT.NAME,
 			TEST_CASE_NATURE.LABEL, TEST_CASE_NATURE.CODE,
 			TEST_CASE_TYPE.LABEL, TEST_CASE_TYPE.CODE,
-			SCRIPTED_TEST_CASE.LANGUAGE, SCRIPTED_TEST_CASE.SCRIPT,
+			SCRIPTED_TEST_CASE.TCLN_ID, SCRIPTED_TEST_CASE.SCRIPT,
 			KEYWORD_TEST_CASE.TCLN_ID,
 			groupConcatDistinct(MILESTONE.LABEL).separator("|").as("milestones"),
 			countDistinct(ATTACHMENT).as("countAttachments"),
@@ -243,8 +243,7 @@ public class ExportDao {
 		.groupBy(TEST_CASE.TCLN_ID, TEST_CASE_LIBRARY_NODE.TCLN_ID, PROJECT.PROJECT_ID,
 			TEST_CASE_NATURE.ITEM_ID, TEST_CASE_TYPE.ITEM_ID, TCLN_RELATIONSHIP.CONTENT_ORDER,
 			TEST_CASE_FOLDER.TCLN_ID, ATTACHMENT_LIST.ATTACHMENT_LIST_ID,
-			SCRIPTED_TEST_CASE.LANGUAGE, SCRIPTED_TEST_CASE.SCRIPT,
-			KEYWORD_TEST_CASE.TCLN_ID)
+			SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID)
 		.fetch()
 		.forEach(record -> {
 			TestCaseModel model = createTestCaseModelFromQueryResult(record, record.get(TCLN_RELATIONSHIP.CONTENT_ORDER));
@@ -267,7 +266,7 @@ public class ExportDao {
 			PROJECT.PROJECT_ID, PROJECT.NAME,
 			TEST_CASE_NATURE.LABEL, TEST_CASE_NATURE.CODE,
 			TEST_CASE_TYPE.LABEL, TEST_CASE_TYPE.CODE,
-			SCRIPTED_TEST_CASE.LANGUAGE, SCRIPTED_TEST_CASE.SCRIPT,
+			SCRIPTED_TEST_CASE.TCLN_ID, SCRIPTED_TEST_CASE.SCRIPT,
 			KEYWORD_TEST_CASE.TCLN_ID,
 			groupConcatDistinct(MILESTONE.LABEL).separator("|").as("milestones"),
 			countDistinct(ATTACHMENT).as("countAttachments"),
@@ -296,8 +295,7 @@ public class ExportDao {
 			.groupBy(TEST_CASE.TCLN_ID, TEST_CASE_LIBRARY_NODE.TCLN_ID, PROJECT.PROJECT_ID,
 				TEST_CASE_NATURE.ITEM_ID, TEST_CASE_TYPE.ITEM_ID, TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER,
 				ATTACHMENT_LIST.ATTACHMENT_LIST_ID,
-				SCRIPTED_TEST_CASE.LANGUAGE, SCRIPTED_TEST_CASE.SCRIPT,
-				KEYWORD_TEST_CASE.TCLN_ID)
+				SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID)
 			.fetch()
 			.forEach(record -> {
 				TestCaseModel model = createTestCaseModelFromQueryResult(record, record.get(TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER));
@@ -320,18 +318,16 @@ public class ExportDao {
 			((Integer) record.get("countReqCoverages")).longValue(), ((Integer) record.get("countCaller")).longValue(), Long.valueOf(record.get("countAttachments").toString()),
 			((Integer) record.get("countIteration")).longValue(), record.get(TEST_CASE_LIBRARY_NODE.CREATED_ON), record.get(TEST_CASE_LIBRARY_NODE.CREATED_BY),
 			record.get(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_ON), record.get(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY), null,
-			null, null);
+			null);
 
-		String scriptedLanguage = record.get(SCRIPTED_TEST_CASE.LANGUAGE);
 		String script = record.get(SCRIPTED_TEST_CASE.SCRIPT);
 
 		Long keywordTCLNId = record.get(KEYWORD_TEST_CASE.TCLN_ID);
-		if (scriptedLanguage != null && !scriptedLanguage.isEmpty()) {
-			model.setScriptedTestCaseLanguage(ScriptedTestCaseLanguage.GHERKIN);
+		Long scriptedTCLNId = record.get(SCRIPTED_TEST_CASE.TCLN_ID);
+
+		if (scriptedTCLNId != null) {
 			model.setTestCaseKind(TestCaseKind.GHERKIN);
-			if (script != null && !script.isEmpty()) {
-				model.setTcScript(script);
-			}
+			model.setTcScript(script);
 		} else if (keywordTCLNId != null) {
 			model.setTestCaseKind(TestCaseKind.KEYWORD);
 		} else {

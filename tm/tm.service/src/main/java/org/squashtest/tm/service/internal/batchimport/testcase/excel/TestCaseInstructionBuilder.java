@@ -73,9 +73,8 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	}
 
 	private ScriptedTestCase getBlankScriptedTestCase(Row row) {
-		ScriptedTestCaseLanguage language = getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE));
 		String script = getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPT));
-		return ScriptedTestCase.createBlankScriptedTestCase(language, script);
+		return ScriptedTestCase.createBlankScriptedTestCase(script);
 	}
 
 	/**
