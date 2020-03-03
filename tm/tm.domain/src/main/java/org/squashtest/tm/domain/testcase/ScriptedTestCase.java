@@ -63,20 +63,6 @@ public class ScriptedTestCase extends TestCase {
 		populateInitialScript(LocaleContextHolder.getLocale().getLanguage());
 	}
 
-	//	public ScriptedTestCase(String scriptLanguage, String locale) {
-//		super();
-//		if (StringUtils.isNotBlank(scriptLanguage)) {
-//			ScriptedTestCaseLanguage scriptedTestCaseLanguage = EnumUtils.getEnum(ScriptedTestCaseLanguage.class, scriptLanguage);
-//			if (scriptedTestCaseLanguage == null) {
-//				throw new IllegalArgumentException("Unknown scriptLanguage of scripted test case : " + scriptLanguage);
-//			}
-//			this.language = scriptedTestCaseLanguage;
-//			this.populateInitialScript(scriptLanguage, locale);
-//		} else {
-//			throw new IllegalArgumentException("Scripted test case MUST have a not null scriptLanguage");
-//		}
-//	}
-
 	//For SquashTM 1.18 this is for Gherkin only for now
 	//if sometime another script language need to be handled, you will probably need to subclass with a discriminator column...
 	private void populateInitialScript(String locale) {

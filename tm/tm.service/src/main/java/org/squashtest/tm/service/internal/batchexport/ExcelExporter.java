@@ -161,7 +161,6 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
-		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
 		TestCaseSheetColumn.TC_SCRIPT
 	};
 
