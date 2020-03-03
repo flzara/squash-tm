@@ -102,11 +102,11 @@ public class ScriptedTestCase extends TestCase {
 
 	@Override
 	public ScriptedTestCase createCopy() {
-		throw new UnsupportedOperationException();
-//		ScriptedTestCaseExtender copy = new ScriptedTestCaseExtender();
-//		copy.setScript(this.getScript());
-//		copy.setLanguage(this.getLanguage());
-//		return copy;
+		ScriptedTestCase copy = new ScriptedTestCase();
+		populateCopiedTestCaseAttributes(copy);
+		copy.setLanguage(this.getLanguage());
+		copy.setScript(this.getScript());
+		return copy;
 	}
 
 	/**

@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.bdd.ActionWord
-import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.exception.UnknownEntityException
@@ -247,26 +246,6 @@ class TestCaseTest extends Specification {
 		copy.steps[0].action == sourceStep.action
 		copy.steps[0].expectedResult == sourceStep.expectedResult
 		!copy.steps[0].is(sourceStep)
-	}
-
-	def "copy of a test case should have the same keyword steps"() {
-		given:
-		KeywordTestCase source = new KeywordTestCase()
-		source.setName("source")
-		source.notifyAssociatedWithProject(mockFactory.mockProject())
-		ActionWord actionWord = new ActionWord("Harry Potter")
-		KeywordTestStep sourceStep = new KeywordTestStep(Keyword.AND, actionWord)
-		source.steps << sourceStep
-
-		when:
-		def copy = source.createCopy()
-
-		then:
-		copy.steps.size() == 1
-		KeywordTestStep copiedStep = copy.steps[0]
-		copiedStep.keyword == sourceStep.keyword
-		copiedStep.actionWord == sourceStep.actionWord
-		!copiedStep.is(sourceStep)
 	}
 
 	def "should remove automated script link"(){

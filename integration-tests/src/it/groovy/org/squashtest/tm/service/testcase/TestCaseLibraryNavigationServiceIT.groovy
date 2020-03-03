@@ -168,7 +168,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
     }
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste tc with keyword test steps.xml")
-	def "should copy paste tc with with keyword test steps"() {
+	def "should copy paste tc with keyword test steps"() {
 		given: "a test case with parameters and dataset"
 		Long[] sourceIds = [-12L]
 		Long destinationId = -2L
@@ -201,6 +201,44 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		def thirdStepActionWord = thirdStep.getActionWord()
 		thirdStepActionWord.getId() == -3L
 		thirdStepActionWord.getWord() == "HERMIONE"
+	}
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")
+	def "should copy paste scripted tc with its script in a folder"() {
+		given: "a test case with parameters and dataset"
+		Long[] sourceIds = [-12L]
+		Long destinationId = -2L
+
+		when: "this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then: "the test case is copied"
+		nodes.get(0) instanceof ScriptedTestCase
+		ScriptedTestCase testCaseCopy = (ScriptedTestCase) nodes.get(0)
+		and: "it has copies of parameters"
+		def testSteps = testCaseCopy.getSteps()
+		testSteps.size() == 0
+		and: "the script has been copied"
+		testCaseCopy.getScript() == "The script of the scripted test case."
+	}
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")
+	def "should copy paste scripted tc with its script in a library"() {
+		given: "a test case with parameters and dataset"
+		Long[] sourceIds = [-12L]
+		Long destinationId = -1L
+
+		when: "this test case is copied into a library"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToLibrary(destinationId, sourceIds)
+
+		then: "the test case is copied"
+		nodes.get(0) instanceof ScriptedTestCase
+		ScriptedTestCase testCaseCopy = (ScriptedTestCase) nodes.get(0)
+		and: "it has copies of parameters"
+		def testSteps = testCaseCopy.getSteps()
+		testSteps.size() == 0
+		and: "the script has been copied"
+		testCaseCopy.getScript() == "The script of the scripted test case."
 	}
 
     @DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
