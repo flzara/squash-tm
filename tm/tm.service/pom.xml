@@ -162,17 +162,6 @@
     /LOGGING
     ++++++++++++++++++++++++++++-->
 
-    <!--
-
-    		TODO : usage deprecated as of TM 1.17. If no bug related to this
-    		library was reported when 1.18 is release, remove this definitely.
-
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>ooxml-schemas</artifactId>
-    </dependency>
-     -->
-
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
