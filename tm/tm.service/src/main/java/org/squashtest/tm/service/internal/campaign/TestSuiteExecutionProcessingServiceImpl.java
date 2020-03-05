@@ -47,8 +47,8 @@ public class TestSuiteExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Inject
 	private TestSuiteDao suiteDao;
 
-	TestSuiteExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory) {
-		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory);
+	TestSuiteExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService) {
+		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService);
 	}
 
 	/**

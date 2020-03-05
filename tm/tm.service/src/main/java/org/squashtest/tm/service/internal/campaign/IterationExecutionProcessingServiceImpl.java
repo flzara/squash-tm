@@ -47,8 +47,8 @@ public class IterationExecutionProcessingServiceImpl extends AbstractTestPlanExe
 	@Inject
 	private IterationDao iterationDao;
 
-	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory) {
-		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory);
+	IterationExecutionProcessingServiceImpl(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager, UserAccountService userService, PermissionEvaluationService permissionEvaluationService) {
+		super(campaignDeletionHandler, testPlanManager, userService, permissionEvaluationService);
 	}
 
 	/**

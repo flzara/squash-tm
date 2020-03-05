@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -63,18 +64,14 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 
 	private PermissionEvaluationService permissionEvaluationService;
 
-	@Named("scriptedTestCaseParserFactory")
-	Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory;
-
 	// Injection is made through constructor to allow simple mock injection in unit test.
 	@Inject
 	AbstractTestPlanExecutionProcessingService(CampaignNodeDeletionHandler campaignDeletionHandler, IterationTestPlanManager testPlanManager,
-											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService, Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory){
+											   UserAccountService userService, PermissionEvaluationService permissionEvaluationService){
 		this.campaignDeletionHandler = campaignDeletionHandler;
 		this.testPlanManager = testPlanManager;
 		this.userService = userService;
 		this.permissionEvaluationService = permissionEvaluationService;
-		this.parserFactory = parserFactory;
 	}
 
 	@Override
@@ -214,7 +211,7 @@ public abstract class AbstractTestPlanExecutionProcessingService<E extends TestP
 	}
 
 	private boolean hasScenarios(ScriptedTestCase scriptedTestCase){
-		GherkinTestCaseParser gherkinParser = (GherkinTestCaseParser) parserFactory.apply(scriptedTestCase);
+		GherkinTestCaseParser gherkinParser = new GherkinTestCaseParser(new GherkinStepGenerator());
 		GherkinDocument gherkinScript = gherkinParser.parseToGherkinDocument(scriptedTestCase);
 		return gherkinScript != null && gherkinScript.getFeature() != null && !gherkinScript.getFeature().getChildren().isEmpty()
 			&& gherkinScript.getFeature().getChildren().stream().anyMatch( definition -> !(definition instanceof Background));

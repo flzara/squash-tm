@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 
@@ -43,10 +45,6 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 	@Inject
 	private ScriptedTestCaseDao scriptedTestCaseDao;
 
-	@Inject
-	@Named("scriptedTestCaseParserFactory")
-	private Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory;
-
 	@Override
 	public void updateTcScript(Long testCaseId, String script) {
 		ScriptedTestCase scriptedTestCase = scriptedTestCaseDao.getOne(testCaseId);
@@ -61,7 +59,7 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 	public void validateScript(String script) {
 		ScriptedTestCase scriptedTestCase = new ScriptedTestCase();
 		scriptedTestCase.setScript(script);
-		ScriptedTestCaseParser parser = parserFactory.apply(scriptedTestCase);
+		ScriptedTestCaseParser parser = new GherkinTestCaseParser(new GherkinStepGenerator());
 		parser.validateScript(scriptedTestCase);
 	}
 }

@@ -51,10 +51,9 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	UserAccountService userService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	CampaignNodeDeletionHandler campaignNodeDeletionHandler = Mock()
-	Function<ScriptedTestCase, ScriptedTestCaseParser> parserFactory = Mock()
 
 	def setup() {
-		manager = new TestSuiteExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory)
+		manager = new TestSuiteExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService)
 		manager.suiteDao = testSuiteDao
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -181,20 +180,10 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 
 		and:
 		ScriptedTestCase testCase = new ScriptedTestCase()
-		testCase.setScript("script")
-
-		and:
-		GherkinTestCaseParser parser = Mock()
-		GherkinDocument document = Mock()
-		Feature feature = Mock()
-		Scenario scenario = Mock()
-		List<ScenarioDefinition> scenarios = [scenario]
-		feature.getChildren() >> scenarios
-		document.getFeature() >> feature
-		parser.parseToGherkinDocument(testCase) >> document
-
-		parserFactory.apply(testCase) >> parser
-
+		testCase.setScript("# language: fr\n" +
+			"Fonctionnalité: migration\n" +
+			"  \n" +
+			"  Scénario: Vérifier les produits disponibles.")
 
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
@@ -221,20 +210,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 
 		and:
 		ScriptedTestCase testCase = new ScriptedTestCase()
-		testCase.setScript("script")
-
-		and:
-		GherkinTestCaseParser parser = Mock()
-		GherkinDocument document = Mock()
-		Feature feature = Mock()
-		Background background = Mock()
-		List<ScenarioDefinition> scenarios = [background]
-		feature.getChildren() >> scenarios
-		document.getFeature() >> feature
-		parser.parseToGherkinDocument(testCase) >> document
-
-		parserFactory.apply(testCase) >> parser
-
+		testCase.setScript("")
 
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
