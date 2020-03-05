@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
@@ -57,7 +58,7 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 	}
 
 	@Override
-	public void validateScript(Long testCaseId, String script, ScriptedTestCaseLanguage language) {
+	public void validateScript(String script) {
 		ScriptedTestCase scriptedTestCase = new ScriptedTestCase();
 		scriptedTestCase.setScript(script);
 		ScriptedTestCaseParser parser = parserFactory.apply(scriptedTestCase);

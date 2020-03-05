@@ -123,8 +123,8 @@ define([], function(){
 		'testcases.base' :					root + '/test-cases',
 		'testcases.info' :					root + '/test-cases/{\\d+}/info',
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
-		'testcases.scripted' : root + '/test-cases/{\\d+}/scripted',
-		'testcases.scripted.validate' : root + '/test-cases/{\\d+}/scripted/validate',
+		'testcases.scripted' : root + '/scripted-test-cases/{\\d+}',
+		'testcases.scripted.validate' : root + '/scripted-test-cases/validate',
 
 		'teststeps.info' :					root + '/test-steps/{\\d+}',
 		'teststeps.fromExec' :              root + '/test-steps/{\\d+}/from-exec?optimized={true|false}',

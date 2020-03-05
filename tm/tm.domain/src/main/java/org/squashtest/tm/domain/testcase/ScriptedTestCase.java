@@ -49,6 +49,12 @@ public class ScriptedTestCase extends TestCase {
 
 	public static final String LANGUAGE_TAG = "# language: ";
 
+	public static final String FEATURE_EXTENSION = "feature";
+
+	private static final String ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-]";
+
+	public static final int FILENAME_MAX_SIZE = 100;
+
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	private String script = "";
@@ -138,5 +144,33 @@ public class ScriptedTestCase extends TestCase {
 	@Override
 	public void accept(TestCaseVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	// -- Transmission Methods --
+
+	public String createFilename(){
+		String normalized = baseNameFromTestCase();
+
+		// make sure that the final filename will not exceed the MAX_SIZE limit once the extension is added
+		String caped = StringUtils.substring(normalized, 0, FILENAME_MAX_SIZE - (FEATURE_EXTENSION.length() +1));
+
+		return caped + "." + FEATURE_EXTENSION;
+	}
+
+	private String baseNameFromTestCase() {
+		String name = this.getName();
+		Long id = this.getId();
+		String deAccented = StringUtils.stripAccents(name);
+		String normalized = deAccented.replaceAll(ILLEGAL_PATTERN, "_");
+
+		return id + "_" + normalized;
+	}
+
+	public String buildFilenameMatchPattern(){
+		return String.format("%d(_.*)?\\.%s", getId(), FEATURE_EXTENSION);
+	}
+
+	public String createBackupFileName() {
+		return getId() + "." + FEATURE_EXTENSION;
 	}
 }

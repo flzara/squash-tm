@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.service.testcase.scripted;
 
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-
 public interface ScriptedTestCaseService {
 	void updateTcScript(Long testCaseId, String script);
 
-	void validateScript(Long testCaseId, String script, ScriptedTestCaseLanguage language);
+	void validateScript(String script);
 }

@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -54,6 +55,7 @@ import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -91,6 +93,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private KeywordTestCaseService keywordTestCaseService;
+
+	@Inject
+	private KeywordTestCaseFinder keywordTestCaseFinder;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
@@ -219,17 +224,17 @@ public class TestCaseTestStepsController {
 	}
 
 	@RequestMapping(value = "/keyword-test-step-panel")
-	public String getKeywordTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
-		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<TestStep> steps = testCase.getSteps();
-		model.addAttribute(TEST_CASE, testCase);
+	public String getKeywsordTestStepPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(testCaseId);
+		List<TestStep> steps = keywordTestCase.getSteps();
+		model.addAttribute(TEST_CASE, keywordTestCase);
 
 		//create keyword test step table model
 		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordList", Keyword.values());
-		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(testCaseId));
+		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 

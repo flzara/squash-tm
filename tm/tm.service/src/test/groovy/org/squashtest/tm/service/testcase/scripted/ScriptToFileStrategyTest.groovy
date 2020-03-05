@@ -24,27 +24,26 @@ import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
-import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.GHERKIN_STRATEGY
+import static org.squashtest.tm.domain.testcase.TestCaseKind.KEYWORD
+import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.KEYWORD_STRATEGY
 
 class ScriptToFileStrategyTest extends Specification{
 
-
 	@Unroll("should select strategy '#strategy' for test case kind '#kind'")
-	def "should select strategy"(){
+	def "should select strategy"() {
 		expect :
-			ScriptToFileStrategy.strategyFor(kind) == strategy
+		ScriptToFileStrategy.strategyFor(kind) == strategy
 
 		where :
 		kind		|	strategy
-		GHERKIN		|	GHERKIN_STRATEGY
+		KEYWORD		|	KEYWORD_STRATEGY
 	}
 
 	@Unroll("should turn '#id:#name' into '#result'")
-	def "should create a gherkin filename for a test case"(){
+	def "should create a gherkin filename for a test case"() {
 
 		expect :
-			GHERKIN_STRATEGY.createFilenameFor(testcase) == result
+		KEYWORD_STRATEGY.createFilenameFor(testcase) == result
 
 		where :
 		id 		| name										|	result									| testcase
@@ -54,14 +53,13 @@ class ScriptToFileStrategyTest extends Specification{
 
 	}
 
-
-	def "should create a gherkin filename for a quite long test case name"(){
+	def "should create a gherkin filename for a quite long test case name"() {
 
 		given :
 		def testcase = tc(815, "Oh my God this test case has such a long name that I don't think it will fit under the filename length limit")
 
 		when :
-		def filename = GHERKIN_STRATEGY.createFilenameFor(testcase)
+		def filename = KEYWORD_STRATEGY.createFilenameFor(testcase)
 
 		then :
 		filename.length() == ScriptToFileStrategy.FILENAME_MAX_SIZE
@@ -69,35 +67,30 @@ class ScriptToFileStrategyTest extends Specification{
 
 	}
 
-
-	def "should create the shortest gherkin filename possible"(){
+	def "should create the shortest gherkin filename possible"() {
 
 		given :
 		def testcase = tc(815, 256.times {"A"}+"RRGHH!")
 
 		when :
-		def filename = GHERKIN_STRATEGY.backupFilenameFor(testcase)
+		def filename = KEYWORD_STRATEGY.backupFilenameFor(testcase)
 
 		then:
 		filename == "815.feature"
 	}
 
-
-	def "should build a pattern that will locate the filename that corresponds to a scripted test case"(){
+	def "should build a pattern that will locate the filename that corresponds to a scripted test case"() {
 
 		expect :
-		GHERKIN_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
+		KEYWORD_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
 
 	}
 
-
-
-	def tc(id, name){
+	def tc(id, name) {
 		Mock(TestCase){
 			getId() >> id
 			getName() >> name
 		}
 	}
-
 
 }

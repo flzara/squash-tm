@@ -18,16 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.bdd;
+package org.squashtest.tm.service.internal.testcase.bdd
 
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-public interface KeywordTestCaseService {
-	String writeScriptFromTestCase(KeywordTestCase keywordTestCase);
+import org.squashtest.tm.service.internal.testcase.scripted.BDDTestCaseEventListener
 
-	String createFileName(KeywordTestCase keywordTestCase);
+import javax.inject.Inject
 
-	String createBackupFileName(KeywordTestCase keywordTestCase);
+@UnitilsSupport
+@Transactional
+@DataSet
+class BDDTestCaseEventListenerIT extends DbunitServiceSpecification{
 
-	String buildFilenameMatchPattern(KeywordTestCase keywordTestCase);
+	@Inject
+	BDDTestCaseEventListener listener
+
+	def "should find Test case candidates for Auto Bind"() {
+		when:
+		def result = listener.findTCCandidatesForAutoBind([-1L, -3L, -4L, -5L, -6L, -7L, -8L])
+
+		then:
+		result != null
+		result.size() == 4
+	}
+
+
 }

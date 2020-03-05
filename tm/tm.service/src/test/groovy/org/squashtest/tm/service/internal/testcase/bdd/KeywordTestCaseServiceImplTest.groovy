@@ -32,22 +32,14 @@ import spock.lang.Specification
 class KeywordTestCaseServiceImplTest extends Specification {
 
 	KeywordTestCaseService keywordTestCaseService = new KeywordTestCaseServiceImpl()
-	TestCaseDao testCaseDao = Mock()
-
-	def setup() {
-		keywordTestCaseService.testCaseDao = testCaseDao
-	}
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
 		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("Disconnection test")
 
-		and:
-		testCaseDao.findById(-4L) >> keywordTestCase
-
 		when:
-		String result = keywordTestCaseService.writeScriptFromTestCase(-4L)
+		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
 		result == "# language: en\nFeature: Disconnection test"
@@ -66,11 +58,8 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		keywordTestCase.addStep(step2)
 		keywordTestCase.addStep(step3)
 
-		and:
-		testCaseDao.findById(-4L) >> keywordTestCase
-
 		when:
-		String result = keywordTestCaseService.writeScriptFromTestCase(-4L)
+		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
 		result ==
@@ -81,5 +70,59 @@ Feature: Disconnection test
 		GIVEN I am connécted
 		WHEN I sign oùt
 		THEN I am dîsconnect&d"""
+	}
+
+	def "Should create a File name for a Keyword Test case"(){
+		given:
+		def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
+
+		when:
+		def result = keywordTestCaseService.createFileName(keywordTestCase)
+
+		then:
+		result == "777_Test_de_Deconnexion.feature"
+	}
+
+	def "Should create a backup File name for a Keyword Test case"(){
+		given:
+		def keywordTestCase = new KeywordTCMock(777L)
+
+		when:
+		def result = keywordTestCaseService.createBackupFileName(keywordTestCase)
+
+		then:
+		result == "777.feature"
+	}
+
+	def "Should build Pattern for a Keyword Test case"(){
+		given:
+		def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
+
+		when:
+		def result = keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase)
+
+		then:
+		result == "777(_.*)?\\.feature"
+	}
+
+	class KeywordTCMock extends KeywordTestCase {
+		private Long id
+
+		KeywordTCMock(Long id) {
+			this.id = id
+		}
+
+		KeywordTCMock(Long id, String name) {
+			this.setName(name)
+			this.id = id
+		}
+
+		Long getId() {
+			return id
+		}
+
+		void setId(Long id) {
+			this.id = id
+		}
 	}
 }

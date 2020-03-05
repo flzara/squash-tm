@@ -48,4 +48,11 @@ public interface ScmRepositoryFilesystemService {
 	 */
 	void createWorkingFolderIfAbsent(ScmRepository scm);
 
+	/**
+	 * Create a Regex expression indicating the test case's name pattern to retrieve it in file system.
+	 * @param testCase the searched test case
+	 * @return the test case's pattern
+	 */
+	String createTestCasePatternForResearch(TestCase testCase);
+
 }

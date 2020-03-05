@@ -24,6 +24,7 @@ package org.squashtest.tm.domain.testcase
 import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class ScriptedTestCaseTest extends Specification {
 
@@ -32,7 +33,6 @@ class ScriptedTestCaseTest extends Specification {
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
 	}
-
 	def "copy of a scripted test case should have the same script"() {
 		given:
 		ScriptedTestCase source = new ScriptedTestCase()
@@ -48,5 +48,49 @@ class ScriptedTestCaseTest extends Specification {
 		copy.script == script
 	}
 
+	@Unroll("should turn '#id:#name' into '#result'")
+	def "should create a gherkin filename for a test case"(){
+		expect :
+		def testcase = new MockTC(id, name)
+		testcase.createFilename() == result
 
+		where :
+		id 		| name										|	result
+		815		| "fetch my data"							|	"815_fetch_my_data.feature"
+		815		| "r\u00E9cup\u00E8re mes donn\u00E9es"		|	"815_recupere_mes_donnees.feature"
+		815		| "r\u00FCckgewinnung der Daten"			|	"815_ruckgewinnung_der_Daten.feature"
+	}
+
+	@Unroll("#backupFilenameFor - should turn '#id:#name' into '#result'")
+	def "should create a gherkin backup filename for a test case"(){
+		expect :
+		new MockTC(47L).createBackupFileName() == "47.feature"
+	}
+
+	def "should build filename match pattern"() {
+		expect:
+		new MockTC(44L, "holaTc").buildFilenameMatchPattern() == "44(_.*)?\\.feature"
+	}
+
+	class MockTC extends ScriptedTestCase{
+		Long overId
+
+		MockTC(Long id) {
+			overId = id
+		}
+
+		MockTC(Long id, String name) {
+			overId = id
+			this.name=name
+		}
+
+		public Long getId() {
+			return overId
+		}
+
+		public void setId(Long newId) {
+			overId=newId
+		}
+
+	}
 }

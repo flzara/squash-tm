@@ -20,14 +20,21 @@
  */
 package org.squashtest.tm.service.testcase.bdd;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
-public interface KeywordTestCaseService {
-	String writeScriptFromTestCase(KeywordTestCase keywordTestCase);
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-	String createFileName(KeywordTestCase keywordTestCase);
-
-	String createBackupFileName(KeywordTestCase keywordTestCase);
-
-	String buildFilenameMatchPattern(KeywordTestCase keywordTestCase);
+@Transactional(readOnly = true)
+@DynamicManager(name="squashtest.tm.service.testcase.bdd.KeywordTestCasFinder", entity = KeywordTestCase.class)
+public interface KeywordTestCaseFinder {
+	/**
+	 * Find KeywordTestCase by id.
+	 * @param keywordTestCaseId
+	 * @return
+	 */
+	@PostAuthorize("hasPermission(returnObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	KeywordTestCase findById(long keywordTestCaseId);
 }

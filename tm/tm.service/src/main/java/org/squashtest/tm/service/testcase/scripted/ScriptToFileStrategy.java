@@ -35,35 +35,7 @@ import org.squashtest.tm.domain.testcase.TestCaseKind;
  */
 public enum ScriptToFileStrategy {
 
-	GHERKIN_STRATEGY(){
-		@Override
-		public TestCaseKind getHandledKind() {
-			return TestCaseKind.GHERKIN;
-		}
-
-		@Override
-		public String getExtension(){
-			return "feature";
-		}
-
-		@Override
-		public String getWritableFileContent(TestCase testCase) {
-			if (! canHandleScripted(testCase)){
-				throw new IllegalArgumentException("This strategy can only handle scripted test cases.");
-			}
-
-			//NOSONAR : type is checked before
-			ScriptedTestCase scriptedTestCase = (ScriptedTestCase) testCase;
-
-			return scriptedTestCase.computeScriptWithAppendedMetadata();
-		}
-	},
-
 	KEYWORD_STRATEGY(){
-		@Override
-		public TestCaseKind getHandledKind() {
-			return TestCaseKind.KEYWORD;
-		}
 
 		@Override
 		public String getExtension(){
@@ -82,16 +54,9 @@ public enum ScriptToFileStrategy {
 		}
 	};
 
-
-
-
 	// ******************* public API ******************************
 
-
 	public static final int FILENAME_MAX_SIZE = 100;
-
-
-
 
 	/**
 	 * Selects the correct instance of Strategy for the given language
@@ -102,24 +67,13 @@ public enum ScriptToFileStrategy {
 	public static ScriptToFileStrategy strategyFor(TestCaseKind kind){
 		ScriptToFileStrategy strategy = null;
 		switch(kind){
-			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
 			case KEYWORD: strategy = KEYWORD_STRATEGY; break;
 			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;
 	}
 
-
-
 	 // ---- language-specific methods -------
-
-	/**
-	 * Returns the kind of TestCase this strategy is for.
-	 *
-	 * @return
-	 */
-	public abstract TestCaseKind getHandledKind();
-
 
 	/**
 	 * Returns the extension usually associated to files written in this language.
@@ -127,7 +81,6 @@ public enum ScriptToFileStrategy {
 	 * @return
 	 */
 	public abstract String getExtension();
-
 
 	/**
 	 * <p>Returns the content of the script, possibly with additional metadata (eg comments)
@@ -140,21 +93,7 @@ public enum ScriptToFileStrategy {
 	 */
 	public abstract String getWritableFileContent(TestCase testCase);
 
-
 	// --------- common methods --------------
-
-
-	/**
-	 * Returns whether this strategy can handle a scripted test case
-	 *
-	 * @param testCase
-	 * @return
-	 */
-	public boolean canHandleScripted(TestCase testCase){
-		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
-		testCase.accept(visitor);
-		return visitor.isScripted();
-	}
 
 	/**
 	 * Returns whether this strategy can handle a keyword test case
@@ -181,9 +120,7 @@ public enum ScriptToFileStrategy {
 	public String buildFilenameMatchPattern(TestCase testCase){
 		Long id = testCase.getId();
 		String extension = getExtension();
-
 		return String.format("%d(_.*)?\\.%s", id, extension);
-
 	}
 
 	/**
@@ -218,10 +155,7 @@ public enum ScriptToFileStrategy {
 	}
 
 
-
-
 	// ****************** private API **********************
-
 
 	private static final String ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-]";
 
@@ -244,7 +178,6 @@ public enum ScriptToFileStrategy {
 		Long id = testCase.getId();
 		String deaccented = StringUtils.stripAccents(name);
 		String normalized = deaccented.replaceAll(ILLEGAL_PATTERN, "_");
-
 		return id + "_" + normalized;
 	}
 

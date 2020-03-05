@@ -237,7 +237,7 @@ define(["jquery", "backbone", "underscore","squash.translator", "ace/ace", "work
 
 			var that = this;
 			var script = this.editor.session.getValue();
-			var validationUrl = urlBuilder.buildURL("testcases.scripted.validate", this.testCaseId);
+			var validationUrl = urlBuilder.buildURL("testcases.scripted.validate");
 
 			var xhr = $.ajax({
 				url : validationUrl,
