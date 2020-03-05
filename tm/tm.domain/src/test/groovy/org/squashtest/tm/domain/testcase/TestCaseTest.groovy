@@ -21,9 +21,13 @@
 package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
-import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testutils.MockFactory
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.exception.UnknownEntityException
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
@@ -32,6 +36,8 @@ import spock.lang.Unroll
 
 import java.lang.reflect.Modifier
 
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.*
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*
 
 class TestCaseTest extends Specification {
 
@@ -278,11 +284,11 @@ class TestCaseTest extends Specification {
 
 		and:
 		List blankableFields = findFields(TestCase)
-				.findAll({ !(Collection.isAssignableFrom(it.type) || Map.isAssignableFrom(it.type)) })
-				.findAll({ !(Modifier.isStatic(it.modifiers) || Modifier.isFinal(it.modifiers))})
-				.findAll({ ! [Long.TYPE, Integer.TYPE, Boolean.TYPE, Float.TYPE, Double.TYPE].contains(it.type) })
-				.findAll({ ! it.name.startsWith('audit') && ! it.name.equals("executionMode") && !it.name.equals("kind")})
-				.each { it.setAccessible(true) }
+			.findAll({ !(Collection.isAssignableFrom(it.type) || Map.isAssignableFrom(it.type)) })
+			.findAll({ !(Modifier.isStatic(it.modifiers) || Modifier.isFinal(it.modifiers))})
+			.findAll({ ! [Long.TYPE, Integer.TYPE, Boolean.TYPE, Float.TYPE, Double.TYPE].contains(it.type) })
+			.findAll({ ! it.name.startsWith('audit') && ! it.name.equals("executionMode") && !it.name.equals("kind")})
+			.each { it.setAccessible(true) }
 
 		when:
 		TestCase res = TestCase.createBlankTestCase()
@@ -290,6 +296,127 @@ class TestCaseTest extends Specification {
 		then:
 		blankableFields.findAll({ it.get(res) != null })*.name == []
 
+	}
+
+	@Unroll
+	def "#isAutomatedInWorkflow() - Should tell whether the TestCase is automated within an Automation Workflow"() {
+		given: "TestCase"
+		TestCase testCase = new TestCase()
+		testCase.automatable = automatable
+
+		and: "Project"
+		Project project = new Project()
+		testCase.notifyAssociatedWithProject(project)
+
+		and: "AutomationRequest"
+		AutomationRequest automationRequest = new AutomationRequest()
+		automationRequest.requestStatus = automationRequestStatus
+		testCase.automationRequest = automationRequest
+
+		and: "AutomatedTest"
+		if(hasAutomatedTest) {
+			TestAutomationProject testAutomationProject = new TestAutomationProject()
+			project.testAutomationProjects.add(testAutomationProject)
+			AutomatedTest automatedTest = new AutomatedTest()
+			automatedTest.project = testAutomationProject
+			testCase.automatedTest = automatedTest
+		}
+
+		and: "TestAutomationServer"
+		if(projectHasAutomationServer) {
+			TestAutomationServer testAutomationServer = new TestAutomationServer()
+			project.setTestAutomationServer(testAutomationServer)
+		}
+
+		when:
+		def isAutomatedInWorkflow = testCase.isAutomatedInWorkflow()
+
+		then:
+		isAutomatedInWorkflow == resultIsAutomated
+
+		where:
+		automatable | automationRequestStatus | hasAutomatedTest | projectHasAutomationServer | resultIsAutomated
+		// TestAutomatable is not 'Y'
+		M           | AUTOMATED               | true             | true                       | false
+		N           | AUTOMATED               | true             | true                       | false
+		// AutomationRequestStatus is not 'AUTOMATED'
+		Y           | TRANSMITTED             | true             | true                       | false
+		Y           | AUTOMATION_IN_PROGRESS  | true             | true                       | false
+		Y           | SUSPENDED               | true             | true                       | false
+		Y           | REJECTED                | true             | true                       | false
+		Y           | READY_TO_TRANSMIT       | true             | true                       | false
+		Y           | WORK_IN_PROGRESS        | true             | true                       | false
+		Y           | null                    | true             | true                       | false
+		// TestCase has no AutomatedTest
+		Y           | AUTOMATED               | false            | true                       | false
+		// Project has no AutomationServer
+		Y           | AUTOMATED               | true             | false                      | false
+		// Only case where result is true
+		Y           | AUTOMATED               | true             | true                       | true
+	}
+
+	@Unroll
+	def "#isAutomated() - Should tell whether the TestCase is automated"() {
+		given: "TestCase"
+		TestCase testCase = new TestCase()
+		testCase.automatable = automatable
+
+		and: "Project"
+		Project project = new Project()
+		testCase.notifyAssociatedWithProject(project)
+		project.allowAutomationWorkflow = projectInWorkflow
+
+		and: "AutomationRequest"
+		AutomationRequest automationRequest = new AutomationRequest()
+		automationRequest.requestStatus = automationRequestStatus
+		testCase.automationRequest = automationRequest
+
+		and: "AutomatedTest"
+		if(hasAutomatedTest) {
+			TestAutomationProject testAutomationProject = new TestAutomationProject()
+			project.testAutomationProjects.add(testAutomationProject)
+			AutomatedTest automatedTest = new AutomatedTest()
+			// this is necessary in order to associate the TestCase to the AutomatedTest
+			automatedTest.project = testAutomationProject
+			testCase.automatedTest = automatedTest
+		}
+
+		and: "TestAutomationServer"
+		if(projectHasAutomationServer) {
+			TestAutomationServer testAutomationServer = new TestAutomationServer()
+			project.setTestAutomationServer(testAutomationServer)
+		}
+
+		when:
+		def isAutomatedInWorkflow = testCase.isAutomated()
+
+		then:
+		isAutomatedInWorkflow == resultIsAutomated
+
+		where:
+		projectInWorkflow	| automatable	| automationRequestStatus	| hasAutomatedTest	| projectHasAutomationServer	| resultIsAutomated
+
+		// TestAutomatable is not 'Y'
+		true				| M 			| AUTOMATED  				| true 				| true 							| false
+		true				| N 			| AUTOMATED  				| true 				| true							| false
+		// AutomationRequestStatus is not 'AUTOMATED'
+		true				| Y 			| TRANSMITTED  				| true 				| true 							| false
+		true				| Y 			| AUTOMATION_IN_PROGRESS  	| true 				| true 							| false
+		true				| Y 			| SUSPENDED  				| true 				| true 							| false
+		true				| Y 			| REJECTED  				| true 				| true 							| false
+		true				| Y 			| READY_TO_TRANSMIT  		| true 				| true 							| false
+		true				| Y 			| WORK_IN_PROGRESS  		| true 				| true 							| false
+		true				| Y  			| null 						| true 				| true							| false
+		// TestCase has no AutomatedTest
+		true				| Y  			| AUTOMATED 				| false 			| true							| false
+		// Project has no AutomationServer
+		true				| Y  			| AUTOMATED 				| true 				| false							| false
+		// Project is not in a Workflow and TestCase is not actually automated
+		false				| Y  			| null 						| false				| true							| false
+		false				| Y  			| null 						| true 				| false							| false
+		// Only cases where result is true
+		true				| Y  			| AUTOMATED 				| true 				| true 							| true
+		false				| N  			| WORK_IN_PROGRESS			| true 				| true 							| true
 	}
 
 }

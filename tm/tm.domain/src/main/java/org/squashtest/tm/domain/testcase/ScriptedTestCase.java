@@ -134,11 +134,10 @@ public class ScriptedTestCase extends TestCase {
 
 	@Override
 	protected boolean isAutomatedInWorkflow() {
-		boolean isAutomated =false;
-		if (automatable.equals(TestCaseAutomatable.Y) && AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus())) {
-			isAutomated = automatedTest != null && getProject().getScmRepository() != null;
-		}
-		return isAutomated;
+		return isActuallyAutomated() &&
+			TestCaseAutomatable.Y.equals(automatable) &&
+			AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus()) &&
+			getProject().getScmRepository() != null;
 	}
 
 	@Override

@@ -20,11 +20,27 @@
  */
 package org.squashtest.tm.domain.testcase
 
-
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.scm.ScmRepository
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testutils.MockFactory
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.M
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.N
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.Y
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.READY_TO_TRANSMIT
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.REJECTED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.SUSPENDED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.WORK_IN_PROGRESS
 
 class ScriptedTestCaseTest extends Specification {
 
@@ -47,6 +63,74 @@ class ScriptedTestCaseTest extends Specification {
 		then:
 		copy.script == script
 	}
+
+	@Unroll
+	def "#isAutomatedInWorkflow() - Should tell whether the ScriptedTestCase is automated within an Automation Workflow"() {
+		given: "ScriptedTestCase"
+		ScriptedTestCase scriptedTestCase = new ScriptedTestCase()
+		scriptedTestCase.automatable = automatable
+
+		and: "Project"
+		Project project = new Project()
+		scriptedTestCase.notifyAssociatedWithProject(project)
+
+		and: "AutomationRequest"
+		AutomationRequest automationRequest = new AutomationRequest()
+		automationRequest.requestStatus = automationRequestStatus
+		scriptedTestCase.automationRequest = automationRequest
+
+		and: "AutomatedTest"
+		if(hasAutomatedTest) {
+			TestAutomationProject testAutomationProject = new TestAutomationProject()
+			project.testAutomationProjects.add(testAutomationProject)
+			AutomatedTest automatedTest = new AutomatedTest()
+			automatedTest.project = testAutomationProject
+			scriptedTestCase.automatedTest = automatedTest
+		}
+
+		and: "TestAutomationServer"
+		if(projectHasAutomationServer) {
+			TestAutomationServer testAutomationServer = new TestAutomationServer()
+			project.setTestAutomationServer(testAutomationServer)
+		}
+
+		and: "ScmRepository"
+		if(projectHasScmRepository) {
+			ScmRepository scmRepository = new ScmRepository()
+			project.setScmRepository(scmRepository)
+		}
+
+		when:
+		def isAutomatedInWorkflow = scriptedTestCase.isAutomatedInWorkflow()
+
+		then:
+		isAutomatedInWorkflow == resultIsAutomated
+
+		where:
+		automatable | automationRequestStatus | hasAutomatedTest | projectHasAutomationServer | projectHasScmRepository 	| resultIsAutomated
+
+		// TestAutomatable is not 'Y'
+		M           | AUTOMATED               | true             | true                       | true 						| false
+		N           | AUTOMATED               | true             | true                       | true 						| false
+		// AutomationRequestStatus is not 'AUTOMATED'
+		Y           | TRANSMITTED             | true             | true                       | true 						| false
+		Y           | AUTOMATION_IN_PROGRESS  | true             | true                       | true 						| false
+		Y           | SUSPENDED               | true             | true                       | true 						| false
+		Y           | REJECTED                | true             | true                       | true 						| false
+		Y           | READY_TO_TRANSMIT       | true             | true                       | true 						| false
+		Y           | WORK_IN_PROGRESS        | true             | true                       | true 						| false
+		Y           | null                    | true             | true                       | true 						| false
+		// TestCase has no AutomatedTest
+		Y           | AUTOMATED               | false            | true                       | true 						| false
+		// Project has no AutomationServer
+		Y           | AUTOMATED               | true             | false                      | true 						| false
+		// Project has no ScmRepository
+		Y           | AUTOMATED               | true             | false                      | false						| false
+		// Only case where result is true
+		Y           | AUTOMATED               | true             | true                       | true 						| true
+	}
+
+
 
 	@Unroll("should turn '#id:#name' into '#result'")
 	def "should create a gherkin filename for a test case"(){
