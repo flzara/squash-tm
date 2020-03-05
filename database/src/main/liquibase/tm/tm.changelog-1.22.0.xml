@@ -34,16 +34,6 @@
     </update>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-171" author="jthebault">
-    <comment>Add keyword testing</comment>
-
-    <addColumn tableName="TEST_CASE">
-      <column name="IS_KEYWORD_TEST_CASE" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case is a keyword TC.">
-        <constraints nullable="false" />
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.22.0-SQUASH-174-action-word-table" author="jlor">
     <comment>Add action word table</comment>
 
