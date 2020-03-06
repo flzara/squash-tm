@@ -577,8 +577,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:hg:${project.basedir}</connection>
-    <developerConnection>scm:hg:${project.basedir}</developerConnection>
+    <connection>scm:git:${project.basedir}</connection>
+    <developerConnection>scm:git:${project.basedir}</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -749,40 +749,6 @@
       </build>
     </profile>
 
-    <profile>
-      <id>add-windows-hg-hooks</id>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
-        <!--<file>-->
-        <!-- mvn appplies OR so criterion below is deactivated -->
-        <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
-        <!--</file>-->
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <id>add-windows-hg-hooks</id>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <phase>process-resources</phase>
-                <inherited>false</inherited>
-                <configuration>
-                  <source>${project.basedir}/src/main/scripts/AddWindowsHgHooks.groovy</source>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <profile>
       <!-- Configuration for sonar / code coverage measurement using jacoco -->
