@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -130,8 +131,6 @@ class ScriptedTestCaseTest extends Specification {
 		Y           | AUTOMATED               | true             | true                       | true 						| true
 	}
 
-
-
 	@Unroll("should turn '#id:#name' into '#result'")
 	def "should create a gherkin filename for a test case"(){
 		expect :
@@ -154,6 +153,44 @@ class ScriptedTestCaseTest extends Specification {
 	def "should build filename match pattern"() {
 		expect:
 		new MockTC(44L, "holaTc").buildFilenameMatchPattern() == "44(_.*)?\\.feature"
+	}
+
+	def "#computeScriptWithAppendedMetadata() - Should write the metadata with no script content"() {
+		given: "SriptedTestCase"
+		ScriptedTestCase scriptedTestCase = new ScriptedTestCase()
+		scriptedTestCase.setImportance(TestCaseImportance.HIGH)
+		scriptedTestCase.setScript("")
+		and: "AutomationRequest"
+		AutomationRequest automationRequest = new AutomationRequest()
+		automationRequest.setRequestStatus(AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
+		automationRequest.setAutomationPriority(4)
+		scriptedTestCase.setAutomationRequest(automationRequest)
+		when:
+		def res = scriptedTestCase.computeScriptWithAppendedMetadata()
+		then:
+		res == """# Automation priority: 4
+# Automation status: AUTOMATION_IN_PROGRESS
+# Test case importance: HIGH
+"""
+	}
+
+	def "#computeScriptWithAppendedMetadata() - Should write the script with metadata"() {
+		given: "SriptedTestCase"
+		ScriptedTestCase scriptedTestCase = new ScriptedTestCase()
+		scriptedTestCase.setImportance(TestCaseImportance.HIGH)
+		scriptedTestCase.setScript("this is a script")
+		and: "AutomationRequest"
+		AutomationRequest automationRequest = new AutomationRequest()
+		automationRequest.setRequestStatus(AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
+		automationRequest.setAutomationPriority(4)
+		scriptedTestCase.setAutomationRequest(automationRequest)
+		when:
+		def res = scriptedTestCase.computeScriptWithAppendedMetadata()
+		then:
+		res == """# Automation priority: 4
+# Automation status: AUTOMATION_IN_PROGRESS
+# Test case importance: HIGH
+this is a script"""
 	}
 
 	class MockTC extends ScriptedTestCase{

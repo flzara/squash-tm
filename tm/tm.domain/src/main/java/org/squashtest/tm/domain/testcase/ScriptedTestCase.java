@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.testcase;
 
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
@@ -30,15 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 
 @Entity
