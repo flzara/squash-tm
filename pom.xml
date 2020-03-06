@@ -585,8 +585,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:hg:${project.basedir}</connection>
-    <developerConnection>scm:hg:${project.basedir}</developerConnection>
+    <connection>scm:git:${project.basedir}</connection>
+    <developerConnection>scm:git:${project.basedir}</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -699,36 +699,6 @@
       </modules>
     </profile>
 
-    <profile>
-      <id>add-windows-hg-hooks</id>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <id>add-windows-hg-hooks</id>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <phase>process-resources</phase>
-                <inherited>false</inherited>
-                <configuration>
-                  <source>${project.basedir}/src/main/scripts/AddWindowsHgHooks.groovy</source>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <profile>
 
