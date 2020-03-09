@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -155,6 +156,10 @@ public class VerifiedRequirementsManagerController {
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("milestoneConf", milestoneConf);
+
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(visitor);
+		model.addAttribute("isTcScripted", visitor.isScripted());
 
 		return "page/test-case-workspace/show-verified-requirements-manager";
 	}

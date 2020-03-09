@@ -20,19 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.KeywordTestCase
 import spock.lang.Specification
+
+import static org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.KEYWORD
 
 class TestCaseFormModelTest extends Specification {
 
 	def "should create keyword test"() {
 		given:
 		TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
-		testCaseFormModel.setIsKeywordTestCase(TestCase.IS_KEYWORD_TEST_CASE)
+		testCaseFormModel.setScriptLanguage(KEYWORD)
 		when:
 		def testCase = testCaseFormModel.getTestCase()
 		then:
-		testCase.isKeywordTestCase()
+		KeywordTestCase.class.isAssignableFrom(testCase.class)
 	}
 
 }

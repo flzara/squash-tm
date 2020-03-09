@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -80,6 +81,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
@@ -138,6 +140,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
+
+	@Inject
+	private KeywordTestCaseDao keywordTestCaseDao;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -270,7 +275,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord) {
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
-		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 		// TODO: 1 - verify if the parent test case is a keyword test case
 		// TODO: 2 - verify if the given ActionWord already exists in db and reuse it if exists
 		ActionWord givenActionWord = new ActionWord(actionWord);

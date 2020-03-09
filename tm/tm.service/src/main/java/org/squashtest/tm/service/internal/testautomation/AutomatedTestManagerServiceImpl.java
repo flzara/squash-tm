@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -268,7 +269,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 		return projects.stream().map(proj -> new TestAutomationProjectContent(proj, ex)).collect(toList());
 	}
 
-	
+
 	private void populateProjectContents(List<String> testPathsForKind, List<TestAutomationProjectContent> contentForKind) {
 		for (TestAutomationProjectContent content : contentForKind) {
 			TestAutomationProject taProject = content.getProject();
@@ -307,7 +308,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 	// naive classifier here !
 	private boolean isTestGherkin(String testPath){
-		return testPath.endsWith(ScriptToFileStrategy.GHERKIN_STRATEGY.getExtension());
+		return testPath.endsWith(ScriptedTestCase.FEATURE_EXTENSION);
 	}
 
 	private TestCaseKind identifyProjectTechnology(TestAutomationProjectContent projectContent){

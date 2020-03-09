@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -235,7 +234,6 @@ public class ExportModel {
 		private List<CustomField> cufs = new LinkedList<>();
 		//scripted tc optional attributes
 		private TestCaseKind testCaseKind;
-		private ScriptedTestCaseLanguage scriptedTestCaseLanguage;
 		private String tcScript;
 		private TestCaseAutomatable automatable;
 		private String uuid;
@@ -247,8 +245,7 @@ public class ExportModel {
 							 Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 							 TestCaseStatus status, TestCaseAutomatable automatable, String description, String prerequisite, Long nbReq, Long nbCaller,
 							 Long nbAttachments, Long nbIterations, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy,
-							 TestCaseKind testCaseKind, ScriptedTestCaseLanguage scriptedTestCaseLanguage, String tcScript
-		) {
+							 TestCaseKind testCaseKind, String tcScript) {
 
 			super();
 			this.projectId = projectId;
@@ -276,7 +273,6 @@ public class ExportModel {
 			this.lastModifiedOn = lastModifiedOn;
 			this.lastModifiedBy = lastModifiedBy;
 			this.testCaseKind = testCaseKind;
-			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
 			this.tcScript = tcScript;
 
 		}
@@ -479,14 +475,6 @@ public class ExportModel {
 
 		public void setTestCaseKind(TestCaseKind testCaseKind) {
 			this.testCaseKind = testCaseKind;
-		}
-
-		public ScriptedTestCaseLanguage getScriptedTestCaseLanguage() {
-			return scriptedTestCaseLanguage;
-		}
-
-		public void setScriptedTestCaseLanguage(ScriptedTestCaseLanguage scriptedTestCaseLanguage) {
-			this.scriptedTestCaseLanguage = scriptedTestCaseLanguage;
 		}
 
 		public String getTcScript() {

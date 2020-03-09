@@ -182,7 +182,6 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_KIND, OptionalEnumCellCoercer.forEnum(TestCaseKind.class));
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE, OptionalEnumCellCoercer.forEnum(ScriptedTestCaseLanguage.class));
 
 		return repo;
 	}

@@ -18,21 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.testcase;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 
-import java.util.Collection;
-import java.util.List;
+public class IsKeywordTestCaseVisitor implements TestCaseVisitor {
 
-public interface ScriptedTestCaseExtenderDao extends JpaRepository<ScriptedTestCaseExtender,Long>{
+	private Wrapped<Boolean> isKeyword = new Wrapped<>(false);
 
-	@Query("select ext from ScriptedTestCaseExtender ext inner join fetch ext.testCase tc where tc.id=:testCaseId")
-	ScriptedTestCaseExtender findByTestCase_Id(@Param("testCaseId") Long testCaseId);
+	@Override
+	public void visit(TestCase testCase) {
+		isKeyword.setValue(false);
+	}
 
-	List<ScriptedTestCaseExtender> findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage language, Collection<Long> testCaseIds);
+	@Override
+	public void visit(KeywordTestCase keywordTestCase) {
+		isKeyword.setValue(true);
+	}
+
+	@Override
+	public void visit(ScriptedTestCase scriptedTestCase) {
+		isKeyword.setValue(false);
+	}
+
+	public boolean isKeyword() {
+		return isKeyword.getValue();
+	}
 }

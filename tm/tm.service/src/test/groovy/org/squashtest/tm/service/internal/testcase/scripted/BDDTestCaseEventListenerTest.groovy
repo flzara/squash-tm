@@ -25,17 +25,18 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.service.internal.scmserver.UnsecuredScmRepositoryFilesystemService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared
 import spock.lang.Specification
 
 
-class ScriptedTestCaseEventListenerTest extends Specification {
+class BDDTestCaseEventListenerTest extends Specification {
 
-	private ScriptedTestCaseEventListener listener = new ScriptedTestCaseEventListener()
+	private BDDTestCaseEventListener listener = new BDDTestCaseEventListener()
 	private TestCaseModificationService tcService = Mock()
+	private UnsecuredScmRepositoryFilesystemService scmService = Mock()
 
 	@Shared
 	private ScmRepository scm = new MockFactory().mockScmRepository(10L, "repo", "squash"){
@@ -46,6 +47,7 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 
 	def setup(){
 		listener.tcService = tcService
+		listener.scmService = scmService
 	}
 
 	def cleanupSpec(){
@@ -119,11 +121,12 @@ class ScriptedTestCaseEventListenerTest extends Specification {
 		def testCase = Mock(TestCase){
 			getId() >> 123L
 			getProject() >> project
-			getKind() >> TestCaseKind.GHERKIN
 		}
 
 		when :
+		scmService.createTestCasePatternForResearch(testCase) >> "123(_.*)?\\.feature"
 		listener.autoBindWithScm(scm, [testCase])
+
 
 		then :
 		1 * tcService.bindAutomatedTestAutomatically(123L, 10L, "123_ghertest.feature")

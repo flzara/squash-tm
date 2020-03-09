@@ -112,8 +112,8 @@
 
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
-<c:set var="scripted" value="${testCase.isScripted()}"/>
-<c:set var="isKeywordTest" value="${testCase.isKeywordTestCase()}"/>
+<c:set var="scripted" value="${isScriptedTestCase}"/>
+<c:set var="isKeywordTest" value="${isKeywordTestCase}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
@@ -188,7 +188,8 @@
 
       <tc:test-case-description testCase="${testCase}"
                                 testCaseImportanceLabel="${testCaseImportanceLabel}"
-                                writable="${writable}"/>
+                                writable="${writable}"
+                                isScriptedTc="${scripted}"/>
 
       <tc:test-case-attribut testCase="${testCase}" writable="${writable}"
                              testCaseImportanceLabel="${testCaseImportanceLabel}"/>
@@ -206,7 +207,7 @@
       </c:if>
         <%--------------------------- Verified Requirements section ------------------------------------%>
 
-      <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"
+      <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}" isScriptedTc="${scripted}"
                                               containerId="contextual-content" milestoneConf="${milestoneConf}"/>
 
 
@@ -284,7 +285,7 @@
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
-          , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
+          , script: ${json:serialize(scriptContent)}
           </c:if>
           <c:if test="${not empty milestoneConf.activeMilestone}">
           , milestone: ${json:serialize(milestoneConf.activeMilestone)}

@@ -22,11 +22,14 @@ package org.squashtest.tm.service.internal.testcase.bdd;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
+import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -36,20 +39,43 @@ import java.util.List;
 @Transactional
 public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
-	@Inject
-	private TestCaseDao testCaseDao;
+	@Override
+	public String createFileName(KeywordTestCase keywordTestCase) {
+		// Get techno from Project
+		// Get corresponding Strategy
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		// Create fileName
+		return strategy.createFilenameFor(keywordTestCase);
+	}
 
 	@Override
-	public String writeScriptFromTestCase(Long keywordTestCaseId) {
-		// get Testcase by Id
-		TestCase testCase = testCaseDao.findById(keywordTestCaseId);
+	public String createBackupFileName(KeywordTestCase keywordTestCase) {
+		// Get techno from Project
+		// Get corresponding Strategy
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		// Create fileName
+		return strategy.backupFilenameFor(keywordTestCase);
+	}
 
+	@Override
+	public String buildFilenameMatchPattern(KeywordTestCase keywordTestCase) {
+		//TODO:refactoring me for all above methods!!!
+
+		// Get techno from Project
+		// Get corresponding Strategy
+		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		// Create fileName
+		return strategy.buildFilenameMatchPattern(keywordTestCase);
+	}
+
+	@Override
+	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
 		//TODO: get Testcase's project for further functions: get project techno and language
 		String language = "en";
 
-		String testCaseName = testCase.getName();
+		String testCaseName = keywordTestCase.getName();
 
-		List<TestStep> testSteps = testCase.getSteps();
+		List<TestStep> testSteps = keywordTestCase.getSteps();
 
 		String stepScript = generateStepScript(testSteps, testCaseName);
 		return generateScript(testCaseName, stepScript, language);

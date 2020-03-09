@@ -149,7 +149,6 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 			getSteps()>>[]
 			getRequirementVersionCoverages() >> []
 			getId()>>23L
-			getKind() >> TestCaseKind.STANDARD
 			getName() >> "Test case"
 			getFullName() >> "Test case"
 		}

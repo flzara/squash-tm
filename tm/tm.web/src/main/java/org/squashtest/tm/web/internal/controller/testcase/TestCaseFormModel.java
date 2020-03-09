@@ -28,6 +28,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
@@ -45,6 +47,9 @@ public class TestCaseFormModel {
 	 */
 
 	private static final String MESSAGE_NOT_BLANK = "message.notBlank";
+	public static final String STANDARD = "STANDARD";
+	public static final String KEYWORD = "KEYWORD";
+	public static final String GHERKIN = "GHERKIN";
 
 	/*@NotBlank
 	@NotNull*/
@@ -53,7 +58,6 @@ public class TestCaseFormModel {
 	private String reference;
 	private String description;
 
-	private boolean isKeywordTestCase = TestCase.IS_NOT_KEYWORD_TEST_CASE;
 	private String scriptLanguage;
 
 
@@ -96,10 +100,6 @@ public class TestCaseFormModel {
 		return scriptLanguage;
 	}
 
-	public boolean isKeywordTestCase() {
-		return isKeywordTestCase;
-	}
-
 	public void setScriptLanguage(String scriptLanguage) {
 		this.scriptLanguage = scriptLanguage;
 	}
@@ -108,19 +108,24 @@ public class TestCaseFormModel {
 		this.customFields = customFields;
 	}
 
-	public void setIsKeywordTestCase(boolean keywordTestCase) {
-		isKeywordTestCase = keywordTestCase;
-	}
-
 	public TestCase getTestCase() {
-		TestCase newTC = new TestCase(this.isKeywordTestCase);
+		TestCase newTC;
+		switch (scriptLanguage) {
+			case STANDARD:
+				newTC = new TestCase();
+				break;
+			case KEYWORD:
+				newTC = new KeywordTestCase();
+				break;
+			case GHERKIN:
+				newTC = new ScriptedTestCase(name);
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid test case type");
+		}
 		newTC.setName(name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);
-		if (StringUtils.isNotBlank(scriptLanguage)) {
-			String locale = LocaleContextHolder.getLocale().getLanguage();
-			newTC.extendWithScript(scriptLanguage, locale);
-		}
 		return newTC;
 	}
 

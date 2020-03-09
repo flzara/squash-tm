@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;

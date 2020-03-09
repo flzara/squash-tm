@@ -38,10 +38,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.GenericNodeManagementService
-import org.squashtest.tm.service.internal.repository.ActionTestStepDao
-import org.squashtest.tm.service.internal.repository.ParameterDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.repository.TestStepDao
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
@@ -54,6 +51,7 @@ import spock.lang.Unroll
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
+	KeywordTestCaseDao keywordTestCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
 	ParameterDao parameterDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
@@ -74,6 +72,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		CollectionAssertions.declareContainsExactly()
 
 		service.testCaseDao = testCaseDao
+		service.keywordTestCaseDao = keywordTestCaseDao
 		service.testStepDao = testStepDao
 		service.testCaseManagementService = testCaseManagementService
 		service.deletionHandler = deletionHandler
@@ -90,14 +89,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should find test case and add a keyword step at last position"() {
 		given:
 			long parentTestCaseId = 2
-			TestCase parentTestCase = new TestCase(TestCase.IS_KEYWORD_TEST_CASE)
+			KeywordTestCase parentTestCase = new KeywordTestCase()
 
 		and:
 			def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:
-			testCaseDao.findById(parentTestCaseId) >> parentTestCase
+			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
 
 		when:
 			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")

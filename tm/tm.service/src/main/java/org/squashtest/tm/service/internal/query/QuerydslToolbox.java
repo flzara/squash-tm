@@ -805,7 +805,7 @@ class QuerydslToolbox {
 
 	private BooleanExpression createMatchPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.S_MATCHES, baseExp, operands[0]);
-		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to 
+		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to
 		// be compared to something.
 		return matchExpr.isTrue();
 	}
@@ -823,8 +823,8 @@ class QuerydslToolbox {
 	}
 
 	private BooleanExpression createEntityPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
-		if(operation != Operation.IS_CLASS) {
-			throw new IllegalArgumentException("Operation other than IS_CLASS is not allowed with DataType ENTITY");
+		if(operation != Operation.IS_CLASS && operation != Operation.IN) {
+			throw new IllegalArgumentException("Only IS_CLASS and IN operations are allowed for DataType ENTITY.");
 		}
 		return Expressions.booleanOperation(ExtOps.IS_CLASS, baseExp, operands[0]);
 	}

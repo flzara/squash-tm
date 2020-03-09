@@ -65,7 +65,11 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.GetKindTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -92,6 +96,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseFinder;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
@@ -229,6 +234,10 @@ public class TestCaseModificationController {
 
 	@Inject
 	private GenericProjectManagerService projectManager;
+
+	@Inject
+	private ScriptedTestCaseFinder scriptedTestCaseFinder;
+
 	@Inject
 	private ProjectDao projectDao;
 
@@ -300,7 +309,25 @@ public class TestCaseModificationController {
 			ot.setValue(executionMode.toString());
 			executionModes.add(ot);
 		}
+
+
 		mav.addObject(TEST_CASE, testCase);
+
+		IsScriptedTestCaseVisitor isScriptedTestCaseVisitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(isScriptedTestCaseVisitor);
+		boolean isScriptedTestCase = isScriptedTestCaseVisitor.isScripted();
+
+		mav.addObject("isScriptedTestCase", isScriptedTestCase);
+
+		if(isScriptedTestCase) {
+			ScriptedTestCase scriptedTestCase = scriptedTestCaseFinder.findById(testCase.getId());
+			mav.addObject("scriptContent", scriptedTestCase.getScript());
+		}
+
+		IsKeywordTestCaseVisitor isKeywordTestCaseVisitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(isKeywordTestCaseVisitor);
+		mav.addObject("isKeywordTestCase", isKeywordTestCaseVisitor.isKeyword());
+
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
@@ -783,6 +810,17 @@ public class TestCaseModificationController {
 		}
 		ModelAndView mav = new ModelAndView("print-test-case.html");
 		mav.addObject(TEST_CASE, testCase);
+
+		IsScriptedTestCaseVisitor isScriptedVisitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(isScriptedVisitor);
+		mav.addObject("isTcScripted", isScriptedVisitor.isScripted());
+
+		GetKindTestCaseVisitor kindVisitor = new GetKindTestCaseVisitor();
+		testCase.accept(kindVisitor);
+
+		mav.addObject("tcKind", kindVisitor.getKind());
+
+
 
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {

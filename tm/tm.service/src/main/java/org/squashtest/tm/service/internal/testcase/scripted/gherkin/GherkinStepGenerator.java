@@ -84,6 +84,10 @@ public class GherkinStepGenerator {
 	public void populateExecution(Execution execution, GherkinDocument gherkinDocument) {
 		ScriptedExecutionExtender executionExtender = execution.getScriptedExecutionExtender();
 		Feature feature = gherkinDocument.getFeature();
+		if (feature == null) {
+			return;
+		}
+
 		executionExtender.setScriptName(feature.getName());
 		initDialect(feature);
 

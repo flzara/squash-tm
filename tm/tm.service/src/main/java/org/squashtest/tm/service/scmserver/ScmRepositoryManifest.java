@@ -27,9 +27,14 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.core.scm.api.exception.ScmException;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import java.io.File;
@@ -97,13 +102,10 @@ public final class ScmRepositoryManifest {
 	 * Attends to retrieve the test file in the repository for a given test.
 	 * The result is returned as an Optional.
 	 *
-	 * @param testCase
+	 * @param pattern the test file pattern
 	 * @return
 	 */
-	public Optional<File> locateTest(TestCase testCase){
-
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
-		String pattern = strategy.buildFilenameMatchPattern(testCase);
+	public Optional<File> locateTest(String pattern, Long tcId){
 
 		Collection<File> files;
 		if (useCache){
@@ -116,7 +118,7 @@ public final class ScmRepositoryManifest {
 		// check for the validity of the result
 		if (files.size() > 1){
 			LOGGER.warn("found two files more more that are possible candidates for test '{}'. This is an unexpected situation. " +
-							"The commit routine will proceed with the first file in lexicographic order.", testCase.getId());
+							"The commit routine will proceed with the first file in lexicographic order.", tcId);
 		}
 
 		return files.stream().sorted(Comparator.comparing(File::getName)).findFirst();

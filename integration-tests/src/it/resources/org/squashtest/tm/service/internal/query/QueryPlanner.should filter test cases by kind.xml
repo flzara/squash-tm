@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11111"/>
+	<PROJECT CREATED_BY="admin" NAME="p" PROJECT_ID="-11111" ATTACHMENT_LIST_ID="-11111" CREATED_ON="2015-11-16"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="testcase 1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1" PROJECT_ID="-11111"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-2" NAME="testcase 2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-3" NAME="testcase 3" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-4" NAME="testcase 4" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-5" NAME="testcase 5" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-1" IMPORTANCE="LOW" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1"/>
+  <SCRIPTED_TEST_CASE TCLN_ID="-1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-2" IMPORTANCE="VERY_HIGH" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa2"/>
+  <SCRIPTED_TEST_CASE TCLN_ID="-2" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-3" IMPORTANCE="HIGH" VERSION="1" TC_NATURE="4" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa3"/>
+  <KEYWORD_TEST_CASE TCLN_ID="-3"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-4" IMPORTANCE="HIGH" VERSION="1" TC_NATURE="4" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa4"/>
+  <TEST_CASE PREREQUISITE="" TCLN_ID="-5" IMPORTANCE="HIGH" VERSION="1" TC_NATURE="4" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa5"/>
+
+</dataset>

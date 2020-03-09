@@ -61,12 +61,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.count;
+import static org.squashtest.tm.jooq.domain.Tables.KEYWORD_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_REQ_VERSION;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION;
 import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.SCRIPTED_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_FOLDER;
@@ -126,25 +128,37 @@ public class TestCaseWorkspaceDisplayService extends AbstractWorkspaceDisplaySer
 	}
 
 	private Map<Long, JsTreeNode> buildTestCaseJsTreeNode(UserDto currentUser, Map<Long, List<Long>> allMilestonesForTCs, List<Long> milestonesModifiable, TestCaseLibraryNodeDistribution nodeDistribution) {
-		return DSL.select(TCLN.TCLN_ID, TCLN.NAME
-			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TC.TC_KIND, TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW
+		return DSL.select(TCLN.TCLN_ID, SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID, TCLN.NAME
+			, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW
 			, count(TCS.TEST_CASE_ID).as("STEP_COUNT")
 			, count(RVC.VERIFYING_TEST_CASE_ID).as("COVERAGE_COUNT")
 			)
 			.from(TCLN)
 			.innerJoin(TC).on(TCLN.TCLN_ID.eq(TC.TCLN_ID))
+			.leftJoin(SCRIPTED_TEST_CASE).on(SCRIPTED_TEST_CASE.TCLN_ID.eq(TCLN.TCLN_ID))
+			.leftJoin(KEYWORD_TEST_CASE).on(KEYWORD_TEST_CASE.TCLN_ID.eq(TCLN.TCLN_ID))
 			.leftJoin(TCS).on(TCLN.TCLN_ID.eq(TCS.TEST_CASE_ID))
 			.leftJoin(RVC).on(TCLN.TCLN_ID.eq(RVC.VERIFYING_TEST_CASE_ID))
 			.innerJoin(P).on(TCLN.PROJECT_ID.eq(P.PROJECT_ID))
 			.where(TCLN.TCLN_ID.in(nodeDistribution.getTcIds()))
 			//i would love to have the right to do some window function to avoid this messy groupBy clause
-			.groupBy(TCLN.TCLN_ID, TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID, TC.TC_KIND, TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW)
+			.groupBy(TCLN.TCLN_ID, SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID,
+				TCLN.NAME, TC.IMPORTANCE, TC.REFERENCE, TC.TC_STATUS, TCS.TEST_CASE_ID, RVC.VERIFYING_TEST_CASE_ID,
+				TC.AUTOMATABLE, P.ALLOW_AUTOMATION_WORKFLOW)
 			.fetch()
 			.stream()
 			.map(r -> {
 				Integer milestonesNumber = getMilestonesNumberForTC(allMilestonesForTCs, r.get(TCLN.TCLN_ID));
 				String isMilestoneModifiable = isMilestoneModifiable(allMilestonesForTCs, milestonesModifiable, r.get(TCLN.TCLN_ID));
-				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", r.get(TC.TC_KIND), r.get(TC.AUTOMATABLE), r.get(P.ALLOW_AUTOMATION_WORKFLOW), r.get(TC.REFERENCE),
+
+				String testCaseKind = "STANDARD";
+				if(r.get(SCRIPTED_TEST_CASE.TCLN_ID) != null) {
+					testCaseKind = "GHERKIN";
+				} else if(r.get(KEYWORD_TEST_CASE.TCLN_ID) != null) {
+					testCaseKind = "KEYWORD";
+				}
+
+				return buildTestCase(r.get(TCLN.TCLN_ID), r.get(TCLN.NAME), "test-cases", testCaseKind, r.get(TC.AUTOMATABLE), r.get(P.ALLOW_AUTOMATION_WORKFLOW), r.get(TC.REFERENCE),
 					r.get(TC.IMPORTANCE), r.get(TC.TC_STATUS), r.get("STEP_COUNT", Integer.class), r.get("COVERAGE_COUNT", Integer.class), currentUser, milestonesNumber, isMilestoneModifiable);
 			}).collect(Collectors.toMap(node -> (Long) node.getAttr().get(RES_ID), Function.identity()));
 	}

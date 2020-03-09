@@ -21,7 +21,8 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -30,6 +31,8 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 
 import javax.validation.constraints.NotNull;
+
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 /**
  * This builder creates {@link TestCaseTarget}s by reading workbook rows according to its {@link WorkbookMetaData}
@@ -47,7 +50,31 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	 */
 	@Override
 	protected TestCaseInstruction createInstruction(Row row) {
-		return new TestCaseInstruction(new TestCaseTarget(), TestCase.createBlankTestCase());
+		StdColumnDef<TestCaseSheetColumn> columnDef = worksheetDef.getColumnDef(TestCaseSheetColumn.TC_KIND);
+		TestCaseKind testCaseKind = STANDARD;
+		if(columnDef != null) {
+			testCaseKind = getValue(row, columnDef);
+		}
+		TestCase testCase;
+		switch (testCaseKind) {
+			case STANDARD:
+				testCase = TestCase.createBlankTestCase();
+				break;
+			case GHERKIN:
+				testCase = getBlankScriptedTestCase(row);
+				break;
+			case KEYWORD:
+				testCase = KeywordTestCase.createBlankKeywordTestCase();
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown TestCaseKind: " + testCaseKind);
+		}
+		return new TestCaseInstruction(new TestCaseTarget(), testCase);
+	}
+
+	private ScriptedTestCase getBlankScriptedTestCase(Row row) {
+		String script = getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPT));
+		return ScriptedTestCase.createBlankScriptedTestCase(script);
 	}
 
 	/**
@@ -55,31 +82,7 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	 */
 	@Override
 	protected void postProcessInstruction(Row row, TestCaseInstruction instruction) {
-		createScriptedExtender(row, instruction);
 		ignoreImportanceIfAuto(instruction);
-	}
-
-	/**
-	 * Create a {@link ScriptedTestCaseExtender} for the {@link TestCase} if needed (ie if imported file provide the correct columns and values)
-	 * @param row the excel row
-	 * @param instruction the generated instruction
-	 */
-	private void createScriptedExtender(Row row, TestCaseInstruction instruction) {
-		StdColumnDef<TestCaseSheetColumn> columnDef = worksheetDef.getColumnDef(TestCaseSheetColumn.TC_KIND);
-		if (columnDef == null) {
-			return;
-		}
-		TestCaseKind testCaseKind = getValue(row, columnDef);
-		if (testCaseKind != null && testCaseKind.isScripted()) {
-			TestCase testCase = instruction.getTestCase();
-			ScriptedTestCaseLanguage language = getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE));
-			ScriptedTestCaseExtender testCaseExtender = new ScriptedTestCaseExtender();
-			testCaseExtender.setLanguage(language);
-			testCaseExtender.setScript(getValue(row, worksheetDef.getColumnDef(TestCaseSheetColumn.TC_SCRIPT)));
-			testCase.setKind(testCaseKind);
-			testCase.setScriptedTestCaseExtender(testCaseExtender);
-			testCaseExtender.setTestCase(testCase);
-		}
 	}
 
 	private void ignoreImportanceIfAuto(TestCaseInstruction instruction) {

@@ -24,7 +24,7 @@ package org.squashtest.tm.domain.infolist;
  * Instances of such classes are not meant to be persisted.
  * They merely hold a code, that should be looked up. The real instance
  * should then be used instead of that reference
- * 
+ *
  * @author bsiri
  *
  */
@@ -39,6 +39,10 @@ public class ListItemReference extends InfoListItem {
 		setCode(code);
 	}
 
-
+	public ListItemReference(String code, String label){
+		super();
+		setCode(code);
+		setLabel(label);
+	}
 
 }

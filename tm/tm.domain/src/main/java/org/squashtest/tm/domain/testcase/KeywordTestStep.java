@@ -85,9 +85,23 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public void setTestCase(@NotNull TestCase testCase) {
-		if(!testCase.isKeywordTestCase()) {
-			throw new IllegalArgumentException("Cannot add a Keyword Test Step");
-		}
+
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
+			}
+		};
+		testCase.accept(testCaseVisitor);
 		super.setTestCase(testCase);
 	}
 

@@ -33,7 +33,7 @@ import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 
 import javax.inject.Inject;
 
-@RequestMapping("/test-cases/{testCaseId}/scripted")
+@RequestMapping("/scripted-test-cases")
 @Controller
 public class ScriptedTestCaseController {
 
@@ -41,7 +41,7 @@ public class ScriptedTestCaseController {
 	private ScriptedTestCaseService scriptedTestCaseService;
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
+	@RequestMapping(value = "/{testCaseId}", method = RequestMethod.POST, headers = AcceptHeaders.CONTENT_JSON)
 	public ScriptedTestCaseModel updateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
 		scriptedTestCaseService.updateTcScript(testCaseId, scriptedTestCaseModel.getScript());
 		return scriptedTestCaseModel;
@@ -49,8 +49,8 @@ public class ScriptedTestCaseController {
 
 	@ResponseBody
 	@RequestMapping(path = "/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, headers = AcceptHeaders.CONTENT_JSON)
-	public ScriptedTestCaseModel validateTcScript(@PathVariable Long testCaseId, @RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
-		scriptedTestCaseService.validateScript(testCaseId, scriptedTestCaseModel.getScript(), ScriptedTestCaseLanguage.GHERKIN);
+	public ScriptedTestCaseModel validateTcScript(@RequestBody ScriptedTestCaseModel scriptedTestCaseModel) {
+		scriptedTestCaseService.validateScript(scriptedTestCaseModel.getScript());
 		return scriptedTestCaseModel;
 	}
 }

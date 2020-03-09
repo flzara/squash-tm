@@ -20,8 +20,14 @@
  */
 package org.squashtest.tm.service.testcase.bdd;
 
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
 public interface KeywordTestCaseService {
-	String writeScriptFromTestCase(Long keywordTestCaseId);
+	String writeScriptFromTestCase(KeywordTestCase keywordTestCase);
+
+	String createFileName(KeywordTestCase keywordTestCase);
+
+	String createBackupFileName(KeywordTestCase keywordTestCase);
+
+	String buildFilenameMatchPattern(KeywordTestCase keywordTestCase);
 }

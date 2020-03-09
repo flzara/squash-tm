@@ -200,7 +200,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	List<Long> findAllTCIdsForActiveMilestoneInList(Long activeMilestoneId, List<Long> testCaseIds);
 
-	Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId);
+	Integer countScriptedTestCaseAssociatedToTAScriptByProject(Long projectId);
 
 	List<TestCase> findTestCaseByAutomationRequestIds(List<Long> requestIds);
 	TestCase findTestCaseByUuid(String uuid);

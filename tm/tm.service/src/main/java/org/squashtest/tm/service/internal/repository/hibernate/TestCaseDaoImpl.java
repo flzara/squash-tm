@@ -66,6 +66,7 @@ import java.util.Map;
 
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.SCRIPTED_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
 
@@ -102,7 +103,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			"join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
 	private static final String FIND_ALL_ASSOCIATED_TO_TA_SCRIPT = "select tc.id from TestCase tc left join tc.automationRequest req " +
-		"where tc.automatedTest is not null and req.testCase is null and tc.kind = 'STANDARD' and tc.project.id = :" + PROJECT_ID;
+		"where tc.automatedTest is not null and req.testCase is null and tc.class = TestCase and tc.project.id = :" + PROJECT_ID;
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
@@ -483,12 +484,12 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	}
 
 	@Override
-	public Integer findAllTestCaseGherkinAssociatedToTAScriptByProject(Long projectId) {
-		return DSL.selectCount().from(TEST_CASE)
+	public Integer countScriptedTestCaseAssociatedToTAScriptByProject(Long projectId) {
+		return DSL.selectCount().from(SCRIPTED_TEST_CASE)
+			.innerJoin(TEST_CASE).on(TEST_CASE.TCLN_ID.eq(SCRIPTED_TEST_CASE.TCLN_ID))
 			.innerJoin(TEST_CASE_LIBRARY_NODE).on(TEST_CASE.TCLN_ID.eq(TEST_CASE_LIBRARY_NODE.TCLN_ID))
 			.innerJoin(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
-			.where(TEST_CASE.TC_KIND.eq(TestCaseKind.GHERKIN.name())
-				.and(PROJECT.PROJECT_ID.eq(projectId)))
+			.where(PROJECT.PROJECT_ID.eq(projectId))
 				.and(TEST_CASE.TA_TEST.isNotNull())
 			.fetchOne().value1();
 	}
@@ -499,7 +500,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 		query.setParameter("requestIds", requestIds);
 		return query.getResultList();
 	}
-	
+
 	public TestCase findTestCaseByUuid(String uuid) {
 		javax.persistence.Query query = entityManager.createNamedQuery("testCase.findTestCaseByUuid");
 		query.setParameter("uuid", uuid);

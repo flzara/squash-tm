@@ -489,6 +489,15 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		res == null
 	}
 
+	@DataSet("HibernateTestCaseDaoIT.should count scripted test case associated to a TA script.xml")
+	def "should count scripted test cases associated with a TA script"() {
+		when:
+			def res = testCaseDao.countScriptedTestCaseAssociatedToTAScriptByProject(-1L)
+		then:
+			res != null
+			res == 2
+	}
+
 	// ************* scaffolding ************
 
 	//cannot make it more groovy because java native code wouldn't mix well with other kinds of proxies

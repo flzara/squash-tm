@@ -34,16 +34,6 @@
     </update>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-171" author="jthebault">
-    <comment>Add keyword testing</comment>
-
-    <addColumn tableName="TEST_CASE">
-      <column name="IS_KEYWORD_TEST_CASE" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the test case is a keyword TC.">
-        <constraints nullable="false" />
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.22.0-SQUASH-174-action-word-table" author="jlor">
     <comment>Add action word table</comment>
 
@@ -105,6 +95,39 @@
   <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-h2" author="jlor" dbms="h2">
     <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for h2</comment>
     <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-TEST_CASE_HIERARCHY_MODIFICATION" author="jlor">
+    <comment>Create KEYWORD_TEST_CASE table. Update SCRIPTED_TC_EXTENDER table/column</comment>
+
+    <createTable tableName="KEYWORD_TEST_CASE">
+      <column name="TCLN_ID" type="BIGINT">
+        <constraints primaryKey="true" />
+      </column>
+    </createTable>
+
+    <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
+
+    <renameTable newTableName="SCRIPTED_TEST_CASE" oldTableName="SCRIPTED_TC_EXTENDER" />
+
+    <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
+
+    <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-update-tc-kind-column-prototype" author="jlor">
+    <comment>In QueryColumnPrototype table, at TestCaseKind line, change data_type column value from Level_enum to Entity</comment>
+    <sql>update QUERY_COLUMN_PROTOTYPE set DATA_TYPE='ENTITY', COLUMN_TYPE='ENTITY' where QUERY_COLUMN_ID=184;</sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-tc-kind-column" author="jlor">
+    <dropColumn tableName="TEST_CASE" columnName="TC_KIND" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-language-column-in-scripted-tc" author="jlor">
+    <comment>LANGUAGE is no longer necessary for ScriptedTestCase, as it is always GHERKIN.</comment>
+    <dropColumn tableName="SCRIPTED_TEST_CASE" columnName="LANGUAGE" />
   </changeSet>
 
 </databaseChangeLog>

@@ -45,7 +45,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao = Mock()
+	ScriptedTestCaseDao scriptedTestCaseDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
 	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
 
@@ -55,7 +55,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
-		service.scriptedTestCaseExtenderDao = scriptedTestCaseExtenderDao
+		service.scriptedTestCaseDao = scriptedTestCaseDao
 		service.customFieldBindingFinderService = customFieldBindingFinderService
 		service.customValueService = customValueService
 
@@ -266,22 +266,16 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
 	def "should export some gherkin test cases"(){
 		given:
-		def testCase1 = Mock(TestCase)
+		def testCase1 = Mock(ScriptedTestCase)
 		testCase1.getId() >> 1L
-		def extender1 = new ScriptedTestCaseExtender(testCase1, GHERKIN)
-		extender1.script = "Feature: one"
-		extender1.id = 1L
-		extender1.testCaseId =1L
+		testCase1.getScript() >> "Feature: one"
 
-		def testCase2 = Mock(TestCase)
+		def testCase2 = Mock(ScriptedTestCase)
 		testCase2.getId() >> 2L
-		def extender2 = new ScriptedTestCaseExtender(testCase2, GHERKIN)
-		extender2.script = "Feature: two\nScenario: one"
-		extender2.id = 2L
-		extender2.testCaseId = 2L
+		testCase2.getScript() >> "Feature: two\nScenario: one"
 
 		and:
-		scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(GHERKIN,_) >> [extender1,extender2]
+		scriptedTestCaseDao.findAllById(_) >> [testCase1, testCase2]
 
 		when:
 		File export = service.doGherkinExport([]);

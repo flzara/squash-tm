@@ -28,14 +28,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
-import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -44,8 +47,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collection;
 import java.util.Optional;
-
-import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.strategyFor;
 
 @Service("ScmRepositoryFilesystemService")
 @Transactional(readOnly = true)
@@ -142,7 +143,8 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			LOGGER.trace("attempting to locate physical script file for test '{}' in the scm", testCase.getId());
 		}
 		File testfile = null;
-		Optional<File> maybeTestFile = manifest.locateTest(testCase);
+		String pattern = createTestCasePatternForResearch(testCase);
+		Optional<File> maybeTestFile = manifest.locateTest(pattern, testCase.getId());
 		if (maybeTestFile.isPresent()){
 			testfile = maybeTestFile.get();
 			LOGGER.trace("found file : '{}'", testfile.getAbsolutePath());
@@ -163,6 +165,29 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 			}
 		}
 		return testfile;
+	}
+
+	@Override
+	public String createTestCasePatternForResearch(TestCase testCase) {
+		Wrapped<String> pattern = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				pattern.setValue(keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				pattern.setValue(scriptedTestCase.buildFilenameMatchPattern());
+			}
+		};
+		testCase.accept(visitor);
+		return pattern.getValue();
 	}
 
 	/**
@@ -224,9 +249,25 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @return The relative path with the Standard name
 	 */
 	private String buildTestCaseStandardRelativePath(String foldersPath, TestCase testCase) {
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
-		String standardName = strategy.createFilenameFor(testCase);
-		return foldersPath + standardName;
+		Wrapped<String> standardName = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				standardName.setValue(keywordTestCaseService.createFileName(keywordTestCase));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				standardName.setValue(scriptedTestCase.createFilename());
+			}
+		};
+		testCase.accept(visitor);
+		return foldersPath + standardName.getValue();
 	}
 
 	/**
@@ -236,9 +277,26 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @return The relative path with the Standard name
 	 */
 	private String buildTestCaseBackUpRelativePath(String foldersPath, TestCase testCase) {
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(testCase.getKind());
-		String standardName = strategy.backupFilenameFor(testCase);
-		return foldersPath + standardName;
+		Wrapped<String> backupName =  new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				backupName.setValue(keywordTestCaseService.createBackupFileName(keywordTestCase));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				backupName.setValue(scriptedTestCase.createBackupFileName());
+			}
+		};
+
+		testCase.accept(visitor);
+		return foldersPath + backupName.getValue();
 	}
 
 	/**
@@ -325,22 +383,31 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	private void printToFile(File dest, TestCase testCase) throws IOException{
-		ScriptToFileStrategy strategy;
-		String content="";
+		Wrapped<String> content = new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot print STANDARD test case to file");
+			}
 
-		if (testCase.isScripted()){
-			strategy = strategyFor(testCase.getKind());
-			content = strategy.getWritableFileContent(testCase);
-		} else if (testCase.isKeywordTestCase()) {
-			content = keywordTestCaseService.writeScriptFromTestCase(testCase.getId());
-		}
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				content.setValue(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				content.setValue(scriptedTestCase.computeScriptWithAppendedMetadata());
+			}
+		};
+		testCase.accept(visitor);
 
 		try {
 			// try first with UTF-8
-			FileUtils.write(dest, content, Charset.forName("UTF-8"));
+			FileUtils.write(dest, content.getValue(), Charset.forName("UTF-8"));
 		} catch (UnsupportedCharsetException ex) {
 			// try again with default charset
-			FileUtils.write(dest, content);
+			FileUtils.write(dest, content.getValue());
 		}
 
 	}

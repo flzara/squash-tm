@@ -25,7 +25,10 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportLog
 import org.unitils.dbunit.annotation.DataSet
@@ -73,4 +76,23 @@ class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
 		summary != null
 		TestCaseLibrary library = findEntity(TestCaseLibrary.class, -10L)
 	}
+
+	@DataSet("TestCaseExcelBatchImporter.should import test case in library.xml")
+	def "should import one test case of each type"() {
+		given :
+		URL url = TestCaseExcelBatchImporter.class.getClassLoader().getResource("import/import one test case of each type.xls")
+		File file = new File(url.toURI())
+		when :
+		ImportLog summary = importer.performImport(file)
+		then :
+		summary != null
+		TestCaseLibrary library = findEntity(TestCaseLibrary.class, -10L)
+		def libraryContent = library.getRootContent()
+		libraryContent != null
+		libraryContent.size() == 3
+		libraryContent.collect { it.class }.containsAll([TestCase.class, ScriptedTestCase.class, KeywordTestCase.class])
+
+	}
+
+
 }

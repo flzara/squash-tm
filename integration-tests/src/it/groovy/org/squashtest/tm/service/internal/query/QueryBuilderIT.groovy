@@ -218,7 +218,7 @@ order by col_0_0_ asc"""
 				"""select distinct testCase.id as col_0_0_, s_sum((select distinct s_count(testStep_sub.id) as col_0_0_sub
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where type(testStep_sub) = ?1 and testCase = testCase_sub)) as col_1_0_
+where type(testStep_sub) in (?1) and testCase = testCase_sub)) as col_1_0_
 from TestCase testCase
 group by col_0_0_
 order by col_0_0_ asc"""
@@ -275,10 +275,45 @@ from Requirement requirement
 where exists (select 1
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where type(testStep_sub) = ?1 and testCase = testCase_sub
+where type(testStep_sub) in (?1) and testCase = testCase_sub
 group by testCase_sub.id
 having s_count(testStep_sub.id) > ?2)
 group by col_0_0_
+order by col_0_0_ asc"""
+	}
+
+	@DataSet("QueryPlanner.should filter test cases by kind.xml")
+	def "should filter on which test cases is a standard or a keyword test case"() {
+		given :
+			def projProto = findByName("TEST_CASE_ID")
+			def filterProto = findByName("TEST_CASE_KIND")
+			def orderProto = findByName("TEST_CASE_ID")
+		and :
+			def projection = new QueryProjectionColumn(columnPrototype :  projProto, operation : Operation.COUNT)
+			def filter = new QueryFilterColumn(
+				column: filterProto,
+				operation : Operation.IN,
+				values : ["org.squashtest.tm.domain.testcase.TestCase", "org.squashtest.tm.domain.testcase.KeywordTestCase"])
+			def ordering = new QueryOrderingColumn(columnPrototype : orderProto, operation : Operation.NONE)
+
+		QueryModel queryModel = new QueryModel(
+			projectionColumns : [projection],
+			filterColumns : [filter],
+			orderingColumns: [ordering]
+		)
+
+		when :
+		def query = new QueryBuilder(new InternalQueryModel(new ConfiguredQuery(queryModel))).createQuery()
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} == [[3]]
+		getTestableQuery(query) ==
+			"""select distinct s_count(testCase.id) as col_0_0_
+from TestCase testCase
+where type(testCase) in (?1, ?2)
 order by col_0_0_ asc"""
 	}
 

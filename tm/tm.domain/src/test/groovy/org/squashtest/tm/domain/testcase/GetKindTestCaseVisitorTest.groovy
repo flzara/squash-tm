@@ -18,21 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.json;
+package org.squashtest.tm.domain.testcase
 
+import spock.lang.Specification
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.squashtest.tm.domain.testcase.TestCase;
+class GetKindTestCaseVisitorTest extends Specification {
 
-/**
- * @author Julien Thebault
- *
- */
-@JsonAutoDetect
-public interface ScriptedTestCaseExtenderMixin {
-
-	@JsonIgnore
-	TestCase getTestCase();
-
+	def "Should get kind of each visited test case"() {
+		given:
+		def standardTc = new TestCase()
+		def scriptedTc = new ScriptedTestCase()
+		def keywordTc = new KeywordTestCase()
+		and:
+		GetKindTestCaseVisitor visitor = new GetKindTestCaseVisitor()
+		when:
+		scriptedTc.accept(visitor)
+		then:
+		visitor.getKind() == TestCaseKind.GHERKIN
+		when:
+		standardTc.accept(visitor)
+		then:
+		visitor.getKind() == TestCaseKind.STANDARD
+		when:
+		keywordTc.accept(visitor)
+		then:
+		visitor.getKind() == TestCaseKind.KEYWORD
+	}
 }

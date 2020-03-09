@@ -25,7 +25,7 @@ import com.querydsl.jpa.HQLTemplates;
 /**
  * These templates, that should be natively used by implementations of {@link ExtendedJPQLQuery}
  * such as {@link ExtendedHibernateQuery}, provide support for the extended functions.
- * 
+ *
  * @author bsiri
  *
  */
@@ -65,7 +65,7 @@ public class ExtHQLTemplates extends HQLTemplates{
 
 		add(ExtOps.FULLTEXT, "fulltext_search({0}, {1})");
 
-		add(ExtOps.IS_CLASS, "type({0}) = {1}");
+		add(ExtOps.IS_CLASS, "type({0}) in ({1})");
 
 		add(ExtOps.LIKE_INSENSITIVE, "i_like({0}, {1})");
 	}

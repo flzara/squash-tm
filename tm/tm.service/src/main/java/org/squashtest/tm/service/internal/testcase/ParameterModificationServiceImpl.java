@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -87,11 +88,9 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		if(testCase.isScripted()){
-			//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
-			//So if we are here the user is playing with controllers...
-			throw new IllegalArgumentException("Cannot add parameters to scripted test case.");
-		}
+		ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(
+				new IllegalArgumentException("Cannot add parameters outside a standard test case."));
+		testCase.accept(testCaseVisitor);
 		addNewParameterToTestCase(parameter, testCase);
 	}
 

@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.execution;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
+import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -71,10 +73,14 @@ public class ScriptedExecutionExtender {
 	public ScriptedExecutionExtender(Execution execution) {
 		this.execution = execution;
 		TestCase referencedTestCase = execution.getReferencedTestCase();
-		if (referencedTestCase == null || !referencedTestCase.isScripted()){
-			throw new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted.");
-		}
-		this.language = referencedTestCase.getScriptedTestCaseExtender().getLanguage();
+
+		Wrapped<ScriptedTestCaseLanguage> script = new Wrapped<>();
+
+		ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
+			scriptedTestCase -> {}, // NOOP
+			new IllegalArgumentException("Can't create an execution extender if test case doesn't exist or is not scripted."));
+		referencedTestCase.accept(testCaseVisitor);
+		this.language = ScriptedTestCaseLanguage.GHERKIN;
 	}
 
 	public Long getId() {
