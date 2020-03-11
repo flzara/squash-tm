@@ -20,24 +20,27 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
 @Transactional
 public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
+
+	@Inject
+	private MessageSource messageSource;
 
 	@Override
 	public String createFileName(KeywordTestCase keywordTestCase) {
@@ -72,16 +75,16 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
 		//TODO: get Testcase's project for further functions: get project techno and language
 		String language = "en";
-
+		Locale locale = new Locale(language);
 		String testCaseName = keywordTestCase.getName();
 
 		List<TestStep> testSteps = keywordTestCase.getSteps();
 
-		String stepScript = generateStepScript(testSteps, testCaseName);
+		String stepScript = generateStepScript(testSteps, testCaseName, locale);
 		return generateScript(testCaseName, stepScript, language);
 	}
 
-	private String generateStepScript(List<TestStep> testSteps, String testCaseName) {
+	private String generateStepScript(List<TestStep> testSteps, String testCaseName, Locale locale) {
 		if (testSteps.isEmpty()) {
 			return "";
 		}
@@ -90,9 +93,10 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		builder.append("\tScenario: ").append(testCaseName).append("\n");
 		for(TestStep step : testSteps) {
 			KeywordTestStep keywordStep = (KeywordTestStep) step;
+			String InternationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
 			builder
 				.append("\t\t")
-				.append(keywordStep.getKeyword())
+				.append(InternationalizedKeyword)
 				.append(" ")
 				.append(keywordStep.getActionWord().getWord())
 				.append("\n");

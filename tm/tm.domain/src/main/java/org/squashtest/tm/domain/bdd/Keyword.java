@@ -26,5 +26,9 @@ public enum Keyword {
 	WHEN,
 	THEN,
 	AND,
-	BUT
+	BUT;
+
+	public String i18nKeywordNameKey() {
+		return "testcase.bdd.keyword.name." + this.name().toLowerCase();
+	}
 }

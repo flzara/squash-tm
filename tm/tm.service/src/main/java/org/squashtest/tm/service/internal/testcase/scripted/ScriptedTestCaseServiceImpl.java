@@ -24,8 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
@@ -34,9 +32,7 @@ import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Date;
-import java.util.function.Function;
 
 @Service
 @Transactional

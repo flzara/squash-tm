@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 

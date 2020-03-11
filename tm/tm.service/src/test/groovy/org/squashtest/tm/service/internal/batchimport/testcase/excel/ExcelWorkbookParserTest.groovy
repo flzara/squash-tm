@@ -25,7 +25,6 @@ import org.springframework.core.io.Resource
 import org.squashtest.tm.core.foundation.lang.DateUtils
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.SheetCorruptedException
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException

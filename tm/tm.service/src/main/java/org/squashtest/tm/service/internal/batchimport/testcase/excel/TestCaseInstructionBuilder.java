@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;

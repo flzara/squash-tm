@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;

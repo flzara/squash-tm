@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd
 
+import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.KeywordTestCase
@@ -32,6 +33,11 @@ import spock.lang.Specification
 class KeywordTestCaseServiceImplTest extends Specification {
 
 	KeywordTestCaseService keywordTestCaseService = new KeywordTestCaseServiceImpl()
+	def messageSource = Mock(MessageSource)
+
+	def setup(){
+		keywordTestCaseService.messageSource = messageSource
+	}
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
@@ -59,6 +65,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		keywordTestCase.addStep(step3)
 
 		when:
+		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -67,9 +74,9 @@ class KeywordTestCaseServiceImplTest extends Specification {
 Feature: Disconnection test
 
 	Scenario: Disconnection test
-		GIVEN I am connécted
-		WHEN I sign oùt
-		THEN I am dîsconnect&d"""
+		Given I am connécted
+		When I sign oùt
+		Then I am dîsconnect&d"""
 	}
 
 	def "Should create a File name for a Keyword Test case"(){

@@ -28,7 +28,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -60,7 +59,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jooq.impl.DSL.countDistinct;
-import static org.jooq.impl.DSL.groupConcat;
 import static org.jooq.impl.DSL.groupConcatDistinct;
 import static org.squashtest.tm.jooq.domain.Tables.ATTACHMENT;
 import static org.squashtest.tm.jooq.domain.Tables.ATTACHMENT_LIST;
