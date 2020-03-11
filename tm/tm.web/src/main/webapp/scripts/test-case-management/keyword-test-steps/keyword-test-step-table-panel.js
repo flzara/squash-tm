@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"], function($, Backbone, _, eventBus, popups) {
+define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"], function($, Backbone, _, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
@@ -71,11 +71,18 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups"],
 		cleanInputs: function() {
 			$("#keyword-input").val('GIVEN');
 			$("#action-word-input").val('');
+			$(".action-word-input-error").text('');
 		},
 
 		addKeywordTestStep: function() {
 			var self = this;
 			var inputActionWord = $('#action-word-input').val();
+
+			if(StringUtil.isBlank(inputActionWord)) {
+				$('.action-word-input-error').text(translator.get("message.actionword.empty"));
+				return;
+			}
+
 			var inputKeyword = $('#keyword-input').val();
 			var objectData = {
 				keyword : inputKeyword,

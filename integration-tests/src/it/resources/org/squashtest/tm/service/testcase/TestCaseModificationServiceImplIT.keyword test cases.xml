@@ -31,4 +31,6 @@
   <TEST_CASE TCLN_ID="-4" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1" PREREQUISITE="" />
   <KEYWORD_TEST_CASE TCLN_ID="-4" />
 
+  <ACTION_WORD ACTION_WORD_ID="-78" WORD="the Action wôrd exists."/>
+
 </dataset>

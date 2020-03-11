@@ -38,12 +38,26 @@
   </div>
   <br/>
   <div th:if="${isWritable}">
-    <label>Add your keyword test step</label>
-    <select id="keyword-input">
-      <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
-    </select>
-    <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
-    <button id="add-keyword-test-step-btn" class="button" type="submit">Add</button>
+    <div class="display-table;">
+      <div class="display-table-row">
+        <div class="display-table-cell" style="padding-right: 1px;">
+          <label>Add your keyword test step</label>
+          <select id="keyword-input">
+            <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
+          </select>
+        </div>
+        <div class="display-table-cell" style="padding-left: 1px;">
+          <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
+          <button id="add-keyword-test-step-btn" class="button" type="submit">Add</button>
+        </div>
+      </div>
+      <div class="display-table-row">
+        <div class="display-table-cell" style="padding-right: 0px;"></div>
+        <div class="display-table-cell" style="padding-left: 0px;">
+          <span class="error-message action-word-input-error"></span>
+        </div>
+      </div>
+    </div>
   </div>
   <br/>
   <div id="add-keyword-test-step-result"></div>

@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.internal.repository.ActionWordDao
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel
@@ -154,9 +155,12 @@ class TestCaseTestStepsControllerTest extends Specification {
 		and:
 		def testStep = Mock(KeywordTestStep);
 		testStep.getId() >> 2020;
+
+		when:
+
 		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step") >> testStep
 
-		expect:
+		then:
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 

@@ -53,7 +53,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	TestCaseDao testCaseDao = Mock()
 	KeywordTestCaseDao keywordTestCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
-	ParameterDao parameterDao = Mock()
+	ActionWordDao actionWordDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
@@ -84,9 +84,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
 		service.eventPublisher = eventPublisher
+		service.actionWordDao = actionWordDao
 	}
 
-	def "should find test case and add a keyword step at last position"() {
+	def "should find test case and add a keyword step with new action word at last position"() {
 		given:
 			long parentTestCaseId = 2
 			KeywordTestCase parentTestCase = new KeywordTestCase()
@@ -97,6 +98,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+			actionWordDao.findByWord(_) >> null
 
 		when:
 			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
@@ -105,6 +107,34 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			1 * testStepDao.persist(_)
 			parentTestCase.getSteps().size() == 2
 			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
+	def "should find test case and add keyword step with existing action word at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord){
+			getId() >> -77L
+			getWord() >> "last"
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "last"
 	}
 
 	def "should find test case and add a step at last position"() {

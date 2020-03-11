@@ -80,6 +80,7 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
+import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -120,6 +121,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.WRITE_PARENT_TC_OR_ROLE_ADMIN;
@@ -143,6 +145,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private KeywordTestCaseDao keywordTestCaseDao;
+
+	@Inject
+	private ActionWordDao actionWordDao;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -273,14 +278,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord) {
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String word) {
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
-		// TODO: 1 - verify if the parent test case is a keyword test case
-		// TODO: 2 - verify if the given ActionWord already exists in db and reuse it if exists
-		ActionWord givenActionWord = new ActionWord(actionWord);
+
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, givenActionWord);
+		ActionWord actionWord = actionWordDao.findByWord(word);
+		if (isNull(actionWord)){
+			actionWord = new ActionWord(word);
+		}
+		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, actionWord);
 		parentTestCase.addStep(keywordTestStep);
 		testStepDao.persist(keywordTestStep);
 		return keywordTestStep;
