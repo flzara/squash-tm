@@ -25,7 +25,7 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
-import org.squashtest.tm.service.internal.testcase.scripted.BDDTestCaseEventListener
+import org.squashtest.tm.service.internal.testcase.bdd.BDDTestCaseEventListener
 
 import javax.inject.Inject
 

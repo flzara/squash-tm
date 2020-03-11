@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.scmserver.UnsecuredScmRepositoryFilesystemService
+import org.squashtest.tm.service.internal.testcase.bdd.BDDTestCaseEventListener
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared
