@@ -179,8 +179,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then: "the test case is copied"
 		nodes.get(0) instanceof TestCase
 		TestCase testCaseCopy = (TestCase) nodes.get(0)
-		and: "it has copies of parameters"
-		testCaseCopy.class.isAssignableFrom(KeywordTestCase.class)
+		and: "it has copies of steps"
+		KeywordTestCase.class.isAssignableFrom(testCaseCopy.class)
 		def testSteps = testCaseCopy.getSteps()
 		testSteps.size() == 3
 		and: "the first test step is Harry"

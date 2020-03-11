@@ -304,7 +304,7 @@ class ExcelWorkbookParserTest extends Specification {
 		Instruction<TestCaseTarget> instruction = instructions.get(0)
 
 		TestCase testCase = instruction.getTestCase()
-		testCase.class.isAssignableFrom(KeywordTestCase)
+		KeywordTestCase.class.isAssignableFrom(testCase.class)
 
 	}
 
