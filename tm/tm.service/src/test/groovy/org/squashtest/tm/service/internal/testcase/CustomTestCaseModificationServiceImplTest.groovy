@@ -109,6 +109,28 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
 	}
 
+	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
 	def "should find test case and add keyword step with existing action word at last position"() {
 		given:
 		long parentTestCaseId = 2
@@ -128,6 +150,34 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "last"
+	}
+
+	def "should find test case and add keyword step with existing action word containing spaces at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord){
+			getId() >> -77L
+			getWord() >> "last"
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
 
 		then:
 		1 * testStepDao.persist(_)

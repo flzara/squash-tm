@@ -557,7 +557,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with a new action word to test case"() {
 		when:
-			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "hello")
+			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ")
 		then:
 			createdKeywordTestStep != null
 			createdKeywordTestStep.id != null
@@ -572,7 +572,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with an existing action word to test case"() {
 		when:
-			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "the Action wôrd exists.")
+			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "    the Action wôrd exists.    ")
 		then:
 			createdKeywordTestStep != null
 			createdKeywordTestStep.id != null

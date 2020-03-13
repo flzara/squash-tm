@@ -279,13 +279,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String word) {
+		String trimmedWord = word.trim();
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		ActionWord actionWord = actionWordDao.findByWord(word);
+		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
 		if (isNull(actionWord)){
-			actionWord = new ActionWord(word);
+			actionWord = new ActionWord(trimmedWord);
 		}
 		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, actionWord);
 		parentTestCase.addStep(keywordTestStep);
