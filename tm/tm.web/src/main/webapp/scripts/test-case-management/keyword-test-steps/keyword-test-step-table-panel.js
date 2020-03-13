@@ -30,6 +30,7 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
+			this.actionWordInput = $('#action-word-input');
 
 			//the popups
 			var conf = {};
@@ -70,16 +71,17 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 
 		cleanInputs: function() {
 			$("#keyword-input").val('GIVEN');
-			$("#action-word-input").val('');
+			this.actionWordInput.val('');
 			$(".action-word-input-error").text('');
 		},
 
 		addKeywordTestStep: function() {
 			var self = this;
-			var inputActionWord = $('#action-word-input').val();
+			var inputActionWord = this.actionWordInput.val();
 
 			if(StringUtil.isBlank(inputActionWord)) {
 				$('.action-word-input-error').text(translator.get("message.actionword.empty"));
+				this.actionWordInput.val("");
 				return;
 			}
 
