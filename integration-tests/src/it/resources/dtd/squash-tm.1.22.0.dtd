@@ -115,6 +115,7 @@
 	RESOURCE*,
 	RLN_RELATIONSHIP*,
 	RLN_RELATIONSHIP_CLOSURE*,
+	SCRIPTED_EXECUTION*,
 	SCRIPTED_TEST_CASE*,
 	SCM_REPOSITORY*,
 	SCM_SERVER*,
@@ -239,6 +240,7 @@
 	resource?,
 	rln_relationship?,
 	rln_relationship_closure?,
+	scripted_execution?,
 	scripted_test_case?,
 	scm_repository?,
 	scm_server?,
@@ -1277,6 +1279,12 @@
 		COMMITTER_MAIL CDATA #IMPLIED
 		>
 
+	<!ELEMENT SCRIPTED_EXECUTION EMPTY>
+	<!ATTLIST SCRIPTED_EXECUTION
+		EXECUTION_ID CDATA #REQUIRED
+		SCRIPT_NAME #IMPLIED
+	>
+
 	<!ELEMENT SCRIPTED_TEST_CASE EMPTY>
 	<!ATTLIST SCRIPTED_TEST_CASE
 		TCLN_ID CDATA #REQUIRED
@@ -1537,6 +1545,7 @@
 	<!ELEMENT resource EMPTY>
 	<!ELEMENT rln_relationship EMPTY>
 	<!ELEMENT rln_relationship_closure EMPTY>
+	<!ELEMENT scripted_execution EMPTY>
 	<!ELEMENT scripted_test_case EMPTY>
 	<!ELEMENT scm_repository EMPTY>
 	<!ELEMENT scm_server EMPTY>
