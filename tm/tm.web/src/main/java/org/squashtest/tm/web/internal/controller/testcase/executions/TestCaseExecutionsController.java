@@ -30,12 +30,17 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -101,10 +106,13 @@ public class TestCaseExecutionsController {
 		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(visitor);
+		model.addAttribute("isTcScripted", visitor.isScripted());
+
 		model.addAttribute("executionsPageSize", paging.getPageSize());
 		model.addAttribute("testCaseId", testCaseId);
 		model.addAttribute("execs", executions);
-		model.addAttribute("isTcScripted", testCase.isScripted());
 
 		return "test-cases-tabs/executions-tab.html";
 	}

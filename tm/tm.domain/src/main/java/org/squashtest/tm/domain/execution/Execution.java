@@ -26,6 +26,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -52,10 +53,14 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
@@ -115,6 +120,9 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 DenormalizedFieldHolder, BoundEntity {
 
 	private static final String EXECUTION_ID = "EXECUTION_ID";
+
+	private static final boolean IS_KEYWORD_EXECUTION = true;
+	private static final boolean IS_NOT_KEYWORD_EXECUTION = false;
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -220,6 +228,8 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private ScriptedExecutionExtender scriptedExecutionExtender;
 
+	private boolean isKeywordExecution = IS_NOT_KEYWORD_EXECUTION;
+
 	/* *********************** attachment attributes ************************ */
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
@@ -234,7 +244,13 @@ DenormalizedFieldHolder, BoundEntity {
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
 
+	public boolean isKeywordExecution() {
+		return isKeywordExecution;
+	}
 
+	public void setKeywordExecution(boolean keywordExecution) {
+		isKeywordExecution = keywordExecution;
+	}
 
 	/*
 	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
@@ -366,6 +382,10 @@ DenormalizedFieldHolder, BoundEntity {
 	private void setReferencedTestCase(TestCase testCase) {
 
 		referencedTestCase = testCase;
+
+		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(visitor);
+		this.isKeywordExecution = visitor.isKeyword();
 
 		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());

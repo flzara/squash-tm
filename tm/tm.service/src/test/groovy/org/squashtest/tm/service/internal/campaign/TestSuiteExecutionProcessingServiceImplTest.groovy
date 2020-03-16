@@ -27,9 +27,10 @@ import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
@@ -50,10 +51,9 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	UserAccountService userService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	CampaignNodeDeletionHandler campaignNodeDeletionHandler = Mock()
-	Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory = Mock()
 
 	def setup() {
-		manager = new TestSuiteExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService, parserFactory)
+		manager = new TestSuiteExecutionProcessingServiceImpl(campaignNodeDeletionHandler, testPlanManager, userService, permissionEvaluationService)
 		manager.suiteDao = testSuiteDao
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -119,8 +119,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		testSuiteDao.getOne(10) >> testSuite
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.STANDARD
+		TestCase testCase = new TestCase()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -156,8 +155,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		testSuiteDao.getOne(10) >> testSuite
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.STANDARD
+		TestCase testCase = new TestCase()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
 		User user = Mock()
 		user.getLogin() >> "admin"
@@ -181,24 +179,11 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		testSuiteDao.getOne(10) >> testSuite
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.GHERKIN
-		ScriptedTestCaseExtender extender = Mock()
-		extender.getScript() >> "script"
-		testCase.getScriptedTestCaseExtender() >> extender
-
-		and:
-		GherkinTestCaseParser parser = Mock()
-		GherkinDocument document = Mock()
-		Feature feature = Mock()
-		Scenario scenario = Mock()
-		List<ScenarioDefinition> scenarios = [scenario]
-		feature.getChildren() >> scenarios
-		document.getFeature() >> feature
-		parser.parseToGherkinDocument(extender) >> document
-
-		parserFactory.apply(extender) >> parser
-
+		ScriptedTestCase testCase = new ScriptedTestCase()
+		testCase.setScript("# language: fr\n" +
+			"Fonctionnalité: migration\n" +
+			"  \n" +
+			"  Scénario: Vérifier les produits disponibles.")
 
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
@@ -224,24 +209,8 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 		testSuiteDao.getOne(10) >> testSuite
 
 		and:
-		TestCase testCase = Mock()
-		testCase.getKind() >> TestCaseKind.GHERKIN
-		ScriptedTestCaseExtender extender = Mock()
-		extender.getScript() >> "script"
-		testCase.getScriptedTestCaseExtender() >> extender
-
-		and:
-		GherkinTestCaseParser parser = Mock()
-		GherkinDocument document = Mock()
-		Feature feature = Mock()
-		Background background = Mock()
-		List<ScenarioDefinition> scenarios = [background]
-		feature.getChildren() >> scenarios
-		document.getFeature() >> feature
-		parser.parseToGherkinDocument(extender) >> document
-
-		parserFactory.apply(extender) >> parser
-
+		ScriptedTestCase testCase = new ScriptedTestCase()
+		testCase.setScript("")
 
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
@@ -268,7 +237,7 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 
 		ids.each { id ->
 			TestCase testCase = Mock()
-			testCase.getKind() >> TestCaseKind.STANDARD
+			testCase.accept(_) >> { TestCaseVisitor visitor -> visitor.visit(testCase) }
 			TestStep testStep = Mock()
 			testCase.getSteps() >> [testStep]
 			IterationTestPlanItem item = new IterationTestPlanItem(testCase)

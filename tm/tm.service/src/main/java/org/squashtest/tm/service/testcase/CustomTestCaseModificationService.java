@@ -26,12 +26,12 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
@@ -56,6 +56,15 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void changeReference(long testCaseId, String reference);
 
 	void changeImportance(long testCaseId, TestCaseImportance importance);
+
+	/**
+	 * Inserts the given {@link KeywordTestStep} in last position of the {@link TestCase} identified by the given id.
+	 * @param parentTestCaseId The id of the parent TestCase
+	 * @param keyword The new step Keyword
+	 * @param actionWord The new step ActionWord
+	 * @return The created KeywordTestStep
+	 */
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.

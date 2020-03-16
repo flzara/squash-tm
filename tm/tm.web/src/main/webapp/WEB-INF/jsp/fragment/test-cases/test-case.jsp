@@ -49,6 +49,7 @@
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 <c:url var="executionsTabUrl" value="/test-cases/${testCase.id}/executions?tab="/>
 <c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel"/>
+<c:url var="keywordTestStepTabUrl" value="/test-cases/${testCase.id}/steps/keyword-test-step-panel"/>
 <c:url var="importanceAutoUrl" value="/test-cases/${testCase.id}/importanceAuto"/>
 <c:url var="customFieldsValuesURL" value="/custom-fields/values"/>
 <c:url var="btEntityUrl" value="/bugtracker/test-case/${testCase.id}"/>
@@ -111,7 +112,8 @@
 
 <%-- ----------------------------------- Variables ----------------------------------------------%>
 
-<c:set var="scripted" value="${testCase.isScripted()}"/>
+<c:set var="scripted" value="${isScriptedTestCase}"/>
+<c:set var="isKeywordTest" value="${isKeywordTestCase}"/>
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:set var="isRemoteAutomationWorkflowUsed" value="${isRemoteAutomationWorkflowUsed}"/>
 
@@ -140,6 +142,11 @@
         <c:when test="${scripted}">
           <li>
             <a href="#tab-tc-script-editor"><f:message key="label.Script"/></a>
+          </li>
+        </c:when>
+        <c:when test="${isKeywordTest}">
+          <li>
+            <a href="${keywordTestStepTabUrl}"><f:message key="tabs.label.steps"/></a>
           </li>
         </c:when>
         <c:otherwise>
@@ -181,14 +188,17 @@
 
       <tc:test-case-description testCase="${testCase}"
                                 testCaseImportanceLabel="${testCaseImportanceLabel}"
-                                writable="${writable}"/>
+                                writable="${writable}"
+                                isScriptedTc="${scripted}"/>
 
       <tc:test-case-attribut testCase="${testCase}" writable="${writable}"
                              testCaseImportanceLabel="${testCaseImportanceLabel}"/>
 
         <%-- ------------------------- Automation Panel ------------------------- --%>
       <c:if test="${allowAutomationWorkflow}">
-        <tc:test-case-automation testCase="${testCase}" isRemoteAutomationWorkflowUsed="${isRemoteAutomationWorkflowUsed}" writable="${writable}"/>
+        <tc:test-case-automation testCase="${testCase}"
+                                 isRemoteAutomationWorkflowUsed="${isRemoteAutomationWorkflowUsed}"
+                                 writable="${writable}"/>
       </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
@@ -197,7 +207,7 @@
       </c:if>
         <%--------------------------- Verified Requirements section ------------------------------------%>
 
-      <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"
+      <tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}" isScriptedTc="${scripted}"
                                               containerId="contextual-content" milestoneConf="${milestoneConf}"/>
 
 
@@ -275,7 +285,7 @@
           isRemoteAutomationWorkflowUsed: ${isRemoteAutomationWorkflowUsed},
           isScripted: ${scripted}
           <c:if test="${scripted}">
-          , scriptExender: ${json:serialize(testCase.scriptedTestCaseExtender)}
+          , script: ${json:serialize(scriptContent)}
           </c:if>
           <c:if test="${not empty milestoneConf.activeMilestone}">
           , milestone: ${json:serialize(milestoneConf.activeMilestone)}

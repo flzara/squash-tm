@@ -33,7 +33,7 @@
         </update>
     </changeSet>
     <!-- End of Infrastructural changesets. -->
-    
+
     <!-- Story SQUASH-167 : adding iteration UUID for external reference -->
     <changeSet id="tm-1.22.0-squash-167-test-it-uuid-for-tf-side-trigger" author="edegenetais">
         <addColumn tableName="ITERATION">
@@ -41,7 +41,7 @@
         </addColumn>
         <addUniqueConstraint tableName="ITERATION" columnNames="UUID" constraintName="uc_iteration_uuid" />
     </changeSet>
-    
+
     <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-postgresql" author="edegenetais" dbms="postgresql">
         <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
         <sql>
@@ -50,7 +50,7 @@
             ALTER TABLE ITERATION ALTER COLUMN UUID SET NOT NULL;
         </sql>
     </changeSet>
-    
+
     <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-mysql" author="edegenetais" dbms="mysql">
         <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
         <sql>
@@ -58,7 +58,7 @@
             ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
         </sql>
     </changeSet>
-    
+
     <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-h2" author="edegenetais" dbms="h2">
         <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
         <sql>
@@ -66,5 +66,101 @@
             ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
         </sql>
     </changeSet>
-    
+
+  <changeSet id="tm-1.22.0-SQUASH-174-action-word-table" author="jlor">
+    <comment>Add action word table</comment>
+
+    <createTable tableName="ACTION_WORD">
+
+      <column name="ACTION_WORD_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="WORD" type="VARCHAR(255)">
+        <constraints nullable="false" unique="true"/>
+
+      </column>
+
+    </createTable>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-174-keyword-test-step-table" author="jlor" >
+    <comment>Add keyword test step table</comment>
+
+    <createTable tableName="KEYWORD_TEST_STEP">
+      <column name="TEST_STEP_ID" type="BIGINT" remarks="Shared key with TEST_STEP table">
+        <constraints primaryKey="true" nullable="false" references="TEST_STEP(TEST_STEP_ID)" primaryKeyName="pk_keyword_test_step"
+                     foreignKeyName="fk_keyword_test_step_test_step"/>
+      </column>
+
+      <column name="ACTION_WORD_ID" type="BIGINT" remarks="The action word which this test step uses">
+        <constraints nullable="false" foreignKeyName="fk_keyword_test_step_action_word_id" references="ACTION_WORD (ACTION_WORD_ID)"/>
+      </column>
+
+      <!-- SQUASH-175 - Add KEYWORD column in KEYWORD_TEST_STEP table -->
+      <column name="KEYWORD" type="java.sql.Types.VARCHAR(20)" remarks="A keyword test step keyword">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
+    <comment>Changes in QueryBuilder related tables concerning TEST_CASE_CALLSTEPCOUNT prototype column: adding a new subclass of TestStep (KeywordTestStep) broke the QueryBuilder</comment>
+    <sql>update QUERY_FILTER_VALUES set FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' where QUERY_FILTER_ID=1;</sql>
+    <sql>update QUERY_FILTER_COLUMN set QUERY_COLUMN_ID=134, FILTER_OPERATION='IS_CLASS' where QUERY_FILTER_ID=1;</sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-199-is-keyword-execution-column" author="mqtran">
+    <comment>Add is-keyword-execution column into Execution table</comment>
+    <addColumn tableName="EXECUTION">
+      <column name="IS_KEYWORD_EXECUTION" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the execution is a keyword one.">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-postgresql" author="jlor" dbms="postgresql">
+    <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for PostgreSQL</comment>
+    <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-h2" author="jlor" dbms="h2">
+    <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for h2</comment>
+    <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-TEST_CASE_HIERARCHY_MODIFICATION" author="jlor">
+    <comment>Create KEYWORD_TEST_CASE table. Update SCRIPTED_TC_EXTENDER table/column</comment>
+
+    <createTable tableName="KEYWORD_TEST_CASE">
+      <column name="TCLN_ID" type="BIGINT">
+        <constraints primaryKey="true" />
+      </column>
+    </createTable>
+
+    <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
+
+    <renameTable newTableName="SCRIPTED_TEST_CASE" oldTableName="SCRIPTED_TC_EXTENDER" />
+
+    <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
+
+    <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-update-tc-kind-column-prototype" author="jlor">
+    <comment>In QueryColumnPrototype table, at TestCaseKind line, change data_type column value from Level_enum to Entity</comment>
+    <sql>update QUERY_COLUMN_PROTOTYPE set DATA_TYPE='ENTITY', COLUMN_TYPE='ENTITY' where QUERY_COLUMN_ID=184;</sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-tc-kind-column" author="jlor">
+    <dropColumn tableName="TEST_CASE" columnName="TC_KIND" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-drop-language-column-in-scripted-tc" author="jlor">
+    <comment>LANGUAGE is no longer necessary for ScriptedTestCase, as it is always GHERKIN.</comment>
+    <dropColumn tableName="SCRIPTED_TEST_CASE" columnName="LANGUAGE" />
+  </changeSet>
+
 </databaseChangeLog>

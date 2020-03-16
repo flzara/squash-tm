@@ -32,6 +32,7 @@ import org.jooq.impl.SQLDataType;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
+import org.squashtest.tm.service.internal.dto.NumericCufHelper;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldValueDao;
 
 import javax.inject.Inject;
@@ -78,14 +79,15 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 	private final static Field CUSTOM_FIELD_VALUE_COMPUTED =
 		DSL.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("CF"), CUSTOM_FIELD_VALUE.VALUE)
 			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("RTF"), CUSTOM_FIELD_VALUE.LARGE_VALUE)
-			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("NUM"), cast(CUSTOM_FIELD_VALUE.NUMERIC_VALUE, SQLDataType.VARCHAR))
+			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("NUM"), CUSTOM_FIELD_VALUE.VALUE)
 			.when(CUSTOM_FIELD_VALUE.FIELD_TYPE.eq("TAG"), CUSTOM_FIELD_VALUE_TAG_VALUE)
 			.as("COMPUTED_VALUE");
 
 	private final static Field DENORMALIZED_FIELD_VALUE_COMPUTED =
 		DSL.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("CF"), DENORMALIZED_FIELD_VALUE.VALUE)
+			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("SSF"), DENORMALIZED_FIELD_VALUE.VALUE)
 			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("RTF"), DENORMALIZED_FIELD_VALUE.LARGE_VALUE)
-			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("NUM"), cast(DENORMALIZED_FIELD_VALUE.NUMERIC_VALUE, SQLDataType.VARCHAR))
+			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("NUM"), DENORMALIZED_FIELD_VALUE.VALUE)
 			.when(DENORMALIZED_FIELD_VALUE.FIELD_TYPE.eq("MFV"), DENORMALIZED_FIELD_VALUE_TAG_VALUE)
 			.as("COMPUTED_VALUE");
 
@@ -144,6 +146,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				record.get(CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID));
 			// Get the value
 			Object cufValue = record.get(CUSTOM_FIELD_VALUE_COMPUTED);
+			if("NUM".equals(record.get(CUSTOM_FIELD_VALUE.FIELD_TYPE))) {
+				cufValue = NumericCufHelper.formatOutputNumericCufValue(String.valueOf(cufValue));
+			}
 			// Get the Cuf id
 			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
 			// populate the Map
@@ -156,6 +161,9 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				record.get(DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID));
 			// Get the value
 			Object cufValue = record.get(DENORMALIZED_FIELD_VALUE_COMPUTED);
+			if("NUM".equals(record.get(DENORMALIZED_FIELD_VALUE.FIELD_TYPE))) {
+				cufValue = NumericCufHelper.formatOutputNumericCufValue(String.valueOf(cufValue));
+			}
 			// Get the Cuf id
 			Long cufId = record.get(CUSTOM_FIELD_VALUE.CF_ID);
 			// populate the Map
@@ -197,6 +205,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_TYPE,
 				CUSTOM_FIELD_VALUE.BOUND_ENTITY_ID,
 				CUSTOM_FIELD_VALUE.CF_ID,
+				CUSTOM_FIELD_VALUE.FIELD_TYPE,
 				CUSTOM_FIELD_VALUE_COMPUTED
 			);
 
@@ -224,6 +233,7 @@ public class CustomFieldValueDaoImpl implements CustomCustomFieldValueDao {
 		SelectSelectStep query2 = Dsl.select(
 			DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_TYPE,
 			DENORMALIZED_FIELD_VALUE.DENORMALIZED_FIELD_HOLDER_ID,
+			DENORMALIZED_FIELD_VALUE.FIELD_TYPE,
 			CUSTOM_FIELD_VALUE.CF_ID,
 			DENORMALIZED_FIELD_VALUE_COMPUTED
 		);

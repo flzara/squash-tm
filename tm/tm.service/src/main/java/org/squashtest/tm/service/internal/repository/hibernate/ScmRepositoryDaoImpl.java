@@ -20,16 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.project.QProject;
 import org.squashtest.tm.domain.scm.QScmRepository;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.QScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.QKeywordTestCase;
+import org.squashtest.tm.domain.testcase.QScriptedTestCase;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.repository.CustomScmRepositoryDao;
 
 import javax.persistence.EntityManager;
@@ -50,33 +53,49 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	private EntityManager em;
 
 	@Override
-	public Map<ScmRepository, Set<TestCase>> findScriptedTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
+	public Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
 
-			LOGGER.debug("looking for repositories and the test cases that should be committed into them");
+		LOGGER.debug("looking for test cases and repositories which are corresponding to these test cases' projects to commit into");
 
-
-			if (testCaseIds.isEmpty()){
-				return Collections.emptyMap();
-			}
-
-			QTestCase testCase = QTestCase.testCase;
-			QScriptedTestCaseExtender script = QScriptedTestCaseExtender.scriptedTestCaseExtender;
-			QProject project = QProject.project1;
-			QScmRepository scm = QScmRepository.scmRepository;
-
-
-			return new JPAQueryFactory(em)
-				.select(scm, testCase, script)
-				.from(testCase)
-				.join(testCase.project, project)
-				.join(project.scmRepository, scm)
-				.join(testCase.scriptedTestCaseExtender, script)
-				.fetchJoin()
-				.where(testCase.id.in(testCaseIds)
-					.and(testCase.kind.ne(TestCaseKind.STANDARD)))
-				.transform(
-					groupBy(scm).as(set(testCase))
-				);
-
+		if (testCaseIds.isEmpty()){
+			return Collections.emptyMap();
 		}
+
+		QTestCase testCase = QTestCase.testCase;
+		QScriptedTestCase scriptedTestCase = QScriptedTestCase.scriptedTestCase;
+		QKeywordTestCase keywordTestCase = QKeywordTestCase.keywordTestCase;
+		QProject project = QProject.project1;
+		QScmRepository scm = QScmRepository.scmRepository;
+
+
+		return new JPAQueryFactory(em)
+			.select(scm, testCase)
+			.from(testCase)
+			.join(testCase.project, project)
+			.join(project.scmRepository, scm)
+			.where(testCase.id.in(
+				createQueryForValueFiltering(keywordTestCase, keywordTestCase.id, testCaseIds))
+				.or(testCase.id.in(
+					createQueryForValueFiltering(scriptedTestCase, scriptedTestCase.id, testCaseIds))
+				)
+			).transform(
+				groupBy(scm).as(set(testCase))
+			);
+
+	}
+
+	/**
+	 * This method is to: from a given id list, we do a filtration and get all ids that belong to a given Data Table.
+	 * @param entityPathBase {@link EntityPathBase} represents the table in which the filtration is executed.
+	 * @param entityPathBaseId {@link NumberPath} represents the ID column in which the filtration is executed.
+	 * @param testCaseIds is all the ID to be filtered.
+	 * @return a {@link JPAQuery<Long>}
+	 */
+	private <Y extends TestCase, T extends EntityPathBase<Y>> JPAQuery<Long> createQueryForValueFiltering(
+		T entityPathBase, NumberPath<Long> entityPathBaseId, Collection<Long> testCaseIds) {
+		return new JPAQueryFactory(em)
+			.select(entityPathBaseId)
+			.from(entityPathBase)
+			.where(entityPathBaseId.in(testCaseIds));
+	}
 }

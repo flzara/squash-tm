@@ -171,4 +171,11 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 		return (BigInteger) query.getSingleResult();
 	}
 
+	@Override
+	public Project fetchForAutomatedExecutionCreation(long projectId) {
+		Query query = em.createNamedQuery("Project.fetchForAutomatedExecutionCreation");
+		query.setParameter("projectId", projectId);
+		return (Project) query.getSingleResult();
+	}
+
 }

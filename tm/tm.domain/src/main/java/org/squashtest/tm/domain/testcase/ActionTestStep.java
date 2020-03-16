@@ -30,14 +30,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,22 +39,29 @@ import java.util.Set;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
+@NamedQueries({
+	@NamedQuery(name = "ActionTestSteps.fetchWithAttachmentReferences", query = "select distinct step " +
+		"from ActionTestStep step " +
+		"inner join fetch step.attachmentList attachmentList " +
+		"left join fetch attachmentList.attachments attachements " +
+		"where step.testCase.id in (:testCaseIds)")
+})
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
-	@Type(type="org.hibernate.type.TextType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String action = "";
 
 	@Lob
-	@Type(type="org.hibernate.type.TextType")
+	@Type(type = "org.hibernate.type.TextType")
 	private String expectedResult = "";
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	@ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
-	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<>();
+	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>();
 
 	public ActionTestStep() {
 		super();
@@ -148,6 +148,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
+	 *
 	 * @param requirementVersionCoverage : the entity to remove from this step's {@linkplain RequirementVersionCoverage}s list.
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
@@ -155,7 +156,6 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	/**
-	 *
 	 * @return an UNMODIFIABLE set of this {@linkplain ActionTestStep}'s {@linkplain RequirementVersionCoverage}s.
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
@@ -164,6 +164,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	/**
 	 * will simply add the given {@linkplain RequirementVersionCoverage} to this {@linkplain ActionTestStep#requirementVersionCoverages}
+	 *
 	 * @param requirementVersionCoverage
 	 */
 	public void addRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
@@ -172,12 +173,11 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	/**
-	 *
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
 		Set<RequirementVersion> verified = new HashSet<>();
-		for(RequirementVersionCoverage coverage : requirementVersionCoverages){
+		for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 			verified.add(coverage.getVerifiedRequirementVersion());
 		}
 		return Collections.unmodifiableSet(verified);
@@ -185,10 +185,10 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	public Set<String> findUsedParametersNames() {
 		Set<String> result = new HashSet<>();
-		if(this.action != null){
+		if (this.action != null) {
 			result.addAll(Parameter.findUsedParameterNamesInString(this.action));
 		}
-		if(this.expectedResult != null){
+		if (this.expectedResult != null) {
 			result.addAll(Parameter.findUsedParameterNamesInString(this.expectedResult));
 		}
 		return result;

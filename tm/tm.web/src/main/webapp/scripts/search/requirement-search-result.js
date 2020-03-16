@@ -166,35 +166,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					};
 				}
 
-				//for requirement linked to other requirement(s)
-				if ("requirement" === this.associationType) {
-					var configureParams = function (self) {
-						table.deselectRows();
-						var selectedKey = $(self).find('option:selected').val();
-						var selectedTypeIdAndDirection = selectedKey.split("_");
-						var selectedTypeId = parseInt(selectedTypeIdAndDirection[0]);
-						var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
-						return {
-							reqVersionLinkTypeId: selectedTypeId,
-							reqVersionLinkTypeDirection: selectedTypeDirection
-						};
-					};
-
-					//get all selected requirement row labels
-					var getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
-						var result = [];
-						selectedIds.forEach(function (selectedId) {
-							result.push(squashTable.getDataById(selectedId)['requirement-label']);
-						});
-
-						return result;
-					};
-
-					var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
-
-					//get current requirement label
-					var reqVersionLabel = getRequirementLabelArrayByItsId(table, ids);
-
+				function initPopUpAfterGettingReqVersionLabel(thisPage, reqVersionLabel) {
 					//create Popup dialog with label values with Handlebars for Thymeleaf
 					var tmpLinkTypeCreate = Handlebars.compile($("#create-link-type-dialog-tpl").html());
 					var linkCreateTypeDialog = tmpLinkTypeCreate({
@@ -204,7 +176,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					});
 
 					//add this Popup into the HTML page
-					this.$el.append(linkCreateTypeDialog);
+					thisPage.$el.append(linkCreateTypeDialog);
 
 					// init the popup
 					var linkTypeDialog = $("#create-link-type-dialog");
@@ -216,7 +188,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 					});
 
 					//add this Popup into the HTML page
-					this.$el.append(createSummaryDialog);
+					thisPage.$el.append(createSummaryDialog);
 
 					// init the popup
 					var summaryDialog = $("#add-summary-dialog");
@@ -229,7 +201,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 						$.ajax({
 							url: squashtm.app.contextRoot + "requirement-versions/" + id + "/linked-requirement-versions/requirement-versions-link-types",
 							method: 'GET',
-							datatype: 'json'
+							dataType: 'json'
 						}).success(function (typesList) {
 							//and display them in the select choice list
 							displayCombo(self, typesList);
@@ -290,7 +262,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 						var bind = bindingActionCallback(apiUrl, "POST");
 
-						var showSummary = function(summary){
+						var showSummary = function (summary) {
 							if (summary) {
 								var summaryMessages = {
 									alreadyLinkedRejections: translator.get("requirement-version.linked-requirement-versions.rejection.already-linked-rejection"),
@@ -349,6 +321,57 @@ define(["jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil",
 
 					//open link type popup
 					linkTypeDialog.formDialog('open');
+				}
+
+				//for requirement linked to other requirement(s)
+				if ("requirement" === this.associationType) {
+					var configureParams = function (self) {
+						table.deselectRows();
+						var selectedKey = $(self).find('option:selected').val();
+						var selectedTypeIdAndDirection = selectedKey.split("_");
+						var selectedTypeId = parseInt(selectedTypeIdAndDirection[0]);
+						var selectedTypeDirection = parseInt(selectedTypeIdAndDirection[1]);
+						return {
+							reqVersionLinkTypeId: selectedTypeId,
+							reqVersionLinkTypeDirection: selectedTypeDirection
+						};
+					};
+
+					//get all selected requirement row labels
+					var getRequirementLabelArrayByItsId = function (squashTable, selectedIds) {
+						var result = [];
+						var transformerEncodage = function (encodedString) {
+							var textArea = document.createElement('textarea');
+							textArea.innerHTML = encodedString;
+							return textArea.value;
+						};
+						selectedIds.forEach(function (selectedId) {
+							var selectedReq = squashTable.getDataById(selectedId)['requirement-label'];
+							result.push(transformerEncodage(selectedReq));
+						});
+
+						return result;
+					};
+
+					var selectedRequirementLabel = getRequirementLabelArrayByItsId(table, ids);
+
+					//get current requirement label
+					var url = squashtm.app.contextRoot + "requirement-versions/"+id+"/name";
+
+					var self = this;
+
+					$.ajax({
+						url: url,
+						method: 'GET',
+						dataType: 'text'
+					}).done(function (data) {
+						//and put it into a variable
+						var reqVersionLabel = data;
+						initPopUpAfterGettingReqVersionLabel(self, reqVersionLabel);
+					});
+
+
+
 				} else {
 					var targetUrl = "";
 

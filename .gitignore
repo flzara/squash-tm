@@ -11,7 +11,7 @@ build/
 .idea/
 .metadata/
 *.swp
-\.iml
+*.iml
 tm/tm.web/logs/
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

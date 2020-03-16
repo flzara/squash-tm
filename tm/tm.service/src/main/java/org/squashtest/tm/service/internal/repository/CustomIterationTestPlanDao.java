@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface CustomIterationTestPlanDao {
@@ -50,5 +52,14 @@ public interface CustomIterationTestPlanDao {
 	 * @return a list of {@link IterationTestPlanItem}
 	 */
 	List<IterationTestPlanItem> findAllByItemsIdWithTCAutomated(@Param("itemsIds") List<Long> itemsIds);
+
+	/**
+	 * Fetch a list of itpi and collaborators optimized for execution creation process
+	 * Aka will prefetch related testcase and other stuff required for execution creation without leading to multiple N+1 problems
+	 * @param itemTestPlanIds ids of itpis
+	 * @return a {@link List<IterationTestPlanItem>} with proxies properly initialized
+	 */
+	@EmptyCollectionGuard
+	List<IterationTestPlanItem> fetchForAutomatedExecutionCreation(Collection<Long> itemTestPlanIds);
 
 }

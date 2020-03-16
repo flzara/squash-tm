@@ -25,9 +25,12 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
@@ -415,6 +418,21 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		obj*.action.containsAll(["action2", "action4"])
 	}
 
+	@DataSet("TestCaseModificationServiceImplIT.should remove some keyword steps.xml")
+	def "should remove a list of keyword steps"() {
+		given:
+			def toRemove = [-1L, -2L]
+		when:
+			service.removeListOfSteps(-1L, toRemove);
+			def obj = service.findStepsByTestCaseId(-1L)
+		then:
+			obj.size() == 1
+			KeywordTestStep keywordTestStep = obj[0];
+			keywordTestStep.getId() == -3L
+			keywordTestStep.getKeyword() == Keyword.THEN
+			keywordTestStep.getActionWord().getWord() == "GoodBye!"
+	}
+
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
 	def "should remove automated script link"() {
 		given:
@@ -534,5 +552,35 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def stepsResults = result.getSteps().collect({ it.getAction() })
 		stepsResults == expectedActionList
 
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with a new action word to test case"() {
+		when:
+			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ")
+		then:
+			createdKeywordTestStep != null
+			createdKeywordTestStep.id != null
+
+			Keyword.AND == createdKeywordTestStep.keyword
+
+			ActionWord actionWord = createdKeywordTestStep.actionWord
+			actionWord.id != null
+			actionWord.word == "hello"
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an existing action word to test case"() {
+		when:
+			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "    the Action wôrd exists.    ")
+		then:
+			createdKeywordTestStep != null
+			createdKeywordTestStep.id != null
+
+			Keyword.THEN == createdKeywordTestStep.keyword
+
+			ActionWord actionWord = createdKeywordTestStep.actionWord
+			actionWord.id == -78L
+			actionWord.word == "the Action wôrd exists."
 	}
 }

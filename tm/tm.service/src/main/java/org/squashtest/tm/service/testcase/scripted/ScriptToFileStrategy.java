@@ -21,7 +21,10 @@
 package org.squashtest.tm.service.testcase.scripted;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 
@@ -32,11 +35,7 @@ import org.squashtest.tm.domain.testcase.TestCaseKind;
  */
 public enum ScriptToFileStrategy {
 
-	GHERKIN_STRATEGY(){
-		@Override
-		public TestCaseKind getHandledKind() {
-			return TestCaseKind.GHERKIN;
-		}
+	KEYWORD_STRATEGY(){
 
 		@Override
 		public String getExtension(){
@@ -45,26 +44,19 @@ public enum ScriptToFileStrategy {
 
 		@Override
 		public String getWritableFileContent(TestCase testCase) {
-			if (! canHandle(testCase)){
-				throw new IllegalArgumentException("This strategy handles Gherkin test cases, but current test case is of kind "+testCase.getKind());
+			if (! canHandleKeyword(testCase)){
+				throw new IllegalArgumentException("This strategy can only handle keyword test cases.");
 			}
 
-			ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender();
+			KeywordTestCase keywordTestCase = (KeywordTestCase) testCase;
 
-			return extender.computeScriptWithAppendedMetadata();
+			throw new UnsupportedOperationException("To be updated");
 		}
 	};
 
-
-
-
 	// ******************* public API ******************************
 
-
 	public static final int FILENAME_MAX_SIZE = 100;
-
-
-
 
 	/**
 	 * Selects the correct instance of Strategy for the given language
@@ -75,23 +67,13 @@ public enum ScriptToFileStrategy {
 	public static ScriptToFileStrategy strategyFor(TestCaseKind kind){
 		ScriptToFileStrategy strategy = null;
 		switch(kind){
-			case GHERKIN: strategy = GHERKIN_STRATEGY; break;
+			case KEYWORD: strategy = KEYWORD_STRATEGY; break;
 			default : throw new IllegalArgumentException("unimplemented script dumping strategy for test case kind : '"+kind+"'");
 		}
 		return strategy;
 	}
 
-
-
 	 // ---- language-specific methods -------
-
-	/**
-	 * Returns the kind of TestCase this strategy is for.
-	 *
-	 * @return
-	 */
-	public abstract TestCaseKind getHandledKind();
-
 
 	/**
 	 * Returns the extension usually associated to files written in this language.
@@ -99,7 +81,6 @@ public enum ScriptToFileStrategy {
 	 * @return
 	 */
 	public abstract String getExtension();
-
 
 	/**
 	 * <p>Returns the content of the script, possibly with additional metadata (eg comments)
@@ -112,22 +93,18 @@ public enum ScriptToFileStrategy {
 	 */
 	public abstract String getWritableFileContent(TestCase testCase);
 
-
 	// --------- common methods --------------
 
-
 	/**
-	 * Returns whether this strategy can handle that test case (ie, the test case
-	 * is a scripted test case and corresponds to the scripting language).
-	 * Is equivalent to (this == ScriptToFileStrategy.strategyFor(testCase))
+	 * Returns whether this strategy can handle a keyword test case
 	 *
 	 * @param testCase
 	 * @return
 	 */
-	public boolean canHandle(TestCase testCase){
-		TestCaseKind kind = testCase.getKind();
-		return testCase.isScripted() &&
-				   kind == getHandledKind();
+	public boolean canHandleKeyword(TestCase testCase){
+		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(visitor);
+		return visitor.isKeyword();
 	}
 
 	/**
@@ -143,9 +120,7 @@ public enum ScriptToFileStrategy {
 	public String buildFilenameMatchPattern(TestCase testCase){
 		Long id = testCase.getId();
 		String extension = getExtension();
-
 		return String.format("%d(_.*)?\\.%s", id, extension);
-
 	}
 
 	/**
@@ -180,10 +155,7 @@ public enum ScriptToFileStrategy {
 	}
 
 
-
-
 	// ****************** private API **********************
-
 
 	private static final String ILLEGAL_PATTERN = "[^a-zA-Z0-9\\_\\-]";
 
@@ -206,7 +178,6 @@ public enum ScriptToFileStrategy {
 		Long id = testCase.getId();
 		String deaccented = StringUtils.stripAccents(name);
 		String normalized = deaccented.replaceAll(ILLEGAL_PATTERN, "_");
-
 		return id + "_" + normalized;
 	}
 

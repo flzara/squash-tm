@@ -23,45 +23,39 @@ package org.squashtest.tm.service.internal.testcase.scripted;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.security.UserContextHolder;
-import org.squashtest.tm.service.internal.repository.ScriptedTestCaseExtenderDao;
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
+import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Date;
-import java.util.function.Function;
 
 @Service
 @Transactional
 public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 
 	@Inject
-	private ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao;
-
-	@Inject
-	@Named("scriptedTestCaseParserFactory")
-	private Function<ScriptedTestCaseExtender, ScriptedTestCaseParser> parserFactory;
+	private ScriptedTestCaseDao scriptedTestCaseDao;
 
 	@Override
 	public void updateTcScript(Long testCaseId, String script) {
-		ScriptedTestCaseExtender scriptExtender = scriptedTestCaseExtenderDao.findByTestCase_Id(testCaseId);
-		scriptExtender.setScript(script);
+		ScriptedTestCase scriptedTestCase = scriptedTestCaseDao.getOne(testCaseId);
+		scriptedTestCase.setScript(script);
 		//Audit on test case... No way to write 3 triggers for only one method call
-		TestCase testCase = scriptExtender.getTestCase();
-		AuditableMixin auditable = (AuditableMixin)testCase;
+		AuditableMixin auditable = (AuditableMixin)scriptedTestCase;
 		auditable.setLastModifiedOn(new Date());
 		auditable.setLastModifiedBy(UserContextHolder.getUsername());
 	}
 
 	@Override
-	public void validateScript(Long testCaseId, String script, ScriptedTestCaseLanguage language) {
-		ScriptedTestCaseExtender extender = new ScriptedTestCaseExtender(language,script);
-		ScriptedTestCaseParser parser = parserFactory.apply(extender);
-		parser.validateScript(extender);
+	public void validateScript(String script) {
+		ScriptedTestCase scriptedTestCase = new ScriptedTestCase();
+		scriptedTestCase.setScript(script);
+		ScriptedTestCaseParser parser = new GherkinTestCaseParser(new GherkinStepGenerator());
+		parser.validateScript(scriptedTestCase);
 	}
 }

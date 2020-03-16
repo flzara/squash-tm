@@ -161,7 +161,6 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY,
 		TestCaseSheetColumn.TC_KIND,
-		TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE,
 		TestCaseSheetColumn.TC_SCRIPT
 	};
 
@@ -316,7 +315,6 @@ class ExcelExporter {
 		r.createCell(cIdx++).setCellValue(testCaseKind.name());
 
 		if (testCaseKind.isScripted()) {
-			r.createCell(cIdx++).setCellValue(tcm.getScriptedTestCaseLanguage().name());
 			r.createCell(cIdx++).setCellValue(tcm.getTcScript());
 		} else {
 			r.createCell(cIdx++).setCellValue("");

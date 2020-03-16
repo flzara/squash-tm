@@ -25,6 +25,7 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.testcase.*
@@ -61,9 +62,10 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         then: "test-case folder has 2 test-cases"
         nodes.get(0) instanceof TestCaseFolder
         TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
-        folderCopy.content.size() == 2
+        folderCopy.content.size() == 3
         folderCopy.content.find { it.name == "test-case10" } != null
         folderCopy.content.find { it.name == "test-case11" } != null
+		folderCopy.content.find { it.name == "keyword-test-case12" } != null
     }
 
     @DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -164,6 +166,80 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         dataset2copy.parameterValues.collect { it.parameter }.containsAll([param1copy, param2copy])
         dataset2copy.parameterValues.collect { it.paramValue }.containsAll(["val", "val"])
     }
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste tc with keyword test steps.xml")
+	def "should copy paste tc with keyword test steps"() {
+		given: "a test case with parameters and dataset"
+		Long[] sourceIds = [-12L]
+		Long destinationId = -2L
+
+		when: "this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then: "the test case is copied"
+		nodes.get(0) instanceof TestCase
+		TestCase testCaseCopy = (TestCase) nodes.get(0)
+		and: "it has copies of steps"
+		KeywordTestCase.class.isAssignableFrom(testCaseCopy.class)
+		def testSteps = testCaseCopy.getSteps()
+		testSteps.size() == 3
+		and: "the first test step is Harry"
+		def firstStep = testSteps.get(0)
+		firstStep.getKeyword() == Keyword.GIVEN
+		def firstStepActionWord = firstStep.getActionWord()
+		firstStepActionWord.getId() == -1L
+		firstStepActionWord.getWord() == "HARRY"
+		and: "the second test step is Ron"
+		def secondStep = testSteps.get(1)
+		secondStep.getKeyword() == Keyword.AND
+		def secondStepActionWord = secondStep.getActionWord()
+		secondStepActionWord.getId() == -2L
+		secondStepActionWord.getWord() == "RON"
+		and: "the third test step is Hermione"
+		def thirdStep = testSteps.get(2)
+		thirdStep.getKeyword() == Keyword.THEN
+		def thirdStepActionWord = thirdStep.getActionWord()
+		thirdStepActionWord.getId() == -3L
+		thirdStepActionWord.getWord() == "HERMIONE"
+	}
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")
+	def "should copy paste scripted tc with its script in a folder"() {
+		given: "a test case with parameters and dataset"
+		Long[] sourceIds = [-12L]
+		Long destinationId = -2L
+
+		when: "this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then: "the test case is copied"
+		nodes.get(0) instanceof ScriptedTestCase
+		ScriptedTestCase testCaseCopy = (ScriptedTestCase) nodes.get(0)
+		and: "it has copies of parameters"
+		def testSteps = testCaseCopy.getSteps()
+		testSteps.size() == 0
+		and: "the script has been copied"
+		testCaseCopy.getScript() == "The script of the scripted test case."
+	}
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")
+	def "should copy paste scripted tc with its script in a library"() {
+		given: "a test case with parameters and dataset"
+		Long[] sourceIds = [-12L]
+		Long destinationId = -1L
+
+		when: "this test case is copied into a library"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToLibrary(destinationId, sourceIds)
+
+		then: "the test case is copied"
+		nodes.get(0) instanceof ScriptedTestCase
+		ScriptedTestCase testCaseCopy = (ScriptedTestCase) nodes.get(0)
+		and: "it has copies of parameters"
+		def testSteps = testCaseCopy.getSteps()
+		testSteps.size() == 0
+		and: "the script has been copied"
+		testCaseCopy.getScript() == "The script of the scripted test case."
+	}
 
     @DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
     def "should copy tc with datasetParamValues of called step"() {

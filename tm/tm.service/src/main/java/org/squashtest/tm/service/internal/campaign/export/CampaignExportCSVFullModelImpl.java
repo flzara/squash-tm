@@ -58,7 +58,6 @@ import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
-import static org.squashtest.tm.jooq.domain.Tables.ISSUE_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
@@ -186,11 +185,11 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 	@Override
 	Iterator<Record> getIterationJooqQueryIterator() {
 		return
-			DSL.select(
+			DSL.selectDistinct(
 				ITERATION_ID, ITERATION_NAME, ITERATION_SCHEDULED_END_DATE, ITERATION_SCHEDULED_START_DATE, ITERATION_ACTUAL_END_DATE, ITERATION_ACTUAL_START_DATE,
 				ITPI_ID, ITPI_STATUS, USER_LOGIN, ITPI_LAST_EXECUTED_ON, ITPI_EXECUTION, DATASET_NAME, IT_MILESTONE.LABEL,
 				TC_ID, TC_IMPORTANCE, TC_REFERENCE, TC_NATURE, TC_TYPE, TC_STATUS, TC_REQUIREMENT_VERIFIED,
-				TC_NAME, TC_PREREQUISITE, TC_DESCRIPTION, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
+				TC_NAME, PROJECT_ID, PROJECT_NAME, ITPI_ISSUE,
 				TSu_NAME, TC_MILESTONE.LABEL,
 				TS_ORDER, TS_ID, CTS_CALLED_TS, TS_REQUIREMENT_VERIFIED,
 				EXECUTION_ID, EXECUTION_MODE, EXECUTION_STATUS,
@@ -228,7 +227,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
-				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()))
+				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()).and(ES_TS_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID).or(ES_TS_ID.isNull()))) // TMSUP-1925 - Thanks to JPJ
 				.orderBy(ITERATION_ID, ITPI_ID, EXECUTION_ID, ES_ORDER)
 				.fetch().iterator();
 	}
@@ -375,12 +374,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 	private TestCaseDto createNewTestCaseDto(Record r) {
 		TestCaseDto newTestCase = new TestCaseDto(r.get(TC_ID), r.get(TC_REFERENCE), r.get(TC_NAME), r.get(TC_IMPORTANCE), r.get(TC_NATURE), r.get(TC_TYPE), r.get(TC_STATUS), r.get(PROJECT_ID), r.get(PROJECT_NAME));
-		if (r.get(TC_DESCRIPTION) != null) {
-			newTestCase.setDescription(r.get(TC_DESCRIPTION));
-		}
-		if (r.get(TC_PREREQUISITE) != null) {
-			newTestCase.setPrerequisite(r.get(TC_PREREQUISITE));
-		}
+
 		populateTestCase(r, newTestCase);
 
 		return newTestCase;

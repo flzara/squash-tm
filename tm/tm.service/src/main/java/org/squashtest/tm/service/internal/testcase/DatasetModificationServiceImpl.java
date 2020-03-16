@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -73,11 +74,9 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
-			if(testCase.isScripted()){
-				//No need to make proper error message, because the IHM do not allow parameters on scripted test case.
-				//So if we are here the user is playing with controllers...
-				throw new IllegalArgumentException("Cannot add dataset to scripted test case.");
-			}
+			ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(
+				new IllegalArgumentException("Cannot add dataset outside a standard test case."));
+			testCase.accept(testCaseVisitor);
 
 			dataset.setTestCase(testCase);
 			testCase.addDataset(dataset);

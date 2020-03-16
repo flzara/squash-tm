@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.rest;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
@@ -56,6 +57,10 @@ public class RestTestStep {
 			setCalledTestCase(new RestTestCaseStub(visited.getCalledTestCase()));
 		}
 
+		@Override
+		public void visit(KeywordTestStep visited) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	public String getAction() {

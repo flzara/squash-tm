@@ -84,6 +84,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 	def "should show test case manager page"() {
 		given:
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
+		testCaseFinder.findById(_) >> new TestCase()
 
 		when:
 		def res = controller.showTestCaseManager(20L, Mock(Model), [] as String[])

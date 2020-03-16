@@ -25,4 +25,6 @@ public interface TestStepVisitor {
 	void visit(ActionTestStep visited);
 
 	void visit(CallTestStep visited);
+
+	void visit(KeywordTestStep visited);
 }

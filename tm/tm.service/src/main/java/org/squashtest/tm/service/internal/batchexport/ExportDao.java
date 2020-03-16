@@ -24,8 +24,15 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.jooq.domain.tables.InfoListItem;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
@@ -46,14 +53,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.groupConcatDistinct;
+import static org.squashtest.tm.jooq.domain.Tables.ATTACHMENT;
+import static org.squashtest.tm.jooq.domain.Tables.ATTACHMENT_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.CALL_TEST_STEP;
+import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.KEYWORD_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE;
+import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
+import static org.squashtest.tm.jooq.domain.Tables.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.jooq.domain.Tables.SCRIPTED_TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TCLN_RELATIONSHIP;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_FOLDER;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_CONTENT;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.service.internal.repository.hibernate.NativeQueries.FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE;
-
 
 @Repository
 public class ExportDao {
@@ -62,8 +87,15 @@ public class ExportDao {
 	private static final String TEST_CASE_IDS = "testCaseIds";
 
 	private static final String VERSION_IDS = "versionIds";
+
+	private static final InfoListItem TEST_CASE_NATURE = INFO_LIST_ITEM.as("nature");
+	private static final InfoListItem TEST_CASE_TYPE = INFO_LIST_ITEM.as("type");
+
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private DSLContext dsl;
 
 	@Inject
 	private PathService pathService;
@@ -166,18 +198,154 @@ public class ExportDao {
 		return loadModels("testCase.excelExportCoverage", tcIds, TEST_CASE_IDS, CoverageModel.class);
 	}
 
+	private List<TestCaseModel> loadTestCaseModelsFromFolderWithJOOQ(List<Long> tclnIds) {
+
+		List<TestCaseModel> result = new ArrayList<>();
+
+		dsl.select(TEST_CASE.TCLN_ID, TEST_CASE.UUID, TEST_CASE.REFERENCE,
+			TEST_CASE.IMPORTANCE, TEST_CASE.IMPORTANCE_AUTO, TEST_CASE.AUTOMATABLE,
+			TEST_CASE.TC_STATUS, TEST_CASE.PREREQUISITE,
+			TEST_CASE_LIBRARY_NODE.DESCRIPTION, TEST_CASE_LIBRARY_NODE.NAME,
+			TEST_CASE_LIBRARY_NODE.CREATED_BY, TEST_CASE_LIBRARY_NODE.CREATED_ON,
+			TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY, TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_ON,
+			PROJECT.PROJECT_ID, PROJECT.NAME,
+			TEST_CASE_NATURE.LABEL, TEST_CASE_NATURE.CODE,
+			TEST_CASE_TYPE.LABEL, TEST_CASE_TYPE.CODE,
+			SCRIPTED_TEST_CASE.TCLN_ID, SCRIPTED_TEST_CASE.SCRIPT,
+			KEYWORD_TEST_CASE.TCLN_ID,
+			groupConcatDistinct(MILESTONE.LABEL).separator("|").as("milestones"),
+			countDistinct(ATTACHMENT).as("countAttachments"),
+			countDistinct(REQUIREMENT_VERSION_COVERAGE).as("countReqCoverages"),
+			countDistinct(ITEM_TEST_PLAN_LIST.ITERATION_ID).as("countIteration"),
+			countDistinct(TEST_CASE_STEPS.TEST_CASE_ID).as("countCaller"),
+			TCLN_RELATIONSHIP.CONTENT_ORDER)
+		.from(TEST_CASE)
+			.join(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.join(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+			.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(MILESTONE).on(MILESTONE.MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID))
+			.join(TEST_CASE_NATURE).on(TEST_CASE_NATURE.ITEM_ID.eq(TEST_CASE.TC_NATURE))
+			.join(TEST_CASE_TYPE).on(TEST_CASE_TYPE.ITEM_ID.eq(TEST_CASE.TC_TYPE))
+			.join(TCLN_RELATIONSHIP).on(TCLN_RELATIONSHIP.DESCENDANT_ID.eq(TEST_CASE.TCLN_ID))
+			.join(TEST_CASE_FOLDER).on(TEST_CASE_FOLDER.TCLN_ID.eq(TCLN_RELATIONSHIP.ANCESTOR_ID))
+			.join(ATTACHMENT_LIST).on(ATTACHMENT_LIST.ATTACHMENT_LIST_ID.eq(TEST_CASE_LIBRARY_NODE.ATTACHMENT_LIST_ID))
+			.leftJoin(ATTACHMENT).on(ATTACHMENT.ATTACHMENT_LIST_ID.eq(ATTACHMENT_LIST.ATTACHMENT_LIST_ID))
+			.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
+			.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.CALLED_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.STEP_ID.eq(CALL_TEST_STEP.TEST_STEP_ID))
+			.leftJoin(SCRIPTED_TEST_CASE).on(SCRIPTED_TEST_CASE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(KEYWORD_TEST_CASE).on(KEYWORD_TEST_CASE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+		.where(TEST_CASE.TCLN_ID.in(tclnIds))
+		.groupBy(TEST_CASE.TCLN_ID, TEST_CASE_LIBRARY_NODE.TCLN_ID, PROJECT.PROJECT_ID,
+			TEST_CASE_NATURE.ITEM_ID, TEST_CASE_TYPE.ITEM_ID, TCLN_RELATIONSHIP.CONTENT_ORDER,
+			TEST_CASE_FOLDER.TCLN_ID, ATTACHMENT_LIST.ATTACHMENT_LIST_ID,
+			SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID)
+		.fetch()
+		.forEach(record -> {
+			TestCaseModel model = createTestCaseModelFromQueryResult(record, record.get(TCLN_RELATIONSHIP.CONTENT_ORDER));
+			result.add(model);
+		});
+
+		return result;
+	}
+
+	private List<TestCaseModel> loadTestCaseModelsFromLibraryWithJOOQ(List<Long> tclnIds) {
+
+		List<TestCaseModel> result = new ArrayList<>();
+
+		dsl.select(TEST_CASE.TCLN_ID, TEST_CASE.UUID, TEST_CASE.REFERENCE,
+			TEST_CASE.IMPORTANCE, TEST_CASE.IMPORTANCE_AUTO, TEST_CASE.AUTOMATABLE,
+			TEST_CASE.TC_STATUS, TEST_CASE.PREREQUISITE,
+			TEST_CASE_LIBRARY_NODE.DESCRIPTION, TEST_CASE_LIBRARY_NODE.NAME,
+			TEST_CASE_LIBRARY_NODE.CREATED_BY, TEST_CASE_LIBRARY_NODE.CREATED_ON,
+			TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY, TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_ON,
+			PROJECT.PROJECT_ID, PROJECT.NAME,
+			TEST_CASE_NATURE.LABEL, TEST_CASE_NATURE.CODE,
+			TEST_CASE_TYPE.LABEL, TEST_CASE_TYPE.CODE,
+			SCRIPTED_TEST_CASE.TCLN_ID, SCRIPTED_TEST_CASE.SCRIPT,
+			KEYWORD_TEST_CASE.TCLN_ID,
+			groupConcatDistinct(MILESTONE.LABEL).separator("|").as("milestones"),
+			countDistinct(ATTACHMENT).as("countAttachments"),
+			countDistinct(REQUIREMENT_VERSION_COVERAGE).as("countReqCoverages"),
+			countDistinct(ITEM_TEST_PLAN_LIST.ITERATION_ID).as("countIteration"),
+			countDistinct(TEST_CASE_STEPS.TEST_CASE_ID).as("countCaller"),
+			TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER)
+			.from(TEST_CASE)
+			.join(TEST_CASE_LIBRARY_NODE).on(TEST_CASE_LIBRARY_NODE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.join(PROJECT).on(PROJECT.PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
+			.leftJoin(MILESTONE_TEST_CASE).on(MILESTONE_TEST_CASE.TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(MILESTONE).on(MILESTONE.MILESTONE_ID.eq(MILESTONE_TEST_CASE.MILESTONE_ID))
+			.join(TEST_CASE_NATURE).on(TEST_CASE_NATURE.ITEM_ID.eq(TEST_CASE.TC_NATURE))
+			.join(TEST_CASE_TYPE).on(TEST_CASE_TYPE.ITEM_ID.eq(TEST_CASE.TC_TYPE))
+			.join(TEST_CASE_LIBRARY_CONTENT).on(TEST_CASE_LIBRARY_CONTENT.CONTENT_ID.eq(TEST_CASE.TCLN_ID))
+			.join(ATTACHMENT_LIST).on(ATTACHMENT_LIST.ATTACHMENT_LIST_ID.eq(TEST_CASE_LIBRARY_NODE.ATTACHMENT_LIST_ID))
+			.leftJoin(ATTACHMENT).on(ATTACHMENT.ATTACHMENT_LIST_ID.eq(ATTACHMENT_LIST.ATTACHMENT_LIST_ID))
+			.leftJoin(REQUIREMENT_VERSION_COVERAGE).on(REQUIREMENT_VERSION_COVERAGE.VERIFYING_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(ITERATION_TEST_PLAN_ITEM).on(ITERATION_TEST_PLAN_ITEM.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
+			.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.CALLED_TEST_CASE_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.STEP_ID.eq(CALL_TEST_STEP.TEST_STEP_ID))
+			.leftJoin(SCRIPTED_TEST_CASE).on(SCRIPTED_TEST_CASE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.leftJoin(KEYWORD_TEST_CASE).on(KEYWORD_TEST_CASE.TCLN_ID.eq(TEST_CASE.TCLN_ID))
+			.where(TEST_CASE.TCLN_ID.in(tclnIds))
+			.groupBy(TEST_CASE.TCLN_ID, TEST_CASE_LIBRARY_NODE.TCLN_ID, PROJECT.PROJECT_ID,
+				TEST_CASE_NATURE.ITEM_ID, TEST_CASE_TYPE.ITEM_ID, TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER,
+				ATTACHMENT_LIST.ATTACHMENT_LIST_ID,
+				SCRIPTED_TEST_CASE.TCLN_ID, KEYWORD_TEST_CASE.TCLN_ID)
+			.fetch()
+			.forEach(record -> {
+				TestCaseModel model = createTestCaseModelFromQueryResult(record, record.get(TEST_CASE_LIBRARY_CONTENT.CONTENT_ORDER));
+				result.add(model);
+			});
+
+		return result;
+	}
+
+	private TestCaseModel createTestCaseModelFromQueryResult(Record record, Integer testCaseOrderInContainer) {
+		TestCaseModel model = new TestCaseModel(
+			record.get(PROJECT.PROJECT_ID),
+			record.get(PROJECT.NAME), testCaseOrderInContainer + 1, record.get(TEST_CASE.TCLN_ID),
+			record.get(TEST_CASE.UUID), record.get(TEST_CASE.REFERENCE), record.get(TEST_CASE_LIBRARY_NODE.NAME),
+			(String) record.get("milestones"), record.get(TEST_CASE.IMPORTANCE_AUTO), TestCaseImportance.valueOf(record.get(TEST_CASE.IMPORTANCE)),
+			new ListItemReference(record.get(TEST_CASE_NATURE.CODE), record.get(TEST_CASE_NATURE.LABEL)),
+			new ListItemReference(record.get(TEST_CASE_TYPE.CODE), record.get(TEST_CASE_TYPE.LABEL)),
+			TestCaseStatus.valueOf(record.get(TEST_CASE.TC_STATUS)),
+			TestCaseAutomatable.valueOf(record.get(TEST_CASE.AUTOMATABLE)), record.get(TEST_CASE_LIBRARY_NODE.DESCRIPTION), record.get(TEST_CASE.PREREQUISITE),
+			((Integer) record.get("countReqCoverages")).longValue(), ((Integer) record.get("countCaller")).longValue(), Long.valueOf(record.get("countAttachments").toString()),
+			((Integer) record.get("countIteration")).longValue(), record.get(TEST_CASE_LIBRARY_NODE.CREATED_ON), record.get(TEST_CASE_LIBRARY_NODE.CREATED_BY),
+			record.get(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_ON), record.get(TEST_CASE_LIBRARY_NODE.LAST_MODIFIED_BY), null,
+			null);
+
+		String script = record.get(SCRIPTED_TEST_CASE.SCRIPT);
+
+		Long keywordTCLNId = record.get(KEYWORD_TEST_CASE.TCLN_ID);
+		Long scriptedTCLNId = record.get(SCRIPTED_TEST_CASE.TCLN_ID);
+
+		if (scriptedTCLNId != null) {
+			model.setTestCaseKind(TestCaseKind.GHERKIN);
+			model.setTcScript(script);
+		} else if (keywordTCLNId != null) {
+			model.setTestCaseKind(TestCaseKind.KEYWORD);
+		} else {
+			model.setTestCaseKind(TestCaseKind.STANDARD);
+		}
+		return model;
+	}
 
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds) {
 
 		List<TestCaseModel> models = new ArrayList<>(tclnIds.size());
 		List<TestCaseModel> buffer;
 
-
 		// get the models
-		buffer = loadModels("testCase.excelExportDataFromFolder", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
+		//buffer = loadModels("testCase.excelExportDataFromFolder", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
+		buffer = loadTestCaseModelsFromFolderWithJOOQ(tclnIds);
 		models.addAll(buffer);
 
-		buffer = loadModels("testCase.excelExportDataFromLibrary", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
+//		buffer = loadModels("testCase.excelExportDataFromLibrary", tclnIds, TEST_CASE_IDS, TestCaseModel.class);
+		buffer = loadTestCaseModelsFromLibraryWithJOOQ(tclnIds);
 		models.addAll(buffer);
 
 		//get the cufs
@@ -297,7 +465,7 @@ public class ExportDao {
 	private Map<Long, Long> findIdRequirementAndNumCurrentVersionNotObsolete(List<Long> versionIds) {
 		Map<Long, Long> mapIdRequirementNumVersion = null;
 		if(versionIds.size()==0){
-			return mapIdRequirementNumVersion;			
+			return mapIdRequirementNumVersion;
 		}
 		javax.persistence.Query query = em.createNativeQuery(FIND_ID_REQUIREMENT_NUM_VERSION_NOT_OBSOLETE);
 		query.setParameter("versionIds", versionIds);
@@ -428,7 +596,7 @@ public class ExportDao {
 
 	@SuppressWarnings("unchecked")
 	private <R> List<R> loadModels(String queryName, List<Long> ids, String paramName,
-	                               Class<R> resclass) {
+								   Class<R> resclass) {
 		ids = !ids.isEmpty() ? ids : Collections.singletonList(-1L);
 		Session session = getStatelessSession();
 		Query q = session.getNamedQuery(queryName);

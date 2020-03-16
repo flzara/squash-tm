@@ -46,6 +46,8 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -270,12 +272,16 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
 		persistTestCase(copyTestCase);
-		copyCustomFields(source, copyTestCase);
 		copyRequirementVersionCoverage(source, copyTestCase);
-		copyContentsOnExternalRepository (copyTestCase);
-
-		copyTestCase.getActionSteps().forEach(this::copyContentsOnExternalRepository );
-
+		copyContentsOnExternalRepository(copyTestCase);
+		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
+		source.accept(visitor);
+		if(visitor.isKeyword()) {
+			//TODO someday, when we decide to play with custom fields in Keyword Test Case, fill this block of code
+		} else {
+			copyCustomFields(source, copyTestCase);
+			copyTestCase.getActionSteps().forEach(this::copyContentsOnExternalRepository);
+		}
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
 			flush();

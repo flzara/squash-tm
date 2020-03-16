@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
@@ -62,7 +63,11 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 	@Override
 	public void visit(CallTestStep visited) {
 		// not possible. The step is an ActionTestStep even if it's in fact a call step.
+	}
 
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
 	}
 
 	private ExecutionStep findExistingStep(ExecutionStep execStep) {

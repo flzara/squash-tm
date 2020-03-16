@@ -18,21 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
+public class KeywordTestStepModel {
 
-import java.util.Collection;
-import java.util.List;
+	private String keyword;
 
-public interface ScriptedTestCaseExtenderDao extends JpaRepository<ScriptedTestCaseExtender,Long>{
+	private String actionWord;
 
-	@Query("select ext from ScriptedTestCaseExtender ext inner join fetch ext.testCase tc where tc.id=:testCaseId")
-	ScriptedTestCaseExtender findByTestCase_Id(@Param("testCaseId") Long testCaseId);
+	public String getKeyword() {
+		return keyword;
+	}
 
-	List<ScriptedTestCaseExtender> findByLanguageAndTestCase_IdIn(ScriptedTestCaseLanguage language, Collection<Long> testCaseIds);
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public String getActionWord() {
+		return actionWord;
+	}
+
+	public void setActionWord(String actionWord) {
+		this.actionWord = actionWord;
+	}
 }

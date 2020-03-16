@@ -24,13 +24,18 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomAttachmentDao;
 import org.squashtest.tm.service.internal.repository.CustomIterationTestPlanDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class IterationTestPlanDaoImpl implements CustomIterationTestPlanDao {
 
@@ -60,4 +65,30 @@ public class IterationTestPlanDaoImpl implements CustomIterationTestPlanDao {
 		List<IterationTestPlanItem> result = q.getResultList();
 		return result;
 	}
+
+	@Override
+	public List<IterationTestPlanItem> fetchForAutomatedExecutionCreation(Collection<Long> itemTestPlanIds) {
+		List<IterationTestPlanItem> testPlanItems = fetchIterationTestPlanItems(itemTestPlanIds);
+		// fetching the associated steps at least directly executables. For call steps it will be N+1...
+		// but call step should be fairly rare in automated executions...
+		fetchTestStepsForAutomatedExecutionCreation(testPlanItems);
+		return testPlanItems;
+	}
+
+	private List<IterationTestPlanItem> fetchIterationTestPlanItems(Collection<Long> itemTestPlanIds) {
+		Query q = entityManager.createNamedQuery("IterationTestPlanItem.fetchForExecutionCreation");
+		q.setParameter("itemTestPlanIds", itemTestPlanIds);
+		return (List<IterationTestPlanItem>) q.getResultList();
+	}
+
+	private List<ActionTestStep> fetchTestStepsForAutomatedExecutionCreation(Collection<IterationTestPlanItem> testPlanItems) {
+		Set<Long> testCaseIds = testPlanItems.stream()
+			.map(IterationTestPlanItem::getReferencedTestCase)
+			.map(TestCaseLibraryNode::getId)
+			.collect(Collectors.toSet());
+		Query q = entityManager.createNamedQuery("ActionTestSteps.fetchWithAttachmentReferences");
+		q.setParameter("testCaseIds", testCaseIds);
+		return (List<ActionTestStep>) q.getResultList();
+	}
+
 }

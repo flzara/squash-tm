@@ -28,6 +28,7 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -36,9 +37,12 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
@@ -60,6 +64,8 @@ public final class BugTrackerControllerHelper {
 
 	private static final String ISSUE_URL = "issue-url";
 	public static final String BT_PROJECT = "BtProject";
+	private static final String STANDARD = "STANDARD";
+	private static final String GHERKIN = "GHERKIN";
 
 	@Inject
 	private BugTrackersLocalService service;
@@ -89,22 +95,35 @@ public final class BugTrackerControllerHelper {
 		MessageSource messageSource) {
 
 		Execution execution = buggedStep.getExecution();
-		TestCaseKind testCaseKind = execution.getReferencedTestCase().getKind();
+//		TestCaseKind testCaseKind = execution.getReferencedTestCase().getKind();
 
 		List<ExecutionStep> executionSteps = execution.getSteps();
 		int totalStepNumber = executionSteps.size();
 		long buggedStepId = buggedStep.getId();
 
-		switch(testCaseKind) {
-			case STANDARD:
-				return getAdditionalInformationForStandardTestCase(
-					executionSteps, buggedStepId, totalStepNumber, locale, messageSource);
-			case GHERKIN:
-				return getAdditionalInformationForScriptedTestCase(
-					executionSteps, buggedStepId, totalStepNumber, locale, messageSource);
-			default:
-				throw new IllegalArgumentException("The Kind " + testCaseKind + " for a Test Case does not exist.");
-		}
+		Wrapped<String> additionalInformation = new Wrapped<>();
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				additionalInformation.setValue(getAdditionalInformationForStandardTestCase(
+					executionSteps, buggedStepId, totalStepNumber, locale, messageSource));
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				throw new IllegalArgumentException("The Kind " + additionalInformation + " for a Test Case does not exist.");
+
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				additionalInformation.setValue(getAdditionalInformationForScriptedTestCase(
+					executionSteps, buggedStepId, totalStepNumber, locale, messageSource));
+			}
+		};
+
+		execution.getReferencedTestCase().accept(testCaseVisitor);
+		return additionalInformation.getValue();
 	}
 
 	/**

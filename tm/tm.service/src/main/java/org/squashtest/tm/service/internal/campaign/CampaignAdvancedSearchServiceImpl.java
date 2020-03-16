@@ -266,7 +266,9 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			.map("testSuites.id", ITEM_SUITE_ID)
 			.mapHandler("executionMode", new AdvancedSearchColumnMappings.SpecialHandler(CampaignAdvancedSearchServiceImpl::createExecutionModeFilter));
 
-
+		//INFO: for the [TM-324] bug, we get from the UI form a parameter named "campaign.folder.id",
+		//but infact, we will not map it with a colLabel in order to avoid further Database risks
+		//if in the future, there's another parameter of type, we'll think about another solution !
 	}
 
 }

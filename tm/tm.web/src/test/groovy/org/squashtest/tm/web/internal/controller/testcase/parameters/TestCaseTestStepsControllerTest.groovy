@@ -23,14 +23,19 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.internal.repository.ActionWordDao
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestCaseTestStepsController
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
@@ -140,10 +145,74 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 
 	}
-	def "should change step index"() {
+
+	def "should add a keyword test step with given keyword and actionWord" (){
 		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("BUT");
+		testStepModel.setActionWord("add a BDD test step");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+
+		when:
+
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step") >> testStep
+
+		then:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
+	def "should build table model for keyword test case steps"() {
+		given:
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step1, to: 1L
+		}
+
+		and:
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, new ActionWord("how are you ?"))
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step2, to: 2L
+		}
+
+		and:
+		TestCase tc = Mock()
+		tc.getSteps() >> [step1, step2]
+		testCaseModificationService.findById(7L) >> tc
+
+		and:
+		DataTableDrawParameters params = new DataTableDrawParameters();
+		params.setiDisplayLength(10);
+		params.setiDisplayStart(0)
+		params.setsEcho("echo");
+
+		when:
+		def res = controller.getKeywordTestStepTableModel(7L, params)
+
+		then:
+		res.sEcho == "echo"
+		res.aaData ==[
+			[
+				"entity-id": "1",
+				"step-keyword":'GIVEN',
+				"step-index":'1',
+				"empty-delete-holder":null,
+				"step-action-word":'hello'
+			],
+			[
+				"entity-id": "2",
+				"step-keyword":'AND',
+				"step-index":'2',
+				"empty-delete-holder":null,
+				"step-action-word":'how are you ?'
+			]]
 
 
+	}
+
+	def "should change step index"() {
 		when:
 		controller.changeStepIndex(10, 1, 20)
 

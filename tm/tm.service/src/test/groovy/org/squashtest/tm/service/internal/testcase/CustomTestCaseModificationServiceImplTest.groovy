@@ -22,7 +22,8 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -30,21 +31,14 @@ import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.exception.InconsistentInfoListItemException
-
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.GenericNodeManagementService
-import org.squashtest.tm.service.internal.repository.ActionTestStepDao
-import org.squashtest.tm.service.internal.repository.ParameterDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.repository.TestStepDao
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
@@ -57,8 +51,9 @@ import spock.lang.Unroll
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
+	KeywordTestCaseDao keywordTestCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
-	ParameterDao parameterDao = Mock()
+	ActionWordDao actionWordDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
@@ -77,6 +72,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		CollectionAssertions.declareContainsExactly()
 
 		service.testCaseDao = testCaseDao
+		service.keywordTestCaseDao = keywordTestCaseDao
 		service.testStepDao = testStepDao
 		service.testCaseManagementService = testCaseManagementService
 		service.deletionHandler = deletionHandler
@@ -88,6 +84,107 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionStepDao = actionStepDao
 		service.infoListItemService = infoListItemService
 		service.eventPublisher = eventPublisher
+		service.actionWordDao = actionWordDao
+	}
+
+	def "should find test case and add a keyword step with new action word at last position"() {
+		given:
+			long parentTestCaseId = 2
+			KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+			def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+			parentTestCase.addStep(firstStep)
+
+		and:
+			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+			actionWordDao.findByWord(_) >> null
+
+		when:
+			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
+
+		then:
+			1 * testStepDao.persist(_)
+			parentTestCase.getSteps().size() == 2
+			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
+	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
+	def "should find test case and add keyword step with existing action word at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord){
+			getId() >> -77L
+			getWord() >> "last"
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "last"
+	}
+
+	def "should find test case and add keyword step with existing action word containing spaces at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord){
+			getId() >> -77L
+			getWord() >> "last"
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "last"
 	}
 
 	def "should find test case and add a step at last position"() {
@@ -520,6 +617,25 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def tc = Mock(TestCase)
 		def step1 = Mock(TestStep)
 		def step2 = Mock(TestStep)
+
+		and:
+		testCaseDao.findById(10L) >> tc
+		testStepDao.findById(_) >>> [step1, step2]
+
+		when:
+		service.removeListOfSteps(10L, [1L, 2L])
+
+		then:
+		1 * deletionHandler.deleteStep(tc, step1)
+		1 * deletionHandler.deleteStep(tc, step2)
+	}
+
+	def "should remove a bunch of keyword steps"(){
+
+		given:
+		def tc = Mock(TestCase)
+		def step1 = Mock(KeywordTestStep)
+		def step2 = Mock(KeywordTestStep)
 
 		and:
 		testCaseDao.findById(10L) >> tc

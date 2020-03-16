@@ -40,6 +40,8 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -51,6 +53,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -63,7 +67,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
-import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
@@ -77,7 +80,9 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
+import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
+import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
@@ -116,6 +121,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.WRITE_PARENT_TC_OR_ROLE_ADMIN;
@@ -136,6 +142,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
+
+	@Inject
+	private KeywordTestCaseDao keywordTestCaseDao;
+
+	@Inject
+	private ActionWordDao actionWordDao;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -262,6 +274,25 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	/* *************** TestStep section ***************************** */
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String word) {
+		String trimmedWord = word.trim();
+		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
+
+		Keyword givenKeyword = Keyword.valueOf(keyword);
+		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
+		if (isNull(actionWord)){
+			actionWord = new ActionWord(trimmedWord);
+		}
+		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, actionWord);
+		parentTestCase.addStep(keywordTestStep);
+		testStepDao.persist(keywordTestStep);
+		return keywordTestStep;
+	}
 
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
@@ -526,6 +557,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			public void visit(CallTestStep visited) {
 
 			}
+
+			@Override
+			public void visit(KeywordTestStep visited) {
+				throw new UnsupportedOperationException();
+			}
 		};
 
 		for (TestStep original : originals) {
@@ -687,6 +723,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		} else {
 
 			Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
+
+			// SQUASH-209 - boolean must be updated when manual association with automation workflow
+			AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
+			if(automationRequest != null && automationRequest.getProject().isAllowAutomationWorkflow()
+				&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
+				requestDao.updateIsManual(testCaseId, true);
+			}
 
 			// once it's okay we commit the test association
 			return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
@@ -1257,6 +1300,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			// NOPE
 		}
 
+		@Override
+		public void visit(KeywordTestStep visited) {
+			// NOOP
+		}
 	}
 
 	private List<Long> findAllTCIdsWithLockedMilestone(List<Long> testCaseIds) {

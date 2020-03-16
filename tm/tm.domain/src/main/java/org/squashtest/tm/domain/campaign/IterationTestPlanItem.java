@@ -73,13 +73,29 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @NamedQueries({
-	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query="select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
-	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")
+	@NamedQuery(name = "IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query = "select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
+	@NamedQuery(name = "IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)"),
+	@NamedQuery(name = "IterationTestPlanItem.fetchForExecutionCreation",
+		query = "select distinct itpi " +
+			"from IterationTestPlanItem itpi " +
+			"inner join fetch itpi.referencedTestCase tc " +
+			"left join fetch itpi.referencedDataset ds " +
+			"left join fetch ds.parameterValues " +
+			"left join fetch tc.parameters " +
+			"left join fetch tc.automationRequest " +
+			"left join fetch tc.automatedTest " +
+			"inner join fetch itpi.iteration it " +
+			"inner join fetch it.campaign " +
+			"left join fetch itpi.executions exec " +
+			"left join fetch exec.issueList " +
+			"left join fetch exec.automatedExecutionExtender " +
+			"left join fetch exec.scriptedExecutionExtender " +
+			"where itpi.id in (:itemTestPlanIds)")
 })
 @Entity
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
-@Persister(impl=IterationTestPlanItemPersister.class)
+@Persister(impl = IterationTestPlanItemPersister.class)
 public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
@@ -126,7 +142,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset referencedDataset;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH})
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
 	private final List<Execution> executions = new ArrayList<>();
@@ -136,7 +152,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private Iteration iteration;
 
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "testPlan")
 	private List<TestSuite> testSuites = new ArrayList<>();
 
 	public IterationTestPlanItem() {
@@ -155,7 +171,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		label = testCase.getName();
 	}
 
-	public IterationTestPlanItem(TestCase testCase, Dataset dataset, User assignee){
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset, User assignee) {
 		this(testCase, dataset);
 		this.user = assignee;
 	}
@@ -180,7 +196,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last "live" Execution in his execution list
-	 *
 	 */
 	public void updateExecutionStatus() {
 		if (executions.isEmpty()) {
@@ -394,7 +409,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * @return true if (the item last execution with unexecuted step) or (item has no execution and is linked to a
-	 *         testCase).
+	 * testCase).
 	 */
 	public boolean isExecutableThroughTestSuite() {
 		// XXX check if tester is assigned
@@ -441,7 +456,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	public void addTestSuite(@NotNull TestSuite suite) {
 		if (!isSameIteration(this.iteration, suite.getIteration())) {
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
-					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
+				+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
 		}
 		this.testSuites.add(suite);
 		suite.bindTestPlanItem(this);
@@ -472,7 +487,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		}
 
 
-		return builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
+		return builder.toString().replaceFirst(", $", "");    //this eliminates the last comma
 	}
 
 	public void setTestSuites(List<TestSuite> testSuites) {
@@ -485,7 +500,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	/**
-	 *
 	 * @return the last {@linkplain Execution} or null if there is none
 	 */
 	public Execution getLatestExecution() {
@@ -515,8 +529,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 * will create an "unparameterized" item. Otherwise, this will create 1 item per dataset.
 	 *
 	 * @param testCase
-	 * @param datasets
-	 *            collection of datasets, can be empty or null.
+	 * @param datasets collection of datasets, can be empty or null.
 	 * @return a collection containing at least 1 item.
 	 */
 	public static Collection<IterationTestPlanItem> createTestPlanItems(TestCase testCase, Collection<Dataset> datasets) {
@@ -546,8 +559,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	/**
 	 * Return true if the item is assigned to the given user.
 	 *
-	 * @param userLogin
-	 *            : the login of the concerned user (may not be null)
+	 * @param userLogin : the login of the concerned user (may not be null)
 	 * @return true if the assigned user is not <code>null</code> and matches the given login.
 	 */
 	public boolean isAssignedToUser(@NotNull String userLogin) {

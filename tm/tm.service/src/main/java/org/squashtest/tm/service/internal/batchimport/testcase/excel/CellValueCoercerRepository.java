@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -182,7 +181,6 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_KIND, OptionalEnumCellCoercer.forEnum(TestCaseKind.class));
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_SCRIPTING_LANGUAGE, OptionalEnumCellCoercer.forEnum(ScriptedTestCaseLanguage.class));
 
 		return repo;
 	}

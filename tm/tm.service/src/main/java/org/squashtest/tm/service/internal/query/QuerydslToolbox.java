@@ -719,6 +719,9 @@ class QuerydslToolbox {
 		else if (datatype == DataType.DATE) {
 			predicate = createDatePredicate(operation, baseExp, operands);
 		}
+		else if(datatype == DataType.ENTITY) {
+			predicate = createEntityPredicate(operation, baseExp, operands);
+		}
 		// another special case, for regex
 		else if (operation == Operation.MATCHES){
 			predicate = createMatchPredicate(operation, baseExp, operands);
@@ -737,9 +740,7 @@ class QuerydslToolbox {
 			predicate = Expressions.predicate(operator, expressions);
 
 		}
-
 		return predicate;
-
 	}
 
 	/*
@@ -804,7 +805,7 @@ class QuerydslToolbox {
 
 	private BooleanExpression createMatchPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.S_MATCHES, baseExp, operands[0]);
-		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to 
+		// the isTrue() is necessary, because the result of the match (positive or negative) still needs to
 		// be compared to something.
 		return matchExpr.isTrue();
 	}
@@ -819,6 +820,13 @@ class QuerydslToolbox {
 		BooleanExpression matchExpr = Expressions.booleanOperation(ExtOps.LIKE_INSENSITIVE, baseExp, operands[0]);
 
 		return matchExpr.isTrue();
+	}
+
+	private BooleanExpression createEntityPredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
+		if(operation != Operation.IS_CLASS && operation != Operation.IN) {
+			throw new IllegalArgumentException("Only IS_CLASS and IN operations are allowed for DataType ENTITY.");
+		}
+		return Expressions.booleanOperation(ExtOps.IS_CLASS, baseExp, operands[0]);
 	}
 
 
@@ -963,6 +971,13 @@ class QuerydslToolbox {
 					case BOOLEAN:
 					case EXISTENCE:
 						operand = Boolean.valueOf(val.toLowerCase());
+						break;
+					case ENTITY:
+						try {
+							operand = Class.forName(val);
+						} catch (ClassNotFoundException ex) {
+							throw new IllegalArgumentException(ex);
+						}
 						break;
 					default:
 						throw new IllegalArgumentException("type '" + type + NOT_YET_SUPPORTED);

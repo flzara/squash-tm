@@ -45,9 +45,13 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -83,22 +87,24 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
  * @author Gregory Fouquet
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
+
 	public static final int MAX_REF_SIZE = 50;
 	@Column(updatable = false)
 	private final int version = 1;
 
 	@NotNull
 	@Size(min = 0, max = MAX_REF_SIZE)
-	private String reference = "";
+	protected String reference = "";
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	private String prerequisite = "";
+	protected String prerequisite = "";
 
 	@NotNull
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
@@ -123,23 +129,23 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@NotNull
 	@Enumerated(STRING)
-	private TestCaseImportance importance = LOW;
+	protected TestCaseImportance importance = LOW;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_NATURE")
-	private InfoListItem nature = null;
+	protected InfoListItem nature = null;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_TYPE")
-	private InfoListItem type = null;
+	protected InfoListItem type = null;
 
 
 	@NotNull
 	@Enumerated(STRING)
 	@Column(name = "TC_STATUS")
-	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
+	protected TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull
 	@Enumerated(STRING)
@@ -149,37 +155,29 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * Should the importance be automatically computed.
 	 */
 	@NotNull
-	private Boolean importanceAuto = Boolean.FALSE;
+	protected Boolean importanceAuto = Boolean.FALSE;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "TA_TEST")
-	private AutomatedTest automatedTest;
+	protected AutomatedTest automatedTest;
 
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<>();
 
 	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
-	private ScriptedTestCaseExtender scriptedTestCaseExtender;
-
-
-	@Column(name = "TC_KIND")
-	@Enumerated(value = STRING)
-	@NotNull
-	private TestCaseKind kind = STANDARD;
-
-	@OneToOne(mappedBy = "testCase", optional = true, fetch = LAZY, cascade = CascadeType.ALL)
-	private AutomationRequest automationRequest;
+	protected AutomationRequest automationRequest;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private TestCaseAutomatable automatable = M;
+	protected TestCaseAutomatable automatable = M;
 
 	/*TM-13*/
 	@NotNull
 	@Column(name = "UUID")
 	@Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
-	private String uuid;
+	protected String uuid;
+
 
 	// *************************** CODE *************************************
 
@@ -300,11 +298,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Override
 	public TestCase createCopy() {
 		TestCase copy = new TestCase();
+		populateCopiedTestCaseAttributes(copy);
+		return copy;
+	}
+
+	protected void populateCopiedTestCaseAttributes(TestCase copy) {
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
 		copy.addCopiesOfParametersAndDatasets(this);
-		copy.addCopyOfScript(this);
 		copy.notifyAssociatedWithProject(this.getProject());
 		copy.bindSameMilestones(this);
 		if (this.automatedTest != null) {
@@ -316,7 +318,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 					this.getId(), e);
 			}
 		}
-		return copy;
 	}
 
 	/**
@@ -345,14 +346,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 				String datasetParamValueCopyParamValue = datasetParamValue.getParamValue();
 				new DatasetParamValue(datasetParamValueCopyParam, datasetCopy, datasetParamValueCopyParamValue);
 			}
-		}
-	}
-
-	private void addCopyOfScript(TestCase source) {
-		if (source.isScripted()) {
-			ScriptedTestCaseExtender copy = source.getScriptedTestCaseExtender().createCopy();
-			copy.setTestCase(this);
-			this.setScriptedTestCaseExtender(copy);
 		}
 	}
 
@@ -401,7 +394,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.status = source.getStatus();
 		this.reference = source.getReference();
 		this.importanceAuto = source.isImportanceAuto();
-		this.kind = source.getKind();
 	}
 
 	/**
@@ -510,20 +502,26 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isAutomated() {
-		boolean isAutomated = false;
 		if (getProject().isAllowAutomationWorkflow()) {
-			if (automatable.equals(TestCaseAutomatable.Y) && AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus())) {
-				if (TestCaseKind.GHERKIN.equals(kind)) {
-					isAutomated = automatedTest != null && getProject().getScmRepository() != null;
-				} else {
-					isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
-				}
-
-			}
+			return isAutomatedInWorkflow();
 		} else {
-			isAutomated = automatedTest != null && getProject().isTestAutomationEnabled();
+			return isActuallyAutomated();
 		}
-		return isAutomated;
+	}
+
+	protected boolean isAutomatedInWorkflow() {
+		return isActuallyAutomated() &&
+			TestCaseAutomatable.Y.equals(automatable) &&
+			AutomationRequestStatus.AUTOMATED.equals(automationRequest.getRequestStatus());
+	}
+
+	/**
+	 * Tells whether the Project is associated with a TestAutomationServer and if this TestCase is associated with
+	 * an AutomatedTest.
+	 * @return
+	 */
+	protected boolean isActuallyAutomated() {
+		return getProject().isTestAutomationEnabled() && automatedTest != null;
 	}
 
 	// ***************** (detached) custom field section *************
@@ -589,6 +587,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			// noop
 		}
 
+		@Override
+		public void visit(KeywordTestStep visited) {
+			// NOOP
+		}
 	}
 
 	// =====================Requirement verifying section====================
@@ -829,6 +831,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return result;
 	}
 
+
 	/**
 	 * Creates a test case which non-collection, non-primitive type fields are set to null.
 	 *
@@ -836,7 +839,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	public static TestCase createBlankTestCase() {
 		TestCase res = new TestCase();
+		setAttributesAsNullForBlankTestCase(res);
+		return res;
+	}
 
+	protected static void setAttributesAsNullForBlankTestCase(TestCase res) {
 		res.importanceAuto = null;
 		res.prerequisite = null;
 		res.reference = null;
@@ -846,8 +853,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		res.status = null;
 		res.automatable = null;
 		res.uuid = null;
-
-		return res;
 	}
 
 	/**
@@ -870,6 +875,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public boolean isModifiable() {
 		return milestonesAllowEdit();
 	}
+
 
 	private boolean milestonesAllowEdit() {
 		for (Milestone m : getAllMilestones()) {
@@ -901,33 +907,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	//*********************** SCRIPTED TEST CASE SECTION ************************//
 
 
-	public ScriptedTestCaseExtender getScriptedTestCaseExtender() {
-		return scriptedTestCaseExtender;
-	}
 
-	public void setScriptedTestCaseExtender(ScriptedTestCaseExtender scriptedTestCaseExtender) {
-		this.scriptedTestCaseExtender = scriptedTestCaseExtender;
-	}
-
-	public boolean isScripted() {
-		return this.kind.isScripted();
-	}
 
 	public void extendWithScript(String scriptLanguage, String locale) {
-		TestCaseKind tcKind = TestCaseKind.getFromString(scriptLanguage);
-		if (tcKind.isScripted()) {
-			ScriptedTestCaseExtender scriptedTCExtender = new ScriptedTestCaseExtender(this, scriptLanguage, locale);
-			this.setScriptedTestCaseExtender(scriptedTCExtender);
-			this.setKind(tcKind);
-		}
-	}
-
-	public TestCaseKind getKind() {
-		return kind;
-	}
-
-	public void setKind(TestCaseKind kind) {
-		this.kind = kind;
+		throw new UnsupportedOperationException();
 	}
 
 	public AutomationRequest getAutomationRequest() {
@@ -953,5 +936,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+
+	public void accept(TestCaseVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }
 

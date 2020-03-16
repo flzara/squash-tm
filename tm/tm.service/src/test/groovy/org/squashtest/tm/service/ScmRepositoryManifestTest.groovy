@@ -22,8 +22,7 @@ package org.squashtest.tm.service
 
 import org.apache.commons.io.FileUtils
 import org.squashtest.tm.domain.scm.ScmRepository
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared
@@ -150,14 +149,11 @@ class ScmRepositoryManifestTest extends Specification{
 		def manifest = new ScmRepositoryManifest(repo)
 
 		and:
-		def tc = Mock(TestCase){
-			getId() >> 411L
-			getKind() >> TestCaseKind.GHERKIN
-			getName() >> "test"
-		}
+		def tc = new ScriptedTCMock("test", 411L)
 
 		when :
-		def maybeFile = manifest.locateTest(tc)
+		def pattern = tc.buildFilenameMatchPattern()
+		def maybeFile = manifest.locateTest(pattern, tc.getId())
 
 		then :
 		maybeFile.isPresent()
@@ -174,14 +170,11 @@ class ScmRepositoryManifestTest extends Specification{
 		def manifest = new ScmRepositoryManifest(repoDuplicates)
 
 		and:
-		def tc = Mock(TestCase){
-			getId() >> 555L
-			getKind() >> TestCaseKind.GHERKIN
-			getName() >> "test5"
-		}
+		def tc = new ScriptedTCMock("test5", 555L)
 
 		when :
-		def maybeFile = manifest.locateTest(tc)
+		String pattern = tc.buildFilenameMatchPattern()
+		def maybeFile = manifest.locateTest(pattern, tc.getId())
 
 		then :
 		maybeFile.isPresent()
@@ -207,14 +200,11 @@ class ScmRepositoryManifestTest extends Specification{
 		def manifest = new ScmRepositoryManifest(repo, false)
 
 		and:
-		def tc = Mock(TestCase){
-			getId() >> 411L
-			getKind() >> TestCaseKind.GHERKIN
-			getName() >> "test"
-		}
+		def tc = new ScriptedTCMock("test", 411L)
 
 		when :
-		def maybeFile = manifest.locateTest(tc)
+		def pattern = tc.buildFilenameMatchPattern()
+		def maybeFile = manifest.locateTest(pattern, tc.getId())
 
 		then :
 		maybeFile.isPresent()
@@ -235,14 +225,11 @@ class ScmRepositoryManifestTest extends Specification{
 		def manifest = new ScmRepositoryManifest(repoDuplicates, useCache)
 
 		and:
-		def tc = Mock(TestCase){
-			getId() >> 42L
-			getKind() >> TestCaseKind.GHERKIN
-			getName() >> "ahahah"
-		}
+		def tc = new ScriptedTCMock("ahahah", 42L)
 
 		when:
-		def maybeFile = manifest.locateTest(tc)
+		def pattern = tc.buildFilenameMatchPattern()
+		def maybeFile = manifest.locateTest(pattern, tc.getId())
 
 		then:
 		maybeFile.isPresent()
@@ -297,6 +284,23 @@ class ScmRepositoryManifestTest extends Specification{
 			def ex = thrown Exception
 			ex.message == "cannot list content of scm 'dead repo'"
 
+	}
+
+	class ScriptedTCMock extends ScriptedTestCase {
+		private Long newId;
+
+		ScriptedTCMock(String name, Long newId) {
+			super(name)
+			this.newId = newId
+		}
+
+		Long getId() {
+			return newId
+		}
+
+		void setId(Long newId) {
+			this.newId = newId
+		}
 	}
 
 }

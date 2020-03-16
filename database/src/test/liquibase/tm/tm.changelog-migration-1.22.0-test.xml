@@ -25,15 +25,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    
+
     <!-- test sets -->
     <include file="tm.data-1.22.0-SQUASH-167.xml" relativeToChangelogFile="true" />
-    
+
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml"
            relativeToChangelogFile="true" />
     <!-- ========================================================================================================= -->
-    
+
     <!-- Testing migration for ITERATION UUID in SQUASH-167 -->
     <changeSet id="tm-1.22.0-SQUASH-167-test-uuid" author="edegenetais" dbms="mysql, postgresql, h2">
         <preConditions>
@@ -43,4 +43,26 @@
         </preConditions>
         <comment>Check that no uiteration is left without UUID</comment>
     </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_VALUES where FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_COLUMN where QUERY_COLUMN_ID=134 and FILTER_OPERATION='IS_CLASS' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+    </preConditions>
+    <comment>Check QUERY_FILTER_VALUES and QUERY_FILTER_COLUMN were successfully updated.</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order-table" author="jlor">
+    <preConditions>
+      <not>
+        <tableExists tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+      </not>
+    </preConditions>
+    <comment>Check TEMP_EXECUTION_EXTENDER_ORDER table was successfully dropped.</comment>
+  </changeSet>
+
 </databaseChangeLog>

@@ -171,7 +171,7 @@
       verifiedRequirementsUrl="${verifiedRequirementsUrl }"
       containerId="contextual-content"
       milestoneConf="${milestoneConf}"
-      isTcScripted="${testCase.isScripted()}"/>
+      isTcScripted="${isTcScripted}"/>
 
       <div id="add-summary-dialog" class="not-displayed"
            title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">

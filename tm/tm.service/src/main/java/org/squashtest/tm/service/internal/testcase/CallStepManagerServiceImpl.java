@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -115,9 +116,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(node, "READ"));
 		}
 
-		if(parentTestCase.isScripted()){
-			throw new ScriptedStepCallException();
-		}
+		ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(new ScriptedStepCallException());
+
+		parentTestCase.accept(testCaseVisitor);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 
@@ -127,9 +128,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 			TestCase calledTestCase = testCaseDao.findById(testCase.getId());
 
-			if(calledTestCase.isScripted()){
-				throw new ScriptedStepCallException();
-			}
+			calledTestCase.accept(testCaseVisitor);
 
 			CallTestStep newStep = new CallTestStep();
 			newStep.setCalledTestCase(calledTestCase);

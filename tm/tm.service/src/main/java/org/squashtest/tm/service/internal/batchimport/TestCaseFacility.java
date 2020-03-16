@@ -26,13 +26,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -270,10 +275,20 @@ public class TestCaseFacility extends EntityFacilitySupport {
 	}
 
 	private void doUpdateTestCaseScriptExtender(TestCase testCase, TestCase orig) {
-		if (orig.isScripted() && testCase.isScripted()) {
-			String newScript = testCase.getScriptedTestCaseExtender().getScript();
+		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
+		testCase.accept(visitor);
+		boolean isScripted = visitor.isScripted();
+
+		if(isScripted) {
+			orig.accept(visitor);
+		}
+
+		// isScripted could have been modified after orig.accept(visitor)
+		// merging the two conditions should be an error !!
+		if (isScripted) {
+			String newScript = ((ScriptedTestCase) testCase).getScript();
 			if (StringUtils.isNoneBlank(newScript)) {
-				orig.getScriptedTestCaseExtender().setScript(newScript);
+				((ScriptedTestCase)orig).setScript(newScript);
 			}
 		}
 	}

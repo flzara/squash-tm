@@ -28,6 +28,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,12 +36,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -50,6 +55,8 @@ import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -83,6 +90,12 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
+
+	@Inject
+	private KeywordTestCaseService keywordTestCaseService;
+
+	@Inject
+	private KeywordTestCaseFinder keywordTestCaseFinder;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
@@ -164,6 +177,22 @@ public class TestCaseTestStepsController {
 
 	}
 
+	@RequestMapping(value = "/keyword-test-step-table", params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getKeywordTestStepTableModel (@PathVariable long testCaseId, DataTableDrawParameters params) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		List<TestStep> steps = testCase.getSteps();
+
+		Paging filter = new DataTablePaging(params);
+
+		PagedCollectionHolder<List<TestStep>> holder = new PagingBackedPagedCollectionHolder<>(filter, steps.size(), steps);
+
+		// generate the model
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		return builder.buildDataModel(holder, params.getsEcho());
+
+	}
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public Long addActionTestStep(@RequestBody ActionStepFormModel stepModel,
@@ -192,6 +221,30 @@ public class TestCaseTestStepsController {
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 			+ step.getExpectedResult());
 		return addActionTestStep.getId();
+	}
+
+	@RequestMapping(value = "/keyword-test-step-panel")
+	public String getKeywsordTestStepPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(testCaseId);
+		List<TestStep> steps = keywordTestCase.getSteps();
+		model.addAttribute(TEST_CASE, keywordTestCase);
+
+		//create keyword test step table model
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		Collection<Object> stepData = builder.buildRawModel(steps, 1);
+		model.addAttribute("stepData", stepData);
+		model.addAttribute("keywordList", Keyword.values());
+		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
+		return "test-cases-tabs/keyword-test-steps-tab.html";
+	}
+
+	@PostMapping(value = "/add-keyword-test-step", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) {
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
+		return step.getId();
 	}
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})

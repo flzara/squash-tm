@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
+import org.squashtest.tm.domain.project.Project;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -62,5 +63,7 @@ public interface CustomProjectDao {
 	void removeLibraryPluginBindingProperty(Long libraryPluginBindingId);
 
 	BigInteger countActivePluginInProject(long projectId);
+
+	Project fetchForAutomatedExecutionCreation(long projectId);
 
 }

@@ -55,8 +55,9 @@ public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanIte
 	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@Param("testPlanIds") List<Long> testPlanIds, @Param("suiteId") long testSuiteId);
 
 	List<IterationTestPlanItem> findByReferencedTestCase(TestCase referencedTestCase);
-	
+
 	@EmptyCollectionGuard
 	List<Long> findAllForMilestones(@Param("milestonesIds") List<Long> milestonesIds);
+
 
 }

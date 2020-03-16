@@ -24,13 +24,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode;
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
@@ -120,7 +125,28 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
 			builtNode.addAttr("title", tooltip);
 			builtNode.addAttr("hassteps", hasSteps.toString());
-			builtNode.addAttr("kind", visited.getKind().name().toLowerCase());
+			//create a visitor
+			Wrapped<String> testCaseKind = new Wrapped<>();
+			TestCaseVisitor visitor = new TestCaseVisitor() {
+				@Override
+				public void visit(TestCase testCase) {
+					testCaseKind.setValue("standard");
+				}
+
+				@Override
+				public void visit(KeywordTestCase keywordTestCase) {
+					testCaseKind.setValue("keyword");
+
+				}
+
+				@Override
+				public void visit(ScriptedTestCase scriptedTestCase) {
+					testCaseKind.setValue("gherkin");
+
+				}
+			};
+			visited.accept(visitor);
+			builtNode.addAttr("kind", testCaseKind.getValue());
 
 			//milestone attributes
 			Collection<Milestone> allMilestones = milestoneMembershipFinder.findAllMilestonesForTestCase(visited.getId());

@@ -24,16 +24,20 @@ import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.*
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExtenderSorter
 import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
@@ -46,6 +50,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao
 import spock.lang.Specification
 
 import javax.inject.Provider
+import javax.persistence.EntityManager
 
 class AutomatedSuiteManagerServiceTest extends Specification {
 
@@ -53,25 +58,29 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 	TestAutomationConnectorRegistry connectorRegistry
 	AutomatedSuiteManagerServiceImpl service
 	PermissionEvaluationService permService
+	AutomatedSuiteDao autoSuiteDao
 
 
 	CustomFieldValueFinderService finder = Mock()
-        PrivateCustomFieldValueService customFieldValuesService = Mock()
-        PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
+	PrivateCustomFieldValueService customFieldValuesService = Mock()
+	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
 	Provider builderProvider = Mock()
-        AutomatedSuiteDao autoSuiteDaoMock = Mock()
-        ExecutionDao executionDaoMock = Mock()
+	ExecutionDao executionDaoMock = Mock()
+	EntityManager entityManager = Mock()
+	ProjectDao projectDao = Mock()
+	IterationTestPlanDao testPlanDao = Mock()
 
 	def setup(){
 
 
 		connectorRegistry = Mock()
 		permService = Mock()
+		autoSuiteDao = Mock()
 		permService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		permService.hasRoleOrPermissionOnObject(_, _, _, _) >> true
 		permService.hasRole(_) >> true
 
-		service = new AutomatedSuiteManagerServiceImpl(autoSuiteDao: autoSuiteDaoMock,
+		service = new AutomatedSuiteManagerServiceImpl(autoSuiteDao: autoSuiteDao,
                                                                 executionDao: executionDaoMock,
                                                                 customFieldValuesService: customFieldValuesService,
                                                                 denormalizedFieldValueService: denormalizedFieldValueService)
@@ -81,8 +90,11 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		service.customFieldValueFinder = finder
 		builderProvider.get() >> { return new TaParametersBuilder()}
 		service.paramBuilder = builderProvider
-                
-		autoSuiteDaoMock.createNewSuite() >> new AutomatedSuite()
+
+		service.entityManager = entityManager
+		service.projectDao = projectDao
+		service.testPlanDao = testPlanDao
+
 	}
 
 
@@ -118,6 +130,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		def qcConnector = Mock(TestAutomationConnector)
 
 		and:
+		autoSuiteDao.findAndFetchForAutomatedExecutionCreation(_) >> []
 		finder.findAllCustomFieldValues(_) >> []
 
 		when :
@@ -151,6 +164,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		connectorRegistry.getConnectorForKind("qc") >> { throw new UnknownConnectorKind("connector unknown") }
 
 		and:
+		autoSuiteDao.findAndFetchForAutomatedExecutionCreation(_) >> suite.executionExtenders
 		finder.findAllCustomFieldValues(_) >> []
 
 		and:
@@ -164,7 +178,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		1 * jenConnector.executeParameterizedTests(_, "12345", _)
 		errors == 6
 	}
-        
+
         def "should return collection of tests with params"() {
                 given :
 		AutomatedSuite suite = mockAutomatedSuite()
@@ -294,9 +308,14 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		binding.customField >> field
 
 		finder.findAllCustomFieldValues(_) >> [value]
+		AutomatedSuiteManagerServiceImpl.CustomFieldValuesForExec cufValues = Mock()
+		cufValues.getValueForTestcase(_) >> [value]
+		cufValues.getValueForIteration(_) >> [value]
+		cufValues.getValueForCampaign(_) >> [value]
+		cufValues.getValueForTestSuite(_) >> [value]
 
 		when:
-		Couple couple = service.createAutomatedExecAndParams(extender)
+		Couple couple = service.createAutomatedExecAndParams(extender, cufValues)
 
 		then:
 		couple.a1 == extender
@@ -304,26 +323,34 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		couple.a2["IT_CUF_FIELD"] == "VALUE"
 		couple.a2["CPG_CUF_FIELD"] == "VALUE"
 	}
-        
+
         def "should create automated suite from ITPI list"() {
                 given:
                 List<IterationTestPlanItem> items = mockITPIList()
-        
+				testPlanDao.fetchForAutomatedExecutionCreation(_) >> items
+				AutomatedSuite autoSuite = new AutomatedSuite()
+				autoSuite.id = "3fb11dd8-6e5c-4020-ade9-9378ff206fbc"
+				autoSuiteDao.createNewSuite() >> autoSuite
+				entityManager.find(AutomatedSuite.class, "3fb11dd8-6e5c-4020-ade9-9378ff206fbc") >> autoSuite
+
                 when:
                 AutomatedSuite suite = service.createFromIterationTestPlanItems(1L, items)
 
-                then: 
+                then:
                 suite.executionExtenders.size() == 5
         }
-        
+
         private List<IterationTestPlanItem> mockITPIList() {
             List<IterationTestPlanItem> itpiList = new ArrayList<>()
             5.times { num -> itpiList.add(mockITPI()) }
             return itpiList
         }
-        
+
         private IterationTestPlanItem mockITPI() {
             IterationTestPlanItem itpi = Mock()
+			Project mockProject = Mock()
+			mockProject.getId() >> 1L
+			itpi.getProject() >> mockProject
             itpi.isAutomated() >> true
             itpi.getIteration() >> mockIteration()
             itpi.createAutomatedExecution() >> Mock(Execution) {
@@ -331,25 +358,30 @@ class AutomatedSuiteManagerServiceTest extends Specification {
             }
             return itpi
         }
-        
+
         private Iteration mockIteration() {
             Iteration iter = Mock()
             iter.getId() >> 1L
             return iter
         }
 
-        
-        
+
+
 	private AutomatedExecutionExtender mockExtender(realExec) {
 		AutomatedExecutionExtender extender = Mock()
 
 		AutomatedTest automatedTest = Mock()
 		extender.getAutomatedTest() >> automatedTest
-
 		Execution exec = Mock()
-		exec.iteration >> Mock(Iteration)
-		exec.testPlan >> Mock(IterationTestPlanItem)
+		Iteration iteration = Mock()
+
+		exec.iteration >>iteration
+		def iterationTestPlanItem = Mock(IterationTestPlanItem)
+		exec.testPlan >> iterationTestPlanItem
 		exec.campaign >> Mock(Campaign)
+		iterationTestPlanItem.getIteration() >> iteration
+		iterationTestPlanItem.getTestSuites() >> new ArrayList<TestSuite>()
+		iteration.getTestSuites() >> new ArrayList<TestSuite>()
 
 		extender.getExecution() >> exec
 

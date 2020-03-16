@@ -18,21 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.json;
+package org.squashtest.tm.service.testcase.bdd;
 
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.squashtest.tm.domain.testcase.TestCase;
+public interface KeywordTestCaseService {
+	String writeScriptFromTestCase(KeywordTestCase keywordTestCase);
 
-/**
- * @author Julien Thebault
- *
- */
-@JsonAutoDetect
-public interface ScriptedTestCaseExtenderMixin {
+	String createFileName(KeywordTestCase keywordTestCase);
 
-	@JsonIgnore
-	TestCase getTestCase();
+	String createBackupFileName(KeywordTestCase keywordTestCase);
 
+	String buildFilenameMatchPattern(KeywordTestCase keywordTestCase);
 }

@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
@@ -172,6 +173,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		}
 	}
 
+	public ExecutionStep(KeywordTestStep keywordTestStep) {
+		this.action = keywordTestStep.getKeyword().toString() + " " + keywordTestStep.getActionWord().getWord();
+		referencedTestStep = keywordTestStep;
+	}
+
 	public void fillParameterMap(Dataset dataset) {
 		fillParameterMapPrivately(dataset);
 	}
@@ -304,6 +310,8 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		expectedResult = valueParams(originalExpectedResult);
 	}
 
+
+
 	private String valueParams(String content){
 
 		String result = null;
@@ -356,6 +364,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public void visit(CallTestStep visited) {
 		// FIXME naive implementation so that app don't break
 		action = visited.getCalledTestCase().getName();
+	}
+
+	@Override
+	public void visit(KeywordTestStep visited) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

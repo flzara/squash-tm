@@ -25,7 +25,10 @@ import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
@@ -33,8 +36,6 @@ import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
-
-import static org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage.GHERKIN
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
@@ -45,7 +46,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	ScriptedTestCaseExtenderDao scriptedTestCaseExtenderDao = Mock()
+	ScriptedTestCaseDao scriptedTestCaseDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
 	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
 
@@ -55,7 +56,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
-		service.scriptedTestCaseExtenderDao = scriptedTestCaseExtenderDao
+		service.scriptedTestCaseDao = scriptedTestCaseDao
 		service.customFieldBindingFinderService = customFieldBindingFinderService
 		service.customValueService = customValueService
 
@@ -186,102 +187,19 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
 
 	}
-//
-//	def "should persist a hierarchy of folders at the root of a library"() {
-//
-//		given:
-//		def path = "/project/folder1/folder2/folder \\/ 3/folder4"
-//
-//		and:
-//		Project p = Mock()
-//		TestCaseLibrary tcl = Mock()
-//		p.getTestCaseLibrary() >> tcl
-//		tcl.getId() >> 5l
-//
-//		and:
-//		Project project = Mock()
-//
-//
-//		CustomField cuf = Mock()
-//		cuf.getId() >> 5L
-//
-//		BindableEntity entity1 = Mock()
-//		BindableEntity entity2 = Mock()
-//
-//		CustomFieldBinding binding1 = Mock()
-//		CustomFieldBinding binding2 = Mock()
-//
-//		binding1.getBoundEntity() >> entity1
-//		binding1.getCustomField() >> cuf
-//
-//		binding2.getBoundEntity() >> entity2
-//		binding2.getCustomField() >> cuf
-//
-//		List<CustomFieldBinding> bindings = [binding1, binding2]
-//
-//		TestCaseFolder tcln1 = new TestCaseFolder()
-//		TestCaseFolder tcln2 = new TestCaseFolder()
-//		TestCaseFolder tcln3 = new TestCaseFolder()
-//		TestCaseFolder newFolder = new TestCaseFolder()
-//		newFolder.getName() >> "project"
-//		tcln1.getName() >> "folder2"
-//		tcln2.getName() >> "folder / 3"
-//		tcln3.getName() >> "folder4"
-//		tcln1.getContent() >> [tcln2]
-//		tcln2.getContent() >> [tcln3]
-//		String[] split = ["project", "folder1", "folder2", "folder / 3", "folder4"]
-//
-//		and:
-//		nodeDao.findNodeIdsByPath(_) >> [null, null, null, null]
-//		service.getFolderDao().persist(newFolder) >> { newFolder.getId() } >> 5L
-//		and:
-//		projectDao.findByName("project") >> p
-//		testCaseLibraryDao.findById(5l) >> tcl
-//
-//
-//		customFieldBindingFinderService.findCustomFieldsForProjectAndEntity(5L, BindableEntity.TESTCASE_FOLDER ) >> bindings
-//
-//		when :
-//		service.mkdirs(path)
-//
-//		then :
-//
-//		1 * testCaseFolderDao.persist ( {
-//			it.id == 5L &&
-//			it.name == "folder1" &&
-//				it.content[0].name == "folder2" &&
-//				it.content[0].content[0].name == "folder / 3" &&
-//				it.content[0].content[0].content[0].name == "folder4"
-//		})
-//
-//		1 * tcl.addContent( {
-//			it.id == 5L &&
-//			it.name == "folder1" &&
-//				it.content[0].name == "folder2" &&
-//				it.content[0].content[0].name == "folder / 3" &&
-//				it.content[0].content[0].content[0].name == "folder4"
-//		} )
-//	}
-//
 
 	def "should export some gherkin test cases"(){
 		given:
-		def testCase1 = Mock(TestCase)
+		def testCase1 = Mock(ScriptedTestCase)
 		testCase1.getId() >> 1L
-		def extender1 = new ScriptedTestCaseExtender(testCase1, GHERKIN)
-		extender1.script = "Feature: one"
-		extender1.id = 1L
-		extender1.testCaseId =1L
+		testCase1.getScript() >> "Feature: one"
 
-		def testCase2 = Mock(TestCase)
+		def testCase2 = Mock(ScriptedTestCase)
 		testCase2.getId() >> 2L
-		def extender2 = new ScriptedTestCaseExtender(testCase2, GHERKIN)
-		extender2.script = "Feature: two\nScenario: one"
-		extender2.id = 2L
-		extender2.testCaseId = 2L
+		testCase2.getScript() >> "Feature: two\nScenario: one"
 
 		and:
-		scriptedTestCaseExtenderDao.findByLanguageAndTestCase_IdIn(GHERKIN,_) >> [extender1,extender2]
+		scriptedTestCaseDao.findAllById(_) >> [testCase1, testCase2]
 
 		when:
 		File export = service.doGherkinExport([]);

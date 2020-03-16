@@ -23,10 +23,9 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.squashtest.tm.core.foundation.lang.DateUtils
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseLanguage
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.exception.SheetCorruptedException
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
@@ -285,13 +284,27 @@ class ExcelWorkbookParserTest extends Specification {
 		then:
 		Instruction<TestCaseTarget> instruction = instructions.get(0)
 
+		ScriptedTestCase testCase = instruction.getTestCase()
+
+		testCase.script.equals("Feature: Make something")
+	}
+
+	def "should create a keyword test case"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/import-keyword-tc.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+
+		when:
+		parser.parse().releaseResources()
+		def instructions = parser.getTestCaseInstructions()
+
+		then:
+		Instruction<TestCaseTarget> instruction = instructions.get(0)
+
 		TestCase testCase = instruction.getTestCase()
-		testCase.getKind().equals(TestCaseKind.GHERKIN)
-
-		ScriptedTestCaseExtender extender = testCase.getScriptedTestCaseExtender()
-		extender.language.equals(ScriptedTestCaseLanguage.GHERKIN)
-		extender.script.equals("Feature: Make something")
-
+		KeywordTestCase.class.isAssignableFrom(testCase.class)
 
 	}
 

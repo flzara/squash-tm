@@ -25,7 +25,7 @@ import com.querydsl.jpa.HQLTemplates;
 /**
  * These templates, that should be natively used by implementations of {@link ExtendedJPQLQuery}
  * such as {@link ExtendedHibernateQuery}, provide support for the extended functions.
- * 
+ *
  * @author bsiri
  *
  */
@@ -59,11 +59,13 @@ public class ExtHQLTemplates extends HQLTemplates{
 
 		// boolean case when
 		add(ExtOps.TRUE_IF, "case when {0} then true else false end ");
-		
+
 		// by_day operator
 		add(ExtOps.YEAR_MONTH_DAY, "year({0}) * 10000 + month({0}) * 100 + day({0})");
 
 		add(ExtOps.FULLTEXT, "fulltext_search({0}, {1})");
+
+		add(ExtOps.IS_CLASS, "type({0}) in ({1})");
 
 		add(ExtOps.LIKE_INSENSITIVE, "i_like({0}, {1})");
 	}

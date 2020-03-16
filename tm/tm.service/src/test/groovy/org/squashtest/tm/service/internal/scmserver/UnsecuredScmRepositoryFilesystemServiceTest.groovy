@@ -21,30 +21,34 @@
 package org.squashtest.tm.service.internal.scmserver
 
 import org.apache.commons.io.FileUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
-import org.squashtest.tm.domain.testcase.ScriptedTestCaseExtender
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
-import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.nio.file.Files
 
 class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	private UnsecuredScmRepositoryFilesystemService service = new UnsecuredScmRepositoryFilesystemService()
+
+	private KeywordTestCaseService keywordTestCaseService = Mock(KeywordTestCaseService)
 
 	private PathService pathService = Mock(PathService);
 
@@ -60,6 +64,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	def setup() {
 		service.pathService = pathService
 		service.eventPublisher = eventPublisher
+		service.keywordTestCaseService = keywordTestCaseService
 
 		def server = Mock(ScmServer)
 		server.getUrl() >> "http://github.com"
@@ -106,18 +111,14 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	}
 
 
-	def "should create a file with the nominal name for given test case"(){
+	def "should create a file with the nominal name for given test case"() {
 
 		given:
 		def project = Mock(Project) {
 			isUseTreeStructureInScmRepo() >> false
 		}
-		def tc = Mock(TestCase){
-			getId() >> 123L
-			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
-			getProject() >> project
-		}
+		def tc = new ScriptedTcMock(123L, "yes test case")
+		tc.notifyAssociatedWithProject(project)
 
 		when :
 		def file = service.createTestNominal(scm, tc)
@@ -127,21 +128,16 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 		cleanup:
 		clean file
-
 	}
 
-	def "should create a file with the backup name for a given test case"(){
+	def "should create a file with the backup name for a given test case"() {
 
 		given:
 		def project = Mock(Project) {
 			isUseTreeStructureInScmRepo() >> false
 		}
-		def tc = Mock(TestCase){
-			getId() >> 123L
-			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
-			getProject() >> project
-		}
+		def tc = new ScriptedTcMock(123L, "yes test case")
+		tc.notifyAssociatedWithProject(project)
 
 		when :
 		def file = service.createTestBackup(scm, tc)
@@ -151,7 +147,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 		cleanup:
 		clean file
-
 	}
 
 	def "#locateOrMoveOrCreateTestFile - Should create/locate/move the file for a given test case"() {
@@ -166,12 +161,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 				isUseTreeStructureInScmRepo() >> pUseTreeStructure
 				getScmRepository() >> scmRepo
 			}
-			def tc = Mock(TestCase) {
-				getId() >> pTestCaseId
-				getKind() >> TestCaseKind.GHERKIN
-				getName() >> pTestCaseName
-				getProject() >> project
-			}
+			def tc = new ScriptedTcMock(pTestCaseId, pTestCaseName)
+			tc.notifyAssociatedWithProject(project)
 			def manifest = new ScmRepositoryManifest(scm)
 		and:
 			nbrPathCall * pathService.buildTestCaseFoldersPath(pTestCaseId) >> pReturnedFoldersPath
@@ -206,12 +197,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			def workingFolder = scm.getWorkingFolder()
 			def file = new File(workingFolder, pInitialFilePath)
 			createFileAndSubFolders(file)
-			def testCase = Mock(TestCase) {
-				getId() >> 499L
-				getKind() >> TestCaseKind.GHERKIN
-				getName() >> pTestCaseName
-				getProject() >> project
-			}
+			def testCase = new ScriptedTcMock(499L, pTestCaseName)
+			testCase.notifyAssociatedWithProject(project)
 		and:
 			pNbrePathCall * pathService.buildTestCaseFoldersPath(499L) >> pReturnedFoldersPath
 		when:
@@ -240,14 +227,12 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			pNbrePathCall = pUseTreeStructure ? 1 : 0
 	}
 
-
 	@Ignore
 	def "should create the file with backup name if not exists and IOException occured"(){
 
 		// couldn't find how to simulate an IOException
 
 	}
-
 
 	def "def should print a TestCase to an existing file"(){
 
@@ -271,16 +256,13 @@ go home quickly before someone notices that the ITs are broken"""
 """
 
 		and: "the test case"
-		def tcExtender = new ScriptedTestCaseExtender(script:script)
 
-		def tc = new TestCase(
-			kind: TestCaseKind.GHERKIN,
+		def tc = new ScriptedTestCase(
 			importance: TestCaseImportance.MEDIUM,
 			automationRequest: new AutomationRequest(automationPriority: 2, requestStatus: AutomationRequestStatus.SUSPENDED),
-			scriptedTestCaseExtender: tcExtender
+			script:script
 		)
 
-		tcExtender.setTestCase(tc)
 
 		when:
 		service.printToFile(testfile, tc)
@@ -293,13 +275,12 @@ go home quickly before someone notices that the ITs are broken"""
 
 	}
 
-
-
-	def "should export two test cases : a new one, and one that existed already"(){
+	def "should export two Gherkin test cases : a new one, and one that existed already; and a Keyword test case"(){
 
 		given: "the scripts"
 		def script1 = "drunken Cicero says"
 		def script2 = "Lorem *hips*um"
+		def script3 = "I am a keyword test case script"
 
 		def metadata1 =
 			"""# Automation priority: 1
@@ -313,7 +294,7 @@ go home quickly before someone notices that the ITs are broken"""
 # Test case importance: LOW
 """
 
-		and: "the test cases"
+		and: "the Gherkin test cases"
 		def scmServer = Mock(ScmServer) {
 			getUrl() >> "http://theUrl"
 		}
@@ -324,49 +305,68 @@ go home quickly before someone notices that the ITs are broken"""
 			isUseTreeStructureInScmRepo() >> false
 			getScmRepository() >> scmRepo
 		}
-		def newTcExtender = new ScriptedTestCaseExtender(script:script1)
-		def newTc = Mock(TestCase){
+
+		ScriptedTestCase newTc = Mock(ScriptedTestCase){
 			getId() >> 123L
 			getName() >> "yes test case"
-			getKind() >> TestCaseKind.GHERKIN
 			getImportance() >> TestCaseImportance.HIGH
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> newTcExtender
 			getAutomationRequest() >>
 				new AutomationRequest(automationPriority: 1, requestStatus: AutomationRequestStatus.AUTOMATED)
 			getProject() >> project
+			getScript() >> script1
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
+			computeScriptWithAppendedMetadata() >> metadata1 + script1
+			buildFilenameMatchPattern() >> String.format("%d(_.*)?\\.%s", it.getId(), ScriptedTestCase.FEATURE_EXTENSION)
+			createFilename() >> "123_yes_test_case.feature"
 		}
-		newTcExtender.setTestCase(newTc)
 
-		def updateTcExtender = new ScriptedTestCaseExtender(script:script2)
-		def updateTc = Mock(TestCase){
+		ScriptedTestCase updateTc = Mock(ScriptedTestCase){
 			getId() >> 456L
 			getName() >> "lame pun"
 			getImportance() >> TestCaseImportance.LOW
-			getKind() >> TestCaseKind.GHERKIN
-			isScripted() >> true
-			getScriptedTestCaseExtender() >> updateTcExtender
 			getAutomationRequest() >>
 				new AutomationRequest(automationPriority: 3, requestStatus: AutomationRequestStatus.AUTOMATION_IN_PROGRESS)
 			getProject() >> project
+			getScript() >> script2
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
+			computeScriptWithAppendedMetadata() >> metadata2 + script2
+			buildFilenameMatchPattern() >> String.format("%d(_.*)?\\.%s", it.getId(), ScriptedTestCase.FEATURE_EXTENSION)
+			createFilename() >> "456_lame_pun.feature"
 		}
-		updateTcExtender.setTestCase(updateTc)
+
+		and: "the Keyword test case"
+		KeywordTestCase keywordTc = Mock(KeywordTestCase){
+			getId() >> 777L
+			getName() >> "keyword test case"
+			getImportance() >> TestCaseImportance.LOW
+			getAutomationRequest() >>
+				new AutomationRequest(automationPriority: 1, requestStatus: AutomationRequestStatus.AUTOMATED)
+			getProject() >> project
+			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
+		}
+		keywordTestCaseService.buildFilenameMatchPattern(keywordTc) >> "777(_.*)?\\.feature"
+		keywordTestCaseService.createFileName(keywordTc) >> "777_keyword_test_case.feature"
+		keywordTestCaseService.writeScriptFromTestCase(keywordTc) >> script3
 
 		when:
-		service.createOrUpdateScriptFile(scm, [updateTc, newTc])
+		service.createOrUpdateScriptFile(scm, [updateTc, newTc, keywordTc])
 
 		then:
 		File newScript = new File(scm.workingFolder, "123_yes_test_case.feature")
 		File updateScript = new File(scm.workingFolder, "456_lame_pun.feature")
+		File keywordTcScript = new File(scm.workingFolder, "777_keyword_test_case.feature")
 
 		newScript.exists()
 		updateScript.exists()
+		keywordTcScript.exists()
 
 		newScript.text == metadata1 + script1
 		updateScript.text == metadata2 + script2
+		keywordTcScript.text == script3
 
 		cleanup:
 		clean newScript
+		clean keywordTcScript
 
 	}
 
@@ -382,6 +382,24 @@ go home quickly before someone notices that the ITs are broken"""
 				throw new RuntimeException("directory could not be created at path " + file.toString());
 		}
 		file.createNewFile();
+	}
+
+	class ScriptedTcMock extends ScriptedTestCase {
+
+		private Long overId
+
+		ScriptedTcMock(Long overId, String name) {
+			this.overId = overId
+			this.name = name
+		}
+
+		Long getId() {
+			return overId
+		}
+
+		void setId(Long overId) {
+			this.overId = overId
+		}
 	}
 
 	// ********** scaffolding **********

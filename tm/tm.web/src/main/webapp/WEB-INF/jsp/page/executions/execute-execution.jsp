@@ -291,7 +291,7 @@
 					</jsp:attribute>
       </comp:toggle-panel>
 
-      <c:if test="${!execution.isScripted()}">
+      <c:if test="${!execution.isScripted() && !execution.isKeywordExecution()}">
       <comp:toggle-panel id="execution-expected-result-panel"
                          titleKey="execute.panel.expected-result.title"
                          open="true">

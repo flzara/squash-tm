@@ -1,4 +1,8 @@
 package org.squashtest.tm.service.internal.query
+
+import com.querydsl.core.types.Expression
+import com.querydsl.core.types.dsl.BooleanExpression
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -154,5 +158,24 @@ class QuerydslToolboxTest extends Specification{
 		resultExpr.toString() == "case when testCase.importance = VERY_HIGH then 1 when testCase.importance = HIGH then 2 when testCase.importance = MEDIUM then 3 when testCase.importance = LOW then 4 else -1000 end"
 	}
 
+	def "should throw an IllegalArgumentException when trying to create an Entity Predicate for an invalid operation"() {
+		when:
+		utils.createEntityPredicate(Operation.BY_YEAR, Mock(Expression))
+
+		then:
+		thrown IllegalArgumentException
+	}
+
+	def "should create an expression for Entity DataType"() {
+		given:
+		def operation = Operation.IS_CLASS
+
+		when:
+		def resultExpr = utils.createEntityPredicate(operation, Mock(Expression), Mock(Expression))
+
+		then:
+		resultExpr != null
+		resultExpr instanceof BooleanExpression
+	}
 
 }
