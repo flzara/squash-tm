@@ -102,16 +102,13 @@
 
     <createTable tableName="KEYWORD_TEST_CASE">
       <column name="TCLN_ID" type="BIGINT">
-        <constraints primaryKey="true" />
+        <constraints primaryKey="true" foreignKeyName="fk_keyword_tc_tc" references="TEST_CASE(TCLN_ID)"/>
       </column>
     </createTable>
 
     <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
-
-    <renameTable newTableName="SCRIPTED_TEST_CASE" oldTableName="SCRIPTED_TC_EXTENDER" />
-
+    <renameTable oldTableName="SCRIPTED_TC_EXTENDER" newTableName="SCRIPTED_TEST_CASE" />
     <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
-
     <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
 
   </changeSet>
@@ -132,6 +129,7 @@
 
   <changeSet id="tm-1.22.0-SQUASH-325-EXECUTION_MODIFICATION" author="jlor">
     <comment>Update SCRIPTED_EXECUTION_EXTENDER table/column.</comment>
+
     <renameTable oldTableName="SCRIPTED_EXECUTION_EXTENDER" newTableName="SCRIPTED_EXECUTION" />
     <dropColumn tableName="SCRIPTED_EXECUTION" columnName="SCRIPTED_EXECUTION_EXTENDER_ID" />
     <addPrimaryKey tableName="SCRIPTED_EXECUTION" columnNames="EXECUTION_ID" />
