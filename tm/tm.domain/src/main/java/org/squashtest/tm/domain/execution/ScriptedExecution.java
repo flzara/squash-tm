@@ -18,13 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.scripted;
+package org.squashtest.tm.domain.execution;
 
-import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 
-public interface ScriptedTestCaseParser {
-	void populateExecution(ScriptedExecution scriptedExecution);
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 
-	void validateScript(ScriptedTestCase scriptedTestCase);
+@Entity
+@PrimaryKeyJoinColumn(name = "EXECUTION_ID")
+public class ScriptedExecution extends Execution {
+	private String scriptName = "";
+
+	public ScriptedExecution() {
+	}
+
+	public ScriptedExecution(ScriptedTestCase scriptedTestCase) {
+		super(scriptedTestCase);
+	}
+
+	public void accept(ExecutionVisitor executionVisitor){
+		executionVisitor.visit(this);
+	}
+
+	public String getScriptName() {
+		return scriptName;
+	}
+
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
+	}
 }

@@ -26,15 +26,12 @@ import gherkin.ParserException;
 import gherkin.ast.GherkinDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.exception.testcase.ScriptParsingException;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
-import sun.font.Script;
 
 import java.util.function.Consumer;
 
@@ -51,16 +48,16 @@ public class GherkinTestCaseParser implements ScriptedTestCaseParser {
 	}
 
 	@Override
-	public void populateExecution(Execution execution) {
-		TestCase referencedTestCase = execution.getReferencedTestCase();
+	public void populateExecution(ScriptedExecution scriptedExecution) {
+		TestCase referencedTestCase = scriptedExecution.getReferencedTestCase();
 		if(nonNull(referencedTestCase)){
 
 			Consumer<ScriptedTestCase> consumer = scriptedTestCase -> {
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, execution);
+					LOGGER.debug("Begin parsing of Test Case {} for Execution {}", referencedTestCase, scriptedExecution);
 				}
 				GherkinDocument gherkinDocument = parseToGherkinDocument(scriptedTestCase);
-				stepGenerator.populateExecution(execution, gherkinDocument);
+				stepGenerator.populateExecution(scriptedExecution, gherkinDocument);
 			};
 
 			ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(

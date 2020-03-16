@@ -45,8 +45,6 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -81,7 +79,6 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.M;
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
-import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
 /**
  * @author Gregory Fouquet

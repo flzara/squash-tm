@@ -38,9 +38,8 @@ import gherkin.ast.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.execution.ScriptedExecutionExtender;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,14 +80,13 @@ public class GherkinStepGenerator {
 
 	private String currentStepClass = "";
 
-	public void populateExecution(Execution execution, GherkinDocument gherkinDocument) {
-		ScriptedExecutionExtender executionExtender = execution.getScriptedExecutionExtender();
+	public void populateExecution(ScriptedExecution scriptedExecution, GherkinDocument gherkinDocument) {
 		Feature feature = gherkinDocument.getFeature();
 		if (feature == null) {
 			return;
 		}
 
-		executionExtender.setScriptName(feature.getName());
+		scriptedExecution.setScriptName(feature.getName());
 		initDialect(feature);
 
 		List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
@@ -106,7 +104,7 @@ public class GherkinStepGenerator {
 			//Yes it means that the TC pre-requisite is ignored for Gherkin script witch seems legit in this context
 			StringBuilder preRequisiteBuilder = new StringBuilder();
 			appendBackground(background,preRequisiteBuilder);
-			execution.setPrerequisite(preRequisiteBuilder.toString());
+			scriptedExecution.setPrerequisite(preRequisiteBuilder.toString());
 		}
 
 		//now let's do the scenarios
@@ -114,9 +112,9 @@ public class GherkinStepGenerator {
 			//Sigh... i don't see any means to avoid this ugly instanceof
 			//Can't use visitor because cannot change Gherking Parser source code to add accept method, and haven't right to fork ...
 			if (scenarioDefinition instanceof Scenario) {
-				appendScenarioStep(execution, background, scenarioDefinition);
+				appendScenarioStep(scriptedExecution, background, scenarioDefinition);
 			} else if (scenarioDefinition instanceof ScenarioOutline) {
-				appendScenarioOutlineStep(execution, background, scenarioDefinition);
+				appendScenarioOutlineStep(scriptedExecution, background, scenarioDefinition);
 			}
 		}
 	}
@@ -131,7 +129,7 @@ public class GherkinStepGenerator {
 		}
 	}
 
-	private void appendScenarioStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+	private void appendScenarioStep(ScriptedExecution scriptedExecution, Background background, ScenarioDefinition scenarioDefinition) {
 		StringBuilder sb = new StringBuilder();
 		Scenario scenario = (Scenario) scenarioDefinition;
 		appendScenarioLine(scenarioDefinition, sb);
@@ -143,19 +141,19 @@ public class GherkinStepGenerator {
 			appendStepLine(step, sb);
 		}
 
-		appendExecutionStep(execution, sb);
+		appendExecutionStep(scriptedExecution, sb);
 	}
 
-	private void appendScenarioOutlineStep(Execution execution, Background background, ScenarioDefinition scenarioDefinition) {
+	private void appendScenarioOutlineStep(ScriptedExecution scriptedExecution, Background background, ScenarioDefinition scenarioDefinition) {
 		ScenarioOutline scenario = (ScenarioOutline) scenarioDefinition;
 		List<Examples> examples = scenario.getExamples();
 
 		for (Examples example : examples) {
-			appendExample(execution, background, scenario, example);
+			appendExample(scriptedExecution, background, scenario, example);
 		}
 	}
 
-	private void appendExample(Execution execution, Background background, ScenarioOutline scenario, Examples example) {
+	private void appendExample(ScriptedExecution scriptedExecution, Background background, ScenarioOutline scenario, Examples example) {
 		int count = example.getTableBody().size();
 		List<String> headers = getExampleHeaders(example);
 		int nbColumn = headers.size();
@@ -172,14 +170,14 @@ public class GherkinStepGenerator {
 			for (Step step : steps) {
 				appendStepLine(step, valueByHeader, sb);
 			}
-			appendExecutionStep(execution, sb);
+			appendExecutionStep(scriptedExecution, sb);
 		}
 	}
 
-	private void appendExecutionStep(Execution execution, StringBuilder sb) {
+	private void appendExecutionStep(ScriptedExecution scriptedExecution, StringBuilder sb) {
 		ExecutionStep executionStep = new ExecutionStep();
 		executionStep.setAction(sb.toString());
-		execution.getSteps().add(executionStep);
+		scriptedExecution.getSteps().add(executionStep);
 	}
 
 	private List<String> getExampleLineValue(Examples example, int i) {

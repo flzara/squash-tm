@@ -26,7 +26,6 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -54,13 +53,10 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
@@ -80,6 +76,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -112,10 +110,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 @Auditable
 @Entity
-/*
- *  the following annotation is a trick, see same thing in class documentation in RequirementLibraryNode
- */
-//@Table(appliesTo="EXECUTION_ISSUES_CLOSURE", sqlDelete=@SQLDelete(sql="delete from EXECUTION_ISSUES_CLOSURE where EXECUTION_ID=null and EXECUTION_ID=?"))
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
@@ -225,9 +220,7 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
-	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
-	private ScriptedExecutionExtender scriptedExecutionExtender;
-
+	//TODO: to be removed
 	private boolean isKeywordExecution = IS_NOT_KEYWORD_EXECUTION;
 
 	/* *********************** attachment attributes ************************ */
@@ -297,6 +290,9 @@ DenormalizedFieldHolder, BoundEntity {
 		setDatasetLabel(testCase, dataset);
 	}
 
+	public void accept(ExecutionVisitor executionVisitor){
+		executionVisitor.visit(this);
+	}
 
 	public List<ExecutionStep> getSteps() {
 		return steps;
@@ -749,26 +745,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	public boolean isAutomated() {
 		return executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null;
-	}
-
-	public ScriptedExecutionExtender getScriptedExecutionExtender() {
-		return scriptedExecutionExtender;
-	}
-
-	private void setScriptedExecutionExtender(ScriptedExecutionExtender scriptedExecutionExtender) {
-		this.scriptedExecutionExtender = scriptedExecutionExtender;
-	}
-
-	public boolean isScripted(){
-		return this.scriptedExecutionExtender != null;
-	}
-
-	public boolean isNotScripted(){
-		return !isScripted();
-	}
-
-	public void createScriptedExtender(){
-		this.setScriptedExecutionExtender(new ScriptedExecutionExtender(this));
 	}
 
 	private boolean checkValidNewStatus(ExecutionStatus status) {

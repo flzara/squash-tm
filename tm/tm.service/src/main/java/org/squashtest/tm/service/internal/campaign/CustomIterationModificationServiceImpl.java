@@ -38,6 +38,8 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -384,7 +386,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
 		}
 
-		operationsAfterAddingExec(item, execution);
+		operationsAfterAddingExec(execution);
 		return execution;
 	}
 
@@ -408,22 +410,33 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return execution;
 	}
 
-	private void operationsAfterAddingExec(IterationTestPlanItem item, Execution execution) {
+	private void operationsAfterAddingExec(Execution execution) {
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 
-		createExecutionStepsForScriptedTestCase(execution);
+		ExecutionVisitor executionVisitor = new ExecutionVisitor() {
+			@Override
+			public void visit(Execution execution) {
+				//NOOP
+			}
+
+			@Override
+			public void visit(ScriptedExecution scriptedExecution) {
+				createExecutionStepsForScriptedTestCase(scriptedExecution);
+			}
+		};
+		execution.accept(executionVisitor);
 	}
 
 	//This method is responsible for create execution steps by parsing the script
 	//For a standard test case we do that job directly in model but for scripted test case we can't
 	//the model mustn't have a parser as dependency, and we don't want to hack the original tests case by detaching him from hibernate session and add virtual steps
-	private void createExecutionStepsForScriptedTestCase(Execution execution) {
+	private void createExecutionStepsForScriptedTestCase(ScriptedExecution scriptedExecution) {
 
 		ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
-			scriptedTestCase -> scriptedTestCaseExecutionHelper.createExecutionStepsForScriptedTestCase(execution));
+			scriptedTestCase -> scriptedTestCaseExecutionHelper.createExecutionStepsForScriptedTestCase(scriptedExecution));
 
-		execution.getReferencedTestCase().accept(testCaseVisitor);
+		scriptedExecution.getReferencedTestCase().accept(testCaseVisitor);
 	}
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution) {
@@ -505,7 +518,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		Execution execution = createExec(itpi);
 		itpi.addExecutionAtPos(execution, order);
-		operationsAfterAddingExec(itpi, execution);
+		operationsAfterAddingExec(execution);
 		return execution;
 	}
 

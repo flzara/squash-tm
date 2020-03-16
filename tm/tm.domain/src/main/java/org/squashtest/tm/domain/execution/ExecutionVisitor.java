@@ -18,13 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.scripted;
+package org.squashtest.tm.domain.execution;
 
-import org.squashtest.tm.domain.execution.ScriptedExecution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+public interface ExecutionVisitor {
+	void visit (Execution execution);
 
-public interface ScriptedTestCaseParser {
-	void populateExecution(ScriptedExecution scriptedExecution);
+	void visit (ScriptedExecution scriptedExecution);
 
-	void validateScript(ScriptedTestCase scriptedTestCase);
 }
