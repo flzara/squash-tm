@@ -46,18 +46,16 @@ class TestCaseIT extends DbunitServiceSpecification{
 
 	@DataSet
 	def "Should find all different test case types"(){
-
 		when :
 		def res = em
 			.createQuery("from TestCase")
 			.getResultList()
 		then :
-		res.size() == 2
+		res.size() == 3
 	}
 
 	@DataSet
 	def "Should find a single classic test case"(){
-
 		when :
 		def res = em.find(TestCase.class, -10L)
 		then :
@@ -67,8 +65,23 @@ class TestCaseIT extends DbunitServiceSpecification{
 	}
 
 	@DataSet
-	def "Should find a single keyword test case as a test case"(){
+	def "Should not find a single classic test case as a keyword test case"(){
+		when :
+		def res = em.find(KeywordTestCase.class, -10L)
+		then :
+		res == null
+	}
 
+	@DataSet
+	def "Should not find a single classic test case as a scripted test case"(){
+		when :
+		def res = em.find(ScriptedTestCase.class, -10L)
+		then :
+		res == null
+	}
+
+	@DataSet
+	def "Should find a single keyword test case as a test case"(){
 		when :
 		def res = em.find(TestCase.class, -20L)
 		then :
@@ -79,7 +92,6 @@ class TestCaseIT extends DbunitServiceSpecification{
 
 	@DataSet
 	def "Should find a single keyword test case as a keyword test case"(){
-
 		when :
 		def res = em.find(KeywordTestCase.class, -20L)
 		then :
@@ -89,18 +101,29 @@ class TestCaseIT extends DbunitServiceSpecification{
 	}
 
 	@DataSet
-	def "Should not find a single classic test case as a keyword test case"(){
+	def "Should find a single scripted test case as a test case"() {
+		when:
+		def res = em.find(TestCase.class, -30L)
+		then:
+		res != null
+		res.id == -30
+		res.name == "test-30"
+	}
 
-		when :
-		def res = em.find(KeywordTestCase.class, -10L)
-		then :
-		res == null
+	@DataSet
+	def "Should find a single scripted test case as a scripted test case"() {
+		when:
+		def res = em.find(ScriptedTestCase.class, -30L)
+		then:
+		res != null
+		res.id == -30
+		res.name == "test-30"
 	}
 
 	@DataSet
 	def "Should correctly use a test case visitor"(){
 		given:
-		def res = ["hello", "goodbye"]
+		def res = ["hello", "how are you?", "goodbye"]
 		def visitor = new TestCaseVisitor() {
 			@Override
 			void visit(TestCase testCase) {
@@ -113,17 +136,21 @@ class TestCaseIT extends DbunitServiceSpecification{
 			}
 
 			void visit(ScriptedTestCase scriptedTestCase) {
+				res[2] = "scriptedTestCase"
 			}
 		}
 		and:
 		def testCase = em.find(TestCase.class, -10L)
 		def keywordTestCase = em.find(TestCase.class, -20L)
+		def scriptedTestCase = em.find(TestCase.class, -30L)
 		when :
 		visitor.visit(testCase)
 		visitor.visit(keywordTestCase)
+		visitor.visit(scriptedTestCase)
 		then :
 		res[0] == "testCase"
 		res[1] == "keywordTestCase"
+		res[2] == "scriptedTestCase"
 	}
 
 }
