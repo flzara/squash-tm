@@ -163,4 +163,37 @@
     <dropColumn tableName="SCRIPTED_TEST_CASE" columnName="LANGUAGE" />
   </changeSet>
 
+  <!-- Story SQUASH-421 : adding test suite UUID for external reference -->
+  <changeSet id="tm-1.22.0-squash-421-add-test-suite-uuid" author="aguilhem">
+    <addColumn tableName="TEST_SUITE">
+      <column name="UUID" type="java.sql.Types.VARCHAR(36)" />
+    </addColumn>
+    <addUniqueConstraint tableName="TEST_SUITE" columnNames="UUID" constraintName="uc_test_suite_uuid" />
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-squash-421-update-test-suite-uuid-postgresql" author="aguilhem" dbms="postgresql">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      UPDATE TEST_SUITE SET UUID = uuid_generate_v4() WHERE UUID is NULL;
+      ALTER TABLE TEST_SUITE ALTER COLUMN UUID SET NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-squash-421-update-test-suite-uuid-mysql" author="aguilhem" dbms="mysql">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      UPDATE TEST_SUITE SET UUID = uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_SUITE MODIFY UUID VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-squash-421-update-test-suite-uuid-h2" author="aguilhem" dbms="h2">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      UPDATE TEST_SUITE SET UUID = random_uuid() WHERE UUID is NULL;
+      ALTER TABLE TEST_SUITE MODIFY UUID VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -21,10 +21,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
-<dataset>
-  <TEST_SUITE NAME="fishnet" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1"/>
-  <ITERATION_TEST_SUITE ITERATION_ID="-1" />
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <CUSTOM_FIELD_VALUE BOUND_ENTITY_TYPE="TEST_SUITE" CFB_ID="-1" VALUE="winklepicker" />
-</dataset>
+    <changeSet id="tm.data-1.22.0-SQUASH-421" author="aguilhem">
+        <sqlFile path="tm.data-1.22.0-SQUASH-421.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+    </changeSet>
+</databaseChangeLog>

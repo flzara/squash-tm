@@ -60,12 +60,14 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Auditable
 @Entity
@@ -91,6 +93,14 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_suite_id_seq")
 	@SequenceGenerator(name = "test_suite_id_seq", sequenceName = "test_suite_id_seq", allocationSize = 1)
 	private Long id;
+
+	/**
+	 * Adding a test suite UUID for external reference (ex: from Squash TF) as per story SQUASH-421.
+	*/
+	@NotNull
+	@Column(name = "UUID")
+	@Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
+	private String uuid;
 
 	@NotBlank
 	@Size(max = MAX_NAME_SIZE)
@@ -119,6 +129,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	public TestSuite() {
 		super();
+		UUID newUUID=UUID.randomUUID();
+		this.uuid=newUUID.toString();
 	}
 
 
@@ -491,5 +503,17 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 			}
 		}
 		return allowed;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	/**
+	 * @deprecated : this ONLY exists for hibernate. Updating UUID has NO meaning so please NEVER call this from business code.
+	 */
+	@Deprecated
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

@@ -29,11 +29,13 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.unitils.UnitilsSupport
@@ -49,6 +51,9 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	IterationModificationService iterService
+
+	@Inject
+	CustomFieldValueFinderService customFieldValueFinderService
 
 
 	@PersistenceContext
@@ -189,19 +194,21 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 
 
 	@DataSet("IterationModificationServiceIT.should create a suite with custom fields.xml")
-	@ExpectedDataSet("IterationModificationServiceIT.should create a suite with custom fields.expected.xml")
 	def "should create a suite with custom fields"() {
 		given:
 		TestSuite suite = new TestSuite(name: "fishnet")
 
-		def createSuite = {
-			iterService.addTestSuite(-1L, suite)
-			em.flush()
-			true
-		}
+		when:
+		iterService.addTestSuite(-1L, suite)
+		em.flush()
 
-		expect:
-		createSuite()
+		then:
+
+		suite.getUuid() != null
+		List<CustomFieldValue> customFieldValues =
+			customFieldValueFinderService.findAllCustomFieldValues(suite.getBoundEntityId(), suite.getBoundEntityType())
+		customFieldValues.size() == 1
+		customFieldValues.get(0).value == "winklepicker"
 	}
 
 	@DataSet("IterationModificationServiceIT.add exec to itp.xml")
@@ -307,7 +314,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		def iteration = findEntity(Iteration.class, iterationId)
 		def testSuites = iteration.getTestSuites()
 		testSuites.size() == 3
-		
+
 		testSuites[2].id == -1L
 	}
 

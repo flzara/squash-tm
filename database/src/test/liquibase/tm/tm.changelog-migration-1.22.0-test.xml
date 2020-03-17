@@ -28,6 +28,7 @@
 
     <!-- test sets -->
     <include file="tm.data-1.22.0-SQUASH-167.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-421.xml" relativeToChangelogFile="true" />
 
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml"
@@ -63,6 +64,16 @@
       </not>
     </preConditions>
     <comment>Check TEMP_EXECUTION_EXTENDER_ORDER table was successfully dropped.</comment>
+  </changeSet>
+
+  <!-- Testing migration for TEST_SUITE UUID in SQUASH-421 -->
+  <changeSet id="tm-1.22.0-SQUASH-421-test-uuid" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from ITERATION where UUID is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no test suite is left without UUID</comment>
   </changeSet>
 
 </databaseChangeLog>

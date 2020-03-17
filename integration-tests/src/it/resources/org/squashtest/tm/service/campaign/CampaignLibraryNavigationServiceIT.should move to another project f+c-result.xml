@@ -21,13 +21,13 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.result.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 
 	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1"  PROJECT_ID="-2"/>
 	<CAMPAIGN_LIBRARY_NODE CLN_ID="-10" PROJECT_ID="-2"/>
 	<CAMPAIGN_LIBRARY_NODE CLN_ID="-11" PROJECT_ID="-2" />
-	
+
 	<CLN_RELATIONSHIP ANCESTOR_ID="-2" DESCENDANT_ID="-1" />
 	<CLN_RELATIONSHIP_CLOSURE DESCENDANT_ID="-2" DEPTH="0" ANCESTOR_ID="-2"/>
 	<CLN_RELATIONSHIP_CLOSURE DESCENDANT_ID="-1" DEPTH="0" ANCESTOR_ID="-1"/>
@@ -38,6 +38,6 @@
 	<CLN_RELATIONSHIP_CLOSURE DESCENDANT_ID="-11" DEPTH="1" ANCESTOR_ID="-1"/>
 	<CLN_RELATIONSHIP_CLOSURE DESCENDANT_ID="-10" DEPTH="2" ANCESTOR_ID="-2"/>
 	<CLN_RELATIONSHIP_CLOSURE DESCENDANT_ID="-11" DEPTH="2" ANCESTOR_ID="-2"/>
-	
-	
+
+
 </dataset>
