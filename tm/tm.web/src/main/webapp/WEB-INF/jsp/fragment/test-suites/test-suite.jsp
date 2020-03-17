@@ -231,6 +231,12 @@
       <comp:toggle-panel id="test-suite-description-panel"
                          title='${labelDescription} <span class="small txt-discreet">[ID = ${ testSuite.id }]</span>'>
         <jsp:attribute name="body">
+          
+          <div class="display-table-row">
+            <label for="test-suite-uuid" class="display-table-cell"><f:message key="test-suite.uuid.label"/></label>
+
+            <div id="test-suite-uuid">${testSuite.uuid}</div>
+          </div>
 
           <div class="display-table-row">
             <label for="test-suite-description" class="display-table-cell"><f:message key="label.Description"/></label>
