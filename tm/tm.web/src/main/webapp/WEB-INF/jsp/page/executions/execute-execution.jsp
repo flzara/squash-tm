@@ -39,7 +39,7 @@
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
 
 
-<c:set var="scripted" value="${execution.isScripted()}"/>
+<c:set var="scripted" value="${isExecutionScripted}"/>
 <c:set var="actionPanelTitle" value="${scripted ? 'label.Script' : 'execute.panel.action.title'}"/>
 
 
@@ -236,7 +236,7 @@
                         data-status="SUCCESS" title="${passedTitle}">
                   <span class="ui-icon exec-status-success"></span>
                 </button>
-                <c:if test="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}">
+                <c:if test="${execution.project.allowTcModifDuringExec() and !scripted}">
                   <button id="edit-tc" style="float: right"
                           class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''}
                           title="${modifyTcLabel}">
@@ -291,7 +291,7 @@
 					</jsp:attribute>
       </comp:toggle-panel>
 
-      <c:if test="${!execution.isScripted() && !execution.isKeywordExecution()}">
+      <c:if test="${!scripted && !execution.isKeywordExecution()}">
       <comp:toggle-panel id="execution-expected-result-panel"
                          titleKey="execute.panel.expected-result.title"
                          open="true">

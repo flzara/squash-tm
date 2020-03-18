@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
 import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -180,7 +181,12 @@ public class ExecutionModificationController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
+
+		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(executionVisitor);
+
 		mav.addObject("execution", execution);
+		mav.addObject("isExecutionScripted", executionVisitor.isScripted());
 		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
@@ -212,22 +218,10 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		Wrapped<Boolean> isScritpedExecution = new Wrapped<>(false);
-		ExecutionVisitor executionVisitor = new ExecutionVisitor() {
-			@Override
-			public void visit(Execution execution) {
-				isScritpedExecution.setValue(false);
-			}
-
-			@Override
-			public void visit(ScriptedExecution scriptedExecution) {
-				isScritpedExecution.setValue(true);
-			}
-		};
-
+		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
 		execution.accept(executionVisitor);
 
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, isScritpedExecution.getValue());
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, executionVisitor.isScripted());
 		return columnDefs;
 	}
 

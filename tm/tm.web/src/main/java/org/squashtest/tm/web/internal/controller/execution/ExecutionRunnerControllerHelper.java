@@ -31,6 +31,8 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
@@ -158,7 +160,11 @@ public class ExecutionRunnerControllerHelper {
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
+		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(executionVisitor);
+
 		model.addAttribute("execution", execution);
+		model.addAttribute("isExecutionScripted", executionVisitor.isScripted());
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("hasDenormFields", hasDenormFields);
 		model.addAttribute("hasCustomFields", hasCustomFields);
@@ -332,7 +338,11 @@ public class ExecutionRunnerControllerHelper {
 		runnerState.setOptimized(optimized);
 		runnerState.setPrologue(true);
 
+		IsScriptedExecutionVisitor isScriptedExecVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(isScriptedExecVisitor);
+
 		model.addAttribute("execution", execution);
+		model.addAttribute("isExecutionScripted", isScriptedExecVisitor.isScripted());
 		model.addAttribute("config", runnerState);
 		model.addAttribute("totalSteps", totalSteps);
 		model.addAttribute("attachments", attachmentHelper.findAttachments(execution));
