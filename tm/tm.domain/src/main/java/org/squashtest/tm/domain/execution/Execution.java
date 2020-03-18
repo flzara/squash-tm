@@ -62,7 +62,9 @@ import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
+import org.squashtest.tm.infrastructure.hibernate.ExecutionPersister;
 import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
+import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Basic;
@@ -110,6 +112,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 @Auditable
 @Entity
+@Persister(impl = ExecutionPersister.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
@@ -195,7 +198,9 @@ DenormalizedFieldHolder, BoundEntity {
 
 	// TODO rename as testPlanItem
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = EXECUTION_ID, insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION",
+		joinColumns = @JoinColumn(name = EXECUTION_ID, insertable = false, updatable = false),
+		inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
 	private IterationTestPlanItem testPlan;
 
 	@ManyToOne(fetch = FetchType.LAZY)
