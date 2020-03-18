@@ -31,7 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -74,6 +74,9 @@ public class AutomatedSuite {
 	private String id;
 
 	@OneToMany(mappedBy = "automatedSuite", cascade = {CascadeType.ALL})
+	//[TMSUP-1910] Goodbye OrderColumn, hello OrderBy.
+	// We still need to be sure to get them ordered by id (which is not always the case without the annotation) to respect test plan order when getting the list.
+	@OrderBy
 	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<>();
 
 	/**

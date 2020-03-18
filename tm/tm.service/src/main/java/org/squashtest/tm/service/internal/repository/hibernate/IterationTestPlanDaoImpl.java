@@ -32,8 +32,10 @@ import org.squashtest.tm.service.internal.repository.CustomIterationTestPlanDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,10 +71,15 @@ public class IterationTestPlanDaoImpl implements CustomIterationTestPlanDao {
 	@Override
 	public List<IterationTestPlanItem> fetchForAutomatedExecutionCreation(Collection<Long> itemTestPlanIds) {
 		List<IterationTestPlanItem> testPlanItems = fetchIterationTestPlanItems(itemTestPlanIds);
+
+		//We order fetch ITPI according to itemTestPlanIds order because fetch request don't respect that order depending on the database.
+		Map<Long, IterationTestPlanItem> itemMap = testPlanItems.stream().collect(Collectors.toMap(IterationTestPlanItem::getId, item -> item));
+		List<IterationTestPlanItem> orderedTestPlanItems = itemTestPlanIds.stream().map(itemMap::get).collect(Collectors.toList());
+
 		// fetching the associated steps at least directly executables. For call steps it will be N+1...
 		// but call step should be fairly rare in automated executions...
-		fetchTestStepsForAutomatedExecutionCreation(testPlanItems);
-		return testPlanItems;
+		fetchTestStepsForAutomatedExecutionCreation(orderedTestPlanItems);
+		return orderedTestPlanItems;
 	}
 
 	private List<IterationTestPlanItem> fetchIterationTestPlanItems(Collection<Long> itemTestPlanIds) {
