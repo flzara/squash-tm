@@ -25,4 +25,5 @@ public interface ExecutionVisitor {
 
 	void visit (ScriptedExecution scriptedExecution);
 
+	void visit (KeywordExecution keywordExecution);
 }

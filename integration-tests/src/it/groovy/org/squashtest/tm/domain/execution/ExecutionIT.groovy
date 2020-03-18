@@ -107,7 +107,7 @@ class ExecutionIT extends DbunitServiceSpecification {
 			.createQuery("from Execution")
 			.getResultList()
 		then:
-		res.size() == 2
+		res.size() == 3
 	}
 
 	@DataSet
@@ -121,11 +121,39 @@ class ExecutionIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet
+	def "Should not find a single classic execution as a keyword execution"() {
+		when:
+			def res = em.find(KeywordExecution.class, -10L)
+		then:
+			res == null
+	}
+
+	@DataSet
 	def "Should not find a single classic execution as a scripted execution"() {
 		when:
 		def res = em.find(ScriptedExecution.class, -10L)
 		then:
 		res == null
+	}
+
+	@DataSet
+	def "Should find a single keyword execution as an execution"() {
+		when:
+			def res = em.find(Execution.class, -30L)
+		then:
+			res != null
+			res.id == -30
+			res.name == "execution-30"
+	}
+
+	@DataSet
+	def "Should find a single keyword execution as a keyword execution"() {
+		when:
+			def res = em.find(KeywordExecution.class, -30L)
+		then:
+			res != null
+			res.id == -30
+			res.name == "execution-30"
 	}
 
 	@DataSet
@@ -162,15 +190,23 @@ class ExecutionIT extends DbunitServiceSpecification {
 				void visit(ScriptedExecution scriptedExecution) {
 					res[1] = "scriptedExecution"
 				}
+
+				@Override
+				void visit(KeywordExecution keywordExecution) {
+					res[2] = "keywordExecution"
+				}
 			}
 		and:
 			def execution = em.find(Execution.class, -10L)
 			def scriptedExecution = em.find(Execution.class, -20L)
+			def keywordExecution = em.find(KeywordExecution.class, -30L)
 		when:
 			visitor.visit(execution)
 			visitor.visit(scriptedExecution)
+			visitor.visit(keywordExecution)
 		then:
 			res[0] == "execution"
 			res[1] == "scriptedExecution"
+			res[2] == "keywordExecution"
 	}
 }

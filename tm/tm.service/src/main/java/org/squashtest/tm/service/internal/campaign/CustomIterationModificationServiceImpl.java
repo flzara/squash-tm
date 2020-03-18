@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.KeywordExecution;
 import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
@@ -417,13 +418,19 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		ExecutionVisitor executionVisitor = new ExecutionVisitor() {
 			@Override
 			public void visit(Execution execution) {
-				//NOOP
+				// NOOP
 			}
 
 			@Override
 			public void visit(ScriptedExecution scriptedExecution) {
 				createExecutionStepsForScriptedTestCase(scriptedExecution);
 			}
+
+			@Override
+			public void visit(KeywordExecution keywordExecution) {
+				// NOOP
+			}
+
 		};
 		execution.accept(executionVisitor);
 	}

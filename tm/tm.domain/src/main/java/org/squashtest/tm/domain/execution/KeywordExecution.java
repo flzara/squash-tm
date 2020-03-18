@@ -20,28 +20,15 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import org.squashtest.tm.core.foundation.lang.Wrapped;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 
-public class IsScriptedExecutionVisitor implements ExecutionVisitor {
-
-	private Wrapped<Boolean> isScripted = new Wrapped<>(false);
-
-	@Override
-	public void visit(Execution execution) {
-		isScripted.setValue(false);
-	}
+@Entity
+@PrimaryKeyJoinColumn(name = "EXECUTION_ID")
+public class KeywordExecution extends Execution {
 
 	@Override
-	public void visit(ScriptedExecution scriptedExecution) {
-		isScripted.setValue(true);
-	}
-
-	@Override
-	public void visit(KeywordExecution keywordExecution) {
-		isScripted.setValue(false);
-	}
-
-	public boolean isScripted() {
-		return isScripted.getValue();
+	public void accept(ExecutionVisitor executionVisitor) {
+		executionVisitor.visit(this);
 	}
 }

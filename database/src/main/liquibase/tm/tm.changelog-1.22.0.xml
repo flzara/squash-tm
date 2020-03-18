@@ -127,13 +127,19 @@
     <dropColumn tableName="SCRIPTED_TEST_CASE" columnName="LANGUAGE" />
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-325-EXECUTION_MODIFICATION" author="jlor">
-    <comment>Update SCRIPTED_EXECUTION_EXTENDER table/column.</comment>
+  <changeSet id="tm-1.22.0-SQUASH-325-EXECUTION_HIERARCHY_MODIFICATION" author="jlor">
+    <comment>Create KEYWORD_EXECUTION table. Update SCRIPTED_EXECUTION_EXTENDER table/column.</comment>
 
     <renameTable oldTableName="SCRIPTED_EXECUTION_EXTENDER" newTableName="SCRIPTED_EXECUTION" />
     <dropColumn tableName="SCRIPTED_EXECUTION" columnName="SCRIPTED_EXECUTION_EXTENDER_ID" />
     <addPrimaryKey tableName="SCRIPTED_EXECUTION" columnNames="EXECUTION_ID" />
     <dropColumn tableName="SCRIPTED_EXECUTION" columnName="LANGUAGE" />
+
+    <createTable tableName="KEYWORD_EXECUTION">
+      <column name="EXECUTION_ID" type="BIGINT">
+        <constraints primaryKey="true" foreignKeyName="fk_keyword_exec_exec" references="EXECUTION(EXECUTION_ID)" />
+      </column>
+    </createTable>
   </changeSet>
 
 </databaseChangeLog>
