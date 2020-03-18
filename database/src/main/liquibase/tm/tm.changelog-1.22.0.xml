@@ -78,15 +78,6 @@
     <sql>update QUERY_FILTER_COLUMN set QUERY_COLUMN_ID=134, FILTER_OPERATION='IS_CLASS' where QUERY_FILTER_ID=1;</sql>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-199-is-keyword-execution-column" author="mqtran">
-    <comment>Add is-keyword-execution column into Execution table</comment>
-    <addColumn tableName="EXECUTION">
-      <column name="IS_KEYWORD_EXECUTION" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the execution is a keyword one.">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-postgresql" author="jlor" dbms="postgresql">
     <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for PostgreSQL</comment>
     <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />

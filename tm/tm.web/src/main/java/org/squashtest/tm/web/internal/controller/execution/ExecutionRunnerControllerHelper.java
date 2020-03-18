@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsKeywordExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -160,11 +161,15 @@ public class ExecutionRunnerControllerHelper {
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
-		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
-		execution.accept(executionVisitor);
+		IsScriptedExecutionVisitor isScriptedExecutionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(isScriptedExecutionVisitor);
+
+		IsKeywordExecutionVisitor isKeywordExecutionVisitor = new IsKeywordExecutionVisitor();
+		execution.accept(isKeywordExecutionVisitor);
 
 		model.addAttribute("execution", execution);
-		model.addAttribute("isExecutionScripted", executionVisitor.isScripted());
+		model.addAttribute("isExecutionScripted", isScriptedExecutionVisitor.isScripted());
+		model.addAttribute("isExecutionKeyword", isKeywordExecutionVisitor.isKeyword());
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("hasDenormFields", hasDenormFields);
 		model.addAttribute("hasCustomFields", hasCustomFields);

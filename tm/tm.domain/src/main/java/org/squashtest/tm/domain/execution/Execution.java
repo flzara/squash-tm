@@ -119,9 +119,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	private static final String EXECUTION_ID = "EXECUTION_ID";
 
-	private static final boolean IS_KEYWORD_EXECUTION = true;
-	private static final boolean IS_NOT_KEYWORD_EXECUTION = false;
-
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
 	private static final String PARAM_PREFIX = "\\Q${\\E";
@@ -129,7 +126,6 @@ DenormalizedFieldHolder, BoundEntity {
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	private static final int EXECUTION_NAME_MAX_LENGTH = 308;
-
 
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
@@ -225,9 +221,6 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
-	//TODO: to be removed
-	private boolean isKeywordExecution = IS_NOT_KEYWORD_EXECUTION;
-
 	/* *********************** attachment attributes ************************ */
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
@@ -241,14 +234,6 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
-
-	public boolean isKeywordExecution() {
-		return isKeywordExecution;
-	}
-
-	public void setKeywordExecution(boolean keywordExecution) {
-		isKeywordExecution = keywordExecution;
-	}
 
 	/*
 	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
@@ -383,10 +368,6 @@ DenormalizedFieldHolder, BoundEntity {
 	private void setReferencedTestCase(TestCase testCase) {
 
 		referencedTestCase = testCase;
-
-		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
-		testCase.accept(visitor);
-		this.isKeywordExecution = visitor.isKeyword();
 
 		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());
