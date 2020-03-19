@@ -161,8 +161,8 @@
 		<div id="execution-information-table" class="display-table">
       <c:if test="${isExecutionScripted}">
          <div class="display-table-row">
-           <label class="display-table-cell" for="testcase-script-name"><f:message key="${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}"/></label>
-           <div id="testcase-script-name" class="display-table-cell"><c:out value="${ execution.scriptedExecutionExtender.scriptName }"/> </div>
+           <label class="display-table-cell" for="testcase-script-name"><f:message key="execution.script.name.gherkin"/></label>
+           <div id="testcase-script-name" class="display-table-cell"><c:out value="${ executionScriptName }"/> </div>
          </div>
       </c:if>
 

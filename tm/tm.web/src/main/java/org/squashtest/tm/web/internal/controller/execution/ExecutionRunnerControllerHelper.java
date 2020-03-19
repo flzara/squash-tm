@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.execution.ExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsKeywordExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
@@ -42,6 +43,7 @@ import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.execution.ScriptedExecutionFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
@@ -102,6 +104,9 @@ public class ExecutionRunnerControllerHelper {
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinderService;
+
+	@Inject
+	private ScriptedExecutionFinder scriptedExecutionFinder;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
@@ -345,9 +350,14 @@ public class ExecutionRunnerControllerHelper {
 
 		IsScriptedExecutionVisitor isScriptedExecVisitor = new IsScriptedExecutionVisitor();
 		execution.accept(isScriptedExecVisitor);
+		boolean isExecutionScripted = isScriptedExecVisitor.isScripted();
 
 		model.addAttribute("execution", execution);
-		model.addAttribute("isExecutionScripted", isScriptedExecVisitor.isScripted());
+		model.addAttribute("isExecutionScripted", isExecutionScripted);
+		if(isExecutionScripted) {
+			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
+			model.addAttribute("executionScriptName", scriptedExecution.getScriptName());
+		}
 		model.addAttribute("config", runnerState);
 		model.addAttribute("totalSteps", totalSteps);
 		model.addAttribute("attachments", attachmentHelper.findAttachments(execution));

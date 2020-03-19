@@ -57,6 +57,7 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.execution.ScriptedExecutionFinder;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
@@ -108,6 +109,9 @@ public class ExecutionModificationController {
 
 	@Inject
 	private ExecutionProcessingService executionProcService;
+
+	@Inject
+	private ScriptedExecutionFinder scriptedExecutionFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -184,9 +188,15 @@ public class ExecutionModificationController {
 
 		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
 		execution.accept(executionVisitor);
+		boolean isExecutionScripted = executionVisitor.isScripted();
 
 		mav.addObject("execution", execution);
-		mav.addObject("isExecutionScripted", executionVisitor.isScripted());
+		mav.addObject("isExecutionScripted", isExecutionScripted);
+		if(isExecutionScripted) {
+			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
+			mav.addObject("executionScriptName", scriptedExecution.getScriptName());
+		}
+
 		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));

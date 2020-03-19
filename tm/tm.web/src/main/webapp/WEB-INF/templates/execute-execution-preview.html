@@ -146,9 +146,9 @@ documentation :
 
             <div th:if="${isExecutionScripted}" class="display-table-row">
 
-              <label class="display-table-cell" th:text="#{${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}}">Feature</label>
+              <label class="display-table-cell" th:text="#{execution.script.name.gherkin}">Feature</label>
 
-              <div id="testcase-script-name" class="display-table-cell" th:text="${execution.scriptedExecutionExtender.scriptName}">REF01</div>
+              <div id="testcase-script-name" class="display-table-cell" th:text="${executionScriptName}">REF01</div>
             </div>
 
 
