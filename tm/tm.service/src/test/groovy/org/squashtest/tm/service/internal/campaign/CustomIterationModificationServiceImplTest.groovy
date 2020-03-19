@@ -213,6 +213,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		testCase.getType() >> new UserListItem(code: "SOME_TYPE", infoList: Mock(InfoList))
 		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDatasets() >> []
+		testCase.accept(_) >> { TestCaseVisitor visitor -> visitor.visit(testCase) }
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id: 1L, iteration: iteration)
 
 		def execs = (1..4).collect {
@@ -228,7 +229,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		}
 
 		executionModificationService.deleteExecution(_) >> { Execution execution ->
-			testPlan.removeExecution(execution);
+			testPlan.removeExecution(execution)
 		}
 
 		testPlan.setReferencedTestCase(testCase)

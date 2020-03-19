@@ -20,12 +20,21 @@
  */
 package org.squashtest.tm.domain.execution;
 
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
+
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "EXECUTION_ID")
 public class KeywordExecution extends Execution {
+
+	public KeywordExecution() {
+	}
+
+	public KeywordExecution(KeywordTestCase keywordTestCase) {
+		super(keywordTestCase);
+	}
 
 	@Override
 	public void accept(ExecutionVisitor executionVisitor) {

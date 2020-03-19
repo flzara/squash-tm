@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testcase.CreateExecutionFromTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -272,17 +273,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 * @return the new execution
 	 */
 	public Execution createExecution() throws TestPlanItemNotExecutableException {
-
 		checkExecutable();
-		Execution newExecution = null;
-
-		if (this.referencedDataset != null) {
-			newExecution = new Execution(referencedTestCase, referencedDataset);
-		} else {
-			newExecution = new Execution(referencedTestCase);
-		}
-
-		return newExecution;
+		CreateExecutionFromTestCaseVisitor createExecutionVisitor =
+			new CreateExecutionFromTestCaseVisitor(referencedDataset);
+		referencedTestCase.accept(createExecutionVisitor);
+		return createExecutionVisitor.getCreatedExecution();
 	}
 
 	public Execution createAutomatedExecution() throws TestPlanItemNotExecutableException {
