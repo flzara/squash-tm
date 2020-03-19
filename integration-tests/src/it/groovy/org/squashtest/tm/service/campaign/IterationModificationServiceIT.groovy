@@ -33,9 +33,11 @@ import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.KeywordExecution
 import org.squashtest.tm.exception.DuplicateNameException
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -49,7 +51,6 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	IterationModificationService iterService
-
 
 	@PersistenceContext
 	EntityManager em
@@ -216,6 +217,31 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		then:
 		IterationTestPlanItem item = findEntity(IterationTestPlanItem.class, itemTestPlanId)
 		item.getExecutions().size() == 2
+	}
+
+	@Unroll
+	@DataSet("IterationModificationServiceIT.create executions of different types.xml")
+	def "Should create executions of different types"() {
+		given:
+			def execQuery = em.createQuery("select count(*) from Execution")
+			def scriptedExecQuery = em.createQuery("select count(*)  from ScriptedExecution")
+			def keywordExecQuery = em.createQuery("select count(*)  from KeywordExecution")
+		and:
+			execQuery.getSingleResult() == 0
+			scriptedExecQuery.getSingleResult() == 0
+			keywordExecQuery.getSingleResult() == 0
+		when:
+			iterService.addExecution(itpiId)
+		then:
+			execQuery.getSingleResult() == expectNbreExec
+			scriptedExecQuery.getSingleResult() == expectNbreScriptedExec
+			keywordExecQuery.getSingleResult() == expectNbreKeywordExecution
+		where:
+		// -1L is Standard Exec ; -2L is a Scripted Exec ; -3L is a Keyword Exec
+		itpiId 	| expectNbreExec 	| expectNbreScriptedExec 	| expectNbreKeywordExecution
+		-1L		| 1					|0							| 0
+		-2L		| 1					|1							| 0
+		-3L		| 1					|0							| 1
 	}
 
 

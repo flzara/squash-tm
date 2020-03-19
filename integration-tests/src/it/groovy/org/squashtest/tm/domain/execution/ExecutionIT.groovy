@@ -209,4 +209,14 @@ class ExecutionIT extends DbunitServiceSpecification {
 			res[1] == "scriptedExecution"
 			res[2] == "keywordExecution"
 	}
+
+	@DataSet
+	def "Should get the IterationTestPlanItem of an Execution"() {
+		when:
+			Execution execution = em.find(ScriptedExecution.class, -20L)
+		then:
+			IterationTestPlanItem itpi = execution.getTestPlan()
+			itpi != null
+			itpi.id == -1L
+	}
 }
