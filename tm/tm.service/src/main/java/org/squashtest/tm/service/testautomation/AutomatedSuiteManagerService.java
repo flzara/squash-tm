@@ -91,18 +91,17 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createAndExecute(AutomatedSuiteCreationSpecification specification);
 
-/**
-	 * Creates a new AutomatedSuite based on a given {@link IterationTestPlanItem} list. Only automated tests planned in the
-	 * test plan will be included. The automated executions are ordered according to the test plan.
-         * 
-         * @param iterationId
-	 * @param itpi
-         * @throws IllegalArgumentException All test plan items must belong to the selected iteration
+	/**
+	 * Creates a new AutomatedSuite based on a given {@link IterationTestPlanItem} list belonging to a specific {@link Iteration}.
+	 * Only automated tests planned in the test plan will be included. The automated executions are ordered according to the test plan.
+	 *
+	 * @param iterationId
+	 * @param items
+	 * @throws IllegalArgumentException All test plan items must belong to the selected iteration
 	 * @return
 	 */
-	AutomatedSuite createFromIterationTestPlanItems(Long idIteration, List<IterationTestPlanItem> items);
-        
-        
+	AutomatedSuite createFromIterationTestPlanItems(long iterationId, List<IterationTestPlanItem> items);
+
 	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of an {@link Iteration}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
@@ -113,10 +112,21 @@ public interface AutomatedSuiteManagerService {
 	AutomatedSuite createFromIterationTestPlan(long iterationId);
 
 	/**
+	 * Creates a new AutomatedSuite based on a given {@link IterationTestPlanItem} list belonging to a specific {@link TestSuite}.
+	 * Only automated tests planned in the test plan will be included. The automated executions are ordered according to the test plan.
+	 *
+	 * @param testSuiteId
+	 * @param items
+	 * @throws IllegalArgumentException All test plan items must belong to the selected test suite
+	 * @return
+	 */
+	AutomatedSuite createFromTestSuiteTestPlanItems(long testSuiteId, List<IterationTestPlanItem> items);
+
+	/**
 	 * Creates a new AutomatedSuite based on the whole test plan of a {@link TestSuite}, given its ID. Only automated tests planned in the
 	 * test plan will be included. The automated executions are ordered according to the test plan.
 	 *
-	 * @param iterationId
+	 * @param testSuiteId
 	 * @return
 	 */
 	AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId);

@@ -324,7 +324,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		couple.a2["CPG_CUF_FIELD"] == "VALUE"
 	}
 
-        def "should create automated suite from ITPI list"() {
+        def "should create automated suite from ITPI list and iteration uuid"() {
                 given:
                 List<IterationTestPlanItem> items = mockITPIList()
 				testPlanDao.fetchForAutomatedExecutionCreation(_) >> items
@@ -340,6 +340,22 @@ class AutomatedSuiteManagerServiceTest extends Specification {
                 suite.executionExtenders.size() == 5
         }
 
+		def "should create automated suite from ITPI list and test suite uuid"() {
+				given:
+				List<IterationTestPlanItem> items = mockITPIList()
+				testPlanDao.fetchForAutomatedExecutionCreation(_) >> items
+				AutomatedSuite autoSuite = new AutomatedSuite()
+				autoSuite.id = "3fb11dd8-6e5c-4020-ade9-9378ff206fbc"
+				autoSuiteDao.createNewSuite() >> autoSuite
+				entityManager.find(AutomatedSuite.class, "3fb11dd8-6e5c-4020-ade9-9378ff206fbc") >> autoSuite
+
+				when:
+				AutomatedSuite suite = service.createFromTestSuiteTestPlanItems(1L, items)
+
+				then:
+				suite.executionExtenders.size() == 5
+		}
+
         private List<IterationTestPlanItem> mockITPIList() {
             List<IterationTestPlanItem> itpiList = new ArrayList<>()
             5.times { num -> itpiList.add(mockITPI()) }
@@ -353,6 +369,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 			itpi.getProject() >> mockProject
             itpi.isAutomated() >> true
             itpi.getIteration() >> mockIteration()
+			itpi.getTestSuites() >> mockTestSuiteList()
             itpi.createAutomatedExecution() >> Mock(Execution) {
                 getAutomatedExecutionExtender() >> Mock(AutomatedExecutionExtender)
             }
@@ -365,6 +382,17 @@ class AutomatedSuiteManagerServiceTest extends Specification {
             return iter
         }
 
+		private TestSuite mockTestSuite() {
+			TestSuite testSuite = Mock()
+			testSuite.getId() >> 1L
+			return testSuite
+		}
+
+		private List<TestSuite> mockTestSuiteList() {
+			List<TestSuite> testSuiteList = new ArrayList<>()
+			testSuiteList.add(mockTestSuite())
+			return testSuiteList
+		}
 
 
 	private AutomatedExecutionExtender mockExtender(realExec) {

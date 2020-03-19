@@ -277,8 +277,14 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		PermissionsUtils.checkPermission(permissionService, singleId, EXECUTE, clazz.getName());
 	}
 
-	private void checkPermissionOnIteration(Long idIteration){
-		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT) && !permissionService.hasRoleOrPermissionOnObject(Roles.ROLE_ADMIN, EXECUTE, idIteration, Iteration.class.getName())) {
+	private void checkPermissionOnIteration(Long iterationId){
+		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT) && !permissionService.hasRoleOrPermissionOnObject(Roles.ROLE_ADMIN, EXECUTE, iterationId, Iteration.class.getName())) {
+			throw new AccessDeniedException("Access is denied");
+		}
+	}
+
+	private void checkPermissionOnTestSuite(Long testSuiteId){
+		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT) && !permissionService.hasRoleOrPermissionOnObject(Roles.ROLE_ADMIN, EXECUTE, testSuiteId, TestSuite.class.getName())) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
@@ -288,19 +294,18 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
-        /**
-	 *
-         *
-	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlanObject(List<IterationTestPlanItem>)
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlanItems(long, List<IterationTestPlanItem>)
 	 */
 	@Override
-	public AutomatedSuite createFromIterationTestPlanItems(Long idIteration, List<IterationTestPlanItem> items) {
+	public AutomatedSuite createFromIterationTestPlanItems(long iterationId, List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			if(!item.getIteration().getId().equals(idIteration)) {
+			if(!item.getIteration().getId().equals(iterationId)) {
 				throw new IllegalArgumentException("All items must belong to the same selected iteration");
 			}
 		}
-		checkPermissionOnIteration(idIteration);
+		checkPermissionOnIteration(iterationId);
 		return createFromItems(items);
 	}
 
@@ -312,6 +317,21 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = iteration.getTestPlans();
+		return createFromItems(items);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlanItems(long, List<IterationTestPlanItem>)
+	 */
+	@Override
+	public AutomatedSuite createFromTestSuiteTestPlanItems(long testSuiteId, List<IterationTestPlanItem> items) {
+		for (IterationTestPlanItem item : items) {
+			boolean isInTargetTestSuite = item.getTestSuites().stream().map(TestSuite::getId).anyMatch(suiteID -> suiteID.equals(testSuiteId));
+			if(!isInTargetTestSuite) {
+				throw new IllegalArgumentException("All items must belong to the same selected test suite");
+			}
+		}
+		checkPermissionOnTestSuite(testSuiteId);
 		return createFromItems(items);
 	}
 

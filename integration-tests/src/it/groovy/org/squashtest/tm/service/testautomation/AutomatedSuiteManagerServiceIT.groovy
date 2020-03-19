@@ -77,11 +77,46 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestAutomationService.TFtrigger.xml")
-	def "should return collection of tests with params"() {
+	def "should return collection of tests with params (associated with an iteration)"() {
 		given:
 		def testItemsList = itpiDao.findAllByIdsOrderedByIterationTestPlan([-201L, -202L, -203L])
 
 		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList.get(0).getIteration().getId(), testItemsList)
+
+		when:
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
+
+		then:
+		executionOrder.size() == 3
+		executionOrder[0].a1.execution.referencedTestCase.uuid == "5bb09a58-72fd-4630-95fa-1b4651052c6a"
+		executionOrder[0].a1.automatedTest.name == "test 1"
+
+		executionOrder[0].a2.containsKey("TC_UUID")
+		executionOrder[0].a2.get("TC_UUID") == "5bb09a58-72fd-4630-95fa-1b4651052c6a"
+
+		executionOrder[0].a2.containsKey("TC_REFERENCE")
+		executionOrder[0].a2.get("TC_REFERENCE") == "ref"
+	}
+
+	@DataSet("TestAutomationService.TFtrigger.xml")
+	def "should return automated test suite associated to a test suite given a test plan items list"() {
+		given:
+		def testItemsList = itpiDao.findAllByIdsOrderedBySuiteTestPlan([-201L, -202L, -203L], -21L)
+		when:
+		AutomatedSuite suite = service.createFromTestSuiteTestPlanItems(testItemsList.get(0).getTestSuites().get(0).getId(), testItemsList)
+
+		then:
+		suite.executionExtenders.size() == 3
+		suite.executionExtenders[0].id == 7L
+		suite.executionExtenders[0].automatedTest.id == -71L
+	}
+
+	@DataSet("TestAutomationService.TFtrigger.xml")
+	def "should return collection of tests with params (associated with a test suite)"() {
+		given:
+		def testItemsList = itpiDao.findAllByIdsOrderedBySuiteTestPlan([-201L, -202L, -203L], -21L)
+
+		AutomatedSuite suite = service.createFromTestSuiteTestPlanItems(testItemsList.get(0).getTestSuites().get(0).getId(), testItemsList)
 
 		when:
 		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
