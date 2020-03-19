@@ -18,13 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.scripted;
+package org.squashtest.tm.domain.execution;
 
-import org.squashtest.tm.domain.execution.ScriptedExecution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 
-public interface ScriptedTestCaseParser {
-	void populateExecution(ScriptedExecution scriptedExecution);
+public class IsScriptedExecutionVisitor implements ExecutionVisitor {
 
-	void validateScript(ScriptedTestCase scriptedTestCase);
+	private Wrapped<Boolean> isScripted = new Wrapped<>(false);
+
+	@Override
+	public void visit(Execution execution) {
+		isScripted.setValue(false);
+	}
+
+	@Override
+	public void visit(ScriptedExecution scriptedExecution) {
+		isScripted.setValue(true);
+	}
+
+	@Override
+	public void visit(KeywordExecution keywordExecution) {
+		isScripted.setValue(false);
+	}
+
+	public boolean isScripted() {
+		return isScripted.getValue();
+	}
 }

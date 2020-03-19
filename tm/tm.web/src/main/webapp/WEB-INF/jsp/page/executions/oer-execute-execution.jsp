@@ -34,7 +34,7 @@
 <%@ taglib prefix="hu" uri="http://org.squashtest.tm/taglib/html-utils" %>
 
 
-<c:set var="scripted" value="${execution.isScripted()}"/>
+<c:set var="scripted" value="${isExecutionScripted}"/>
 <c:set var="actionPanelTitle" value="${scripted ? 'label.Script' : 'execute.panel.action.title'}"/>
 
 
@@ -222,7 +222,7 @@
 						</c:if>
 					</h3>
 				</td>
-		<c:if test="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}">
+		<c:if test="${execution.project.allowTcModifDuringExec() and !scripted}">
 		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''} title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
                                  </button> </td>
@@ -252,7 +252,7 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
-    <c:if test="${!execution.isScripted()}">
+    <c:if test="${!scripted}">
 		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-expected-result" class="load-links-right-frame">${hu:clean(executionStep.expectedResult)} </div>

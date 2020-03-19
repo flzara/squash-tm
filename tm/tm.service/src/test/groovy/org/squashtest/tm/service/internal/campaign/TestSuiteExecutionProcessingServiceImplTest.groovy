@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import gherkin.ast.*
+
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
@@ -29,20 +29,15 @@ import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
-import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.util.function.Function
 
 class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	TestSuiteExecutionProcessingServiceImpl manager

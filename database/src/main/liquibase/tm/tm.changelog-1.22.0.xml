@@ -24,48 +24,47 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    <!-- Infrastructural changesets, they MUST be overriden by their counterparts from the default branch at the time of the merge. -->
-    <changeSet id="tm-1.22.0" author="jthebault">
-        <comment>Update TM database version number</comment>
-        <update tableName="CORE_CONFIG">
-            <column name="VALUE" value="1.22.0"/>
-            <where>STR_KEY = 'squashtest.tm.database.version'</where>
-        </update>
-    </changeSet>
-    <!-- End of Infrastructural changesets. -->
 
-    <!-- Story SQUASH-167 : adding iteration UUID for external reference -->
-    <changeSet id="tm-1.22.0-squash-167-test-it-uuid-for-tf-side-trigger" author="edegenetais">
-        <addColumn tableName="ITERATION">
-            <column name="UUID" type="java.sql.Types.VARCHAR(36)" />
-        </addColumn>
-        <addUniqueConstraint tableName="ITERATION" columnNames="UUID" constraintName="uc_iteration_uuid" />
-    </changeSet>
+  <changeSet id="tm-1.22.0" author="jthebault">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.22.0"/>
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
 
-    <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-postgresql" author="edegenetais" dbms="postgresql">
-        <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
-        <sql>
-            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-            UPDATE ITERATION SET UUID = uuid_generate_v4() WHERE UUID is NULL;
-            ALTER TABLE ITERATION ALTER COLUMN UUID SET NOT NULL;
-        </sql>
-    </changeSet>
+  <!-- Story SQUASH-167 : adding iteration UUID for external reference -->
+  <changeSet id="tm-1.22.0-squash-167-test-it-uuid-for-tf-side-trigger" author="edegenetais">
+    <addColumn tableName="ITERATION">
+      <column name="UUID" type="java.sql.Types.VARCHAR(36)" />
+    </addColumn>
+    <addUniqueConstraint tableName="ITERATION" columnNames="UUID" constraintName="uc_iteration_uuid" />
+  </changeSet>
 
-    <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-mysql" author="edegenetais" dbms="mysql">
-        <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
-        <sql>
-            UPDATE ITERATION SET UUID = uuid() WHERE UUID is NULL;
-            ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
-        </sql>
-    </changeSet>
+  <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-postgresql" author="edegenetais" dbms="postgresql">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      UPDATE ITERATION SET UUID = uuid_generate_v4() WHERE UUID is NULL;
+      ALTER TABLE ITERATION ALTER COLUMN UUID SET NOT NULL;
+    </sql>
+  </changeSet>
 
-    <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-h2" author="edegenetais" dbms="h2">
-        <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
-        <sql>
-            UPDATE ITERATION SET UUID = random_uuid() WHERE UUID is NULL;
-            ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
-        </sql>
-    </changeSet>
+  <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-mysql" author="edegenetais" dbms="mysql">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      UPDATE ITERATION SET UUID = uuid() WHERE UUID is NULL;
+      ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-squash-167-update-iteration-uuid-h2" author="edegenetais" dbms="h2">
+    <comment>Created missing UUIDs on upgrade to add the not-null constraint.</comment>
+    <sql>
+      UPDATE ITERATION SET UUID = random_uuid() WHERE UUID is NULL;
+      ALTER TABLE ITERATION MODIFY UUID VARCHAR(36) NOT NULL;
+    </sql>
+  </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-174-action-word-table" author="jlor">
     <comment>Add action word table</comment>
@@ -111,15 +110,6 @@
     <sql>update QUERY_FILTER_COLUMN set QUERY_COLUMN_ID=134, FILTER_OPERATION='IS_CLASS' where QUERY_FILTER_ID=1;</sql>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-199-is-keyword-execution-column" author="mqtran">
-    <comment>Add is-keyword-execution column into Execution table</comment>
-    <addColumn tableName="EXECUTION">
-      <column name="IS_KEYWORD_EXECUTION" type="BOOLEAN" defaultValueBoolean="false" remarks="This column precises if the execution is a keyword one.">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.22.0-drop-temp_execution_extender_order_table-postgresql" author="jlor" dbms="postgresql">
     <comment>Drop TEMP_EXECUTION_EXTENDER_ORDER table for PostgreSQL</comment>
     <dropTable tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
@@ -135,16 +125,13 @@
 
     <createTable tableName="KEYWORD_TEST_CASE">
       <column name="TCLN_ID" type="BIGINT">
-        <constraints primaryKey="true" />
+        <constraints primaryKey="true" foreignKeyName="fk_keyword_tc_tc" references="TEST_CASE(TCLN_ID)"/>
       </column>
     </createTable>
 
     <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
-
-    <renameTable newTableName="SCRIPTED_TEST_CASE" oldTableName="SCRIPTED_TC_EXTENDER" />
-
+    <renameTable oldTableName="SCRIPTED_TC_EXTENDER" newTableName="SCRIPTED_TEST_CASE" />
     <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
-
     <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
 
   </changeSet>
@@ -194,6 +181,21 @@
       UPDATE TEST_SUITE SET UUID = random_uuid() WHERE UUID is NULL;
       ALTER TABLE TEST_SUITE MODIFY UUID VARCHAR(36) NOT NULL;
     </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-325-EXECUTION_HIERARCHY_MODIFICATION" author="jlor">
+    <comment>Create KEYWORD_EXECUTION table. Update SCRIPTED_EXECUTION_EXTENDER table/column.</comment>
+
+    <renameTable oldTableName="SCRIPTED_EXECUTION_EXTENDER" newTableName="SCRIPTED_EXECUTION" />
+    <dropColumn tableName="SCRIPTED_EXECUTION" columnName="SCRIPTED_EXECUTION_EXTENDER_ID" />
+    <addPrimaryKey tableName="SCRIPTED_EXECUTION" columnNames="EXECUTION_ID" />
+    <dropColumn tableName="SCRIPTED_EXECUTION" columnName="LANGUAGE" />
+
+    <createTable tableName="KEYWORD_EXECUTION">
+      <column name="EXECUTION_ID" type="BIGINT">
+        <constraints primaryKey="true" foreignKeyName="fk_keyword_exec_exec" references="EXECUTION(EXECUTION_ID)" />
+      </column>
+    </createTable>
   </changeSet>
 
 </databaseChangeLog>

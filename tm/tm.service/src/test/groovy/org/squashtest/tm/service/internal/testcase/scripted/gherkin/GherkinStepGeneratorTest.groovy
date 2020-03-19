@@ -25,8 +25,7 @@ import gherkin.Parser
 import gherkin.ast.GherkinDocument
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.execution.ScriptedExecutionExtender
+import org.squashtest.tm.domain.execution.ScriptedExecution
 import spock.lang.Specification
 
 import static org.apache.commons.io.FileUtils.readFileToString
@@ -38,15 +37,14 @@ class GherkinStepGeneratorTest extends Specification {
 		given:
 		GherkinDocument gherkinDocument = getGherkinDocument(file)
 		GherkinStepGenerator stepGenerator = new GherkinStepGenerator()
-		Execution execution = new Execution()
-		execution.scriptedExecutionExtender = new ScriptedExecutionExtender()
+		ScriptedExecution scriptedExecution = new ScriptedExecution()
 
 
 		when:
-		stepGenerator.populateExecution(execution, gherkinDocument)
+		stepGenerator.populateExecution(scriptedExecution, gherkinDocument)
 
 		then:
-		execution.getSteps().size().equals(exepectedStepsNumber)
+		scriptedExecution.getSteps().size().equals(exepectedStepsNumber)
 
 		where:
 		file                              || exepectedStepsNumber

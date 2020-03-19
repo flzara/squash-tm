@@ -24,7 +24,13 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.KeywordExecution
+import org.squashtest.tm.domain.execution.ScriptedExecution
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.SystemListItem
 import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException
@@ -185,5 +191,26 @@ public class IterationTestPlanItemTest extends Specification {
 				Mock(Dataset)
 			]
 		]
+	}
+
+	@Unroll
+	def "Should create a new ScriptedExecution with the right type"() {
+		given: "A TestCase"
+			TestCase testCase = newTestCase
+			InfoListItem infoListItem = new SystemListItem()
+			testCase.nature = infoListItem
+			testCase.type = infoListItem
+		and: "An ITPI"
+			IterationTestPlanItem itpi = new IterationTestPlanItem()
+			itpi.setReferencedTestCase(testCase)
+		when:
+			Execution exec = itpi.createExecution()
+		then:
+			expectedExecClass.isAssignableFrom(exec.class)
+		where:
+			newTestCase				| expectedExecClass
+			new TestCase()			| Execution.class
+			new ScriptedTestCase()	| ScriptedExecution.class
+			new KeywordTestCase()	| KeywordExecution.class
 	}
 }

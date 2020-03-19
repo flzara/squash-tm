@@ -31,11 +31,16 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 class ExecutionIT extends DbunitServiceSpecification {
 
+	@PersistenceContext
+	EntityManager em
 
 	@DataSet("ExecutionIT.3executions.xml")
 	def "should correctly update an item test plan status when the status of an execution is updated "(){
@@ -93,5 +98,125 @@ class ExecutionIT extends DbunitServiceSpecification {
 		-1L | -1L
 		-2L | -2L
 		-3L | -2L
+	}
+
+	@DataSet
+	def "Should find all different execution types"() {
+		when:
+		def res = em
+			.createQuery("from Execution")
+			.getResultList()
+		then:
+		res.size() == 3
+	}
+
+	@DataSet
+	def "Should find a single classic execution"() {
+		when:
+		def res = em.find(Execution.class, -10L)
+		then:
+		res != null
+		res.id == -10
+		res.name == "execution-10"
+	}
+
+	@DataSet
+	def "Should not find a single classic execution as a keyword execution"() {
+		when:
+			def res = em.find(KeywordExecution.class, -10L)
+		then:
+			res == null
+	}
+
+	@DataSet
+	def "Should not find a single classic execution as a scripted execution"() {
+		when:
+		def res = em.find(ScriptedExecution.class, -10L)
+		then:
+		res == null
+	}
+
+	@DataSet
+	def "Should find a single keyword execution as an execution"() {
+		when:
+			def res = em.find(Execution.class, -30L)
+		then:
+			res != null
+			res.id == -30
+			res.name == "execution-30"
+	}
+
+	@DataSet
+	def "Should find a single keyword execution as a keyword execution"() {
+		when:
+			def res = em.find(KeywordExecution.class, -30L)
+		then:
+			res != null
+			res.id == -30
+			res.name == "execution-30"
+	}
+
+	@DataSet
+	def "Should find a single scripted execution as an execution"() {
+		when:
+		def res = em.find(Execution.class, -20L)
+		then:
+		res != null
+		res.id == -20
+		res.name == "execution-20"
+	}
+
+	@DataSet
+	def "Should find a single scripted execution as a scripted execution"() {
+		when:
+		def res = em.find(ScriptedExecution.class, -20L)
+		then:
+		res != null
+		res.id == -20
+		res.name == "execution-20"
+	}
+
+	@DataSet
+	def "Should correctly use an execution visitor"() {
+		given:
+			def res = ["hello", "how are you?", "goodbye"]
+			def visitor = new ExecutionVisitor() {
+				@Override
+				void visit(Execution execution) {
+					res[0] = "execution"
+				}
+
+				@Override
+				void visit(ScriptedExecution scriptedExecution) {
+					res[1] = "scriptedExecution"
+				}
+
+				@Override
+				void visit(KeywordExecution keywordExecution) {
+					res[2] = "keywordExecution"
+				}
+			}
+		and:
+			def execution = em.find(Execution.class, -10L)
+			def scriptedExecution = em.find(Execution.class, -20L)
+			def keywordExecution = em.find(KeywordExecution.class, -30L)
+		when:
+			visitor.visit(execution)
+			visitor.visit(scriptedExecution)
+			visitor.visit(keywordExecution)
+		then:
+			res[0] == "execution"
+			res[1] == "scriptedExecution"
+			res[2] == "keywordExecution"
+	}
+
+	@DataSet
+	def "Should get the IterationTestPlanItem of an Execution"() {
+		when:
+			Execution execution = em.find(ScriptedExecution.class, -20L)
+		then:
+			IterationTestPlanItem itpi = execution.getTestPlan()
+			itpi != null
+			itpi.id == -1L
 	}
 }

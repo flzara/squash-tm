@@ -31,6 +31,10 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsKeywordExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.Party;
@@ -39,6 +43,7 @@ import org.squashtest.tm.service.campaign.TestPlanExecutionProcessingService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.execution.ScriptedExecutionFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
@@ -101,6 +106,9 @@ public class ExecutionRunnerControllerHelper {
 	private CustomFieldValueFinderService customFieldValueFinderService;
 
 	@Inject
+	private ScriptedExecutionFinder scriptedExecutionFinder;
+
+	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
 	@Inject
@@ -158,7 +166,15 @@ public class ExecutionRunnerControllerHelper {
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
+		IsScriptedExecutionVisitor isScriptedExecutionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(isScriptedExecutionVisitor);
+
+		IsKeywordExecutionVisitor isKeywordExecutionVisitor = new IsKeywordExecutionVisitor();
+		execution.accept(isKeywordExecutionVisitor);
+
 		model.addAttribute("execution", execution);
+		model.addAttribute("isExecutionScripted", isScriptedExecutionVisitor.isScripted());
+		model.addAttribute("isExecutionKeyword", isKeywordExecutionVisitor.isKeyword());
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("hasDenormFields", hasDenormFields);
 		model.addAttribute("hasCustomFields", hasCustomFields);
@@ -332,7 +348,16 @@ public class ExecutionRunnerControllerHelper {
 		runnerState.setOptimized(optimized);
 		runnerState.setPrologue(true);
 
+		IsScriptedExecutionVisitor isScriptedExecVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(isScriptedExecVisitor);
+		boolean isExecutionScripted = isScriptedExecVisitor.isScripted();
+
 		model.addAttribute("execution", execution);
+		model.addAttribute("isExecutionScripted", isExecutionScripted);
+		if(isExecutionScripted) {
+			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
+			model.addAttribute("executionScriptName", scriptedExecution.getScriptName());
+		}
 		model.addAttribute("config", runnerState);
 		model.addAttribute("totalSteps", totalSteps);
 		model.addAttribute("attachments", attachmentHelper.findAttachments(execution));

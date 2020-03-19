@@ -21,41 +21,33 @@
 package org.squashtest.tm.service.internal.campaign.scripted;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.testcase.ConsumerForScriptedTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
 
 @Component
 public class ScriptedTestCaseExecutionHelper {
 
-	public void createExecutionStepsForScriptedTestCase(Execution execution){
+	public void createExecutionStepsForScriptedTestCase(ScriptedExecution scriptedExecution){
 		//guard condition
-		TestCase referencedTestCase = execution.getReferencedTestCase();
+		TestCase referencedTestCase = scriptedExecution.getReferencedTestCase();
 		if(nonNull(referencedTestCase)){
 
 			Consumer<ScriptedTestCase> consumer = scriptedTestCase -> {
-				//creating execution extender
-				execution.createScriptedExtender();
-
 				//now we must do the step creation and everything that depend on script
 				//first we retrieve the good parser
 				ScriptedTestCaseParser testCaseParser = new GherkinTestCaseParser(new GherkinStepGenerator());
 
 				//and we delegate to the parser
-				testCaseParser.populateExecution(execution);
+				testCaseParser.populateExecution(scriptedExecution);
 			};
 			ConsumerForScriptedTestCaseVisitor testCaseVisitor = new ConsumerForScriptedTestCaseVisitor(
 				consumer,

@@ -83,6 +83,7 @@
 	ITERATION_TEST_PLAN_ITEM*,
 	ITERATION_TEST_SUITE*,
 	ACTION_WORD*,
+	KEYWORD_EXECUTION*,
 	KEYWORD_TEST_CASE*,
 	KEYWORD_TEST_STEP*,
 	LIBRARY_PLUGIN_BINDING*,
@@ -115,6 +116,7 @@
 	RESOURCE*,
 	RLN_RELATIONSHIP*,
 	RLN_RELATIONSHIP_CLOSURE*,
+	SCRIPTED_EXECUTION*,
 	SCRIPTED_TEST_CASE*,
 	SCM_REPOSITORY*,
 	SCM_SERVER*,
@@ -239,6 +241,7 @@
 	resource?,
 	rln_relationship?,
 	rln_relationship_closure?,
+	scripted_execution?,
 	scripted_test_case?,
 	scm_repository?,
 	scm_server?,
@@ -989,6 +992,12 @@
 		WORD CDATA #REQUIRED
 		>
 
+	<!ELEMENT KEYWORD_EXECUTION EMPTY>
+	<!ATTLIST KEYWORD_EXECUTION
+		EXECUTION_ID CDATA #REQUIRED
+		>
+
+
 	<!ELEMENT KEYWORD_TEST_CASE EMPTY>
 	<!ATTLIST KEYWORD_TEST_CASE
 		TCLN_ID CDATA #REQUIRED
@@ -1278,6 +1287,12 @@
 		COMMITTER_MAIL CDATA #IMPLIED
 		>
 
+	<!ELEMENT SCRIPTED_EXECUTION EMPTY>
+	<!ATTLIST SCRIPTED_EXECUTION
+		EXECUTION_ID CDATA #REQUIRED
+		SCRIPT_NAME #IMPLIED
+	>
+
 	<!ELEMENT SCRIPTED_TEST_CASE EMPTY>
 	<!ATTLIST SCRIPTED_TEST_CASE
 		TCLN_ID CDATA #REQUIRED
@@ -1507,6 +1522,7 @@
 	<!ELEMENT iteration EMPTY>
 	<!ELEMENT iteration_test_plan_item EMPTY>
 	<!ELEMENT iteration_test_suite EMPTY>
+	<!ELEMENT keyword_execution EMPTY>
 	<!ELEMENT keyword_test_case EMPTY>
 	<!ELEMENT keyword_test_step EMPTY>
 	<!ELEMENT library_plugin_binding EMPTY>
@@ -1538,6 +1554,7 @@
 	<!ELEMENT resource EMPTY>
 	<!ELEMENT rln_relationship EMPTY>
 	<!ELEMENT rln_relationship_closure EMPTY>
+	<!ELEMENT scripted_execution EMPTY>
 	<!ELEMENT scripted_test_case EMPTY>
 	<!ELEMENT scm_repository EMPTY>
 	<!ELEMENT scm_server EMPTY>

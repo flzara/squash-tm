@@ -118,6 +118,7 @@ public class TestCaseFormModel {
 				newTC = new KeywordTestCase();
 				break;
 			case GHERKIN:
+				// this constructor must be used to initialize the script
 				newTC = new ScriptedTestCase(name);
 				break;
 			default:

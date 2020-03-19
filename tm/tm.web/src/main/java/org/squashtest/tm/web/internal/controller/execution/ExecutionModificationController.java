@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -44,6 +45,9 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
+import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -53,6 +57,7 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.execution.ScriptedExecutionFinder;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.dto.CustomFieldValueModel;
@@ -104,6 +109,9 @@ public class ExecutionModificationController {
 
 	@Inject
 	private ExecutionProcessingService executionProcService;
+
+	@Inject
+	private ScriptedExecutionFinder scriptedExecutionFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -177,7 +185,18 @@ public class ExecutionModificationController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
+
+		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(executionVisitor);
+		boolean isExecutionScripted = executionVisitor.isScripted();
+
 		mav.addObject("execution", execution);
+		mav.addObject("isExecutionScripted", isExecutionScripted);
+		if(isExecutionScripted) {
+			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
+			mav.addObject("executionScriptName", scriptedExecution.getScriptName());
+		}
+
 		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
@@ -209,7 +228,10 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, execution.isScripted());
+		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
+		execution.accept(executionVisitor);
+
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, executionVisitor.isScripted());
 		return columnDefs;
 	}
 

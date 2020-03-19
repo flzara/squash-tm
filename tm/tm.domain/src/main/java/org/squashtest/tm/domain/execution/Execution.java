@@ -26,7 +26,6 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -54,19 +53,18 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
+import org.squashtest.tm.infrastructure.hibernate.ExecutionPersister;
 import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
+import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Basic;
@@ -80,6 +78,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -112,17 +112,12 @@ import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 @Auditable
 @Entity
-/*
- *  the following annotation is a trick, see same thing in class documentation in RequirementLibraryNode
- */
-//@Table(appliesTo="EXECUTION_ISSUES_CLOSURE", sqlDelete=@SQLDelete(sql="delete from EXECUTION_ISSUES_CLOSURE where EXECUTION_ID=null and EXECUTION_ID=?"))
+@Persister(impl = ExecutionPersister.class)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
 	private static final String EXECUTION_ID = "EXECUTION_ID";
-
-	private static final boolean IS_KEYWORD_EXECUTION = true;
-	private static final boolean IS_NOT_KEYWORD_EXECUTION = false;
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -131,7 +126,6 @@ DenormalizedFieldHolder, BoundEntity {
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	private static final int EXECUTION_NAME_MAX_LENGTH = 308;
-
 
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
@@ -200,7 +194,9 @@ DenormalizedFieldHolder, BoundEntity {
 
 	// TODO rename as testPlanItem
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = EXECUTION_ID, insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION",
+		joinColumns = @JoinColumn(name = EXECUTION_ID, insertable = false, updatable = false),
+		inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
 	private IterationTestPlanItem testPlan;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -225,11 +221,6 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
-	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
-	private ScriptedExecutionExtender scriptedExecutionExtender;
-
-	private boolean isKeywordExecution = IS_NOT_KEYWORD_EXECUTION;
-
 	/* *********************** attachment attributes ************************ */
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
@@ -243,14 +234,6 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
-
-	public boolean isKeywordExecution() {
-		return isKeywordExecution;
-	}
-
-	public void setKeywordExecution(boolean keywordExecution) {
-		isKeywordExecution = keywordExecution;
-	}
 
 	/*
 	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
@@ -297,6 +280,9 @@ DenormalizedFieldHolder, BoundEntity {
 		setDatasetLabel(testCase, dataset);
 	}
 
+	public void accept(ExecutionVisitor executionVisitor){
+		executionVisitor.visit(this);
+	}
 
 	public List<ExecutionStep> getSteps() {
 		return steps;
@@ -382,10 +368,6 @@ DenormalizedFieldHolder, BoundEntity {
 	private void setReferencedTestCase(TestCase testCase) {
 
 		referencedTestCase = testCase;
-
-		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor();
-		testCase.accept(visitor);
-		this.isKeywordExecution = visitor.isKeyword();
 
 		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());
@@ -749,26 +731,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	public boolean isAutomated() {
 		return executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null;
-	}
-
-	public ScriptedExecutionExtender getScriptedExecutionExtender() {
-		return scriptedExecutionExtender;
-	}
-
-	private void setScriptedExecutionExtender(ScriptedExecutionExtender scriptedExecutionExtender) {
-		this.scriptedExecutionExtender = scriptedExecutionExtender;
-	}
-
-	public boolean isScripted(){
-		return this.scriptedExecutionExtender != null;
-	}
-
-	public boolean isNotScripted(){
-		return !isScripted();
-	}
-
-	public void createScriptedExtender(){
-		this.setScriptedExecutionExtender(new ScriptedExecutionExtender(this));
 	}
 
 	private boolean checkValidNewStatus(ExecutionStatus status) {

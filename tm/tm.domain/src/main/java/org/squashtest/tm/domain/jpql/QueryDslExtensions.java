@@ -53,8 +53,8 @@ public final class QueryDslExtensions {
 	/**
 	 * The simple, no arg implementation.
 	 *
-	 * @param string
-	 * @return
+	 * @param attributeConcat
+	 * @return 
 	 */
 	@QueryDelegate(String.class)
 	public static StringExpression groupConcat(StringPath attributeConcat){

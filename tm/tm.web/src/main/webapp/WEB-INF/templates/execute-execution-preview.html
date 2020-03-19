@@ -31,7 +31,7 @@
 	   title = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
 	   		#{title.ExecutionPopupWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
 	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
-	   titlePrerequisite = ${execution.isScripted()} ? #{label.Background} : #{generics.prerequisite.title}
+	   titlePrerequisite = ${isExecutionScripted} ? #{label.Background} : #{generics.prerequisite.title}
 ">
 <head>
   <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -125,7 +125,7 @@ documentation :
         <td><h2 th:text="${title}">Exec #3 : test interface</h2></td>
         <td class="cf">
           <div class="btn-toolbar right">
-            <button th:if="${execution.project.allowTcModifDuringExec() and !execution.isScripted()}" id="edit-tc" th:title="#{execution.execute.modify.testcase}"
+            <button th:if="${execution.project.allowTcModifDuringExec() and !isExecutionScripted}" id="edit-tc" th:title="#{execution.execute.modify.testcase}"
                     class="sq-btn std-btn control-button ">
               <span class="ui-icon ui-icon-pencil"/>
             </button>
@@ -144,11 +144,11 @@ documentation :
 
           <div class="display-table">
 
-            <div th:if="${execution.isScripted()}" class="display-table-row">
+            <div th:if="${isExecutionScripted}" class="display-table-row">
 
-              <label class="display-table-cell" th:text="#{${execution.scriptedExecutionExtender.language.i18nScriptNameKey()}}">Feature</label>
+              <label class="display-table-cell" th:text="#{execution.script.name.gherkin}">Feature</label>
 
-              <div id="testcase-script-name" class="display-table-cell" th:text="${execution.scriptedExecutionExtender.scriptName}">REF01</div>
+              <div id="testcase-script-name" class="display-table-cell" th:text="${executionScriptName}">REF01</div>
             </div>
 
 
@@ -187,7 +187,7 @@ documentation :
                 <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
               </div>
             </div>
-             <div th:if="${execution.isNotScripted()}" class="display-table-row">
+             <div th:if="${!isExecutionScripted}" class="display-table-row">
               <label class="display-table-cell" th:text="#{label.dataset}">dataset</label>
 
           <div id="execute-dataset" class="display-table-cell" th:text="${execution.datasetLabel}">

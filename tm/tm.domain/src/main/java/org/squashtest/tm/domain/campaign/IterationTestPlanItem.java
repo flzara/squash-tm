@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testcase.CreateExecutionFromTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -142,9 +143,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset referencedDataset;
 
-	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH})
 	@OrderColumn(name = "EXECUTION_ORDER")
-	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
+	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION",
+		joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"),
+		inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	private final List<Execution> executions = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -152,7 +155,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private Iteration iteration;
 
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "testPlan")
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
 	private List<TestSuite> testSuites = new ArrayList<>();
 
 	public IterationTestPlanItem() {
@@ -285,17 +288,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 * @return the new execution
 	 */
 	public Execution createExecution() throws TestPlanItemNotExecutableException {
-
 		checkExecutable();
-		Execution newExecution = null;
-
-		if (this.referencedDataset != null) {
-			newExecution = new Execution(referencedTestCase, referencedDataset);
-		} else {
-			newExecution = new Execution(referencedTestCase);
-		}
-
-		return newExecution;
+		CreateExecutionFromTestCaseVisitor createExecutionVisitor =
+			new CreateExecutionFromTestCaseVisitor(referencedDataset);
+		referencedTestCase.accept(createExecutionVisitor);
+		return createExecutionVisitor.getCreatedExecution();
 	}
 
 	public Execution createAutomatedExecution() throws TestPlanItemNotExecutableException {
@@ -409,7 +406,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * @return true if (the item last execution with unexecuted step) or (item has no execution and is linked to a
-	 * testCase).
+	 *         testCase).
 	 */
 	public boolean isExecutableThroughTestSuite() {
 		// XXX check if tester is assigned

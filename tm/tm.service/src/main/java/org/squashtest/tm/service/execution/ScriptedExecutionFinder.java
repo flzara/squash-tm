@@ -18,13 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase.scripted;
+package org.squashtest.tm.service.execution;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.execution.ScriptedExecution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 
-public interface ScriptedTestCaseParser {
-	void populateExecution(ScriptedExecution scriptedExecution);
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-	void validateScript(ScriptedTestCase scriptedTestCase);
+@Transactional(readOnly = true)
+@DynamicManager(name="squashtest.tm.service.ScriptedExecutionFinder", entity = ScriptedExecution.class)
+public interface ScriptedExecutionFinder {
+
+	/**
+	 * Find scripted execution by id.
+	 * @param scriptedExecutionId id of the scripted execution
+	 * @return The requested ScriptedExecution
+	 */
+	@PostAuthorize("hasPermission(returnObject , 'READ')" + OR_HAS_ROLE_ADMIN)
+	ScriptedExecution findById(long scriptedExecutionId);
 }
