@@ -90,7 +90,6 @@ import java.util.stream.Collectors;
 			"left join fetch itpi.executions exec " +
 			"left join fetch exec.issueList " +
 			"left join fetch exec.automatedExecutionExtender " +
-			"left join fetch exec.scriptedExecutionExtender " +
 			"where itpi.id in (:itemTestPlanIds)")
 })
 @Entity

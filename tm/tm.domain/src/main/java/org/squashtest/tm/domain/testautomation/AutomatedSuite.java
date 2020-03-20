@@ -53,7 +53,6 @@ import java.util.List;
 		"join fetch tc.nature nat " +
 		"join fetch nat.infoList " +
 		"left join fetch tc.parameters " +
-		"left join fetch tc.scriptedTestCaseExtender " +
 		"left join fetch tc.automationRequest " +
 		// can be null
 		"left join fetch itpi.referencedDataset dataset " +
