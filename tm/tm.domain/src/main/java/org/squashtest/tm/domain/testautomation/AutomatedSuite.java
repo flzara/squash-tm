@@ -44,7 +44,6 @@ import java.util.List;
 	// Fetching mass to prevent massive N + 1 that lead to exponential execution time
 	@NamedQuery(name = "automatedSuite.fetchForAutomationExecution", query = "select distinct ext from AutomatedExecutionExtender ext " +
 		"join fetch ext.execution exec " +
-		"left join fetch exec.scriptedExecutionExtender " +
 		"join fetch exec.issueList " +
 		"join fetch exec.attachmentList " +
 		"join fetch exec.testPlan itpi  " +
