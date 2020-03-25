@@ -26,18 +26,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -258,7 +255,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		// update the test case core attributes last
 
 		doUpdateTestCaseCoreAttributes(testCase, orig);
-		doUpdateTestCaseScriptExtender(testCase, orig);
+		doUpdateTestCaseScriptIfScripted(testCase, orig);
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
@@ -274,7 +271,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 	}
 
-	private void doUpdateTestCaseScriptExtender(TestCase testCase, TestCase orig) {
+	private void doUpdateTestCaseScriptIfScripted(TestCase testCase, TestCase orig) {
 		IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor();
 		testCase.accept(visitor);
 		boolean isScripted = visitor.isScripted();
