@@ -35,6 +35,7 @@
 
 
 <c:set var="scripted" value="${isExecutionScripted}"/>
+<c:set var="isKeywordExecution" value="${isExecutionKeyword}"/>
 <c:set var="actionPanelTitle" value="${scripted ? 'label.Script' : 'execute.panel.action.title'}"/>
 
 
@@ -252,7 +253,7 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
-    <c:if test="${!scripted}">
+    <c:if test="${!scripted && !isKeywordExecution}">
 		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-expected-result" class="load-links-right-frame">${hu:clean(executionStep.expectedResult)} </div>
