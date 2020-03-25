@@ -352,7 +352,12 @@ public class ExecutionRunnerControllerHelper {
 		execution.accept(isScriptedExecVisitor);
 		boolean isExecutionScripted = isScriptedExecVisitor.isScripted();
 
+		IsKeywordExecutionVisitor isKeywordExecutionVisitor = new IsKeywordExecutionVisitor();
+		execution.accept(isKeywordExecutionVisitor);
+		boolean isExecutionKeyword = isKeywordExecutionVisitor.isKeyword();
+
 		model.addAttribute("execution", execution);
+		model.addAttribute("isExecutionKeyword", isExecutionKeyword);
 		model.addAttribute("isExecutionScripted", isExecutionScripted);
 		if(isExecutionScripted) {
 			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
