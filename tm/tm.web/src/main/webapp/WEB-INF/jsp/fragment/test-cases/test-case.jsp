@@ -202,7 +202,7 @@
       </c:if>
 
         <%----------------------------------- Prerequisites -----------------------------------------------%>
-      <c:if test="${!scripted}">
+      <c:if test="${!scripted && !isKeywordTest}">
         <tc:test-case-prerequisites testCase="${testCase}"/>
       </c:if>
         <%--------------------------- Verified Requirements section ------------------------------------%>
@@ -213,7 +213,7 @@
 
         <%--------------------------- calling test case section ------------------------------------%>
 
-      <c:if test="${!scripted}">
+      <c:if test="${!scripted && !isKeywordTest}">
         <tc:calling-test-cases-panel testCase="${testCase}"/>
       </c:if>
 
