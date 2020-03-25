@@ -189,7 +189,7 @@
       <tc:test-case-description testCase="${testCase}"
                                 testCaseImportanceLabel="${testCaseImportanceLabel}"
                                 writable="${writable}"
-                                isScriptedTc="${scripted}"/>
+                                isScriptedTc="${scripted}" isKeywordTc="${isKeywordTest}"/>
 
       <tc:test-case-attribut testCase="${testCase}" writable="${writable}"
                              testCaseImportanceLabel="${testCaseImportanceLabel}"/>
