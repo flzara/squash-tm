@@ -64,7 +64,7 @@ public class ScriptedTestCase extends TestCase {
 
 	//For SquashTM 1.18 this is for Gherkin only for now
 	//if sometime another script language need to be handled, you will probably need to subclass with a discriminator column...
-	private void populateInitialScript(String locale) {
+	public void populateInitialScript(String locale) {
 		LOGGER.info("Try to populate script with script language {} and locale {}.", locale);
 		StringBuilder sb = new StringBuilder();
 		sb.append(LANGUAGE_TAG)
