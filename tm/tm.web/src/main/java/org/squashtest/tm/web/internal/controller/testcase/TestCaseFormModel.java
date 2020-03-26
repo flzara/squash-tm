@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
 
@@ -41,76 +42,21 @@ import java.util.Map.Entry;
 
 // XSS OK
 public class TestCaseFormModel {
-	/**
-	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
-	 *
-	 */
 
 	private static final String MESSAGE_NOT_BLANK = "message.notBlank";
-	public static final String STANDARD = "STANDARD";
-	public static final String KEYWORD = "KEYWORD";
-	public static final String GHERKIN = "GHERKIN";
 
-	/*@NotBlank
-	@NotNull*/
 	private String name;
-
 	private String reference;
 	private String description;
 
 	private String scriptLanguage;
 
-
-	/*@NotNull
-	@NotEmpty*/
 	private RawValueModelMap customFields = new RawValueModelMap();
 
 
-	public String getName() {
-		return name;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public RawValueModelMap getCustomFields() {
-		return customFields;
-	}
-
-	public String getScriptLanguage() {
-		return scriptLanguage;
-	}
-
-	public void setScriptLanguage(String scriptLanguage) {
-		this.scriptLanguage = scriptLanguage;
-	}
-
-	public void setCustomFields(RawValueModelMap customFields) {
-		this.customFields = customFields;
-	}
-
 	public TestCase getTestCase() {
 		TestCase newTC;
-		switch (scriptLanguage) {
+		switch (getTestCaseKind()) {
 			case STANDARD:
 				newTC = new TestCase();
 				break;
@@ -138,7 +84,6 @@ public class TestCaseFormModel {
 		}
 		return cufs;
 	}
-
 
 	public static class TestCaseFormModelValidator implements Validator {
 
@@ -184,5 +129,44 @@ public class TestCaseFormModel {
 
 	}
 
+	private TestCaseKind getTestCaseKind() {
+		return TestCaseKind.valueOf(scriptLanguage.toUpperCase());
+	}
+
+
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getScriptLanguage() {
+		return scriptLanguage;
+	}
+	public void setScriptLanguage(String scriptLanguage) {
+		this.scriptLanguage = scriptLanguage;
+	}
+
+	public RawValueModelMap getCustomFields() {
+		return customFields;
+	}
+	public void setCustomFields(RawValueModelMap customFields) {
+		this.customFields = customFields;
+	}
 
 }

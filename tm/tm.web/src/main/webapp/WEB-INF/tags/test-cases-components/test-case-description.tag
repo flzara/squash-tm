@@ -37,10 +37,11 @@
 
 <%@ attribute name="isScriptedTc" required="true" type="java.lang.Boolean"
         description="whether the test case is scripted" %>
+<%@ attribute name="isKeywordTc" required="true" type="java.lang.Boolean"
+              description="whether the test case is keyword" %>
 
 <c:set var="allowAutomationWorkflow" value="${testCase.project.isAllowAutomationWorkflow()}"/>
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
-<c:set var="scripted" value="${isScriptedTc}"/>
 
 <f:message var="labelDescription" key="label.Description"/>
 
@@ -52,22 +53,25 @@
 	<jsp:attribute name="body">
 	<div id="test-case-description-table" class="display-table">
 
-		<div class="display-table-row">
-			<label class="display-table-cell" for="test-case-format"><f:message key="test-case.format.label"/></label>
-			<div class="display-table-cell" id="test-case-format">
-				  <c:choose>
-        <c:when test="${scripted}">
-				<f:message key="test-case.format.gherkin"/>
-		</c:when>
-        <c:otherwise>
-				<f:message key="test-case.format.standard"/>
-        </c:otherwise>
-      </c:choose>
-			</div>
-		</div>
+    <div class="display-table-row">
+      <label class="display-table-cell" for="test-case-format"><f:message key="test-case.format.label"/></label>
+      <div class="display-table-cell" id="test-case-format">
+        <c:choose>
+          <c:when test="${isScriptedTc}">
+            <f:message key="test-case.format.gherkin"/>
+          </c:when>
+          <c:when test="${isKeywordTc}">
+            <f:message key="test-case.format.keyword"/>
+          </c:when>
+          <c:otherwise>
+            <f:message key="test-case.format.standard"/>
+          </c:otherwise>
+        </c:choose>
+      </div>
+    </div>
 
-		<div class="display-table-row">
-			<label class="display-table-cell" for="test-case-reference"><f:message
+    <div class="display-table-row">
+      <label class="display-table-cell" for="test-case-reference"><f:message
 				key="test-case.reference.label"/></label>
 			<div class="display-table-cell" id="test-case-reference"><c:out value="${ testCase.reference }" escapeXml="true"/></div>
 		</div>

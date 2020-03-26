@@ -24,14 +24,15 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      th:with=
-        "titleWindow = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
-	   		#{title.ExecutionPopupPreviewWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
-	   		: #{title.ExecutionPopupPreviewWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
-	   title = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
+      th:with = "
+      titleWindow = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
+        #{title.ExecutionPopupPreviewWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
+	   		: #{title.ExecutionPopupPreviewWithoutDataset(${execution.executionOrder + 1}, ${execution.name})},
+	   	title = ${execution.datasetLabel != null AND execution.datasetLabel != ''} ?
 	   		#{title.ExecutionPopupWithDataset(${execution.executionOrder + 1}, ${execution.name}, ${execution.datasetLabel})}
-	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})} ,
-	   titlePrerequisite = ${isExecutionScripted} ? #{label.Background} : #{generics.prerequisite.title}
+	   		: #{title.ExecutionPopupWithoutDataset(${execution.executionOrder + 1}, ${execution.name})},
+	    titlePrerequisite = ${isExecutionScripted} ? #{label.Background} : #{generics.prerequisite.title},
+	    isExecutionKeyword = ${isExecutionKeyword}
 ">
 <head>
   <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -241,7 +242,7 @@ documentation :
   			</div>
   			</div>
 
-    <div class="sq-tg expand">
+    <div class="sq-tg expand" th:if="${!isExecutionKeyword}">
         <div class="tg-head">
           <h3 th:text="${titlePrerequisite}"></h3>
         </div>

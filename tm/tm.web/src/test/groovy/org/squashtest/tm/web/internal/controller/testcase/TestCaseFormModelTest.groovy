@@ -21,20 +21,80 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
+import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
+import spock.lang.Unroll
 
-import static org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.KEYWORD
+import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
+import static org.squashtest.tm.domain.testcase.TestCaseKind.KEYWORD
+import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
 
 class TestCaseFormModelTest extends Specification {
 
-	def "should create keyword test"() {
+	def "#getTestCase() - Should create standard test case"() {
 		given:
-		TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
-		testCaseFormModel.setScriptLanguage(KEYWORD)
+			TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
+			testCaseFormModel.setScriptLanguage("STANDARD")
+			testCaseFormModel.setName("Standàrd 11")
+			testCaseFormModel.setReference("STD|1")
+			testCaseFormModel.setDescription("~ A stândàrd tést c@se ~")
 		when:
-		def testCase = testCaseFormModel.getTestCase()
+			def testCase = testCaseFormModel.getTestCase()
 		then:
-		KeywordTestCase.class.isAssignableFrom(testCase.class)
+			TestCase.class.isAssignableFrom(testCase.class)
+			testCase.name == "Standàrd 11"
+			testCase.reference == "STD|1"
+			testCase.description == "~ A stândàrd tést c@se ~"
+	}
+
+	def "#getTestCase() - Should create scripted test case"() {
+		given:
+			TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
+			testCaseFormModel.setScriptLanguage("GHERKIN")
+			testCaseFormModel.setName("ScriptedTestCase_6")
+			testCaseFormModel.setReference("SC6")
+			testCaseFormModel.setDescription("A scripted test case")
+		when:
+			def testCase = testCaseFormModel.getTestCase()
+		then:
+			ScriptedTestCase.class.isAssignableFrom(testCase.class)
+			testCase.name == "ScriptedTestCase_6"
+			testCase.reference == "SC6"
+			testCase.description == "A scripted test case"
+			! ((ScriptedTestCase) testCase).getScript().isEmpty()
+	}
+
+	def "#getTestCase() - Should create keyword test case"() {
+		given:
+			TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
+			testCaseFormModel.setScriptLanguage("KEYWORD")
+			testCaseFormModel.setName("KeywordTestCase_3")
+			testCaseFormModel.setReference("KW3")
+			testCaseFormModel.setDescription("A keyword test case")
+		when:
+			def testCase = testCaseFormModel.getTestCase()
+		then:
+			KeywordTestCase.class.isAssignableFrom(testCase.class)
+			testCase.name == "KeywordTestCase_3"
+			testCase.reference == "KW3"
+			testCase.description == "A keyword test case"
+	}
+
+	@Unroll
+	def "getTestCaseKind() - Should get test case kind #expectedOutput from scriptedLanguage"() {
+		given:
+			TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
+			testCaseFormModel.setScriptLanguage(input)
+		when:
+			def kind = testCaseFormModel.getTestCaseKind()
+		then:
+			kind == expectedOutput
+		where:
+			input 		| expectedOutput
+			"ghErkIn" 	| GHERKIN
+			"kEYwOrd" 	| KEYWORD
+			"stAndArd" 	| STANDARD
 	}
 
 }
