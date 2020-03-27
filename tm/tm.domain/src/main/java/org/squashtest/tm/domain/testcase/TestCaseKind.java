@@ -29,10 +29,6 @@ public enum TestCaseKind implements Internationalizable {
 		return this.equals(GHERKIN);
 	}
 
-	public static TestCaseKind getFromString(String kind){
-		return TestCaseKind.valueOf(kind);
-	}
-
 	@Override
 	public String getI18nKey() {
 		return "test-case.format." + this.name().toLowerCase();

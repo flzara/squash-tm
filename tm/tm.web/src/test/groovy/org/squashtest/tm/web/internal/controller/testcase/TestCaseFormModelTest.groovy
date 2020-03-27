@@ -81,20 +81,4 @@ class TestCaseFormModelTest extends Specification {
 			testCase.description == "A keyword test case"
 	}
 
-	@Unroll
-	def "getTestCaseKind() - Should get test case kind #expectedOutput from scriptedLanguage"() {
-		given:
-			TestCaseFormModel testCaseFormModel = new TestCaseFormModel()
-			testCaseFormModel.setScriptLanguage(input)
-		when:
-			def kind = testCaseFormModel.getTestCaseKind()
-		then:
-			kind == expectedOutput
-		where:
-			input 		| expectedOutput
-			"ghErkIn" 	| GHERKIN
-			"kEYwOrd" 	| KEYWORD
-			"stAndArd" 	| STANDARD
-	}
-
 }

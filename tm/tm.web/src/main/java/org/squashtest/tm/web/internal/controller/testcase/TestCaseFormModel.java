@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFactory;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 import org.squashtest.tm.service.internal.dto.RawValueModel.RawValueModelMap;
@@ -55,22 +56,7 @@ public class TestCaseFormModel {
 
 
 	public TestCase getTestCase() {
-		TestCase newTC;
-		switch (getTestCaseKind()) {
-			case STANDARD:
-				newTC = new TestCase();
-				break;
-			case KEYWORD:
-				newTC = new KeywordTestCase();
-				break;
-			case GHERKIN:
-				// this constructor must be used to initialize the script
-				newTC = new ScriptedTestCase(name);
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid test case type");
-		}
-		newTC.setName(name);
+		TestCase newTC = TestCaseFactory.getTestCase(scriptLanguage, name);
 		newTC.setDescription(description);
 		newTC.setReference(reference);
 		return newTC;
@@ -127,10 +113,6 @@ public class TestCaseFormModel {
 
 		}
 
-	}
-
-	private TestCaseKind getTestCaseKind() {
-		return TestCaseKind.valueOf(scriptLanguage.toUpperCase());
 	}
 
 
