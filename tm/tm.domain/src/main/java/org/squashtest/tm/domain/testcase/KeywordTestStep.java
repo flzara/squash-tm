@@ -51,7 +51,7 @@ public class KeywordTestStep extends TestStep {
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
-	KeywordTestStep() {
+	public KeywordTestStep() {
 	}
 
 	public KeywordTestStep(Keyword paramKeyword, ActionWord paramActionWord) {
@@ -111,5 +111,13 @@ public class KeywordTestStep extends TestStep {
 
 	public ActionWord getActionWord() {
 		return actionWord;
+	}
+
+	public void setKeyword(Keyword keyword) {
+		this.keyword = keyword;
+	}
+
+	public void setActionWord(ActionWord actionWord) {
+		this.actionWord = actionWord;
 	}
 }
