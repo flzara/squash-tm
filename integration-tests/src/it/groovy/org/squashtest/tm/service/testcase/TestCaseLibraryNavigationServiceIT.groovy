@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.testcase
 
 import org.hibernate.Query
+import org.hibernate.Session
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
@@ -28,21 +29,43 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.ScriptedTestCase
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
+import spock.lang.Ignore
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
+	@PersistenceContext
+	private EntityManager em
+
+	@Inject
+	private RequirementDao requirementDao
+
+	@Inject
+	private RequirementVersionDao requirementVersionDao
 
     @Inject
     private TestCaseLibraryNavigationService navService
@@ -320,6 +343,13 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         values11.find { it.getBinding().id == -4L }.value == "default"
     }
 
+	def findCufValuesForEntity(BindableEntity tctype, long tcId) {
+		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
+		query.setParameter("id", tcId)
+		query.setParameter("type", tctype)
+		return query.list()
+	}
+
     @DataSet("TestCaseLibraryNavigationServiceIT.should move to same project.xml")
     @ExpectedDataSet("TestCaseLibraryNavigationServiceIT.should move to same project-result.xml")
     def "should move to same project"() {
@@ -504,10 +534,77 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
     }
 
-    def findCufValuesForEntity(BindableEntity tctype, long tcId) {
-        Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
-        query.setParameter("id", tcId)
-        query.setParameter("type", tctype)
-        return query.list()
-    }
+	@Unroll
+	@DataSet("TestCaseLibraryNavigationServiceIT.copy-testcase-from-requirement.xml")
+	def "copyReqToTestCasesToFolder(long, Long[], Config) - Should copy some #tcKind test cases from requirements into a folder"() {
+		given:
+			[-2L, -3L, -4L].each {
+				setBidirectionalReqReqVersion(it,it)
+			}
+		and:
+			def config = new ReqToTestCaseConfiguration(tcKind)
+		when:
+			navService.copyReqToTestCasesToFolder(/*TCFolder*/-1L, /*Requirements*/sourceReqIds as Long[], config)
+		then: "Check test cases"
+			def testCaseList = em.createQuery("select tc from TestCase tc").getResultList()
+			testCaseList.size() == reqNames.size()
+			testCaseList.collect { it.name } containsAll(reqNames)
+			testCaseList.each {
+				expectedTcClass.isAssignableFrom(it.class)
+				if(expectedTcClass == TestCase.class) {
+					! ScriptedTestCase.class.isAssignableFrom(it.class)
+					! KeywordTestCase.class.isAssignableFrom(it.class)
+				}
+			}
+		where:
+			sourceReqIds 	| reqNames 												| tcKind 		| expectedTcClass
+			[-2L]			| ["Requirement_2"]										| "STANDARD" 	| TestCase.class
+			[-2L, -3l, -4L]	| ["Requirement_2","Requirement_3","Requirement_4"]	| "STANDARD"	| TestCase.class
+			[-2L]			| ["Requirement_2"]										| "GHERKIN" 	| ScriptedTestCase.class
+			[-2L, -3l, -4L]	| ["Requirement_2","Requirement_3","Requirement_4"]	| "GHERKIN"		| ScriptedTestCase.class
+			[-2L]			| ["Requirement_2"]										| "KEYWORD" 	| KeywordTestCase.class
+			[-2L, -3l, -4L]	| ["Requirement_2","Requirement_3","Requirement_4"]	| "KEYWORD"		| KeywordTestCase.class
+	}
+
+	@Ignore("Bug in milestones fetching?")
+	@Unroll
+	@DataSet("TestCaseLibraryNavigationServiceIT.copy-testcase-from-requirement.xml")
+	def "copyReqToTestCasesToFolder(long, Long[], Config) - Should copy a #tcKind test case folder from requirements into a folder"() {
+		given:
+			[-2L, -3L, -4L].each {
+				setBidirectionalReqReqVersion(it,it)
+			}
+		and:
+			def config = new ReqToTestCaseConfiguration(tcKind)
+		when:
+			navService.copyReqToTestCasesToFolder(/*TCFolder*/-1L, /*Requirements*/sourceReqIds as Long[], config)
+		then: "Check test cases"
+			def testCaseList = em.createQuery("select tc from TestCase tc").getResultList()
+			testCaseList.size() == reqNames.size()
+			testCaseList.collect { it.name }.containsAll(reqNames)
+			testCaseList.each {
+				expectedTcClass.isAssignableFrom(it.class)
+				if(expectedTcClass == TestCase.class) {
+					! ScriptedTestCase.class.isAssignableFrom(it.class)
+					! KeywordTestCase.class.isAssignableFrom(it.class)
+				}
+			}
+		and: "Check test case folders"
+			def testCaseFolderList = em.createQuery("select folder from TestCaseFolder folder").getResultList()
+			testCaseFolderList.size() == 2
+			testCaseFolderList.collect { it.name }.contains("Tc_Folder_1")
+		where:
+			sourceReqIds 	| reqNames 												| tcKind 		| expectedTcClass
+			[-1L] 			| ["Requirement_2","Requirement_3","Requirement_4"] 	| "STANDARD" 	| TestCase.class
+			/*
+			* Copy the Folder into the Folder
+			* Copy the empty Folder into the Folder
+			* */
+	}
+
+	def setBidirectionalReqReqVersion(Long reqVersionId, Long reqId) {
+		def reqVer = requirementVersionDao.getOne(reqVersionId)
+		def req = requirementDao.findById(reqId)
+		reqVer.setRequirement(req)
+	}
 }

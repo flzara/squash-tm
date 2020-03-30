@@ -22,27 +22,16 @@ package org.squashtest.tm.service.testcase.fromreq;
 
 public class ReqToTestCaseConfiguration {
 
-	private String scriptLanguage;
-	private String locale;
+	private String testCaseKindAsString;
 
-	public ReqToTestCaseConfiguration(String scriptLanguage, String locale) {
-		this.scriptLanguage = scriptLanguage;
-		this.locale = locale;
+	public ReqToTestCaseConfiguration(String testCaseKindAsString) {
+		this.testCaseKindAsString = testCaseKindAsString;
 	}
 
-	public String getScriptLanguage() {
-		return scriptLanguage;
+	public String getTestCaseKindAsString() {
+		return testCaseKindAsString;
 	}
-
-	public void setScriptLanguage(String scriptLanguage) {
-		this.scriptLanguage = scriptLanguage;
-	}
-
-	public String getLocale() {
-		return locale;
-	}
-
-	public void setLocale(String locale) {
-		this.locale = locale;
+	public void setTestCaseKindAsString(String testCaseKindAsString) {
+		this.testCaseKindAsString = testCaseKindAsString;
 	}
 }

@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFactory;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -292,14 +293,14 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		RequirementLibraryNode reqNode = em.find(RequirementLibraryNode.class, srcNode.getId());
 		if (reqNode.getClass() == Requirement.class) {
 			Requirement req = (Requirement) reqNode;
-			TestCase newTestCase = new TestCase();
+
+			TestCase newTestCase = TestCaseFactory.getTestCase(configuration.getTestCaseKindAsString(), req.getName());
 			newTestCase.setImportanceAuto(true);
 			newTestCase.setImportance(deduceImportanceFromRequirementCriticality(req.getCriticality()));
-			newTestCase.setName(req.getName());
 			newTestCase.setDescription(req.getDescription());
 			newTestCase.setReference(req.getReference());
 			newTestCase.notifyAssociatedWithProject((Project) destination.getProject());
-			newTestCase.extendWithScript(configuration.getScriptLanguage(), configuration.getLocale());
+
 			if (req.hasContent()) {
 				isReqMother = true;
 			}

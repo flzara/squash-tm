@@ -205,7 +205,7 @@ public class TestCaseLibraryNavigationController extends
 									   @RequestParam("tcKind") String tcKind,
 									   Locale locale) {
 
-		ReqToTestCaseConfiguration configuration = new ReqToTestCaseConfiguration(tcKind, locale.getLanguage());
+		ReqToTestCaseConfiguration configuration = new ReqToTestCaseConfiguration(tcKind);
 
 		try {
 			switch (destType) {

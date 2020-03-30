@@ -903,13 +903,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	//*********************** SCRIPTED TEST CASE SECTION ************************//
 
-
-
-
-	public void extendWithScript(String scriptLanguage, String locale) {
-		throw new UnsupportedOperationException();
-	}
-
 	public AutomationRequest getAutomationRequest() {
 		return automationRequest;
 	}
