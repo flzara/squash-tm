@@ -627,8 +627,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private CustomFieldValuesForExec fetchCustomFieldValues(Collection<AutomatedExecutionExtender> extenders) {
 		Map<Long, List<CustomFieldValue>> testCaseCfv = fetchTestCaseCfv(extenders);
 		Map<Long, List<CustomFieldValue>> iterationCfv = fetchIterationCfv(extenders);
-		Map<Long, List<CustomFieldValue>> campaignCfv = fetchTestCaseCfv(extenders);
-		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestCaseCfv(extenders);
+		Map<Long, List<CustomFieldValue>> campaignCfv = fetchCampaignCfv(extenders);
+		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestSuiteCfv(extenders);
 		return new CustomFieldValuesForExec(testCaseCfv, iterationCfv, campaignCfv, testSuiteCfv);
 	}
 

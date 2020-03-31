@@ -131,5 +131,23 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 
 		executionOrder[0].a2.containsKey("TC_REFERENCE")
 		executionOrder[0].a2.get("TC_REFERENCE") == "ref"
+
+		executionOrder[0].a2.containsKey("TC_CUF_accreditation")
+		executionOrder[0].a2.get("TC_CUF_accreditation") == "toto"
+
+		executionOrder[0].a2.containsKey("IT_CUF_public")
+		executionOrder[0].a2.get("IT_CUF_public") == "true"
+
+		executionOrder[0].a2.containsKey("CPG_CUF_taglist")
+		executionOrder[0].a2.get("CPG_CUF_taglist") == "SEC-2"
+
+		executionOrder[0].a2.containsKey("TS_CUF_checkbox")
+		executionOrder[0].a2.get("TS_CUF_checkbox") == "false"
+
+		executionOrder[0].a2.containsKey("DSNAME")
+		executionOrder[0].a2.get("DSNAME") == "dataset1"
+
+		executionOrder[0].a2.containsKey("DS_param101")
+		executionOrder[0].a2.get("DS_param101") == "titi"
 	}
 }
