@@ -102,6 +102,39 @@ public class ScmRepository {
 		return result;
 	}
 
+	/**
+	 * Returns the repository base directory as a File
+	 *
+	 * @return
+	 */
+	public File getBaseRepositoryFolder(){
+		return new File(getRepositoryPath());
+	}
+
+	/**
+	 * Returns the repository working folder as a File
+	 *
+	 * @return
+	 */
+	public File getWorkingFolder(){
+		if (StringUtils.isBlank(workingFolderPath)){
+			return getBaseRepositoryFolder();
+		}
+		else{
+			return FileUtils.getFile(repositoryPath, workingFolderPath);
+		}
+	}
+
+	public Collection<File> listWorkingFolderContent() throws IOException{
+		File workingFolder = getWorkingFolder();
+		return doWithLock(() -> FileUtils.listFiles(workingFolder, null, true));
+	}
+
+	@FunctionalInterface
+	public interface IOSupplier<T> {
+		T get() throws IOException;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -142,38 +175,5 @@ public class ScmRepository {
 	}
 	public void setScmServer(ScmServer scmServer) {
 		this.scmServer = scmServer;
-	}
-
-	/**
-	 * Returns the repository base directory as a File
-	 *
-	 * @return
-	 */
-	public File getBaseRepositoryFolder(){
-		return new File(getRepositoryPath());
-	}
-
-	/**
-	 * Returns the repository working folder as a File
-	 *
-	 * @return
-	 */
-	public File getWorkingFolder(){
-		if (StringUtils.isBlank(workingFolderPath)){
-			return getBaseRepositoryFolder();
-		}
-		else{
-			return FileUtils.getFile(repositoryPath, workingFolderPath);
-		}
-	}
-
-	public Collection<File> listWorkingFolderContent() throws IOException{
-		File workingFolder = getWorkingFolder();
-		return doWithLock(() -> FileUtils.listFiles(workingFolder, null, true));
-	}
-
-	@FunctionalInterface
-	public interface IOSupplier<T> {
-		T get() throws IOException;
 	}
 }

@@ -52,7 +52,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	@Shared
 	private ScmRepository scm = new MockFactory().mockScmRepository(10L, "scmtest_", "squash"){
-		dir("squash"){
+		dir("squash") {
 			file "456_lame_pun.feature"
 		}
 	}
@@ -70,10 +70,15 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		FileUtils.forceDelete(scm.baseRepositoryFolder)
 	}
 
-	def String relativePathFromWorkingDirectory(File file) {
-		return scm.getWorkingFolder().toURI().relativize(file.toURI()).toString()
+	def listContentRelativePathFromWorkingDirectory() {
+		return FileUtils
+			.listFiles(scm.getWorkingFolder(), null, true)
+			.collect { relativePathFromWorkingDirectory(it) }
 	}
 
+	def relativePathFromWorkingDirectory(File file) {
+		return scm.getWorkingFolder().toURI().relativize(file.toURI()).toString()
+	}
 
 	def "should create a file in the scm, if it doesn't exist"(){
 
@@ -104,7 +109,6 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		clean file
 
 	}
-
 
 	def "should create a file with the nominal name for given test case"(){
 
@@ -154,7 +158,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	}
 
-	def "#locateOrMoveOrCreateTestFile - Should create/locate/move the file for a given test case"() {
+	@Unroll
+	def "locateOrMoveOrCreateTestFile - Should create/locate/move the file for a given test case when Using tree structure"() {
 		given:
 			def scmServer = Mock(ScmServer) {
 				getUrl() >> "http://the_url.org"
@@ -163,7 +168,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 				getScmServer() >> scmServer
 			}
 			def project = Mock(Project) {
-				isUseTreeStructureInScmRepo() >> pUseTreeStructure
+				isUseTreeStructureInScmRepo() >> true
 				getScmRepository() >> scmRepo
 			}
 			def tc = Mock(TestCase) {
@@ -174,7 +179,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			}
 			def manifest = new ScmRepositoryManifest(scm)
 		and:
-			nbrPathCall * pathService.buildTestCaseFoldersPath(pTestCaseId) >> pReturnedFoldersPath
+			1 * pathService.buildTestCaseFoldersPath(pTestCaseId) >> pReturnedFoldersPath
 		when:
 			def file = service.locateOrMoveOrCreateTestFile(manifest, tc)
 		then:
@@ -182,26 +187,165 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			file.exists()
 		where:
 			// Rewrite to create our own file where we want as the test below
-			pTestCaseId | pUseTreeStructure	| pTestCaseName		| pReturnedFoldersPath 		| pExpectedRelativePath
-
-			123         | false 			| "new test case"	| "any/folder/path"    		| "123_new_test_case.feature"
-			123         | true 				| "new test case"	| "màin fôlder/sùb foldèr"  | "main_folder/sub_folder/123_new_test_case.feature"
-
-			456         | false             | "lame pun"        | "any/folder/path"    		| "456_lame_pun.feature"
-			456         | false             | "renàmed lame pùn"| "any/folder/path"    		| "456_renamed_lame_pun.feature"
-
-			456         | true              | "lame pun"        | null                 		| "456_lame_pun.feature"
-			456			| true            	| "renàmed lame pùn"| null                 		| "456_renamed_lame_pun.feature"
-			456			| true             	| "lame pun"        | "màin fôlder/sùb foldèr"	| "main_folder/sub_folder/456_lame_pun.feature"
-			456			| true             	| "renàmed lame pùn"| "màin fôlder/sùb foldèr"	| "main_folder/sub_folder/456_renamed_lame_pun.feature"
-
-			nbrPathCall = pUseTreeStructure ? 1 : 0 // pathService is only called (twice) if the tree structure is used
+			pTestCaseId	| pTestCaseName			| pReturnedFoldersPath 		| pExpectedRelativePath
+			456			| "lame pun"        	| null                 		| "456_lame_pun.feature"
+			456			| "renàmed lame pùn"	| null                 		| "456_renamed_lame_pun.feature"
+			456			| "lame pun"        	| "màin fôlder/sùb foldèr"	| "main_folder/sub_folder/456_lame_pun.feature"
+			456			| "renàmed lame pùn"	| "màin fôlder/sùb foldèr"	| "main_folder/sub_folder/456_renamed_lame_pun.feature"
 	}
 
-	def "#moveAndRenameFileIfNeeded - Should rename/move the file or not"() {
+	@Unroll
+	def "locateOrMoveOrCreateTestFile - Should create/locate/move the file for a given test case when Not using tree structure"() {
 		given:
 			def project = Mock(Project) {
-				isUseTreeStructureInScmRepo() >> pUseTreeStructure
+				isUseTreeStructureInScmRepo() >> false
+			}
+			def tc = Mock(TestCase) {
+				getId() >> pTestCaseId
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> pTestCaseName
+				getProject() >> project
+			}
+			tc.notifyAssociatedWithProject(project)
+			def manifest = new ScmRepositoryManifest(scm)
+		when:
+			def file = service.locateOrMoveOrCreateTestFile(manifest, tc)
+		then:
+			relativePathFromWorkingDirectory(file) == pExpectedRelativePath
+			file.exists()
+		where:
+			// Rewrite to create our own file where we want as the test below
+			pTestCaseId	| pTestCaseName		 	| pExpectedRelativePath
+
+			123			| "new test case"	 	| "123_new_test_case.feature"
+			456			| "lame pun"		 	| "456_lame_pun.feature"
+			456			| "renàmed lame pùn" 	| "456_renamed_lame_pun.feature"
+			5			| "another test case"	| "5_another_test_case.feature"
+	}
+
+	/**
+	 * This test aims to check the following issue:
+	 * 	- a file exists in the repository with a name containing a number other than its id (e.g. 46_test_4.feature)
+	 * 	- we try to locate the file of a test case which id is equal to this number (expecting 4_test_case.feature)
+	 * 	-> the first test is wrongfully detected and replaced by the second test case's test file
+	 */
+	@Unroll
+	def "locateOrMoveOrCreateTestFile - Should not locate the wrong file when Not using tree structure"() {
+		given: "create a file containing ambiguous pattern"
+			def workingFolder = scm.getWorkingFolder()
+			def file = new File(workingFolder, "55_5_5.feature")
+			createFileAndSubFolders(file)
+		and:
+			def project = Mock(Project) {
+				isUseTreeStructureInScmRepo() >> false
+			}
+		and: "create a test case which id is the problematic number"
+			def tc = Mock(TestCase) {
+				getId() >> 5L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "new-file"
+				getProject() >> project
+			}
+			def manifest = new ScmRepositoryManifest(scm)
+		when:
+			def resultFile = service.locateOrMoveOrCreateTestFile(manifest, tc)
+		then:
+			resultFile != null
+			resultFile.exists()
+			relativePathFromWorkingDirectory(resultFile) == "5_new-file.feature"
+			listContentRelativePathFromWorkingDirectory().containsAll(["55_5_5.feature", "5_new-file.feature"])
+		cleanup:
+			clean(file)
+			clean(resultFile)
+	}
+
+	/**
+	 * This test aims to check the following issue:
+	 * 	- a file exists in the repository with a folder containing a number other than its id (e.g. the_4.feature_test_folder/78_test.feature)
+	 * 	- we try to locate the file of a test case which id is equal to this number (expecting 4_test_case.feature)
+	 * 	-> the first test is wrongfully detected and replaced by the second test case's test file
+	 */
+	@Unroll
+	def "locateOrMoveOrCreateTestFile - Should not locate the wrong file when Using tree structure"() {
+		given: "create a file ending with a number"
+			def workingFolder = scm.getWorkingFolder()
+			def file = new File(workingFolder, "5_main_5_folder_5/sub_5_folder.feature_folder/55_5_5.feature")
+			createFileAndSubFolders(file)
+		and:
+			def project = Mock(Project) {
+				isUseTreeStructureInScmRepo() >> true
+			}
+		and: "create a test case which id is the number above"
+			def tc = Mock(TestCase) {
+				getId() >> 5L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "new-file"
+				getProject() >> project
+			}
+			def manifest = new ScmRepositoryManifest(scm)
+		and:
+			1 * pathService.buildTestCaseFoldersPath(_) >> "folder/subfolder"
+		when:
+			def resultFile = service.locateOrMoveOrCreateTestFile(manifest, tc)
+		then:
+			resultFile != null
+			resultFile.exists()
+			relativePathFromWorkingDirectory(resultFile) == "folder/subfolder/5_new-file.feature"
+			def repositoryContent = listContentRelativePathFromWorkingDirectory()
+			repositoryContent.containsAll([
+				"5_main_5_folder_5/sub_5_folder.feature_folder/55_5_5.feature",
+				"folder/subfolder/5_new-file.feature"])
+		cleanup:
+			clean(file)
+			clean(resultFile)
+	}
+
+	/**
+	 * Same as the test above, but with both files already created.
+	 */
+	@Unroll
+	def "locateOrMoveOrCreateTestFile - Should not locate the wrong file when Using tree structure and both files are already written"() {
+		given: "create a file ending with a number"
+			def workingFolder = scm.getWorkingFolder()
+			def file = new File(workingFolder, "5_main_5_folder_5/sub_5_folder.feature_folder/55_5_5.feature")
+			createFileAndSubFolders(file)
+		and: "create the other file"
+			def  secondFile = new File(workingFolder, "folder/subfolder/5_new-file.feature")
+			createFileAndSubFolders(secondFile)
+		and:
+			def project = Mock(Project) {
+				isUseTreeStructureInScmRepo() >> true
+			}
+		and: "create the test case of the 5_new-file.feature"
+			def tc = Mock(TestCase) {
+				getId() >> 5L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> "new-file"
+				getProject() >> project
+			}
+		and:
+			1 * pathService.buildTestCaseFoldersPath(_) >> "folder/subfolder"
+		when:
+			def manifest = new ScmRepositoryManifest(scm)
+			def resultFile = service.locateOrMoveOrCreateTestFile(manifest, tc)
+		then:
+			resultFile != null
+			resultFile.exists()
+			relativePathFromWorkingDirectory(resultFile) == "folder/subfolder/5_new-file.feature"
+			def repositoryContent = listContentRelativePathFromWorkingDirectory()
+			repositoryContent.containsAll([
+				"5_main_5_folder_5/sub_5_folder.feature_folder/55_5_5.feature",
+				"folder/subfolder/5_new-file.feature"])
+		cleanup:
+			clean(file)
+			clean(resultFile)
+	}
+
+	@Unroll
+	def "moveAndRenameFileIfNeeded - Should rename/move the file or not when Using tree structure"() {
+		given:
+			def project = Mock(Project) {
+				isUseTreeStructureInScmRepo() >> true
 			}
 			def workingFolder = scm.getWorkingFolder()
 			def file = new File(workingFolder, pInitialFilePath)
@@ -213,7 +357,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 				getProject() >> project
 			}
 		and:
-			pNbrePathCall * pathService.buildTestCaseFoldersPath(499L) >> pReturnedFoldersPath
+			1 * pathService.buildTestCaseFoldersPath(499L) >> pReturnedFoldersPath
 		when:
 			def resultFile = service.moveAndRenameFileIfNeeded(testCase, file, scm)
 		then:
@@ -223,21 +367,46 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 			clean(file)
 			clean(resultFile)
 		where:
-			pUseTreeStructure	| pInitialFilePath									| pTestCaseName	| pReturnedFoldersPath		| pExpectedRelativePath
+			pInitialFilePath									| pTestCaseName		| pReturnedFoldersPath		| pExpectedRelativePath
+			"main_folder/sub_folder/499_connection.feature"	| "cônnèctîon"		| "main folder/sub folder" 	| "main_folder/sub_folder/499_connection.feature"
+			"main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"	| "main folder/sub folder" 	| "main_folder/sub_folder/499_deconnection.feature"
+			"499_connection.feature"							| "cônnèctîon"		| "main folder/sub folder" 	| "main_folder/sub_folder/499_connection.feature"
+			"499_connection.feature"							| "décônnèctîon"	| "main folder/sub folder" 	| "main_folder/sub_folder/499_deconnection.feature"
 
-			false 				| "499_connection.feature"							| "cônnèctîon"	| "any/folders/path"		| "499_connection.feature"
-			false 				| "499_connection.feature"							| "décônnèctîon"| "any/folders/path"		| "499_deconnection.feature"
-			false 				| "main_folder/sub_folder/499_connection.feature"	| "cônnèctîon"	| "any/folders/path"		| "499_connection.feature"
-			false 				| "main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"| "any/folders/path"		| "499_deconnection.feature"
+			"main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"	| null						| "499_deconnection.feature"
+	}
 
-			true 				| "main_folder/sub_folder/499_connection.feature"	| "cônnèctîon"	| "main folder/sub folder" 	| "main_folder/sub_folder/499_connection.feature"
-			true 				| "main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"| "main folder/sub folder" 	| "main_folder/sub_folder/499_deconnection.feature"
-			true 				| "499_connection.feature"							| "cônnèctîon"	| "main folder/sub folder" 	| "main_folder/sub_folder/499_connection.feature"
-			true 				| "499_connection.feature"							| "décônnèctîon"| "main folder/sub folder" 	| "main_folder/sub_folder/499_deconnection.feature"
-
-			true 				| "main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"| null						| "499_deconnection.feature"
-
-			pNbrePathCall = pUseTreeStructure ? 1 : 0
+	@Unroll
+	def "moveAndRenameFileIfNeeded - Should rename/move the file or not when Not using tree structure"() {
+		given:
+			def project = Mock(Project) {
+			isUseTreeStructureInScmRepo() >> false
+		}
+		and: "test case"
+			def tc = Mock(TestCase) {
+				getId() >> 499L
+				getKind() >> TestCaseKind.GHERKIN
+				getName() >> pTestCaseName
+				getProject() >> project
+			}
+		and: "create a file"
+			def workingFolder = scm.getWorkingFolder()
+			def file = new File(workingFolder, pInitialFilePath)
+			createFileAndSubFolders(file)
+		when:
+			def resultFile = service.moveAndRenameFileIfNeeded(tc, file, scm)
+		then:
+			relativePathFromWorkingDirectory(resultFile) == pExpectedRelativePath
+			resultFile.exists()
+		cleanup:
+			clean(file)
+			clean(resultFile)
+		where:
+			pInitialFilePath									| pTestCaseName		| pExpectedRelativePath
+			"499_connection.feature"							| "cônnèctîon"		| "499_connection.feature"
+			"499_connection.feature"							| "décônnèctîon"	| "499_deconnection.feature"
+			"main_folder/sub_folder/499_connection.feature"	| "cônnèctîon"		| "499_connection.feature"
+			"main_folder/sub_folder/499_connection.feature"	| "décônnèctîon"	| "499_deconnection.feature"
 	}
 
 

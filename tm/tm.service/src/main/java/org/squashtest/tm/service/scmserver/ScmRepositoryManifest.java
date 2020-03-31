@@ -65,23 +65,18 @@ public final class ScmRepositoryManifest {
 			"\nPlease contact an administrator to check that this repository is well initialized on the local server.";
 
 	private ScmRepository scm;
+
 	private boolean useCache = true;
 
-	// contains all the file paths relative to the working folder
+	/**
+	 * Contains all the file paths relative to the working folder
+	 */
 	private Set<String> pathCache = new HashSet<>();
 
 	private final Path workFolderPath;
 
 	public ScmRepositoryManifest(ScmRepository scm){
 		this(scm, true);
-	}
-
-	public ScmRepository getScm() {
-		return scm;
-	}
-
-	public boolean isUseCache() {
-		return useCache;
 	}
 
 	ScmRepositoryManifest(ScmRepository scm, boolean useCache){
@@ -91,6 +86,32 @@ public final class ScmRepositoryManifest {
 		if (useCache){
 			initCache();
 		}
+	}
+
+	private final void initCache(){
+		try {
+			// the pathcache maps a File by its filename
+			pathCache = scm.listWorkingFolderContent()
+				.stream()
+				.map(this::getRelativePath)
+				.collect(Collectors.toSet());
+		}
+		catch (IOException ex){
+			throw new RuntimeException("cannot list content of scm '"+scm.getName()+"'", ex);
+		} catch (IllegalArgumentException ex) {
+			LOGGER.error(MISSING_WORKING_FOLDER_LOG_ERROR_MESSAGE, scm.getName(), scm.getWorkingFolder().toString());
+			throw new ScmException(
+				String.format(MISSING_WORKING_FOLDER_ERROR_MESSAGE, scm.getName()), ex);
+		}
+	}
+
+	private final Path initWorkingFolderPath(){
+		String baseDir = scm.getRepositoryPath();
+		if (baseDir == null){
+			throw new IllegalArgumentException("the repository '"+scm.getName()+"' has no base directory defined !");
+		}
+		String folderPath = StringUtils.defaultIfBlank(scm.getWorkingFolderPath(), "");
+		return Paths.get(baseDir, folderPath);
 	}
 
 	/**
@@ -162,47 +183,28 @@ public final class ScmRepositoryManifest {
 	/**
 	 * Looks for a test
 	 *
-	 * @param pattern
+	 * @param regex
 	 * @return
 	 */
-	private Collection<File> searchOnDrive(String pattern){
+	private Collection<File> searchOnDrive(String regex) {
+		String pattern = '^' + regex + '$';
 		File workingFolder = scm.getWorkingFolder();
 		return FileUtils.listFiles(workingFolder, new FilenamePatternFilter(pattern), FileFilterUtils.trueFileFilter());
 	}
 
-	private Collection<File> searchInCache(String regex){
-		Pattern pattern = Pattern.compile(regex+"$");
+	private Collection<File> searchInCache(String regex) {
+		Pattern pattern = Pattern.compile('^' + regex + '$');
 		return pathCache.stream()
-			.filter(entry -> pattern.matcher(entry).find())
+			.filter(entry -> {
+				String fileName = new File(entry).getName();
+				return pattern.matcher(fileName).find();
+			})
 			.map(relPath -> new File(scm.getWorkingFolder(), relPath))
 			.collect(Collectors.toList());
 	}
 
-	private final void initCache(){
-		try {
-			// the pathcache maps a File by its filename
-			pathCache = scm.listWorkingFolderContent()
-							.stream()
-							.map(this::getRelativePath)
-							.collect(Collectors.toSet());
-		}
-		catch (IOException ex){
-			throw new RuntimeException("cannot list content of scm '"+scm.getName()+"'", ex);
-		} catch (IllegalArgumentException ex) {
-			LOGGER.error(MISSING_WORKING_FOLDER_LOG_ERROR_MESSAGE, scm.getName(), scm.getWorkingFolder().toString());
-			throw new ScmException(
-				String.format(MISSING_WORKING_FOLDER_ERROR_MESSAGE, scm.getName()), ex);
-		}
-	}
 
-	private final Path initWorkingFolderPath(){
-		String baseDir = scm.getRepositoryPath();
-		if (baseDir == null){
-			throw new IllegalArgumentException("the repository '"+scm.getName()+"' has no base directory defined !");
-		}
-		String folderPath = StringUtils.defaultIfBlank(scm.getWorkingFolderPath(), "");
-		return Paths.get(baseDir, folderPath);
-	}
+
 
 
 
@@ -226,6 +228,14 @@ public final class ScmRepositoryManifest {
 		}
 	}
 
+
+	public boolean isUseCache() {
+		return useCache;
+	}
+
+	public ScmRepository getScm() {
+		return scm;
+	}
 
 
 
