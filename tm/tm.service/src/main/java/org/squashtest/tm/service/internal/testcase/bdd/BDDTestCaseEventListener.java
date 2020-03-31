@@ -339,7 +339,7 @@ public class BDDTestCaseEventListener {
 
 			testCases.forEach( tc -> {
 				String pattern = scmService.createTestCasePatternForResearch(tc);
-				Optional<File> maybeFile = manifest.locateTest(pattern,tc.getId());
+				Optional<File> maybeFile = manifest.locateTest(pattern, tc.getId());
 
 				if (maybeFile.isPresent()) {
 

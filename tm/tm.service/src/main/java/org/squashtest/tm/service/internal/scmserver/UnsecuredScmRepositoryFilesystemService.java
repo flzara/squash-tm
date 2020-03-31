@@ -300,10 +300,10 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	}
 
 	/**
-	 * Given a Test Case, compute its corresponding file's folders path.
+	 * Given a Test Case, compute its corresponding file's normalized folders path.
 	 * The folders path is the relative path from the working directory but not containing the name of the file,
 	 * so it only contains the folders.
-	 * Ex: A test case in 'Project_2/main_folder/sub_folder/test_case_7' will compute the path 'main_folder/sub_folder/'
+	 * Ex: A test case in 'Project 2/main folder/sub folder/test case 7' will compute the path 'main_folder/sub_folder/'
 	 * Ex: A test case in the root of a library will compute an empty string
 	 * @param testCase The Test Case which path is to compute
 	 * @return The folders path of the given Test Case
@@ -435,7 +435,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	 * @param sourceFile The source file to move and/or rename
 	 * @param targetFile The target file
 	 * @return The moved File.
-	 * @throws IOException If an error occurrend during the operation
+	 * @throws IOException If an error occurred during the operation
 	 */
 	private File tryMoveFile(File sourceFile, File targetFile) throws IOException {
 		File targetFileParent = targetFile.getParentFile();
