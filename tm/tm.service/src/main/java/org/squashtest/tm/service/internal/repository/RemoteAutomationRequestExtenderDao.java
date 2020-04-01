@@ -21,6 +21,9 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 
 import javax.validation.constraints.NotNull;
@@ -31,5 +34,9 @@ import java.util.List;
  * @author Gregory Fouquet
  */
 public interface RemoteAutomationRequestExtenderDao extends JpaRepository<RemoteAutomationRequestExtender, Long> {
+
+	@Query("delete from RemoteAutomationRequestExtender rare where rare.automationRequest.id in :automationRequestIds")
+	@Modifying
+	void deleteByAutomationRequestIds(@Param("automationRequestIds") List<Long> automationRequestIds);
 
 }

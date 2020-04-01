@@ -191,6 +191,11 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 */
 	void deleteAllSync(long projectId);
 
+	/**
+	 * delete all RemoteAutomationRequestExtenders in Workflow Automation Jira project
+	 * @param projectId the id of the project
+	 */
+	void deleteAllRemoteAutomationRequestExtenders(long projectId);
 
 	/**
 	 * Returns the configuration of a given plugin for a given project. Returns an empty map if the plugin is not bound

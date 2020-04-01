@@ -26,9 +26,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 
+import java.util.List;
+
 public interface AutomationRequestDao extends JpaRepository<AutomationRequest, Long>, CustomAutomationRequestDao {
 
 	AutomationRequest findByTestCaseId(long testCaseId);
+
+	List<AutomationRequest> findByProjectId(long projectId);
 
 	@Modifying
 	@Query("delete from AutomationRequest ar where ar.project.id = :projectId")

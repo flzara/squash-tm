@@ -105,7 +105,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	@Override
-	public void removeAutomationRequest(List<Long> automationRequestIds) {
+	public void removeAutomationRequestLibraryContent(List<Long> automationRequestIds) {
 		if (!automationRequestIds.isEmpty()) {
 			executeDeleteSQLQuery(NativeQueries.AUTOMATION_REQUEST_SQL_REMOVE_LIBRARY_CONTENT_FROMLIST, AUTOMATION_REQUEST_IDS, automationRequestIds);
 		}

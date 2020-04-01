@@ -277,7 +277,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 			List<Long> automationRequestIds = requestDao.getReqIdsByTcIds(tcIds);
-			deletionDao.removeAutomationRequest(automationRequestIds);
+			deletionDao.removeAutomationRequestLibraryContent(automationRequestIds);
 
 			deletionDao.removeCampaignTestPlanInboundReferences(tcIds);
 			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(tcIds);

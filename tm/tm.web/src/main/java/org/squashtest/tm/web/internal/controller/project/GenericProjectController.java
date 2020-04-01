@@ -508,6 +508,8 @@ public class GenericProjectController {
 				if (projectManager.hasProjectRemoteSynchronisation(projectId)) {
 						projectManager.deleteAllSync(projectId);
 				}
+			} else if (pluginId.contains("workflow.automjira")) {
+				projectManager.deleteAllRemoteAutomationRequestExtenders(projectId);
 			}
 			projectManager.disablePluginForWorkspace(projectId, workspaceTypes, pluginId);
 		}
