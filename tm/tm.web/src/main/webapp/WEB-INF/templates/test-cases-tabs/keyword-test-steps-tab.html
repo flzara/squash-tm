@@ -48,7 +48,9 @@
         </div>
         <div class="display-table-cell" style="padding-left: 1px;">
           <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
-          <button id="add-keyword-test-step-btn" class="button" type="submit">Add</button>
+          <button id="add-keyword-test-step-btn" class="button" type="submit"
+                  th:text="#{test-case.step.add.button}"
+                  th:title="#{test-case.step.add.button}">Add</button>
         </div>
       </div>
       <div class="display-table-row">
