@@ -31,7 +31,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds);
 
 	//data removers
-	void removeAutomationRequest(List<Long> automationRequestIds);
+	void removeAutomationRequestLibraryContent(List<Long> automationRequestIds);
 	void removeAllSteps(List<Long> testStepIds);
 	void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds);
 	void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCaseIds);

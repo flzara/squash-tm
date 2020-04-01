@@ -68,6 +68,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestLibrary;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.domain.users.Party;
@@ -81,6 +82,7 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
@@ -89,6 +91,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
+import org.squashtest.tm.service.internal.repository.RemoteAutomationRequestExtenderDao;
 import org.squashtest.tm.service.internal.repository.RemoteSynchronisationDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderSyncExtenderDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
@@ -182,6 +185,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private RequirementSyncExtenderDao requirementSyncExtenderDao;
 	@Inject
 	private HibernateRequirementDao hibernateRequirementDao;
+	@Inject
+	private AutomationRequestDao automationRequestDao;
+	@Inject
+	private RemoteAutomationRequestExtenderDao remoteAutomationRequestExtenderDao;
 
 	@Autowired(required = false)
 	Collection<WorkspaceWizard> plugins = Collections.EMPTY_LIST;
@@ -675,8 +682,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		List<RemoteSynchronisation> rmList = remoteSynchronisationDao.findByProjectId(projectId);
 		List<Long> ids = rmList.stream().map(RemoteSynchronisation::getId).collect(Collectors.toList());
-		for (Long id: ids
-			 ) {
+		for (Long id : ids) {
 			hibernateRequirementDao.updateManagementMode(id);
 		}
 		//deleteRequierement folder sync extender
@@ -685,6 +691,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		requirementSyncExtenderDao.deleteByRemoteSynchronisationId(ids);
 		//delete sync
 		remoteSynchronisationDao.deleteByProjectId(projectId);
+	}
+
+	@Override
+	public void deleteAllRemoteAutomationRequestExtenders(long projectId) {
+		List<AutomationRequest> automationRequests = automationRequestDao.findByProjectId(projectId);
+		List<Long> automationRequestIds = automationRequests.stream().map(AutomationRequest::getId).collect(Collectors.toList());
+
+		// delete remote automation request extenders
+		remoteAutomationRequestExtenderDao.deleteByAutomationRequestIds(automationRequestIds);
 	}
 
 	@Override

@@ -91,11 +91,15 @@ define(
 				}
 			}
 
-			function configurePopup(){
+			function configurePopup(pluginId) {
 			 	var popup = $("#disabled-plugin").formDialog();
 			 	var label = popup.find($("#msgDisablePlugin"));
 			 	label.empty();
-				label.append(translator.get('message.disabled.plugin.xsquashjira'));
+			 	if (pluginId.indexOf("jirasync") != -1) {
+					label.append(translator.get('message.disabled.plugin.xsquashjira'));
+				} else {
+					label.append(translator.get('message.disabled.plugin.workflow-automjira'));
+				}
 			}
 
 
@@ -154,8 +158,8 @@ define(
 						pluginName.empty();
 						pluginName.append(pluginN);
 
-						if (pluginId =="squash.tm.plugin.jirasync") {
-							configurePopup();
+						if (pluginId.indexOf("jirasync") != -1 || pluginId.indexOf("workflow.automjira") != -1) {
+							configurePopup(pluginId);
 						}
 						else {
 							var label = disabledPluginPopup.find($("#msgDisablePlugin"));
