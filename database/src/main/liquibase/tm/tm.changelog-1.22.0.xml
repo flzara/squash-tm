@@ -102,6 +102,10 @@
       </column>
     </createTable>
 
+    <createIndex tableName="KEYWORD_TEST_STEP" indexName="idx_fk_keyword_test_step_action_word">
+      <column name="ACTION_WORD_ID" />
+    </createIndex>
+
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
