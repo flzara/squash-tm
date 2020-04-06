@@ -43,7 +43,7 @@ public class ActionWord {
 	@Column(name = "WORD")
 	private String word;
 
-	ActionWord() {
+	public ActionWord() {
 	}
 
 	public ActionWord(String word) {
@@ -63,5 +63,21 @@ public class ActionWord {
 
 	public String getWord() {
 		return word;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setWord(String word) {
+		this.word = word;
+	}
+
+	@Override
+	public String toString() {
+		return "ActionWord{" +
+			"id=" + id +
+			", word='" + word + '\'' +
+			'}';
 	}
 }

@@ -47,7 +47,7 @@ public class KeywordTestStep extends TestStep {
 	private Keyword keyword;
 
 	@NotNull
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = { CascadeType.PERSIST})
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
