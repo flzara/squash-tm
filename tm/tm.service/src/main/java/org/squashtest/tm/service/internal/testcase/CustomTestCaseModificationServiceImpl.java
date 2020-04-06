@@ -297,6 +297,37 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
+		String trimmedWord = newTestStep.getActionWord().getWord().trim();
+		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
+
+		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
+		if (isNull(actionWord)) {
+			newTestStep.setActionWord(new ActionWord(trimmedWord));
+		} else {
+			newTestStep.setActionWord(actionWord);
+		}
+		newTestStep.setTestCase(parentTestCase);
+		testStepDao.persist(newTestStep);
+
+		addStepToTestCase(newTestStep, parentTestCase, index);
+
+		return newTestStep;
+	}
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep) {
+
+		return addKeywordTestStep(parentTestCaseId, newTestStep, STEP_LAST_POS);
+
+	}
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep) {
 
 		return addActionTestStep(parentTestCaseId, newTestStep, STEP_LAST_POS);
@@ -313,14 +344,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		newTestStep.setTestCase(parentTestCase);
 		testStepDao.persist(newTestStep);
-
-		if (index == STEP_LAST_POS){
-			parentTestCase.addStep(newTestStep);
-		}
-		else {
-			parentTestCase.addStep(index, newTestStep);
-		}
-
+		addStepToTestCase(newTestStep, parentTestCase, index);
 		LOGGER.trace("creating custom field values");
 		customFieldValuesService.createAllCustomFieldValues(newTestStep, newTestStep.getProject());
 		LOGGER.trace("processing parameters");
@@ -436,6 +460,21 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 */
 	private int findTestStepInTestCase(TestCase testCase, long testStepId) {
 		return testCase.getPositionOfStep(testStepId);
+	}
+
+	/**
+	 * Inserts the given {@link TestStep} inserted at the index value in the {@link TestCase} identified by the given id.
+	 * @param testStep new step
+	 * @param parentTestCase The id of the parent TestCase
+	 * @param index Position of the testStep in the testCase
+	 */
+	private void addStepToTestCase(TestStep testStep, TestCase parentTestCase, int index) {
+		if (index == STEP_LAST_POS){
+			parentTestCase.addStep(testStep);
+		}
+		else {
+			parentTestCase.addStep(index, testStep);
+		}
 	}
 
 	@Override
@@ -1346,6 +1385,5 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		requestDao.save(request);
 		project.getAutomationRequestLibrary().addContent(request);
 	}
-
 
 }

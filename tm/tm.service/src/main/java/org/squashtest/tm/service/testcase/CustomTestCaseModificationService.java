@@ -67,6 +67,23 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord);
 
 	/**
+	 * Inserts the given {@link KeywordTestStep} inserted at the index value in the {@link TestCase} identified by the given id.
+	 * @param parentTestCaseId The id of the parent TestCase
+	 * @param newTestStep The new KeywordTestStep
+	 * @param index Position of the keywordTestStep in the testCase
+	 * @return
+	 */
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index);
+
+	/**
+	 * Inserts the given {@link KeywordTestStep} in last position of the {@link TestCase} identified by the given id.
+	 * @param parentTestCaseId The id of the parent TestCase
+	 * @param newTestStep The new KeywordTestStep
+	 * @return
+	 */
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep);
+
+	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.
 	 *
 	 * @param parentTestCaseId
@@ -276,7 +293,5 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName);
 
 	Collection<TestAutomationProjectContent> findAssignableAutomationTestsToAutomationProgramer(long testCaseId);
-
-
 
 }
