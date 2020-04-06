@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 import javax.validation.constraints.NotNull;
@@ -91,5 +92,14 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	 * @return the {@link CustomField} matching the code param.
 	 */
 	CustomField findByCode(@NotNull String code);
+
+	/**
+	 * Returns the field matching the label and of the correct type if it exists.
+	 *
+	 * @param label
+	 * @param inputType
+	 * @return
+	 */
+	CustomField findByLabelAndInputType(@NotNull String label, @NotNull InputType inputType);
 
 }
