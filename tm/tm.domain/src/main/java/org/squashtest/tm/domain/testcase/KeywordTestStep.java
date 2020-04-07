@@ -72,7 +72,7 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public void accept(TestStepVisitor visitor) {
-		throw new UnsupportedOperationException();
+		visitor.visit(this);
 	}
 
 	@Override

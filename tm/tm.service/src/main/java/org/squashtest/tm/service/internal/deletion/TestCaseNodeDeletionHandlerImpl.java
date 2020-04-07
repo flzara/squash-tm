@@ -25,16 +25,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
+import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
@@ -358,15 +362,33 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		stepId.add(step.getId());
 		deletionDao.setExecStepInboundReferencesToNull(stepId);
 
-		if (step instanceof ActionTestStep) {
-			customValueService.deleteAllCustomFieldValues((ActionTestStep) step);
-			deleteActionStep((ActionTestStep) step);
-			customValueService.deleteAllCustomFieldValues((ActionTestStep) step);
-		} else if (step instanceof CallTestStep) {
-			CallTestStep callTestStep = (CallTestStep) step;
-			deleteCallStep(callTestStep);
-			testCaseImportanceManagerService.changeImportanceIfCallStepRemoved(callTestStep.getCalledTestCase(), owner);
-		}
+		TestStepVisitor testStepVisitor = new TestStepVisitor() {
+			@Override
+			public void visit(ActionTestStep visited) {
+
+				customValueService.deleteAllCustomFieldValues(visited);
+				deleteActionStep(visited);
+				customValueService.deleteAllCustomFieldValues(visited);
+
+			}
+
+			@Override
+			public void visit(CallTestStep visited) {
+				CallTestStep callTestStep = (CallTestStep) visited;
+				doDeleteTestStep(callTestStep);
+				testCaseImportanceManagerService.changeImportanceIfCallStepRemoved(callTestStep.getCalledTestCase(), owner);
+			}
+
+			@Override
+			public void visit(KeywordTestStep visited) {
+				KeywordTestStep keywordTestStep = (KeywordTestStep) visited;
+				doDeleteTestStep(keywordTestStep);
+
+			}
+		};
+
+		step.accept(testStepVisitor);
+
 	}
 
 
@@ -473,9 +495,10 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		attachmentManager.deleteContents(listPairContenIDListID);
 	}
 
-	private void deleteCallStep(CallTestStep step) {
+	private void doDeleteTestStep(TestStep step) {
 		deletionDao.removeEntity(step);
 	}
+
 
 	private DeletableIds findSeparateIds(List<Long> ids){
 		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
