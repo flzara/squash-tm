@@ -365,25 +365,20 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		TestStepVisitor testStepVisitor = new TestStepVisitor() {
 			@Override
 			public void visit(ActionTestStep visited) {
-
 				customValueService.deleteAllCustomFieldValues(visited);
 				deleteActionStep(visited);
 				customValueService.deleteAllCustomFieldValues(visited);
-
 			}
 
 			@Override
 			public void visit(CallTestStep visited) {
-				CallTestStep callTestStep = (CallTestStep) visited;
-				doDeleteTestStep(callTestStep);
-				testCaseImportanceManagerService.changeImportanceIfCallStepRemoved(callTestStep.getCalledTestCase(), owner);
+				doDeleteTestStep(visited);
+				testCaseImportanceManagerService.changeImportanceIfCallStepRemoved(visited.getCalledTestCase(), owner);
 			}
 
 			@Override
 			public void visit(KeywordTestStep visited) {
-				KeywordTestStep keywordTestStep = (KeywordTestStep) visited;
-				doDeleteTestStep(keywordTestStep);
-
+				doDeleteTestStep(visited);
 			}
 		};
 

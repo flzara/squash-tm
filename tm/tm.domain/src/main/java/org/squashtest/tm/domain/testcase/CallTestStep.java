@@ -27,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,27 @@ public class CallTestStep extends TestStep {
 
 	}
 
+	@Override
+	public void setTestCase(@NotNull TestCase testCase) {
+
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				throw new IllegalArgumentException("Cannot add a Call Test Step outside a Test Case");
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Cannot add a Call Test Step outside a Test Case");
+			}
+		};
+		testCase.accept(testCaseVisitor);
+		super.setTestCase(testCase);
+	}
 
 	public void setCalledTestCase(TestCase calledTestCase) {
 		this.calledTestCase = calledTestCase;

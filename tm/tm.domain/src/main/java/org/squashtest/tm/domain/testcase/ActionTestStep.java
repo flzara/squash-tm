@@ -30,7 +30,17 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -110,6 +120,28 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public void accept(TestStepVisitor visitor) {
 		visitor.visit(this);
 
+	}
+
+	@Override
+	public void setTestCase(@NotNull TestCase testCase) {
+
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				throw new IllegalArgumentException("Cannot add an Action Test Step outside a Test Case");
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Cannot add an Action Test Step outside a Test Case");
+			}
+		};
+		testCase.accept(testCaseVisitor);
+		super.setTestCase(testCase);
 	}
 
 	@Override
