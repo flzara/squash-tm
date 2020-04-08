@@ -83,6 +83,7 @@ import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
+import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
@@ -164,6 +165,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestStepDao testStepDao;
+
+	@Inject
+	private KeywordTestStepDao keywordTestStepDao;
 
 	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
@@ -302,12 +306,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 
-		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
-		if (isNull(actionWord)) {
-			newTestStep.setActionWord(new ActionWord(trimmedWord));
-		} else {
-			newTestStep.setActionWord(actionWord);
-		}
+		addActionWordToKeywordTestStep(newTestStep, trimmedWord);
+
 		newTestStep.setTestCase(parentTestCase);
 		testStepDao.persist(newTestStep);
 
@@ -323,6 +323,50 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		return addKeywordTestStep(parentTestCaseId, newTestStep, STEP_LAST_POS);
 
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public void updateKeywordTestStep(long testStepId, KeywordTestStep updatedKeywordTestStep) {
+
+		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getKeyword());
+
+		String trimmedWord = updatedKeywordTestStep.getActionWord().getWord().trim();
+		updateKeywordTestStep(testStepId, trimmedWord);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public void updateKeywordTestStep(long testStepId, Keyword updatedKeyword) {
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		if (! updatedKeyword.equals(testStep.getKeyword())) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} keyword to '{}'", testStepId, updatedKeyword);
+			}
+			testStep.setKeyword(updatedKeyword);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public void updateKeywordTestStep(long testStepId, String updatedWord) {
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		if (! updatedWord.equals(testStep.getActionWord().getWord())) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} action word to '{}'", testStepId, updatedWord);
+			}
+			addActionWordToKeywordTestStep(testStep, updatedWord);
+		}
+	}
+
+	private void addActionWordToKeywordTestStep(KeywordTestStep keywordTestStep, String word) {
+		ActionWord actionWord = actionWordDao.findByWord(word);
+
+		if (isNull(actionWord)) {
+			keywordTestStep.setActionWord(new ActionWord(word));
+		} else {
+			keywordTestStep.setActionWord(actionWord);
+		}
 	}
 
 	@Override

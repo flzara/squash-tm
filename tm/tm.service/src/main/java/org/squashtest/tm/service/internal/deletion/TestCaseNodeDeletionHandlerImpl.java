@@ -485,7 +485,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		AttachmentList attachmentList = step.getAttachmentList();
 		//save ListId, contentID for FileSystem Repository
 		List<ExternalContentCoordinates> listPairContenIDListID = getExternalAttachmentContentCoordinatesOfObject(step);
-		deletionDao.removeEntity(step); //Cascade AttachmentList -> include AttachmentList and Attachments
+		doDeleteTestStep(step); //Cascade AttachmentList -> include AttachmentList and Attachments
 		attachmentManager.removeAttachmentsAndLists(makeListAttachmentListIdFordAttachmentList(attachmentList));
 		attachmentManager.deleteContents(listPairContenIDListID);
 	}

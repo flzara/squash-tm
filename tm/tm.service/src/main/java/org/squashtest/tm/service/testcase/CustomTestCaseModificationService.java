@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -82,6 +83,27 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return
 	 */
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep);
+
+	/**
+	 * Updates the {@link KeywordTestStep} of given id with new values from the given {@link KeywordTestStep}
+	 * @param testStepId The id of the KeywordTestStep to update
+	 * @param updatedKeywordTestStep The updated KeywordTestStep
+	 */
+	void updateKeywordTestStep(long testStepId, KeywordTestStep updatedKeywordTestStep);
+
+	/**
+	 * Updates the {@link KeywordTestStep} of given id with given {@link Keyword}
+	 * @param testStepId The id of the KeywordTestStep to update
+	 * @param updatedKeyword The updated Keyword
+	 */
+	void updateKeywordTestStep(long testStepId, Keyword updatedKeyword);
+
+	/**
+	 * Updates the {@link KeywordTestStep} of given id with given Word
+	 * @param testStepId The id of the KeywordTestStep to update
+	 * @param updatedWord The updated Word of the ActionWord
+	 */
+	void updateKeywordTestStep(long testStepId, String updatedWord);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.
