@@ -20,18 +20,25 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import org.squashtest.tm.api.plugin.Plugin;
-
-public interface WorkspacePlugin extends Plugin {
+public interface WorkspacePluginIcon {
 	/**
-	 * Get access roles for this Workspace
-	 * as defined in {@linkplain org.squashtest.tm.api.security.acls.Roles Roles} interface.
-	 * @return The AccessRoles for this Workspace.
+	 * Get this Icon's css class.
+	 * @return This Icon's css class.
 	 */
-	String[] getAccessRoles();
+	String getCssClass();
 	/**
-	 * Get the WorkspacePluginIcon of this Workspace.
-	 * @return The WorkspacePluginIcon of this Workspace.
+	 * Get this Icon's style sheet path.
+	 * @return This Icon's style sheet path.
 	 */
-	WorkspacePluginIcon getWorkspaceIcon();
+	String getStyleSheetPath();
+	/**
+	 * Get this Icon's tooltip.
+	 * @return This Icon's tooltip.
+	 */
+	String getTooltip();
+	/**
+	 * Get the context-relative Url bound to this Icon.
+	 * @return The context-relative Url bound to this Icon.
+	 */
+	String getUrl();
 }
