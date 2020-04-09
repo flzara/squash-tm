@@ -48,6 +48,8 @@ import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.swing.Action
+
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
@@ -107,6 +109,28 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			1 * testStepDao.persist(_)
 			parentTestCase.getSteps().size() == 2
 			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
+	def "should find test case and add a keyword step with new action word at index position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByWord(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, firstStep,1)
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		parentTestCase.getSteps()[1].actionWord.getWord() == "first"
 	}
 
 	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
@@ -600,6 +624,20 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 		deletionHandler.deleteStep(tc, removedStep)
 
+	}
+
+	def "should remove a keyword step from a test case, by index"(){
+		given:
+		def removedStep = Mock(KeywordTestStep)
+		def tc = Mock(KeywordTestCase){
+			getSteps() >> [Mock(KeywordTestStep), Mock(KeywordTestStep), removedStep, Mock(KeywordTestStep)]
+		}
+		and:
+		testCaseDao.findById(10L) >> tc
+		when:
+		service.removeStepFromTestCaseByIndex(10L, 2)
+		then:
+		deletionHandler.deleteStep(tc, removedStep)
 	}
 
 	// more cheap code coverage upgrade !
