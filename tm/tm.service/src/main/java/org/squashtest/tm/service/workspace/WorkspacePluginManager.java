@@ -25,10 +25,9 @@ import org.squashtest.tm.api.wizard.WorkspacePlugin;
 import java.util.Collection;
 
 public interface WorkspacePluginManager {
-
 	/**
-	 * Find all {@linkplain WorkspacePlugin} collected from the classpath.
-	 * @return A Collection of all WorkspacePlugins collected from the classpath.
+	 * Get all {@linkplain WorkspacePlugin} collected from the classpath and authorized for the current User.
+	 * @return A Collection of all WorkspacePlugins collected from the classpath and authorized for the current User .
 	 */
-	Collection<WorkspacePlugin> findAll();
+	Collection<WorkspacePlugin> getAllAuthorized();
 }

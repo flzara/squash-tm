@@ -25,14 +25,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.wizard.WorkspacePlugin;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.workspace.WorkspacePluginManager;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 @Service
 public class WorkspacePluginManagerImpl implements WorkspacePluginManager {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspacePluginManagerImpl.class);
+
+	@Inject
+	private UserContextService userContextService;
 
 	/**
 	 * The Collection of collected WorkspacePlugins from the classpath.
@@ -41,7 +50,16 @@ public class WorkspacePluginManagerImpl implements WorkspacePluginManager {
 	private Collection<WorkspacePlugin> collectedWorkspacePlugins = Collections.EMPTY_LIST;
 
 	@Override
-	public Collection<WorkspacePlugin> findAll() {
-		return Collections.unmodifiableCollection(collectedWorkspacePlugins);
+	public Collection<WorkspacePlugin> getAllAuthorized() {
+		List<WorkspacePlugin> authorizedWorkspacePlugins = new ArrayList();
+		for(WorkspacePlugin workspacePlugin : collectedWorkspacePlugins) {
+			for(String accessRole : workspacePlugin.getAccessRoles()) {
+				if (userContextService.hasRole(accessRole)) {
+					authorizedWorkspacePlugins.add(workspacePlugin);
+					break;
+				}
+			}
+		}
+		return Collections.unmodifiableCollection(authorizedWorkspacePlugins);
 	}
 }

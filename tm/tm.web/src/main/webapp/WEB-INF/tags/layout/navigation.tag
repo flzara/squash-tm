@@ -20,74 +20,84 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f"  uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+    <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="f"  uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
+    <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-<%@ attribute name="highlighted" description="which button should be highlithed"%>
+    <%@ attribute name="highlighted" description="which button should be highlithed"%>
 
-<c:set var="rootctxt" value="${pageContext.servletContext.contextPath}"/>
+    <c:set var="rootctxt" value="${pageContext.servletContext.contextPath}"/>
 
-<f:message var="homeTitle" 	key="workspace.home.button.label"/>
-<f:message var="reqTitle" 	key="workspace.requirement.button.label"/>
-<f:message var="tcTitle" 	key="workspace.test-case.button.label"/>
-<f:message var="campTitle" 	key="workspace.campaign.button.label"/>
-<f:message var="automTitle" key="workspace.automation.button.label"/>
-<f:message var="automProgTitle" key="workspace.automation.programmer.button.label"/>
-<f:message var="automTesterTitle" key="workspace.automation.tester.button.label"/>
-<f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
-<f:message var="repoTitle" 	key="workspace.report.button.label"/>
-<f:message var="customReportTitle" 	key="workspace.custom-report.title.long"/>
+    <f:message var="homeTitle" 	key="workspace.home.button.label"/>
+    <f:message var="reqTitle" 	key="workspace.requirement.button.label"/>
+    <f:message var="tcTitle" 	key="workspace.test-case.button.label"/>
+    <f:message var="campTitle" 	key="workspace.campaign.button.label"/>
+    <f:message var="automTitle" key="workspace.automation.button.label"/>
+    <f:message var="automProgTitle" key="workspace.automation.programmer.button.label"/>
+    <f:message var="automTesterTitle" key="workspace.automation.tester.button.label"/>
+    <f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
+    <f:message var="repoTitle" 	key="workspace.report.button.label"/>
+    <f:message var="customReportTitle" 	key="workspace.custom-report.title.long"/>
 
-<c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
-<c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
-<c:set var="canNavigate" value="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')" />
+    <c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
+    <c:set var="authorizedWorkspacePluginIcons" value="${wu:getAuthorizedWorkspacePluginIcons(pageContext.servletContext)}"/>
+    <c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
+    <c:set var="canNavigate" value="hasRole('ROLE_TF_FUNCTIONAL_TESTER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')" />
 
-<div id="navigation" data-highlight="${ highlighted }">
-<sec:authorize access="${canNavigate}">
-	<div id="test_mgt_nav">
-		<a id="requirement-link" 	style="margin-top: 15px;"	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace/"	title="${reqTitle}"></a>
-		<a id="test-case-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace/"		title="${tcTitle}"></a>
-		<a id="campaign-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace/"		title="${campTitle}"></a>
-	</div>
-	</sec:authorize>
+    <div id="navigation" data-highlight="${ highlighted }">
+    <sec:authorize access="${canNavigate}">
+      <div id="test_mgt_nav">
+      <a id="requirement-link" 	style="margin-top: 15px;"	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace/"	title="${reqTitle}"></a>
+      <a id="test-case-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace/"		title="${tcTitle}"></a>
+      <a id="campaign-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace/"		title="${campTitle}"></a>
+      </div>
+    </sec:authorize>
 
-	<div id="nav_logo">
-		<div style="margin-bottom: 40px;">
-			<sec:authorize access="${canNavigate}">
-			<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>			
-			<a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace/"			title="${customReportTitle}"></a>
-			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
-			<ul class="not-displayed width:130px;" style="max-height: 12.8em;">
-			<c:forEach var="bugtracker" items="${visibleBugtrackers}">
-				<li>
-					<c:url var="btUrl" 			value="${bugtracker.iframeFriendly ? '/bugtracker/'.concat(bugtracker.id.toString()).concat('/workspace') : bugtracker.URL}"/>
-					<c:set var="targetClause" 	value="${bugtracker.iframeFriendly ? '' : 'target=\"_blank\"' }"/>
-					<a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}><c:out value="${bugtracker.name}"/></a>
-				</li>
-			</c:forEach>
-			</ul>
-			</sec:authorize>
-		  <sec:authorize access="!hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
-		     <a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automProgTitle}"></a>
-		  </sec:authorize>
-		  <sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
-		  <a id="automation-tester-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-tester-workspace/"	title="${automTesterTitle}"></a>
-		  </sec:authorize>
-		  <sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
-		  <a id="automation-link-ul"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automTitle}"></a>
-		    <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
-				<li><a id="automation-link" href="${rootctxt}/automation-workspace/" title="${automTitle}" ${targetClause}><c:out value="${automProgTitle}"/></a></li>
-				<li><a id="automation-tester-link" href="${rootctxt}/automation-tester-workspace/" title="${automTesterTitle}" ${targetClause}><c:out value="${automTesterTitle}"/></a></li>
-			</ul>
-      		</sec:authorize>
-		</div>
-		<div class="vertical-logo"></div>
-	</div>
-</div>
-<script type="text/javascript">
-publish("load.navBar");
-</script>
+    <div id="nav_logo">
+    <div style="margin-bottom: 40px;">
+    <sec:authorize access="${canNavigate}">
+      <a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>
+      <a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace/"			title="${customReportTitle}"></a>
+      <a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
+      <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
+      <c:forEach var="bugtracker" items="${visibleBugtrackers}">
+        <li>
+        <c:url var="btUrl" 			value="${bugtracker.iframeFriendly ? '/bugtracker/'.concat(bugtracker.id.toString()).concat('/workspace') : bugtracker.URL}"/>
+        <c:set var="targetClause" 	value="${bugtracker.iframeFriendly ? '' : 'target=\"_blank\"' }"/>
+        <a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}><c:out value="${bugtracker.name}"/></a>
+        </li>
+      </c:forEach>
+      </ul>
+    </sec:authorize>
+    <sec:authorize access="!hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
+      <a id="automation-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automProgTitle}"></a>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_TF_FUNCTIONAL_TESTER') and !hasRole('ROLE_TF_AUTOMATION_PROGRAMMER') and !hasRole('ROLE_ADMIN')">
+      <a id="automation-tester-link"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-tester-workspace/"	title="${automTesterTitle}"></a>
+    </sec:authorize>
+    <sec:authorize access="(hasRole('ROLE_TF_FUNCTIONAL_TESTER') and hasRole('ROLE_TF_AUTOMATION_PROGRAMMER')) or hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')">
+      <a id="automation-link-ul"	 	style="margin-top: 10px;"	class="navigation-link navigation-automation"	href="${rootctxt}/automation-workspace/"	title="${automTitle}"></a>
+      <ul class="not-displayed width:130px;" style="max-height: 12.8em;">
+      <li><a id="automation-link" href="${rootctxt}/automation-workspace/" title="${automTitle}" ${targetClause}><c:out value="${automProgTitle}"/></a></li>
+      <li><a id="automation-tester-link" href="${rootctxt}/automation-tester-workspace/" title="${automTesterTitle}" ${targetClause}><c:out value="${automTesterTitle}"/></a></li>
+      </ul>
+    </sec:authorize>
+    <c:forEach items="${authorizedWorkspacePluginIcons}" var="workspacePluginIcon" >
+      <link rel="stylesheet" type="text/css" media="all"
+            href="${pageContext.servletContext.contextPath}/styles/${workspacePluginIcon.styleSheetPath}"/>
+      <c:set var="computedCssClass" value="navigation-link ${workspacePluginIcon.cssClass}" />
+      <a class="${computedCssClass}"
+      title="${workspacePluginIcon.tooltip}"
+      href="${workspacePluginIcon.url}">
+      </a>
+    </c:forEach>
+    </div>
+    <div class="vertical-logo"></div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    publish("load.navBar");
+    </script>
 

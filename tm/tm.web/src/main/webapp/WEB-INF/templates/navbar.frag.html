@@ -47,8 +47,10 @@
 
 <body>
   <div id="workspace" th:fragment="navbar(highlight)">
-    <div id="test_mgt_nav" class="squash-navbar" th:with="bugtrackers = ${bugtrackers == null ? #workspace.visibleBugtrackers() : bugtrackers},
-      canNavigate = ${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')}">
+    <div id="test_mgt_nav" class="squash-navbar"
+         th:with="bugtrackers = ${bugtrackers == null ? #workspace.visibleBugtrackers() : bugtrackers},
+                  canNavigate = ${sec.hasRole('ROLE_TF_FUNCTIONAL_TESTER')} or ${sec.hasRole('ROLE_ADMIN')} or ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')},
+                  authorizedWorkspacePluginIcons = ${authorizedWorkspacePluginIcons == null ? #workspace.authorizedWorkspacePluginIcons() : authorizedWorkspacePluginIcons}">
 
       <a id="requirement-link" style="margin-top: 15px;" class="navigation-link navigation-requirement navigation-link-first"
         th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}" th:classappend="${highlight == 'requirement'} ? 'navigation-selected'"
@@ -57,12 +59,9 @@
       <a id="test-case-link" style="margin-top: 10px;" class="navigation-link navigation-test-case" th:href="@{/test-case-workspace/}"
         th:title="#{workspace.test-case.button.label}" th:classappend="${highlight == 'test-case'} ? 'navigation-selected'"
         th:if="${canNavigate}"></a>
-
       <a id="campaign-link" style="margin-top: 10px;" class="navigation-link navigation-campaign" th:href="@{/campaign-workspace/}"
         th:title="#{workspace.campaign.button.label}" th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"
         th:if="${canNavigate}"></a>
-
-
 
       <div id="nav_logo">
         <div id="test_mgt_nav_bottom" style="margin-bottom: 40px; margin-top:70px;">
@@ -102,6 +101,17 @@
               <a th:id="automation-tester-link" th:href="@{/automation-tester-workspace/}" th:text="#{workspace.automation.tester.button.label}"></a>
             </li>
           </ul>
+
+          <div th:remove="tag"
+               th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}">
+            <link rel="stylesheet" type="text/css" media="all" th:href="@{'/styles/' + ${workspacePluginIcon.styleSheetPath}}" />
+            <a
+              th:class="navigation-link"
+              th:classappend="${workspacePluginIcon.cssClass}"
+              th:title="${workspacePluginIcon.tooltip}"
+              th:href="${workspacePluginIcon.url}">
+            </a>
+          </div>
 
         </div>
         <div class="vertical-logo"></div>
