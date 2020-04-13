@@ -111,7 +111,7 @@
                         'background-image: url(' + ${iconPath} + ');'"
               th:class="navigation-link"
               th:title="${workspacePluginIcon.tooltip}"
-              th:href="${workspacePluginIcon.url}">
+              th:href="@{/__${workspacePluginIcon.url}__}">
             </a>
           </div>
 
