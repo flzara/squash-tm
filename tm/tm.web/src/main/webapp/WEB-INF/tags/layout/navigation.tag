@@ -85,12 +85,13 @@
       </ul>
     </sec:authorize>
     <c:forEach items="${authorizedWorkspacePluginIcons}" var="workspacePluginIcon" >
-      <link rel="stylesheet" type="text/css" media="all"
-            href="${pageContext.servletContext.contextPath}/styles/${workspacePluginIcon.styleSheetPath}"/>
-      <c:set var="computedCssClass" value="navigation-link ${workspacePluginIcon.cssClass}" />
-      <a class="${computedCssClass}"
-      title="${workspacePluginIcon.tooltip}"
-      href="${workspacePluginIcon.url}">
+      <c:set var="iconPath" value="${pageContext.servletContext.contextPath}/images/${workspacePluginIcon.iconFilePath}" />
+      <a
+        class="navigation-link"
+        href="${workspacePluginIcon.url}"
+        style="background-repeat: no-repeat;
+               background-image: url(${iconPath});"
+        title="${workspacePluginIcon.tooltip}">
       </a>
     </c:forEach>
     </div>

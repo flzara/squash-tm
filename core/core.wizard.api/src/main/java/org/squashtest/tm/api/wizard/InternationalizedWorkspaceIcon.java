@@ -28,25 +28,16 @@ import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
  */
 public class InternationalizedWorkspaceIcon extends ContextBasedInternationalized implements WorkspacePluginIcon {
 
-	private String cssClass;
-	private String styleSheetPath;
+	private String iconFilePath;
 	private String tooltipI18nKey;
 	private String url;
 
 	@Override
-	public String getCssClass() {
-		return cssClass;
+	public String getIconFilePath() {
+		return iconFilePath;
 	}
-	public void setCssClass(String cssClass) {
-		this.cssClass = cssClass;
-	}
-
-	@Override
-	public String getStyleSheetPath() {
-		return styleSheetPath;
-	}
-	public void setStyleSheetPath(String styleSheetPath) {
-		this.styleSheetPath = styleSheetPath;
+	public void setIconFilePath(String iconFilePath) {
+		this.iconFilePath = iconFilePath;
 	}
 
 	@Override

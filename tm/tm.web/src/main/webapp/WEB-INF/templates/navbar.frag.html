@@ -104,10 +104,12 @@
 
           <div th:remove="tag"
                th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}">
-            <link rel="stylesheet" type="text/css" media="all" th:href="@{'/styles/' + ${workspacePluginIcon.styleSheetPath}}" />
+            <!--<link rel="stylesheet" type="text/css" media="all" th:href="@{'/styles/' + ${workspacePluginIcon.styleSheetPath}}" />-->
             <a
+              th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__}"
+              th:style="'background-repeat: no-repeat; ' +
+                        'background-image: url(' + ${iconPath} + ');'"
               th:class="navigation-link"
-              th:classappend="${workspacePluginIcon.cssClass}"
               th:title="${workspacePluginIcon.tooltip}"
               th:href="${workspacePluginIcon.url}">
             </a>

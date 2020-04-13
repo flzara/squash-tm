@@ -22,15 +22,10 @@ package org.squashtest.tm.api.wizard;
 
 public interface WorkspacePluginIcon {
 	/**
-	 * Get this Icon's css class.
-	 * @return This Icon's css class.
+	 * Get this Icon's icon file path.
+	 * @return This Icon's icon file path.
 	 */
-	String getCssClass();
-	/**
-	 * Get this Icon's style sheet path.
-	 * @return This Icon's style sheet path.
-	 */
-	String getStyleSheetPath();
+	String getIconFilePath();
 	/**
 	 * Get this Icon's tooltip.
 	 * @return This Icon's tooltip.
