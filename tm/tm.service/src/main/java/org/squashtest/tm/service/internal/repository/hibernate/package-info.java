@@ -152,7 +152,7 @@
 	@NamedQuery(name = "requirement.findAllRequirementIdsByLibraries", query = "select r.id from Requirement r join r.project p join p.requirementLibrary rl where rl.id in (:libraryIds)"),
 	@NamedQuery(name = "requirement.findAllRequirementIdsByNodesId", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id"),
 	@NamedQuery(name = "requirement.findVersionsIdsForAll", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
-	@NamedQuery(name = "requirement.findVersionsModels", query = "select rv.id,r.id,p.id,p.name,rv.versionNumber,rv.reference,rv.name,rv.criticality,listItem.code,rv.status,rv.description"
+	@NamedQuery(name = "requirement.findVersionsModels", query = "select rv.id,r.id,p.id,p.name,rv.versionNumber,rv.reference,rv.name,rv.criticality,listItem.label,rv.status,rv.description"
 			+ ",(select count(distinct coverages) from RequirementVersion rv2 join rv2.requirementVersionCoverages coverages where rv2.id=rv.id)"
 			+ ",(select count(distinct requirementVersion) from RequirementVersion requirementVersion join requirementVersion.requirement req where req.id=rv.requirement.id)"
 			+ ",(select count(distinct attachments) from RequirementVersion rv3 join rv3.attachmentList attachmentList left join attachmentList.attachments attachments where rv3.id=rv.id)"

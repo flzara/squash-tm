@@ -125,7 +125,7 @@ public class RequirementExportModel {
 		private String reference;
 		private String name;
 		private RequirementCriticality criticality;
-		private String categoryCode;
+		private String categoryLabel;
 		private RequirementStatus status;
 		private String description;
 		private Long requirementVersionCoveragesSize;
@@ -145,7 +145,7 @@ public class RequirementExportModel {
 		public RequirementModel(Long id, Long requirementId, Long projectId,
 				String projectName, int requirementVersionNumber,
 				String reference, String name,
-				RequirementCriticality criticality, String categoryCode,
+				RequirementCriticality criticality, String categoryLabel,
 				RequirementStatus status, String description,
 				Long requirementVersionCoveragesSize, Long requirementVersionNumberSize,
 				Long attachmentListSize, Date createdOn, String createdBy, Date lastModifiedOn,
@@ -159,7 +159,7 @@ public class RequirementExportModel {
 			this.reference = reference;
 			this.name = name;
 			this.criticality = criticality;
-			this.categoryCode = categoryCode;
+			this.categoryLabel = categoryLabel;
 			this.status = status;
 			this.description = description;
 			this.requirementVersionCoveragesSize = requirementVersionCoveragesSize;
@@ -255,12 +255,12 @@ public class RequirementExportModel {
 			this.criticality = criticality;
 		}
 
-		public String getCategoryCode() {
-			return categoryCode;
+		public String getCategoryLabel() {
+			return categoryLabel;
 		}
 
-		public void setCategoryCode(String categoryCode) {
-			this.categoryCode = categoryCode;
+		public void setCategoryLabel(String categoryLabel) {
+			this.categoryLabel = categoryLabel;
 		}
 
 		public RequirementStatus getStatus() {
@@ -360,8 +360,8 @@ public class RequirementExportModel {
 					+ ", projectName=" + projectName + ", path=" + path
 					+ ", requirementVersionNumber=" + requirementVersionNumber
 					+ ", reference=" + reference + ", name=" + name
-					+ ", criticality=" + criticality + ", categoryCode="
-					+ categoryCode + ", status=" + status + ", description="
+					+ ", criticality=" + criticality + ", categoryLabel="
+					+ categoryLabel + ", status=" + status + ", description="
 					+ description + ", requirementVersionCoveragesSize="
 					+ requirementVersionCoveragesSize
 					+ ", requirementVersionNumberSize="

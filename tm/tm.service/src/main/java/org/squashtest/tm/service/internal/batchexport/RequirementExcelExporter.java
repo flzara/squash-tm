@@ -258,7 +258,7 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getReference());
 			row.createCell(colIndex++).setCellValue(reqModel.getName());
 			row.createCell(colIndex++).setCellValue(reqModel.getCriticality().toString());
-			row.createCell(colIndex++).setCellValue(reqModel.getCategoryCode());
+			row.createCell(colIndex++).setCellValue(reqModel.getCategoryLabel());
 			row.createCell(colIndex++).setCellValue(reqModel.getStatus().toString());
 			String description = reqModel.getDescription();
 			row.createCell(colIndex++).setCellValue(HtmlUtils.htmlUnescape(defaultIfBlank(reqModel.getDescription(), "")));

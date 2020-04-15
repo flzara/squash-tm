@@ -185,7 +185,7 @@ public class RequirementSearchExcelExporter {
 
 		try {
 			String criticality = handleMessages(CRITICALITY+reqModel.getCriticality().toString());
-			String category = handleMessages(CATEGORY+reqModel.getCategoryCode());
+			String category = handleMessages(reqModel.getCategoryLabel());
 			String status = handleMessages(STATUS+reqModel.getStatus().toString());
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementId());
