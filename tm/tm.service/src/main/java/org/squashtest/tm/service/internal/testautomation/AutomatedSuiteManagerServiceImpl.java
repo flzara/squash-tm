@@ -34,6 +34,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.acls.Roles;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
@@ -49,7 +50,6 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -702,7 +702,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message) {
 		for (AutomatedExecutionExtender extender : failedExecExtenders) {
 			extender.setExecutionStatus(ExecutionStatus.ERROR);
-			extender.setResultSummary(message);
+			extender.setResultSummary(HtmlUtils.htmlEscape(message));
 		}
 	}
 

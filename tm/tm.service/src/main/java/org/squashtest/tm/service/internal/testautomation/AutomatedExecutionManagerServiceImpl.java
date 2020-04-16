@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
@@ -101,7 +102,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 
 		for (AutomatedExecutionExtender exec : execs) {
 			permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, EXECUTE, exec);
-			exec.setResultSummary(newSummary);
+			exec.setResultSummary(HtmlUtils.htmlEscape(newSummary));
 		}
 
 	}
@@ -116,7 +117,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	 * @param stateChange
 	 */
 	private void changeState(AutomatedExecutionExtender exec, TestExecutionStatus stateChange) {
-		exec.setResultSummary(stateChange.getStatusMessage());
+		exec.setResultSummary(HtmlUtils.htmlEscape(stateChange.getStatusMessage()));
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
 
 		customTestSuiteModificationService.updateExecutionStatus(exec.getExecution().getTestPlan().getTestSuites());

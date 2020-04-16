@@ -312,7 +312,7 @@
                        titleKey="label.resultSummary"
                        open="${ not empty execution.resultSummary }">
 		<jsp:attribute name="body">
-			<span>${execution.resultSummary}</span>
+			<span>${hu:clean(execution.resultSummary)}</span>
 		</jsp:attribute>
     </comp:toggle-panel>
   </c:if>
@@ -383,7 +383,7 @@
   <f:message var="executionComment" key="execution.description.panel.title"/>
   <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="true">
 		<jsp:attribute name="body">
-		<div id="execution-description" ${descrRicheditAttributes} >${ execution.description }</div>
+		<div id="execution-description" ${descrRicheditAttributes} >${hu:clean(execution.description)}></div>
 	</jsp:attribute>
   </comp:toggle-panel>
 
