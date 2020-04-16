@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.testcase
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.bdd.ActionWord
-import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -48,13 +47,14 @@ import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import javax.swing.Action
+import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	KeywordTestCaseDao keywordTestCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
+	KeywordTestStepDao keywordTestStepDao = Mock()
 	ActionWordDao actionWordDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
@@ -76,6 +76,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.keywordTestCaseDao = keywordTestCaseDao
 		service.testStepDao = testStepDao
+		service.keywordTestStepDao = keywordTestStepDao
 		service.testCaseManagementService = testCaseManagementService
 		service.deletionHandler = deletionHandler
 		service.customFieldValuesService = cufValuesService
@@ -95,7 +96,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			KeywordTestCase parentTestCase = new KeywordTestCase()
 
 		and:
-			def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+			def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 			parentTestCase.addStep(firstStep)
 
 		and:
@@ -117,7 +118,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 
 		and:
-		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -139,7 +140,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 
 		and:
-		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -165,7 +166,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		and:
-		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -193,7 +194,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		and:
-		def firstStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -574,6 +575,25 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		res == steps
 	}
 
+	def "should update the keyword and the action word of a keyword step"() {
+		given:
+		def step = Mock(KeywordTestStep)
+		step.actionWord >> new ActionWord("first")
+		def existingActionWord = Mock(ActionWord) {
+			getId() >> -77L
+			getWord() >> "last"
+		}
+
+		when:
+		service.updateKeywordTestStep(10L, GIVEN)
+		service.updateKeywordTestStep(10L, "last   ")
+
+		then:
+		2 * keywordTestStepDao.findById(10L) >> step
+		1 * step.setKeyword(GIVEN)
+		1 * actionWordDao.findByWord("last") >> existingActionWord
+		1 * step.setActionWord(existingActionWord)
+	}
 
 	def "should update the action and the expected result of a test step"(){
 		given:
