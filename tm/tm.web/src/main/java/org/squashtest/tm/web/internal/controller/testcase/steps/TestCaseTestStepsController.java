@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -49,6 +50,7 @@ import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.actionword.ActionWordService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
@@ -74,6 +76,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 // XSS OK
@@ -96,6 +99,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private KeywordTestCaseFinder keywordTestCaseFinder;
+
+	@Autowired(required = false)
+	private ActionWordService actionWordService;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
@@ -232,6 +238,7 @@ public class TestCaseTestStepsController {
 		//create keyword test step table model
 		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
+		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordList", Keyword.values());
 		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));

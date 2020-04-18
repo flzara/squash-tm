@@ -25,12 +25,30 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 		el : "#tab-tc-keyword-test-steps",
 
 		initialize : function(options) {
-			$.squash.decorateButtons();
 			var self = this;
+
+			$.squash.decorateButtons();
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
+
 			this.actionWordInput = $('#action-word-input');
+			this.keywordInput = $('#keyword-input');
+
+			this.keyupTimer = undefined;
+			if(this.settings.isAutocompleteActive) {
+				this.actionWordInput.on('keyup', function(event) {
+					// not perform autocomplete if arrows are pressed
+					if(!_.contains([37, 38, 39, 40], event.which)) {
+						self.performAutocomplete(event, self);
+					}
+				});
+			}
+			this.actionWordInput.autocomplete({
+				select: function(event, ui) {
+					self.addKeywordTestStepFromAutocomplete(self, event, ui);
+				}
+			});
 
 			//the popups
 			var conf = {};
@@ -44,7 +62,7 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 		},
 
 		events : {
-			"click #add-keyword-test-step-btn" : "addKeywordTestStep",
+			"click #add-keyword-test-step-btn" : "addKeywordTestStepFromButton",
 			"click #delete-all-steps-button" : "deleteSelectedTestSteps"
 		},
 
@@ -75,34 +93,52 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			$(".action-word-input-error").text('');
 		},
 
-		addKeywordTestStep: function() {
-			var self = this;
+		addKeywordTestStepFromButton: function() {
 			var inputActionWord = this.actionWordInput.val();
+			this.addKeywordTestStep(inputActionWord);
+		},
 
+		addKeywordTestStep: function(inputActionWord) {
+			var self = this;
+			if(this.isInputActionWordBlank(inputActionWord)) {
+				return;
+			}
+			var inputKeyword = this.keywordInput.val();
+			this.doAddKeywordTestStep(inputKeyword, inputActionWord)
+				.done(function(testStepId) {
+					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
+				});
+		},
+
+		isInputActionWordBlank: function(inputActionWord) {
 			if(StringUtil.isBlank(inputActionWord)) {
 				$('.action-word-input-error').text(translator.get("message.actionword.empty"));
 				this.actionWordInput.val("");
-				return;
+				return true;
+			} else {
+				return false;
 			}
+		},
 
-			var inputKeyword = $('#keyword-input').val();
+		doAddKeywordTestStep: function(keyword, actionWord) {
 			var objectData = {
-				keyword : inputKeyword,
-				actionWord : inputActionWord
+				keyword : keyword,
+				actionWord : actionWord
 			};
-
-			$.ajax({
-				type: "POST",
+			return $.ajax({
+				type: 'POST',
 				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step",
 				contentType: 'application/json',
 				data: JSON.stringify(objectData)
-			}).done(function(id) {
-				var displayDiv = $('#add-keyword-test-step-result');
-				displayDiv.text("The keyword test step has been successfully created with id : "+id+" and name : "+inputActionWord);
-				self.refresh();
-				self.cleanInputs();
-				eventBus.trigger('testStepsTable.stepAdded');
 			});
+		},
+
+		afterKeywordTestStepAdd: function(testStepId, inputActionWord) {
+			var displayDiv = $('#add-keyword-test-step-result');
+			displayDiv.text("The keyword test step has been successfully created with id : " + testStepId + " and name : "+ inputActionWord);
+			this.refresh();
+			this.cleanInputs();
+			eventBus.trigger('testStepsTable.stepAdded');
 		},
 
 		deleteSelectedTestSteps: function() {
@@ -116,7 +152,32 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			return {
 				deleteStep: tcUrl + "/steps",
 			};
-		}
+		},
+
+		performAutocomplete: function(event,  self) {
+			var searchInput = $(event.currentTarget);
+			var searchInputValue = searchInput.val();
+			searchInput.autocomplete('close');
+			searchInput.autocomplete('disable');
+			clearTimeout(self.keyupTimer);
+			self.keyupTimer = setTimeout(function() {
+				$.ajax({
+					type: 'GET',
+					url: '/squash/keyword-test-cases/autocomplete',
+					data: { searchInput: searchInputValue }
+				}).done(function(actionWords) {
+					searchInput.autocomplete('enable');
+					searchInput.autocomplete('option', 'source', actionWords);
+					searchInput.autocomplete('search');
+				});
+			}, 300);
+		},
+
+		addKeywordTestStepFromAutocomplete: function(self, event, ui) {
+			event.preventDefault();
+			var inputActionWord = ui.item.value;
+			self.addKeywordTestStep(inputActionWord);
+		},
 	});
 	return KeywordTestStepTablePanel;
 });
