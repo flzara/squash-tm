@@ -151,8 +151,12 @@
 							<span th:remove="tag" th:case="'DATE_PICKER'"
 							th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
 							<span th:remove="tag" th:case="'CHECKBOX'"
-							th:text="#{label.__*{value}__}">true</span> <span th:remove="tag"
+							th:text="#{label.__*{value}__}">true</span>
+               <span th:remove="tag"
+                     th:case="'RICH_TEXT'" th:utext="*{value}">value</span>
+              <span th:remove="tag"
 							th:case="*" th:text="*{value}">value</span>
+
 						</span>
 					</div>
 				</div>
