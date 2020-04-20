@@ -27,6 +27,12 @@
 	<uri>http://org.squashtest.tm/taglib/workspace-utils</uri>
 
 	<function>
+		<name>getAuthorizedWorkspacePluginIcons</name>
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
+		<function-signature>java.util.Collection getAuthorizedWorkspacePluginIcons(javax.servlet.ServletContext)</function-signature>
+	</function>
+
+	<function>
 		<name>getVisibleBugtrackers</name>
 		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>
 		<function-signature>java.util.Collection getVisibleBugtrackers(javax.servlet.ServletContext)</function-signature>

@@ -24,6 +24,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
+import org.squashtest.tm.api.wizard.WorkspacePlugin;
+import org.squashtest.tm.api.wizard.WorkspacePluginIcon;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.execution.Execution;
@@ -33,6 +35,7 @@ import org.squashtest.tm.service.internal.dto.FilterModel;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.workspace.WorkspaceHelperService;
+import org.squashtest.tm.service.workspace.WorkspacePluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManager;
 
@@ -41,6 +44,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Warning : strongly tied to Spring
@@ -60,6 +64,15 @@ public class WorkspaceHelper extends SimpleTagSupport {
 		List<Long> projectsIds =  projectFinder.findAllReadableIds();
 
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
+	}
+
+	public static Collection<WorkspacePluginIcon> getAuthorizedWorkspacePluginIcons(ServletContext context) {
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
+		WorkspacePluginManager workspacePluginManager = wac.getBean(WorkspacePluginManager.class);
+		return workspacePluginManager.getAllAuthorized()
+			.stream()
+			.map(WorkspacePlugin::getWorkspaceIcon)
+			.collect(Collectors.toList());
 	}
 
 	public static URL getAutomatedJobURL(ServletContext context, Long executionId) {

@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
+import org.squashtest.tm.api.wizard.WorkspacePluginIcon;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
@@ -60,7 +61,14 @@ public class WorkspaceHelper {
 	public Collection<BugTracker> visibleBugtrackers() {
 		return org.squashtest.tm.web.internal.helper.WorkspaceHelper.getVisibleBugtrackers(servletContext);
 	}
-
+	/**
+	 * Add attribute "authorizedWorkspacePluginIcons" to the model
+	 * containing all detected and authorized WorkspacePlugins' icon.
+	 * @return A collection of {@linkplain WorkspacePluginIcon} added to the model.
+	 */
+	public Collection<WorkspacePluginIcon> authorizedWorkspacePluginIcons() {
+		return org.squashtest.tm.web.internal.helper.WorkspaceHelper.getAuthorizedWorkspacePluginIcons(servletContext);
+	}
 
 	public FilterModel projectFilter() {
 		return org.squashtest.tm.web.internal.helper.WorkspaceHelper.getProjectFilter(servletContext);
