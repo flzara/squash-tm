@@ -104,7 +104,6 @@
 
           <div th:remove="tag"
                th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}">
-            <!--<link rel="stylesheet" type="text/css" media="all" th:href="@{'/styles/' + ${workspacePluginIcon.styleSheetPath}}" />-->
             <a
               th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__}"
               th:style="'background-repeat: no-repeat; ' +
