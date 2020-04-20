@@ -43,12 +43,12 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 						self.performAutocomplete(event, self);
 					}
 				});
+				this.actionWordInput.autocomplete({
+					select: function(event, ui) {
+						self.addKeywordTestStepFromAutocomplete(self, event, ui);
+					}
+				});
 			}
-			this.actionWordInput.autocomplete({
-				select: function(event, ui) {
-					self.addKeywordTestStepFromAutocomplete(self, event, ui);
-				}
-			});
 
 			//the popups
 			var conf = {};
