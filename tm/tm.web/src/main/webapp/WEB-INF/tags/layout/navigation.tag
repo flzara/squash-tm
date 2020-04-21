@@ -85,10 +85,11 @@
       </ul>
     </sec:authorize>
     <c:forEach items="${authorizedWorkspacePluginIcons}" var="workspacePluginIcon" >
-      <c:set var="iconPath" value="${pageContext.servletContext.contextPath}/images/${workspacePluginIcon.iconFilePath}" />
+      <c:set var="iconPath" value="${rootctxt}/images/${workspacePluginIcon.iconFilePath}" />
+      <c:set var="hrefUrl" value="${rootctxt}/${workspacePluginIcon.url}" />
       <a
         class="navigation-link"
-        href="${workspacePluginIcon.url}"
+        href="${hrefUrl}"
         style="background-repeat: no-repeat;
                background-image: url(${iconPath});"
         title="${workspacePluginIcon.tooltip}">
