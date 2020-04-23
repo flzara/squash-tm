@@ -25,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
-import org.squashtest.tm.domain.bdd.ActionWord;
-import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
@@ -63,7 +61,10 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 @Transactional
