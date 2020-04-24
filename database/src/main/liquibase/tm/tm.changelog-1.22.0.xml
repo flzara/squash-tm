@@ -202,4 +202,27 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-350-PARAMETER_IN_ACTION_WORD" author="qtran">
+    <comment>Create ACTION_WORD_FRAGMENT table</comment>
+    <createTable tableName="ACTION_WORD_FRAGMENT">
+      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="INDEX" type="INT" remarks="the index of a fragment in the fragment list of an action word">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="ACTION_WORD_ID" type="BIGINT" remarks="The action word to which this fragment belongs">
+        <constraints nullable="false" foreignKeyName="fk_action_word_fragment_action_word_id" references="ACTION_WORD (ACTION_WORD_ID)"/>
+      </column>
+    </createTable>
+
+    <comment>Update ACTION_WORD table</comment>
+    <addColumn tableName="ACTION_WORD">
+      <column name="TOKEN" type="VARCHAR(255)"/>
+    </addColumn>
+
+  </changeSet>
+
 </databaseChangeLog>

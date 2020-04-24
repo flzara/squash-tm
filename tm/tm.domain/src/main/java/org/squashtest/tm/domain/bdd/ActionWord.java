@@ -1,33 +1,38 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class ActionWord {
@@ -43,18 +48,39 @@ public class ActionWord {
 	@Column(name = "WORD")
 	private String word;
 
+	@Column(name = "TOKEN")
+	private String token;
+
+	@NotNull
+	@OneToMany(mappedBy = "actionWord", cascade = CascadeType.ALL)
+	private List<ActionWordFragment> fragments = new ArrayList<>();
+
+	public List<ActionWordFragment> getFragments() {
+		return fragments;
+	}
+
+	public void addFragment(@NotNull ActionWordFragment fragment) {
+		getFragments().add(fragment);
+	}
+
 	public ActionWord() {
 	}
 
 	public ActionWord(String word) {
-		if(StringUtils.isBlank(word)) {
+		if (StringUtils.isBlank(word)) {
 			throw new IllegalArgumentException("Action word cannot be blank.");
 		}
 		String trimmedWord = word.trim();
-		if(trimmedWord.length() > ACTION_WORD_MAX_LENGTH) {
+		if (trimmedWord.length() > ACTION_WORD_MAX_LENGTH) {
 			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
 		}
 		this.word = trimmedWord;
+		this.token = "F";
+	}
+
+	public ActionWord(String word, String token) {
+		this(word);
+		setToken(token);
 	}
 
 	public Long getId() {
@@ -71,6 +97,14 @@ public class ActionWord {
 
 	public void setWord(String word) {
 		this.word = word;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@Override
