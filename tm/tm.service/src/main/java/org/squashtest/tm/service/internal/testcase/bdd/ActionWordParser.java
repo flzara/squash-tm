@@ -17,9 +17,13 @@ public class ActionWordParser {
 	public ActionWord generateActionWordFromTextWithParamValue(String trimmedWord) {
 		//If the input word contains any double quote, do the fragmentation
 		if (trimmedWord.contains("\"")) {
+			//add the missing double quote if any
 			String updateWord = addMissingDoubleQuoteIfAny(trimmedWord);
+			//creating the fragment list
 			createFragments(updateWord);
+			//generate token
 			String token = generateToken(fragmentList);
+			//initiate the action word
 			ActionWord result = new ActionWord(updateWord, token);
 			result.setFragments(fragmentList);
 			return result;
@@ -55,6 +59,7 @@ public class ActionWordParser {
 					actionWordParamValue = "";
 				} else if (!actionWordText.isEmpty()){
 					//this is a text fragment if the currentChar is not empty
+					//TODO: remove extra-spaces in text
 					fragmentList.add(new ActionWordFragment());
 					actionWordText = "";
 				}

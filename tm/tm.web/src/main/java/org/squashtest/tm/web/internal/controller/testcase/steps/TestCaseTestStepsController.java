@@ -250,6 +250,7 @@ public class TestCaseTestStepsController {
 	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) {
 		String keyword = keywordTestStepDto.getKeyword();
 		String actionWord = keywordTestStepDto.getActionWord();
+		//TODO-QUAN: add a validator to check if the input action word contain at least a text (see line 204)
 		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		return step.getId();
 	}

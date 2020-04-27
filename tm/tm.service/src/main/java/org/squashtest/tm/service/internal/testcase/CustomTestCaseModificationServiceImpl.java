@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.Keyword;
+import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -288,7 +289,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		//TODO
+		//TODO-QUAN
+		ActionWord inputActionWord = new ActionWordParser().generateActionWordFromTextWithParamValue(trimmedWord);
 		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
 		if (isNull(actionWord)){
 			actionWord = new ActionWord(trimmedWord);
