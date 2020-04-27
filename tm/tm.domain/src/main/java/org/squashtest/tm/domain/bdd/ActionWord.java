@@ -30,7 +30,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +52,11 @@ public class ActionWord {
 	private Long id;
 
 	@Column(name = "WORD")
+	@NotBlank
+	@Size(max = 255)
 	private String word;
 
+	@NotBlank
 	@Column(name = "TOKEN")
 	private String token;
 
