@@ -230,7 +230,7 @@ public class TestCaseTestStepsController {
 	}
 
 	@RequestMapping(value = "/keyword-test-step-panel")
-	public String getKeywsordTestStepPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+	public String getKeywordTestStepPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
 		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(testCaseId);
 		List<TestStep> steps = keywordTestCase.getSteps();
 		model.addAttribute(TEST_CASE, keywordTestCase);

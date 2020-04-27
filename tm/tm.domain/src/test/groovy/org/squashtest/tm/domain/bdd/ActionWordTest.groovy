@@ -32,7 +32,7 @@ class ActionWordTest extends Specification {
 
 		then:
 		actionWord.getWord() == expectedWord
-		actionWord.getToken() == "F"
+		actionWord.getToken() == ActionWord.ACTION_WORD_TEXT_TOKEN
 
 		where:
 		word 			|| expectedWord
@@ -42,11 +42,11 @@ class ActionWordTest extends Specification {
 
 	def "create an ActionWord with given token"() {
 		when:
-		ActionWord actionWord = new ActionWord("hello \"param\"", "FP")
+		ActionWord actionWord = new ActionWord("hello \"param\"", "TP")
 
 		then:
 		actionWord.getWord() == "hello \"param\""
-		actionWord.getToken() == "FP"
+		actionWord.getToken() == "TP"
 	}
 
 	@Unroll

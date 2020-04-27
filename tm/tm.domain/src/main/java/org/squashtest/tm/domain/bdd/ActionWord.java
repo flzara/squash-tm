@@ -39,6 +39,10 @@ public class ActionWord {
 
 	private static final int ACTION_WORD_MAX_LENGTH = 255;
 
+	public static final String ACTION_WORD_TEXT_TOKEN = "T";
+
+	public static final String ACTION_WORD_PARAM_TOKEN = "P";
+
 	@Id
 	@Column(name = "ACTION_WORD_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "action_word_action_word_id_seq")
@@ -59,6 +63,10 @@ public class ActionWord {
 		return fragments;
 	}
 
+	public void setFragments(List<ActionWordFragment> fragments) {
+		this.fragments = fragments;
+	}
+
 	public void addFragment(@NotNull ActionWordFragment fragment) {
 		getFragments().add(fragment);
 	}
@@ -75,7 +83,7 @@ public class ActionWord {
 			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
 		}
 		this.word = trimmedWord;
-		this.token = "F";
+		this.token = ACTION_WORD_TEXT_TOKEN;
 	}
 
 	public ActionWord(String word, String token) {
