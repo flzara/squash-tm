@@ -204,17 +204,13 @@
 
   <changeSet id="tm-1.22.0-SQUASH-350-PARAMETER_IN_ACTION_WORD" author="qtran">
     <comment>Create ACTION_WORD_FRAGMENT table</comment>
-    <createTable tableName="ACTION_WORD_FRAGMENT">
-      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false"/>
-      </column>
-
-      <column name="INDEX" type="INT" remarks="the index of a fragment in the fragment list of an action word">
-        <constraints nullable="false"/>
+    <createTable tableName="ACTION_WORD_FRAGMENT" remarks="base table for Action word fragments">
+      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" autoIncrement="true" remarks="primary key, auto-generated">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACTION_WORD_FRAGMENT"/>
       </column>
 
       <column name="ACTION_WORD_ID" type="BIGINT" remarks="The action word to which this fragment belongs">
-        <constraints nullable="false" foreignKeyName="fk_action_word_fragment_action_word_id" references="ACTION_WORD (ACTION_WORD_ID)"/>
+        <constraints nullable="false" foreignKeyName="fk_action_word_fragment_action_word_id" references="ACTION_WORD(ACTION_WORD_ID)"/>
       </column>
     </createTable>
 
@@ -222,6 +218,49 @@
     <addColumn tableName="ACTION_WORD">
       <column name="TOKEN" type="VARCHAR(255)"/>
     </addColumn>
+
+    <comment>Create new table for Action word text elements</comment>
+    <createTable tableName="ACTION_WORD_TEXT">
+      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" remarks="Shared key with ACTION_WORD_FRAGMENT table">
+        <constraints primaryKey="true" nullable="false" references="ACTION_WORD_FRAGMENT(ACTION_WORD_FRAGMENT_ID)"
+                     primaryKeyName="PK_ACTION_WORD_TEXT" foreignKeyName="fk_action_word_text_action_word_fragment"/>
+      </column>
+      <column name="TEXT" type="VARCHAR(255)" remarks="the content of the action word text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <comment>Create new table for Action word parameter elements</comment>
+    <createTable tableName="ACTION_WORD_PARAMETER">
+      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" remarks="Shared key with ACTION_WORD_FRAGMENT table">
+        <constraints primaryKey="true" nullable="false" references="ACTION_WORD_FRAGMENT(ACTION_WORD_FRAGMENT_ID)"
+                     primaryKeyName="PK_ACTION_WORD_PARAMETER" foreignKeyName="fk_action_word_parameter_action_word_fragment"/>
+      </column>
+      <column name="NAME" type="VARCHAR(255)" remarks="the name of the action word parameter">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DEFAULT_VALUE" type="VARCHAR(255)" remarks="the default value of the action word parameter">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <comment>Create new table for Action word parameter value</comment>
+    <createTable tableName="ACTION_WORD_PARAMETER_VALUE">
+      <column name="ACTION_WORD_PARAMETER_VALUE_ID" type="BIGINT" autoIncrement="true"  remarks="primary key, auto-generated">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACTION_WORD_PARAMETER_VALUE"/>
+      </column>
+      <column name="VALUE" type="VARCHAR(255)" remarks="the value of the action word parameter value">
+        <constraints nullable="false"/>
+      </column>
+      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" remarks="the action word parameter by which this value replaces">
+        <constraints nullable="false" foreignKeyName="fk_action_word_parameter_value_action_word_fragment_id"
+                      references="ACTION_WORD_PARAMETER(ACTION_WORD_FRAGMENT_ID)"/>
+      </column>
+      <column name="KEYWORD_TEST_STEP_ID" type="BIGINT" remarks="the keyword test step in which this value is used">
+        <constraints nullable="false" foreignKeyName="fk_action_word_parameter_value_keyword_test_step_id"
+                     references="KEYWORD_TEST_STEP(TEST_STEP_ID)"/>
+      </column>
+    </createTable>
 
   </changeSet>
 
