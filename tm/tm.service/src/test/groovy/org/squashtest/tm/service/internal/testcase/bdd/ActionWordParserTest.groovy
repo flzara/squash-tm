@@ -29,10 +29,10 @@ class ActionWordParserTest extends Specification {
 
 	def "Should create an ActionWord without parameter"() {
 		when:
-		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("This is an action word")
+		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n act1on-word with ('.,?/!§)")
 
 		then:
-		result.getWord() == "This is an action word"
+		result.getWord() == "This_is @n act1on-word with ('.,?/!§)"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 1
 		fragments.get(0).class.is(ActionWordFragment)
@@ -67,19 +67,57 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "TT"
 	}
 
-	def "Should create an ActionWord with a parameter at the end and a parameter in the middle"() {
+	def "Should create an ActionWord with a parameter at the beginning, a parameter in the middle and a parameter at the end"() {
 		when:
-		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("This is an \"action word\" with \"param\"")
+		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is an \"action word\" with \"param\"")
 
 		then:
 		//result.getWord() == "This is an action word with \"p1\""
-		result.getWord() == "This is an \"action word\" with \"param\""
+		result.getWord() == "\"This\" is an \"action word\" with \"param\""
 		List<ActionWordFragment> fragments = result.getFragments()
-		fragments.size() == 4
+		fragments.size() == 5
 		fragments.get(0).class.is(ActionWordFragment)
 		fragments.get(1).class.is(ActionWordFragment)
 		fragments.get(2).class.is(ActionWordFragment)
 		fragments.get(3).class.is(ActionWordFragment)
-		result.getToken() == "TTTT"
+		fragments.get(4).class.is(ActionWordFragment)
+		result.getToken() == "TTTTT"
+	}
+
+	def "Should create an ActionWord with a parameter at the beginning, 2 parameters in the middle which is next to the other and a parameter at the end"() {
+		when:
+		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is an \"action\"\"word\" with \"param\"")
+
+		then:
+		//result.getWord() == "This is an action word with \"p1\""
+		result.getWord() == "\"This\" is an \"action\"\"word\" with \"param\""
+		List<ActionWordFragment> fragments = result.getFragments()
+		fragments.size() == 6
+		fragments.get(0).class.is(ActionWordFragment)
+		fragments.get(1).class.is(ActionWordFragment)
+		fragments.get(2).class.is(ActionWordFragment)
+		fragments.get(3).class.is(ActionWordFragment)
+		fragments.get(4).class.is(ActionWordFragment)
+		fragments.get(5).class.is(ActionWordFragment)
+		result.getToken() == "TTTTTT"
+	}
+
+	def "Should create an ActionWord with a parameter at the beginning, 2 parameters in the middle which are separated by a space and a parameter at the end"() {
+		when:
+		ActionWord result =  new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is an \"action\" \"word\" with \"param\"")
+
+		then:
+		//result.getWord() == "This is an action word with \"p1\""
+		result.getWord() == "\"This\" is an \"action\" \"word\" with \"param\""
+		List<ActionWordFragment> fragments = result.getFragments()
+		fragments.size() == 7
+		fragments.get(0).class.is(ActionWordFragment)
+		fragments.get(1).class.is(ActionWordFragment)
+		fragments.get(2).class.is(ActionWordFragment)
+		fragments.get(3).class.is(ActionWordFragment)
+		fragments.get(4).class.is(ActionWordFragment)
+		fragments.get(5).class.is(ActionWordFragment)
+		fragments.get(6).class.is(ActionWordFragment)
+		result.getToken() == "TTTTTTT"
 	}
 }

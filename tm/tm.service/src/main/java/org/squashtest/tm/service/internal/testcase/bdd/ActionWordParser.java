@@ -53,8 +53,8 @@ public class ActionWordParser {
 					//this is the value of a param fragment
 					fragmentList.add(new ActionWordFragment());
 					actionWordParamValue = "";
-				} else {
-					//this is a text fragment
+				} else if (!actionWordText.isEmpty()){
+					//this is a text fragment if the currentChar is not empty
 					fragmentList.add(new ActionWordFragment());
 					actionWordText = "";
 				}
