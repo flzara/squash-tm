@@ -63,9 +63,9 @@ public class ActionWordParser {
 		for (int i = 0; i < fragmentList.size(); ++i) {
 			ActionWordFragment fragment = fragmentList.get(i);
 			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
-				builder.append("P");
+				builder.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
 			} else {
-				builder.append("T");
+				builder.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
 			}
 		}
 		return builder.toString();
