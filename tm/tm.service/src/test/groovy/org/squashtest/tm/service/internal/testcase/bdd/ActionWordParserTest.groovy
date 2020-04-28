@@ -36,7 +36,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "This_is @n act1on-word with ('.,?/!§)"
-		result.getToken() == ActionWord.ACTION_WORD_TEXT_TOKEN
+		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 1
 		def f1 = fragments.get(0)
@@ -50,7 +50,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "This_is @n    act1on-word with    ('.,?/!§)"
-		result.getToken() == ActionWord.ACTION_WORD_TEXT_TOKEN
+		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 1
 		def f1 = fragments.get(0)
@@ -65,7 +65,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "This is an action word with \"param\""
-		result.getToken() == "TP"
+		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
 		def f1 = fragments.get(0)
@@ -88,7 +88,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "This is an action word with \"param\""
-		result.getToken() == "TP"
+		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
 	}
@@ -99,7 +99,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "This is an action word with \"     par@m   123    []   \""
-		result.getToken() == "TP"
+		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
 		def f1 = fragments.get(0)
@@ -121,7 +121,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "\"This\" is   an \"action word\" with   \"param\""
-		result.getToken() == "PTPTP"
+		result.getToken() == "PTPTP- is an - with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 5
 		def f1 = fragments.get(0)
@@ -163,7 +163,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "\"This\" is an\"action\"\"word\" with \"param\""
-		result.getToken() == "PTPPTP"
+		result.getToken() == "PTPPTP- is an- with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 6
 		def f1 = fragments.get(0)
@@ -213,7 +213,7 @@ class ActionWordParserTest extends Specification {
 
 		then:
 		result.getWord() == "\"This\" is an \"action\"    \"word\" with \"param\""
-		result.getToken() == "PTPTPTP"
+		result.getToken() == "PTPTPTP- is an - - with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 7
 		def f1 = fragments.get(0)

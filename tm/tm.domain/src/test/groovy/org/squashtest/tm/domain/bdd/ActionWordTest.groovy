@@ -32,21 +32,21 @@ class ActionWordTest extends Specification {
 
 		then:
 		actionWord.getWord() == expectedWord
-		actionWord.getToken() == ActionWord.ACTION_WORD_TEXT_TOKEN
+		actionWord.getToken() == expectedToken
 
 		where:
-		word 			|| expectedWord
-		"hello" 		|| "hello"
-		" hello   " 	|| "hello"
+		word 						|| expectedWord						|| expectedToken
+		"hello" 					|| "hello"							|| "T-hello-"
+		" hello   is it   me ?   " 	|| "hello   is it   me ?"			|| "T-hello is it me ?-"
 	}
 
 	def "create an ActionWord with given token"() {
 		when:
-		ActionWord actionWord = new ActionWord("hello \"param\"", "TP")
+		ActionWord actionWord = new ActionWord("hello \"param\"", "TP-hello -")
 
 		then:
 		actionWord.getWord() == "hello \"param\""
-		actionWord.getToken() == "TP"
+		actionWord.getToken() == "TP-hello -"
 	}
 
 	@Unroll

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,7 +57,7 @@ public class ActionWordText extends ActionWordFragment {
 		if (text.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 			throw new IllegalArgumentException("Action word text length cannot exceed 255 characters.");
 		}
-		this.text = formatText(text);
+		this.text = ActionWordUtil.formatText(text);
 	}
 
 	public String getText() {

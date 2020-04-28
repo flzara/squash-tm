@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,7 +81,7 @@ public class ActionWordParameter extends ActionWordFragment {
 			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 				throw new IllegalArgumentException("Action word parameter default value length cannot exceed 255 characters.");
 			}
-			this.defaultValue = formatText(trimmedDefaultValue);
+			this.defaultValue = ActionWordUtil.formatText(trimmedDefaultValue);
 		} else {
 			this.defaultValue = "";
 		}

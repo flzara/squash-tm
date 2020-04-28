@@ -72,9 +72,4 @@ public abstract class ActionWordFragment {
 	public void setActionWord(ActionWord actionWord) {
 		this.actionWord = actionWord;
 	}
-
-	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
-	protected String formatText(String text) {
-		return text.replaceAll("[\\s]+"," ");
-	}
 }

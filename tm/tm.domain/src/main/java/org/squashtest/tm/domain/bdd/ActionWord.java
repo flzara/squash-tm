@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -88,7 +89,7 @@ public class ActionWord {
 			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
 		}
 		this.word = trimmedWord;
-		this.token = ACTION_WORD_TEXT_TOKEN;
+		this.token = ACTION_WORD_TEXT_TOKEN+"-"+ActionWordUtil.formatText(trimmedWord)+"-";
 	}
 
 	public ActionWord(String word, String token) {

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 
 import javax.persistence.CascadeType;
@@ -76,15 +77,10 @@ public class ActionWordParameterValue {
 			if (value.length() > ACTION_WORD_PARAM_VALUE_MAX_LENGTH) {
 				throw new IllegalArgumentException("Action word parameter value length cannot exceed 255 characters.");
 			}
-			this.value = formatText(trimmedValue);
+			this.value = ActionWordUtil.formatText(trimmedValue);
 		} else {
 			this.value = "";
 		}
-	}
-
-	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
-	private String formatText(String text) {
-		return text.replaceAll("[\\s]+", " ");
 	}
 
 	public Long getId() {

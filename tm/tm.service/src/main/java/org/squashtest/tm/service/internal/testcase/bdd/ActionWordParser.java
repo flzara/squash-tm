@@ -52,23 +52,26 @@ public class ActionWordParser {
 			return result;
 		} else {
 			//otherwise  --> action word has no parameter and its token = T
-			ActionWord result = new ActionWord(trimmedWord, ActionWord.ACTION_WORD_TEXT_TOKEN);
+			ActionWord result = new ActionWord(trimmedWord);
 			result.addFragment(new ActionWordText(trimmedWord));
 			return result;
 		}
 	}
 
 	public String generateToken(List<ActionWordFragment> fragmentList) {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder1 = new StringBuilder();
+		StringBuilder builder2 = new StringBuilder("-");
 		for (int i = 0; i < fragmentList.size(); ++i) {
 			ActionWordFragment fragment = fragmentList.get(i);
 			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
-				builder.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
+				builder1.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
 			} else {
-				builder.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
+				builder1.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
+				ActionWordText text = (ActionWordText) fragment;
+				builder2.append(text.getText()).append("-");
 			}
 		}
-		return builder.toString();
+		return builder1.append(builder2).toString();
 	}
 
 	private void createFragmentsWithParamValue(String word) {
