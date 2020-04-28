@@ -1,28 +1,31 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,7 @@ public class ActionWordParser {
 			//add the missing double quote if any
 			String updateWord = addMissingDoubleQuoteIfAny(trimmedWord);
 			//creating the fragment list
-			createFragments(updateWord);
+			createFragmentsWithParamValue(updateWord);
 			//generate token
 			String token = generateToken(fragmentList);
 			//initiate the action word
@@ -50,7 +53,7 @@ public class ActionWordParser {
 		} else {
 			//otherwise  --> action word has no parameter and its token = T
 			ActionWord result = new ActionWord(trimmedWord, ActionWord.ACTION_WORD_TEXT_TOKEN);
-			result.addFragment(new ActionWordFragment());
+			result.addFragment(new ActionWordText(trimmedWord));
 			return result;
 		}
 	}
@@ -58,14 +61,19 @@ public class ActionWordParser {
 	public String generateToken(List<ActionWordFragment> fragmentList) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < fragmentList.size(); ++i) {
-			builder.append("T");
+			ActionWordFragment fragment = fragmentList.get(i);
+			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
+				builder.append("P");
+			} else {
+				builder.append("T");
+			}
 		}
 		return builder.toString();
 	}
 
-	private void createFragments(String word) {
+	private void createFragmentsWithParamValue(String word) {
 		boolean inDoubleQuotes = false;
-		int index = 0;
+		int paramIndex = 0;
 		String actionWordText = "";
 		String actionWordParamValue = "";
 
@@ -75,18 +83,17 @@ public class ActionWordParser {
 				//end of the current fragment
 				if (inDoubleQuotes) {
 					//this is the value of a param fragment
-					fragmentList.add(new ActionWordFragment());
+					++paramIndex;
+					ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue);
+					fragmentList.add(param);
 					actionWordParamValue = "";
-				} else if (!actionWordText.isEmpty()){
+				} else if (!actionWordText.isEmpty()) {
 					//this is a text fragment if the currentChar is not empty
-					//TODO: remove extra-spaces in text
-					fragmentList.add(new ActionWordFragment());
+					fragmentList.add(new ActionWordText(actionWordText));
 					actionWordText = "";
 				}
 				//change the status in/out of the double quotes
 				inDoubleQuotes = !inDoubleQuotes;
-				//move to the new fragment index
-				++index;
 			} else {
 				if (inDoubleQuotes) {
 					//continue to charge the current actionWordParamValue
@@ -97,6 +104,14 @@ public class ActionWordParser {
 				}
 			}
 		}
+	}
+
+	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
+		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
+		String paramName = "p" + paramIndex;
+		ActionWordParameter param = new ActionWordParameter(paramName, "");
+		param.addValue(paramValue);
+		return param;
 	}
 
 	/**
