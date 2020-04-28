@@ -24,6 +24,7 @@ import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -130,8 +131,13 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	@JoinColumn(name = "ARL_ID")
 	private AutomationRequestLibrary automationRequestLibrary;
 
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "AWL_ID")
+	private ActionWordLibrary actionWordLibrary;
+
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
+
 
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "tmProject")
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<>();
@@ -273,6 +279,13 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		this.customReportLibrary = customReportLibrary;
 	}
 
+	public ActionWordLibrary getActionWordLibrary() {
+		return actionWordLibrary;
+	}
+
+	public void setActionWordLibrary(ActionWordLibrary actionWordLibrary) {
+		this.actionWordLibrary = actionWordLibrary;
+	}
 
 	public BugTrackerBinding getBugtrackerBinding() {
 		return bugtrackerBinding;

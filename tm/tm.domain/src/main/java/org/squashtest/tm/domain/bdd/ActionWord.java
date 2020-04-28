@@ -21,12 +21,16 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.project.Project;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
@@ -42,6 +46,10 @@ public class ActionWord {
 
 	@Column(name = "WORD")
 	private String word;
+
+	@JoinColumn(name = "PROJECT_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Project project;
 
 	public ActionWord() {
 	}
@@ -71,6 +79,10 @@ public class ActionWord {
 
 	public void setWord(String word) {
 		this.word = word;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	@Override
