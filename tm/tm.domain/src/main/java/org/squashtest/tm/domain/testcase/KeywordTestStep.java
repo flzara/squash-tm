@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
@@ -30,6 +31,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -50,6 +52,10 @@ public class KeywordTestStep extends TestStep {
 	@ManyToOne(cascade = { CascadeType.PERSIST})
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
+
+	@NotNull
+	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL)
+	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
 
 	public KeywordTestStep() {
 	}

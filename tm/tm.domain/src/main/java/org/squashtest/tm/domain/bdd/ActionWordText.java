@@ -16,8 +16,6 @@ import javax.validation.constraints.Size;
 @Table(name = "ACTION_WORD_TEXT")
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 public class ActionWordText extends ActionWordFragment{
-	private static final int ACTION_WORD_TEXT_MAX_LENGTH = 255;
-
 	@NotBlank
 	@Column(name = "TEXT")
 	@Size(max = 255)
@@ -27,21 +25,18 @@ public class ActionWordText extends ActionWordFragment{
 	}
 
 	public ActionWordText(String text) {
-		if(StringUtils.isBlank(text) || text.contains("\"")) {
+		if(StringUtils.isBlank(text)) {
 			throw new IllegalArgumentException("Action word text cannot be empty.");
 		}
 		if(text.contains("\"")) {
 			throw new IllegalArgumentException("Action word text cannot contain double quote.");
 		}
-		if (text.length() > ACTION_WORD_TEXT_MAX_LENGTH) {
+
+		//Action word text can have space at the beginning or at the end; so do not trim it!
+		if (text.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 			throw new IllegalArgumentException("Action word text length cannot exceed 255 characters.");
 		}
 		this.text = formatText(text);
-	}
-
-	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
-	private String formatText(String text) {
-		return text.replaceAll("[\\s]+"," ");
 	}
 
 	public String getText() {

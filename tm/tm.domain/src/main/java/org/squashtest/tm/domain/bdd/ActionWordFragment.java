@@ -41,6 +41,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "ACTION_WORD_FRAGMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ActionWordFragment {
+	protected static final int ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH = 255;
+
 	@Id
 	@Column(name = "ACTION_WORD_FRAGMENT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "action_word_fragment_action_word_fragment_id_seq")
@@ -48,11 +50,11 @@ public abstract class ActionWordFragment {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
-	ActionWordFragment() {
+	public ActionWordFragment() {
 	}
 
 	public Long getId() {
@@ -69,5 +71,10 @@ public abstract class ActionWordFragment {
 
 	public void setActionWord(ActionWord actionWord) {
 		this.actionWord = actionWord;
+	}
+
+	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
+	protected String formatText(String text) {
+		return text.replaceAll("[\\s]+"," ");
 	}
 }
