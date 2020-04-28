@@ -25,7 +25,7 @@ public class ActionWordText extends ActionWordFragment {
 	}
 
 	public ActionWordText(String text) {
-		if (StringUtils.isBlank(text)) {
+		if (StringUtils.isEmpty(text)) {
 			throw new IllegalArgumentException("Action word text cannot be empty.");
 		}
 		if (text.contains("\"")) {
