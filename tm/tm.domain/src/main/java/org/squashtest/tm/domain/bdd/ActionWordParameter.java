@@ -52,24 +52,24 @@ public class ActionWordParameter extends ActionWordFragment {
 		checkIfParamNameIsValid(trimmedName);
 		this.name = trimmedName;
 
-		if(StringUtils.isNotEmpty(defaultValue)){
-			if(defaultValue.contains("\"")) {
+		if (StringUtils.isNotEmpty(defaultValue)) {
+			if (defaultValue.contains("\"")) {
 				throw new IllegalArgumentException("Action word parameter default value cannot contain double quote.");
 			}
-			String trimmedDefaultValue =  defaultValue.trim();
+			String trimmedDefaultValue = defaultValue.trim();
 			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 				throw new IllegalArgumentException("Action word parameter default value length cannot exceed 255 characters.");
 			}
 			this.defaultValue = formatText(trimmedDefaultValue);
 		} else {
-			this.defaultValue =  "";
+			this.defaultValue = "";
 		}
 	}
 
 	private void checkIfParamNameIsValid(String trimmedName) {
 		Pattern pattern = Pattern.compile("[^\\w-_]");
 		Matcher matcher = pattern.matcher(trimmedName);
-		if (matcher.find()){
+		if (matcher.find()) {
 			throw new IllegalArgumentException("Action word parameter name must contain only alphanumeric, dash or underscore characters.");
 		}
 	}

@@ -48,8 +48,8 @@ public class ActionWordParameterValue {
 	}
 
 	public ActionWordParameterValue(String value) {
-		if(StringUtils.isNotEmpty(value)) {
-			if (value.contains("\"")){
+		if (StringUtils.isNotEmpty(value)) {
+			if (value.contains("\"")) {
 				throw new IllegalArgumentException("Action word parameter value cannot contain double quote.");
 			}
 			String trimmedValue = value.trim();
@@ -64,7 +64,7 @@ public class ActionWordParameterValue {
 
 	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
 	private String formatText(String text) {
-		return text.replaceAll("[\\s]+"," ");
+		return text.replaceAll("[\\s]+", " ");
 	}
 
 	public Long getId() {

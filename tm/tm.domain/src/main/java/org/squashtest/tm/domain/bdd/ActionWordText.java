@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "ACTION_WORD_TEXT")
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
-public class ActionWordText extends ActionWordFragment{
+public class ActionWordText extends ActionWordFragment {
 	@NotBlank
 	@Column(name = "TEXT")
 	@Size(max = 255)
@@ -25,10 +25,10 @@ public class ActionWordText extends ActionWordFragment{
 	}
 
 	public ActionWordText(String text) {
-		if(StringUtils.isBlank(text)) {
+		if (StringUtils.isBlank(text)) {
 			throw new IllegalArgumentException("Action word text cannot be empty.");
 		}
-		if(text.contains("\"")) {
+		if (text.contains("\"")) {
 			throw new IllegalArgumentException("Action word text cannot contain double quote.");
 		}
 
