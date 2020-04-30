@@ -31,6 +31,8 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -55,8 +57,7 @@ import static org.squashtest.tm.service.security.Authorizations.READ_CUR_LIBRARY
 
 @Service("org.squashtest.tm.service.customreport.CustomReportLibraryNodeService")
 @Transactional
-public class CustomReportLibraryNodeServiceImpl implements
-		CustomReportLibraryNodeService {
+public class CustomReportLibraryNodeServiceImpl implements CustomReportLibraryNodeService {
 
 	@Inject
 	protected PermissionEvaluationService permissionService;
@@ -140,7 +141,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@Override
 	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
+	public CustomReportLibraryNode createNewNode(Long parentId, CustomReportTreeEntity entity) {
 		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.getOne(parentId);
 
 		CustomReportLibraryNode newNode = new CustomReportLibraryNodeBuilder(parentNode, entity).build();
@@ -196,7 +197,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
+	public CustomReportLibraryNode findNodeFromEntity(CustomReportTreeEntity treeEntity) {
 		return customReportLibraryNodeDao.findNodeFromEntity(treeEntity);
 	}
 
@@ -228,7 +229,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	//--------------- PRIVATE METHODS --------------
 
 	private TreeEntity findEntityAndCheckType(Long nodeId, CustomReportTreeDefinition entityDef){
-		TreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
+		CustomReportTreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
 
 		if (node==null||node.getEntityType()!=entityDef) {
 			String message = "the node for given id %d doesn't exist or doesn't represent a %s entity";

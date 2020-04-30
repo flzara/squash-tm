@@ -28,7 +28,9 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -48,7 +50,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	EntityManager em;
 
 	@Override
-	public List<TreeLibraryNode> findChildren(Long parentId) {
+	public List<CustomReportTreeLibraryNode> findChildren(Long parentId) {
 		CustomReportLibraryNode node = em.find(CustomReportLibraryNode.class,parentId);
 		return node.getChildren();
 	}
@@ -123,9 +125,9 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	}
 
 	@Override
-	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
+	public CustomReportLibraryNode findNodeFromEntity(CustomReportTreeEntity treeEntity) {
 		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
+		CustomReportTreeEntityVisitor visitor = new CustomReportTreeEntityVisitor() {
 
 			@Override
 			public void visit(ReportDefinition reportDefinition) {
@@ -165,9 +167,9 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	}
 
 	@Override
-	public Long countNodeFromEntity(TreeEntity treeEntity) {
+	public Long countNodeFromEntity(CustomReportTreeEntity treeEntity) {
 		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
+		CustomReportTreeEntityVisitor visitor = new CustomReportTreeEntityVisitor() {
 
 			@Override
 			public void visit(ReportDefinition reportDefinition) {

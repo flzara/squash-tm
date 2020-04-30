@@ -50,6 +50,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -58,7 +59,7 @@ import java.util.List;
 
 @Entity
 @Table(name="CUSTOM_REPORT_LIBRARY_NODE")
-public class CustomReportLibraryNode  implements TreeLibraryNode {
+public class CustomReportLibraryNode implements CustomReportTreeLibraryNode {
 
 	private static final String CRLN_ID = "CRLN_ID";
 
@@ -102,15 +103,15 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 			joinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName= CRLN_ID, insertable=false, updatable=false)},
 			inverseJoinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName= CRLN_ID, insertable=false, updatable=false)})
 	@ManyToOne(fetch = FetchType.LAZY,targetEntity=CustomReportLibraryNode.class)
-	private TreeLibraryNode parent;
+	private CustomReportTreeLibraryNode parent;
 
 	@JoinTable(name="CRLN_RELATIONSHIP",
 			joinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName= CRLN_ID)},
 			inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName= CRLN_ID)})
 	@OneToMany(cascade={ CascadeType.ALL },fetch = FetchType.LAZY,
 			targetEntity=CustomReportLibraryNode.class)
-	@IndexColumn(name="CONTENT_ORDER")
-	private List<TreeLibraryNode> children = new ArrayList<>();
+	@OrderColumn(name="CONTENT_ORDER")
+	private List<CustomReportTreeLibraryNode> children = new ArrayList<>();
 
 	//for the @MetaValue we cannot use the Tree Entity Definition
 	//as value must be a constant so constant names are in an interface
@@ -128,7 +129,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	    })
 	@JoinColumn( name = "ENTITY_ID" )
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
-	private TreeEntity entity;
+	private CustomReportTreeEntity entity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
@@ -153,22 +154,22 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public TreeLibraryNode getParent() {
+	public CustomReportTreeLibraryNode getParent() {
 		return parent;
 	}
 
 	@Override
-	public void setParent(TreeLibraryNode parent) {
+	public void setParent(CustomReportTreeLibraryNode parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public List<TreeLibraryNode> getChildren() {
+	public List<CustomReportTreeLibraryNode> getChildren() {
 		return children;
 	}
 
 	@Override
-	public GenericTreeLibrary getLibrary() {
+	public CustomReportLibrary getLibrary() {
 		return library;
 	}
 
@@ -201,7 +202,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public TreeEntityDefinition getEntityType() {
+	public CustomReportTreeDefinition getEntityType() {
 		return entityType;
 	}
 
@@ -214,17 +215,17 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	 * See private attribute entity in this class.
 	 */
 	@Override
-	public TreeEntity getEntity() {
+	public CustomReportTreeEntity getEntity() {
 		return entity;
 	}
 
 	@Override
-	public void setEntity(TreeEntity treeEntity) {
+	public void setEntity(CustomReportTreeEntity treeEntity) {
 		this.entity = treeEntity;
 	}
 
 	@Override
-	public void addChild(TreeLibraryNode treeLibraryNode) {
+	public void addChild(CustomReportTreeLibraryNode treeLibraryNode) {
 		if (treeLibraryNode == null) {
 			throw new IllegalArgumentException("Cannot add a null child to a library node");
 		}
@@ -240,7 +241,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		String newChildName = treeLibraryNode.getName();
 
 		if(this.childNameAlreadyUsed(newChildName)){
-			TreeLibraryNode node = getContentNodeByName(newChildName);
+			CustomReportTreeLibraryNode node = getContentNodeByName(newChildName);
 			throw new DuplicateNameException(node.getEntityType().getTypeName(), newChildName);
 		}
 		this.getChildren().add(treeLibraryNode);
@@ -265,8 +266,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		return false;
 	}
 
-	private TreeLibraryNode getContentNodeByName (String name){
-		for (TreeLibraryNode child : children) {
+	private CustomReportTreeLibraryNode getContentNodeByName (String name){
+		for (CustomReportTreeLibraryNode child : children) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -275,7 +276,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public void removeChild(TreeLibraryNode treeLibraryNode) {
+	public void removeChild(CustomReportTreeLibraryNode treeLibraryNode) {
 		children.remove(treeLibraryNode);
 		//forcing hibernate to clean it's children list,
 		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
@@ -311,7 +312,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	private List<String> getSiblingsNames() {
-		List<TreeLibraryNode> siblings = getSiblings();
+		List<CustomReportTreeLibraryNode> siblings = getSiblings();
 		List<String> siblingNames = new ArrayList<>();
 		for (TreeLibraryNode sibling : siblings) {
 			siblingNames.add(sibling.getName());
@@ -319,8 +320,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		return siblingNames;
 	}
 
-	private List<TreeLibraryNode> getSiblings() {
-		TreeLibraryNode parentNode = getParent();
+	private List<CustomReportTreeLibraryNode> getSiblings() {
+		CustomReportTreeLibraryNode parentNode = getParent();
 		return parentNode.getChildren();
 	}
 }
