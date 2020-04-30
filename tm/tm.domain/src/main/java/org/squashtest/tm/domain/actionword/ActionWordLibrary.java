@@ -34,7 +34,7 @@ import javax.persistence.SequenceGenerator;
 public class ActionWordLibrary {
 
 	@Id
-	@Column(name="CRL_ID")
+	@Column(name="AWL_ID")
 	@GeneratedValue(strategy= GenerationType.AUTO, generator="action_word_library_awl_id_seq")
 	@SequenceGenerator(name="action_word_library_awl_id_seq", sequenceName="action_word_library_awl_id_seq", allocationSize = 1)
 	private Long id;
