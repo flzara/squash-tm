@@ -216,8 +216,8 @@
     </createTable>
 
     <createIndex tableName="ACTION_WORD_LIBRARY" indexName="idx_action_word_library">
-      <column name="AWL_ID" />
-    </createIndex>
+    <column name="AWL_ID" />
+  </createIndex>
 
     <createIndex tableName="ACTION_WORD_LIBRARY" indexName="idx_fk_awl_attachment_list">
       <column name="ATTACHMENT_LIST_ID" />
@@ -248,9 +248,13 @@
 
     <addColumn tableName="ACTION_WORD">
       <column name="PROJECT_ID" type="BIGINT">
-        <constraints references="PROJECT(PROJECT_ID)" foreignKeyName="fk_action_word_project" />
+        <constraints references="PROJECT(PROJECT_ID)" nullable="false" foreignKeyName="fk_action_word_project" />
       </column>
     </addColumn>
+
+    <createIndex tableName="ACTION_WORD" indexName="idx_fk_action_word_project">
+      <column name="PROJECT_ID" />
+    </createIndex>
 
     <comment>Add foreign key to the library in a project</comment>
 
@@ -259,6 +263,10 @@
         <constraints references="ACTION_WORD_LIBRARY(AWL_ID)" foreignKeyName="fk_project_awl" />
       </column>
     </addColumn>
+
+    <createIndex tableName="PROJECT" indexName="idx_fk_project_awl">
+      <column name="AWL_ID" />
+    </createIndex>
 
     <comment>Create one action word library for each existing project</comment>
 
@@ -348,6 +356,56 @@
     ]]>
     </sql>
 
+    <comment>Create action word library node table</comment>
+
+    <createTable tableName="ACTION_WORD_LIBRARY_NODE">
+      <column name="AWLN_ID" type="BIGINT" autoIncrement="true" remarks="The auto-generated id">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACTION_WORD_LIBRARY_NODE" />
+      </column>
+
+      <column name="NAME" type="VARCHAR(255)"/>
+
+      <column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+
+      <column name="ENTITY_ID" type="BIGINT"/>
+
+      <column name="AWL_ID" type="BIGINT" remarks="Foreign key to the ACTION_WORD_LIBRARY">
+        <constraints references="ACTION_WORD_LIBRARY(AWL_ID)" nullable="true" foreignKeyName="fk_awln_awl" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="ACTION_WORD_LIBRARY_NODE" indexName="idx_action_word_library_node">
+      <column name="AWLN_ID" />
+    </createIndex>
+
+    <createIndex tableName="ACTION_WORD_LIBRARY_NODE" indexName="idx_fk_awln_awl">
+      <column name="AWL_ID" />
+    </createIndex>
+
+
+    <comment>Create action word library node relationship table</comment>
+
+    <createTable tableName="AWLN_RELATIONSHIP">
+
+      <column name="ANCESTOR_ID" type="BIGINT" remarks="Foreign key to parent node">
+        <constraints nullable="true" foreignKeyName="fk_awln_relationship_ancestor" references="ACTION_WORD_LIBRARY_NODE(AWLN_ID)" />
+      </column>
+
+      <column name="DESCENDANT_ID" type="BIGINT" remarks="Foreign key to child node">
+        <constraints nullable="false" foreignKeyName="fk_awln_relationship_descendant" references="ACTION_WORD_LIBRARY_NODE(AWLN_ID)" />
+      </column>
+
+      <column name="CONTENT_ORDER" type="BIGINT" remarks="Order in its parent node">
+      </column>
+    </createTable>
+
+    <createIndex tableName="AWLN_RELATIONSHIP" indexName="idx_awln_relationship_descendant">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="AWLN_RELATIONSHIP" indexName="idx_awln_relationship_ancestor">
+      <column name="ANCESTOR_ID" />
+    </createIndex>
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-302-action-word-workspace-2" author="jlor" dbms="postgresql">
