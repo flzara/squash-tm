@@ -26,14 +26,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MetaValue;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeNodeVisitor;
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

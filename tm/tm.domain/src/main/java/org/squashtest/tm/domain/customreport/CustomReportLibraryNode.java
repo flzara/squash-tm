@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
@@ -184,11 +183,6 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 
 	public void setLibrary(CustomReportLibrary library) {
 		this.library = library;
-	}
-
-	@Override
-	public void accept(TreeNodeVisitor visitor) {
-		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
 	}
 
 	@Override

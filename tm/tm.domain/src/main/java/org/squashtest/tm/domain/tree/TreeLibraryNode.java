@@ -34,7 +34,7 @@ import java.util.List;
  * @author jthebault
  *
  */
-public interface TreeLibraryNode extends TreeVisitable, Identified {
+public interface TreeLibraryNode extends Identified {
 	String getName ();
 
 	/**
