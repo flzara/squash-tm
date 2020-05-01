@@ -23,6 +23,10 @@ package org.squashtest.tm.service.internal.testcase
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.CustomFieldValue
@@ -30,14 +34,24 @@ import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.KeywordTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.InconsistentInfoListItemException
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.GenericNodeManagementService
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.ActionTestStepDao
+import org.squashtest.tm.service.internal.repository.ActionWordDao
+import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao
+import org.squashtest.tm.service.internal.repository.KeywordTestStepDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
@@ -47,6 +61,7 @@ import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static org.squashtest.tm.domain.bdd.Keyword.AND
 import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
@@ -92,28 +107,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should find test case and add a keyword step with new action word at last position"() {
 		given:
-			long parentTestCaseId = 2
-			KeywordTestCase parentTestCase = new KeywordTestCase()
-
-		and:
-			def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
-			parentTestCase.addStep(firstStep)
-
-		and:
-			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-			actionWordDao.findByWord(_) >> null
-
-		when:
-			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
-
-		then:
-			1 * testStepDao.persist(_)
-			parentTestCase.getSteps().size() == 2
-			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
-	}
-
-	def "should find test case and add a keyword step with new action word at index position"() {
-		given:
 		long parentTestCaseId = 2
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 
@@ -123,15 +116,38 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByWord(_) >> null
+		actionWordDao.findByToken(_) >> null
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, firstStep,1)
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
 
 		then:
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
-		parentTestCase.getSteps()[1].actionWord.getWord() == "first"
+		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+	}
+
+	def "should find test case and add a keyword step with new action word at index position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def newStep = new KeywordTestStep(AND, new ActionWord("next"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByToken(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, newStep, 1)
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		parentTestCase.getSteps()[1].actionWord.getWord() == "next"
 	}
 
 	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
@@ -145,7 +161,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByWord(_) >> null
+		actionWordDao.findByToken(_) >> null
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
@@ -156,11 +172,47 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
 	}
 
+	def "should find test case and add a keyword step with new action word containing param at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByToken(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with \"param\"	")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getWord() == "this is with \"param\""
+		checkedActionWord.getToken() == "TP-this is with -"
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 2
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText.class)
+		((ActionWordText) f1).getText() == "this is with "
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter.class)
+		((ActionWordParameter) f2).getName() == "p1"
+		((ActionWordParameter) f2).getDefaultValue() == ""
+		def values = ((ActionWordParameter) f2).getValues()
+		values.size() == 1
+		values.get(0).getValue() == "param"
+	}
+
 	def "should find test case and add keyword step with existing action word at last position"() {
 		given:
 		long parentTestCaseId = 2
 		KeywordTestCase parentTestCase = new KeywordTestCase()
-		def existingActionWord = Mock(ActionWord){
+		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"
 		}
@@ -171,7 +223,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByWord(_) >> existingActionWord
+		actionWordDao.findByToken(_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
@@ -188,7 +240,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		given:
 		long parentTestCaseId = 2
 		KeywordTestCase parentTestCase = new KeywordTestCase()
-		def existingActionWord = Mock(ActionWord){
+		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"
 		}
@@ -199,7 +251,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByWord(_) >> existingActionWord
+		actionWordDao.findByToken(_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
@@ -211,6 +263,63 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getId() == -77L
 		checkedActionWord.getWord() == "last"
 	}
+
+	def "should find test case and add keyword step with existing action word containing parameter"() {
+		given:
+		long parentTestCaseId = 2
+		def inputFragments = new ArrayList<ActionWordFragment>()
+		def actionWordText = new ActionWordText("today is ")
+		def actionWordParams = new ArrayList<ActionWordParameter>()
+		def actionWordParam = new ActionWordParameter("p1", "")
+		def actionWordParamValue = new ActionWordParameterValue("Sunday")
+		actionWordParam.addValue(actionWordParamValue)
+		actionWordParams.add(actionWordParam)
+
+		inputFragments.add(actionWordText)
+		inputFragments.add(actionWordParam)
+
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord) {
+			getId() >> -77L
+			getWord() >> "today is \"date\""
+			getToken() >> "TP-today is -"
+			getFragments() >> inputFragments
+			getFragmentsByClass(_) >> actionWordParams
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByToken(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Monday\"  ")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "today is \"date\""
+		checkedActionWord.getToken() == "TP-today is -"
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 2
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText.class)
+		((ActionWordText) f1).getText() == "today is "
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter.class)
+		((ActionWordParameter) f2).getName() == "p1"
+		((ActionWordParameter) f2).getDefaultValue() == ""
+		def values = ((ActionWordParameter) f2).getValues()
+		values.size() == 2
+		values.get(0).getValue() == "Sunday"
+		values.get(1).getValue() == "Monday"
+	}
+
 
 	def "should find test case and add a step at last position"() {
 		given:
@@ -233,7 +342,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should find test case and add a step at first position"(){
+	def "should find test case and add a step at first position"() {
 		given:
 		def testCase = new MockTC(3L, "tc1")
 		testCaseDao.findById(10) >> testCase
@@ -254,10 +363,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-
-
 	@Unroll("should add an action step with initial custom field values at #msgposition")
-	def "should add an action step with initial custom field values at given position"(){
+	def "should add an action step with initial custom field values at given position"() {
 
 		given: "a test case with steps"
 
@@ -267,17 +374,17 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and: "the custom field values for the new step"
 		def cufValues = [
-			(100L) : new RawValue("value 100"),
-			(200L) : new RawValue("value 200")
+			(100L): new RawValue("value 100"),
+			(200L): new RawValue("value 200")
 		]
 
 		and: "other services"
 		def cufValue1 = mockCuf(100L, "empty 100", newStep)
 		def cufValue2 = mockCuf(200L, "empty 200", newStep)
-		cufValuesService.findAllCustomFieldValues(newStep) >> [ cufValue1, cufValue2 ]
+		cufValuesService.findAllCustomFieldValues(newStep) >> [cufValue1, cufValue2]
 
 
-		when :
+		when:
 		action(service, 10L, newStep, cufValues)
 
 		then:
@@ -287,12 +394,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		cufValue2.value == "value 200"
 
 		where:
-		initialStep << [new MockActionStep(1L),new MockActionStep(1L)]
+		initialStep << [new MockActionStep(1L), new MockActionStep(1L)]
 		newStep << [new MockActionStep(4L), new MockActionStep(4L)]
 		msgposition << ["last position", "first position"]
 		action << [
-			{tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs)},	// defaults to last position
-			{tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs, 0)}, 	// first position
+			{ tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs) },    // defaults to last position
+			{ tcservice, id, step, cufs -> tcservice.addActionTestStep(id, step, cufs, 0) },    // first position
 		]
 		resultsteps << [
 			[initialStep, newStep],
@@ -341,15 +448,15 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should copy and insert a Test Step a a specific position"(){
+	def "should copy and insert a Test Step a a specific position"() {
 		given:
 		TestCase testCase = new TestCase()
-		ActionTestStep step1 = new ActionTestStep("a","a")
+		ActionTestStep step1 = new ActionTestStep("a", "a")
 		ActionTestStep step2 = new ActionTestStep("b", "b")
 
-		and :
+		and:
 		Project p = Mock()
-		testCase.notifyAssociatedWithProject (mockFactory.mockProject())
+		testCase.notifyAssociatedWithProject(mockFactory.mockProject())
 
 		and:
 		testCase.addStep step1
@@ -369,11 +476,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should decompose an automated test path into a project id and a test path"(){
+	def "should decompose an automated test path into a project id and a test path"() {
 
 		given:
-		def autoprojBad = Mock(TestAutomationProject){getLabel() >> "not me"; getId() >> -50L}
-		def autoprojGood = Mock(TestAutomationProject){getLabel() >> "me ! me !"; getId() >> 50L}
+		def autoprojBad = Mock(TestAutomationProject) { getLabel() >> "not me"; getId() >> -50L }
+		def autoprojGood = Mock(TestAutomationProject) { getLabel() >> "me ! me !"; getId() >> 50L }
 
 		def tc = Mock(TestCase) {
 			getProject() >> Mock(Project) {
@@ -394,50 +501,51 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should remove test case link to automated script"(){
+	def "should remove test case link to automated script"() {
 		given: "an automated test case"
 		TestCase testCase = Mock()
-		testCaseDao.findById(11L)>> testCase
+		testCaseDao.findById(11L) >> testCase
 
 		when:
 		service.removeAutomation(11L)
 
-		then : 1 * testCase.removeAutomatedScript()
+		then:
+		1 * testCase.removeAutomatedScript()
 	}
 
 
-	def "should rename a test case"(){
+	def "should rename a test case"() {
 
-		given :
-		def tc = Mock(TestCase){
+		given:
+		def tc = Mock(TestCase) {
 			getId() >> 10L
 		}
 
-		when :
+		when:
 		service.rename(10L, "Bob")
 
-		then :
+		then:
 		// interactions
 		1 * testCaseManagementService.renameNode(10L, "Bob")
 
 		1 * testCaseDao.findById(10L) >> tc
-		1* eventPublisher.publishEvent({
+		1 * eventPublisher.publishEvent({
 			it instanceof TestCaseNameChangeEvent && it.testCaseId == 10L && it.newName == "Bob"
 		})
 	}
 
 
-	def "should change the reference of a test case"(){
+	def "should change the reference of a test case"() {
 
-		given :
-		def tc = Mock(TestCase){
+		given:
+		def tc = Mock(TestCase) {
 			getId() >> 10L
 		}
 
-		when :
+		when:
 		service.changeReference(10L, "reref")
 
-		then :
+		then:
 		1 * tc.setReference("reref")
 
 		1 * testCaseDao.findById(10L) >> tc
@@ -446,17 +554,17 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		})
 	}
 
-	def "should change the importance of a test case"(){
+	def "should change the importance of a test case"() {
 
-		given :
-		def tc = Mock(TestCase){
+		given:
+		def tc = Mock(TestCase) {
 			getId() >> 10L
 		}
 
-		when :
+		when:
 		service.changeImportance(10L, TestCaseImportance.HIGH)
 
-		then :
+		then:
 		1 * tc.setImportance(TestCaseImportance.HIGH)
 
 		1 * testCaseDao.findById(10L) >> tc
@@ -464,12 +572,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should change the nature of a test case"(){
+	def "should change the nature of a test case"() {
 
 		given:
-		def tc = Mock(TestCase){
+		def tc = Mock(TestCase) {
 			getProject() >> {
-				Mock(Project){
+				Mock(Project) {
 					getId() >> 2L
 				}
 			}
@@ -479,7 +587,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		testCaseDao.findById(_) >> tc
 		infoListItemService.findByCode(_) >> nature
-		infoListItemService.isNatureConsistent(_,_) >> true
+		infoListItemService.isNatureConsistent(_, _) >> true
 
 		when:
 		service.changeNature(10L, "NAT_BOB")
@@ -489,12 +597,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should not change the nature of a test case"(){
+	def "should not change the nature of a test case"() {
 
 		given:
-		def tc = Mock(TestCase){
+		def tc = Mock(TestCase) {
 			getProject() >> {
-				Mock(Project){
+				Mock(Project) {
 					getId() >> 2L
 				}
 			}
@@ -504,7 +612,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		testCaseDao.findById(_) >> tc
 		infoListItemService.findByCode(_) >> nature
-		infoListItemService.isNatureConsistent(_,_) >> false
+		infoListItemService.isNatureConsistent(_, _) >> false
 
 		when:
 		service.changeNature(10L, "NAT_BOB")
@@ -513,12 +621,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		thrown InconsistentInfoListItemException
 	}
 
-	def "should change the type of a test case"(){
+	def "should change the type of a test case"() {
 
 		given:
-		def tc = Mock(TestCase){
+		def tc = Mock(TestCase) {
 			getProject() >> {
-				Mock(Project){
+				Mock(Project) {
 					getId() >> 2L
 				}
 			}
@@ -528,7 +636,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		testCaseDao.findById(_) >> tc
 		infoListItemService.findByCode(_) >> type
-		infoListItemService.isTypeConsistent(_,_) >> true
+		infoListItemService.isTypeConsistent(_, _) >> true
 
 		when:
 		service.changeType(10L, "TYP_MIKE")
@@ -538,12 +646,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should not change the type of a test case"(){
+	def "should not change the type of a test case"() {
 
 		given:
-		def tc = Mock(TestCase){
+		def tc = Mock(TestCase) {
 			getProject() >> {
-				Mock(Project){
+				Mock(Project) {
 					getId() >> 2L
 				}
 			}
@@ -553,7 +661,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		testCaseDao.findById(_) >> tc
 		infoListItemService.findByCode(_) >> type
-		infoListItemService.isTypeConsistent(_,_) >> false
+		infoListItemService.isTypeConsistent(_, _) >> false
 
 		when:
 		service.changeType(10L, "TYP_MIKE")
@@ -563,7 +671,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should retrieve the steps of a test case"(){
+	def "should retrieve the steps of a test case"() {
 		given:
 		def steps = [Mock(ActionTestStep), Mock(ActionTestStep)]
 
@@ -582,6 +690,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"
+			getToken() >> "T-last-"
 		}
 
 		when:
@@ -591,11 +700,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 		2 * keywordTestStepDao.findById(10L) >> step
 		1 * step.setKeyword(GIVEN)
-		1 * actionWordDao.findByWord("last") >> existingActionWord
-		1 * step.setActionWord(existingActionWord)
+		//TODO-QUAN
+		1 * actionWordDao.findByToken("T-last-") >> existingActionWord
+		0 * step.setActionWord(existingActionWord)
 	}
 
-	def "should update the action and the expected result of a test step"(){
+	def "should update the action and the expected result of a test step"() {
 		given:
 		def step = Mock(ActionTestStep)
 
@@ -611,7 +721,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should move a step up in the step list"(){
+	def "should move a step up in the step list"() {
 		given:
 		def tc = Mock(TestCase)
 		def step1 = Mock(TestStep)
@@ -629,10 +739,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should remove a step from a test case, by index"(){
+	def "should remove a step from a test case, by index"() {
 		given:
 		def removedStep = Mock(TestStep)
-		def tc = Mock(TestCase){
+		def tc = Mock(TestCase) {
 			getSteps() >> [Mock(TestStep), Mock(TestStep), removedStep, Mock(TestStep)]
 		}
 		and:
@@ -646,10 +756,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
-	def "should remove a keyword step from a test case, by index"(){
+	def "should remove a keyword step from a test case, by index"() {
 		given:
 		def removedStep = Mock(KeywordTestStep)
-		def tc = Mock(KeywordTestCase){
+		def tc = Mock(KeywordTestCase) {
 			getSteps() >> [Mock(KeywordTestStep), Mock(KeywordTestStep), removedStep, Mock(KeywordTestStep)]
 		}
 		and:
@@ -661,7 +771,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 	// more cheap code coverage upgrade !
-	def "should find a Hibernate Initialized test case"(){
+	def "should find a Hibernate Initialized test case"() {
 		when:
 		service.findTestCaseWithSteps(10L)
 
@@ -669,7 +779,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * testCaseDao.findAndInit(10L)
 	}
 
-	def "should remove a bunch of steps"(){
+	def "should remove a bunch of steps"() {
 
 		given:
 		def tc = Mock(TestCase)
@@ -688,7 +798,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * deletionHandler.deleteStep(tc, step2)
 	}
 
-	def "should remove a bunch of keyword steps"(){
+	def "should remove a bunch of keyword steps"() {
 
 		given:
 		def tc = Mock(TestCase)
@@ -708,13 +818,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	def "should return a page list of steps"(){
+	def "should return a page list of steps"() {
 		given:
 		def paging = Mock(Paging)
 		def steps = [Mock(TestStep), Mock(TestStep), Mock(TestStep), Mock(TestStep)]
 
 		and:
-		testCaseDao.findAllStepsByIdFiltered(10L, paging) >> steps.subList(0,2)
+		testCaseDao.findAllStepsByIdFiltered(10L, paging) >> steps.subList(0, 2)
 		testCaseDao.findTestSteps(10L) >> steps
 
 		when:
@@ -723,55 +833,63 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 		res.paging == paging
 		res.totalNumberOfItems == 4
-		res.items == steps.subList(0,2)
+		res.items == steps.subList(0, 2)
 
 	}
 
 
 	// ****************** test utilities *****************
 
-	class MockTC extends TestCase{
+	class MockTC extends TestCase {
 		Long overId;
-		MockTC(Long id){
+
+		MockTC(Long id) {
 			overId = id;
-			name="don't care"
+			name = "don't care"
 		}
-		MockTC(Long id, String name){
+
+		MockTC(Long id, String name) {
 			this(id);
-			this.name=name;
+			this.name = name;
 		}
-		public Long getId(){
+
+		public Long getId() {
 			return overId;
 		}
-		public void setId(Long newId){
-			overId=newId;
+
+		public void setId(Long newId) {
+			overId = newId;
 		}
-		public Project getProject(){
+
+		public Project getProject() {
 			Project project = new Project();
 			return project;
 		}
 	}
 
-	class MockActionStep extends ActionTestStep{
+	class MockActionStep extends ActionTestStep {
 		Long overId;
-		MockActionStep(Long id){
+
+		MockActionStep(Long id) {
 			overId = id;
 		}
-		public Long getId(){
+
+		public Long getId() {
 			return overId;
 		}
-		public void setId(Long newId){
-			overId=newId;
+
+		public void setId(Long newId) {
+			overId = newId;
 		}
 	}
 
-	def mockCuf(cufId, initialValue, owner){
+	def mockCuf(cufId, initialValue, owner) {
 		return new CustomFieldValue(owner.getId(), owner.getBoundEntityType(),
-			new CustomFieldBinding(customField :
-				Mock(CustomField){
+			new CustomFieldBinding(customField:
+				Mock(CustomField) {
 					getId() >> cufId
 				},
-				boundEntity : owner.getBoundEntityType()
+				boundEntity: owner.getBoundEntityType()
 			)
 			,
 			initialValue)

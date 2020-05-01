@@ -41,8 +41,9 @@ import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.Keyword;
-import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -54,9 +55,9 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseAutomatable;
@@ -91,6 +92,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
@@ -140,7 +142,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
-	private static final String TEST_CASE = "TestCase";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -284,38 +285,70 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String word) {
-		String trimmedWord = word.trim();
-		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
-		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
-
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		//TODO-QUAN
-		ActionWord inputActionWord = new ActionWordParser().generateActionWordFromTextWithParamValue(trimmedWord);
-		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
-		if (isNull(actionWord)){
-			actionWord = new ActionWord(trimmedWord);
+		ActionWordParser parser = new ActionWordParser();
+		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(word.trim());
+		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, STEP_LAST_POS);
+	}
+
+	private void addKeywordTestStepForActionWordParameterValue(KeywordTestStep keywordTestStep, ActionWord inputActionWord) {
+		List<ActionWordParameter> inputActionWordParams = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
+		for (ActionWordParameter parameter : inputActionWordParams) {
+			parameter.getValues().get(0).setKeywordTestStep(keywordTestStep);
 		}
-		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, actionWord);
-		parentTestCase.addStep(keywordTestStep);
-		testStepDao.persist(keywordTestStep);
-		return keywordTestStep;
 	}
 
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
-		String trimmedWord = newTestStep.getActionWord().getWord().trim();
+		Keyword inputKeyword = newTestStep.getKeyword();
+		ActionWordParser parser = new ActionWordParser();
+		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(newTestStep.getActionWord().getWord().trim());
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
+		return addKeywordTestStep(parentTestCaseId, inputKeyword, inputActionWord, index);
+	}
+
+	private KeywordTestStep addKeywordTestStep(long parentTestCaseId, Keyword inputKeyword, ActionWord inputActionWord, int index) {
+		KeywordTestStep newTestStep = new KeywordTestStep();
+		//set keyword to step
+		newTestStep.setKeyword(inputKeyword);
+		//set test case to step
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
-
-		addActionWordToKeywordTestStep(newTestStep, trimmedWord);
-
 		newTestStep.setTestCase(parentTestCase);
+
+		//set this test step to input action word parameter values
+		addKeywordTestStepForActionWordParameterValue(newTestStep, inputActionWord);
+
+		//check action word existence
+		String token = inputActionWord.getToken();
+		ActionWord actionWord = actionWordDao.findByToken(token);
+
+		if (isNull(actionWord)) {
+			LOGGER.debug("adding test step with new action word");
+			return addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, index);
+		} else {
+			LOGGER.debug("Action word exists in database.");
+			insertNewValuesToActionWordParamValueListInDataBase(inputActionWord, actionWord);
+			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, index);
+		}
+	}
+
+	private void insertNewValuesToActionWordParamValueListInDataBase(ActionWord inputActionWord, ActionWord actionWord) {
+		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
+		List<ActionWordParameter> actionWordParametersInDB = actionWord.getFragmentsByClass(ActionWordParameter.class);
+
+		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
+			ActionWordParameterValue newValue = inputActionWordParameters.get(i).getValues().get(0);
+			actionWordParametersInDB.get(i).addValue(newValue);
+		}
+	}
+
+	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, int index) {
+		newTestStep.setActionWord(inputActionWord);
+
 		testStepDao.persist(newTestStep);
-
 		addStepToTestCase(newTestStep, parentTestCase, index);
-
 		return newTestStep;
 	}
 
@@ -323,17 +356,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep) {
-
 		return addKeywordTestStep(parentTestCaseId, newTestStep, STEP_LAST_POS);
-
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, KeywordTestStep updatedKeywordTestStep) {
-
 		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getKeyword());
-
 		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getActionWord().getWord());
 	}
 
@@ -341,7 +370,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, Keyword updatedKeyword) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
-		if (updatedKeyword != null && ! updatedKeyword.equals(testStep.getKeyword())) {
+		if (updatedKeyword != null && !updatedKeyword.equals(testStep.getKeyword())) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("changing step #{} keyword to '{}'", testStepId, updatedKeyword);
 			}
@@ -353,26 +382,40 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, String updatedWord) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		String token = testStep.getActionWord().getToken();
 		if (updatedWord != null) {
-			updatedWord = updatedWord.trim();
-			if (! updatedWord.equals(testStep.getActionWord().getWord())) {
+			String trimmedWord = updatedWord.trim();
+			ActionWord inputActionWord = new ActionWordParser().generateActionWordFromTextWithParamValue(trimmedWord);
+			String inputToken = inputActionWord.getToken();
+			if (!inputToken.equals(token)) {
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("changing step #{} action word to '{}'", testStepId, updatedWord);
+					LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.getWord());
 				}
-				addActionWordToKeywordTestStep(testStep, updatedWord);
+				//TODO-QUAN: the whole method needs to be recoded
+				ActionWord actionWord = actionWordDao.findByToken(inputToken);
+				addActionWordToKeywordTestStep(testStep, actionWord);
 			}
 		}
 	}
 
-	private void addActionWordToKeywordTestStep(KeywordTestStep keywordTestStep, String word) {
-		ActionWord actionWord = actionWordDao.findByWord(word);
-
+	//TODO-QUAN
+	private void addActionWordToKeywordTestStep(KeywordTestStep keywordTestStep, ActionWord actionWord) {
+		ActionWord inputActionWord = keywordTestStep.getActionWord();
+		List<ActionWordParameter> inputActionWordParams = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
 		if (isNull(actionWord)) {
-			keywordTestStep.setActionWord(new ActionWord(word));
-		} else {
+			LOGGER.debug("adding new action word");
+
+			LOGGER.debug("Action word exists in database. Adding new param values to their param value lists");
+			List<ActionWordParameter> actionWordParams = actionWord.getFragmentsByClass(ActionWordParameter.class);
+			//insertNewValuesToActionWordParamValueListInDataBase(inputActionWordParams, actionWordParams);
 			keywordTestStep.setActionWord(actionWord);
+		} else {
+
 		}
+		//addKeywordTestStepForActionWordParameterValue(keywordTestStep, inputActionWordParams);
 	}
+
+	//**********ACTION STEP************
 
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
@@ -432,7 +475,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, Math.min(newAction.length(),25)));
+			LOGGER.debug("changing step #{} action to '{}'", testStepId, newAction.substring(0, Math.min(newAction.length(), 25)));
 		}
 
 		testStep.setAction(newAction);
@@ -444,8 +487,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
-		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, Math.min(newExpectedResult.length(),25)));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("changing step #{} expected result to '{}'", testStepId, newExpectedResult.substring(0, Math.min(newExpectedResult.length(), 25)));
 		}
 
 		testStep.setExpectedResult(newExpectedResult);
@@ -513,15 +556,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	/**
 	 * Inserts the given {@link TestStep} inserted at the index value in the {@link TestCase} identified by the given id.
-	 * @param testStep new step
+	 *
+	 * @param testStep       new step
 	 * @param parentTestCase The id of the parent TestCase
-	 * @param index Position of the testStep in the testCase
+	 * @param index          Position of the testStep in the testCase
 	 */
 	private void addStepToTestCase(TestStep testStep, TestCase parentTestCase, int index) {
-		if (index == STEP_LAST_POS){
+		if (index == STEP_LAST_POS) {
 			parentTestCase.addStep(testStep);
-		}
-		else {
+		} else {
 			parentTestCase.addStep(index, testStep);
 		}
 	}
@@ -600,7 +643,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds) {
-		if (LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("copying {} steps into test case #{} at last position", copiedTestStepIds.size(), testCaseId);
 			LOGGER.trace("step ids are : {}", copiedTestStepIds);
 		}
@@ -761,11 +804,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return taService.listTestsInProjects(taProjects);
 	}
 
-	private Collection<TestAutomationProject> extractAutomationProject(TestCase testCase){
+	private Collection<TestAutomationProject> extractAutomationProject(TestCase testCase) {
 
 		Collection<TestAutomationProject> taProjects = testCase.getProject().getTestAutomationProjects();
 
-		if (LOGGER.isTraceEnabled()){
+		if (LOGGER.isTraceEnabled()) {
 			List<Long> taProjectIds = IdCollector.collect(taProjects);
 			LOGGER.trace("involved test automation projects are : {}", taProjectIds);
 		}
@@ -814,7 +857,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 			// SQUASH-209 - boolean must be updated when manual association with automation workflow
 			AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
-			if(automationRequest != null && automationRequest.getProject().isAllowAutomationWorkflow()
+			if (automationRequest != null && automationRequest.getProject().isAllowAutomationWorkflow()
 				&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 				requestDao.updateIsManual(testCaseId, true);
 			}
@@ -1062,7 +1105,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
 
-		if(automationRequest.getProject().isAllowAutomationWorkflow()
+		if (automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 
@@ -1087,7 +1130,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTestAutomatically(Long testCaseId, Long taProjectId, String testName) {
-			return bindAutomatedTest(testCaseId, taProjectId, testName);
+		return bindAutomatedTest(testCaseId, taProjectId, testName);
 	}
 
 	@Override
@@ -1097,7 +1140,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		AutomationRequest automationRequest = automationRequestFinderService.findRequestByTestCaseId(testCaseId);
 		Collection<TestAutomationProject> taProjects = null;
 
-		if(automationRequest.getProject().isAllowAutomationWorkflow()
+		if (automationRequest.getProject().isAllowAutomationWorkflow()
 			&& TestCaseAutomatable.Y.equals(automationRequest.getTestCase().getAutomatable())) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(automationRequest.getId()), WRITE_AS_AUTOMATION, AutomationRequest.class.getName());
 			TestCase testCase = testCaseDao.findById(testCaseId);
@@ -1214,7 +1257,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		List<Long> milestoneIds = IdCollector.collect(milestones);
 
-		if (LOGGER.isTraceEnabled()){
+		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("found {} milestones, ids are : {}", milestoneIds.size(), milestoneIds);
 		}
 
@@ -1270,7 +1313,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		List<Long> folderIds = selectedNodes.get("folders");
 		List<Long> libraryIds = selectedNodes.get("libraries");
 
-		if (! libraryIds.isEmpty()) {
+		if (!libraryIds.isEmpty()) {
 			List<TestCaseLibraryNode> rootLibraryNodes = new ArrayList<>();
 			for (Long libraryId : libraryIds) {
 				rootLibraryNodes.addAll(testCaseLibraryDao.findAllRootContentById(libraryId));
@@ -1283,7 +1326,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				}
 			}
 		}
-		if (! folderIds.isEmpty()) {
+		if (!folderIds.isEmpty()) {
 			testCaseIds.addAll(testCaseFolderDao.findAllTestCaseIdsFromFolderIds(folderIds));
 		}
 
@@ -1295,7 +1338,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCaseIds.removeAll(testCaseIdsWithLockedMilestone);
 
 		List<Long> eligibleTestCaseIds = testCaseDao.findAllEligibleTestCaseIds(testCaseIds);
-		if (! eligibleTestCaseIds.isEmpty()) {
+		if (!eligibleTestCaseIds.isEmpty()) {
 			// Transmit all eligible test cases
 			automationRequestModificationService.changeStatus(eligibleTestCaseIds, AutomationRequestStatus.TRANSMITTED);
 		}
@@ -1310,9 +1353,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		private stuffs etc
 	**********************************************************/
 
-	private void traceResult(Collection<? extends Identified> collection, String qualifier){
+	private void traceResult(Collection<? extends Identified> collection, String qualifier) {
 
-		if (LOGGER.isTraceEnabled()){
+		if (LOGGER.isTraceEnabled()) {
 			List<Long> ids = IdCollector.collect(collection);
 			LOGGER.trace("found {} " + qualifier + ", ids are : {}", collection.size(), ids);
 		}
@@ -1345,8 +1388,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (LOGGER.isTraceEnabled()) {
 			List<String> taProjectNames = taProjects.stream()
-											  .map(TestAutomationProject::getJobName)
-											  .collect(Collectors.toList());
+				.map(TestAutomationProject::getJobName)
+				.collect(Collectors.toList());
 			LOGGER.trace("available automation projects for test case #{} : {}", testCaseId, taProjectNames);
 		}
 		/*
@@ -1356,7 +1399,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Optional<TestAutomationProject> tap = taProjects.stream().filter(taProj -> taProj.getLabel().equals(projectLabel)).findAny();
 
 		// if the project couldn't be found we must also reject the operation
-		if (! tap.isPresent()) {
+		if (!tap.isPresent()) {
 			LOGGER.error("expected testautomation project '{}' but it appears that it doesn't belong to the TA projects within the scope of test case #{} ", projectLabel);
 			throw new UnallowedTestAssociationException();
 		}
@@ -1420,7 +1463,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCase.setAutomationRequest(request);
 		request.setTestCase(testCase);
 		request.setProject(project);
-		if(automationRequestStatus != null) {
+		if (automationRequestStatus != null) {
 			request.setRequestStatus(automationRequestStatus);
 		}
 
@@ -1428,7 +1471,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		request.setCreatedBy(currentUser);
 
 		//TM-13: setting isManual depending on test case's automated test value
-		if(testCase.getAutomatedTest()!=null) {
+		if (testCase.getAutomatedTest() != null) {
 			request.setManual(true);
 		}
 		requestDao.save(request);
