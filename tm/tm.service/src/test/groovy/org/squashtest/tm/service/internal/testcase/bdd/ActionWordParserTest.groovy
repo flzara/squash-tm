@@ -30,6 +30,14 @@ import spock.lang.Specification
 class ActionWordParserTest extends Specification {
 
 	//*********** TEXT VALIDATION **************
+	def "Should throw error when create an ActionWord without text" () {
+		when:
+		new ActionWordParser().generateActionWordFromTextWithParamValue("\"This_is @n act1on-word\"")
+
+		then:
+		thrown(IllegalArgumentException)
+	}
+
 	def "Should create an ActionWord without parameter whose text can contain any character except for double quote"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n act1on-word with ('.,?/!§)")
@@ -39,6 +47,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 1
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
@@ -68,6 +77,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This is an action word with "
@@ -91,6 +101,19 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "p1"
+		parameter.getDefaultValue() == ""
+		def values = parameter.getValues()
+		values.size() == 1
+		values.get(0).getValue() == "param"
 	}
 
 	def "Should create an ActionWord with a parameter value whose content content has spaces and special characters and is removed extra-spaces"() {
@@ -102,6 +125,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "TP-This is an action word with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 2
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This is an action word with "
@@ -124,6 +148,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "PTPTP- is an - with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 5
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1
@@ -166,6 +191,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "PTPPTP- is an- with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 6
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1
@@ -216,6 +242,7 @@ class ActionWordParserTest extends Specification {
 		result.getToken() == "PTPTPTP- is an - - with -"
 		List<ActionWordFragment> fragments = result.getFragments()
 		fragments.size() == 7
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1

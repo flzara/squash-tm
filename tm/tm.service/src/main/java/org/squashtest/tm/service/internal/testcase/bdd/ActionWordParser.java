@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class ActionWordParser {
 
+	private boolean actionWordHavingText = false;
+
 	private List<ActionWordFragment> fragmentList = new ArrayList<>();
 
 	public ActionWord generateActionWordFromTextWithParamValue(String trimmedWord) {
@@ -44,25 +46,39 @@ public class ActionWordParser {
 			String updateWord = addMissingDoubleQuoteIfAny(trimmedWord);
 			//creating the fragment list
 			createFragmentsWithParamValue(updateWord);
+			//check if the fragment list contains at least one text element
+			if (!actionWordHavingText) {
+				throw new IllegalArgumentException("Action word must contain at least some texts.");
+			}
 			//generate token
 			String token = generateToken(fragmentList);
 			//initiate the action word
 			ActionWord result = new ActionWord(updateWord, token);
+			//add action word to each fragment in list
+			addActionWordToFragment(result);
 			result.setFragments(fragmentList);
 			return result;
 		} else {
+			actionWordHavingText = true;
 			//otherwise  --> action word has no parameter and its token = T
 			ActionWord result = new ActionWord(trimmedWord);
-			result.addFragment(new ActionWordText(trimmedWord));
+			ActionWordText text = new ActionWordText(trimmedWord);
+			text.setActionWord(result);
+			result.addFragment(text);
 			return result;
+		}
+	}
+
+	private void addActionWordToFragment(ActionWord actionWord) {
+		for (ActionWordFragment fragment : fragmentList) {
+			fragment.setActionWord(actionWord);
 		}
 	}
 
 	public String generateToken(List<ActionWordFragment> fragmentList) {
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder("-");
-		for (int i = 0; i < fragmentList.size(); ++i) {
-			ActionWordFragment fragment = fragmentList.get(i);
+		for (ActionWordFragment fragment : fragmentList) {
 			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
 				builder1.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
 			} else {
@@ -77,8 +93,8 @@ public class ActionWordParser {
 	private void createFragmentsWithParamValue(String word) {
 		boolean inDoubleQuotes = false;
 		int paramIndex = 0;
-		String actionWordText = "";
-		String actionWordParamValue = "";
+		StringBuilder actionWordText = new StringBuilder();
+		StringBuilder actionWordParamValue = new StringBuilder();
 
 		for (int i = 0; i < word.length(); ++i) {
 			String currentChar = String.valueOf(word.charAt(i));
@@ -87,25 +103,39 @@ public class ActionWordParser {
 				if (inDoubleQuotes) {
 					//this is the value of a param fragment
 					++paramIndex;
-					ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue);
+					ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue.toString());
 					fragmentList.add(param);
-					actionWordParamValue = "";
-				} else if (!actionWordText.isEmpty()) {
+					actionWordParamValue.setLength(0);
+				} else if (actionWordText.length() > 0) {
 					//this is a text fragment if the currentChar is not empty
-					fragmentList.add(new ActionWordText(actionWordText));
-					actionWordText = "";
+					fragmentList.add(new ActionWordText(actionWordText.toString()));
+					updateHasTextBoolean();
+					actionWordText.setLength(0);
 				}
 				//change the status in/out of the double quotes
 				inDoubleQuotes = !inDoubleQuotes;
 			} else {
 				if (inDoubleQuotes) {
 					//continue to charge the current actionWordParamValue
-					actionWordParamValue += currentChar;
+					actionWordParamValue.append(currentChar);
 				} else {
 					//continue to charge the current actionWordText
-					actionWordText += currentChar;
+					actionWordText.append(currentChar);
 				}
 			}
+		}
+
+		//add the last text
+		if (actionWordText.length() > 0) {
+			//this is a text fragment if the currentChar is not empty
+			fragmentList.add(new ActionWordText(actionWordText.toString()));
+			updateHasTextBoolean();
+		}
+	}
+
+	private void updateHasTextBoolean() {
+		if (!actionWordHavingText) {
+			actionWordHavingText = true;
 		}
 	}
 
@@ -113,6 +143,7 @@ public class ActionWordParser {
 		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
 		String paramName = "p" + paramIndex;
 		ActionWordParameter param = new ActionWordParameter(paramName, "");
+		paramValue.setActionWordParam(param);
 		param.addValue(paramValue);
 		return param;
 	}
@@ -120,8 +151,8 @@ public class ActionWordParser {
 	/**
 	 * This method is to add a double quote at the end of the input word if the current number of double quote is odd
 	 *
-	 * @param word
-	 * @return
+	 * @param word the input action word word
+	 * @return word with inserted double quotes at the end if missing
 	 */
 	private String addMissingDoubleQuoteIfAny(String word) {
 		int count = StringUtils.countMatches(word, "\"");
@@ -131,5 +162,6 @@ public class ActionWordParser {
 		return word;
 	}
 
-
 }
+
+

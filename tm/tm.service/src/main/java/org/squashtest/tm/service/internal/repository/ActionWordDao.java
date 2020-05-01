@@ -26,7 +26,6 @@ import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.bdd.ActionWord;
 
 public interface ActionWordDao extends JpaRepository<ActionWord, Long> {
-
-	@Query("from ActionWord where word = :word")
-	ActionWord findByWord(@Param("word") String researchedWord);
+	@Query("from ActionWord where token = :token")
+	ActionWord findByToken(@Param("token") String inputToken);
 }
