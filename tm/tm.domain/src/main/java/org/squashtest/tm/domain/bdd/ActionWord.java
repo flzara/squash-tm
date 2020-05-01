@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -61,6 +62,9 @@ public class ActionWord {
 	@Column(name = "TOKEN")
 	private String token;
 
+	@OneToMany(mappedBy = "actionWord", cascade = CascadeType.ALL)
+	private List<KeywordTestStep> keywordTestSteps = new ArrayList<>();
+
 	@NotNull
 	@OneToMany(mappedBy = "actionWord", cascade = CascadeType.ALL)
 	private List<ActionWordFragment> fragments = new ArrayList<>();
@@ -89,7 +93,7 @@ public class ActionWord {
 			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
 		}
 		this.word = trimmedWord;
-		this.token = ACTION_WORD_TEXT_TOKEN+"-"+ActionWordUtil.formatText(trimmedWord)+"-";
+		this.token = ACTION_WORD_TEXT_TOKEN + "-" + ActionWordUtil.formatText(trimmedWord) + "-";
 	}
 
 	public ActionWord(String word, String token) {
@@ -119,6 +123,24 @@ public class ActionWord {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public List<KeywordTestStep> getKeywordTestSteps() {
+		return keywordTestSteps;
+	}
+
+	public void setKeywordTestSteps(List<KeywordTestStep> keywordTestSteps) {
+		this.keywordTestSteps = keywordTestSteps;
+	}
+
+	public <T extends ActionWordFragment> List<T> getFragmentsByClass(Class<T> actionWordFragmentClass) {
+		List<T> result = new ArrayList<>();
+		for (ActionWordFragment fragment : getFragments()) {
+			if (actionWordFragmentClass.isAssignableFrom(fragment.getClass())) {
+				result.add((T) fragment);
+			}
+		}
+		return result;
 	}
 
 	@Override

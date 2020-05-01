@@ -50,7 +50,7 @@ public abstract class ActionWordFragment {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 

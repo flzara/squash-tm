@@ -54,7 +54,7 @@ public class KeywordTestStep extends TestStep {
 	private ActionWord actionWord;
 
 	@NotNull
-	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL)
 	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
 
 	public KeywordTestStep() {
@@ -125,5 +125,13 @@ public class KeywordTestStep extends TestStep {
 
 	public void setActionWord(ActionWord actionWord) {
 		this.actionWord = actionWord;
+	}
+
+	public List<ActionWordParameterValue> getParamValues() {
+		return paramValues;
+	}
+
+	public void setParamValues(List<ActionWordParameterValue> paramValues) {
+		this.paramValues = paramValues;
 	}
 }

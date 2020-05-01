@@ -56,13 +56,13 @@ public class ActionWordParameterValue {
 	private String value;
 
 	@NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 	private ActionWordParameter actionWordParam;
 
 	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "TEST_STEP_ID")
+	@JoinColumn(name = "KEYWORD_TEST_STEP_ID")
 	private KeywordTestStep keywordTestStep;
 
 	public ActionWordParameterValue() {

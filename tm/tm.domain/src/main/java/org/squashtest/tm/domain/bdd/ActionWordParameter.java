@@ -55,7 +55,6 @@ public class ActionWordParameter extends ActionWordFragment {
 	@Size(max = 255)
 	private String defaultValue;
 
-	@NotNull
 	@OneToMany(mappedBy = "actionWordParam", cascade = CascadeType.ALL)
 	private List<ActionWordParameterValue> values = new ArrayList<>();
 
