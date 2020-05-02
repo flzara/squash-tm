@@ -30,7 +30,7 @@ import spock.lang.Specification
 class ActionWordParserTest extends Specification {
 
 	//*********** TEXT VALIDATION **************
-	def "Should throw error when create an ActionWord without text" () {
+	def "Should throw error when creating an ActionWord without text" () {
 		when:
 		new ActionWordParser().generateActionWordFromTextWithParamValue("\"This_is @n act1on-word\"")
 
@@ -38,7 +38,7 @@ class ActionWordParserTest extends Specification {
 		thrown(IllegalArgumentException)
 	}
 
-	def "Should create an ActionWord without parameter whose text can contain any character except for double quote"() {
+	def "Should create an ActionWord without parameter whose texts contain special characters except for double quote"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n act1on-word with ('.,?/!§)")
 
@@ -53,7 +53,7 @@ class ActionWordParserTest extends Specification {
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
 	}
 
-	def "Should create an ActionWord without parameter, any multi-spaces in text will be replaced by a space"() {
+	def "Should create an ActionWord without parameter, any multi-spaces in a parameter text will be replaced by a space"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n    act1on-word with    ('.,?/!§)")
 
@@ -89,7 +89,10 @@ class ActionWordParserTest extends Specification {
 		parameter.getDefaultValue() == ""
 		def values = parameter.getValues()
 		values.size() == 1
-		values.get(0).getValue() == "param"
+		def value = values.get(0)
+		value.getValue() == "param"
+		value.getActionWordParam() == parameter
+		value.getKeywordTestStep() == null
 	}
 
 	def "Should create an ActionWord with a parameter value at the end but missing a double quote"() {
@@ -116,7 +119,7 @@ class ActionWordParserTest extends Specification {
 		values.get(0).getValue() == "param"
 	}
 
-	def "Should create an ActionWord with a parameter value whose content content has spaces and special characters and is removed extra-spaces"() {
+	def "Should create an ActionWord with a parameter value which has spaces, special characters"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This is an action word with \"     par@m   123    []   \"")
 
@@ -139,7 +142,7 @@ class ActionWordParserTest extends Specification {
 		values.get(0).getValue() == "par@m 123 []"
 	}
 
-	def "Should create an ActionWord with a parameter value at the beginning, in the middle and at the end"() {
+	def "Should create an ActionWord with 3 parameter values: at the beginning, in the middle and at the end"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is   an \"action word\" with   \"param\"")
 
@@ -182,7 +185,7 @@ class ActionWordParserTest extends Specification {
 		values3.get(0).getValue() == "param"
 	}
 
-	def "Should create an ActionWord with a parameter value at the beginning, 2 parameter values in the middle which are next to each other and a parameter value at the end"() {
+	def "Should create an ActionWord with 4 parameter values: 1 at the beginning, 2 parameter values in the middle which are next to each other and 1 at the end"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is an\"action\"\"word\" with \"param\"")
 
@@ -233,7 +236,7 @@ class ActionWordParserTest extends Specification {
 		values4.get(0).getValue() == "param"
 	}
 
-	def "Should create an ActionWord with a parameter value at the beginning, 2 parameter values in the middle which are separated by a space and a parameter value at the end"() {
+	def "Should create an ActionWord with 4 parameter values: 1 at the beginning, 2 parameter values in the middle which are separated by a space and 1 parameter value at the end"() {
 		when:
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("\"This\" is an \"action\"    \"word\" with \"param\"")
 

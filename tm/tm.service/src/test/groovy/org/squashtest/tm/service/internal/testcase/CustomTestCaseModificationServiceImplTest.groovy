@@ -142,12 +142,15 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		actionWordDao.findByToken(_) >> null
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, newStep, 1)
+		service.addKeywordTestStep(parentTestCaseId, newStep, 0)
 
 		then:
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
-		parentTestCase.getSteps()[1].actionWord.getWord() == "next"
+		def step1 = parentTestCase.getSteps()[0]
+		((KeywordTestStep) step1).actionWord.getWord() == "next"
+		def step2 = parentTestCase.getSteps()[1]
+		((KeywordTestStep) step2).actionWord.getWord() == "first"
 	}
 
 	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
@@ -172,7 +175,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
 	}
 
-	def "should find test case and add a keyword step with new action word containing param at last position"() {
+	def "should find test case and add a keyword step with new action word containing a param at last position"() {
 		given:
 		long parentTestCaseId = 2
 		KeywordTestCase parentTestCase = new KeywordTestCase()
@@ -196,16 +199,92 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getToken() == "TP-this is with -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
+
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "this is with "
+
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter.class)
-		((ActionWordParameter) f2).getName() == "p1"
-		((ActionWordParameter) f2).getDefaultValue() == ""
-		def values = ((ActionWordParameter) f2).getValues()
+		def param = (ActionWordParameter) f2
+		param.getName() == "p1"
+		param.getDefaultValue() == ""
+		def values = param.getValues()
 		values.size() == 1
-		values.get(0).getValue() == "param"
+		def value = values.get(0)
+		value.getValue() == "param"
+		value.getActionWordParam() == param
+		value.getKeywordTestStep() != null
+	}
+
+	def "should find test case and add a keyword step with new action word containing many parameter values"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByToken(_) >> null
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    \"this\" is with \"param\"	\"v@lue\"")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getWord() == "\"this\" is with \"param\"	\"v@lue\""
+		checkedActionWord.getToken() == "PTPTP- is with - -"
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 5
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordParameter.class)
+		def param1 = (ActionWordParameter) f1
+		param1.getName() == "p1"
+		param1.getDefaultValue() == ""
+		def values1 = param1.getValues()
+		values1.size() == 1
+		def value1 = values1.get(0)
+		value1.getValue() == "this"
+		value1.getActionWordParam() == param1
+		value1.getKeywordTestStep() != null
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordText.class)
+		((ActionWordText) f2).getText() == " is with "
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordParameter.class)
+		def param3 = (ActionWordParameter) f3
+		param3.getName() == "p2"
+		param3.getDefaultValue() == ""
+		def values3 = param3.getValues()
+		values3.size() == 1
+		def value3 = values3.get(0)
+		value3.getValue() == "param"
+		value3.getActionWordParam() == param3
+		value3.getKeywordTestStep() != null
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordText.class)
+		((ActionWordText) f4).getText() == " "
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordParameter.class)
+		def param5 = (ActionWordParameter) f5
+		param5.getName() == "p3"
+		param5.getDefaultValue() == ""
+		def values5 = param5.getValues()
+		values5.size() == 1
+		def value5 = values5.get(0)
+		value5.getValue() == "v@lue"
+		value5.getActionWordParam() == param5
+		value5.getKeywordTestStep() != null
 	}
 
 	def "should find test case and add keyword step with existing action word at last position"() {
@@ -264,7 +343,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getWord() == "last"
 	}
 
-	def "should find test case and add keyword step with existing action word containing parameter"() {
+	def "should find test case and add keyword step with existing action word containing a parameter"() {
 		given:
 		long parentTestCaseId = 2
 		def inputFragments = new ArrayList<ActionWordFragment>()
@@ -281,7 +360,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "today is \"date\""
+			getWord() >> "today is \"p1\""
 			getToken() >> "TP-today is -"
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
@@ -303,7 +382,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.getSteps().size() == 2
 		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "today is \"date\""
+		checkedActionWord.getWord() == "today is \"p1\""
 		checkedActionWord.getToken() == "TP-today is -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
@@ -320,6 +399,97 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		values.get(1).getValue() == "Monday"
 	}
 
+	def "should find test case and add keyword step with existing action word containing many parameters"() {
+		given:
+		long parentTestCaseId = 2
+		def inputFragments = new ArrayList<ActionWordFragment>()
+		def actionWordText1 = new ActionWordText("today is ")
+		def actionWordText2 = new ActionWordText(" of ")
+
+		def actionWordParams = new ArrayList<ActionWordParameter>()
+		def actionWordParam1 = new ActionWordParameter("p1", "")
+		def actionWordParamValue1 = new ActionWordParameterValue("Sunday")
+		actionWordParam1.addValue(actionWordParamValue1)
+		actionWordParams.add(actionWordParam1)
+		def actionWordParam2 = new ActionWordParameter("p2", "")
+		def actionWordParamValue2 = new ActionWordParameterValue("January")
+		actionWordParam2.addValue(actionWordParamValue2)
+		actionWordParams.add(actionWordParam2)
+		def actionWordParam3 = new ActionWordParameter("p3", "")
+		def actionWordParamValue3 = new ActionWordParameterValue("2019")
+		actionWordParam3.addValue(actionWordParamValue3)
+		actionWordParams.add(actionWordParam3)
+
+		inputFragments.add(actionWordText1)
+		inputFragments.add(actionWordParam1)
+		inputFragments.add(actionWordText2)
+		inputFragments.add(actionWordParam2)
+		inputFragments.add(actionWordParam3)
+
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def existingActionWord = Mock(ActionWord) {
+			getId() >> -77L
+			getWord() >> "today is \"p1\" of \"p2\"\"p3\""
+			getToken() >> "TPTPP-today is - of "
+			getFragments() >> inputFragments
+			getFragmentsByClass(_) >> actionWordParams
+		}
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByToken(_) >> existingActionWord
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Friday\" of  \"May\"\"2020\"")
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 2
+		ActionWord checkedActionWord = parentTestCase.getSteps()[1].actionWord
+		checkedActionWord.getId() == -77L
+		checkedActionWord.getWord() == "today is \"p1\" of \"p2\"\"p3\""
+		checkedActionWord.getToken() == "TPTPP-today is - of "
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 5
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText.class)
+		((ActionWordText) f1).getText() == "today is "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter.class)
+		((ActionWordParameter) f2).getName() == "p1"
+		((ActionWordParameter) f2).getDefaultValue() == ""
+		def values = ((ActionWordParameter) f2).getValues()
+		values.size() == 2
+		values.get(0).getValue() == "Sunday"
+		values.get(1).getValue() == "Friday"
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText.class)
+		((ActionWordText) f3).getText() == " of "
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordParameter.class)
+		((ActionWordParameter) f4).getName() == "p2"
+		((ActionWordParameter) f4).getDefaultValue() == ""
+		def values2 = ((ActionWordParameter) f4).getValues()
+		values2.size() == 2
+		values2.get(0).getValue() == "January"
+		values2.get(1).getValue() == "May"
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordParameter.class)
+		((ActionWordParameter) f5).getName() == "p3"
+		((ActionWordParameter) f5).getDefaultValue() == ""
+		def values3 = ((ActionWordParameter) f5).getValues()
+		values3.size() == 2
+		values3.get(0).getValue() == "2019"
+		values3.get(1).getValue() == "2020"
+	}
 
 	def "should find test case and add a step at last position"() {
 		given:
@@ -407,6 +577,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		]
 
 	}
+
+	//TODO-QUAN: check custom fields for keyword test step
 
 
 	def "should find test case and change its step index"() {
@@ -683,6 +855,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		res == steps
 	}
 
+	//TODO-QUAN
 	def "should update the keyword and the action word of a keyword step"() {
 		given:
 		def step = Mock(KeywordTestStep)
