@@ -40,6 +40,9 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -263,15 +266,22 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setCustomReportLibrary(crl);
 		em.persist(crl);
 
-		AutomationRequestLibrary arl = new AutomationRequestLibrary();
-		project.setAutomationRequestLibrary(arl);
-		em.persist(arl);
-
 		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
 		crlNode.setEntity(crl);
 		em.persist(crlNode);
+
+		AutomationRequestLibrary arl = new AutomationRequestLibrary();
+		project.setAutomationRequestLibrary(arl);
+		em.persist(arl);
+
+		ActionWordLibrary awl = new ActionWordLibrary();
+		project.setActionWordLibrary(awl);
+		em.persist(awl);
+
+		// add tree node for the ActionWordLibrary
+		ActionWordLibraryNode awlNode = new ActionWordLibraryNode(ActionWordTreeDefinition.LIBRARY, awl.getId(), project.getName(), awl);
 
 		// now persist it
 		em.persist(project);
