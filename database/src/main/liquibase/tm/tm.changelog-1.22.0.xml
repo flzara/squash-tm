@@ -382,6 +382,17 @@
       <column name="AWL_ID" />
     </createIndex>
 
+    <comment>Create one action word library node for each library created</comment>
+
+    <sql>
+      insert into ACTION_WORD_LIBRARY_NODE (AWL_ID, ENTITY_ID, ENTITY_TYPE)
+        select AWL_ID, AWL_ID, 'LIBRARY'
+        from ACTION_WORD_LIBRARY;
+
+      update ACTION_WORD_LIBRARY_NODE
+      set NAME = (select p.NAME from PROJECT p where ENTITY_ID = p.AWL_ID)
+      where ENTITY_TYPE = 'LIBRARY';
+    </sql>
 
     <comment>Create action word library node relationship table</comment>
 
