@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 
 import javax.persistence.Column;
@@ -34,7 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class ActionWord {
+public class ActionWord implements ActionWordTreeEntity {
 
 	private static final int ACTION_WORD_MAX_LENGTH = 255;
 
@@ -91,5 +93,34 @@ public class ActionWord {
 			"id=" + id +
 			", word='" + word + '\'' +
 			'}';
+	}
+
+	/* ActionWordTreeEntity methods */
+
+	@Override
+	public void accept(ActionWordTreeEntityVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public ActionWordTreeEntity createCopy() {
+		throw new UnsupportedOperationException();
+	}
+
+	/* TreeEntity methods */
+
+	@Override
+	public String getName() {
+		return word;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.word = name;
+	}
+
+	@Override
+	public Project getProject() {
+		return project;
 	}
 }

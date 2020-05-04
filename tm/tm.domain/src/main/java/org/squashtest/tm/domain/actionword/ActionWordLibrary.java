@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.actionword;
 
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +33,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class ActionWordLibrary {
+public class ActionWordLibrary extends GenericTreeLibrary implements ActionWordTreeEntity {
 
 	@Id
 	@Column(name="AWL_ID")
@@ -46,7 +48,43 @@ public class ActionWordLibrary {
 		return id;
 	}
 
-	public GenericProject getProject() {
-		return project;
+	@Override
+	public Project getProject() {
+		return (Project) project;
+	}
+
+	/* ActionWordTreeEntity methods */
+
+	@Override
+	public void accept(ActionWordTreeEntityVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public ActionWordTreeEntity createCopy() {
+		throw new UnsupportedOperationException("Cannot copy a library.");
+	}
+	/* TreeLibrary methods */
+
+	@Override
+	public void notifyAssociatedWithProject(GenericProject project) {
+		this.project = project;
+	}
+
+	/* TreeEntity methods */
+
+	@Override
+	public String getName() {
+		return project.getName();
+	}
+
+	@Override
+	public void setName(String name) {
+
+	}
+
+	@Override
+	public void setProject(Project project) {
+		throw new UnsupportedOperationException("A library cannot be renamed. Please rename the project instead.");
 	}
 }

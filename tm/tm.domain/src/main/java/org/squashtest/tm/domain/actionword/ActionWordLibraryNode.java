@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -51,7 +53,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "ACTION_WORD_LIBRARY_NODE")
-public class ActionWordLibraryNode {
+public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	private static final String AWLN_ID = "AWLN_ID";
 
@@ -75,14 +77,14 @@ public class ActionWordLibraryNode {
 		joinColumns = { @JoinColumn(name = "DESCENDANT_ID", referencedColumnName = AWLN_ID, insertable = false, updatable = false) },
 		inverseJoinColumns = { @JoinColumn(name = "ANCESTOR_ID", referencedColumnName= AWLN_ID, insertable = false, updatable = false) })
 	@ManyToOne(fetch = FetchType.LAZY, targetEntity = ActionWordLibraryNode.class)
-	private TreeLibraryNode parent;
+	private ActionWordTreeLibraryNode parent;
 
 	@JoinTable(name="AWLN_RELATIONSHIP",
 		joinColumns = { @JoinColumn(name="ANCESTOR_ID", referencedColumnName= AWLN_ID) },
 		inverseJoinColumns = { @JoinColumn(name="DESCENDANT_ID", referencedColumnName= AWLN_ID) })
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = ActionWordLibraryNode.class, cascade = { CascadeType.ALL })
 	@OrderColumn(name="CONTENT_ORDER")
-	private List<TreeLibraryNode> children = new ArrayList<>();
+	private List<ActionWordTreeLibraryNode> children = new ArrayList<>();
 
 	@Any( metaColumn = @Column( name = "ENTITY_TYPE" ), fetch = FetchType.LAZY)
 	@AnyMetaDef(
@@ -94,7 +96,7 @@ public class ActionWordLibraryNode {
 		})
 	@JoinColumn( name = "ENTITY_ID" )
 	@Cascade(value = org.hibernate.annotations.CascadeType.ALL)
-	private TreeEntity entity;
+	private ActionWordTreeEntity entity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AWL_ID")
@@ -113,5 +115,101 @@ public class ActionWordLibraryNode {
 		this.entityId = entityId;
 		this.name = name;
 		this.library = library;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	/* TreeLibraryNode methods */
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public long getEntityId() {
+		return entityId;
+	}
+
+	@Override
+	public void isCoherentWithEntity() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasContent() {
+		if (!getEntityType().isContainer()) {
+			return false;
+		}
+		return !children.isEmpty();
+	}
+
+	@Override
+	public void renameNode(String newName) {
+		throw new UnsupportedOperationException();
+	}
+
+	/* ActionWordTreeLibraryNode methods */
+
+	@Override
+	public ActionWordTreeDefinition getEntityType() {
+		return entityType;
+	}
+	@Override
+	public void setEntityType(ActionWordTreeDefinition entityType) {
+		this.entityType = entityType;
+	}
+
+	@Override
+	public ActionWordTreeEntity getEntity() {
+		return entity;
+	}
+	@Override
+	public void setEntity(ActionWordTreeEntity treeEntity) {
+		this.entity = treeEntity;
+	}
+
+	@Override
+	@AclConstrainedObject
+	public ActionWordLibrary getLibrary() {
+		return library;
+	}
+
+	@Override
+	public void setLibrary(ActionWordLibrary library) {
+		this.library = library;
+	}
+
+	@Override
+	public ActionWordTreeLibraryNode getParent() {
+		return parent;
+	}
+	@Override
+	public void setParent(ActionWordTreeLibraryNode parent) {
+		this.parent = parent;
+	}
+
+	@Override
+	public List<ActionWordTreeLibraryNode> getChildren() {
+		return children;
+	}
+
+	@Override
+	public void addChild(ActionWordTreeLibraryNode treeLibraryNode)
+		throws UnsupportedOperationException, IllegalArgumentException, NameAlreadyInUseException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void removeChild(ActionWordTreeLibraryNode treeLibraryNode) {
+		throw new UnsupportedOperationException();
 	}
 }
