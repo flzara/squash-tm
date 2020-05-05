@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 
-public interface ActionWordLibraryNodeDao
-	extends JpaRepository<ActionWordLibraryNode, Long>, CustomActionWordLibraryNodeDao {
+public interface CustomActionWordLibraryNodeDao {
+	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
 }

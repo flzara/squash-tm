@@ -964,6 +964,9 @@
 	@NamedQuery(name="CustomReportLibraryNode.countNodeFromEntity",query="select count(crln.id) from CustomReportLibraryNode crln where crln.entityType = :entityType and crln.entityId = :entityId"),
 	@NamedQuery(name="CustomReportLibraryNode.findAllNodeForCustomReportLibrary",query="select crln.id from CustomReportLibraryNode crln where crln.library.id = :libraryId and crln.entityType is not 'LIBRARY'"),
 
+	// ActionWordNode
+	@NamedQuery(name="ActionWordLibraryNode.findNodeFromEntity",query="from ActionWordLibraryNode awln where awln.entityType = :entityType and awln.entityId = :entityId"),
+
 	//Coverage stat 5433 and 5434
 	@NamedQuery(name = "iteration.findITPIByTestCaseGroupByStatus", query = "select  itpi.executionStatus,tc.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),
 	@NamedQuery(name = "iteration.findVerifiedTcIdsInIterations", query = "select itpi.referencedTestCase.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),

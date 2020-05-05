@@ -40,6 +40,8 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -72,6 +74,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -149,6 +152,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private ActionWordDao actionWordDao;
+
+	@Inject
+	private ActionWordLibraryNodeService actionWordLibraryNodeService;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -289,8 +295,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		Keyword givenKeyword = Keyword.valueOf(keyword);
 		ActionWord actionWord = actionWordDao.findByWord(trimmedWord);
-		if (isNull(actionWord)){
+		if (isNull(actionWord)) {
 			actionWord = new ActionWord(trimmedWord);
+			ActionWordLibrary actionWordLibrary = parentTestCase.getProject().getActionWordLibrary();
+			ActionWordLibraryNode parentLibraryNode = actionWordLibraryNodeService.findNodeFromEntity(actionWordLibrary);
+			actionWordLibraryNodeService.createNewNode(parentLibraryNode.getId(), actionWord);
 		}
 		KeywordTestStep keywordTestStep = new KeywordTestStep(givenKeyword, actionWord);
 		parentTestCase.addStep(keywordTestStep);

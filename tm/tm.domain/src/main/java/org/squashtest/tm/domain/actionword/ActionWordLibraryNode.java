@@ -26,8 +26,10 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MetaValue;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
@@ -141,7 +143,12 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	@Override
 	public void isCoherentWithEntity() {
-		throw new UnsupportedOperationException();
+		String nodeName = getName();
+		String entityName = getEntity().getName();
+		if (!nodeName.equals(entityName)) {
+			String message = "Cannot add a library node with name %s to represent an entity with different name %s.";
+			throw new IllegalArgumentException(String.format(message, nodeName, entityName));
+		}
 	}
 
 	@Override
@@ -205,7 +212,41 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 	@Override
 	public void addChild(ActionWordTreeLibraryNode treeLibraryNode)
 		throws UnsupportedOperationException, IllegalArgumentException, NameAlreadyInUseException {
-		throw new UnsupportedOperationException();
+		if (treeLibraryNode == null) {
+			throw new IllegalArgumentException("Cannot add a null child to a library node.");
+		}
+		if (treeLibraryNode.getEntity() == null) {
+			throw new IllegalArgumentException("Cannot add a library node representing a null entity.");
+		}
+		if (!this.getEntityType().isContainer()) {
+			throw new UnsupportedOperationException("This type of library node doesn't accept children.");
+		}
+		treeLibraryNode.isCoherentWithEntity();
+
+		String newChildName = treeLibraryNode.getName();
+		if (this.childNameAlreadyUsed(newChildName)) {
+			ActionWordTreeLibraryNode node = getContentNodeByName(newChildName);
+			throw new DuplicateNameException(node.getEntityType().getTypeName(), newChildName);
+		}
+		this.getChildren().add(treeLibraryNode);
+	}
+
+	private boolean childNameAlreadyUsed(String newChildName) {
+		for (TreeLibraryNode child : children) {
+			if (child.getName().equals(newChildName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private ActionWordTreeLibraryNode getContentNodeByName (String name) {
+		for (ActionWordTreeLibraryNode child : children) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+		return null;
 	}
 
 	@Override

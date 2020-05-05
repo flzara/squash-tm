@@ -18,11 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.actionword;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
+import org.squashtest.tm.domain.bdd.ActionWord;
 
-public interface ActionWordLibraryNodeDao
-	extends JpaRepository<ActionWordLibraryNode, Long>, CustomActionWordLibraryNodeDao {
+public class GetActionWordTreeDefinitionVisitor implements ActionWordTreeEntityVisitor {
+
+	private Wrapped<ActionWordTreeDefinition> actionWordTreeDefinition = new Wrapped<>();
+
+	@Override
+	public void visit(ActionWordLibrary actionWordLibrary) {
+		actionWordTreeDefinition.setValue(ActionWordTreeDefinition.LIBRARY);
+	}
+
+	@Override
+	public void visit(ActionWord actionWord) {
+		actionWordTreeDefinition.setValue(ActionWordTreeDefinition.ACTION_WORD);
+	}
+
+	public ActionWordTreeDefinition getActionWordTreeDefinition() {
+		return actionWordTreeDefinition.getValue();
+	}
 }

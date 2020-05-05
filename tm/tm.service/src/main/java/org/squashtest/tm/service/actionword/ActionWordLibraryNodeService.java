@@ -41,4 +41,10 @@ public interface ActionWordLibraryNodeService {
 	 * @return The created node.
 	 */
 	ActionWordLibraryNode createNewNode(Long parentId, ActionWordTreeEntity entity) throws NameAlreadyInUseException;
+	/**
+	 * Find the {@link ActionWordLibraryNode} linked to a {@link ActionWordTreeEntity}.
+	 * @param actionWordTreeEntity The ActionWordTreeEntity
+	 * @return The requested ActionWordLibraryNode
+	 */
+	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
 }
