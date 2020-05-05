@@ -83,6 +83,7 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
@@ -174,6 +175,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
+	@Inject
+	private ActionWordLibraryNodeDao actionWordLibraryNodeDao;
 	@Inject
 	private TestCaseDao testCaseDao;
 	@Inject
@@ -1045,8 +1048,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		CustomReportLibrary crl = project.getCustomReportLibrary();
 		CustomReportLibraryNode node = customReportLibraryNodeDao.findNodeFromEntity(crl);
-		project.setName(newName);
 		node.setName(newName);
+		ActionWordLibrary awl = project.getActionWordLibrary();
+		ActionWordLibraryNode actionWordLibraryNode = actionWordLibraryNodeDao.findNodeFromEntity(awl);
+		actionWordLibraryNode.setName(newName);
+
+		project.setName(newName);
 	}
 
 	private void copyMilestone(GenericProject target, GenericProject source) {
