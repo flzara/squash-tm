@@ -184,14 +184,16 @@ public interface AutomatedSuiteManagerService {
 	 * @param configuration
 	 */
 	void start(String suiteId, Collection<SuiteExecutionConfiguration> configuration);
-        
-        /**
+
+	/**
 	 * Creates a test list with parameters (dataset and cufs) from an automated suite.
 	 *
 	 * @param suite
 	 * @param configuration
+	 * @param withAllCustomFields
 	 */
-        Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite);
+
+	Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite, boolean withAllCustomFields);
         
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.

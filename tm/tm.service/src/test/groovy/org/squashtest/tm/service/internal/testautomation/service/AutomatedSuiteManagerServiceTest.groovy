@@ -111,7 +111,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		finder.findAllCustomFieldValues(_) >> []
 
 		when :
-		def res = service.collectAutomatedExecs(exts)
+		def res = service.collectAutomatedExecs(exts, true)
 
 		then :
 		res*.a1 == exts
@@ -187,7 +187,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		finder.findAllCustomFieldValues(_) >> []
 
 		when :
-		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite, true)
 
 		then :
                 executionOrder.size() == 18
