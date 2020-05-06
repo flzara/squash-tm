@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.domain.actionword.ActionWordLibrary
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -32,6 +34,7 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.exception.InconsistentInfoListItemException
+import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder
 import org.squashtest.tm.service.infolist.InfoListItemFinderService
@@ -56,6 +59,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	TestStepDao testStepDao = Mock()
 	KeywordTestStepDao keywordTestStepDao = Mock()
 	ActionWordDao actionWordDao = Mock()
+	ActionWordLibraryNodeService actionWordLibraryNodeService = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
@@ -88,13 +92,20 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.infoListItemService = infoListItemService
 		service.eventPublisher = eventPublisher
 		service.actionWordDao = actionWordDao
+		service.actionWordLibraryNodeService = actionWordLibraryNodeService
 	}
 
 	def "should find test case and add a keyword step with new action word at last position"() {
 		given:
 			long parentTestCaseId = 2
 			KeywordTestCase parentTestCase = new KeywordTestCase()
-
+			def awLibraryNode = Mock(ActionWordLibraryNode)
+			awLibraryNode.getId() >> 4L
+			def awLibrary = Mock(ActionWordLibrary)
+			def project = Mock(Project)
+		and:
+			parentTestCase.notifyAssociatedWithProject(project)
+			project.getActionWordLibrary() >> awLibrary
 		and:
 			def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 			parentTestCase.addStep(firstStep)
@@ -102,11 +113,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
 			actionWordDao.findByWord(_) >> null
-
+			actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 		when:
 			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
 
 		then:
+			1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "last" })
 			1 * testStepDao.persist(_)
 			parentTestCase.getSteps().size() == 2
 			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
@@ -136,24 +148,29 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
 		given:
-		long parentTestCaseId = 2
-		KeywordTestCase parentTestCase = new KeywordTestCase()
-
+			long parentTestCaseId = 2
+			KeywordTestCase parentTestCase = new KeywordTestCase()
+			def awLibraryNode = Mock(ActionWordLibraryNode)
+			awLibraryNode.getId() >> 4L
+			def awLibrary = Mock(ActionWordLibrary)
+			def project = Mock(Project)
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
-		parentTestCase.addStep(firstStep)
-
+			parentTestCase.notifyAssociatedWithProject(project)
+			project.getActionWordLibrary() >> awLibrary
 		and:
-		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByWord(_) >> null
-
+			def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+			parentTestCase.addStep(firstStep)
+		and:
+			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+			actionWordDao.findByWord(_) >> null
+			actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
-
+			service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
 		then:
-		1 * testStepDao.persist(_)
-		parentTestCase.getSteps().size() == 2
-		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+			1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "last" })
+			1 * testStepDao.persist(_)
+			parentTestCase.getSteps().size() == 2
+			parentTestCase.getSteps()[1].actionWord.getWord() == "last"
 	}
 
 	def "should find test case and add keyword step with existing action word at last position"() {
