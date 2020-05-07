@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -111,7 +112,7 @@ public interface CustomReportLibraryNodeService {
 	 * @param parentId Id of parent node. Can't be null.
 	 * @return
 	 */
-	CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
+	CustomReportLibraryNode createNewNode(Long parentId, CustomReportTreeEntity entity) throws NameAlreadyInUseException;
 
 	List<SuppressionPreviewReport> simulateDeletion (List<Long> nodeIds);
 
@@ -147,7 +148,7 @@ public interface CustomReportLibraryNodeService {
 	 * @param treeEntity
 	 * @return
 	 */
-	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
+	CustomReportLibraryNode findNodeFromEntity(CustomReportTreeEntity treeEntity);
 
 	List<TreeLibraryNode> copyNodes(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target);
 

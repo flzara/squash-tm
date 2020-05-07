@@ -24,7 +24,8 @@ import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportReportBinding;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
@@ -54,7 +55,7 @@ import java.util.Set;
 @Entity
 @Table(name = "REPORT_DEFINITION")
 @Auditable
-public class ReportDefinition implements TreeEntity{
+public class ReportDefinition implements CustomReportTreeEntity {
 
 	@Id
 	@Column(name = "REPORT_ID")
@@ -166,12 +167,12 @@ public class ReportDefinition implements TreeEntity{
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		ReportDefinition copy = new ReportDefinition();
 		copy.setName(this.getName());
 		copy.setDescription(this.getDescription());

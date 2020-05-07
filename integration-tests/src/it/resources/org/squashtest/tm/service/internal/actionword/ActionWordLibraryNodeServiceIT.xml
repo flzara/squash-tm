@@ -21,20 +21,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
 
   <ACTION_WORD_LIBRARY AWL_ID="-1" />
-  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-1" NAME="" ENTITY_ID="-1" ENTITY_TYPE="LIBRARY" AWL_ID="-1"/>
+  <PROJECT PROJECT_ID="-1" AWL_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-01-02" CREATED_BY="admin" NAME="action word project"/>
 
-  <PROJECT PROJECT_ID="-1" AWL_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2020-01-21" CREATED_BY="IT" NAME=""/>
+  <ACTION_WORD ACTION_WORD_ID="-1" WORD="press the red button" PROJECT_ID="-1" />
 
-  <TEST_CASE_LIBRARY_NODE TCLN_ID="-4" PROJECT_ID="-1" CREATED_ON="2020-01-21" CREATED_BY="IT" NAME="" ATTACHMENT_LIST_ID="-1" />
-  <TEST_CASE TCLN_ID="-4" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1" PREREQUISITE="" />
-  <KEYWORD_TEST_CASE TCLN_ID="-4" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-1" NAME="action word project" ENTITY_TYPE="LIBRARY" ENTITY_ID="-1" AWL_ID="-1" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-2" NAME="press the red button" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-1" AWL_ID="-1" />
 
-  <ACTION_WORD ACTION_WORD_ID="-78" WORD="the Action wôrd exists." PROJECT_ID="-1"/>
-  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-2" NAME="the Action wôrd exists." ENTITY_ID="-78" ENTITY_TYPE="ACTION_WORD" AWL_ID="-1"/>
-
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-2" CONTENT_ORDER="0" />
 </dataset>

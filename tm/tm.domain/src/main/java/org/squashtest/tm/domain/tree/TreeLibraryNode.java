@@ -22,8 +22,6 @@ package org.squashtest.tm.domain.tree;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 import java.util.List;
 
@@ -34,9 +32,8 @@ import java.util.List;
  * @author jthebault
  *
  */
-public interface TreeLibraryNode extends TreeVisitable, Identified {
+public interface TreeLibraryNode extends Identified {
 	String getName ();
-
 	/**
 	 * Don't forget to update ENTITY name.
 	 * Name is denormalized to avoid complex inject/request each time we need the name of an entity.
@@ -47,25 +44,6 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 
 	long getEntityId();
 
-	void setEntityType(CustomReportTreeDefinition entityType);
-
-	TreeEntity getEntity();
-
-	void setEntity(TreeEntity treeEntity);
-
-	TreeEntityDefinition getEntityType();
-
-	TreeLibraryNode getParent();
-
-	void setParent(TreeLibraryNode parent);
-
-	List<TreeLibraryNode> getChildren();
-
-	GenericTreeLibrary getLibrary();
-
-	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
-
-	void removeChild(TreeLibraryNode treeLibraryNode);
 	/**
 	 * Check if a {@link CustomReportLibraryNode} is consistent with it's linked {@link TreeEntity}.
 	 * Throws {@link IllegalArgumentException} if not, as user action haven't any way to create this kind of inconsistency.
@@ -74,7 +52,6 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	void isCoherentWithEntity();
 
 	boolean hasContent();
-
 	/**
 	 * Rename a {@link CustomReportLibraryNode}. Will also take care of renaming the linked {@link TreeEntity}.
 	 * @param newName

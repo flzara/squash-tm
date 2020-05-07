@@ -18,10 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ *     This file is part of the Squashtest platform.
+6 *     Copyright (C) Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.squashtest.tm.service.internal.customreport;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
@@ -58,7 +79,7 @@ public class CRLNMover {
 
 	private void moveOneFirstLayerNode(CustomReportLibraryNode target, CustomReportLibraryNode node) {
 		if (userCanDeleteMovedNode(node)) {
-			TreeLibraryNode parent = node.getParent();
+			CustomReportTreeLibraryNode parent = node.getParent();
 			nameResolver.resolveNewName(node,target);
 			parent.removeChild(node);
 			changeNodeLibrary(node, target);

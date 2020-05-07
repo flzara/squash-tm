@@ -40,6 +40,9 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -80,6 +83,7 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
@@ -172,6 +176,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 	@Inject
+	private ActionWordLibraryNodeDao actionWordLibraryNodeDao;
+	@Inject
 	private TestCaseDao testCaseDao;
 	@Inject
 	private CustomTestCaseModificationService customTestCaseModificationService;
@@ -263,20 +269,28 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setCustomReportLibrary(crl);
 		em.persist(crl);
 
-		AutomationRequestLibrary arl = new AutomationRequestLibrary();
-		project.setAutomationRequestLibrary(arl);
-		em.persist(arl);
-
 		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
 		crlNode.setEntity(crl);
 		em.persist(crlNode);
 
+		AutomationRequestLibrary arl = new AutomationRequestLibrary();
+		project.setAutomationRequestLibrary(arl);
+		em.persist(arl);
+
+		ActionWordLibrary awl = new ActionWordLibrary();
+		project.setActionWordLibrary(awl);
+		em.persist(awl);
+
+		// add tree node for the ActionWordLibrary
+		ActionWordLibraryNode awlNode = new ActionWordLibraryNode(ActionWordTreeDefinition.LIBRARY, awl.getId(), project.getName(), awl);
+		awlNode.setEntity(awl);
+		em.persist(awlNode);
+
 		// now persist it
 		em.persist(project);
 		em.flush(); // otherwise ids not available
-
 
 		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
 		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
@@ -284,7 +298,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
 		objectIdentityService.addObjectIdentity(arl.getId(), arl.getClass());
-
 	}
 
 	private void assignDefaultInfolistToProject(GenericProject project) {
@@ -1035,8 +1048,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		CustomReportLibrary crl = project.getCustomReportLibrary();
 		CustomReportLibraryNode node = customReportLibraryNodeDao.findNodeFromEntity(crl);
-		project.setName(newName);
 		node.setName(newName);
+		ActionWordLibrary awl = project.getActionWordLibrary();
+		ActionWordLibraryNode actionWordLibraryNode = actionWordLibraryNodeDao.findNodeFromEntity(awl);
+		actionWordLibraryNode.setName(newName);
+
+		project.setName(newName);
 	}
 
 	private void copyMilestone(GenericProject target, GenericProject source) {

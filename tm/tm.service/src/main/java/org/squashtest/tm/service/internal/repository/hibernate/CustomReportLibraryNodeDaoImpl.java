@@ -28,7 +28,10 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
+import org.squashtest.tm.domain.customreport.GetCustomReportTreeDefinitionVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -48,7 +51,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	EntityManager em;
 
 	@Override
-	public List<TreeLibraryNode> findChildren(Long parentId) {
+	public List<CustomReportTreeLibraryNode> findChildren(Long parentId) {
 		CustomReportLibraryNode node = em.find(CustomReportLibraryNode.class,parentId);
 		return node.getChildren();
 	}
@@ -123,85 +126,21 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	}
 
 	@Override
-	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
-		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
-
-			@Override
-			public void visit(ReportDefinition reportDefinition) {
-				type[0] = CustomReportTreeDefinition.REPORT;
-			}
-
-			@Override
-			public void visit(ChartDefinition chartDefinition) {
-				type[0] = CustomReportTreeDefinition.CHART;
-			}
-
-			@Override
-			public void visit(CustomReportDashboard crf) {
-				type[0] = CustomReportTreeDefinition.DASHBOARD;
-			}
-
-			@Override
-			public void visit(CustomReportLibrary crl) {
-				type[0] = CustomReportTreeDefinition.LIBRARY;
-			}
-
-			@Override
-			public void visit(CustomReportFolder crf) {
-				type[0] = CustomReportTreeDefinition.FOLDER;
-			}
-
-			@Override
-			public void visit(CustomReportCustomExport cret) {
-				type[0] = CustomReportTreeDefinition.CUSTOM_EXPORT;
-			}
-		};
+	public CustomReportLibraryNode findNodeFromEntity(CustomReportTreeEntity treeEntity) {
+		GetCustomReportTreeDefinitionVisitor visitor = new GetCustomReportTreeDefinitionVisitor();
 		treeEntity.accept(visitor);
 		Query query = em.createNamedQuery("CustomReportLibraryNode.findNodeFromEntity");
-		query.setParameter("entityType", type[0]);
+		query.setParameter("entityType", visitor.getCustomReportTreeDefinition());
 		query.setParameter("entityId", treeEntity.getId());
 		return (CustomReportLibraryNode) query.getSingleResult();
 	}
 
 	@Override
-	public Long countNodeFromEntity(TreeEntity treeEntity) {
-		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
-		TreeEntityVisitor visitor = new TreeEntityVisitor() {
-
-			@Override
-			public void visit(ReportDefinition reportDefinition) {
-				type[0] = CustomReportTreeDefinition.REPORT;
-			}
-
-			@Override
-			public void visit(ChartDefinition chartDefinition) {
-				type[0] = CustomReportTreeDefinition.CHART;
-			}
-
-			@Override
-			public void visit(CustomReportDashboard crf) {
-				type[0] = CustomReportTreeDefinition.DASHBOARD;
-			}
-
-			@Override
-			public void visit(CustomReportLibrary crl) {
-				type[0] = CustomReportTreeDefinition.LIBRARY;
-			}
-
-			@Override
-			public void visit(CustomReportFolder crf) {
-				type[0] = CustomReportTreeDefinition.FOLDER;
-			}
-
-			@Override
-			public void visit(CustomReportCustomExport cret) {
-				type[0] = CustomReportTreeDefinition.CUSTOM_EXPORT;
-			}
-		};
+	public Long countNodeFromEntity(CustomReportTreeEntity treeEntity) {
+		GetCustomReportTreeDefinitionVisitor visitor = new GetCustomReportTreeDefinitionVisitor();
 		treeEntity.accept(visitor);
 		Query query = em.createNamedQuery("CustomReportLibraryNode.countNodeFromEntity");
-		query.setParameter("entityType", type[0]);
+		query.setParameter("entityType", visitor.getCustomReportTreeDefinition());
 		query.setParameter("entityId", treeEntity.getId());
 		return (Long) query.getSingleResult();
 	}

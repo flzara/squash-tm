@@ -18,64 +18,47 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport;
+package org.squashtest.tm.domain.customreport;
 
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
-import org.squashtest.tm.service.deletion.OperationReport;
 
-/**
- * Class used to do specific entity job on delete operations
- * @author jthebault
- */
-public class CRLNDeletionVisitor implements CustomReportTreeEntityVisitor {
+public class GetCustomReportTreeDefinitionVisitor implements CustomReportTreeEntityVisitor {
 
-	private OperationReport operationReport;
-	private CustomReportLibraryNode customReportLibraryNode;
-
-	public CRLNDeletionVisitor(OperationReport operationReport,CustomReportLibraryNode customReportLibraryNode) {
-		super();
-		this.operationReport = operationReport;
-		this.customReportLibraryNode = customReportLibraryNode;
-	}
+	private Wrapped<CustomReportTreeDefinition> customReportTreeDefinition = new Wrapped<>();
 
 	@Override
 	public void visit(CustomReportFolder crf) {
-		addRemoved("folder");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.FOLDER);
 	}
 
 	@Override
 	public void visit(CustomReportLibrary crl) {
-		throw new UnsupportedOperationException("Cannot delete libraies by this service. The only way to delete a library is to delete the project");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.LIBRARY);
 	}
 
 	@Override
 	public void visit(CustomReportDashboard crf) {
-		addRemoved("dashboard");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.DASHBOARD);
 	}
 
 	@Override
 	public void visit(ChartDefinition chartDefinition) {
-		addRemoved("chart");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.CHART);
 	}
 
+	@Override
 	public void visit(ReportDefinition reportDefinition) {
-		addRemoved("report");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.REPORT);
 	}
 
 	@Override
 	public void visit(CustomReportCustomExport crce) {
-		addRemoved("custom-export");
+		customReportTreeDefinition.setValue(CustomReportTreeDefinition.CUSTOM_EXPORT);
 	}
 
-	private void addRemoved(String relType){
-		operationReport.addRemoved(relType, customReportLibraryNode.getId());
+	public CustomReportTreeDefinition getCustomReportTreeDefinition() {
+		return customReportTreeDefinition.getValue();
 	}
-
 }

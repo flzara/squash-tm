@@ -26,22 +26,23 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 
 /**
  * Builder for new {@link CustomReportLibraryNode}.
- * Implement {@link TreeEntityVisitor} if type dependent process is necessary
+ * Implement {@link CustomReportTreeEntityVisitor} if type dependent process is necessary
  * @author jthebault
  */
-public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
+public class CustomReportLibraryNodeBuilder implements CustomReportTreeEntityVisitor {
 
 	private CustomReportLibraryNode builtNode;
 	private CustomReportLibraryNode parentNode;
-	private TreeEntity treeEntity;
+	private CustomReportTreeEntity treeEntity;
 
-	public CustomReportLibraryNodeBuilder(CustomReportLibraryNode parentNode,TreeEntity treeEntity) {
+	public CustomReportLibraryNodeBuilder(CustomReportLibraryNode parentNode, CustomReportTreeEntity treeEntity) {
 		builtNode = new CustomReportLibraryNode();
 		this.treeEntity = treeEntity;
 		this.parentNode = parentNode;

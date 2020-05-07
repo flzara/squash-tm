@@ -23,13 +23,15 @@ package org.squashtest.tm.service.internal.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 import java.util.List;
 
 public interface CustomCustomReportLibraryNodeDao {
-	List<TreeLibraryNode> findChildren(Long parentId);
+	List<CustomReportTreeLibraryNode> findChildren(Long parentId);
 	List<Long> findAllDescendantIds(List<Long> nodesIds);
 	List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds);
 	List<Long> findAllFirstLevelDescendantIds(Long nodeId);
@@ -38,8 +40,8 @@ public interface CustomCustomReportLibraryNodeDao {
 	List<Object[]> findAncestor(Long nodeId);
 	List<CustomReportLibraryNode> findAllConcreteLibraries();
 	List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds);
-	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
-	Long countNodeFromEntity(TreeEntity treeEntity);
+	CustomReportLibraryNode findNodeFromEntity(CustomReportTreeEntity treeEntity);
+	Long countNodeFromEntity(CustomReportTreeEntity treeEntity);
 
 	@Query(name="BoundEntityDao.findCurrentProjectFromCustomReportFoldersId")
 	Long findCurrentProjectFromCustomReportFoldersId(@Param("clnId") Long id);
