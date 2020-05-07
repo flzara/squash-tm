@@ -285,11 +285,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		// add tree node for the ActionWordLibrary
 		ActionWordLibraryNode awlNode = new ActionWordLibraryNode(ActionWordTreeDefinition.LIBRARY, awl.getId(), project.getName(), awl);
+		awlNode.setEntity(awl);
+		em.persist(awlNode);
 
 		// now persist it
 		em.persist(project);
 		em.flush(); // otherwise ids not available
-
 
 		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
 		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
@@ -297,7 +298,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
 		objectIdentityService.addObjectIdentity(arl.getId(), arl.getClass());
-
 	}
 
 	private void assignDefaultInfolistToProject(GenericProject project) {
