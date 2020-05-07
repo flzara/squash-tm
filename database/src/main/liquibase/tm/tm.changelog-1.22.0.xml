@@ -355,7 +355,9 @@
 
     ]]>
     </sql>
+  </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-302-action-word-workspace-2" author="jlor">
     <comment>Create action word library node table</comment>
 
     <createTable tableName="ACTION_WORD_LIBRARY_NODE">
@@ -386,8 +388,8 @@
 
     <sql>
       insert into ACTION_WORD_LIBRARY_NODE (AWL_ID, ENTITY_ID, ENTITY_TYPE)
-        select AWL_ID, AWL_ID, 'LIBRARY'
-        from ACTION_WORD_LIBRARY;
+      select AWL_ID, AWL_ID, 'LIBRARY'
+      from ACTION_WORD_LIBRARY;
 
       update ACTION_WORD_LIBRARY_NODE
       set NAME = (select p.NAME from PROJECT p where ENTITY_ID = p.AWL_ID)
@@ -419,11 +421,11 @@
     </createIndex>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-302-action-word-workspace-2" author="jlor" dbms="postgresql">
+  <changeSet id="tm-1.22.0-SQUASH-302-action-word-workspace-3" author="jlor" dbms="postgresql">
     <comment>Reset postgresql sequences</comment>
 
     <sql>
-      select setval('action_word_library_awl_id_seq', (select MAX(ARL_ID) from AUTOMATION_REQUEST_LIBRARY));
+      select setval('action_word_library_awl_id_seq', (select MAX(AWL_ID) from ACTION_WORD_LIBRARY));
       select setval('attachment_list_attachment_list_id_seq', (select MAX(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
       select setval('acl_object_identity_id_seq', (SELECT MAX(ID) from ACL_OBJECT_IDENTITY));
       select setval('acl_responsibility_scope_entry_id_seq', (select MAX(ID) from ACL_RESPONSIBILITY_SCOPE_ENTRY));
