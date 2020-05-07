@@ -23,6 +23,7 @@ package org.squashtest.tm.service.actionword;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 public interface ActionWordLibraryNodeService {
@@ -33,14 +34,10 @@ public interface ActionWordLibraryNodeService {
 	 * The service will persist the entity, create and persist the node and make links.
 	 * <br/>
 	 * <br/>
-	 * WARNING :
-	 * This method clear the hibernate session. The @any mapping in {@link ActionWordLibraryNode}
-	 * requires a proper persist and reload to have an updated node and entity.
-	 *
 	 * @param parentId Id of parent node. Can't be null.
 	 * @return The created node.
 	 */
-	ActionWordLibraryNode createNewNode(Long parentId, ActionWordTreeEntity entity) throws NameAlreadyInUseException;
+	ActionWordLibraryNode createNewNode(Long parentId, ActionWordTreeEntity entity) throws DuplicateNameException;
 	/**
 	 * Find the {@link ActionWordLibraryNode} linked to a {@link ActionWordTreeEntity}.
 	 * @param actionWordTreeEntity The ActionWordTreeEntity

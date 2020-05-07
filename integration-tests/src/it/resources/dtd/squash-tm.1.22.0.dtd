@@ -18,6 +18,7 @@
 	AUTOMATION_REQUEST*,
 	AUTOMATION_REQUEST_LIBRARY*,
 	AUTOMATION_REQUEST_LIBRARY_CONTENT*,
+	AWLN_RELATIONSHIP*,
 	BUGTRACKER*,
 	BUGTRACKER_BINDING*,
 	BUGTRACKER_PROJECT*,
@@ -157,6 +158,7 @@
 	automation_request?,
 	automation_request_library?,
 	automation_request_library_content?,
+	awln_relationship?,
 	bugtracker?,
 	bugtracker_binding?,
 	bugtracker_project?,
@@ -409,6 +411,13 @@
 		LIBRARY_ID CDATA #REQUIRED
 		CONTENT_ID CDATA #REQUIRED
 		>
+
+	<!ELEMENT AWLN_RELATIONSHIP EMPTY>
+	<!ATTLIST AWLN_RELATIONSHIP
+		ANCESTOR_ID CDATA #REQUIRED
+		DESCENDANT_ID CDATA #REQUIRED
+		CONTENT_ORDER CDATA #REQUIRED
+	>
 
 	<!ELEMENT BUGTRACKER EMPTY>
 	<!ATTLIST BUGTRACKER
@@ -1471,6 +1480,7 @@
 	<!ELEMENT action_test_step EMPTY>
 	<!ELEMENT action_word EMPTY>
 	<!ELEMENT action_word_library EMPTY>
+	<!ELEMENT action_word_library_node EMPTY>
 	<!ELEMENT attachment EMPTY>
 	<!ELEMENT attachment_content EMPTY>
 	<!ELEMENT attachment_list EMPTY>
@@ -1481,6 +1491,7 @@
 	<!ELEMENT automation_request EMPTY>
 	<!ELEMENT automation_request_library EMPTY>
 	<!ELEMENT auth_user EMPTY>
+	<!ELEMENT awln_relationship EMPTY>
 	<!ELEMENT bugtracker EMPTY>
 	<!ELEMENT bugtracker_binding EMPTY>
 	<!ELEMENT bugtracker_project EMPTY>

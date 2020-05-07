@@ -39,9 +39,6 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 @Transactional
 public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeService {
 
-	@PersistenceContext
-	private EntityManager em;
-
 	@Inject
 	private ActionWordLibraryNodeDao actionWordLibraryNodeDao;
 
