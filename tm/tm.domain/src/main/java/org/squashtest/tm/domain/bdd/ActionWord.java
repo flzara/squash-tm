@@ -30,13 +30,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class ActionWord {
@@ -62,18 +68,21 @@ public class ActionWord {
 	@Column(name = "TOKEN")
 	private String token;
 
-	@OneToMany(mappedBy = "actionWord", cascade = CascadeType.ALL)
-	private List<KeywordTestStep> keywordTestSteps = new ArrayList<>();
+	@NotNull
+	@OneToMany(mappedBy = "actionWord", cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<KeywordTestStep> keywordTestSteps = new HashSet<>(0);
 
 	@NotNull
-	@OneToMany(mappedBy = "actionWord", cascade = CascadeType.ALL)
-	private List<ActionWordFragment> fragments = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderColumn(name = "FRAGMENT_ORDER")
+	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
+	private Set<ActionWordFragment> fragments = new LinkedHashSet<>(0);
 
-	public List<ActionWordFragment> getFragments() {
+	public Set<ActionWordFragment> getFragments() {
 		return fragments;
 	}
 
-	public void setFragments(List<ActionWordFragment> fragments) {
+	public void setFragments(Set<ActionWordFragment> fragments) {
 		this.fragments = fragments;
 	}
 
@@ -125,12 +134,16 @@ public class ActionWord {
 		this.token = token;
 	}
 
-	public List<KeywordTestStep> getKeywordTestSteps() {
+	public Set<KeywordTestStep> getKeywordTestSteps() {
 		return keywordTestSteps;
 	}
 
-	public void setKeywordTestSteps(List<KeywordTestStep> keywordTestSteps) {
+	public void setKeywordTestSteps(Set<KeywordTestStep> keywordTestSteps) {
 		this.keywordTestSteps = keywordTestSteps;
+	}
+
+	public void addStep(KeywordTestStep keywordTestStep) {
+		keywordTestSteps.add(keywordTestStep);
 	}
 
 	public <T extends ActionWordFragment> List<T> getFragmentsByClass(Class<T> actionWordFragmentClass) {

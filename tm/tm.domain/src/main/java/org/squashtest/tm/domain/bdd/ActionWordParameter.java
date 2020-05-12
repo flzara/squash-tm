@@ -23,17 +23,13 @@ package org.squashtest.tm.domain.bdd;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,9 +50,6 @@ public class ActionWordParameter extends ActionWordFragment {
 	@Column(name = "DEFAULT_VALUE")
 	@Size(max = 255)
 	private String defaultValue;
-
-	@OneToMany(mappedBy = "actionWordParam", cascade = CascadeType.ALL)
-	private List<ActionWordParameterValue> values = new ArrayList<>();
 
 	public ActionWordParameter() {
 	}
@@ -110,15 +103,4 @@ public class ActionWordParameter extends ActionWordFragment {
 		this.defaultValue = defaultValue;
 	}
 
-	public List<ActionWordParameterValue> getValues() {
-		return values;
-	}
-
-	public void setValues(List<ActionWordParameterValue> values) {
-		this.values = values;
-	}
-
-	public void addValue(@NotNull ActionWordParameterValue value) {
-		getValues().add(value);
-	}
 }

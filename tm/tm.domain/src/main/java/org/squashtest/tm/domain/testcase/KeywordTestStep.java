@@ -35,7 +35,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -49,22 +52,22 @@ public class KeywordTestStep extends TestStep {
 	private Keyword keyword;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST})
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "ACTION_WORD_ID")
 	private ActionWord actionWord;
 
 	@NotNull
-	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL)
-	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
+	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ActionWordParameterValue> paramValues = new LinkedHashSet<>(0);
 
 	public KeywordTestStep() {
 	}
 
 	public KeywordTestStep(Keyword paramKeyword, ActionWord paramActionWord) {
-		if(paramKeyword == null) {
+		if (paramKeyword == null) {
 			throw new IllegalArgumentException("Keyword cannot be null.");
 		}
-		if(paramActionWord == null) {
+		if (paramActionWord == null) {
 			throw new IllegalArgumentException("Action word cannot be null.");
 		}
 		this.keyword = paramKeyword;
@@ -127,11 +130,15 @@ public class KeywordTestStep extends TestStep {
 		this.actionWord = actionWord;
 	}
 
-	public List<ActionWordParameterValue> getParamValues() {
+	public Set<ActionWordParameterValue> getParamValues() {
 		return paramValues;
 	}
 
-	public void setParamValues(List<ActionWordParameterValue> paramValues) {
+	public void setParamValues(Set<ActionWordParameterValue> paramValues) {
 		this.paramValues = paramValues;
+	}
+
+	public void addParamValues(ActionWordParameterValue value) {
+		this.paramValues.add(value);
 	}
 }
