@@ -40,7 +40,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -76,13 +75,13 @@ public class ActionWord {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderColumn(name = "FRAGMENT_ORDER")
 	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
-	private Set<ActionWordFragment> fragments = new LinkedHashSet<>(0);
+	private List<ActionWordFragment> fragments = new ArrayList<>();
 
-	public Set<ActionWordFragment> getFragments() {
+	public List<ActionWordFragment> getFragments() {
 		return fragments;
 	}
 
-	public void setFragments(Set<ActionWordFragment> fragments) {
+	public void setFragments(List<ActionWordFragment> fragments) {
 		this.fragments = fragments;
 	}
 

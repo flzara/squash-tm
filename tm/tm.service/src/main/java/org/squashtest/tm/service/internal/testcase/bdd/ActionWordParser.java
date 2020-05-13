@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public class ActionWordParser {
 
 	private boolean actionWordHavingText = false;
 
-	private Set<ActionWordFragment> fragmentList = new LinkedHashSet<>();
+	private List<ActionWordFragment> fragmentList = new ArrayList<>();
 
 	private List<ActionWordParameterValue> parameterValues = new ArrayList<>();
 
@@ -79,7 +78,7 @@ public class ActionWordParser {
 		}
 	}
 
-	public String generateToken(Set<ActionWordFragment> fragmentList) {
+	public String generateToken(List<ActionWordFragment> fragmentList) {
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder("-");
 		for (ActionWordFragment fragment : fragmentList) {

@@ -52,8 +52,8 @@ public abstract class ActionWordFragment {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"),
-		inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_ID"))
+	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID", updatable = false, insertable = false),
+		inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_ID", updatable = false, insertable = false))
 	private ActionWord actionWord;
 
 	public ActionWordFragment() {

@@ -58,7 +58,7 @@ public class KeywordTestStep extends TestStep {
 
 	@NotNull
 	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ActionWordParameterValue> paramValues = new LinkedHashSet<>(0);
+	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
 
 	public KeywordTestStep() {
 	}
@@ -130,11 +130,11 @@ public class KeywordTestStep extends TestStep {
 		this.actionWord = actionWord;
 	}
 
-	public Set<ActionWordParameterValue> getParamValues() {
+	public List<ActionWordParameterValue> getParamValues() {
 		return paramValues;
 	}
 
-	public void setParamValues(Set<ActionWordParameterValue> paramValues) {
+	public void setParamValues(List<ActionWordParameterValue> paramValues) {
 		this.paramValues = paramValues;
 	}
 

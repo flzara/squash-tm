@@ -203,14 +203,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getWord() == "this is with \"param\""
 		checkedActionWord.getToken() == "TP-this is with -"
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "this is with "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter.class)
 		def param = (ActionWordParameter) f2
 		param.getName() == "p1"
@@ -218,8 +218,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		def values = createdTestStep.paramValues
 		values.size() == 1
-		def valueArray = values.toArray()
-		ActionWordParameterValue value = valueArray[0]
+		def valueArray = values
+		ActionWordParameterValue value = valueArray.get(0)
 		value.getValue() == "param"
 		value.getActionWordParam() == param
 		value.getKeywordTestStep() == createdTestStep
@@ -250,48 +250,48 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getWord() == "\"this\" is with \"param\"	\"v@lue\""
 		checkedActionWord.getToken() == "PTPTP- is with - -"
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter.class)
 		def param1 = (ActionWordParameter) f1
 		param1.getName() == "p1"
 		param1.getDefaultValue() == ""
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText.class)
 		((ActionWordText) f2).getText() == " is with "
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordParameter.class)
 		def param3 = (ActionWordParameter) f3
 		param3.getName() == "p2"
 		param3.getDefaultValue() == ""
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordText.class)
 		((ActionWordText) f4).getText() == " "
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordParameter.class)
 		def param5 = (ActionWordParameter) f5
 		param5.getName() == "p3"
 		param5.getDefaultValue() == ""
 
-		def values = createdTestStep.paramValues.toArray()
+		def values = createdTestStep.paramValues
 		values.size() == 3
-		ActionWordParameterValue value1 = values[0]
+		ActionWordParameterValue value1 = values.get(0)
 		value1.getValue() == "this"
 		value1.getActionWordParam() == param1
 		value1.getKeywordTestStep() == createdTestStep
 
-		ActionWordParameterValue value2 = values[1]
+		ActionWordParameterValue value2 = values.get(1)
 		value2.getValue() == "param"
 		value2.getActionWordParam() == param3
 		value2.getKeywordTestStep() != null
 
-		ActionWordParameterValue value3 = values[2]
+		ActionWordParameterValue value3 = values.get(2)
 		value3.getValue() == "v@lue"
 		value3.getActionWordParam() == param5
 		value3.getKeywordTestStep() != null
@@ -304,7 +304,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"
-			def fragments = new HashSet<ActionWordFragment>()
+			List<ActionWordFragment> fragments = new ArrayList<>()
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
 			getFragments() >> fragments
@@ -330,10 +330,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getId() == -77L
 		checkedActionWord.getWord() == "last"
 
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 1
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "last"
 	}
@@ -345,7 +345,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"
-			def fragments = new HashSet<ActionWordFragment>()
+			List<ActionWordFragment> fragments = new ArrayList<>()
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
 			getFragments() >> fragments
@@ -371,10 +371,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getId() == -77L
 		checkedActionWord.getWord() == "last"
 
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 1
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "last"
 	}
@@ -421,22 +421,22 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getId() == -77L
 		checkedActionWord.getWord() == "today is \"p1\""
 		checkedActionWord.getToken() == "TP-today is -"
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "today is "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter.class)
 		ActionWordParameter param = (ActionWordParameter) f2
 		param.getName() == "p1"
 		param.getDefaultValue() == ""
 
-		def values = createdTestStep.paramValues.toArray()
+		def values = createdTestStep.paramValues
 		values.size() == 1
-		ActionWordParameterValue value1 = values[0]
+		ActionWordParameterValue value1 = values.get(0)
 		value1.getValue() == "Monday"
 		value1.getActionWordParam() == param
 		value1.getKeywordTestStep() == createdTestStep
@@ -493,48 +493,48 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		checkedActionWord.getId() == -77L
 		checkedActionWord.getWord() == "today is \"p1\" of \"p2\"\"p3\""
 		checkedActionWord.getToken() == "TPTPP-today is - of "
-		def fragments = checkedActionWord.getFragments().toArray()
+		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText.class)
 		((ActionWordText) f1).getText() == "today is "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter.class)
 		ActionWordParameter param1 = (ActionWordParameter) f2
 		param1.getName() == "p1"
 		param1.getDefaultValue() == ""
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordText.class)
 		((ActionWordText) f3).getText() == " of "
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordParameter.class)
 		ActionWordParameter param2 = (ActionWordParameter) f4
 		param2.getName() == "p2"
 		param2.getDefaultValue() == ""
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordParameter.class)
 		ActionWordParameter param3 = (ActionWordParameter) f5
 		param3.getName() == "p3"
 		param3.getDefaultValue() == ""
 
-		def values = createdTestStep.paramValues.toArray()
+		def values = createdTestStep.paramValues
 		values.size() == 3
-		ActionWordParameterValue value1 = values[0]
+		ActionWordParameterValue value1 = values.get(0)
 		value1.getValue() == "Friday"
 		value1.getActionWordParam() == param1
 		value1.getKeywordTestStep() == createdTestStep
 
-		ActionWordParameterValue value2 = values[1]
+		ActionWordParameterValue value2 = values.get(1)
 		value2.getValue() == "May"
 		value2.getActionWordParam() == param2
 		value2.getKeywordTestStep() == createdTestStep
 
-		ActionWordParameterValue value3 = values[2]
+		ActionWordParameterValue value3 = values.get(2)
 		value3.getValue() == "2020"
 		value3.getActionWordParam() == param3
 		value3.getKeywordTestStep() == createdTestStep

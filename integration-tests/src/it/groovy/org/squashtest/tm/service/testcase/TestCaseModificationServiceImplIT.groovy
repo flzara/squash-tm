@@ -620,13 +620,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		param1.name == "p1"
 		param1.id != null
 		param1.defaultValue == ""
-		param1.values.size() == 1
 		param1.actionWord == actionWord
-		ActionWordParameterValue value1 = param1.values.get(0)
-		value1.id != null
-		value1.keywordTestStep == createdKeywordTestStep
-		value1.actionWordParam == param1
-		value1.value == "Friday"
 
 		def f3 = fragments.get(2)
 		f3.class.is(ActionWordText)
@@ -634,6 +628,14 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		text2.getText() == "."
 		text2.id != null
 		text2.actionWord == actionWord
+
+		def paramValues = createdKeywordTestStep.paramValues
+		paramValues.size() == 1
+		ActionWordParameterValue value1 = paramValues.get(0)
+		value1.id != null
+		value1.value == "Friday"
+		value1.actionWordParam == param1
+		value1.keywordTestStep == createdKeywordTestStep
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
@@ -659,7 +661,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		f1.class.is(ActionWordText)
 		def text1 = (ActionWordText) f1
 		text1.getText() == "the Action wôrd exists."
-		text1.id == -1
+		text1.id == -7
 		text1.actionWord == actionWord
 	}
 
@@ -679,17 +681,17 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		actionWord.word == "today is \"date\" of \"month\" \"year\""
 		actionWord.token == "TPTPTP-today is - of - -"
 
-		def fragments = actionWord.getFragments().toArray()
+		def fragments = actionWord.getFragments()
 		fragments.size() == 6
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		def text1 = (ActionWordText) f1
 		text1.text == "today is "
 		text1.id == -6
 		text1.actionWord == actionWord
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
 		def parameter = (ActionWordParameter) f2
 		parameter.id == -5
@@ -697,14 +699,14 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter.name == "date"
 		parameter.actionWord == actionWord
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordText)
 		def text2 = (ActionWordText) f3
 		text2.text == " of "
 		text2.id == -4
 		text2.actionWord == actionWord
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordParameter)
 		def parameter2 = (ActionWordParameter) f4
 		parameter2.id == -3
@@ -712,14 +714,14 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter2.name == "month"
 		parameter2.actionWord == actionWord
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordText)
 		def text3 = (ActionWordText) f5
 		text3.text == " "
 		text3.id == -2
 		text3.actionWord == actionWord
 
-		def f6 = fragments[3]
+		def f6 = fragments.get(5)
 		f6.class.is(ActionWordParameter)
 		def parameter3 = (ActionWordParameter) f6
 		parameter3.id == -1
@@ -727,24 +729,24 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter3.name == "year"
 		parameter3.actionWord == actionWord
 
-		def paramValues = createdKeywordTestStep.paramValues.toArray()
+		def paramValues = createdKeywordTestStep.paramValues
 		paramValues.size() == 3
-		ActionWordParameterValue value1 = paramValues[0]
+		ActionWordParameterValue value1 = paramValues.get(0)
 		value1.id != null
 		value1.value == "Tuesday"
 		value1.actionWordParam == parameter
 		value1.keywordTestStep == createdKeywordTestStep
 
-		ActionWordParameterValue value2 = paramValues[1]
+		ActionWordParameterValue value2 = paramValues.get(1)
 		value2.id != null
 		value2.value == "May"
-		value2.actionWordParam == parameter
+		value2.actionWordParam == parameter2
 		value2.keywordTestStep == createdKeywordTestStep
 
-		ActionWordParameterValue value3 = paramValues[2]
+		ActionWordParameterValue value3 = paramValues.get(2)
 		value3.id != null
 		value3.value == "2020"
-		value3.actionWordParam == parameter
+		value3.actionWordParam == parameter3
 		value3.keywordTestStep == createdKeywordTestStep
 
 

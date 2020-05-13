@@ -46,10 +46,10 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "This_is @n act1on-word with ('.,?/!§)"
 		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 1
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
 	}
@@ -61,9 +61,9 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "This_is @n    act1on-word with    ('.,?/!§)"
 		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 1
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
 	}
@@ -78,14 +78,14 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "This is an action word with \"param\""
 		result.getToken() == "TP-This is an action word with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 2
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This is an action word with "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
 		ActionWordParameter parameter = (ActionWordParameter) f2
 		parameter.getName() == "p1"
@@ -107,14 +107,14 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "This is an action word with \"param\""
 		result.getToken() == "TP-This is an action word with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 2
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This is an action word with "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
 		ActionWordParameter parameter = (ActionWordParameter) f2
 		parameter.getName() == "p1"
@@ -133,14 +133,14 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "This is an action word with \"     par@m   123    []   \""
 		result.getToken() == "TP-This is an action word with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 2
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This is an action word with "
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
 		ActionWordParameter parameter = (ActionWordParameter) f2
 		parameter.getName() == "p1"
@@ -158,28 +158,28 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "\"This\" is   an \"action word\" with   \"param\""
 		result.getToken() == "PTPTP- is an - with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 5
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1
 		parameter1.getName() == "p1"
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText)
 		((ActionWordText) f2).getText() == " is an "
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordParameter)
 		ActionWordParameter parameter2 = (ActionWordParameter) f3
 		parameter2.getName() == "p2"
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordText)
 		((ActionWordText) f4).getText() == " with "
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordParameter)
 		ActionWordParameter parameter3 = (ActionWordParameter) f5
 		parameter3.getName() == "p3"
@@ -200,33 +200,33 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "\"This\" is an\"action\"\"word\" with \"param\""
 		result.getToken() == "PTPPTP- is an- with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 6
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1
 		parameter1.getName() == "p1"
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText)
 		((ActionWordText) f2).getText() == " is an"
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordParameter)
 		ActionWordParameter parameter2 = (ActionWordParameter) f3
 		parameter2.getName() == "p2"
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordParameter)
 		ActionWordParameter parameter3 = (ActionWordParameter) f4
 		parameter3.getName() == "p3"
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordText)
 		((ActionWordText) f5).getText() == " with "
 
-		def f6 = fragments[5]
+		def f6 = fragments.get(5)
 		f6.class.is(ActionWordParameter)
 		ActionWordParameter parameter4 = (ActionWordParameter) f6
 		parameter4.getName() == "p4"
@@ -247,37 +247,37 @@ class ActionWordParserTest extends Specification {
 		then:
 		result.getWord() == "\"This\" is an \"action\"    \"word\" with \"param\""
 		result.getToken() == "PTPTPTP- is an - - with -"
-		def fragments = result.getFragments().toArray()
+		def fragments = result.getFragments()
 		fragments.size() == 7
 
-		def f1 = fragments[0]
+		def f1 = fragments.get(0)
 		f1.class.is(ActionWordParameter)
 		ActionWordParameter parameter1 = (ActionWordParameter) f1
 		parameter1.getName() == "p1"
 
-		def f2 = fragments[1]
+		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText)
 		((ActionWordText) f2).getText() == " is an "
 
-		def f3 = fragments[2]
+		def f3 = fragments.get(2)
 		f3.class.is(ActionWordParameter)
 		ActionWordParameter parameter2 = (ActionWordParameter) f3
 		parameter2.getName() == "p2"
 
-		def f4 = fragments[3]
+		def f4 = fragments.get(3)
 		f4.class.is(ActionWordText)
 		((ActionWordText) f4).getText() == " "
 
-		def f5 = fragments[4]
+		def f5 = fragments.get(4)
 		f5.class.is(ActionWordParameter)
 		ActionWordParameter parameter3 = (ActionWordParameter) f5
 		parameter3.getName() == "p3"
 
-		def f6 = fragments[5]
+		def f6 = fragments.get(5)
 		f6.class.is(ActionWordText)
 		((ActionWordText) f6).getText() == " with "
 
-		def f7 = fragments[6]
+		def f7 = fragments.get(6)
 		f7.class.is(ActionWordParameter)
 		ActionWordParameter parameter4 = (ActionWordParameter) f7
 		parameter4.getName() == "p4"
