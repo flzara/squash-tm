@@ -83,6 +83,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
+import org.squashtest.tm.service.internal.repository.ActionWordParamValueDao;
 import org.squashtest.tm.service.internal.repository.AutomationRequestDao;
 import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
 import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
@@ -161,6 +162,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private ActionTestStepDao actionStepDao;
+
+	@Inject
+	private ActionWordParamValueDao actionWordParamValueDao;
 
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
@@ -288,14 +292,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Keyword givenKeyword = Keyword.valueOf(keyword);
 		ActionWordParser parser = new ActionWordParser();
 		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(word.trim());
-		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, STEP_LAST_POS);
-	}
-
-	private void addKeywordTestStepForActionWordParameterValue(KeywordTestStep keywordTestStep, ActionWord inputActionWord) {
-		List<ActionWordParameter> inputActionWordParams = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
-		for (ActionWordParameter parameter : inputActionWordParams) {
-			parameter.getValues().get(0).setKeywordTestStep(keywordTestStep);
-		}
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, parameterValues, STEP_LAST_POS);
 	}
 
 	@Override
@@ -305,11 +303,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Keyword inputKeyword = newTestStep.getKeyword();
 		ActionWordParser parser = new ActionWordParser();
 		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(newTestStep.getActionWord().getWord().trim());
+		List<ActionWordParameterValue> parameterValueMap = parser.getParameterValues();
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
-		return addKeywordTestStep(parentTestCaseId, inputKeyword, inputActionWord, index);
+		return addKeywordTestStep(parentTestCaseId, inputKeyword, inputActionWord, parameterValueMap, index);
 	}
 
-	private KeywordTestStep addKeywordTestStep(long parentTestCaseId, Keyword inputKeyword, ActionWord inputActionWord, int index) {
+	private KeywordTestStep addKeywordTestStep(long parentTestCaseId, Keyword inputKeyword, ActionWord inputActionWord, List<ActionWordParameterValue> parameterValues, int index) {
 		KeywordTestStep newTestStep = new KeywordTestStep();
 		//set keyword to step
 		newTestStep.setKeyword(inputKeyword);
@@ -317,38 +316,55 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 		newTestStep.setTestCase(parentTestCase);
 
-		//set this test step to input action word parameter values
-		addKeywordTestStepForActionWordParameterValue(newTestStep, inputActionWord);
-
 		//check action word existence
 		String token = inputActionWord.getToken();
 		ActionWord actionWord = actionWordDao.findByToken(token);
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
-			return addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, index);
+			//actionWordDao.persist(inputActionWord);
+			//persistNewActionWordWithFragments(inputActionWord);
+			return addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
 		} else {
 			LOGGER.debug("Action word exists in database.");
-			insertNewValuesToActionWordParamValueListInDataBase(inputActionWord, actionWord);
-			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, index);
+			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);
 		}
 	}
 
-	private void insertNewValuesToActionWordParamValueListInDataBase(ActionWord inputActionWord, ActionWord actionWord) {
+//	private void persistNewActionWordWithFragments(ActionWord inputActionWord) {
+//		for (ActionWordFragment fragment : inputActionWord.getFragments()) {
+//			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
+//				ActionWordText text = (ActionWordText) fragment;
+//				actionWordTextDao.persist(text);
+//			} else {
+//				ActionWordParameter parameter = (ActionWordParameter) fragment;
+//			}
+//		}
+//	}
+
+	private void insertNewValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
 		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
-		List<ActionWordParameter> actionWordParametersInDB = actionWord.getFragmentsByClass(ActionWordParameter.class);
 
 		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
-			ActionWordParameterValue newValue = inputActionWordParameters.get(i).getValues().get(0);
-			actionWordParametersInDB.get(i).addValue(newValue);
+			ActionWordParameter parameter = inputActionWordParameters.get(i);
+			ActionWordParameterValue newValue = parameterValueMap.get(i);
+			newValue.setActionWordParam(parameter);
+			newValue.setKeywordTestStep(newTestStep);
+			actionWordParamValueDao.persist(newValue);
+			newTestStep.addParamValues(newValue);
 		}
 	}
 
-	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, int index) {
+	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues, int index) {
 		newTestStep.setActionWord(inputActionWord);
-
 		testStepDao.persist(newTestStep);
+
+		//add new param values to action word
+		insertNewValuesToDataBase(inputActionWord, newTestStep, parameterValues);
+
 		addStepToTestCase(newTestStep, parentTestCase, index);
+		inputActionWord.addStep(newTestStep);
+
 		return newTestStep;
 	}
 

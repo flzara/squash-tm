@@ -28,7 +28,9 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author qtran - created on 24/04/2020
@@ -37,7 +39,9 @@ public class ActionWordParser {
 
 	private boolean actionWordHavingText = false;
 
-	private List<ActionWordFragment> fragmentList = new ArrayList<>();
+	private Set<ActionWordFragment> fragmentList = new LinkedHashSet<>();
+
+	private List<ActionWordParameterValue> parameterValues = new ArrayList<>();
 
 	public ActionWord generateActionWordFromTextWithParamValue(String trimmedWord) {
 		//If the input word contains any double quote, do the fragmentation
@@ -75,7 +79,7 @@ public class ActionWordParser {
 		}
 	}
 
-	public String generateToken(List<ActionWordFragment> fragmentList) {
+	public String generateToken(Set<ActionWordFragment> fragmentList) {
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder("-");
 		for (ActionWordFragment fragment : fragmentList) {
@@ -143,8 +147,7 @@ public class ActionWordParser {
 		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
 		String paramName = "p" + paramIndex;
 		ActionWordParameter param = new ActionWordParameter(paramName, "");
-		paramValue.setActionWordParam(param);
-		param.addValue(paramValue);
+		parameterValues.add(paramValue);
 		return param;
 	}
 
@@ -162,6 +165,13 @@ public class ActionWordParser {
 		return word;
 	}
 
+	public List<ActionWordParameterValue> getParameterValues() {
+		return parameterValues;
+	}
+
+	public void setParameterValues(List<ActionWordParameterValue> parameterValues) {
+		this.parameterValues = parameterValues;
+	}
 }
 
 
