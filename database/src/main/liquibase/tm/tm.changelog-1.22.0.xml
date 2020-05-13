@@ -231,6 +231,14 @@
       </column>
     </createTable>
 
+    <createIndex tableName="ACTION_WORD_FRAGMENTS" indexName="idx_aw_fragments_aw">
+      <column name="ACTION_WORD_ID" />
+    </createIndex>
+
+    <createIndex tableName="ACTION_WORD_FRAGMENTS" indexName="idx_aw_fragments_aw_fragment">
+      <column name="ACTION_WORD_FRAGMENT_ID" />
+    </createIndex>
+
     <comment>Create new table for Action word text elements</comment>
     <createTable tableName="ACTION_WORD_TEXT">
       <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" remarks="Shared key with ACTION_WORD_FRAGMENT table">
