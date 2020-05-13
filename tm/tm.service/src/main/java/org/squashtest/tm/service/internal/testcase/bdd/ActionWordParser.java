@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
@@ -29,7 +29,6 @@ import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author qtran - created on 24/04/2020
@@ -57,24 +56,16 @@ public class ActionWordParser {
 			String token = generateToken(fragmentList);
 			//initiate the action word
 			ActionWord result = new ActionWord(updateWord, token);
-			//add action word to each fragment in list
-			addActionWordToFragment(result);
+
 			result.setFragments(fragmentList);
 			return result;
 		} else {
 			actionWordHavingText = true;
-			//otherwise  --> action word has no parameter and its token = T
+			//otherwise  --> action word has no parameter
 			ActionWord result = new ActionWord(trimmedWord);
 			ActionWordText text = new ActionWordText(trimmedWord);
-			text.setActionWord(result);
 			result.addFragment(text);
 			return result;
-		}
-	}
-
-	private void addActionWordToFragment(ActionWord actionWord) {
-		for (ActionWordFragment fragment : fragmentList) {
-			fragment.setActionWord(actionWord);
 		}
 	}
 

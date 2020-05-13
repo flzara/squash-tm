@@ -277,7 +277,7 @@
                       references="ACTION_WORD_PARAMETER(ACTION_WORD_FRAGMENT_ID)"/>
       </column>
       <column name="KEYWORD_TEST_STEP_ID" type="BIGINT" remarks="the keyword test step in which this value is used">
-        <constraints foreignKeyName="fk_action_word_parameter_value_keyword_test_step_id"
+        <constraints nullable="false" foreignKeyName="fk_action_word_parameter_value_keyword_test_step_id"
                      references="KEYWORD_TEST_STEP(TEST_STEP_ID)"/>
       </column>
     </createTable>

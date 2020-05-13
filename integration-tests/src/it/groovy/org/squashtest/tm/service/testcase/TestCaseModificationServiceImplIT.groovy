@@ -586,7 +586,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def text1 = (ActionWordText) f1
 		text1.getText() == "hello"
 		text1.id != null
-		text1.actionWord == actionWord
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
@@ -612,7 +611,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def text1 = (ActionWordText) f1
 		text1.getText() == "today is "
 		text1.id != null
-		text1.actionWord == actionWord
 
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
@@ -620,14 +618,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		param1.name == "p1"
 		param1.id != null
 		param1.defaultValue == ""
-		param1.actionWord == actionWord
 
 		def f3 = fragments.get(2)
 		f3.class.is(ActionWordText)
 		def text2 = (ActionWordText) f3
 		text2.getText() == "."
 		text2.id != null
-		text2.actionWord == actionWord
 
 		def paramValues = createdKeywordTestStep.paramValues
 		paramValues.size() == 1
@@ -662,7 +658,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def text1 = (ActionWordText) f1
 		text1.getText() == "the Action wôrd exists."
 		text1.id == -7
-		text1.actionWord == actionWord
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
@@ -689,7 +684,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def text1 = (ActionWordText) f1
 		text1.text == "today is "
 		text1.id == -6
-		text1.actionWord == actionWord
 
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
@@ -697,14 +691,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter.id == -5
 		parameter.defaultValue == "Monday"
 		parameter.name == "date"
-		parameter.actionWord == actionWord
 
 		def f3 = fragments.get(2)
 		f3.class.is(ActionWordText)
 		def text2 = (ActionWordText) f3
 		text2.text == " of "
 		text2.id == -4
-		text2.actionWord == actionWord
 
 		def f4 = fragments.get(3)
 		f4.class.is(ActionWordParameter)
@@ -712,14 +704,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter2.id == -3
 		parameter2.defaultValue == ""
 		parameter2.name == "month"
-		parameter2.actionWord == actionWord
 
 		def f5 = fragments.get(4)
 		f5.class.is(ActionWordText)
 		def text3 = (ActionWordText) f5
 		text3.text == " "
 		text3.id == -2
-		text3.actionWord == actionWord
 
 		def f6 = fragments.get(5)
 		f6.class.is(ActionWordParameter)
@@ -727,7 +717,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		parameter3.id == -1
 		parameter3.defaultValue == "2000"
 		parameter3.name == "year"
-		parameter3.actionWord == actionWord
 
 		def paramValues = createdKeywordTestStep.paramValues
 		paramValues.size() == 3
@@ -748,7 +737,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		value3.value == "2020"
 		value3.actionWordParam == parameter3
 		value3.keywordTestStep == createdKeywordTestStep
-
 
 	}
 }
