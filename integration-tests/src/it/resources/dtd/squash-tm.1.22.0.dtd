@@ -84,6 +84,7 @@
 	ITERATION_TEST_SUITE*,
 	ACTION_WORD*,
 	ACTION_WORD_FRAGMENT*,
+	ACTION_WORD_FRAGMENTS*,
 	ACTION_WORD_PARAMETER*,
 	ACTION_WORD_PARAMETER_VALUE*,
 	ACTION_WORD_TEXT*,
@@ -148,6 +149,7 @@
 	action_test_step?,
 	action_word?,
 	action_word_fragment?,
+	action_word_fragments?,
 	action_word_parameter?,
 	action_word_parameter_value?,
 	action_word_text?,
@@ -1005,7 +1007,13 @@
 	<!ELEMENT ACTION_WORD_FRAGMENT EMPTY>
 	<!ATTLIST ACTION_WORD_FRAGMENT
 		ACTION_WORD_FRAGMENT_ID CDATA #REQUIRED
+		>
+
+	<!ELEMENT ACTION_WORD_FRAGMENTS EMPTY>
+	<!ATTLIST ACTION_WORD_FRAGMENTS
+		ACTION_WORD_FRAGMENT_ID CDATA #REQUIRED
 		ACTION_WORD_ID CDATA #REQUIRED
+		FRAGMENT_ORDER CDATA #REQUIRED
 		>
 
 	<!ELEMENT ACTION_WORD_PARAMETER EMPTY>
@@ -1487,6 +1495,7 @@
 	<!ELEMENT action_test_step EMPTY>
 	<!ELEMENT action_word EMPTY>
 	<!ELEMENT action_word_fragment EMPTY>
+	<!ELEMENT action_word_fragments EMPTY>
 	<!ELEMENT action_word_parameter EMPTY>
 	<!ELEMENT action_word_parameter_value EMPTY>
 	<!ELEMENT action_word_text EMPTY>

@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.testcase
 
+
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
@@ -129,7 +133,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def list = service.findStepsByTestCaseId(testCaseId);
 
 
-
 		then:
 
 		list != null
@@ -142,9 +145,11 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def "should rename a lone test case"() {
 		given:
 		def newName = "new name"
+
 		when:
 		service.rename(testCaseId, newName);
 		def testcase = service.findById(testCaseId)
+
 		then:
 		testcase != null
 		testcase.id == testCaseId
@@ -164,6 +169,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		navService.addTestCaseToFolder(folderId, newtc, null)
 		service.rename(newtc.id, newName)
 		def renewtc = service.findById(newtc.id)
+
 		then:
 		renewtc != null
 		renewtc.id == newtc.id
@@ -182,6 +188,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		when:
 		navService.addTestCaseToFolder(folderId, newtc, null)
 		service.rename(newtc.id, newName)
+
 		then:
 		thrown(DuplicateNameException)
 	}
@@ -190,6 +197,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def "should change a test case description"() {
 		given:
 		def tcNewDesc = "the new desc"
+
 		when:
 		service.changeDescription(testCaseId, tcNewDesc)
 		def tc = service.findById(testCaseId)
@@ -201,6 +209,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def "should change a test case reference"() {
 		given:
 		def tcNewRef = "the new ref"
+
 		when:
 		service.changeReference(testCaseId, tcNewRef)
 		def tc = service.findById(testCaseId)
@@ -213,8 +222,10 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def "should update a test step action "() {
 		given:
 		def stepId = -2L
+
 		and:
 		def newAction = "manmana"
+
 		when:
 		service.updateTestStepAction(stepId, newAction)
 
@@ -285,7 +296,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	def "should move a couple of steps to position #2"() {
-
 		given:
 		def step1 = new ActionTestStep("first step", "first result")
 		def step2 = new ActionTestStep("second step", "second result")
@@ -362,12 +372,10 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 
 	def "should initialize a test case with his test steps"() {
-
 		given:
 		def tc = new TestCase(name: "rich-tc")
 		def ts1 = new ActionTestStep(action: "action1", expectedResult: "ex1")
 		def ts2 = new ActionTestStep(action: "action2", expectedResult: "ex2")
-
 
 
 		navService.addTestCaseToFolder(folderId, tc, null)
@@ -421,16 +429,18 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.should remove some keyword steps.xml")
 	def "should remove a list of keyword steps"() {
 		given:
-			def toRemove = [-1L, -2L]
+		def toRemove = [-1L, -2L]
+
 		when:
-			service.removeListOfSteps(-1L, toRemove);
-			def obj = service.findStepsByTestCaseId(-1L)
+		service.removeListOfSteps(-1L, toRemove);
+		def obj = service.findStepsByTestCaseId(-1L)
+
 		then:
-			obj.size() == 1
-			KeywordTestStep keywordTestStep = obj[0];
-			keywordTestStep.getId() == -3L
-			keywordTestStep.getKeyword() == Keyword.THEN
-			keywordTestStep.getActionWord().getWord() == "GoodBye!"
+		obj.size() == 1
+		KeywordTestStep keywordTestStep = obj[0];
+		keywordTestStep.getId() == -3L
+		keywordTestStep.getKeyword() == Keyword.THEN
+		keywordTestStep.getActionWord().getWord() == "GoodBye!"
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
@@ -481,7 +491,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	def "should paste a bunch of steps to end of list"() {
-
 		given:
 		def step1 = new ActionTestStep("first step", "first result")
 		def step2 = new ActionTestStep("second step", "second result")
@@ -519,7 +528,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	def "should paste a bunch of steps to position 3"() {
-
 		given:
 		def step1 = new ActionTestStep("first step", "first result")
 		def step2 = new ActionTestStep("second step", "second result")
@@ -557,30 +565,188 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with a new action word to test case"() {
 		when:
-			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ")
+
 		then:
-			createdKeywordTestStep != null
-			createdKeywordTestStep.id != null
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
 
-			Keyword.AND == createdKeywordTestStep.keyword
+		Keyword.AND == createdKeywordTestStep.keyword
 
-			ActionWord actionWord = createdKeywordTestStep.actionWord
-			actionWord.id != null
-			actionWord.word == "hello"
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id != null
+		actionWord.word == "hello"
+		actionWord.token == "T-hello-"
+		!actionWord.getKeywordTestSteps().isEmpty()
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 1
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "hello"
+		text1.id != null
+		text1.actionWord == actionWord
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with a new action word containing parameters to test case"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"Friday\".   ")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id != null
+		actionWord.word == "today is  \"Friday\"."
+		actionWord.token == "TPT-today is -.-"
+		def fragments = actionWord.getFragments()
+		fragments.size() == 3
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "today is "
+		text1.id != null
+		text1.actionWord == actionWord
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		def param1 = (ActionWordParameter) f2
+		param1.name == "p1"
+		param1.id != null
+		param1.defaultValue == ""
+		param1.values.size() == 1
+		param1.actionWord == actionWord
+		ActionWordParameterValue value1 = param1.values.get(0)
+		value1.id != null
+		value1.keywordTestStep == createdKeywordTestStep
+		value1.actionWordParam == param1
+		value1.value == "Friday"
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.getText() == "."
+		text2.id != null
+		text2.actionWord == actionWord
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with an existing action word to test case"() {
 		when:
-			KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "    the Action wôrd exists.    ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "    the Action wôrd exists.    ")
+
 		then:
-			createdKeywordTestStep != null
-			createdKeywordTestStep.id != null
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
 
-			Keyword.THEN == createdKeywordTestStep.keyword
+		Keyword.THEN == createdKeywordTestStep.keyword
 
-			ActionWord actionWord = createdKeywordTestStep.actionWord
-			actionWord.id == -78L
-			actionWord.word == "the Action wôrd exists."
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -78L
+		actionWord.word == "the Action wôrd exists."
+		actionWord.token == "T-the Action wôrd exists.-"
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 1
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "the Action wôrd exists."
+		text1.id == -1
+		text1.actionWord == actionWord
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an existing action word that contains parameters to test case"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is \"Tuesday\" of \"May\" \"2020\"   ")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -66L
+		actionWord.word == "today is \"date\" of \"month\" \"year\""
+		actionWord.token == "TPTPTP-today is - of - -"
+
+		def fragments = actionWord.getFragments().toArray()
+		fragments.size() == 6
+
+		def f1 = fragments[0]
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.text == "today is "
+		text1.id == -6
+		text1.actionWord == actionWord
+
+		def f2 = fragments[1]
+		f2.class.is(ActionWordParameter)
+		def parameter = (ActionWordParameter) f2
+		parameter.id == -5
+		parameter.defaultValue == "Monday"
+		parameter.name == "date"
+		parameter.actionWord == actionWord
+
+		def f3 = fragments[2]
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.text == " of "
+		text2.id == -4
+		text2.actionWord == actionWord
+
+		def f4 = fragments[3]
+		f4.class.is(ActionWordParameter)
+		def parameter2 = (ActionWordParameter) f4
+		parameter2.id == -3
+		parameter2.defaultValue == ""
+		parameter2.name == "month"
+		parameter2.actionWord == actionWord
+
+		def f5 = fragments[4]
+		f5.class.is(ActionWordText)
+		def text3 = (ActionWordText) f5
+		text3.text == " "
+		text3.id == -2
+		text3.actionWord == actionWord
+
+		def f6 = fragments[3]
+		f6.class.is(ActionWordParameter)
+		def parameter3 = (ActionWordParameter) f6
+		parameter3.id == -1
+		parameter3.defaultValue == "2000"
+		parameter3.name == "year"
+		parameter3.actionWord == actionWord
+
+		def paramValues = createdKeywordTestStep.paramValues.toArray()
+		paramValues.size() == 3
+		ActionWordParameterValue value1 = paramValues[0]
+		value1.id != null
+		value1.value == "Tuesday"
+		value1.actionWordParam == parameter
+		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues[1]
+		value2.id != null
+		value2.value == "May"
+		value2.actionWordParam == parameter
+		value2.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value3 = paramValues[2]
+		value3.id != null
+		value3.value == "2020"
+		value3.actionWordParam == parameter
+		value3.keywordTestStep == createdKeywordTestStep
+
+
 	}
 }
