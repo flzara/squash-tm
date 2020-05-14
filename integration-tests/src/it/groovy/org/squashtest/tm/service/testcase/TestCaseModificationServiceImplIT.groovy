@@ -602,7 +602,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
-		actionWord.word == "today is  \"Friday\"."
+		actionWord.word == "today is \"p1\"."
 		actionWord.token == "TPT-today is -.-"
 		def fragments = actionWord.getFragments()
 		fragments.size() == 3

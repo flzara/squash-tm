@@ -76,7 +76,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"param\""
+		result.getWord() == "This is an action word with \"p1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -105,7 +105,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"param\""
+		result.getWord() == "This is an action word with \"p1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -131,7 +131,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"     par@m   123    []   \""
+		result.getWord() == "This is an action word with \"p1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -156,7 +156,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"This\" is   an \"action word\" with   \"param\""
+		result.getWord() == "\"p1\" is an \"p2\" with \"p3\""
 		result.getToken() == "PTPTP- is an - with -"
 		def fragments = result.getFragments()
 		fragments.size() == 5
@@ -198,7 +198,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"This\" is an\"action\"\"word\" with \"param\""
+		result.getWord() == "\"p1\" is an\"p2\"\"p3\" with \"p4\""
 		result.getToken() == "PTPPTP- is an- with -"
 		def fragments = result.getFragments()
 		fragments.size() == 6
@@ -245,7 +245,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"This\" is an \"action\"    \"word\" with \"param\""
+		result.getWord() == "\"p1\" is an \"p2\" \"p3\" with \"p4\""
 		result.getToken() == "PTPTPTP- is an - - with -"
 		def fragments = result.getFragments()
 		fragments.size() == 7

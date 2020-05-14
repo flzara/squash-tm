@@ -36,6 +36,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("entity-id", step.getId().toString());
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
+		//TODO-QUAN: add keyword test step real text with param value not param name
 		item.put("step-action-word", keywordTestStep.getActionWord().getWord());
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;

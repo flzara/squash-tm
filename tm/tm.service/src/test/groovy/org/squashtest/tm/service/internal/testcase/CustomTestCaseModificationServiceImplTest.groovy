@@ -201,7 +201,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
-		checkedActionWord.getWord() == "this is with \"param\""
+		checkedActionWord.getWord() == "this is with \"p1\""
 		checkedActionWord.getToken() == "TP-this is with -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
@@ -248,7 +248,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
-		checkedActionWord.getWord() == "\"this\" is with \"param\"	\"v@lue\""
+		checkedActionWord.getWord() == "\"p1\" is with \"p2\" \"p3\""
 		checkedActionWord.getToken() == "PTPTP- is with - -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
