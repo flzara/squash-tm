@@ -41,6 +41,7 @@ import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.Keyword;
@@ -363,9 +364,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		insertNewValuesToDataBase(inputActionWord, newTestStep, parameterValues);
 
 		addStepToTestCase(newTestStep, parentTestCase, index);
+
+		addActionWordToItsFragment(inputActionWord);
 		inputActionWord.addStep(newTestStep);
 
 		return newTestStep;
+	}
+
+	private void addActionWordToItsFragment(ActionWord inputActionWord) {
+		List<ActionWordFragment> fragments = inputActionWord.getFragments();
+		fragments.forEach(actionWordFragment -> {
+			actionWordFragment.setActionWord(inputActionWord);
+		});
 	}
 
 	@Override
