@@ -64,6 +64,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfi
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
 import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormModel.ActionStepFormModelValidator;
+import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel.KeywordTestStepModelValidator;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -247,10 +248,16 @@ public class TestCaseTestStepsController {
 
 	@PostMapping(value = "/add-keyword-test-step", consumes = "application/json")
 	@ResponseBody
-	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) {
+	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		BindingResult validation = new BeanPropertyBindingResult(keywordTestStepDto, "add-keyword-test-step");
+		KeywordTestStepModelValidator validator = new KeywordTestStepModelValidator(internationalizationHelper);
+		validator.validate(keywordTestStepDto, validation);
+
+		if (validation.hasErrors()) {
+			throw new BindException(validation);
+		}
 		String keyword = keywordTestStepDto.getKeyword();
 		String actionWord = keywordTestStepDto.getActionWord();
-		//TODO-QUAN: add a validator to check if the input action word contain at least a text (see line 204)
 		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		return step.getId();
 	}

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters
 
+import org.springframework.beans.NotReadablePropertyException
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
@@ -32,7 +33,6 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
-import org.squashtest.tm.service.internal.repository.ActionWordDao
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel
@@ -157,11 +157,84 @@ class TestCaseTestStepsControllerTest extends Specification {
 		testStep.getId() >> 2020;
 
 		when:
-
 		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step") >> testStep
 
 		then:
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
+	def "should add a keyword test step with given keyword and parameterized actionWord" (){
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("BUT");
+		testStepModel.setActionWord("add a \"BDD\" test \"step\"");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+
+		when:
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a \"BDD\" test \"step\"") >> testStep
+
+		then:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
+	def "should throw exception when adding a keyword test step with empty keyword" (){
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("");
+		testStepModel.setActionWord("add a BDD test step");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+		testCaseModificationService.addKeywordTestStep(1L, "", "add a BDD test step") >> testStep
+
+		when:
+		controller.addKeywordTestStep(testStepModel, 1L)
+
+		then:
+		NotReadablePropertyException ex = thrown()
+		ex.message == "Invalid property 'Keyword in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Keyword in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
+	}
+
+	def "should throw exception when adding a keyword test step with empty Action word" (){
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("AND");
+		testStepModel.setActionWord("");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+		testCaseModificationService.addKeywordTestStep(1L, "AND", "") >> testStep
+
+		when:
+		controller.addKeywordTestStep(testStepModel, 1L)
+
+		then:
+		NotReadablePropertyException ex = thrown()
+		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
+	}
+
+	def "should throw exception when adding a keyword test step with no-text Action word" (){
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("AND");
+		testStepModel.setActionWord("\"This is invalid action word\"");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+		testCaseModificationService.addKeywordTestStep(1L, "AND", "\"This is invalid action word\"") >> testStep
+
+		when:
+		controller.addKeywordTestStep(testStepModel, 1L)
+
+		then:
+		NotReadablePropertyException ex = thrown()
+		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
 	}
 
 	def "should build table model for keyword test case steps"() {

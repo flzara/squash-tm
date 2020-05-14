@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import java.util.Locale;
+
 public class KeywordTestStepModel {
 
 	private String keyword;
@@ -40,5 +48,79 @@ public class KeywordTestStepModel {
 
 	public void setActionWord(String actionWord) {
 		this.actionWord = actionWord;
+	}
+
+	public static class KeywordTestStepModelValidator implements Validator {
+
+		private MessageSource messageSource;
+
+		public KeywordTestStepModelValidator(MessageSource messageSource) {
+			super();
+			this.messageSource = messageSource;
+		}
+
+		public MessageSource getMessageSource() {
+			return messageSource;
+		}
+
+		public void setMessageSource(MessageSource messageSource) {
+			this.messageSource = messageSource;
+		}
+
+		@Override
+		public boolean supports(Class<?> aClass) {
+			return aClass.equals(KeywordTestStepModel.class);
+		}
+
+		@Override
+		public void validate(Object target, Errors errors) {
+			Locale locale = LocaleContextHolder.getLocale();
+			String notBlank = messageSource.getMessage("message.notBlank",null, locale);
+
+			KeywordTestStepModel model = (KeywordTestStepModel) target;
+			String keyword = model.getKeyword();
+			String actionWord = model.getActionWord();
+
+			if (keyword.isEmpty()) {
+				errors.rejectValue("Keyword in Keyword Test case", "message.notBlank", notBlank);
+			}
+
+			if (actionWord.isEmpty()) {
+				errors.rejectValue("Action word in Keyword Test case", "message.notBlank", notBlank);
+			}
+
+			String noText = messageSource.getMessage("message.noText",null, locale);
+			if (!validateTextExistence(actionWord)) {
+				errors.rejectValue("Action word in Keyword Test case", "message.noText", noText);
+			}
+
+		}
+
+		private boolean validateTextExistence(String actionWord) {
+			if (actionWord.contains("\"")){
+				return hasTextOutsideParameters(actionWord);
+			}
+			return true;
+		}
+
+		private boolean hasTextOutsideParameters(String actionWord) {
+			String updateWord = addMissingDoubleQuoteIfAny(actionWord);
+			String removedBetweenTwoDoubleQuotes = updateWord.replaceAll("\"[^\"]*\"", "");
+			return !removedBetweenTwoDoubleQuotes.trim().isEmpty();
+		}
+
+		/**
+		 * This method is to add a double quote at the end of the input word if the current number of double quote is odd
+		 *
+		 * @param word the input action word word
+		 * @return word with inserted double quotes at the end if missing
+		 */
+		private String addMissingDoubleQuoteIfAny(String word) {
+			int count = StringUtils.countMatches(word, "\"");
+			if (count % 2 == 1) {
+				word += "\"";
+			}
+			return word;
+		}
 	}
 }
