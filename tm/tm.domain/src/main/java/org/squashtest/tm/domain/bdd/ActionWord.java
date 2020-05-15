@@ -21,9 +21,11 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 
@@ -36,6 +38,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -49,6 +52,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Auditable
 public class ActionWord implements ActionWordTreeEntity {
 
 	private static final int ACTION_WORD_MAX_LENGTH = 255;
@@ -82,6 +86,11 @@ public class ActionWord implements ActionWordTreeEntity {
 	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
 	private List<ActionWordFragment> fragments = new ArrayList<>();
 
+	@Lob
+	@Column(name = "DESCRIPTION")
+	@Type(type = "org.hibernate.type.TextType")
+	private String description;
+
 	@JoinColumn(name = "PROJECT_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Project project;
@@ -110,12 +119,12 @@ public class ActionWord implements ActionWordTreeEntity {
 		return id;
 	}
 
-	public String getWord() {
-		return word;
-	}
-
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getWord() {
+		return word;
 	}
 
 	public void setWord(String word) {
@@ -150,6 +159,14 @@ public class ActionWord implements ActionWordTreeEntity {
 			}
 		}
 		return result;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setProject(Project project) {

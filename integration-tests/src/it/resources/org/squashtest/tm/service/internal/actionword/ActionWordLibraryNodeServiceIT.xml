@@ -28,7 +28,8 @@
   <ACTION_WORD_LIBRARY AWL_ID="-1" />
   <PROJECT PROJECT_ID="-1" AWL_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-01-02" CREATED_BY="admin" NAME="action word project"/>
 
-  <ACTION_WORD ACTION_WORD_ID="-1" WORD="press the red button" PROJECT_ID="-1" />
+  <ACTION_WORD ACTION_WORD_ID="-1" WORD="press the red button" PROJECT_ID="-1"
+               CREATED_ON="2020-05-15" CREATED_BY="admin"/>
 
   <ACTION_WORD_LIBRARY_NODE AWLN_ID="-1" NAME="action word project" ENTITY_TYPE="LIBRARY" ENTITY_ID="-1" AWL_ID="-1" />
   <ACTION_WORD_LIBRARY_NODE AWLN_ID="-2" NAME="press the red button" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-1" AWL_ID="-1" />

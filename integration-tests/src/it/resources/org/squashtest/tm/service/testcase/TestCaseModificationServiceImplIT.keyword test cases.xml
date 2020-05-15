@@ -34,7 +34,7 @@
   <TEST_CASE TCLN_ID="-4" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791fa1" PREREQUISITE="" />
   <KEYWORD_TEST_CASE TCLN_ID="-4" />
 
-  <ACTION_WORD ACTION_WORD_ID="-78" WORD="the Action wôrd exists." TOKEN="T-the Action wôrd exists.-" PROJECT_ID="-1"/>
+  <ACTION_WORD ACTION_WORD_ID="-78" WORD="the Action wôrd exists." TOKEN="T-the Action wôrd exists.-" PROJECT_ID="-1" CREATED_ON="2020-05-15" CREATED_BY="admin/>
   <ACTION_WORD_LIBRARY_NODE AWLN_ID="-2" NAME="the Action wôrd exists." ENTITY_ID="-78" ENTITY_TYPE="ACTION_WORD" AWL_ID="-1"/>
 
   <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-7"/>

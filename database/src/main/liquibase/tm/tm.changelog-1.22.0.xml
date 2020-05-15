@@ -77,8 +77,21 @@
 
       <column name="WORD" type="VARCHAR(255)">
         <constraints nullable="false" unique="true"/>
-
       </column>
+
+      <column name="DESCRIPTION" type="CLOB" />
+
+      <column name="CREATED_BY" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
 
     </createTable>
   </changeSet>
