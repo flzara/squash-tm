@@ -20,14 +20,35 @@
  */
 package org.squashtest.tm.service.actionword;
 
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
+import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 public interface ActionWordLibraryNodeService {
-
+	/**
+	 * Finds an {@linkplain ActionWordLibraryNode} given its id.
+	 * @param nodeId the id of the requested {@linkplain ActionWordLibraryNode}
+	 * @return the requested {@linkplain ActionWordLibraryNode}
+	 */
+	ActionWordLibraryNode findActionWordLibraryNodeById(Long nodeId);
+	/**
+	 * Finds an {@linkplain ActionWordLibrary} given its node id
+	 * (i.e. the id of the corresponding {@linkplain ActionWordLibraryNode}).
+	 * @param nodeId the id of the {@linkplain ActionWordLibraryNode}
+	 * @return the requested {@linkplain ActionWordLibrary}
+	 */
+	ActionWordLibrary findLibraryByNodeId(Long nodeId);
+	/**
+	 * Finds an {@linkplain ActionWord} given its node id
+	 * (i.e. the id of the corresponding {@linkplain ActionWordLibraryNode}).
+	 * @param nodeId the id of the {@linkplain ActionWordLibraryNode}
+	 * @return the requested {@linkplain ActionWord}
+	 */
+	ActionWord findActionWordByNodeId(Long nodeId);
 	/**
 	 * Add a new {@link ActionWordLibraryNode}.
 	 * The caller is responsible for giving a not null, named {@link TreeEntity}.
