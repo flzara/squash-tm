@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -242,7 +243,7 @@ public class CustomReportNavigationController {
 
 
 	//-------------- PRIVATE STUFF ---------------------------
-	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, TreeEntity entity) {
+	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, CustomReportTreeEntity entity) {
 		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewNode(libraryId, entity);
 		JsTreeNode node = builderProvider.get().build(newNode);
 		return node;
