@@ -306,7 +306,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-keyword"       : 'AND',
 				"step-index"         : '2',
 				"empty-delete-holder": null,
-				"step-action-word"   : 'how are \"you\" ?'
+				"step-action-word"   : 'how are <span style=\"color: blue;\">you</span> ?'
 			]]
 
 

@@ -100,7 +100,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		item1.size() == 5
 		item1.get("step-index") == "1"
 		item1.get("step-keyword") == "GIVEN"
-		item1.get("step-action-word") == "hello \"Sunday\""
+		item1.get("step-action-word") == "hello <span style=\"color: blue;\">Sunday</span>"
 		item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
 		item2.size() == 5

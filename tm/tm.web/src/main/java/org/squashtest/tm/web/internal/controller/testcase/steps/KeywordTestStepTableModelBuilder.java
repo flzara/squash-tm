@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
-import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -63,7 +62,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 				ActionWordText text = (ActionWordText) fragment;
 				builder.append(text.getText());
 			} else {
-				builder.append("\"").append(paramValues.get(index).getValue()).append("\"");
+				builder.append("<span style=\"color: blue;\">").append(paramValues.get(index).getValue()).append("</span>");
 				++index;
 			}
 		}
