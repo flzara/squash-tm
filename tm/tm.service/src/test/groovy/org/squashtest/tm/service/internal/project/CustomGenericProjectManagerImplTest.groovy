@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.project
 
 import org.hibernate.Session
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.tm.domain.actionword.ActionWordLibrary
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibrary
@@ -42,6 +44,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.exception.project.LockedParameterException
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.service.infolist.InfoListFinderService
+import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
@@ -73,6 +76,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	ProjectTemplateDao templateDao = Mock()
 	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
+	ActionWordLibraryNodeDao actionWordLibraryNodeDao = Mock()
 	TestCaseDao testCaseDao = Mock()
 
 	ObjectIdentityService objectIdentityService = Mock()
@@ -89,6 +93,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		manager.genericProjectDao = genericProjectDao
 		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
+		manager.actionWordLibraryNodeDao = actionWordLibraryNodeDao
 		manager.templateDao = templateDao
 		manager.projectDao = projectDao
 		manager.testCaseDao = testCaseDao
@@ -165,11 +170,15 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should change a project's name to a free name"() {
 		given:
 		Project project = new Project()
-		CustomReportLibrary crl = new CustomReportLibrary()
 		genericProjectDao.getOne(10L) >> project
+		and:
+		CustomReportLibrary crl = new CustomReportLibrary()
 		project.getCustomReportLibrary() >> crl
 		customReportLibraryNodeDao.findNodeFromEntity(_) >> new CustomReportLibraryNode()
-
+		and:
+		ActionWordLibrary awl = new ActionWordLibrary()
+		project.getActionWordLibrary() >> awl
+		actionWordLibraryNodeDao.findNodeFromEntity(_) >> new ActionWordLibraryNode()
 		and:
 		genericProjectDao.countByName("use your freedom a'choice") >> 0L
 

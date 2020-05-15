@@ -494,7 +494,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
 				LOGGER.debug("-- START COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
 				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
-					.getValue());
+					.getValue(), true);
 				LOGGER.debug("-- END COLLECTING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
 				LOGGER.debug("-- START SENDING AUTOMATED EXECUTIONS FOR " + extendersByKind.getKey() + " " + new Date());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
@@ -519,11 +519,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * This method is only used by an automation server hence the permission check
 	 */
 	@Override
-	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite) {
+	public Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite, boolean withAllCustomFields) {
 		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT)) {
 			throw new AccessDeniedException("Access is denied");
 		}
-		return collectAutomatedExecs(suite.getExecutionExtenders());
+		return collectAutomatedExecs(suite.getExecutionExtenders(), withAllCustomFields);
 	}
 
 
@@ -611,12 +611,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	// ******************* execute suite private methods **************************
 
 	private Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> collectAutomatedExecs(
-		Collection<AutomatedExecutionExtender> extenders) {
+		Collection<AutomatedExecutionExtender> extenders, boolean withAllCustomFields) {
 
 		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<>(
 			extenders.size());
 
-		CustomFieldValuesForExec customFieldValuesForExec = fetchCustomFieldValues(extenders);
+		CustomFieldValuesForExec customFieldValuesForExec = fetchCustomFieldValues(extenders, withAllCustomFields);
 		for (AutomatedExecutionExtender extender : extenders) {
 			tests.add(createAutomatedExecAndParams(extender, customFieldValuesForExec));
 		}
@@ -624,11 +624,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	}
 
-	private CustomFieldValuesForExec fetchCustomFieldValues(Collection<AutomatedExecutionExtender> extenders) {
+	private CustomFieldValuesForExec fetchCustomFieldValues(Collection<AutomatedExecutionExtender> extenders, boolean withAllCustomFields) {
 		Map<Long, List<CustomFieldValue>> testCaseCfv = fetchTestCaseCfv(extenders);
-		Map<Long, List<CustomFieldValue>> iterationCfv = fetchIterationCfv(extenders);
-		Map<Long, List<CustomFieldValue>> campaignCfv = fetchCampaignCfv(extenders);
-		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestSuiteCfv(extenders);
+		Map<Long, List<CustomFieldValue>> iterationCfv = withAllCustomFields ? fetchIterationCfv(extenders) : Collections.emptyMap();
+		Map<Long, List<CustomFieldValue>> campaignCfv = withAllCustomFields ? fetchCampaignCfv(extenders) : Collections.emptyMap();
+		Map<Long, List<CustomFieldValue>> testSuiteCfv = withAllCustomFields ? fetchTestSuiteCfv(extenders) : Collections.emptyMap();
 		return new CustomFieldValuesForExec(testCaseCfv, iterationCfv, campaignCfv, testSuiteCfv);
 	}
 

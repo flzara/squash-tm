@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase;
 
@@ -40,6 +40,8 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
@@ -75,6 +77,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -153,6 +156,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private ActionWordDao actionWordDao;
+
+	@Inject
+	private ActionWordLibraryNodeService actionWordLibraryNodeService;
 
 	@Inject
 	private AutomationRequestDao requestDao;
@@ -323,25 +329,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
-			//actionWordDao.persist(inputActionWord);
-			//persistNewActionWordWithFragments(inputActionWord);
+			ActionWordLibrary actionWordLibrary = parentTestCase.getProject().getActionWordLibrary();
+			ActionWordLibraryNode parentLibraryNode = actionWordLibraryNodeService.findNodeFromEntity(actionWordLibrary);
+			actionWordLibraryNodeService.createNewNode(parentLibraryNode.getId(), inputActionWord);
 			return addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
 		} else {
 			LOGGER.debug("Action word exists in database.");
 			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);
 		}
 	}
-
-//	private void persistNewActionWordWithFragments(ActionWord inputActionWord) {
-//		for (ActionWordFragment fragment : inputActionWord.getFragments()) {
-//			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
-//				ActionWordText text = (ActionWordText) fragment;
-//				actionWordTextDao.persist(text);
-//			} else {
-//				ActionWordParameter parameter = (ActionWordParameter) fragment;
-//			}
-//		}
-//	}
 
 	private void insertNewValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
 		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);

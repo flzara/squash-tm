@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.customreport;
 import org.apache.commons.collections.Closure;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -74,7 +75,7 @@ public class CRLNDeletionHandler implements
 
 	private void doOneDelete(Long nodeId, OperationReport operationReport){
 		CustomReportLibraryNode targetNode = customReportLibraryNodeDao.getOne(nodeId);
-		TreeLibraryNode parentNode = targetNode.getParent();
+		CustomReportTreeLibraryNode parentNode = targetNode.getParent();
 		parentNode.removeChild(targetNode);
 		CRLNDeletionVisitor visitor = new CRLNDeletionVisitor(operationReport, targetNode);
 		targetNode.getEntity().accept(visitor);

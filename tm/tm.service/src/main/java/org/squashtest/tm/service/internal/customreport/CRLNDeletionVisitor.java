@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
 import org.squashtest.tm.service.deletion.OperationReport;
 
@@ -34,7 +34,7 @@ import org.squashtest.tm.service.deletion.OperationReport;
  * Class used to do specific entity job on delete operations
  * @author jthebault
  */
-public class CRLNDeletionVisitor implements TreeEntityVisitor{
+public class CRLNDeletionVisitor implements CustomReportTreeEntityVisitor {
 
 	private OperationReport operationReport;
 	private CustomReportLibraryNode customReportLibraryNode;

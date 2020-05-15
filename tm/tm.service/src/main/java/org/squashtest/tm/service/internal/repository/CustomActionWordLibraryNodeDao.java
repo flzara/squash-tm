@@ -18,13 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.actionword;
+package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 
-import java.util.Collection;
-
-public interface ActionWordService {
-	Collection<String> findAllMatchingActionWords(String searchInput);
-	ActionWord findById(long id);
+public interface CustomActionWordLibraryNodeDao {
+	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
 }
