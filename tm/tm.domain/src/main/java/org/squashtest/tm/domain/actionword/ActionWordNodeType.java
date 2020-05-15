@@ -18,16 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customreport;
+package org.squashtest.tm.domain.actionword;
 
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.report.ReportDefinition;
-
-public interface TreeEntityVisitor {
-	void visit(CustomReportFolder crf);
-	void visit(CustomReportLibrary crl);
-	void visit(CustomReportDashboard crf);
-	void visit(ChartDefinition chartDefinition);
-	void visit(ReportDefinition reportDefinition);
-	void visit(CustomReportCustomExport crce);
+public interface ActionWordNodeType {
+	String LIBRARY_NAME = "LIBRARY";
+	String ACTION_WORD_NAME = "ACTION_WORD";
 }

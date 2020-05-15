@@ -18,33 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.tree;
+package org.squashtest.tm.domain.actionword;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 
-/**
- * Interface that every ENTITY represented in a tree by a {@link TreeLibraryNode} must implements
- * The contract assure that the entity is identified, named and can produce a reference to the {@link TreeLibraryNode}
- * The goal is to have a bidirectional association between a {@link TreeLibraryNode} and it's entity.
- * @author jthebault
- *
- */
-public interface TreeEntity extends Identified{
+public enum ActionWordTreeDefinition implements TreeEntityDefinition {
+	LIBRARY(ActionWordNodeType.LIBRARY_NAME, true),
+	ACTION_WORD(ActionWordNodeType.ACTION_WORD_NAME, false);
 
-	/**
-	 * @return Name of this node.
-	 */
-	String getName();
+	private final String typeIdentifier;
+	private boolean container;
 
-	/**
-	 *Don't forget to update also the NODE name
-	 *Name is denormalized to avoid complex inject/request each time we need the name of an entity.
-	 * @param name The name of this node. Should not be blank or null.
-	 */
-	void setName(String name);
+	ActionWordTreeDefinition(String typeIdentifier, boolean container) {
+		this.typeIdentifier = typeIdentifier;
+		this.container = container;
+	}
 
-	Project getProject();
+	@Override
+	public String getTypeName() {
+		return typeIdentifier;
+	}
 
-	void setProject(Project project);
+	@Override
+	public boolean isContainer() {
+		return container;
+	}
 }

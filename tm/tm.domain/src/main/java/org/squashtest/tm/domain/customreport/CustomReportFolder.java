@@ -42,7 +42,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-public class CustomReportFolder implements TreeEntity, BoundEntity {
+public class CustomReportFolder implements CustomReportTreeEntity, BoundEntity {
 
 	@Id
 	@Column(name = "CRF_ID")
@@ -93,7 +93,7 @@ public class CustomReportFolder implements TreeEntity, BoundEntity {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -123,7 +123,7 @@ public class CustomReportFolder implements TreeEntity, BoundEntity {
 	}
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		CustomReportFolder copy = new CustomReportFolder();
 		copy.setName(this.getName());
 		copy.setDescription(this.getDescription());

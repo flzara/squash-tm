@@ -1,37 +1,42 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
+import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
@@ -44,7 +49,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class ActionWord {
+public class ActionWord implements ActionWordTreeEntity {
 
 	private static final int ACTION_WORD_MAX_LENGTH = 255;
 
@@ -77,17 +82,9 @@ public class ActionWord {
 	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
 	private List<ActionWordFragment> fragments = new ArrayList<>();
 
-	public List<ActionWordFragment> getFragments() {
-		return fragments;
-	}
-
-	public void setFragments(List<ActionWordFragment> fragments) {
-		this.fragments = fragments;
-	}
-
-	public void addFragment(@NotNull ActionWordFragment fragment) {
-		getFragments().add(fragment);
-	}
+	@JoinColumn(name = "PROJECT_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Project project;
 
 	public ActionWord() {
 	}
@@ -155,13 +152,49 @@ public class ActionWord {
 		return result;
 	}
 
-	@Override
-	public String toString() {
-		return "ActionWord{" +
-			"id=" + id +
-			", word='" + word + '\'' +
-			'}';
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
+	@Override
+	public Project getProject() {
+		return project;
+	}
+
+	public List<ActionWordFragment> getFragments() {
+		return fragments;
+	}
+
+	public void setFragments(List<ActionWordFragment> fragments) {
+		this.fragments = fragments;
+	}
+
+	public void addFragment(@NotNull ActionWordFragment fragment) {
+		getFragments().add(fragment);
+	}
+
+	/* ActionWordTreeEntity methods */
+
+	@Override
+	public void accept(ActionWordTreeEntityVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public ActionWordTreeEntity createCopy() {
+		throw new UnsupportedOperationException();
+	}
+
+	/* TreeEntity methods */
+
+	@Override
+	public String getName() {
+		return word;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.word = name;
+	}
 
 }

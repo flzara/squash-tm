@@ -45,7 +45,7 @@ import java.util.Set;
 
 @Entity
 @Auditable
-public class CustomReportDashboard implements TreeEntity {
+public class CustomReportDashboard implements CustomReportTreeEntity {
 
 	@Id
 	@Column(name = "CRD_ID")
@@ -86,7 +86,7 @@ public class CustomReportDashboard implements TreeEntity {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -101,7 +101,7 @@ public class CustomReportDashboard implements TreeEntity {
 	}
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		CustomReportDashboard copy = new CustomReportDashboard();
 		copy.setProject(this.getProject());
 		copy.setName(this.getName());

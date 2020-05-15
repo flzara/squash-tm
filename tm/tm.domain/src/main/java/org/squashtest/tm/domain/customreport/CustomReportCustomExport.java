@@ -48,7 +48,7 @@ import java.util.List;
 @Auditable
 @Entity
 @Table(name = "CUSTOM_REPORT_CUSTOM_EXPORT")
-public class CustomReportCustomExport implements TreeEntity {
+public class CustomReportCustomExport implements CustomReportTreeEntity {
 
 	@Id
 	@Column(name = "CRCE_ID")
@@ -79,12 +79,12 @@ public class CustomReportCustomExport implements TreeEntity {
 	private Project project;
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		CustomReportCustomExport copy = new CustomReportCustomExport();
 		copy.setName(this.name);
 		copy.setProject(this.project);

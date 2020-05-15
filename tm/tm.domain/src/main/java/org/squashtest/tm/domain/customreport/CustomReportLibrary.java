@@ -34,7 +34,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class CustomReportLibrary extends GenericTreeLibrary {
+public class CustomReportLibrary extends GenericTreeLibrary implements CustomReportTreeEntity {
 
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.customreport.CustomReportLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CustomReportLibrary";
@@ -82,7 +82,7 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -92,7 +92,7 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		throw new UnsupportedOperationException("Cannot copy library, how did you call this method ?");
 	}
 

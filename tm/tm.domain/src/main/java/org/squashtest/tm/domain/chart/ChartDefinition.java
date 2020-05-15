@@ -25,11 +25,11 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
+import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
@@ -71,7 +71,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "CHART_DEFINITION")
 @Auditable
-public class ChartDefinition implements TreeEntity{
+public class ChartDefinition implements CustomReportTreeEntity {
 
 	@Id
 	@Column(name = "CHART_ID")
@@ -256,7 +256,7 @@ public class ChartDefinition implements TreeEntity{
 	}
 
 	@Override
-	public void accept(TreeEntityVisitor visitor) {
+	public void accept(CustomReportTreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -292,7 +292,7 @@ public class ChartDefinition implements TreeEntity{
 
 
 	@Override
-	public TreeEntity createCopy() {
+	public CustomReportTreeEntity createCopy() {
 		ChartDefinition copy = new ChartDefinition();
 		copy.setName(this.getName());
 		copy.setOwner(this.getOwner());
