@@ -20,11 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps
 
-
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.KeywordTestStep
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants
 import spock.lang.Specification
 
 class KeywordTestStepTableModelBuilderTest extends Specification {
@@ -33,48 +36,77 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 	def "should build an item data from a KeywordTestStep"() {
 		given:
-			def testStep = Mock(KeywordTestStep)
-			testStep.getId() >> -68L
-			testStep.getKeyword() >> Keyword.GIVEN
-			testStep.getActionWord() >> new ActionWord("goodbye")
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> -68L
+		testStep.getKeyword() >> Keyword.GIVEN
+		def actionWord1 = Mock(ActionWord)
+		actionWord1.getWord() >> "goodbye"
+		ActionWordText text1 = new ActionWordText("goodbye")
+		List<ActionWordFragment> fragments1 = new ArrayList<>()
+		fragments1.add(text1)
+		actionWord1.getFragments() >> fragments1
+		testStep.getActionWord() >> actionWord1
 		when:
-			Map<String, String> resultItem1 = builder.buildItemData(testStep)
+		Map<String, String> resultItem1 = builder.buildItemData(testStep)
 		then:
-			resultItem1.size() == 5
-			resultItem1.get("step-index") == "0"
-			resultItem1.get("step-keyword") == "GIVEN"
-			resultItem1.get("step-action-word") == "goodbye"
-			resultItem1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+		resultItem1.size() == 5
+		resultItem1.get("step-index") == "0"
+		resultItem1.get("step-keyword") == "GIVEN"
+		resultItem1.get("step-action-word") == "goodbye"
+		resultItem1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 	}
 
 	def "should build a raw model from 2 KeywordTestStep"() {
 		given:
-			def testStep = Mock(KeywordTestStep)
-			testStep.getId() >> -99L
-			testStep.getKeyword() >> Keyword.GIVEN
-			testStep.getActionWord() >> new ActionWord("hello")
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> -99L
+		testStep.getKeyword() >> Keyword.GIVEN
+
+		def actionWord = Mock(ActionWord)
+		actionWord.getWord() >> "hello \"Sunday\""
+		ActionWordText text = new ActionWordText("hello ")
+		ActionWordParameter parameter = new ActionWordParameter("p1", "")
+		List<ActionWordFragment> fragments = new ArrayList<>()
+		fragments.add(text)
+		fragments.add(parameter)
+		actionWord.getFragments() >> fragments
+		testStep.getActionWord() >> actionWord
+
+		List<ActionWordParameterValue> values = new ArrayList<>();
+		ActionWordParameterValue value = new ActionWordParameterValue("Sunday")
+		values.add(value)
+		testStep.getParamValues() >> values
+
 		and:
-			def testStep2 = Mock(KeywordTestStep)
-			testStep2.getId() >> -77L
-			testStep2.getKeyword() >> Keyword.THEN
-			testStep2.getActionWord() >> new ActionWord("goodbye")
+		def testStep2 = Mock(KeywordTestStep)
+		testStep2.getId() >> -77L
+		testStep2.getKeyword() >> Keyword.THEN
+
+		def actionWord2 = Mock(ActionWord)
+		actionWord2.getWord() >> "goodbye"
+		ActionWordText text2 = new ActionWordText("goodbye")
+		List<ActionWordFragment> fragments2 = new ArrayList<>()
+		fragments2.add(text2)
+		actionWord2.getFragments() >> fragments2
+		testStep2.getActionWord() >> actionWord2
+
 		when:
-			List<Object> resultCollection = builder.buildRawModel([testStep,testStep2],1)
+		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)
 		then:
-			resultCollection.size() == 2
-			def item1 = resultCollection[0]
-			def item2 = resultCollection[1]
+		resultCollection.size() == 2
+		def item1 = resultCollection[0]
+		def item2 = resultCollection[1]
 
-			item1.size() == 5
-			item1.get("step-index") == "1"
-			item1.get("step-keyword") == "GIVEN"
-			item1.get("step-action-word") == "hello"
-			item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+		item1.size() == 5
+		item1.get("step-index") == "1"
+		item1.get("step-keyword") == "GIVEN"
+		item1.get("step-action-word") == "hello \"Sunday\""
+		item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
-			item2.size() == 5
-			item2.get("step-index") == "2"
-			item2.get("step-keyword") == "THEN"
-			item2.get("step-action-word") == "goodbye"
-			item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+		item2.size() == 5
+		item2.get("step-index") == "2"
+		item2.get("step-keyword") == "THEN"
+		item2.get("step-action-word") == "goodbye"
+		item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 	}
 }

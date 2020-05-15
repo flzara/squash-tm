@@ -20,12 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordFragment;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+import org.squashtest.tm.domain.bdd.ActionWordText;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
@@ -36,9 +42,31 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("entity-id", step.getId().toString());
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
-		//TODO-QUAN: add keyword test step real text with param value not param name
-		item.put("step-action-word", keywordTestStep.getActionWord().getWord());
+		String actionWordWithParamValues = createActionWordWithParamValues(keywordTestStep);
+		item.put("step-action-word", actionWordWithParamValues);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
+	}
+
+	private String createActionWordWithParamValues(KeywordTestStep keywordTestStep) {
+		ActionWord actionWord = keywordTestStep.getActionWord();
+		List<ActionWordFragment> fragments = actionWord.getFragments();
+		List<ActionWordParameterValue> paramValues = keywordTestStep.getParamValues();
+		return createWord(fragments, paramValues);
+	}
+
+	private String createWord(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
+		StringBuilder builder = new StringBuilder();
+		int index = 0;
+		for (ActionWordFragment fragment : fragments) {
+			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
+				ActionWordText text = (ActionWordText) fragment;
+				builder.append(text.getText());
+			} else {
+				builder.append("\"").append(paramValues.get(index).getValue()).append("\"");
+				++index;
+			}
+		}
+		return builder.toString();
 	}
 }

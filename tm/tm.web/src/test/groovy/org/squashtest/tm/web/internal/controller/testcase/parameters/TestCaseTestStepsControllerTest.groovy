@@ -25,6 +25,10 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -57,7 +61,6 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.internationalizationHelper = messageSource
 		controller.cufHelperService = cufHelperService
 	}
-
 
 
 	def "should build table model for test case steps"() {
@@ -109,44 +112,44 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 		then:
 		res.sEcho == "echo"
-		res.aaData ==[
+		res.aaData == [
 			[
-				"step-id":1L,
-				"empty-browse-holder":null,
-				"customFields":[:],
-				"nb-attachments":1,
-				"empty-requirements-holder":null,
-				"nb-requirements":0,
-				"step-index":1,
-				"step-type":"action",
-				"attach-list-id":5L,
-				"step-result":"r1",
-				"has-requirements":false,
-				"empty-delete-holder":null,
-				"step-action":"a1",
-				"call-step-info" : null
+				"step-id"                  : 1L,
+				"empty-browse-holder"      : null,
+				"customFields"             : [:],
+				"nb-attachments"           : 1,
+				"empty-requirements-holder": null,
+				"nb-requirements"          : 0,
+				"step-index"               : 1,
+				"step-type"                : "action",
+				"attach-list-id"           : 5L,
+				"step-result"              : "r1",
+				"has-requirements"         : false,
+				"empty-delete-holder"      : null,
+				"step-action"              : "a1",
+				"call-step-info"           : null
 			],
 			[
-				"step-id":2L,
-				"empty-browse-holder":null,
-				"customFields":[:],
-				"nb-attachments":1,
-				"empty-requirements-holder":null,
-				"nb-requirements":0,
-				"step-index":2,
-				"step-type":"action",
-				"attach-list-id":5L,
-				"step-result":"r2",
-				"has-requirements":false,
-				"call-step-info":null,
-				"empty-delete-holder":null,
-				"step-action":"a2"
+				"step-id"                  : 2L,
+				"empty-browse-holder"      : null,
+				"customFields"             : [:],
+				"nb-attachments"           : 1,
+				"empty-requirements-holder": null,
+				"nb-requirements"          : 0,
+				"step-index"               : 2,
+				"step-type"                : "action",
+				"attach-list-id"           : 5L,
+				"step-result"              : "r2",
+				"has-requirements"         : false,
+				"call-step-info"           : null,
+				"empty-delete-holder"      : null,
+				"step-action"              : "a2"
 			]]
 
 
 	}
 
-	def "should add a keyword test step with given keyword and actionWord" (){
+	def "should add a keyword test step with given keyword and actionWord"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
 		testStepModel.setKeyword("BUT");
@@ -163,7 +166,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
-	def "should add a keyword test step with given keyword and parameterized actionWord" (){
+	def "should add a keyword test step with given keyword and parameterized actionWord"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
 		testStepModel.setKeyword("BUT");
@@ -180,7 +183,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
-	def "should throw exception when adding a keyword test step with empty keyword" (){
+	def "should throw exception when adding a keyword test step with empty keyword"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
 		testStepModel.setKeyword("");
@@ -199,7 +202,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		ex.message == "Invalid property 'Keyword in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Keyword in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
 	}
 
-	def "should throw exception when adding a keyword test step with empty Action word" (){
+	def "should throw exception when adding a keyword test step with empty Action word"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
 		testStepModel.setKeyword("AND");
@@ -218,7 +221,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
 	}
 
-	def "should throw exception when adding a keyword test step with no-text Action word" (){
+	def "should throw exception when adding a keyword test step with no-text Action word"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
 		testStepModel.setKeyword("AND");
@@ -239,15 +242,39 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should build table model for keyword test case steps"() {
 		given:
-		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		def actionWord1 = Mock(ActionWord)
+		actionWord1.getWord() >> "hello"
+		ActionWordText text1 = new ActionWordText("hello")
+		List<ActionWordFragment> fragments1 = new ArrayList<>()
+		fragments1.add(text1)
+		actionWord1.getFragments() >> fragments1
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
+		List<ActionWordParameterValue> paramValues1 = new ArrayList<>();
 		use(ReflectionCategory) {
 			TestStep.set field: "id", of: step1, to: 1L
+			KeywordTestStep.set field: "paramValues", of: step1, to: paramValues1
 		}
 
 		and:
-		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, new ActionWord("how are you ?"))
+		def actionWord2 = Mock(ActionWord)
+		actionWord2.getWord() >> "how are \"you\" ?"
+		ActionWordText text2 = new ActionWordText("how are ")
+		ActionWordText text3 = new ActionWordText(" ?")
+		ActionWordParameter parameter = new ActionWordParameter("p1", "")
+		List<ActionWordFragment> fragments2 = new ArrayList<>()
+		fragments2.add(text2)
+		fragments2.add(parameter)
+		fragments2.add(text3)
+		actionWord2.getFragments() >> fragments2
+
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
+		List<ActionWordParameterValue> paramValues2 = new ArrayList<>();
+		ActionWordParameterValue value = new ActionWordParameterValue("you")
+		paramValues2.add(value)
 		use(ReflectionCategory) {
 			TestStep.set field: "id", of: step2, to: 2L
+			KeywordTestStep.set field: "paramValues", of: step2, to: paramValues2
 		}
 
 		and:
@@ -266,20 +293,20 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 		then:
 		res.sEcho == "echo"
-		res.aaData ==[
+		res.aaData == [
 			[
-				"entity-id": "1",
-				"step-keyword":'GIVEN',
-				"step-index":'1',
-				"empty-delete-holder":null,
-				"step-action-word":'hello'
+				"entity-id"          : "1",
+				"step-keyword"       : 'GIVEN',
+				"step-index"         : '1',
+				"empty-delete-holder": null,
+				"step-action-word"   : 'hello'
 			],
 			[
-				"entity-id": "2",
-				"step-keyword":'AND',
-				"step-index":'2',
-				"empty-delete-holder":null,
-				"step-action-word":'how are you ?'
+				"entity-id"          : "2",
+				"step-keyword"       : 'AND',
+				"step-index"         : '2',
+				"empty-delete-holder": null,
+				"step-action-word"   : 'how are \"you\" ?'
 			]]
 
 
