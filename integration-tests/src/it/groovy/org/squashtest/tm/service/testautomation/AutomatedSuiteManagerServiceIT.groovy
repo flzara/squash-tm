@@ -84,7 +84,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		AutomatedSuite suite = service.createFromIterationTestPlanItems(testItemsList.get(0).getIteration().getId(), testItemsList)
 
 		when:
-		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite, true)
 
 		then:
 		executionOrder.size() == 3
@@ -119,7 +119,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		AutomatedSuite suite = service.createFromTestSuiteTestPlanItems(testItemsList.get(0).getTestSuites().get(0).getId(), testItemsList)
 
 		when:
-		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite)
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite, true)
 
 		then:
 		executionOrder.size() == 3
