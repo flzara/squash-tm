@@ -27,7 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
 @Table(name = "ACTION_WORD_TEXT")
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 public class ActionWordText extends ActionWordFragment {
-	@NotBlank
+	@NotNull
 	@Column(name = "TEXT")
 	@Size(max = 255)
 	private String text;
