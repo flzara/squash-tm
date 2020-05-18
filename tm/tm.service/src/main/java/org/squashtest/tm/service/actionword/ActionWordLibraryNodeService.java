@@ -24,9 +24,7 @@ import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 public interface ActionWordLibraryNodeService {
 	/**
@@ -51,10 +49,8 @@ public interface ActionWordLibraryNodeService {
 	ActionWord findActionWordByNodeId(Long nodeId);
 	/**
 	 * Add a new {@link ActionWordLibraryNode}.
-	 * The caller is responsible for giving a not null, named {@link TreeEntity}.
+	 * The caller is responsible for giving a not null, named {@link ActionWordTreeEntity}.
 	 * The service will persist the entity, create and persist the node and make links.
-	 * <br/>
-	 * <br/>
 	 * @param parentId Id of parent node. Can't be null.
 	 * @return The created node.
 	 */
