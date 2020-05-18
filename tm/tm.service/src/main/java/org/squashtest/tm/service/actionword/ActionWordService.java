@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.service.actionword;
 
-import org.squashtest.tm.domain.bdd.ActionWord;
-
 import java.util.Collection;
 
 public interface ActionWordService {
 	Collection<String> findAllMatchingActionWords(String searchInput);
-	ActionWord findById(long actionWordId);
 	String changeDescription(long actionWordId, String newDescription);
 }
