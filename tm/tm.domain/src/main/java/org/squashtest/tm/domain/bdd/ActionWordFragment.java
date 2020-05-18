@@ -50,7 +50,6 @@ public abstract class ActionWordFragment {
 	@SequenceGenerator(name = "action_word_fragment_action_word_fragment_id_seq", sequenceName = "action_word_fragment_action_word_fragment_id_seq", allocationSize = 1)
 	private Long id;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID", updatable = false, insertable = false),
 		inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_ID", updatable = false, insertable = false))
