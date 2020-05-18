@@ -104,8 +104,8 @@ public class KeywordTestStepModel {
 		}
 
 		private boolean hasTextOutsideParameters(String actionWord) {
-			String updateWord = addMissingDoubleQuoteIfAny(actionWord);
-			String removedBetweenTwoDoubleQuotes = updateWord.replaceAll("\"[^\"]*\"", "");
+			String updatedWord = addMissingDoubleQuoteIfAny(actionWord);
+			String removedBetweenTwoDoubleQuotes = updatedWord.replaceAll("\"[^\"]*\"", "");
 			return !removedBetweenTwoDoubleQuotes.trim().isEmpty();
 		}
 
