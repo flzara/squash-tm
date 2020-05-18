@@ -26,5 +26,6 @@ import java.util.Collection;
 
 public interface ActionWordService {
 	Collection<String> findAllMatchingActionWords(String searchInput);
-	ActionWord findById(long id);
+	ActionWord findById(long actionWordId);
+	String changeDescription(long actionWordId, String newDescription);
 }
