@@ -602,7 +602,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
-		actionWord.word == "today is \"p1\"."
+		actionWord.word == "today is \"param1\"."
 		actionWord.token == "TPT-today is -.-"
 		def fragments = actionWord.getFragments()
 		fragments.size() == 3
@@ -617,7 +617,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordParameter)
 		def param1 = (ActionWordParameter) f2
-		param1.name == "p1"
+		param1.name == "param1"
 		param1.id != null
 		param1.defaultValue == ""
 		param1.actionWord == actionWord

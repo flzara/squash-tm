@@ -150,7 +150,7 @@ public class ActionWordParser {
 
 	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
 		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
-		String paramName = "p" + paramIndex;
+		String paramName = "param" + paramIndex;
 		ActionWordParameter param = new ActionWordParameter(paramName, "");
 		parameterValues.add(paramValue);
 		return param;
