@@ -180,6 +180,7 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 		performAutocomplete: function(event,  self) {
 			var searchInput = $(event.currentTarget);
 			var searchInputValue = searchInput.val();
+			var projectId = self.settings.projectId;
 			searchInput.autocomplete('close');
 			searchInput.autocomplete('disable');
 			clearTimeout(self.keyupTimer);
@@ -187,7 +188,10 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 				$.ajax({
 					type: 'GET',
 					url: '/squash/keyword-test-cases/autocomplete',
-					data: { searchInput: searchInputValue }
+					data: {
+						projectId: projectId,
+						searchInput: searchInputValue
+					}
 				}).done(function(actionWords) {
 					searchInput.autocomplete('enable');
 					searchInput.autocomplete('option', 'source', actionWords);

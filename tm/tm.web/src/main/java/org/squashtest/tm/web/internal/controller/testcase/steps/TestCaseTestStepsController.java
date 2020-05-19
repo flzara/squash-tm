@@ -235,6 +235,7 @@ public class TestCaseTestStepsController {
 		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(testCaseId);
 		List<TestStep> steps = keywordTestCase.getSteps();
 		model.addAttribute(TEST_CASE, keywordTestCase);
+		model.addAttribute("projectId", keywordTestCase.getProject().getId());
 
 		//create keyword test step table model
 		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();

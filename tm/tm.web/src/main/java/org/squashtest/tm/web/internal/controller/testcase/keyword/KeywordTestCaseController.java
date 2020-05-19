@@ -39,8 +39,10 @@ public class KeywordTestCaseController {
 
 	@ResponseBody
 	@RequestMapping("/autocomplete")
-	public Collection<String> findAllMatchingActionWords(@RequestParam String searchInput) {
-		return actionWordService.findAllMatchingActionWords(searchInput);
+	public Collection<String> findAllMatchingActionWords(
+		@RequestParam Long projectId,
+		@RequestParam String searchInput) {
+		return actionWordService.findAllMatchingActionWords(projectId, searchInput);
 	}
 
 }
