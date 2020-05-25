@@ -36,7 +36,7 @@
  --%>
  <c:set var="workspaceColor" value="blue" />
  <c:choose>
- 	<c:when test="${workspace =='test-case'}">
+ 	<c:when test="${workspace =='test-case' || workspace == 'action-word'}">
  		<c:set var="workspaceColor" value="green" />
  	</c:when>
 	<c:when test="${workspace =='campaign'}">
