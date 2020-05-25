@@ -221,36 +221,21 @@
       <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" autoIncrement="true" remarks="primary key, auto-generated">
         <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ACTION_WORD_FRAGMENT"/>
       </column>
+
+      <column name="ACTION_WORD_ID" type="BIGINT" remarks="Foreign key to the action word">
+        <constraints nullable="true" foreignKeyName="fk_action_word_fragment_action_word_id" references="ACTION_WORD(ACTION_WORD_ID)"/>
+      </column>
+
+      <column name="FRAGMENT_ORDER" type="int"
+              remarks="the fragment order in action word fragment list">
+        <constraints nullable="true" />
+      </column>
     </createTable>
 
     <comment>Update ACTION_WORD table</comment>
     <addColumn tableName="ACTION_WORD">
       <column name="TOKEN" type="VARCHAR(255)"/>
     </addColumn>
-
-    <comment>Create association table between ActionWord and ActionWordFragment to control Fragment order</comment>
-    <createTable tableName="ACTION_WORD_FRAGMENTS">
-      <column name="ACTION_WORD_ID" type="BIGINT" remarks="Foreign key to the action word">
-        <constraints nullable="false" foreignKeyName="fk_action_word_fragments_action_word_id" references="ACTION_WORD(ACTION_WORD_ID)"/>
-      </column>
-
-      <column name="ACTION_WORD_FRAGMENT_ID" type="BIGINT" remarks="Foreign key to the action word fragment">
-        <constraints nullable="false" foreignKeyName="fk_action_word_fragments_action_word_fragment_id" references="ACTION_WORD_FRAGMENT(ACTION_WORD_FRAGMENT_ID)"/>
-      </column>
-
-      <column name="FRAGMENT_ORDER" type="int"
-              remarks="the fragment order in action word fragment list">
-        <constraints nullable="false" />
-      </column>
-    </createTable>
-
-    <createIndex tableName="ACTION_WORD_FRAGMENTS" indexName="idx_aw_fragments_aw">
-      <column name="ACTION_WORD_ID" />
-    </createIndex>
-
-    <createIndex tableName="ACTION_WORD_FRAGMENTS" indexName="idx_aw_fragments_aw_fragment">
-      <column name="ACTION_WORD_FRAGMENT_ID" />
-    </createIndex>
 
     <comment>Create new table for Action word text elements</comment>
     <createTable tableName="ACTION_WORD_TEXT">

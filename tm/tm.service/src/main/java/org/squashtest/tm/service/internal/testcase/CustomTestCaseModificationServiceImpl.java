@@ -329,10 +329,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
-			ActionWordLibrary actionWordLibrary = parentTestCase.getProject().getActionWordLibrary();
+			//set project to input action word
+			Project currentProject = parentTestCase.getProject();
+			inputActionWord.setProject(currentProject);
+			//add test step
+			KeywordTestStep testStep = addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
+			//add new action word node in library
+			ActionWordLibrary actionWordLibrary = currentProject.getActionWordLibrary();
 			ActionWordLibraryNode parentLibraryNode = actionWordLibraryNodeService.findNodeFromEntity(actionWordLibrary);
 			actionWordLibraryNodeService.createNewNode(parentLibraryNode.getId(), inputActionWord);
-			return addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
+			return testStep;
 		} else {
 			LOGGER.debug("Action word exists in database.");
 			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);

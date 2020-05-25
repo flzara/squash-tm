@@ -83,7 +83,7 @@ public class ActionWord implements ActionWordTreeEntity {
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderColumn(name = "FRAGMENT_ORDER")
-	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
+	@JoinColumn(name = "ACTION_WORD_ID")
 	private List<ActionWordFragment> fragments = new ArrayList<>();
 
 	@Lob
