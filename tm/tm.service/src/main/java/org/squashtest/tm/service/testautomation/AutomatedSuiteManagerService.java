@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.testautomation;
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -226,5 +229,14 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createFromItemsAndTestSuite(List<Long> testPlanIds, long testSuiteId);
 
+	/**
+	 * Gets a list of AutomatedSuite given an iteration ID.
+	 *
+	 * @param iterationId
+	 * @param paging
+	 * @param filter
+	 * @return
+	 */
+	PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter);
 
 }

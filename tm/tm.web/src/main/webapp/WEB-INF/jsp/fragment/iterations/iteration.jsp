@@ -230,6 +230,11 @@
         </a>
       </li>
       <li>
+        <a href="#iteration-automated-suites-panel">
+          <f:message key="tabs.label.automated-suites"/>
+        </a>
+      </li>
+      <li>
         <a class="tabs-attachments" href="#tabs-3">
           <f:message key="label.Attachments"/>
           <c:if test="${ iteration.attachmentList.notEmpty }">
@@ -352,6 +357,14 @@
       milestoneConf="${milestoneConf}"/>
 
       <%-- ------------------ /test plan ----------------------------- --%>
+
+      <%-- ------------------ automated suites ------------------------------ --%>
+
+          <it:iteration-automated-suites-panel
+            iteration="${iteration}"
+            />
+
+            <%-- ------------------ /automated suites ----------------------------- --%>
 
       <%------------------------------- Dashboard ---------------------------------------------------%>
     <div id="dashboard-iteration">

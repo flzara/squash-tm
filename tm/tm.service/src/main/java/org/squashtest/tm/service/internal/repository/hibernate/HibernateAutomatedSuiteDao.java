@@ -24,6 +24,8 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
@@ -36,6 +38,7 @@ import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -144,6 +147,33 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		Query query = em.createNamedQuery("automatedSuite.fetchForAutomationExecution");
 		query.setParameter("suiteId", suiteId);
 		return query.getResultList();
+	}
+
+	@Override
+	public List<AutomatedSuite> findAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter) {
+//		// get the data
+//		List<Object[]> tuples = findAutomatedSuitesData(iterationId, PagingAndMultiSorting paging, ColumnFiltering filter);
+//
+//		// filter them
+//		List<AutomatedSuite> suites = new ArrayList<>(tuples.size());
+//
+//		for (Object[] tuple : tuples) {
+//			AutomatedSuite automatedSuite = (AutomatedSuite) tuple[1];
+//			suites.add(automatedSuite);
+//		}
+
+		Query query = em.createNamedQuery("automatedSuite.findAutomatedSuitesByIterationID");
+		query.setParameter("iterationId", iterationId);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public long countSuites(Long iterationId, ColumnFiltering filter) {
+		Query query = em.createNamedQuery("automatedSuite.countAutomatedSuitesByIterationID");
+		query.setParameter("iterationId", iterationId);
+
+		return (long) query.getSingleResult();
 	}
 
 	// TODO : either make it private (core Squash at least doesn't call it anywhere but here), either declare it in the interface

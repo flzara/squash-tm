@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.campaign.Iteration;
 
 import java.util.Collection;
 import java.util.List;
@@ -74,7 +77,7 @@ public interface AutomatedSuiteDao{
 	/**
 	 * retrieve all the {@link AutomatedExecutionExtender} that this suite is bound to.
 	 *
-	 * @param id
+	 * @param suiteId
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId);
@@ -82,7 +85,7 @@ public interface AutomatedSuiteDao{
 	/**
 	 * retrieve all the extenders of executions currently waiting to be run by their test automation servers, for a given {@link AutomatedSuite}
 	 *
-	 * @param id
+	 * @param suiteId
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllWaitingExtenders(String suiteId);
@@ -90,7 +93,7 @@ public interface AutomatedSuiteDao{
 	/**
 	 * retrieve all the extenders of executions currently being run by their test automation servers, for a given {@link AutomatedSuite}
 	 *
-	 * @param id
+	 * @param suiteId
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllRunningExtenders(String suiteId);
@@ -98,7 +101,7 @@ public interface AutomatedSuiteDao{
 	/**
 	 * retrieve all the extenders of executions which had been ran their test automation servers, for a given {@link AutomatedSuite}
 	 *
-	 * @param id
+	 * @param suiteId
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllCompletedExtenders(String suiteId);
@@ -106,10 +109,29 @@ public interface AutomatedSuiteDao{
 	/**
 	 * retrieve all the extenders of executions which status is one of the supplied status, for a given {@link AutomatedSuite}
 	 *
-	 * @param id
+	 * @param suiteId
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId, Collection<ExecutionStatus> statusList);
 
 	List<AutomatedExecutionExtender> findAndFetchForAutomatedExecutionCreation(String id);
+
+	/**
+	 * Retrieves all the automated suites related to an {@link Iteration}.
+	 *
+	 * @param iterationId
+	 * @param paging
+	 * @param filter
+	 * @return
+	 */
+	List<AutomatedSuite> findAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter);
+
+	/**
+	 * Counts the number of {@link AutomatedSuite} related to an {@link Iteration}
+	 *
+	 * @param iterationId
+	 * @param filter
+	 * @return
+	 */
+	long countSuites(Long iterationId, ColumnFiltering filter);
 }

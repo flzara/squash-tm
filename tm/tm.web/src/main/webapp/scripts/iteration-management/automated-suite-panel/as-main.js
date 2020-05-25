@@ -18,31 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ './test-suite-menu/TestSuiteMenuMain', 
-         './test-plan-panel/tp-main',
-         './automated-suite-panel/as-main',
-         './events/ctxt-evt-handler', 
-         'dashboard/iterations-dashboard/iteration-dashboard-main' ], 
-		function(TestSuiteMenuMain, testPlanPanel, automatedSuitePanel, evtHandler, dashboard) {
+/*
+ * configuration an object as follow :
+ *
+ * {
+ *		basic : {
+ *			iterationId : the id of the current iteration
+ *		}
+ *	}
+ *
+ */
+
+define(['squash.translator', './table'], function(translator, table){
 
 	return {
-		initTestSuiteMenu : TestSuiteMenuMain,
-		
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		},
-
-		initAutomatedSuitePanel : function(conf){
-			automatedSuitePanel.init(conf);
-		},
-		
-		initEvents : function(conf){
-			evtHandler.init(conf);
-		},
-		
-		initDashboardPanel : function(conf){
-			dashboard.init(conf);
+		init : function(origconf){
+			table.init(origconf);
 		}
 	};
-	
 });

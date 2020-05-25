@@ -36,6 +36,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.acls.Roles;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
@@ -838,6 +842,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
 
 		return createFromItems(items);
+	}
+
+	@Override
+	public PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter) {
+		List<AutomatedSuite> suites = autoSuiteDao.findAutomatedSuitesByIterationID(iterationId, paging, filter);
+		long suiteSize = autoSuiteDao.countSuites(iterationId, filter);
+		return new PagingBackedPagedCollectionHolder<>(paging, suiteSize, suites);
 	}
 
 	public static class CustomFieldValuesForExec {
