@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -153,6 +154,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return new ObjectIdentityImpl(AutomationRequestLibrary.class, project.getAutomationRequestLibrary().getId());
 	}
 
+	private ObjectIdentity createActionWordLibraryIdentity(GenericProject project) {
+		return new ObjectIdentityImpl(ActionWordLibrary.class, project.getActionWordLibrary().getId());
+	}
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProjectPermission> findProjectPermissionByParty(long partyId) {
@@ -253,6 +258,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 			ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
 			aclService.addNewResponsibility(party.getId(), arlibraryRef, permissionName);
+
+			ObjectIdentity awlibraryRef = createActionWordLibraryIdentity(project);
+			aclService.addNewResponsibility(party.getId(), awlibraryRef, permissionName);
+
 		} else if (userLicenseInformation.contains("false")){
 			throw new NotAllowedByLicenseException();
 		}
@@ -280,6 +289,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity arlibraryRef = createAutomationRequestLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, arlibraryRef);
+
+		ObjectIdentity awlibraryRef = createActionWordLibraryIdentity(project);
+		aclService.removeAllResponsibilities(partyId, awlibraryRef);
 	}
 
 	@Override

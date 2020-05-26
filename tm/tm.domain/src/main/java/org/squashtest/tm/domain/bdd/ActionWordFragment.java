@@ -20,26 +20,26 @@
  */
 package org.squashtest.tm.domain.bdd;
 
+import org.squashtest.tm.security.annotation.InheritsAcls;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author qtran - created on 23/04/2020
  */
 @Entity
 @Table(name = "ACTION_WORD_FRAGMENT")
+@InheritsAcls(constrainedClass = ActionWord.class, collectionName = "fragments")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ActionWordFragment {
 	protected static final int ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH = 255;
@@ -50,9 +50,8 @@ public abstract class ActionWordFragment {
 	@SequenceGenerator(name = "action_word_fragment_action_word_fragment_id_seq", sequenceName = "action_word_fragment_action_word_fragment_id_seq", allocationSize = 1)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID", updatable = false, insertable = false),
-		inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_ID", updatable = false, insertable = false))
+	@ManyToOne()
+	@JoinColumn(name = "ACTION_WORD_ID", updatable = false, insertable = false)
 	private ActionWord actionWord;
 
 	public ActionWordFragment() {

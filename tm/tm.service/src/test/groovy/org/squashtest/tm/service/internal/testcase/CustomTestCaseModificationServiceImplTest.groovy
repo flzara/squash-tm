@@ -132,7 +132,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> null
+		actionWordDao.findByTokenInCurrentProject(_,_) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -166,7 +166,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> null
+		actionWordDao.findByTokenInCurrentProject(_,_) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -197,7 +197,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> null
+		actionWordDao.findByTokenInCurrentProject(_,_) >> null
 		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
@@ -234,7 +234,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> null
+		actionWordDao.findByTokenInCurrentProject(_,_) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -291,7 +291,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> null
+		actionWordDao.findByTokenInCurrentProject(_,_) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -367,6 +367,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getFragments() >> fragments
 			getFragmentsByClass(_) >> []
 		}
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
 		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
@@ -374,7 +378,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
@@ -408,6 +412,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getFragments() >> fragments
 			getFragmentsByClass(_) >> []
 		}
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
 		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
@@ -415,7 +423,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
@@ -456,6 +464,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
 		}
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
 		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
@@ -463,7 +475,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Monday\"  ")
@@ -528,6 +540,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
 		}
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
 		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
@@ -535,7 +551,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByToken(_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Friday\" of  \"May\"\"2020\"")
@@ -978,7 +994,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		2 * keywordTestStepDao.findById(10L) >> step
 		1 * step.setKeyword(GIVEN)
 		//TODO-QUAN
-		1 * actionWordDao.findByToken("T-last-") >> existingActionWord
+		1 * actionWordDao.findByTokenInCurrentProject("T-last-",_) >> existingActionWord
 		0 * step.setActionWord(existingActionWord)
 	}
 

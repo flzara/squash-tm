@@ -22,12 +22,14 @@ package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -83,7 +85,7 @@ public class ActionWord implements ActionWordTreeEntity {
 	@NotNull
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderColumn(name = "FRAGMENT_ORDER")
-	@JoinTable(name = "ACTION_WORD_FRAGMENTS", joinColumns = @JoinColumn(name = "ACTION_WORD_ID"), inverseJoinColumns = @JoinColumn(name = "ACTION_WORD_FRAGMENT_ID"))
+	@JoinColumn(name = "ACTION_WORD_ID")
 	private List<ActionWordFragment> fragments = new ArrayList<>();
 
 	@Lob
@@ -176,6 +178,11 @@ public class ActionWord implements ActionWordTreeEntity {
 	@Override
 	public Project getProject() {
 		return project;
+	}
+
+	@AclConstrainedObject
+	public ActionWordLibrary getActionWordLibrary() {
+		return project.getActionWordLibrary();
 	}
 
 	public List<ActionWordFragment> getFragments() {

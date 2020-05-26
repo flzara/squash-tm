@@ -298,6 +298,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
 		objectIdentityService.addObjectIdentity(arl.getId(), arl.getClass());
+		objectIdentityService.addObjectIdentity(awl.getId(), awl.getClass());
 	}
 
 	private void assignDefaultInfolistToProject(GenericProject project) {
