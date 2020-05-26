@@ -322,15 +322,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		//set test case to step
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 		newTestStep.setTestCase(parentTestCase);
+		Project currentProject = parentTestCase.getProject();
+		Long projectId = currentProject.getId();
 
 		//check action word existence
 		String token = inputActionWord.getToken();
-		ActionWord actionWord = actionWordDao.findByToken(token);
+		ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(token, projectId);
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
 			//set project to input action word
-			Project currentProject = parentTestCase.getProject();
 			inputActionWord.setProject(currentProject);
 			//add test step
 			KeywordTestStep testStep = addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
@@ -420,7 +421,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 					LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.getWord());
 				}
 				//TODO-QUAN: the whole method needs to be recoded
-				ActionWord actionWord = actionWordDao.findByToken(inputToken);
+				ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, null);
 				addActionWordToKeywordTestStep(testStep, actionWord);
 			}
 		}
