@@ -197,7 +197,7 @@ public interface AutomatedSuiteManagerService {
 	 */
 
 	Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> prepareExecutionOrder(AutomatedSuite suite, boolean withAllCustomFields);
-        
+
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.
 	 *
@@ -238,5 +238,15 @@ public interface AutomatedSuiteManagerService {
 	 * @return
 	 */
 	PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter);
+
+	/**
+	 * Gets a list of AutomatedSuite given a {@link TestSuite} ID.
+	 *
+	 * @param suiteId
+	 * @param paging
+	 * @param filter
+	 * @return
+	 */
+	PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter);
 
 }

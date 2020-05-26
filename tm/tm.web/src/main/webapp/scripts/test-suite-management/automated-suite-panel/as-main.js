@@ -18,17 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ './test-plan-panel/tp-main', './automated-suite-panel/as-main' ], function(testPlanPanel, automatedSuitesPanel) {
+/*
+ * configuration an object as follow :
+ *
+ * {
+ *		basic : {
+ *			iterationId : the id of the current iteration
+ *		}
+ *	}
+ *
+ */
+
+define(['squash.translator', './table'], function(translator, table){
 
 	return {
-
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		},
-
-		initAutomatedSuitesPanel : function(conf){
-			automatedSuitesPanel.init(conf);
+		init : function(origconf){
+			table.init(origconf);
 		}
 	};
-
 });

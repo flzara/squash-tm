@@ -169,9 +169,26 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	}
 
 	@Override
-	public long countSuites(Long iterationId, ColumnFiltering filter) {
+	public long countSuitesByIterationId(Long iterationId, ColumnFiltering filter) {
 		Query query = em.createNamedQuery("automatedSuite.countAutomatedSuitesByIterationID");
 		query.setParameter("iterationId", iterationId);
+
+		return (long) query.getSingleResult();
+	}
+
+	@Override
+	public List<AutomatedSuite> findAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter) {
+
+		Query query = em.createNamedQuery("automatedSuite.findAutomatedSuitesByTestSuiteID");
+		query.setParameter("suiteId", suiteId);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter) {
+		Query query = em.createNamedQuery("automatedSuite.countAutomatedSuitesByTestSuiteID");
+		query.setParameter("suiteId", suiteId);
 
 		return (long) query.getSingleResult();
 	}

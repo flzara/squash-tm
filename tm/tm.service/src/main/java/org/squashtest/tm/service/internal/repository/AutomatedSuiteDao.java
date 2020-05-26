@@ -133,5 +133,24 @@ public interface AutomatedSuiteDao{
 	 * @param filter
 	 * @return
 	 */
-	long countSuites(Long iterationId, ColumnFiltering filter);
+	long countSuitesByIterationId(Long iterationId, ColumnFiltering filter);
+
+	/**
+	 * Retrieves all the automated suites related to a {@link org.squashtest.tm.domain.campaign.TestSuite}.
+	 *
+	 * @param suiteId
+	 * @param paging
+	 * @param filter
+	 * @return
+	 */
+	List<AutomatedSuite> findAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter);
+
+	/**
+	 * Counts the number of {@link AutomatedSuite} related to a {@link org.squashtest.tm.domain.campaign.TestSuite}
+	 *
+	 * @param suiteId
+	 * @param filter
+	 * @return
+	 */
+	long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter);
 }

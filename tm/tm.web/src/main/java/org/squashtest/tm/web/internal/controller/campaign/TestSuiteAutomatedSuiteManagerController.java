@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Controller
-public class IterationAutomatedSuiteManagerController {
+public class TestSuiteAutomatedSuiteManagerController {
 
 	@Inject
 	private AutomatedSuiteManagerService automatedSuiteManagerService;
@@ -53,14 +53,14 @@ public class IterationAutomatedSuiteManagerController {
 		.map("uuid", "id");
 
 	@ResponseBody
-	@RequestMapping(value = "/iterations/{iterationId}/automated-suite", params = RequestParams.S_ECHO_PARAM)
-	public DataTableModel getAutomatedSuiteListModel(@PathVariable long iterationId, final DataTableDrawParameters params,
+	@RequestMapping(value = "/test-suites/{suiteId}/automated-suite", params = RequestParams.S_ECHO_PARAM)
+	public DataTableModel getAutomatedSuiteListModel(@PathVariable long suiteId, final DataTableDrawParameters params,
 													 final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, automatedSuitesMapper);
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
 		//TODO Use paging information when a sorting by date of automated suite is possible.
-		PagedCollectionHolder<List<AutomatedSuite>> holder = automatedSuiteManagerService.getAutomatedSuitesByIterationID(iterationId, paging, filter);
+		PagedCollectionHolder<List<AutomatedSuite>> holder = automatedSuiteManagerService.getAutomatedSuitesByTestSuiteID(suiteId, paging, filter);
 		return new AutomatedSuiteTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
 }

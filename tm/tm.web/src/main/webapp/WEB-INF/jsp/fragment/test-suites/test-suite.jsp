@@ -209,6 +209,11 @@
         </a>
       </li>
       <li>
+        <a href="#test-suite-automated-suites-panel">
+          <f:message key="tabs.label.automated-suites"/>
+        </a>
+      </li>
+      <li>
         <a class="tabs-attachments" href="#tabs-3">
           <f:message key="label.Attachments"/>
           <c:if test="${ testSuite.attachmentList.notEmpty }">
@@ -231,7 +236,7 @@
       <comp:toggle-panel id="test-suite-description-panel"
                          title='${labelDescription} <span class="small txt-discreet">[ID = ${ testSuite.id }]</span>'>
         <jsp:attribute name="body">
-          
+
           <div class="display-table-row">
             <label for="test-suite-uuid" class="display-table-cell"><f:message key="test-suite.uuid.label"/></label>
 
@@ -297,6 +302,12 @@
       extendedDeletable="${extendedDeletable}"
       reorderable="${linkable}"
       milestoneConf="${milestoneConf}"/>
+
+      <%-- ------------------ automated suites ------------------------------ --%>
+
+
+    <ts:test-suite-automated-suites-panel
+      testSuite="${testSuite}"/>
 
 
       <%------------------------------ Attachments bloc ------------------------------------------- --%>

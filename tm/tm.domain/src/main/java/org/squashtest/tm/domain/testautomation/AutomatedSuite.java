@@ -72,7 +72,19 @@ import java.util.List;
 		"join ext.execution exec " +
 		"join exec.testPlan itpi " +
 		"join itpi.iteration it " +
-		"where it.id = :iterationId")
+		"where it.id = :iterationId"),
+	@NamedQuery(name = "automatedSuite.findAutomatedSuitesByTestSuiteID", query = "select distinct suite from AutomatedExecutionExtender ext " +
+		"join ext.automatedSuite suite " +
+		"join ext.execution exec " +
+		"join exec.testPlan itpi " +
+		"join itpi.testSuites ts " +
+		"where ts.id = :suiteId"),
+	@NamedQuery(name = "automatedSuite.countAutomatedSuitesByTestSuiteID", query = "select count(distinct suite) from AutomatedExecutionExtender ext " +
+		"join ext.automatedSuite suite " +
+		"join ext.execution exec " +
+		"join exec.testPlan itpi " +
+		"join itpi.testSuites ts " +
+		"where ts.id = :suiteId")
 })
 @Entity
 public class AutomatedSuite {

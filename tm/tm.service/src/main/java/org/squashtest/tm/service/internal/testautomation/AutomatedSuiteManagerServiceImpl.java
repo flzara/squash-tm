@@ -847,7 +847,14 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	public PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter) {
 		List<AutomatedSuite> suites = autoSuiteDao.findAutomatedSuitesByIterationID(iterationId, paging, filter);
-		long suiteSize = autoSuiteDao.countSuites(iterationId, filter);
+		long suiteSize = autoSuiteDao.countSuitesByIterationId(iterationId, filter);
+		return new PagingBackedPagedCollectionHolder<>(paging, suiteSize, suites);
+	}
+
+	@Override
+	public PagedCollectionHolder<List<AutomatedSuite>> getAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter) {
+		List<AutomatedSuite> suites = autoSuiteDao.findAutomatedSuitesByTestSuiteID(suiteId, paging, filter);
+		long suiteSize = autoSuiteDao.countSuitesByTestSuiteId(suiteId, filter);
 		return new PagingBackedPagedCollectionHolder<>(paging, suiteSize, suites);
 	}
 
