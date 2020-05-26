@@ -23,6 +23,10 @@ package org.squashtest.tm.service.testautomation
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
+import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
@@ -150,4 +154,64 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		executionOrder[0].a2.containsKey("DS_param101")
 		executionOrder[0].a2.get("DS_param101") == "titi"
 	}
+
+	@DataSet("TestAutomationService.findPagedList.xml")
+	def "should return paged collection of automated suite given an iteration ID"() {
+		given:
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+		ColumnFiltering filtering = ColumnFiltering.UNFILTERED
+
+		when:
+		PagedCollectionHolder<List<AutomatedSuite>> pagedSuites = service.getAutomatedSuitesByIterationID(-11L, paging, filtering)
+
+		then:
+
+		pagedSuites.totalNumberOfItems == 2
+		pagedSuites.firstItemIndex == 0
+		pagedSuites.pagedItems.size() == 2
+
+	}
+
+	@DataSet("TestAutomationService.findPagedList.xml")
+	def "should return paged collection of automated suite given a test suite ID"() {
+		given:
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+		ColumnFiltering filtering = ColumnFiltering.UNFILTERED
+
+		when:
+		PagedCollectionHolder<List<AutomatedSuite>> pagedSuites = service.getAutomatedSuitesByTestSuiteID(-21L, paging, filtering)
+
+		then:
+
+		pagedSuites.totalNumberOfItems == 1
+		pagedSuites.firstItemIndex == 0
+		pagedSuites.pagedItems.size() == 1
+		pagedSuites.pagedItems[0].getId() == "123"
+		pagedSuites.pagedItems[0].executionExtenders.size() == 3
+
+	}
+}
+
+class TestPagingMultiSorting implements PagingAndMultiSorting{
+
+	@Override
+	int getFirstItemIndex() {
+		return 0
+	}
+
+	@Override
+	int getPageSize() {
+		return 50
+	}
+
+	@Override
+	boolean shouldDisplayAll() {
+		return false
+	}
+
+	@Override
+	List<Sorting> getSortings() {
+		return Collections.emptyList()
+	}
+
 }

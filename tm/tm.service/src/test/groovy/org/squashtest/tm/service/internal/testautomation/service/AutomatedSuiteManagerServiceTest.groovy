@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
+import org.squashtest.tm.core.foundation.collection.DefaultSorting
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
@@ -324,6 +330,61 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		couple.a2["CPG_CUF_FIELD"] == "VALUE"
 	}
 
+	def "should find automated suites for automated suites table from iteration id"() {
+		given:
+
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+		ColumnFiltering filtering = ColumnFiltering.UNFILTERED
+
+		List<AutomatedSuite> expectedSuites = mockAutomatedSuiteList()
+
+		autoSuiteDao.findAutomatedSuitesByIterationID(1L, paging, filtering) >> expectedSuites
+		autoSuiteDao.countSuitesByIterationId(1L, filtering) >> expectedSuites.size()
+
+		when:
+		PagedCollectionHolder<List<AutomatedSuite>> pagedSuites = service.getAutomatedSuitesByIterationID(1L, paging, filtering)
+
+		then:
+		pagedSuites.firstItemIndex == 0
+		pagedSuites.totalNumberOfItems == 2
+		pagedSuites.pagedItems.size() == 2
+		pagedSuites.pagedItems[0].getId() == "12345"
+		pagedSuites.pagedItems[1].getId() == "56789"
+	}
+
+	def "should find automated suites for automated suites table from test suite id"() {
+		given:
+
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+		ColumnFiltering filtering = ColumnFiltering.UNFILTERED
+
+		List<AutomatedSuite> expectedSuites = mockAutomatedSuiteList()
+
+		autoSuiteDao.findAutomatedSuitesByTestSuiteID(1L, paging, filtering) >> expectedSuites
+		autoSuiteDao.countSuitesByTestSuiteId(1L, filtering) >> expectedSuites.size()
+
+		when:
+		PagedCollectionHolder<List<AutomatedSuite>> pagedSuites = service.getAutomatedSuitesByTestSuiteID(1L, paging, filtering)
+
+		then:
+		pagedSuites.firstItemIndex == 0
+		pagedSuites.totalNumberOfItems == 2
+		pagedSuites.pagedItems.size() == 2
+		pagedSuites.pagedItems[0].getId() == "12345"
+		pagedSuites.pagedItems[1].getId() == "56789"
+	}
+
+	private def mockAutomatedSuiteList(){
+		AutomatedSuite suite1 = Mock()
+		suite1.getId() >> "12345"
+
+		AutomatedSuite suite2 = Mock()
+		suite2.getId() >> "56789"
+
+		return [suite1, suite2]
+
+	}
+
         def "should create automated suite from ITPI list and iteration uuid"() {
                 given:
                 List<IterationTestPlanItem> items = mockITPIList()
@@ -490,5 +551,29 @@ class ExtenderSorterTest extends Specification {
 		return suite
 	}
 
+
+}
+
+class TestPagingMultiSorting implements PagingAndMultiSorting{
+
+	@Override
+	int getFirstItemIndex() {
+		return 0
+	}
+
+	@Override
+	int getPageSize() {
+		return 50
+	}
+
+	@Override
+	boolean shouldDisplayAll() {
+		return false
+	}
+
+	@Override
+	List<Sorting> getSortings() {
+		return Collections.emptyList()
+	}
 
 }
