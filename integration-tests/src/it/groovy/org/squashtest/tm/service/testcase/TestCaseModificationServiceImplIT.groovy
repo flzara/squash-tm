@@ -750,4 +750,118 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		value3.keywordTestStep == createdKeywordTestStep
 
 	}
+
+	//TODO
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an existing action word to test case via autocompletion"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStepViaAutoCompletion(-4L, "THEN", "the Action wôrd exists.")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.THEN == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -78L
+		actionWord.word == "the Action wôrd exists."
+		actionWord.token == "T-the Action wôrd exists.-"
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 1
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "the Action wôrd exists."
+		text1.id == -7
+		text1.actionWord == actionWord
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an existing action word that contains parameters to test case via autocompletion"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStepViaAutoCompletion(-4L, "AND", "today is \"date\" of \"month\" \"year\"")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -66L
+		actionWord.word == "today is \"date\" of \"month\" \"year\""
+		actionWord.token == "TPTPTP-today is - of - -"
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 6
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.text == "today is "
+		text1.id == -6
+		text1.actionWord == actionWord
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		def parameter = (ActionWordParameter) f2
+		parameter.id == -5
+		parameter.defaultValue == "Monday"
+		parameter.name == "date"
+		text1.actionWord == actionWord
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.text == " of "
+		text2.id == -4
+		text2.actionWord == actionWord
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordParameter)
+		def parameter2 = (ActionWordParameter) f4
+		parameter2.id == -3
+		parameter2.defaultValue == ""
+		parameter2.name == "month"
+		parameter2.actionWord == actionWord
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordText)
+		def text3 = (ActionWordText) f5
+		text3.text == " "
+		text3.id == -2
+		text3.actionWord == actionWord
+
+		def f6 = fragments.get(5)
+		f6.class.is(ActionWordParameter)
+		def parameter3 = (ActionWordParameter) f6
+		parameter3.id == -1
+		parameter3.defaultValue == "2000"
+		parameter3.name == "year"
+		parameter3.actionWord == actionWord
+
+		def paramValues = createdKeywordTestStep.paramValues
+		paramValues.size() == 3
+		ActionWordParameterValue value1 = paramValues.get(0)
+		value1.id != null
+		value1.value == "Monday"
+		value1.actionWordParam == parameter
+		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues.get(1)
+		value2.id != null
+		value2.value == "\"\""
+		value2.actionWordParam == parameter2
+		value2.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value3 = paramValues.get(2)
+		value3.id != null
+		value3.value == "2000"
+		value3.actionWordParam == parameter3
+		value3.keywordTestStep == createdKeywordTestStep
+
+	}
 }

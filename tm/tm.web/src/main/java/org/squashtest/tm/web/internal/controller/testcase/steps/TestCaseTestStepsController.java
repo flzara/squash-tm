@@ -250,6 +250,24 @@ public class TestCaseTestStepsController {
 	@PostMapping(value = "/add-keyword-test-step", consumes = "application/json")
 	@ResponseBody
 	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		validateDto(keywordTestStepDto);
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
+		return step.getId();
+	}
+
+	@PostMapping(value = "/add-keyword-test-step-via-auto-completion", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStepViaAutoCompletion(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		validateDto(keywordTestStepDto);
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStepViaAutoCompletion(testCaseId, keyword, actionWord);
+		return step.getId();
+	}
+
+	private void validateDto(@RequestBody KeywordTestStepModel keywordTestStepDto) throws BindException {
 		BindingResult validation = new BeanPropertyBindingResult(keywordTestStepDto, "add-keyword-test-step");
 		KeywordTestStepModelValidator validator = new KeywordTestStepModelValidator(internationalizationHelper);
 		validator.validate(keywordTestStepDto, validation);
@@ -257,10 +275,6 @@ public class TestCaseTestStepsController {
 		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-		String keyword = keywordTestStepDto.getKeyword();
-		String actionWord = keywordTestStepDto.getActionWord();
-		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
-		return step.getId();
 	}
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})

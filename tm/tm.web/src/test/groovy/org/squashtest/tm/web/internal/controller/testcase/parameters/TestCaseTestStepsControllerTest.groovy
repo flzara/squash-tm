@@ -149,6 +149,87 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	}
 
+	def "should build table model for keyword test case steps"() {
+		given:
+		def actionWord1 = Mock(ActionWord)
+		actionWord1.getWord() >> "hello"
+		ActionWordText text1 = new ActionWordText("hello")
+		List<ActionWordFragment> fragments1 = new ArrayList<>()
+		fragments1.add(text1)
+		actionWord1.getFragments() >> fragments1
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
+		List<ActionWordParameterValue> paramValues1 = new ArrayList<>();
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step1, to: 1L
+			KeywordTestStep.set field: "paramValues", of: step1, to: paramValues1
+		}
+
+		and:
+		def actionWord2 = Mock(ActionWord)
+		actionWord2.getWord() >> "how are \"you\" ?"
+		ActionWordText text2 = new ActionWordText("how are ")
+		ActionWordText text3 = new ActionWordText(" ?")
+		ActionWordParameter parameter = new ActionWordParameter("p1", "")
+		List<ActionWordFragment> fragments2 = new ArrayList<>()
+		fragments2.add(text2)
+		fragments2.add(parameter)
+		fragments2.add(text3)
+		actionWord2.getFragments() >> fragments2
+
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
+		List<ActionWordParameterValue> paramValues2 = new ArrayList<>();
+		ActionWordParameterValue value = new ActionWordParameterValue("you")
+		paramValues2.add(value)
+		use(ReflectionCategory) {
+			TestStep.set field: "id", of: step2, to: 2L
+			KeywordTestStep.set field: "paramValues", of: step2, to: paramValues2
+		}
+
+		and:
+		TestCase tc = Mock()
+		tc.getSteps() >> [step1, step2]
+		testCaseModificationService.findById(7L) >> tc
+
+		and:
+		DataTableDrawParameters params = new DataTableDrawParameters();
+		params.setiDisplayLength(10);
+		params.setiDisplayStart(0)
+		params.setsEcho("echo");
+
+		when:
+		def res = controller.getKeywordTestStepTableModel(7L, params)
+
+		then:
+		res.sEcho == "echo"
+		res.aaData == [
+			[
+				"entity-id"          : "1",
+				"step-keyword"       : 'GIVEN',
+				"step-index"         : '1',
+				"empty-delete-holder": null,
+				"step-action-word"   : 'hello'
+			],
+			[
+				"entity-id"          : "2",
+				"step-keyword"       : 'AND',
+				"step-index"         : '2',
+				"empty-delete-holder": null,
+				"step-action-word"   : 'how are <span style=\"color: blue;\">you</span> ?'
+			]]
+
+
+	}
+
+	def "should change step index"() {
+		when:
+		controller.changeStepIndex(10, 1, 20)
+
+		then:
+		1 * testCaseModificationService.changeTestStepPosition(20, 10, 1)
+	}
+
+
 	def "should add a keyword test step with given keyword and actionWord"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
@@ -240,85 +321,38 @@ class TestCaseTestStepsControllerTest extends Specification {
 		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
 	}
 
-	def "should build table model for keyword test case steps"() {
+	def "should add a keyword test step with given keyword and actionWord via autocompletion"() {
 		given:
-		def actionWord1 = Mock(ActionWord)
-		actionWord1.getWord() >> "hello"
-		ActionWordText text1 = new ActionWordText("hello")
-		List<ActionWordFragment> fragments1 = new ArrayList<>()
-		fragments1.add(text1)
-		actionWord1.getFragments() >> fragments1
-
-		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
-		List<ActionWordParameterValue> paramValues1 = new ArrayList<>();
-		use(ReflectionCategory) {
-			TestStep.set field: "id", of: step1, to: 1L
-			KeywordTestStep.set field: "paramValues", of: step1, to: paramValues1
-		}
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("BUT");
+		testStepModel.setActionWord("add a BDD test step");
 
 		and:
-		def actionWord2 = Mock(ActionWord)
-		actionWord2.getWord() >> "how are \"you\" ?"
-		ActionWordText text2 = new ActionWordText("how are ")
-		ActionWordText text3 = new ActionWordText(" ?")
-		ActionWordParameter parameter = new ActionWordParameter("p1", "")
-		List<ActionWordFragment> fragments2 = new ArrayList<>()
-		fragments2.add(text2)
-		fragments2.add(parameter)
-		fragments2.add(text3)
-		actionWord2.getFragments() >> fragments2
-
-		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
-		List<ActionWordParameterValue> paramValues2 = new ArrayList<>();
-		ActionWordParameterValue value = new ActionWordParameterValue("you")
-		paramValues2.add(value)
-		use(ReflectionCategory) {
-			TestStep.set field: "id", of: step2, to: 2L
-			KeywordTestStep.set field: "paramValues", of: step2, to: paramValues2
-		}
-
-		and:
-		TestCase tc = Mock()
-		tc.getSteps() >> [step1, step2]
-		testCaseModificationService.findById(7L) >> tc
-
-		and:
-		DataTableDrawParameters params = new DataTableDrawParameters();
-		params.setiDisplayLength(10);
-		params.setiDisplayStart(0)
-		params.setsEcho("echo");
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
 
 		when:
-		def res = controller.getKeywordTestStepTableModel(7L, params)
+		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a BDD test step") >> testStep
 
 		then:
-		res.sEcho == "echo"
-		res.aaData == [
-			[
-				"entity-id"          : "1",
-				"step-keyword"       : 'GIVEN',
-				"step-index"         : '1',
-				"empty-delete-holder": null,
-				"step-action-word"   : 'hello'
-			],
-			[
-				"entity-id"          : "2",
-				"step-keyword"       : 'AND',
-				"step-index"         : '2',
-				"empty-delete-holder": null,
-				"step-action-word"   : 'how are <span style=\"color: blue;\">you</span> ?'
-			]]
-
-
+		controller.addKeywordTestStepViaAutoCompletion(testStepModel, 1L) == 2020
 	}
 
-	def "should change step index"() {
+	def "should add a keyword test step with given keyword and parameterized actionWord via autocompletion"() {
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
+		testStepModel.setKeyword("BUT");
+		testStepModel.setActionWord("add a \"param1\" test \"param2\"");
+
+		and:
+		def testStep = Mock(KeywordTestStep);
+		testStep.getId() >> 2020;
+
 		when:
-		controller.changeStepIndex(10, 1, 20)
+		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a \"param1\" test \"param2\"") >> testStep
 
 		then:
-		1 * testCaseModificationService.changeTestStepPosition(20, 10, 1)
+		controller.addKeywordTestStepViaAutoCompletion(testStepModel, 1L) == 2020
 	}
-
 
 }

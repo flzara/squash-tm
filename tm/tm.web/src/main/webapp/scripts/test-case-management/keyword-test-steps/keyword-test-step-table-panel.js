@@ -203,8 +203,27 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 		addKeywordTestStepFromAutocomplete: function(self, event, ui) {
 			event.preventDefault();
 			var inputActionWord = ui.item.value;
-			self.addKeywordTestStep(inputActionWord);
+			var inputKeyword = this.keywordInput.val();
+
+			self.doAddKeywordTestStepViaAutoCompletion(inputKeyword, inputActionWord)
+				.done(function(testStepId) {
+					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
+				});
+
 		},
+
+		doAddKeywordTestStepViaAutoCompletion: function(keyword, actionWord) {
+			var objectData = {
+				keyword : keyword,
+				actionWord : actionWord
+			};
+			return $.ajax({
+				type: 'POST',
+				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step-via-auto-completion",
+				contentType: 'application/json',
+				data: JSON.stringify(objectData)
+			});
+		}
 	});
 	return KeywordTestStepTablePanel;
 });
