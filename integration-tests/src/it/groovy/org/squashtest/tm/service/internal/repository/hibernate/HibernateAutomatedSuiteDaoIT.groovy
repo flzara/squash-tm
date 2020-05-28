@@ -21,6 +21,10 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
+import org.squashtest.tm.core.foundation.collection.Sorting
+import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
@@ -39,6 +43,8 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 	AutomatedSuiteDao suiteDao;
 
 	def suiteid = "-12345"
+	def iterationId = -1L
+	def testSuiteId = -11L
 
 
 	def "should create a new suite"(){
@@ -85,6 +91,84 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 		expect :
 		suiteDao.findAllExtendersByStatus(suiteid, [FAILURE, RUNNING])*.id as Set == [-220L, -130L] as Set
 
+	}
+
+	def "should find all suites linked to an iteration"(){
+
+		given:
+		ColumnFiltering filter = ColumnFiltering.UNFILTERED
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+
+		when:
+
+		List<AutomatedSuite> result = suiteDao.findAutomatedSuitesByIterationID(iterationId, paging, filter)
+
+		then :
+
+		result*.id as Set == ["-12345", "-6789"] as Set
+
+	}
+
+	def "should count all suites linked to an iteration"(){
+
+		given:
+		ColumnFiltering filter = ColumnFiltering.UNFILTERED
+
+		expect :
+
+		suiteDao.countSuitesByIterationId(iterationId, filter) == 2
+
+	}
+
+	def "should find all suites linked to a test suite"(){
+
+		given:
+		ColumnFiltering filter = ColumnFiltering.UNFILTERED
+		PagingAndMultiSorting paging = new TestPagingMultiSorting()
+
+		when:
+
+		List<AutomatedSuite> result = suiteDao.findAutomatedSuitesByTestSuiteID(testSuiteId, paging, filter)
+
+		then :
+
+		result*.id as List == ["-12345"]
+
+	}
+
+	def "should count all suites linked to a test suite"(){
+
+		given:
+		ColumnFiltering filter = ColumnFiltering.UNFILTERED
+
+		expect :
+
+		suiteDao.countSuitesByTestSuiteId(testSuiteId, filter) == 1
+
+	}
+
+}
+
+class TestPagingMultiSorting implements PagingAndMultiSorting{
+
+	@Override
+	int getFirstItemIndex() {
+		return 0
+	}
+
+	@Override
+	int getPageSize() {
+		return 50
+	}
+
+	@Override
+	boolean shouldDisplayAll() {
+		return false
+	}
+
+	@Override
+	List<Sorting> getSortings() {
+		return Collections.emptyList()
 	}
 
 }
