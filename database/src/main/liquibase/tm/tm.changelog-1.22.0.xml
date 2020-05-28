@@ -537,16 +537,16 @@
 
     <sql>
       UPDATE AUTOMATED_SUITE asuite
-      SET created_on = exec.created_on,
-          created_by = exec.created_by,
-          last_modified_by = exec.last_modified_by,
-          last_modified_on = exec.last_modified_on
+      SET CREATED_ON = exec.CREATED_ON,
+          CREATED_BY = exec.CREATED_BY,
+          LAST_MODIFIED_BY = exec.LAST_MODIFIED_BY,
+          LAST_MODIFIED_ON = exec.LAST_MODIFIED_ON
       FROM (
-        select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on, ext.suite_id
-        from automated_execution_extender ext
-        inner join execution ex on ext.master_execution_id = ex.execution_id
-        order by ex.last_modified_on desc) AS exec
-      WHERE exec.suite_id = asuite.suite_id;
+        select ex.CREATED_ON, ex.CREATED_BY, ex.LAST_MODIFIED_BY, ex.LAST_MODIFIED_ON, ext.SUITE_ID
+        from AUTOMATED_EXECUTION_EXTENDER ext
+        inner join EXECUTION ex on ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+        order by ex.LAST_MODIFIED_ON desc) AS exec
+      WHERE exec.SUITE_ID = asuite.SUITE_ID;
 
       ALTER TABLE AUTOMATED_SUITE ALTER COLUMN CREATED_ON SET NOT NULL;
       ALTER TABLE AUTOMATED_SUITE ALTER COLUMN CREATED_BY SET NOT NULL;
@@ -559,16 +559,16 @@
     <sql>
       UPDATE AUTOMATED_SUITE asuite
       INNER JOIN (
-        select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on, ext.suite_id
-        from automated_execution_extender ext
-        inner join execution ex on ext.master_execution_id = ex.execution_id
-        order by ex.last_modified_on desc
+        select ex.CREATED_ON, ex.CREATED_BY, ex.LAST_MODIFIED_BY, ex.LAST_MODIFIED_ON, ext.SUITE_ID
+        from AUTOMATED_EXECUTION_EXTENDER ext
+        inner join EXECUTION ex on ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+        order by ex.LAST_MODIFIED_ON desc
       ) AS exec
-      ON exec.suite_id = asuite.suite_id
-      SET asuite.created_on = exec.created_on,
-          asuite.created_by = exec.created_by,
-          asuite.last_modified_by = exec.last_modified_by,
-          asuite.last_modified_on = exec.last_modified_on;
+      ON exec.SUITE_ID = asuite.SUITE_ID
+      SET asuite.CREATED_ON = exec.CREATED_ON,
+          asuite.CREATED_BY = exec.CREATED_BY,
+          asuite.LAST_MODIFIED_BY = exec.LAST_MODIFIED_BY,
+          asuite.LAST_MODIFIED_ON = exec.LAST_MODIFIED_ON;
 
       ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_ON DATETIME NOT NULL;
       ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_BY VARCHAR(50) NOT NULL;
@@ -580,12 +580,12 @@
 
     <sql>
       UPDATE AUTOMATED_SUITE asuite
-      SET (created_on, created_by, last_modified_by, last_modified_on)=
-      (select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on
-      from automated_execution_extender ext
-      inner join execution ex on ext.master_execution_id = ex.execution_id
-      where ext.suite_id = asuite.suite_id
-      order by ex.last_modified_on desc
+      SET (CREATED_ON, CREATED_BY, LAST_MODIFIED_BY, LAST_MODIFIED_ON)=
+      (select ex.CREATED_ON, ex.CREATED_BY, ex.LAST_MODIFIED_BY, ex.LAST_MODIFIED_ON
+      from AUTOMATED_EXECUTION_EXTENDER ext
+      inner join EXECUTION ex on ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+      where ext.SUITE_ID = asuite.SUITE_ID
+      order by ex.LAST_MODIFIED_ON desc
       limit 1);
 
       ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_ON TIMESTAMP NOT NULL;
