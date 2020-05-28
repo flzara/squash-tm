@@ -511,4 +511,86 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-794-auditable-automated-suite" author="aguilhem">
+    <comment>Make Automated Suite auditable</comment>
+
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="CREATED_BY" type="VARCHAR(50)"/>
+    </addColumn>
+
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="CREATED_ON" type="DATETIME"/>
+    </addColumn>
+
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" />
+    </addColumn>
+
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
+    </addColumn>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-automated-suite-migration-postgres" author="aguilhem" dbms="postgresql">
+    <comment>Add audit data on automated suite for postgresql</comment>
+
+    <sql>
+      UPDATE AUTOMATED_SUITE asuite
+      SET created_on = exec.created_on,
+          created_by = exec.created_by,
+          last_modified_by = exec.last_modified_by,
+          last_modified_on = exec.last_modified_on
+      FROM (
+        select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on, ext.suite_id
+        from automated_execution_extender ext
+        inner join execution ex on ext.master_execution_id = ex.execution_id
+        order by ex.last_modified_on desc) AS exec
+      WHERE exec.suite_id = asuite.suite_id;
+
+      ALTER TABLE AUTOMATED_SUITE ALTER COLUMN CREATED_ON SET NOT NULL;
+      ALTER TABLE AUTOMATED_SUITE ALTER COLUMN CREATED_BY SET NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-automated-suite-migration-mysql" author="aguilhem" dbms="mysql">
+    <comment>Add audit data on automated suite for mysql</comment>
+
+    <sql>
+      UPDATE AUTOMATED_SUITE asuite
+      INNER JOIN (
+        select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on, ext.suite_id
+        from automated_execution_extender ext
+        inner join execution ex on ext.master_execution_id = ex.execution_id
+        order by ex.last_modified_on desc
+      ) AS exec
+      ON exec.suite_id = asuite.suite_id
+      SET asuite.created_on = exec.created_on,
+          asuite.created_by = exec.created_by,
+          asuite.last_modified_by = exec.last_modified_by,
+          asuite.last_modified_on = exec.last_modified_on;
+
+      ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_ON DATETIME NOT NULL;
+      ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_BY VARCHAR(50) NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-automated-suite-migration-h2" author="aguilhem" dbms="h2">
+    <comment>Add audit data on automated suite for h2</comment>
+
+    <sql>
+      UPDATE AUTOMATED_SUITE asuite
+      SET (created_on, created_by, last_modified_by, last_modified_on)=
+      (select ex.created_on, ex.created_by, ex.last_modified_by, ex.last_modified_on
+      from automated_execution_extender ext
+      inner join execution ex on ext.master_execution_id = ex.execution_id
+      where ext.suite_id = asuite.suite_id
+      order by ex.last_modified_on desc
+      limit 1);
+
+      ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_ON TIMESTAMP NOT NULL;
+      ALTER TABLE AUTOMATED_SUITE MODIFY CREATED_BY VARCHAR(50) NOT NULL;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

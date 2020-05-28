@@ -29,6 +29,7 @@
     <!-- test sets -->
     <include file="tm.data-1.22.0-SQUASH-167.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-421.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-794.xml" relativeToChangelogFile="true" />
 
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml"
@@ -74,6 +75,78 @@
       </sqlCheck>
     </preConditions>
     <comment>Check that no test suite is left without UUID</comment>
+  </changeSet>
+
+  <!-- Testing migration for AUTOMATED_SUITE audit data in SQUASH-794 -->
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-data-not-null" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where CREATED_ON is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no automated is left without audit data</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value" author="aguilhem" dbms="mysql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="2011-09-29 10:39:26.0">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-29 10:39:37.0">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2011-09-30 10:37:26.0">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-30 10:37:37.0">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' audit data migration is good</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value-postgres" author="aguilhem" dbms="postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="2011-09-29 10:39:26+02">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-29 10:39:37+02">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2011-09-30 10:37:26+02">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-30 10:37:37+02">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' audit data migration is good (postgres)</comment>
   </changeSet>
 
 </databaseChangeLog>

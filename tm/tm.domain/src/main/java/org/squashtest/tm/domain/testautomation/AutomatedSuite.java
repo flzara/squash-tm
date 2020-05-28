@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testautomation;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 import javax.persistence.CascadeType;
@@ -87,6 +88,7 @@ import java.util.List;
 		"where ts.id = :suiteId")
 })
 @Entity
+@Auditable
 public class AutomatedSuite {
 
 	@Id

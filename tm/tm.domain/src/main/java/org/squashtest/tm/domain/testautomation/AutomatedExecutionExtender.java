@@ -23,6 +23,8 @@ package org.squashtest.tm.domain.testautomation;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.RelatedToAuditable;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -42,6 +44,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -53,7 +56,7 @@ import java.util.Set;
  *
  */
 @Entity
-public class AutomatedExecutionExtender implements Identified{
+public class AutomatedExecutionExtender implements Identified, RelatedToAuditable {
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
 
@@ -197,5 +200,14 @@ public class AutomatedExecutionExtender implements Identified{
 
 	public boolean isProjectDisassociated() {
 		return automatedTest == null;
+	}
+
+	@Override
+	public List<AuditableMixin> getAssociatedAuditableList() {
+		if(automatedSuite == null){
+			return Collections.EMPTY_LIST;
+		} else {
+			return Collections.singletonList((AuditableMixin) automatedSuite);
+		}
 	}
 }
