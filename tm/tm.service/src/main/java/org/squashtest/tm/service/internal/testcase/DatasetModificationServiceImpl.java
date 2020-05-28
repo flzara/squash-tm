@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -67,15 +67,15 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	public void persist(Dataset dataset, long testCaseId) {
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(testCaseId, dataset.getName());
 
-		if(sameName != null ){
+		if (sameName != null) {
 			throw new DuplicateNameException(dataset.getName(), dataset.getName());
-		}
-		else {
-
+		} else {
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
-			ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(
-				new IllegalArgumentException("Cannot add dataset outside a standard test case."));
+			IsScriptedTestCaseVisitor testCaseVisitor = new IsScriptedTestCaseVisitor();
+			if (testCaseVisitor.isScripted()) {
+				throw new IllegalArgumentException("Cannot add dataset in a scripted test case.");
+			}
 			testCase.accept(testCaseVisitor);
 
 			dataset.setTestCase(testCase);

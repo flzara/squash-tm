@@ -153,11 +153,13 @@
           <li>
             <a href="${stepTabUrl}"><f:message key="tabs.label.steps"/></a>
           </li>
-          <li>
-            <a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters"/></a>
-          </li>
         </c:otherwise>
       </c:choose>
+      <c:if test="${!scripted}">
+        <li>
+          <a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters"/></a>
+        </li>
+      </c:if>
       <c:if test="${milestoneConf.displayTab}">
         <li>
           <a href="${testCaseUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>

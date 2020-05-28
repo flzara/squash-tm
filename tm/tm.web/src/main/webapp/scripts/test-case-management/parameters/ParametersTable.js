@@ -44,10 +44,14 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 		},
 
 		_dataTableSettings : function(self) {
+			var columnId = 3;
+			if (self.settings.basic.isKeywordTestCase) {
+				columnId = 1;
+			}
 			return {
 				// has Dom configuration
 				"bPaginate" : false,
-				"aaSorting" : [ [ 3, 'asc' ] ],
+				"aaSorting" : [ [ columnId, 'asc' ] ],
 				"fnRowCallback" : self.parametersTableRowCallback,
 				"fnDrawCallback" : self.parametersTableDrawCallback
 			};

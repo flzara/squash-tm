@@ -52,6 +52,6 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 
 	@Override
 	public void visit(KeywordTestStep visited) {
-		throw new UnsupportedOperationException();
+		//TODO make it work for keyword Test Step
 	}
 }

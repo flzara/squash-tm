@@ -85,8 +85,8 @@
               <th th:attr="data-def='select, map=entity-index'">#</th>
               <th th:attr="data-def='sortable, map=name, sClass=parameter-name'" th:text="#{label.Name}">Name</th>
               <th th:attr="data-def='map=description, sClass=parameter-description'" th:text="#{label.Description}">Description</th>
-              <th th:attr="data-def='sortable, map=test-case-name, link='+ @{/test-cases} +'/{tc-id}/info'" th:text="#{test-case.source.label}">Cas de Test</th>
-              <th th:attr="data-def='invisible, map=directly-associated'">directly-associated</th>
+              <th th:if="!${isKeywordTestCase}" th:attr="data-def='sortable, map=test-case-name, link='+ @{/test-cases} +'/{tc-id}/info'" th:text="#{test-case.source.label}">Cas de Test</th>
+              <th th:if="!${isKeywordTestCase}" th:attr="data-def='invisible, map=directly-associated'">directly-associated</th>
               <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
             </tr>
           </thead>
@@ -257,7 +257,8 @@
 									dataTableLanguageUrl : /*[[@{/datatables/messages}]]*/ "@{/datatables/messages}",
 									ckeConfigUrl : /*[[@{/styles/ckeditor/ckeditor-config.js}]]*/"/squash/styles/ckeditor/ckeditor-config.js",
 									indicatorURl : /*[[@{/scripts/jquery/indicator.gif}]]*/"/squash/scripts/jquery/indicator.gif",
-									parameterValuesUrl : /*[[@{/dataset-parameter-values}]]*/"/squash/dataset-parameter-values"
+									parameterValuesUrl : /*[[@{/dataset-parameter-values}]]*/"/squash/dataset-parameter-values",
+                  isKeywordTestCase : /*[[${isKeywordTestCase}]]*/true
 								},
 
 								language : {

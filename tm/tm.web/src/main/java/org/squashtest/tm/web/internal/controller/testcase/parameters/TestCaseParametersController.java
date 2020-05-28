@@ -35,6 +35,7 @@ import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DomainException;
@@ -157,6 +158,9 @@ public class TestCaseParametersController {
 		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		model.addAttribute("paramHeaders", paramHeaders);
 		model.addAttribute("milestoneConf", milestoneConf);
+		IsKeywordTestCaseVisitor isKeywordTestCaseVisitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(isKeywordTestCaseVisitor);
+		model.addAttribute("isKeywordTestCase", isKeywordTestCaseVisitor.isKeyword());
 
 		// return
 		return "test-cases-tabs/parameters-tab.html";

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.ThrowIfNotStandardTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -88,8 +88,10 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		ThrowIfNotStandardTestCaseVisitor testCaseVisitor = new ThrowIfNotStandardTestCaseVisitor(
-				new IllegalArgumentException("Cannot add parameters outside a standard test case."));
+		IsScriptedTestCaseVisitor testCaseVisitor = new IsScriptedTestCaseVisitor();
+		if (testCaseVisitor.isScripted()) {
+			throw new IllegalArgumentException("Cannot add parameters in a scripted test case.");
+		}
 		testCase.accept(testCaseVisitor);
 		addNewParameterToTestCase(parameter, testCase);
 	}
