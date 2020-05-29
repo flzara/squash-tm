@@ -54,7 +54,7 @@ public class ActionWordParser {
 			}
 			//generate token
 			String token = generateToken(fragmentList);
-			String word = createWord();
+			String word = createWord(fragmentList);
 			//initiate the action word
 			ActionWord result = new ActionWord(word, token);
 
@@ -70,7 +70,7 @@ public class ActionWordParser {
 		}
 	}
 
-	private String createWord() {
+	public String createWord(List<ActionWordFragment> fragmentList) {
 		StringBuilder builder = new StringBuilder();
 		for (ActionWordFragment fragment : fragmentList) {
 			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
@@ -84,7 +84,7 @@ public class ActionWordParser {
 		return builder.toString();
 	}
 
-	public String generateToken(List<ActionWordFragment> fragmentList) {
+	private String generateToken(List<ActionWordFragment> fragmentList) {
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder("-");
 		for (ActionWordFragment fragment : fragmentList) {
