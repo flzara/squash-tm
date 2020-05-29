@@ -55,6 +55,14 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, center,sWidth=2.5em">#</th>
+          <th class="no-user-select"
+              data-def="map=created-on, center"><f:message key="label.createdOn" /></th>
+          <th class="no-user-select"
+              data-def="map=created-by, center"><f:message key="label.createdBy" /></th>
+          <th class="no-user-select"
+              data-def="map=last-modified-on, center"><f:message key="label.lastModifiedOn" /></th>
+          <th class="no-user-select"
+              data-def="map=last-modified-by, center"><f:message key="label.lastModifiedBy" /></th>
           <th class="no-user-select" title="UUID"
               data-def="map=uuid, center">
             <f:message key="test-case.automation-uuid.short" />

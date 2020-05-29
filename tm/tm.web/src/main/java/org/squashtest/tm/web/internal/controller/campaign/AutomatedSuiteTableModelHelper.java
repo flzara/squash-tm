@@ -21,14 +21,36 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 
+import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<AutomatedSuite> {
+
+	/**
+	 * The source for localized label messages.
+	 */
+	private final InternationalizationHelper i18nHelper;
+
+	/**
+	 * The locale to use to format the labels.
+	 */
+	private final Locale locale;
+
+	public AutomatedSuiteTableModelHelper(@NotNull Locale locale, @NotNull InternationalizationHelper i18nHelper) {
+		super();
+		this.locale = locale;
+		this.i18nHelper = i18nHelper;
+	}
 
 	@Override
 	protected Map<String, Object> buildItemData(AutomatedSuite suite) {
@@ -36,6 +58,11 @@ public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<Automa
 		Map<String, Object> res = new HashMap<>();
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put("uuid", suite.getId());
+		AuditableMixin audit = (AuditableMixin) suite;
+		res.put("created-on", i18nHelper.localizeDate(audit.getCreatedOn(), locale));
+		res.put("created-by", HTMLCleanupUtils.escapeOrDefault(audit.getCreatedBy(), null));
+		res.put("last-modified-on", i18nHelper.localizeDate(audit.getLastModifiedOn(), locale));
+		res.put("last-modified-by", HTMLCleanupUtils.escapeOrDefault(audit.getLastModifiedBy(), null));
 		return res;
 	}
 }

@@ -30,6 +30,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -47,6 +48,9 @@ public class IterationAutomatedSuiteManagerController {
 	@Inject
 	private AutomatedSuiteManagerService automatedSuiteManagerService;
 
+	@Inject
+	private InternationalizationHelper internationalizationHelper;
+
 	private final DatatableMapper<String> automatedSuitesMapper = new NameBasedMapper()
 		.map("entity-index", "index(AutomatedSuite)")
 		// index is a special case which means : no sorting.
@@ -59,8 +63,7 @@ public class IterationAutomatedSuiteManagerController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, automatedSuitesMapper);
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
-		//TODO Use paging information when a sorting by date of automated suite is possible.
 		PagedCollectionHolder<List<AutomatedSuite>> holder = automatedSuiteManagerService.getAutomatedSuitesByIterationID(iterationId, paging, filter);
-		return new AutomatedSuiteTableModelHelper().buildDataModel(holder, params.getsEcho());
+		return new AutomatedSuiteTableModelHelper(locale, internationalizationHelper).buildDataModel(holder, params.getsEcho());
 	}
 }
