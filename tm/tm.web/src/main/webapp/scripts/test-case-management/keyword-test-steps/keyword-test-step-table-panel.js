@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"], function($, Backbone, _, eventBus, popups, StringUtil, translator) {
+define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"], function ($, Backbone, _, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
-		el : "#tab-tc-keyword-test-steps",
+		el: "#tab-tc-keyword-test-steps",
 
-		initialize : function(options) {
+		initialize: function (options) {
 			var self = this;
 
 			$.squash.decorateButtons();
@@ -36,15 +36,17 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			this.keywordInput = $('#keyword-input');
 
 			this.keyupTimer = undefined;
-			if(this.settings.isAutocompleteActive) {
-				this.actionWordInput.on('keyup', function(event) {
+			if (this.settings.isAutocompleteActive) {
+				this.actionWordInput.on('keyup', function (event) {
 					// not perform autocomplete if arrows are pressed
-					if(!_.contains([37, 38, 39, 40], event.which)) {
-						self.performAutocomplete(event, self);
+					if (!_.contains([37, 38, 39, 40], event.which)) {
+						var projectId = self.settings.projectId;
+						var searchInput = $(event.currentTarget);
+						self.performAutocomplete(searchInput, projectId);
 					}
 				});
 				this.actionWordInput.autocomplete({
-					select: function(event, ui) {
+					select: function (event, ui) {
 						self.addKeywordTestStepFromAutocomplete(self, event, ui);
 					}
 				});
@@ -61,20 +63,20 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			popups.init(conf);
 		},
 
-		events : {
-			"click #add-keyword-test-step-btn" : "addKeywordTestStepFromButton",
-			"click #delete-all-steps-button" : "deleteSelectedTestSteps"
+		events: {
+			"click #add-keyword-test-step-btn": "addKeywordTestStepFromButton",
+			"click #delete-all-steps-button": "deleteSelectedTestSteps"
 		},
 
-		initKeywordTestStepTable : function(settings) {
+		initKeywordTestStepTable: function (settings) {
 			var testCaseId = settings.testCaseId;
 			var table = $("#keyword-test-step-table-" + testCaseId);
 			table.squashTable(
 				{
 					bServerSide: true,
-					aaData : settings.stepData,
+					aaData: settings.stepData,
 					iDeferLoading: settings.stepData.length,
-					sAjaxSource: '/squash/test-cases/'+testCaseId+'/steps/keyword-test-step-table'
+					sAjaxSource: '/squash/test-cases/' + testCaseId + '/steps/keyword-test-step-table'
 				}, {
 					deleteButtons: {
 						delegate: "#delete-keyword-test-step-dialog",
@@ -87,20 +89,20 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			$("#keyword-test-step-table-" + this.settings.testCaseId).squashTable().refreshRestore();
 		},
 
-		cleanInputs: function() {
+		cleanInputs: function () {
 			$("#keyword-input").val('GIVEN');
 			this.actionWordInput.val('');
 			$(".action-word-input-error").text('');
 		},
 
-		addKeywordTestStepFromButton: function() {
+		addKeywordTestStepFromButton: function () {
 			var inputActionWord = this.actionWordInput.val();
 			this.addKeywordTestStep(inputActionWord);
 		},
 
-		addKeywordTestStep: function(inputActionWord) {
+		addKeywordTestStep: function (inputActionWord) {
 			var self = this;
-			if(this.isInputActionWordBlank(inputActionWord)) {
+			if (this.isInputActionWordBlank(inputActionWord)) {
 				return;
 			}
 			if (!this.inputActionWordHasText(inputActionWord)) {
@@ -109,13 +111,13 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 
 			var inputKeyword = this.keywordInput.val();
 			this.doAddKeywordTestStep(inputKeyword, inputActionWord)
-				.done(function(testStepId) {
+				.done(function (testStepId) {
 					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
 				});
 		},
 
-		isInputActionWordBlank: function(inputActionWord) {
-			if(StringUtil.isBlank(inputActionWord)) {
+		isInputActionWordBlank: function (inputActionWord) {
+			if (StringUtil.isBlank(inputActionWord)) {
 				$('.action-word-input-error').text(translator.get("message.actionword.empty"));
 				this.actionWordInput.val("");
 				return true;
@@ -124,17 +126,17 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			}
 		},
 
-		inputActionWordHasText: function(inputActionWord) {
-			if(inputActionWord.includes('"')){
+		inputActionWordHasText: function (inputActionWord) {
+			if (inputActionWord.includes('"')) {
 				return this.hasTextOutsideParameters(inputActionWord);
 			}
 			return true;
 		},
 
-		hasTextOutsideParameters: function(inputActionWord) {
+		hasTextOutsideParameters: function (inputActionWord) {
 			var updatedWord = inputActionWord.trim();
 			var count = updatedWord.match(/"/g).length;
-			if (updatedWord.startsWith('"')){
+			if (updatedWord.startsWith('"')) {
 				if (count === 1 || (count === 2 && updatedWord.endsWith('"'))) {
 					$('.action-word-input-error').text(translator.get("message.actionword.noText"));
 					return false;
@@ -143,33 +145,33 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			return true;
 		},
 
-		doAddKeywordTestStep: function(keyword, actionWord) {
+		doAddKeywordTestStep: function (keyword, actionWord) {
 			var objectData = {
-				keyword : keyword,
-				actionWord : actionWord
+				keyword: keyword,
+				actionWord: actionWord
 			};
 			return $.ajax({
 				type: 'POST',
-				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step",
+				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step",
 				contentType: 'application/json',
 				data: JSON.stringify(objectData)
 			});
 		},
 
-		afterKeywordTestStepAdd: function(testStepId, inputActionWord) {
+		afterKeywordTestStepAdd: function (testStepId, inputActionWord) {
 			var displayDiv = $('#add-keyword-test-step-result');
-			displayDiv.text("The keyword test step has been successfully created with id : " + testStepId + " and name : "+ inputActionWord);
+			displayDiv.text("The keyword test step has been successfully created with id : " + testStepId + " and name : " + inputActionWord);
 			this.refresh();
 			this.cleanInputs();
 			eventBus.trigger('testStepsTable.stepAdded');
 		},
 
-		deleteSelectedTestSteps: function() {
+		deleteSelectedTestSteps: function () {
 			$("#delete-keyword-test-step-dialog").formDialog('open');
 		},
 
-		makeTableUrls: function(conf){
-			var tcUrl =  conf.testCaseUrl;
+		makeTableUrls: function (conf) {
+			var tcUrl = conf.testCaseUrl;
 			var ctxUrl = conf.rootContext;
 
 			return {
@@ -177,49 +179,55 @@ define([ "jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", 
 			};
 		},
 
-		performAutocomplete: function(event,  self) {
-			var searchInput = $(event.currentTarget);
-			var searchInputValue = searchInput.val();
-			var projectId = self.settings.projectId;
+		performAutocomplete: function (searchInput, projectId) {
 			searchInput.autocomplete('close');
 			searchInput.autocomplete('disable');
-			clearTimeout(self.keyupTimer);
-			self.keyupTimer = setTimeout(function() {
-				$.ajax({
-					type: 'GET',
-					url: '/squash/keyword-test-cases/autocomplete',
-					data: {
-						projectId: projectId,
-						searchInput: searchInputValue
-					}
-				}).done(function(actionWords) {
-					searchInput.autocomplete('enable');
-					searchInput.autocomplete('option', 'source', actionWords);
-					searchInput.autocomplete('search');
-				});
-			}, 300);
+
+			var searchInputValue = searchInput.val();
+
+			searchInput.autocomplete({
+				delay : 500,
+				source: function (request, response) {
+					$.ajax({
+						type: 'GET',
+						url: '/squash/keyword-test-cases/autocomplete',
+						data: {
+							projectId: projectId,
+							searchInput: searchInputValue
+						},
+						success: function (data) {
+							response(data);
+						},
+						error: function () {
+							alert("error handler!");
+						}
+					});
+				},
+				minLength: 1
+			});
+			searchInput.autocomplete('enable');
 		},
 
-		addKeywordTestStepFromAutocomplete: function(self, event, ui) {
+		addKeywordTestStepFromAutocomplete: function (self, event, ui) {
 			event.preventDefault();
 			var inputActionWord = ui.item.value;
 			var inputKeyword = this.keywordInput.val();
 
 			self.doAddKeywordTestStepViaAutoCompletion(inputKeyword, inputActionWord)
-				.done(function(testStepId) {
+				.done(function (testStepId) {
 					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
 				});
 
 		},
 
-		doAddKeywordTestStepViaAutoCompletion: function(keyword, actionWord) {
+		doAddKeywordTestStepViaAutoCompletion: function (keyword, actionWord) {
 			var objectData = {
-				keyword : keyword,
-				actionWord : actionWord
+				keyword: keyword,
+				actionWord: actionWord
 			};
 			return $.ajax({
 				type: 'POST',
-				url: "/squash/test-cases/"+this.settings.testCaseId+"/steps/add-keyword-test-step-via-auto-completion",
+				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step-via-auto-completion",
 				contentType: 'application/json',
 				data: JSON.stringify(objectData)
 			});
