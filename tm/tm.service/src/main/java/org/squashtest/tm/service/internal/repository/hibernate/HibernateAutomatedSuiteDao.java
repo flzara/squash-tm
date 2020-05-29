@@ -38,7 +38,10 @@ import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +60,10 @@ import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	private static final String UNCHECKED = "unchecked";
+
+	private static final String ITERATION = "iteration";
+
+	private static final String TEST_SUITES = "testSuites";
 
 	@PersistenceContext
 	private EntityManager em;
@@ -151,46 +158,67 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	@Override
 	public List<AutomatedSuite> findAutomatedSuitesByIterationID(Long iterationId, PagingAndMultiSorting paging, ColumnFiltering filter) {
-//		// get the data
-//		List<Object[]> tuples = findAutomatedSuitesData(iterationId, PagingAndMultiSorting paging, ColumnFiltering filter);
-//
-//		// filter them
-//		List<AutomatedSuite> suites = new ArrayList<>(tuples.size());
-//
-//		for (Object[] tuple : tuples) {
-//			AutomatedSuite automatedSuite = (AutomatedSuite) tuple[1];
-//			suites.add(automatedSuite);
-//		}
 
-		Query query = em.createNamedQuery("automatedSuite.findAutomatedSuitesByIterationID");
-		query.setParameter("iterationId", iterationId);
-
-		return query.getResultList();
+		return createQueryFindAutomatedSuites(ITERATION, iterationId, paging).getResultList();
 	}
 
-	@Override
-	public long countSuitesByIterationId(Long iterationId, ColumnFiltering filter) {
-		Query query = em.createNamedQuery("automatedSuite.countAutomatedSuitesByIterationID");
-		query.setParameter("iterationId", iterationId);
-
-		return (long) query.getSingleResult();
-	}
 
 	@Override
 	public List<AutomatedSuite> findAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter) {
 
-		Query query = em.createNamedQuery("automatedSuite.findAutomatedSuitesByTestSuiteID");
-		query.setParameter("suiteId", suiteId);
+		return createQueryFindAutomatedSuites(TEST_SUITES, suiteId, paging).getResultList();
+	}
 
-		return query.getResultList();
+	private TypedQuery<AutomatedSuite> createQueryFindAutomatedSuites(String discriminatingEntityName, Long discriminatingEntityId, PagingAndMultiSorting paging) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<AutomatedSuite> criteriaQuery = builder.createQuery(AutomatedSuite.class);
+		Root<AutomatedSuite> root = criteriaQuery.from(AutomatedSuite.class);
+
+		criteriaQuery.distinct(true).select(root)
+			.where(root.join("executionExtenders")
+				.join("execution")
+				.join("testPlan")
+				.join(discriminatingEntityName)
+				.get("id").in(discriminatingEntityId))
+			.orderBy(builder.desc(root.join("audit").get("createdOn")));
+
+		TypedQuery<AutomatedSuite> query = em.createQuery(criteriaQuery);
+
+		if(!paging.shouldDisplayAll()){
+			query.setFirstResult(paging.getFirstItemIndex());
+			query.setMaxResults(paging.getPageSize());
+		}
+
+		return query;
+	}
+
+	@Override
+	public long countSuitesByIterationId(Long iterationId, ColumnFiltering filter) {
+
+		return createQueryCountAutomatedSuites(ITERATION, iterationId).getSingleResult();
 	}
 
 	@Override
 	public long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter) {
-		Query query = em.createNamedQuery("automatedSuite.countAutomatedSuitesByTestSuiteID");
-		query.setParameter("suiteId", suiteId);
 
-		return (long) query.getSingleResult();
+		return createQueryCountAutomatedSuites(TEST_SUITES, suiteId).getSingleResult();
+	}
+
+	private TypedQuery<Long> createQueryCountAutomatedSuites(String discriminatingEntityName, Long discriminatingEntityId) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+		Root<AutomatedSuite> root = criteriaQuery.from(AutomatedSuite.class);
+
+		criteriaQuery.select(builder.countDistinct(root))
+			.where(root.join("executionExtenders")
+				.join("execution")
+				.join("testPlan")
+				.join(discriminatingEntityName)
+				.get("id").in(discriminatingEntityId));
+
+		TypedQuery<Long> query = em.createQuery(criteriaQuery);
+
+		return query;
 	}
 
 	// TODO : either make it private (core Squash at least doesn't call it anywhere but here), either declare it in the interface

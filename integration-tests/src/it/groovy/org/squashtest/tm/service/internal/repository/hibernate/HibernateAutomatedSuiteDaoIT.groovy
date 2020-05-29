@@ -106,6 +106,7 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 		then :
 
 		result*.id as Set == ["-12345", "-6789"] as Set
+		result[0].id == "-6789"
 
 	}
 
