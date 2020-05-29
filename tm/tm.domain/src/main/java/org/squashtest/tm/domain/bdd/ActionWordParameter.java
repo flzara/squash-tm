@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.domain.testcase.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,9 +42,11 @@ import java.util.regex.Pattern;
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 public class ActionWordParameter extends ActionWordFragment {
 
+
 	@NotBlank
 	@Column(name = "NAME")
 	@Size(max = 255)
+	@javax.validation.constraints.Pattern(regexp = Parameter.NAME_REGEXP)
 	private String name;
 
 	@NotNull
