@@ -204,6 +204,8 @@ public class AutomatedExecutionExtender implements Identified, RelatedToAuditabl
 
 	@Override
 	public List<AuditableMixin> getAssociatedAuditableList() {
+		//[SQUASH-794] AutomatedExecutionExtender are created before the AutomatedSuite, therefore when it's created
+		//an AutomatedExecutionExtender has a null AutomatedSuite.
 		if(automatedSuite == null){
 			return Collections.EMPTY_LIST;
 		} else {

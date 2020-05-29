@@ -89,13 +89,13 @@
 
   <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value" author="aguilhem" dbms="mysql, h2">
     <preConditions>
-      <sqlCheck expectedResult="2011-09-29 10:39:26.0">
+      <sqlCheck expectedResult="2011-09-29 10:37:26.0">
         SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
       <sqlCheck expectedResult="User-1">
         SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
-      <sqlCheck expectedResult="2011-09-29 10:39:37.0">
+      <sqlCheck expectedResult="2011-09-29 10:37:37.0">
         SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
       <sqlCheck expectedResult="User-1">
@@ -120,13 +120,13 @@
 
   <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value-postgres" author="aguilhem" dbms="postgresql">
     <preConditions>
-      <sqlCheck expectedResult="2011-09-29 10:39:26+02">
+      <sqlCheck expectedResult="2011-09-29 10:37:26+02">
         SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
       <sqlCheck expectedResult="User-1">
         SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
-      <sqlCheck expectedResult="2011-09-29 10:39:37+02">
+      <sqlCheck expectedResult="2011-09-29 10:37:37+02">
         SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
       </sqlCheck>
       <sqlCheck expectedResult="User-1">
