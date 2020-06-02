@@ -614,4 +614,170 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-795" author="aguilhem">
+  <comment>Adds a execution status field to the automated suites</comment>
+  <addColumn tableName="AUTOMATED_SUITE">
+    <column name="EXECUTION_STATUS" type="VARCHAR(255)" defaultValue="READY">
+    </column>
+  </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-795-migration-mysql" author="aguilhem" dbms="mysql">
+    <comment>Compute preexisting automated suites status for mysql</comment>
+    <sql>
+      UPDATE AUTOMATED_SUITE asuite
+      INNER JOIN
+      (
+        SELECT automated_suite.SUITE_ID,
+              blocked_count.counter as blocked_count,
+              untestable_count.counter as untestable_count,
+              settled_count.counter as settled_count,
+              failure_count.counter as failure_count,
+              success_count.counter as success_count,
+              running_count.counter as running_count,
+              total_count.counter as total_count
+        FROM AUTOMATED_SUITE as automated_suite
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('BLOCKED', 'ERROR', 'NOT_RUN')
+          GROUP BY ext.SUITE_ID) as blocked_count
+        ON automated_suite.SUITE_ID = blocked_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('UNTESTABLE', 'NOT_FOUND')
+          GROUP BY ext.SUITE_ID) as untestable_count
+        ON automated_suite.SUITE_ID = untestable_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SETTLED', 'UNTESTABLE', 'NOT_FOUND')
+          GROUP BY ext.SUITE_ID) as settled_count
+        ON automated_suite.SUITE_ID = settled_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS = 'FAILURE'
+          GROUP BY ext.SUITE_ID) as failure_count
+        ON automated_suite.SUITE_ID = failure_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SUCCESS', 'UNTESTABLE', 'SETTLED', 'NOT_FOUND', 'WARNING')
+          GROUP BY ext.SUITE_ID) as success_count
+        ON automated_suite.SUITE_ID = success_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SUCCESS', 'UNTESTABLE', 'SETTLED', 'NOT_FOUND', 'WARNING')
+          GROUP BY ext.SUITE_ID) as running_count
+        ON automated_suite.SUITE_ID = running_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          GROUP BY ext.SUITE_ID) as total_count
+          ON automated_suite.SUITE_ID = total_count.SUITE_ID
+      ) as count_table
+      ON asuite.SUITE_ID = count_table.SUITE_ID
+      SET asuite.EXECUTION_STATUS = (
+        CASE
+          WHEN (count_table.blocked_count IS NOT NULL AND count_table.blocked_count > 0) THEN 'BLOCKED'
+          WHEN (count_table.untestable_count IS NOT NULL AND count_table.untestable_count = count_table.total_count) THEN 'UNTESTABLE'
+          WHEN (count_table.settled_count IS NOT NULL AND count_table.settled_count = count_table.total_count) THEN 'SETTLED'
+          WHEN (count_table.failure_count IS NOT NULL AND count_table.failure_count > 0) THEN 'FAILURE'
+          WHEN (count_table.success_count IS NOT NULL AND count_table.success_count = count_table.total_count) THEN 'SUCCESS'
+          WHEN (count_table.running_count IS NOT NULL AND count_table.running_count > 0) THEN 'RUNNING'
+          ELSE 'READY'
+        END
+      )
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-795-migration-mysql" author="aguilhem" dbms="postgresql">
+    <comment>Compute preexisting automated suites status for postgres</comment>
+    <sql>
+      UPDATE AUTOMATED_SUITE asuite
+      SET EXECUTION_STATUS = (
+        CASE
+          WHEN (count_table.blocked_count IS NOT NULL AND count_table.blocked_count > 0) THEN 'BLOCKED'
+          WHEN (count_table.untestable_count IS NOT NULL AND count_table.untestable_count = count_table.total_count) THEN 'UNTESTABLE'
+          WHEN (count_table.settled_count IS NOT NULL AND count_table.settled_count = count_table.total_count) THEN 'SETTLED'
+          WHEN (count_table.failure_count IS NOT NULL AND count_table.failure_count > 0) THEN 'FAILURE'
+          WHEN (count_table.success_count IS NOT NULL AND count_table.success_count = count_table.total_count) THEN 'SUCCESS'
+          WHEN (count_table.running_count IS NOT NULL AND count_table.running_count > 0) THEN 'RUNNING'
+          ELSE 'READY'
+        END
+      )
+      FROM
+      (
+        SELECT automated_suite.SUITE_ID,
+              blocked_count.counter as blocked_count,
+              untestable_count.counter as untestable_count,
+              settled_count.counter as settled_count,
+              failure_count.counter as failure_count,
+              success_count.counter as success_count,
+              running_count.counter as running_count,
+              total_count.counter as total_count
+        FROM AUTOMATED_SUITE as automated_suite
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('BLOCKED', 'ERROR', 'NOT_RUN')
+          GROUP BY ext.SUITE_ID) as blocked_count
+        ON automated_suite.SUITE_ID = blocked_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('UNTESTABLE', 'NOT_FOUND')
+          GROUP BY ext.SUITE_ID) as untestable_count
+        ON automated_suite.SUITE_ID = untestable_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SETTLED', 'UNTESTABLE', 'NOT_FOUND')
+          GROUP BY ext.SUITE_ID) as settled_count
+        ON automated_suite.SUITE_ID = settled_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS = 'FAILURE'
+          GROUP BY ext.SUITE_ID) as failure_count
+        ON automated_suite.SUITE_ID = failure_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SUCCESS', 'UNTESTABLE', 'SETTLED', 'NOT_FOUND', 'WARNING')
+          GROUP BY ext.SUITE_ID) as success_count
+        ON automated_suite.SUITE_ID = success_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          AND ex.EXECUTION_STATUS IN ('SUCCESS', 'UNTESTABLE', 'SETTLED', 'NOT_FOUND', 'WARNING')
+          GROUP BY ext.SUITE_ID) as running_count
+        ON automated_suite.SUITE_ID = running_count.SUITE_ID
+        LEFT JOIN
+          (SELECT ext.SUITE_ID, count(ext.SUITE_ID) as counter
+          FROM AUTOMATED_EXECUTION_EXTENDER ext
+          INNER JOIN EXECUTION ex ON ext.MASTER_EXECUTION_ID = ex.EXECUTION_ID
+          GROUP BY ext.SUITE_ID) as total_count
+        ON automated_suite.SUITE_ID = total_count.SUITE_ID
+      ) as count_table
+      WHERE count_table.SUITE_ID = asuite.SUITE_ID;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

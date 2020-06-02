@@ -23,10 +23,13 @@ package org.squashtest.tm.domain.testautomation;
 import org.hibernate.annotations.GenericGenerator;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.library.HasExecutionStatus;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -35,7 +38,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NamedQueries({
 	@NamedQuery(name = "automatedSuite.findAll", query = "from AutomatedSuite"),
@@ -65,7 +71,21 @@ import java.util.List;
 })
 @Entity
 @Auditable
-public class AutomatedSuite {
+public class AutomatedSuite implements HasExecutionStatus {
+
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+
+	static {
+		Set<ExecutionStatus> set = new HashSet<>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
+	}
 
 	@Id
 	@Column(name = "SUITE_ID")
@@ -78,6 +98,9 @@ public class AutomatedSuite {
 	// We still need to be sure to get them ordered by id (which is not always the case without the annotation) to respect test plan order when getting the list.
 	@OrderBy
 	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	/**
 	 * it's transient because we do not want to persist neither do we want to compute it too often.
@@ -150,4 +173,13 @@ public class AutomatedSuite {
 
 	}
 
+	@Override
+	public ExecutionStatus getExecutionStatus() {
+		return executionStatus;
+	}
+
+	@Override
+	public Set<ExecutionStatus> getLegalStatusSet() {
+		return null;
+	}
 }

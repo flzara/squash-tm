@@ -149,4 +149,50 @@
     <comment>Check that automated suites' audit data migration is good (postgres)</comment>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-795-test-automated-suite-status-value" author="aguilhem" dbms="postgresql, mysql">
+    <preConditions>
+      <sqlCheck expectedResult="RUNNING">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="FAILURE">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="BLOCKED">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '2468'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="UNTESTABLE">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1357'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="SUCCESS">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1111'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' status is good (postgres, mysql)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-795-test-automated-suite-status-value-h2" author="aguilhem" dbms="h2">
+    <preConditions>
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '2468'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1357'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' status is good (h2, no migration)</comment>
+  </changeSet>
+
 </databaseChangeLog>
