@@ -93,7 +93,22 @@
 
       <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
 
+      <column name="TOKEN" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="PROJECT_ID" type="BIGINT">
+        <constraints references="PROJECT(PROJECT_ID)" nullable="false" foreignKeyName="fk_action_word_project" />
+      </column>
     </createTable>
+
+
+    <createIndex tableName="ACTION_WORD" indexName="idx_fk_action_word_project">
+      <column name="PROJECT_ID" />
+    </createIndex>
+
+    <addUniqueConstraint tableName="ACTION_WORD" columnNames="TOKEN, PROJECT_ID"
+                         constraintName="uc_aw_token_project_id"/>
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-174-keyword-test-step-table" author="jlor" >
@@ -232,10 +247,12 @@
       </column>
     </createTable>
 
-    <comment>Update ACTION_WORD table</comment>
-    <addColumn tableName="ACTION_WORD">
-      <column name="TOKEN" type="VARCHAR(255)"/>
-    </addColumn>
+    <createIndex tableName="ACTION_WORD_FRAGMENT" indexName="idx_fk_action_word_fragment_action_word_id">
+      <column name="ACTION_WORD_ID" />
+    </createIndex>
+
+    <addUniqueConstraint tableName="ACTION_WORD_FRAGMENT" columnNames="ACTION_WORD_ID, FRAGMENT_ORDER"
+                         constraintName="uc_action_word_fragment_order"/>
 
     <comment>Create new table for Action word text elements</comment>
     <createTable tableName="ACTION_WORD_TEXT">
@@ -247,6 +264,10 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
+
+    <createIndex tableName="ACTION_WORD_TEXT" indexName="idx_fk_action_word_text_action_word_fragment">
+      <column name="ACTION_WORD_FRAGMENT_ID" />
+    </createIndex>
 
     <comment>Create new table for Action word parameter elements</comment>
     <createTable tableName="ACTION_WORD_PARAMETER">
@@ -261,6 +282,10 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
+
+    <createIndex tableName="ACTION_WORD_PARAMETER" indexName="idx_fk_action_word_parameter_action_word_fragment">
+      <column name="ACTION_WORD_FRAGMENT_ID" />
+    </createIndex>
 
     <comment>Create new table for Action word parameter value</comment>
     <createTable tableName="ACTION_WORD_PARAMETER_VALUE">
@@ -279,6 +304,14 @@
                      references="KEYWORD_TEST_STEP(TEST_STEP_ID)"/>
       </column>
     </createTable>
+
+
+    <createIndex tableName="ACTION_WORD_PARAMETER_VALUE" indexName="idx_fk_action_word_parameter_value_action_word_fragment_id">
+      <column name="ACTION_WORD_FRAGMENT_ID" />
+    </createIndex>
+    <createIndex tableName="ACTION_WORD_PARAMETER_VALUE" indexName="idx_fk_action_word_parameter_value_keyword_test_step_id">
+      <column name="KEYWORD_TEST_STEP_ID" />
+    </createIndex>
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-302-action-word-workspace" author="jlor">
@@ -322,18 +355,6 @@
       from ACL_GROUP_PERMISSION AGP2
       where CLASS_ID = 3;
     </sql>
-
-    <comment>Add foreign key to the project in an action word</comment>
-
-    <addColumn tableName="ACTION_WORD">
-      <column name="PROJECT_ID" type="BIGINT">
-        <constraints references="PROJECT(PROJECT_ID)" nullable="false" foreignKeyName="fk_action_word_project" />
-      </column>
-    </addColumn>
-
-    <createIndex tableName="ACTION_WORD" indexName="idx_fk_action_word_project">
-      <column name="PROJECT_ID" />
-    </createIndex>
 
     <comment>Add foreign key to the library in a project</comment>
 
