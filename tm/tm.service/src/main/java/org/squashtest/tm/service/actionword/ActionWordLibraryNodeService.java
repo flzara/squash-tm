@@ -61,4 +61,9 @@ public interface ActionWordLibraryNodeService {
 	 * @return The requested ActionWordLibraryNode
 	 */
 	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
+	/**
+	 * Given an ActionWord which Fragments were modified, rename its corresponding ActionWordLibraryNode.
+	 * @param actionWord the given ActionWord
+	 */
+	void renameNodeFromActionWord(ActionWord actionWord);
 }

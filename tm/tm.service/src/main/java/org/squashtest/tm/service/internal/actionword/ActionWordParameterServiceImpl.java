@@ -22,9 +22,13 @@ package org.squashtest.tm.service.internal.actionword;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.actionword.ActionWordParameterService;
 import org.squashtest.tm.service.internal.repository.ActionWordParameterDao;
+import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 
 import javax.inject.Inject;
 
@@ -35,10 +39,19 @@ public class ActionWordParameterServiceImpl implements ActionWordParameterServic
 	@Inject
 	private ActionWordParameterDao actionWordParameterDao;
 
+	@Inject
+	private ActionWordLibraryNodeService actionWordLibraryNodeService;
+
 	@Override
 	public String renameParameter(long parameterId, String newName) {
 		ActionWordParameter parameter = actionWordParameterDao.getOne(parameterId);
 		parameter.setName(newName);
+		// update ActionWordLibraryNode name
+		ActionWord actionWord = parameter.getActionWord();
+		actionWordLibraryNodeService.renameNodeFromActionWord(actionWord);
+
+
+
 		return newName;
 	}
 }

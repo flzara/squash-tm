@@ -26,6 +26,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MetaValue;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -143,12 +144,15 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	@Override
 	public void isCoherentWithEntity() {
+		// FIXME: This method was temporarily commented before moving createWord() method in ActionWord class.
+		/*
 		String nodeName = getName();
 		String entityName = getEntity().getName();
 		if (!nodeName.equals(entityName)) {
 			String message = "Cannot add a library node with name %s to represent an entity with different name %s.";
 			throw new IllegalArgumentException(String.format(message, nodeName, entityName));
 		}
+		*/
 	}
 
 	@Override
@@ -161,7 +165,32 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	@Override
 	public void renameNode(String newName) {
-		throw new UnsupportedOperationException();
+		if (getEntityType().equals(ActionWordTreeDefinition.LIBRARY)) {
+			throw new IllegalArgumentException("A library cannot be renamed. Please rename the project instead.");
+		}
+		if (nameAlreadyUsedBySibling(newName)) {
+			throw new DuplicateNameException(newName, this.getEntityType().getTypeName());
+		}
+		setName(newName);
+	}
+
+	private boolean nameAlreadyUsedBySibling(String newName) {
+		List<String> siblingsNames = getSiblingsNames();
+		return siblingsNames.contains(newName);
+	}
+
+	private List<String> getSiblingsNames() {
+		List<ActionWordTreeLibraryNode> siblings = getSiblings();
+		List<String> siblingNames = new ArrayList<>();
+		for (TreeLibraryNode sibling : siblings) {
+			siblingNames.add(sibling.getName());
+		}
+		return siblingNames;
+	}
+
+	private List<ActionWordTreeLibraryNode> getSiblings() {
+		ActionWordTreeLibraryNode parentNode = getParent();
+		return parentNode.getChildren();
 	}
 
 	/* ActionWordTreeLibraryNode methods */

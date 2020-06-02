@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
@@ -51,6 +52,8 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	def  "should create a new action word node"() {
 		given:
 			ActionWord newActionWord = new ActionWord("a new action word")
+			ActionWordText textFragment = new ActionWordText("a new action word")
+			newActionWord.addFragment(textFragment)
 		when:
 			def newNode = actionWordLibraryNodeService.createNewNode(-1L, newActionWord)
 		then:

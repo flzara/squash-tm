@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
+import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -101,5 +102,13 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 			throw new IllegalArgumentException(String.format(message, nodeId));
 		}
 		return entity;
+	}
+
+	@Override
+	public void renameNodeFromActionWord(ActionWord actionWord) {
+		ActionWordLibraryNode actionWordLibraryNode = findNodeFromEntity(actionWord);
+		actionWordLibraryNode.renameNode(
+			new ActionWordParser().createWord(
+				actionWord.getFragments()));
 	}
 }
