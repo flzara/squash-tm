@@ -24,6 +24,8 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.core.foundation.collection.Sorting
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.ExecutionStatusReport
 import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
 import org.unitils.dbunit.annotation.DataSet
@@ -31,8 +33,13 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.ERROR
 import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
-import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SETTLED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS;
 
 
 @UnitilsSupport
@@ -145,6 +152,27 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 		expect :
 
 		suiteDao.countSuitesByTestSuiteId(testSuiteId, filter) == 1
+
+	}
+
+	def "should get status report for an automated suite"(){
+
+		when :
+
+		ExecutionStatusReport statusReport = suiteDao.getStatusReport(suiteid)
+
+		then :
+
+		statusReport.getTotal() == 5
+		statusReport.get(SUCCESS) == 1
+		statusReport.get(BLOCKED) == 1
+		statusReport.get(RUNNING) == 1
+		statusReport.get(READY) == 1
+		statusReport.get(FAILURE) == 1
+		statusReport.anyOf(FAILURE)
+		!statusReport.anyOf(SETTLED)
+		!statusReport.allOf(SUCCESS)
+		statusReport.allOf(SUCCESS, BLOCKED, RUNNING, READY, FAILURE)
 
 	}
 

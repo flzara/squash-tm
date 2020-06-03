@@ -49,7 +49,7 @@
    --%>
 
   <div class="table-tab-wrap">
-    <table id="iteration-automated-suites-table" class="unstyled-table"
+    <table id="iteration-automated-suites-table" class="automated-suites-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}" data-entity-id="${iteration.id}" data-entity-type="iteration">
       <thead>
         <tr>
@@ -63,6 +63,9 @@
               data-def="map=last-modified-on, center"><f:message key="label.lastModifiedOn" /></th>
           <th class="no-user-select"
               data-def="map=last-modified-by, center"><f:message key="label.lastModifiedBy" /></th>
+          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
+            <f:message key="iteration.executions.table.column-header.status.label" />
+          </th>
           <th class="no-user-select" title="UUID"
               data-def="map=uuid, center">
             <f:message key="test-case.automation-uuid.short" />

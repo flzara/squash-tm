@@ -67,7 +67,12 @@ import java.util.Set;
 		"join fetch itpi.iteration it " +
 		"join fetch it.campaign " +
 		"where ext.automatedSuite.id = :suiteId " +
-		"order by ext.id asc")
+		"order by ext.id asc"),
+	@NamedQuery(name = "automatedSuite.countStatuses", query = "select exec.executionStatus, count(exec) " +
+		"from AutomatedSuite asuite " +
+		"join asuite.executionExtenders ext " +
+		"join ext.execution exec " +
+		"where asuite.id = :id group by exec.executionStatus")
 })
 @Entity
 @Auditable
@@ -176,6 +181,10 @@ public class AutomatedSuite implements HasExecutionStatus {
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
+	}
+
+	public void setExecutionStatus(ExecutionStatus executionStatus) {
+		this.executionStatus = executionStatus;
 	}
 
 	@Override

@@ -31,9 +31,29 @@
 
 define(['squash.translator', './table'], function(translator, table){
 
+	function enhanceConfiguration(origconf){
+
+		var conf = $.extend({}, origconf);
+
+		conf.messages = translator.get({
+			executionStatus : {
+				SETTLED : "execution.execution-status.SETTLED",
+				UNTESTABLE : "execution.execution-status.UNTESTABLE",
+				BLOCKED : "execution.execution-status.BLOCKED",
+				FAILURE : "execution.execution-status.FAILURE",
+				SUCCESS : "execution.execution-status.SUCCESS",
+				RUNNING : "execution.execution-status.RUNNING",
+				READY	: "execution.execution-status.READY"
+			}
+		});
+
+		return conf;
+	}
+
 	return {
 		init : function(origconf){
-			table.init(origconf);
+			var conf = enhanceConfiguration(origconf);
+			table.init(conf);
 		}
 	};
 });

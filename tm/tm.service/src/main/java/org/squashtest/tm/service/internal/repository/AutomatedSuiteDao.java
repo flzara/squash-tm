@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -153,4 +154,6 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter);
+
+	ExecutionStatusReport getStatusReport(String uuid);
 }

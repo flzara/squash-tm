@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,42 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * configuration an object as follow :
- *
- * {
- *		basic : {
- *			iterationId : the id of the current iteration
- *		}
- *	}
- *
- */
+package org.squashtest.tm.service.campaign;
 
-define(['squash.translator', './table'], function(translator, table){
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 
-	function enhanceConfiguration(origconf){
-
-		var conf = $.extend({}, origconf);
-
-		conf.messages = translator.get({
-			executionStatus : {
-				SETTLED : "execution.execution-status.SETTLED",
-				UNTESTABLE : "execution.execution-status.UNTESTABLE",
-				BLOCKED : "execution.execution-status.BLOCKED",
-				FAILURE : "execution.execution-status.FAILURE",
-				SUCCESS : "execution.execution-status.SUCCESS",
-				RUNNING : "execution.execution-status.RUNNING",
-				READY	: "execution.execution-status.READY"
-			}
-		});
-
-		return conf;
-	}
-
-	return {
-		init : function(origconf){
-			var conf = enhanceConfiguration(origconf);
-			table.init(conf);
-		}
-	};
-});
+public interface AutomatedSuiteModificationService {
+	void updateExecutionStatus(AutomatedSuite automatedSuite);
+}

@@ -31,6 +31,7 @@ import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.campaign.AutomatedSuiteModificationService;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
@@ -65,6 +66,9 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private AutomatedSuiteModificationService automatedSuiteModificationService;
 
 	private static final String EXECUTE = "EXECUTE";
 
@@ -120,6 +124,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 		exec.setResultSummary(HtmlUtils.htmlEscape(stateChange.getStatusMessage()));
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
 
+		automatedSuiteModificationService.updateExecutionStatus(exec.getAutomatedSuite());
 		customTestSuiteModificationService.updateExecutionStatus(exec.getExecution().getTestPlan().getTestSuites());
 
 		try {

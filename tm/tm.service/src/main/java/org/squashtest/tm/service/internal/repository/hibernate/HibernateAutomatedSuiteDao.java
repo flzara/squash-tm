@@ -30,6 +30,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -64,6 +65,8 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	private static final String ITERATION = "iteration";
 
 	private static final String TEST_SUITES = "testSuites";
+
+	private static final String AUTOMATED_SUITE_COUNT_STATUS = "automatedSuite.countStatuses";
 
 	@PersistenceContext
 	private EntityManager em;
@@ -202,6 +205,23 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	public long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter) {
 
 		return createQueryCountAutomatedSuites(TEST_SUITES, suiteId).getSingleResult();
+	}
+
+	@Override
+	public ExecutionStatusReport getStatusReport(String uuid) {
+		ExecutionStatusReport report = new ExecutionStatusReport();
+
+		Query query = em.createNamedQuery(
+			AUTOMATED_SUITE_COUNT_STATUS);
+		query.setParameter("id", uuid);
+
+		List<Object[]> tuples = query.getResultList();
+
+		for (Object[] tuple:tuples) {
+			report.set(((ExecutionStatus) tuple[0]).getCanonicalStatus(), ((Long) tuple[1]).intValue());
+		}
+
+		return report;
 	}
 
 	private TypedQuery<Long> createQueryCountAutomatedSuites(String discriminatingEntityName, Long discriminatingEntityId) {

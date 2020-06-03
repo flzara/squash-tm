@@ -56,18 +56,62 @@
  */
 
 define(
-	['jquery', 'squashtable'],
-	function ($) {
+	['jquery', 'squash.statusfactory', 'squashtable'],
+	function ($, statusfactory) {
 		"use strict";
+
+		function _rowCallbackReadFeatures($row, data, _conf) {
+
+			// execution status (read, thus selected using .status-display)
+			var status = data['status'],
+				$statustd = $row.find('.status-display'),
+				html = statusfactory.getHtmlFor(status);
+
+			$statustd.html(html); // remember : this will insert a <span>
+			// in the process
+		}
+
+		function createTableConfiguration(initconf) {
+
+			// conf objects for the row callbacks
+			var _readFeaturesConf = {
+				statuses: initconf.messages.executionStatus,
+				testSuiteId: initconf.basic.testsuiteId
+			};
+
+			// basic table configuration. Much of it is in the DOM of the
+			// table.
+			var tableSettings = {
+
+				fnRowCallback: function (row, data, displayIndex) {
+
+					var $row = $(row);
+
+					// add read-only mode features (always applied)
+					_rowCallbackReadFeatures($row, data, _readFeaturesConf);
+
+					// done
+					return row;
+				}
+			};
+
+			var squashSettings = {
+			};
+
+			return {
+				tconf: tableSettings,
+				sconf: squashSettings
+			};
+
+		}
 
 		// **************** MAIN ****************
 
 		return {
 			init: function (origconf) {
 				var $table = $("#iteration-automated-suites-table");
-				var datatableSettings = {};
-				var squashSettings={};
-				$table.squashTable(datatableSettings,squashSettings);
+				var tableconf = createTableConfiguration(origconf);
+				$table.squashTable(tableconf.tconf,tableconf.sconf);
 			}
 		};
 
