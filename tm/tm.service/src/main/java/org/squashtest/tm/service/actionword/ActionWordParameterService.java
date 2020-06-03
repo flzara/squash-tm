@@ -22,4 +22,5 @@ package org.squashtest.tm.service.actionword;
 
 public interface ActionWordParameterService {
 	String renameParameter(long parameterId, String newName);
+	String updateParameterDefaultValue(long parameterId, String newDefaultValue);
 }

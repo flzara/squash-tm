@@ -49,9 +49,13 @@ public class ActionWordParameterServiceImpl implements ActionWordParameterServic
 		// update ActionWordLibraryNode name
 		ActionWord actionWord = parameter.getActionWord();
 		actionWordLibraryNodeService.renameNodeFromActionWord(actionWord);
-
-
-
 		return newName;
+	}
+
+	@Override
+	public String updateParameterDefaultValue(long parameterId, String newDefaultValue) {
+		ActionWordParameter parameter = actionWordParameterDao.getOne(parameterId);
+		parameter.setDefaultValue(newDefaultValue);
+		return newDefaultValue;
 	}
 }
