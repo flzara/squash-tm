@@ -72,9 +72,7 @@ public class ActionWordLibraryNodeBuilder implements ActionWordTreeEntityVisitor
 	@Override
 	public void visit(ActionWord actionWord) {
 		linkToProject();
-		builtNode.setName(
-			new ActionWordParser().createWord(
-				actionWord.getFragments()));
+		builtNode.setName(actionWord.createWord());
 	}
 
 	private void linkToProject() {

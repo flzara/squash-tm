@@ -69,11 +69,6 @@ public class ActionWord implements ActionWordTreeEntity {
 	@SequenceGenerator(name = "action_word_action_word_id_seq", sequenceName = "action_word_action_word_id_seq", allocationSize = 1)
 	private Long id;
 
-	@Column(name = "WORD")
-	@NotBlank
-	@Size(max = 255)
-	private String word;
-
 	@NotBlank
 	@Column(name = "TOKEN")
 	private String token;
@@ -100,7 +95,12 @@ public class ActionWord implements ActionWordTreeEntity {
 	public ActionWord() {
 	}
 
-	public ActionWord(String word) {
+	public ActionWord(List<ActionWordFragment> fragments) {
+		setFragments(fragments);
+		setToken(generateToken());
+	}
+
+/*	public ActionWord(String word) {
 		if (StringUtils.isBlank(word)) {
 			throw new IllegalArgumentException("Action word cannot be blank.");
 		}
@@ -110,11 +110,40 @@ public class ActionWord implements ActionWordTreeEntity {
 		}
 		this.word = trimmedWord;
 		this.token = ACTION_WORD_TEXT_TOKEN + "-" + ActionWordUtil.formatText(trimmedWord) + "-";
-	}
+	}*/
 
-	public ActionWord(String word, String token) {
+/*	public ActionWord(String word, String token) {
 		this(word);
 		setToken(token);
+	}*/
+
+	public String createWord() {
+		StringBuilder builder = new StringBuilder();
+		for (ActionWordFragment fragment : fragments) {
+			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
+				ActionWordText text = (ActionWordText) fragment;
+				builder.append(text.getText());
+			} else {
+				ActionWordParameter parameter = (ActionWordParameter) fragment;
+				builder.append("\"").append(parameter.getName()).append("\"");
+			}
+		}
+		return builder.toString();
+	}
+
+	public String generateToken() {
+		StringBuilder builder1 = new StringBuilder();
+		StringBuilder builder2 = new StringBuilder("-");
+		for (ActionWordFragment fragment : fragments) {
+			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
+				builder1.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
+			} else {
+				builder1.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
+				ActionWordText text = (ActionWordText) fragment;
+				builder2.append(text.getText()).append("-");
+			}
+		}
+		return builder1.append(builder2).toString();
 	}
 
 	public Long getId() {
@@ -123,14 +152,6 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getWord() {
-		return word;
-	}
-
-	public void setWord(String word) {
-		this.word = word;
 	}
 
 	public String getToken() {
@@ -213,12 +234,12 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	@Override
 	public String getName() {
-		return word;
+		return createWord();
 	}
 
 	@Override
 	public void setName(String name) {
-		this.word = name;
+		throw new UnsupportedOperationException();
 	}
 
 }

@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testcase.keyword
 
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.service.actionword.ActionWordService
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -43,14 +45,21 @@ class KeywordTestCaseControllerTest  extends Specification{
 		String searchInput = "an action word \"p1\" w"
 
 		and:
-		def actionWord1 = new ActionWord()
-		actionWord1.setWord("an action word without param")
+		def singleFragmentText = new ActionWordText("an action word without param")
 
-		def actionWord2 = new ActionWord()
-		actionWord2.setWord("an action word with \"1\" param")
+		def fragmentText = new ActionWordText("an action word with ")
+		def fragmentText2 = new ActionWordText(" param")
 
-		def actionWord3 = new ActionWord()
-		actionWord3.setWord("an action word with \"this\" param or \"that\" param")
+		def fragmentText3 = new ActionWordText(" param or ")
+
+		def fragmentParam = new ActionWordParameter("param1", "")
+		def fragmentParam2 = new ActionWordParameter("param2", "")
+
+		def actionWord1 = new ActionWord([singleFragmentText] as List)
+
+		def actionWord2 = new ActionWord([fragmentText, fragmentParam, fragmentText2])
+
+		def actionWord3 = new ActionWord([fragmentText, fragmentParam, fragmentText3, fragmentParam2, fragmentText2])
 
 		List<ActionWord> actionWordList = [actionWord1, actionWord2, actionWord3]
 

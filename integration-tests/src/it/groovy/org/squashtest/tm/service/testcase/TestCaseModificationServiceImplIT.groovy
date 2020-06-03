@@ -440,7 +440,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		KeywordTestStep keywordTestStep = obj[0];
 		keywordTestStep.getId() == -3L
 		keywordTestStep.getKeyword() == Keyword.THEN
-		keywordTestStep.getActionWord().getWord() == "GoodBye!"
+		keywordTestStep.getActionWord().createWord() == "GoodBye!"
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
@@ -575,7 +575,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
-		actionWord.word == "hello"
+		actionWord.createWord() == "hello"
 		actionWord.token == "T-hello-"
 		!actionWord.getKeywordTestSteps().isEmpty()
 
@@ -602,7 +602,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
-		actionWord.word == "today is \"param1\"."
+		actionWord.createWord() == "today is \"param1\"."
 		actionWord.token == "TPT-today is -.-"
 		def fragments = actionWord.getFragments()
 		fragments.size() == 3
@@ -651,7 +651,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id == -78L
-		actionWord.word == "the Action wôrd exists."
+		actionWord.createWord() == "the Action wôrd exists."
 		actionWord.token == "T-the Action wôrd exists.-"
 
 		def fragments = actionWord.getFragments()
@@ -678,7 +678,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id == -66L
-		actionWord.word == "today is \"date\" of \"month\" \"year\""
+		actionWord.createWord() == "today is \"date\" of \"month\" \"year\""
 		actionWord.token == "TPTPTP-today is - of - -"
 
 		def fragments = actionWord.getFragments()
@@ -765,7 +765,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id == -78L
-		actionWord.word == "the Action wôrd exists."
+		actionWord.createWord() == "the Action wôrd exists."
 		actionWord.token == "T-the Action wôrd exists.-"
 
 		def fragments = actionWord.getFragments()
@@ -792,7 +792,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id == -66L
-		actionWord.word == "today is \"date\" of \"month\" \"year\""
+		actionWord.createWord() == "today is \"date\" of \"month\" \"year\""
 		actionWord.token == "TPTPTP-today is - of - -"
 
 		def fragments = actionWord.getFragments()

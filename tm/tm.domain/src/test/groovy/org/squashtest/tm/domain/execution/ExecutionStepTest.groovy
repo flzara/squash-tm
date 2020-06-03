@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.execution
 
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
@@ -49,7 +50,8 @@ class ExecutionStepTest extends Specification {
 
 	def "Should create an execution step for an KeywordTestStep"() {
 		given:
-		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		def fragmentText = new ActionWordText("hello")
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord([fragmentText] as List))
 		when:
 		ExecutionStep execStep = new ExecutionStep(keywordTestStep)
 		then:

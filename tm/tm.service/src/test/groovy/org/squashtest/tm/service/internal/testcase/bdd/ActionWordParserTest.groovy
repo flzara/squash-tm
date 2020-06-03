@@ -44,7 +44,7 @@ class ActionWordParserTest extends Specification {
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n act1on-word with ('.,?/!§)")
 
 		then:
-		result.getWord() == "This_is @n act1on-word with ('.,?/!§)"
+		result.createWord() == "This_is @n act1on-word with ('.,?/!§)"
 		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
 		def fragments = result.getFragments()
 		fragments.size() == 1
@@ -59,7 +59,7 @@ class ActionWordParserTest extends Specification {
 		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n    act1on-word with    ('.,?/!§)")
 
 		then:
-		result.getWord() == "This_is @n    act1on-word with    ('.,?/!§)"
+		result.createWord() == "This_is @n act1on-word with ('.,?/!§)"
 		result.getToken() == "T-This_is @n act1on-word with ('.,?/!§)-"
 		def fragments = result.getFragments()
 		fragments.size() == 1
@@ -76,7 +76,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"param1\""
+		result.createWord() == "This is an action word with \"param1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -105,7 +105,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"param1\""
+		result.createWord() == "This is an action word with \"param1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -131,7 +131,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "This is an action word with \"param1\""
+		result.createWord() == "This is an action word with \"param1\""
 		result.getToken() == "TP-This is an action word with -"
 		def fragments = result.getFragments()
 		fragments.size() == 2
@@ -156,7 +156,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"param1\" is an \"param2\" with \"param3\""
+		result.createWord() == "\"param1\" is an \"param2\" with \"param3\""
 		result.getToken() == "PTPTP- is an - with -"
 		def fragments = result.getFragments()
 		fragments.size() == 5
@@ -198,7 +198,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"param1\" is an\"param2\"\"param3\" with \"param4\""
+		result.createWord() == "\"param1\" is an\"param2\"\"param3\" with \"param4\""
 		result.getToken() == "PTPPTP- is an- with -"
 		def fragments = result.getFragments()
 		fragments.size() == 6
@@ -245,7 +245,7 @@ class ActionWordParserTest extends Specification {
 		def values = parser.getParameterValues()
 
 		then:
-		result.getWord() == "\"param1\" is an \"param2\" \"param3\" with \"param4\""
+		result.createWord() == "\"param1\" is an \"param2\" \"param3\" with \"param4\""
 		result.getToken() == "PTPTPTP- is an - - with -"
 		def fragments = result.getFragments()
 		fragments.size() == 7

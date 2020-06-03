@@ -107,8 +107,6 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	@Override
 	public void renameNodeFromActionWord(ActionWord actionWord) {
 		ActionWordLibraryNode actionWordLibraryNode = findNodeFromEntity(actionWord);
-		actionWordLibraryNode.renameNode(
-			new ActionWordParser().createWord(
-				actionWord.getFragments()));
+		actionWordLibraryNode.renameNode(actionWord.createWord());
 	}
 }

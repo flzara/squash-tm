@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase.bdd
 
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
@@ -37,6 +38,11 @@ class KeywordTestCaseServiceImplTest extends Specification {
 
 	def setup(){
 		keywordTestCaseService.messageSource = messageSource
+	}
+
+	def createBasicActionWord(String singleFragment) {
+		def fragment = new ActionWordText(singleFragment)
+		return new ActionWord([fragment] as List)
 	}
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
@@ -56,9 +62,9 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("Disconnection test")
 
-		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, new ActionWord("I am connécted"))
-		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, new ActionWord("I sign oùt"))
-		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, new ActionWord("I am dîsconnect&d"))
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("I am connécted"))
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I sign oùt"))
+		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am dîsconnect&d"))
 
 		keywordTestCase.addStep(step1)
 		keywordTestCase.addStep(step2)

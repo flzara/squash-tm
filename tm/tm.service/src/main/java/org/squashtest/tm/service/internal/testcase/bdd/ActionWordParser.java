@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,51 +53,19 @@ public class ActionWordParser {
 			if (!actionWordHavingText) {
 				throw new IllegalArgumentException("Action word must contain at least some texts.");
 			}
-			//generate token
-			String token = generateToken(fragmentList);
-			String word = createWord(fragmentList);
 			//initiate the action word
-			ActionWord result = new ActionWord(word, token);
+			ActionWord result = new ActionWord(fragmentList);
 
 			result.setFragments(fragmentList);
 			return result;
 		} else {
 			actionWordHavingText = true;
 			//otherwise  --> action word has no parameter
-			ActionWord result = new ActionWord(trimmedWord);
 			ActionWordText text = new ActionWordText(trimmedWord);
-			result.addFragment(text);
+			ActionWord result = new ActionWord(
+				new ArrayList(Arrays.asList(text)));
 			return result;
 		}
-	}
-
-	public String createWord(List<ActionWordFragment> fragmentList) {
-		StringBuilder builder = new StringBuilder();
-		for (ActionWordFragment fragment : fragmentList) {
-			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
-				ActionWordText text = (ActionWordText) fragment;
-				builder.append(text.getText());
-			} else {
-				ActionWordParameter parameter = (ActionWordParameter) fragment;
-				builder.append("\"").append(parameter.getName()).append("\"");
-			}
-		}
-		return builder.toString();
-	}
-
-	private String generateToken(List<ActionWordFragment> fragmentList) {
-		StringBuilder builder1 = new StringBuilder();
-		StringBuilder builder2 = new StringBuilder("-");
-		for (ActionWordFragment fragment : fragmentList) {
-			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
-				builder1.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
-			} else {
-				builder1.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
-				ActionWordText text = (ActionWordText) fragment;
-				builder2.append(text.getText()).append("-");
-			}
-		}
-		return builder1.append(builder2).toString();
 	}
 
 	private void createFragmentsWithParamValue(String word) {

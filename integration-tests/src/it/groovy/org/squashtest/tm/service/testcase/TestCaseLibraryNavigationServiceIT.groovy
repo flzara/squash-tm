@@ -211,19 +211,19 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		firstStep.getKeyword() == Keyword.GIVEN
 		def firstStepActionWord = firstStep.getActionWord()
 		firstStepActionWord.getId() == -1L
-		firstStepActionWord.getWord() == "HARRY"
+		firstStepActionWord.createWord() == "HARRY"
 		and: "the second test step is Ron"
 		def secondStep = testSteps.get(1)
 		secondStep.getKeyword() == Keyword.AND
 		def secondStepActionWord = secondStep.getActionWord()
 		secondStepActionWord.getId() == -2L
-		secondStepActionWord.getWord() == "RON"
+		secondStepActionWord.createWord() == "RON"
 		and: "the third test step is Hermione"
 		def thirdStep = testSteps.get(2)
 		thirdStep.getKeyword() == Keyword.THEN
 		def thirdStepActionWord = thirdStep.getActionWord()
 		thirdStepActionWord.getId() == -3L
-		thirdStepActionWord.getWord() == "HERMIONE"
+		thirdStepActionWord.createWord() == "HERMIONE"
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")

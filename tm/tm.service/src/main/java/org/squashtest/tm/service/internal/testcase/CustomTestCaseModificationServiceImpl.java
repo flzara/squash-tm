@@ -320,7 +320,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		ActionWordParser parser = new ActionWordParser();
-		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(newTestStep.getActionWord().getWord().trim());
+		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(newTestStep.getActionWord().createWord().trim());
 		List<ActionWordParameterValue> parameterValueMap = parser.getParameterValues();
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		return addKeywordTestStep(parentTestCaseId, inputKeyword, inputActionWord, parameterValueMap, index);
@@ -459,7 +459,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, KeywordTestStep updatedKeywordTestStep) {
 		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getKeyword());
-		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getActionWord().getWord());
+		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getActionWord().createWord());
 	}
 
 	@Override
@@ -485,7 +485,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			String inputToken = inputActionWord.getToken();
 			if (!inputToken.equals(token)) {
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.getWord());
+					LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
 				}
 				//TODO-QUAN: the whole method needs to be recoded
 				ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, null);

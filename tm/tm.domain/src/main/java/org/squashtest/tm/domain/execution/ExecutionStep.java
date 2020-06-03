@@ -174,7 +174,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	public ExecutionStep(KeywordTestStep keywordTestStep) {
-		this.action = keywordTestStep.getKeyword().toString() + " " + keywordTestStep.getActionWord().getWord();
+		this.action = keywordTestStep.getKeyword().toString() + " " + keywordTestStep.getActionWord().createWord();
 		referencedTestStep = keywordTestStep;
 	}
 

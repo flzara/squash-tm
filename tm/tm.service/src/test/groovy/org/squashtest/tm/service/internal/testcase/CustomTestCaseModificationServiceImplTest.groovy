@@ -113,6 +113,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionWordLibraryNodeService = actionWordLibraryNodeService
 	}
 
+	def createBasicActionWord(String singleFragment) {
+		def fragment = new ActionWordText(singleFragment)
+		return new ActionWord([fragment] as List)
+	}
+
 	def "should find test case and add a keyword step with new action word at last position"() {
 		given:
 		long parentTestCaseId = 2
@@ -127,7 +132,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		project.getActionWordLibrary() >> awLibrary
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -139,10 +144,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
 
 		then:
-		1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "last" })
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "last" })
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
-		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+		parentTestCase.getSteps()[1].actionWord.createWord() == "last"
 
 	}
 
@@ -160,8 +165,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		project.getActionWordLibrary() >> awLibrary
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
-		def newStep = new KeywordTestStep(AND, new ActionWord("next"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+		def newStep = new KeywordTestStep(AND, createBasicActionWord("next"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -173,13 +178,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.addKeywordTestStep(parentTestCaseId, newStep, 0)
 
 		then:
-		1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "next" })
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "next" })
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
 		def step1 = parentTestCase.getSteps()[0]
-		((KeywordTestStep) step1).actionWord.getWord() == "next"
+		((KeywordTestStep) step1).actionWord.createWord() == "next"
 		def step2 = parentTestCase.getSteps()[1]
-		((KeywordTestStep) step2).actionWord.getWord() == "first"
+		((KeywordTestStep) step2).actionWord.createWord() == "first"
 	}
 
 	def "should find test case and add a keyword step with new action word containing spaces at last position"() {
@@ -198,7 +203,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
 		actionWordDao.findByTokenInCurrentProject(_,_) >> null
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -209,10 +214,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "    last	")
 		then:
-		1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "last" })
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "last" })
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
-		parentTestCase.getSteps()[1].actionWord.getWord() == "last"
+		parentTestCase.getSteps()[1].actionWord.createWord() == "last"
 	}
 
 	def "should find test case and add a keyword step with new action word containing a param at last position"() {
@@ -229,7 +234,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		project.getActionWordLibrary() >> awLibrary
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -241,14 +246,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with \"param\"	")
 
 		then:
-		1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "this is with \"param1\"" })
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "this is with \"param1\"" })
 		1 * testStepDao.persist(_)
 		1 * actionWordParamValueDao.persist(_)
 
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
-		checkedActionWord.getWord() == "this is with \"param1\""
+		checkedActionWord.createWord() == "this is with \"param1\""
 		checkedActionWord.getToken() == "TP-this is with -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
@@ -286,7 +291,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		project.getActionWordLibrary() >> awLibrary
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -298,14 +303,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "    \"this\" is with \"param\"	\"v@lue\"")
 
 		then:
-		1 * actionWordLibraryNodeService.createNewNode(4L, { it.word == "\"param1\" is with \"param2\" \"param3\"" })
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "\"param1\" is with \"param2\" \"param3\"" })
 		1 * testStepDao.persist(_)
 		3 * actionWordParamValueDao.persist(_)
 
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
-		checkedActionWord.getWord() == "\"param1\" is with \"param2\" \"param3\""
+		checkedActionWord.createWord() == "\"param1\" is with \"param2\" \"param3\""
 		checkedActionWord.getToken() == "PTPTP- is with - -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
@@ -360,7 +365,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "last"
+			createWord() >> "last"
 			List<ActionWordFragment> fragments = new ArrayList<>()
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
@@ -373,7 +378,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -389,7 +394,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "last"
+		checkedActionWord.createWord() == "last"
 
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 1
@@ -405,7 +410,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "last"
+			createWord() >> "last"
 			List<ActionWordFragment> fragments = new ArrayList<>()
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
@@ -418,7 +423,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -434,7 +439,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "last"
+		checkedActionWord.createWord() == "last"
 
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 1
@@ -459,7 +464,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "today is \"param1\""
+			createWord() >> "today is \"param1\""
 			getToken() >> "TP-today is -"
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
@@ -470,7 +475,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -488,7 +493,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "today is \"param1\""
+		checkedActionWord.createWord() == "today is \"param1\""
 		checkedActionWord.getToken() == "TP-today is -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
@@ -535,7 +540,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "today is \"param1\" of \"param2\"\"param3\""
+			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
@@ -546,7 +551,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -564,7 +569,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "today is \"param1\" of \"param2\"\"param3\""
+		checkedActionWord.createWord() == "today is \"param1\" of \"param2\"\"param3\""
 		checkedActionWord.getToken() == "TPTPP-today is - of "
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
@@ -619,7 +624,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "last"
+			createWord() >> "last"
 			List<ActionWordFragment> fragments = new ArrayList<>()
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
@@ -632,7 +637,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -648,7 +653,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "last"
+		checkedActionWord.createWord() == "last"
 
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 1
@@ -673,7 +678,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "today is \"param1\""
+			createWord() >> "today is \"param1\""
 			getToken() >> "TP-today is -"
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
@@ -684,7 +689,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -702,7 +707,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "today is \"param1\""
+		checkedActionWord.createWord() == "today is \"param1\""
 		checkedActionWord.getToken() == "TP-today is -"
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 2
@@ -749,7 +754,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "today is \"param1\" of \"param2\"\"param3\""
+			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
 			getFragmentsByClass(_) >> actionWordParams
@@ -760,7 +765,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, new ActionWord("first"))
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
 		and:
@@ -778,7 +783,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
 		ActionWord checkedActionWord = createdTestStep.actionWord
 		checkedActionWord.getId() == -77L
-		checkedActionWord.getWord() == "today is \"param1\" of \"param2\"\"param3\""
+		checkedActionWord.createWord() == "today is \"param1\" of \"param2\"\"param3\""
 		checkedActionWord.getToken() == "TPTPP-today is - of "
 		def fragments = checkedActionWord.getFragments()
 		fragments.size() == 5
@@ -1194,7 +1199,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should update the keyword and the action word of a keyword step"() {
 		given:
 		def step = Mock(KeywordTestStep)
-		step.actionWord >> new ActionWord("first")
+		step.actionWord >> createBasicActionWord("first")
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getWord() >> "last"

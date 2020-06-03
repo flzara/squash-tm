@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testutils.MockFactory
@@ -47,7 +48,8 @@ class KeywordTestCaseTest extends Specification {
 		KeywordTestCase source = new KeywordTestCase()
 		source.setName("source")
 		source.notifyAssociatedWithProject(mockFactory.mockProject())
-		ActionWord actionWord = new ActionWord("Harry Potter")
+		def fragmentText = new ActionWordText("Harry Potter")
+		ActionWord actionWord = new ActionWord([fragmentText] as List)
 		KeywordTestStep sourceStep = new KeywordTestStep(Keyword.AND, actionWord)
 		source.steps << sourceStep
 

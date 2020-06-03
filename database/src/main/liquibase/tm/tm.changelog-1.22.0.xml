@@ -75,10 +75,6 @@
         <constraints primaryKey="true" nullable="false"/>
       </column>
 
-      <column name="WORD" type="VARCHAR(255)">
-        <constraints nullable="false" unique="false"/>
-      </column>
-
       <column name="DESCRIPTION" type="CLOB" />
 
       <column name="CREATED_BY" type="VARCHAR(50)">

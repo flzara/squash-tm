@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.actionword.ActionWordLibrary
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao
 import spock.lang.Specification
@@ -41,7 +42,8 @@ class ActionWordLibraryNodeServiceImplTest extends Specification {
 	def "should create a new action word node"() {
 		given:
 			def parentId = -1L
-			def awTreeEntity = new ActionWord("hello")
+			def fragmentText = new ActionWordText("hello")
+			def awTreeEntity = new ActionWord([fragmentText] as List)
 		and:
 			def awLibrary = Mock(ActionWordLibrary)
 			def project = Mock(Project)
@@ -58,7 +60,7 @@ class ActionWordLibraryNodeServiceImplTest extends Specification {
 				it != null
 				it.name == "hello"
 				it.entity != null
-				it.entity.word == "hello"
+				it.entity.createWord() == "hello"
 				it.getLibrary() == awLibrary
 			})
 	}

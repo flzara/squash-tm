@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.execution.ExecutionStep
 import spock.lang.Specification
@@ -28,8 +29,10 @@ import spock.lang.Specification
 class KeywordTestStepTest extends Specification {
 
 	def "should throw IllegalArgumentException for null Keyword"() {
+		given:
+		def fragmentText = new ActionWordText("hello")
 		when:
-		new KeywordTestStep(null, new ActionWord("hello"))
+		new KeywordTestStep(null, new ActionWord([fragmentText] as List))
 		then:
 		thrown IllegalArgumentException
 	}
@@ -44,7 +47,9 @@ class KeywordTestStepTest extends Specification {
 	def "should associate a valid TestCase"() {
 		given:
 		KeywordTestCase testCase = new KeywordTestCase()
-		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		def fragmentText = new ActionWordText("hello")
+		ActionWord actionWord = new ActionWord([fragmentText] as List)
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, actionWord)
 		when:
 		keywordTestStep.setTestCase(testCase)
 		then:
@@ -55,7 +60,9 @@ class KeywordTestStepTest extends Specification {
 	def "should reject an invalid TestCase"() {
 		given:
 		TestCase testcase = new TestCase()
-		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		def fragmentText = new ActionWordText("hello")
+		ActionWord actionWord = new ActionWord([fragmentText] as List)
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, actionWord)
 		when:
 		keywordTestStep.setTestCase(testcase)
 		then:
@@ -64,7 +71,9 @@ class KeywordTestStepTest extends Specification {
 
 	def "should create an execution step" () {
 		given:
-		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord("hello"))
+		def fragmentText = new ActionWordText("hello")
+		ActionWord actionWord = new ActionWord([fragmentText] as List)
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, actionWord)
 		when:
 		def res = keywordTestStep.createExecutionSteps(null)
 		then:
@@ -78,7 +87,7 @@ class KeywordTestStepTest extends Specification {
 		given:
 			ActionWord actionWord = Mock(ActionWord)
 			actionWord.getId() >> 78L
-			actionWord.getWord() >> "Halo!"
+			actionWord.createWord() >> "Halo!"
 			KeywordTestStep keywordTestStep = new KeywordTestStep(
 				Keyword.BUT,
 				actionWord)
@@ -90,7 +99,7 @@ class KeywordTestStepTest extends Specification {
 			def originalWord = keywordTestStep.getActionWord()
 			def copyWord = copy.actionWord
 			copyWord.getId() == originalWord.getId()
-			copyWord.getWord() == originalWord.getWord()
+			copyWord.createWord() == originalWord.createWord()
 
 	}
 }

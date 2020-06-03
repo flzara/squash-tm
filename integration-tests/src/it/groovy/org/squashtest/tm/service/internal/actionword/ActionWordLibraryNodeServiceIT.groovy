@@ -49,11 +49,16 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	@Inject
 	ActionWordLibraryNodeService actionWordLibraryNodeService
 
+	def createBasicActionWord(String singleFragment) {
+		def fragment = new ActionWordText(singleFragment)
+		return new ActionWord([fragment] as List)
+	}
+
 	def  "should create a new action word node"() {
 		given:
-			ActionWord newActionWord = new ActionWord("a new action word")
-			ActionWordText textFragment = new ActionWordText("a new action word")
-			newActionWord.addFragment(textFragment)
+			ActionWord newActionWord = createBasicActionWord("a new action word")
+//			ActionWordText textFragment = new ActionWordText("a new action word")
+//			newActionWord.addFragment(textFragment)
 		when:
 			def newNode = actionWordLibraryNodeService.createNewNode(-1L, newActionWord)
 		then:
@@ -73,7 +78,7 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 	def "should not create a new action word with a name already in use"() {
 		given:
-			ActionWord newActionWord = new ActionWord("press the red button")
+			ActionWord newActionWord = createBasicActionWord("press the red button")
 		when:
 			actionWordLibraryNodeService.createNewNode(-1L, newActionWord)
 		then:

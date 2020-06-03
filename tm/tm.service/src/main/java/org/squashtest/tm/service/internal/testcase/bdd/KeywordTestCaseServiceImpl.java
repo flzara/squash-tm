@@ -98,7 +98,7 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 				.append("\t\t")
 				.append(InternationalizedKeyword)
 				.append(" ")
-				.append(keywordStep.getActionWord().getWord())
+				.append(keywordStep.getActionWord().createWord())
 				.append("\n");
 		}
 		String testStepScript = builder.toString();
