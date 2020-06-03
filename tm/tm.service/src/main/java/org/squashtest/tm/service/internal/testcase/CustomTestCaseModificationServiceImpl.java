@@ -77,6 +77,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -379,7 +380,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return actionWordDao.findByTokenInCurrentProject(token, projectId);
 	}
 
-	private void insertNewValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
+	private void insertNewValuesToDataBase(KeywordTestCase parentTestCase, ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
 		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
 
 		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
@@ -389,7 +390,31 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			newValue.setKeywordTestStep(newTestStep);
 			actionWordParamValueDao.persist(newValue);
 			newTestStep.addParamValues(newValue);
+			//add test case param if needed
+			String valueStr = newValue.getValue().trim();
+			if (valueStr.startsWith("=")){
+				insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
+			}
 		}
+	}
+
+	private void insertNewTestCaseParamIfNeeded(KeywordTestCase parentTestCase, String valueStr) {
+		String newParamName = generateTestCaseParameter(valueStr);
+		Set<Parameter> testCaseParameters = parentTestCase.getParameters();
+		boolean existed = testCaseParameters.stream().anyMatch(param-> newParamName.equals(param.getName()));
+		if (!existed) {
+			Parameter newParam = new Parameter(newParamName, parentTestCase);
+			if (newParam == null) {
+				throw new InvalidParameterNameException("invalid parameter name " + newParamName);
+			}
+		}
+	}
+
+	private String generateTestCaseParameter(String valueStr) {
+		String removedEqual = valueStr.substring(1);
+		String replacedSpacesWithUnderscores = removedEqual.trim().replaceAll("(\\s)+", "_");
+		String replacedInvalidWithUnderscores = replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
+		return replacedInvalidWithUnderscores;
 	}
 
 	private void insertDefaultValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep) {
@@ -431,7 +456,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testStepDao.persist(newTestStep);
 
 		//add new param values to action word
-		insertNewValuesToDataBase(inputActionWord, newTestStep, parameterValues);
+		insertNewValuesToDataBase(parentTestCase, inputActionWord, newTestStep, parameterValues);
 
 		addStepToTestCase(newTestStep, parentTestCase, index);
 
