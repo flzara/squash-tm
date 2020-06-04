@@ -28,6 +28,8 @@ import org.springframework.validation.Validator;
 
 import java.util.Locale;
 
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.addMissingDoubleQuoteIfAny;
+
 public class KeywordTestStepModel {
 
 	private String keyword;
@@ -107,20 +109,6 @@ public class KeywordTestStepModel {
 			String updatedWord = addMissingDoubleQuoteIfAny(actionWord);
 			String removedBetweenTwoDoubleQuotes = updatedWord.replaceAll("\"[^\"]*\"", "");
 			return !removedBetweenTwoDoubleQuotes.trim().isEmpty();
-		}
-
-		/**
-		 * This method is to add a double quote at the end of the input word if the current number of double quote is odd
-		 *
-		 * @param word the input action word word
-		 * @return word with inserted double quotes at the end if missing
-		 */
-		private String addMissingDoubleQuoteIfAny(String word) {
-			int count = StringUtils.countMatches(word, "\"");
-			if (count % 2 == 1) {
-				word += "\"";
-			}
-			return word;
 		}
 	}
 }

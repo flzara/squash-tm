@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
-import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
@@ -28,8 +27,9 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.addMissingDoubleQuoteIfAny;
 
 /**
  * @author qtran - created on 24/04/2020
@@ -56,19 +56,15 @@ public class ActionWordParser {
 			if (!actionWordHavingText) {
 				throw new IllegalArgumentException("Action word must contain at least some texts.");
 			}
-			//initiate the action word
-			ActionWord result = new ActionWord(fragmentList);
-
-			result.setFragments(fragmentList);
-			return result;
 		} else {
 			actionWordHavingText = true;
 			//otherwise  --> action word has no parameter
 			ActionWordText text = new ActionWordText(trimmedWord);
-			ActionWord result = new ActionWord(
-				new ArrayList(Arrays.asList(text)));
-			return result;
+			fragmentList.add(text);
 		}
+		//initiate the action word
+		ActionWord result = new ActionWord(fragmentList);
+		return result;
 	}
 
 	private void createFragmentsWithParamValue(String word) {
@@ -126,20 +122,6 @@ public class ActionWordParser {
 		ActionWordParameter param = new ActionWordParameter(paramName, "");
 		parameterValues.add(paramValue);
 		return param;
-	}
-
-	/**
-	 * This method is to add a double quote at the end of the input word if the current number of double quote is odd
-	 *
-	 * @param word the input action word word
-	 * @return word with inserted double quotes at the end if missing
-	 */
-	private String addMissingDoubleQuoteIfAny(String word) {
-		int count = StringUtils.countMatches(word, "\"");
-		if (count % 2 == 1) {
-			word += "\"";
-		}
-		return word;
 	}
 
 	public List<ActionWordParameterValue> getParameterValues() {

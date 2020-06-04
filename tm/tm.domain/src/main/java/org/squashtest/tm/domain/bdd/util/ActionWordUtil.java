@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.bdd.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -33,5 +35,19 @@ public final class ActionWordUtil {
 	//this method is to replace all extra-spaces by a single space, for ex:' this is a    text    '-->' this is a text '
 	public static String formatText(@NotNull String text) {
 		return text.replaceAll("[\\s]+"," ");
+	}
+
+	/**
+	 * This method is to add a double quote at the end of the input word if the current number of double quote is odd
+	 *
+	 * @param word the input action word word
+	 * @return word with inserted double quotes at the end if missing
+	 */
+	public static String addMissingDoubleQuoteIfAny(String word) {
+		int count = StringUtils.countMatches(word, "\"");
+		if (count % 2 == 1) {
+			word += "\"";
+		}
+		return word;
 	}
 }
