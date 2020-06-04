@@ -83,6 +83,9 @@
       <sqlCheck expectedResult="0">
         SELECT count(*) from AUTOMATED_SUITE where CREATED_ON is null
       </sqlCheck>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where CREATED_BY is null
+      </sqlCheck>
     </preConditions>
     <comment>Check that no automated is left without audit data</comment>
   </changeSet>
