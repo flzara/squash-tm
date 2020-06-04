@@ -388,33 +388,34 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			ActionWordParameterValue newValue = parameterValueMap.get(i);
 			newValue.setActionWordParam(parameter);
 			newValue.setKeywordTestStep(newTestStep);
-			actionWordParamValueDao.persist(newValue);
-			newTestStep.addParamValues(newValue);
+
 			//add test case param if needed
 			String valueStr = newValue.getValue().trim();
 			if (valueStr.startsWith("=")){
-				insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
+				String newValueValue = insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
+				newValue.setValue(newValueValue);
 			}
+
+			actionWordParamValueDao.persist(newValue);
+			newTestStep.addParamValues(newValue);
+
 		}
 	}
 
-	private void insertNewTestCaseParamIfNeeded(KeywordTestCase parentTestCase, String valueStr) {
+	private String insertNewTestCaseParamIfNeeded(KeywordTestCase parentTestCase, String valueStr) {
 		String newParamName = generateTestCaseParameter(valueStr);
 		Set<Parameter> testCaseParameters = parentTestCase.getParameters();
 		boolean existed = testCaseParameters.stream().anyMatch(param-> newParamName.equals(param.getName()));
 		if (!existed) {
-			Parameter newParam = new Parameter(newParamName, parentTestCase);
-			if (newParam == null) {
-				throw new InvalidParameterNameException("invalid parameter name " + newParamName);
-			}
+			new Parameter(newParamName, parentTestCase);
 		}
+		return "= " + newParamName;
 	}
 
 	private String generateTestCaseParameter(String valueStr) {
 		String removedEqual = valueStr.substring(1);
 		String replacedSpacesWithUnderscores = removedEqual.trim().replaceAll("(\\s)+", "_");
-		String replacedInvalidWithUnderscores = replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
-		return replacedInvalidWithUnderscores;
+		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
 
 	private void insertDefaultValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep) {

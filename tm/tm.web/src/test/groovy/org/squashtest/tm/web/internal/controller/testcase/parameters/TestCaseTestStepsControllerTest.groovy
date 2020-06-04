@@ -159,7 +159,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		actionWord1.getFragments() >> fragments1
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
-		List<ActionWordParameterValue> paramValues1 = new ArrayList<>();
+		List<ActionWordParameterValue> paramValues1 = new ArrayList<>()
 		use(ReflectionCategory) {
 			TestStep.set field: "id", of: step1, to: 1L
 			KeywordTestStep.set field: "paramValues", of: step1, to: paramValues1
@@ -178,7 +178,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		actionWord2.getFragments() >> fragments2
 
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
-		List<ActionWordParameterValue> paramValues2 = new ArrayList<>();
+		List<ActionWordParameterValue> paramValues2 = new ArrayList<>()
 		ActionWordParameterValue value = new ActionWordParameterValue("you")
 		paramValues2.add(value)
 		use(ReflectionCategory) {
@@ -192,10 +192,10 @@ class TestCaseTestStepsControllerTest extends Specification {
 		testCaseModificationService.findById(7L) >> tc
 
 		and:
-		DataTableDrawParameters params = new DataTableDrawParameters();
-		params.setiDisplayLength(10);
+		DataTableDrawParameters params = new DataTableDrawParameters()
+		params.setiDisplayLength(10)
 		params.setiDisplayStart(0)
-		params.setsEcho("echo");
+		params.setsEcho("echo")
 
 		when:
 		def res = controller.getKeywordTestStepTableModel(7L, params)
@@ -232,13 +232,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should add a keyword test step with given keyword and actionWord"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("BUT");
-		testStepModel.setActionWord("add a BDD test step");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a BDD test step")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 
 		when:
 		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step") >> testStep
@@ -249,13 +249,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should add a keyword test step with given keyword and parameterized actionWord"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("BUT");
-		testStepModel.setActionWord("add a \"BDD\" test \"step\"");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a \"BDD\" test \"step\"")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 
 		when:
 		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a \"BDD\" test \"step\"") >> testStep
@@ -264,15 +264,32 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
-	def "should throw exception when adding a keyword test step with empty keyword"() {
+	def "should add a keyword test step with given keyword and parameterized actionWord in which value starts with ="() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("");
-		testStepModel.setActionWord("add a BDD test step");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a \"BDD\" test \"=step\"")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
+
+		when:
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a \"BDD\" test \"=step\"") >> testStep
+
+		then:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
+	def "should throw exception when adding a keyword test step with empty keyword"() {
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("")
+		testStepModel.setActionWord("add a BDD test step")
+
+		and:
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 		testCaseModificationService.addKeywordTestStep(1L, "", "add a BDD test step") >> testStep
 
 		when:
@@ -285,13 +302,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should throw exception when adding a keyword test step with empty Action word"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("AND");
-		testStepModel.setActionWord("");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("AND")
+		testStepModel.setActionWord("")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 		testCaseModificationService.addKeywordTestStep(1L, "AND", "") >> testStep
 
 		when:
@@ -304,13 +321,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should throw exception when adding a keyword test step with no-text Action word"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("AND");
-		testStepModel.setActionWord("\"This is invalid action word\"");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("AND")
+		testStepModel.setActionWord("\"This is invalid action word\"")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 		testCaseModificationService.addKeywordTestStep(1L, "AND", "\"This is invalid action word\"") >> testStep
 
 		when:
@@ -323,13 +340,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should add a keyword test step with given keyword and actionWord via autocompletion"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("BUT");
-		testStepModel.setActionWord("add a BDD test step");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a BDD test step")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 
 		when:
 		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a BDD test step") >> testStep
@@ -340,13 +357,13 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should add a keyword test step with given keyword and parameterized actionWord via autocompletion"() {
 		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel();
-		testStepModel.setKeyword("BUT");
-		testStepModel.setActionWord("add a \"param1\" test \"param2\"");
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a \"param1\" test \"param2\"")
 
 		and:
-		def testStep = Mock(KeywordTestStep);
-		testStep.getId() >> 2020;
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
 
 		when:
 		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a \"param1\" test \"param2\"") >> testStep

@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
+import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
@@ -639,6 +640,80 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with a new action word containing parameters to test case in which some starts with ="() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"= date\" of \"  = Ye@r \"  .   ")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id != null
+		actionWord.createWord() == "today is \"param1\" of \"param2\" ."
+		actionWord.token == "TPTPT-today is - of - .-"
+		def fragments = actionWord.getFragments()
+		fragments.size() == 5
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "today is "
+		text1.id != null
+		text1.actionWord == actionWord
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		def param1 = (ActionWordParameter) f2
+		param1.name == "param1"
+		param1.id != null
+		param1.defaultValue == ""
+		param1.actionWord == actionWord
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.getText() == " of "
+		text2.id != null
+		text2.actionWord == actionWord
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordParameter)
+		def param2 = (ActionWordParameter) f4
+		param2.name == "param2"
+		param2.id != null
+		param2.defaultValue == ""
+		param2.actionWord == actionWord
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordText)
+		def text3 = (ActionWordText) f5
+		text3.getText() == " ."
+		text3.id != null
+		text3.actionWord == actionWord
+
+		def paramValues = createdKeywordTestStep.paramValues
+		paramValues.size() == 2
+		ActionWordParameterValue value1 = paramValues.get(0)
+		value1.id != null
+		value1.value == "= date"
+		value1.actionWordParam == param1
+		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues.get(1)
+		value2.id != null
+		value2.value == "= Ye_r"
+		value2.actionWordParam == param2
+		value2.keywordTestStep == createdKeywordTestStep
+
+		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
+		tcParams.size() == 2
+		tcParams.collect{ it.name }.sort() == ["Ye_r", "date"]
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with an existing action word to test case"() {
 		when:
 		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "THEN", "    the Action wôrd exists.    ")
@@ -751,7 +826,99 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	}
 
-	//TODO
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an existing action word that contains parameters in which some start with = to test case"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is \" =   d@te \" of \"=mon1h\" \"2020\"   ")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -66L
+		actionWord.createWord() == "today is \"date\" of \"month\" \"year\""
+		actionWord.token == "TPTPTP-today is - of - -"
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 6
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.text == "today is "
+		text1.id == -6
+		text1.actionWord == actionWord
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		def parameter = (ActionWordParameter) f2
+		parameter.id == -5
+		parameter.defaultValue == "Monday"
+		parameter.name == "date"
+		text1.actionWord == actionWord
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.text == " of "
+		text2.id == -4
+		text2.actionWord == actionWord
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordParameter)
+		def parameter2 = (ActionWordParameter) f4
+		parameter2.id == -3
+		parameter2.defaultValue == ""
+		parameter2.name == "month"
+		parameter2.actionWord == actionWord
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordText)
+		def text3 = (ActionWordText) f5
+		text3.text == " "
+		text3.id == -2
+		text3.actionWord == actionWord
+
+		def f6 = fragments.get(5)
+		f6.class.is(ActionWordParameter)
+		def parameter3 = (ActionWordParameter) f6
+		parameter3.id == -1
+		parameter3.defaultValue == "2000"
+		parameter3.name == "year"
+		parameter3.actionWord == actionWord
+
+		def paramValues = createdKeywordTestStep.paramValues
+		paramValues.size() == 3
+		ActionWordParameterValue value1 = paramValues.get(0)
+		value1.id != null
+		value1.value == "= d_te"
+		value1.actionWordParam == parameter
+		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues.get(1)
+		value2.id != null
+		value2.value == "= mon1h"
+		value2.actionWordParam == parameter2
+		value2.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value3 = paramValues.get(2)
+		value3.id != null
+		value3.value == "2020"
+		value3.actionWordParam == parameter3
+		value3.keywordTestStep == createdKeywordTestStep
+
+		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
+		tcParams.size() == 2
+		Parameter tcParam1 = tcParams.toArray()[0]
+		tcParam1.name == "d_te"
+
+		Parameter tcParam2 = tcParams.toArray()[1]
+		tcParam2.name == "mon1h"
+	}
+
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with an existing action word to test case via autocompletion"() {
 		when:

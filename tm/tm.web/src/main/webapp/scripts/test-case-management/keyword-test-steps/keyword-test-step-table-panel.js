@@ -158,9 +158,7 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 			});
 		},
 
-		afterKeywordTestStepAdd: function (testStepId, inputActionWord) {
-			var displayDiv = $('#add-keyword-test-step-result');
-			displayDiv.text("The keyword test step has been successfully created with id : " + testStepId + " and name : " + inputActionWord);
+		afterKeywordTestStepAdd: function (testStepId) {
 			this.refresh();
 			this.cleanInputs();
 			eventBus.trigger('testStepsTable.stepAdded');
