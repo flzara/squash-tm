@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class ActionWordParserTest extends Specification {
 
@@ -66,6 +67,17 @@ class ActionWordParserTest extends Specification {
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
+	}
+
+	@Unroll
+	def "Should throw error when creating an ActionWord with invalid fragments"() {
+		when:
+			new ActionWordParser().generateActionWordFromTextWithParamValue(word)
+		then:
+			thrown IllegalArgumentException
+		where:
+			word << ["",
+					 "aaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaa \"ppppp\" aaaaaaaaaaaaaaaaaaaaaaaaaa \"pppppp\" aaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 	}
 
 	//*********** PARAMETER VALIDATION **************

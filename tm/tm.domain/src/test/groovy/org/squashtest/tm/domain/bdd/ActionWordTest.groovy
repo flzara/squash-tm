@@ -27,41 +27,31 @@ import spock.lang.Unroll
 class ActionWordTest extends Specification {
 
 	@Unroll
-	@Ignore("Which class should be responsible for trimming ?")
-	def "should create an ActionWord"() {
+	def "should create an ActionWord with a basic text"() {
 		given:
-			def text = new ActionWordText(word)
+			def fragment = new ActionWordText(word)
 		when:
-			ActionWord actionWord = new ActionWord([text] as List)
+			ActionWord actionWord = new ActionWord([fragment] as List)
 		then:
 			actionWord.createWord() == expectedWord
 			actionWord.generateToken() == expectedToken
 		where:
-			word 						|| expectedWord						|| expectedToken
-			"hello" 					|| "hello"							|| "T-hello-"
-			" hello   is it   me ?   " 	|| "hello   is it   me ?"			|| "T-hello is it me ?-"
-	}
-
-	@Ignore("Irrelevant test ?")
-	def "create an ActionWord with given token"() {
-		when:
-		ActionWord actionWord = new ActionWord("hello \"param\"", "TP-hello -")
-
-		then:
-		actionWord.getWord() == "hello \"param\""
-		actionWord.getToken() == "TP-hello -"
+			word 								|| expectedWord							|| expectedToken
+			"hello" 							|| "hello"								|| "T-hello-"
+			"hello   is it   me ?" 				|| "hello is it me ?"					|| "T-hello is it me ?-"
+			"wôrd; wïth sp&cia! charActers?" 	||	"wôrd; wïth sp&cia! charActers?"	|| "T-wôrd; wïth sp&cia! charActers?-"
 	}
 
 	@Unroll
-	@Ignore("Move to ActionWordText test ?")
-	def "should reject invalid ActionWord"() {
+	def "should create an ActionWord with some fragments"() {
 		given:
-			def text = new ActionWordText(word)
+			def fragment1 = new ActionWordText("An action word with a ")
+			def fragment2 = new ActionWordParameter("name1", "")
+			def fragment3 = new ActionWordText(" parameter !")
 		when:
-			new ActionWord([text] as List)
+			ActionWord actionWord = new ActionWord([fragment1, fragment2, fragment3] as List)
 		then:
-			thrown IllegalArgumentException
-		where:
-			word << [null, "", "   ", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+			actionWord.createWord() == "An action word with a \"name1\" parameter !"
+			actionWord.generateToken() == "TPT-An action word with a - parameter !-"
 	}
 }

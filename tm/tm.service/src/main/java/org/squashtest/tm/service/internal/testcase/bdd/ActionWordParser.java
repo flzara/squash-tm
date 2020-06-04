@@ -43,6 +43,9 @@ public class ActionWordParser {
 	private List<ActionWordParameterValue> parameterValues = new ArrayList<>();
 
 	public ActionWord generateActionWordFromTextWithParamValue(String trimmedWord) {
+		if (trimmedWord.length() > ActionWord.ACTION_WORD_MAX_LENGTH) {
+			throw new IllegalArgumentException("Action word cannot exceed 255 characters.");
+		}
 		//If the input word contains any double quote, do the fragmentation
 		if (trimmedWord.contains("\"")) {
 			//add the missing double quote if any

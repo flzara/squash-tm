@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.domain.bdd;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
-import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -39,7 +37,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -47,7 +44,6 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +53,7 @@ import java.util.Set;
 @Auditable
 public class ActionWord implements ActionWordTreeEntity {
 
-	private static final int ACTION_WORD_MAX_LENGTH = 255;
+	public static final int ACTION_WORD_MAX_LENGTH = 255;
 
 	public static final String ACTION_WORD_TEXT_TOKEN = "T";
 
