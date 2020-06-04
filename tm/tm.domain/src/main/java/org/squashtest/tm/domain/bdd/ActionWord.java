@@ -127,6 +127,22 @@ public class ActionWord implements ActionWordTreeEntity {
 		return builder.toString();
 	}
 
+	public String createWordWithDefaultValues() {
+		StringBuilder builder = new StringBuilder();
+		for (ActionWordFragment fragment : fragments) {
+			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
+				ActionWordText text = (ActionWordText) fragment;
+				builder.append(text.getText());
+			} else {
+				ActionWordParameter parameter = (ActionWordParameter) fragment;
+				builder.append("\"").append(parameter.getDefaultValue()).append("\"");
+			}
+		}
+		return builder.toString();
+	}
+
+
+
 	public String generateToken() {
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder("-");
