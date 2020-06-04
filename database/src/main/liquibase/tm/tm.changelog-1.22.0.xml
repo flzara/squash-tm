@@ -777,7 +777,7 @@
   </changeSet>
 
   <changeSet id="tm-1.22.0-SQUASH-896-add-indexes-for-search-sort-columns" author="jprioux">
-  <comment>add indexes on default search sort columns</comment>>
+    <comment>add indexes on default search sort columns</comment>
 
 
     <createIndex tableName="PROJECT" indexName="idx_project_name">
