@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 public class InternationalizedWorkspaceIcon extends ContextBasedInternationalized implements WorkspacePluginIcon {
 
 	private String iconFilePath;
+	private String iconHoverFilePath;
 	private String tooltipI18nKey;
 	private String url;
 
@@ -38,6 +39,14 @@ public class InternationalizedWorkspaceIcon extends ContextBasedInternationalize
 	}
 	public void setIconFilePath(String iconFilePath) {
 		this.iconFilePath = iconFilePath;
+	}
+
+	@Override
+	public String getIconHoverFilePath() {
+		return iconHoverFilePath;
+	}
+	public void setIconHoverFilePath(String iconHoverFilePath) {
+		this.iconHoverFilePath = iconHoverFilePath;
 	}
 
 	@Override

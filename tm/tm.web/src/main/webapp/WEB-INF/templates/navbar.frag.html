@@ -105,7 +105,8 @@
           <div th:remove="tag"
                th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}">
             <a
-              th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__}"
+              th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__},
+                       iconHoverPath=@{/images/__${workspacePluginIcon.iconHoverFilePath}__}"
               th:style="'background-repeat: no-repeat; ' +
                         'background-image: url(' + ${iconPath} + ');'"
               th:class="navigation-link"

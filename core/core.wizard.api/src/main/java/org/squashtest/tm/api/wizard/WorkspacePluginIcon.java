@@ -27,6 +27,11 @@ public interface WorkspacePluginIcon {
 	 */
 	String getIconFilePath();
 	/**
+	 * Get this Icon's icon hover file path.
+	 * @return This Icon's icon hover file path.
+	 */
+	String getIconHoverFilePath();
+	/**
 	 * Get this Icon's tooltip.
 	 * @return This Icon's tooltip.
 	 */

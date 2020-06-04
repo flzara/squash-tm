@@ -86,6 +86,7 @@
     </sec:authorize>
     <c:forEach items="${authorizedWorkspacePluginIcons}" var="workspacePluginIcon" >
       <c:set var="iconPath" value="${rootctxt}/images/${workspacePluginIcon.iconFilePath}" />
+      <c:set var="iconHoverPath" value="${rootctxt}/images/${workspacePluginIcon.iconHoverFilePath}" />
       <c:set var="hrefUrl" value="${rootctxt}/${workspacePluginIcon.url}" />
       <a
         class="navigation-link"
