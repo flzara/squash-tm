@@ -776,4 +776,36 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-896-add-indexes-for-search-sort-columns" author="jprioux">
+  <comment>add indexes on default search sort columns</comment>>
+
+
+    <createIndex tableName="PROJECT" indexName="idx_project_name">
+      <column name="NAME" />
+    </createIndex>
+    <createIndex tableName="TEST_CASE" indexName="idx_tc_reference">
+      <column name="REFERENCE" />
+    </createIndex>
+    <createIndex tableName="TEST_CASE" indexName="idx_tc_importance">
+      <column name="IMPORTANCE" />
+    </createIndex>
+
+    <createIndex tableName="REQUIREMENT_VERSION" indexName="idx_req_reference">
+      <column name="REFERENCE" />
+    </createIndex>
+    <createIndex tableName="REQUIREMENT_VERSION" indexName="idx_req_status">
+      <column name="REQUIREMENT_STATUS" />
+    </createIndex>
+    <createIndex tableName="REQUIREMENT_VERSION" indexName="idx_req_criticality">
+      <column name="CRITICALITY" />
+    </createIndex>
+
+    <createIndex tableName="ITERATION" indexName="idx_iteration_name">
+      <column name="NAME" />
+    </createIndex>
+    <createIndex tableName="CAMPAIGN_LIBRARY_NODE" indexName="idx_cln_name">
+      <column name="NAME" />
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
