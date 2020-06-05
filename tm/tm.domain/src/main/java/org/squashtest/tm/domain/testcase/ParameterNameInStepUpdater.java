@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+
+import java.util.List;
+
 public class ParameterNameInStepUpdater implements TestStepVisitor {
 
 	private String oldParamName;
@@ -52,6 +56,13 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 
 	@Override
 	public void visit(KeywordTestStep visited) {
-		//TODO make it work for keyword Test Step
+		List<ActionWordParameterValue> paramValues = visited.getParamValues();
+		if (paramValues != null) {
+			for (ActionWordParameterValue paramValue : paramValues) {
+				if (paramValue.getValue() != null && paramValue.getValue().startsWith("=")) {
+					paramValue.setValue(paramValue.getValue().replace(oldParamName, newParamName));
+				}
+			}
+		}
 	}
 }
