@@ -88,11 +88,20 @@
       <c:set var="iconPath" value="${rootctxt}/images/${workspacePluginIcon.iconFilePath}" />
       <c:set var="iconHoverPath" value="${rootctxt}/images/${workspacePluginIcon.iconHoverFilePath}" />
       <c:set var="hrefUrl" value="${rootctxt}/${workspacePluginIcon.url}" />
+      <c:set var="workspaceName" value="${workspacePluginIcon.workspaceName}" />
+      <style>
+        .navigation-${workspaceName} {
+          background-repeat: no-repeat;
+          background-image: url(${iconPath});
+        }
+        .navigation-${workspaceName}:hover {
+          background-image: url(${iconHoverPath});
+        }
+
+      </style>
       <a
-        class="navigation-link"
+        class="navigation-link navigation-${workspaceName}"
         href="${hrefUrl}"
-        style="background-repeat: no-repeat;
-               background-image: url(${iconPath});"
         title="${workspacePluginIcon.tooltip}">
       </a>
     </c:forEach>

@@ -103,15 +103,24 @@
           </ul>
 
           <div th:remove="tag"
-               th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}">
+               th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}",
+               th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__},
+                        iconHoverPath=@{/images/__${workspacePluginIcon.iconHoverFilePath}__},
+                        workspaceName=${workspacePluginIcon.workspaceName}">
+            <style th:inline="text">
+              .navigation-[[${workspaceName}]] {
+                background-repeat: no-repeat;
+                background-image: url([[${iconPath}]]);
+              }
+              .navigation-[[${workspaceName}]]:hover, .navigation-[[${workspaceName}]].navigation-selected {
+                background-image: url([[${iconHoverPath}]]);
+              }
+            </style>
             <a
-              th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__},
-                       iconHoverPath=@{/images/__${workspacePluginIcon.iconHoverFilePath}__}"
-              th:style="'background-repeat: no-repeat; ' +
-                        'background-image: url(' + ${iconPath} + ');'"
-              th:class="navigation-link"
+              th:class="'navigation-link navigation-'+${workspaceName}"
               th:title="${workspacePluginIcon.tooltip}"
-              th:href="@{/__${workspacePluginIcon.url}__}">
+              th:href="@{/__${workspacePluginIcon.url}__}"
+              th:classappend="${highlight == workspaceName} ? 'navigation-selected'" >
             </a>
           </div>
 

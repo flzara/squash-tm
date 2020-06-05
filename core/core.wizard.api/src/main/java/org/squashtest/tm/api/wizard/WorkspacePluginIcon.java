@@ -22,6 +22,12 @@ package org.squashtest.tm.api.wizard;
 
 public interface WorkspacePluginIcon {
 	/**
+	 * Get this Icon's workspace name.
+	 * Will be used for icon class and highlight, also defined in html file for navbar
+	 * @return This Icon's workspace name.
+	 */
+	String getWorkspaceName();
+	/**
 	 * Get this Icon's icon file path.
 	 * @return This Icon's icon file path.
 	 */
