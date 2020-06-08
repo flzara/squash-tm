@@ -60,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
+import org.squashtest.tm.service.testcase.DatasetModificationService
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
@@ -88,6 +89,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	ActionTestStepDao actionStepDao = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
 	ApplicationEventPublisher eventPublisher = Mock()
+	DatasetModificationService datasetModificationService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -112,6 +114,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionWordDao = actionWordDao
 		service.actionWordParamValueDao = actionWordParamValueDao
 		service.actionWordLibraryNodeService = actionWordLibraryNodeService
+		service.datasetModificationService = datasetModificationService
 	}
 
 	def createBasicActionWord(String singleFragment) {
@@ -281,7 +284,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should find test case and add a keyword step with new action word containing a param at last position in which the param value starts with a ="() {
 		given:
 		long parentTestCaseId = 2
-		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def awLibraryNode = Mock(ActionWordLibraryNode)
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
@@ -307,6 +310,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "this is with \"param1\"" })
 		1 * testStepDao.persist(_)
 		1 * actionWordParamValueDao.persist(_)
+		1 * datasetModificationService.cascadeDatasetsUpdate(_) >> {}
 
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
@@ -702,7 +706,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		inputFragments.add(actionWordParam2)
 		inputFragments.add(actionWordParam3)
 
-		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
@@ -729,6 +733,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		then:
 		1 * testStepDao.persist(_)
 		3 * actionWordParamValueDao.persist(_)
+		2 * datasetModificationService.cascadeDatasetsUpdate(_) >> {}
 
 		parentTestCase.getSteps().size() == 2
 		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
@@ -1523,29 +1528,29 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	// ****************** test utilities *****************
 
 	class MockTC extends TestCase {
-		Long overId;
+		Long overId
 
 		MockTC(Long id) {
-			overId = id;
+			overId = id
 			name = "don't care"
 		}
 
 		MockTC(Long id, String name) {
-			this(id);
-			this.name = name;
+			this(id)
+			this.name = name
 		}
 
 		public Long getId() {
-			return overId;
+			return overId
 		}
 
 		public void setId(Long newId) {
-			overId = newId;
+			overId = newId
 		}
 
 		public Project getProject() {
-			Project project = new Project();
-			return project;
+			Project project = new Project()
+			return project
 		}
 	}
 
@@ -1575,5 +1580,21 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			)
 			,
 			initialValue)
+	}
+
+	class MockKeywordTestCase extends KeywordTestCase {
+		Long overId
+
+		MockKeywordTestCase(Long id){
+			overId = id
+		}
+
+		Long getId() {
+			return overId
+		}
+
+		void setId(Long overId) {
+			this.overId = overId
+		}
 	}
 }

@@ -77,7 +77,6 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
-import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -108,6 +107,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -238,6 +238,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
+	@Inject
+	private DatasetModificationService datasetModificationService;
 
 
 	/* *************** TestCase section ***************************** */
@@ -408,6 +410,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		boolean existed = testCaseParameters.stream().anyMatch(param-> newParamName.equals(param.getName()));
 		if (!existed) {
 			new Parameter(newParamName, parentTestCase);
+			datasetModificationService.cascadeDatasetsUpdate(parentTestCase.getId());
 		}
 		return "= " + newParamName;
 	}
