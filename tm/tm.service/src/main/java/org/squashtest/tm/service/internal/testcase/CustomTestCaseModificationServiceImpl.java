@@ -393,7 +393,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 			//add test case param if needed
 			String valueStr = newValue.getValue().trim();
-			if (valueStr.startsWith("=")){
+			if (valueStr.startsWith("=")) {
 				String newValueValue = insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
 				newValue.setValue(newValueValue);
 			}
@@ -407,7 +407,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private String insertNewTestCaseParamIfNeeded(KeywordTestCase parentTestCase, String valueStr) {
 		String newParamName = generateTestCaseParameter(valueStr);
 		Set<Parameter> testCaseParameters = parentTestCase.getParameters();
-		boolean existed = testCaseParameters.stream().anyMatch(param-> newParamName.equals(param.getName()));
+		boolean existed = testCaseParameters.stream().anyMatch(param -> newParamName.equals(param.getName()));
 		if (!existed) {
 			new Parameter(newParamName, parentTestCase);
 			datasetModificationService.cascadeDatasetsUpdate(parentTestCase.getId());
