@@ -388,6 +388,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
 			ActionWordParameter parameter = inputActionWordParameters.get(i);
 			ActionWordParameterValue newValue = parameterValueMap.get(i);
+			String valueValue = newValue.getValue();
+
+			if (valueValue.isEmpty()) {
+				newValue.setValue("\"\"");
+			}
+
 			newValue.setActionWordParam(parameter);
 			newValue.setKeywordTestStep(newTestStep);
 

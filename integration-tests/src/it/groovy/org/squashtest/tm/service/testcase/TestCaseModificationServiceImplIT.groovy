@@ -593,7 +593,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with a new action word containing parameters to test case"() {
 		when:
-		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"Friday\".   ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"Friday\"\"\".   ")
 
 		then:
 		createdKeywordTestStep != null
@@ -603,10 +603,10 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
-		actionWord.createWord() == "today is \"param1\"."
-		actionWord.token == "TPT-today is -.-"
+		actionWord.createWord() == "today is \"param1\"\"param2\"."
+		actionWord.token == "TPPT-today is -.-"
 		def fragments = actionWord.getFragments()
-		fragments.size() == 3
+		fragments.size() == 4
 
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
@@ -624,19 +624,33 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		param1.actionWord == actionWord
 
 		def f3 = fragments.get(2)
-		f3.class.is(ActionWordText)
-		def text2 = (ActionWordText) f3
+		f3.class.is(ActionWordParameter)
+		def param2 = (ActionWordParameter) f3
+		param2.name == "param2"
+		param2.id != null
+		param2.defaultValue == ""
+		param2.actionWord == actionWord
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordText)
+		def text2 = (ActionWordText) f4
 		text2.getText() == "."
 		text2.id != null
 		text2.actionWord == actionWord
 
 		def paramValues = createdKeywordTestStep.paramValues
-		paramValues.size() == 1
+		paramValues.size() == 2
 		ActionWordParameterValue value1 = paramValues.get(0)
 		value1.id != null
 		value1.value == "Friday"
 		value1.actionWordParam == param1
 		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues.get(1)
+		value2.id != null
+		value2.value == "\"\""
+		value2.actionWordParam == param2
+		value2.keywordTestStep == createdKeywordTestStep
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
@@ -710,7 +724,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
 		tcParams.size() == 2
-		tcParams.collect{ it.name }.sort() == ["Ye_r", "date"]
+		tcParams.collect { it.name }.sort() == ["Ye_r", "date"]
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")

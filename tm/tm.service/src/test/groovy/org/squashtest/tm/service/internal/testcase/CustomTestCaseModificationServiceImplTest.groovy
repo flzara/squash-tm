@@ -141,7 +141,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -175,7 +175,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -206,7 +206,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
@@ -243,7 +243,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -281,6 +281,63 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value.getKeywordTestStep() == createdTestStep
 	}
 
+	def "should find test case and add a keyword step with new action word containing an empty param at last position"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def awLibraryNode = Mock(ActionWordLibraryNode)
+		awLibraryNode.getId() >> 4L
+		def awLibrary = Mock(ActionWordLibrary)
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
+		project.getActionWordLibrary() >> awLibrary
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with \"\"	")
+
+		then:
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "this is with \"param1\"" })
+		1 * testStepDao.persist(_)
+		1 * actionWordParamValueDao.persist(_)
+
+		parentTestCase.getSteps().size() == 2
+		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
+		ActionWord checkedActionWord = createdTestStep.actionWord
+		checkedActionWord.createWord() == "this is with \"param1\""
+		checkedActionWord.getToken() == "TP-this is with -"
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 2
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText.class)
+		((ActionWordText) f1).getText() == "this is with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter.class)
+		def param = (ActionWordParameter) f2
+		param.getName() == "param1"
+		param.getDefaultValue() == ""
+
+		def values = createdTestStep.paramValues
+		values.size() == 1
+		def valueArray = values
+		ActionWordParameterValue value = valueArray.get(0)
+		value.getValue() == "\"\""
+		value.getActionWordParam() == param
+		value.getKeywordTestStep() == createdTestStep
+	}
+
 	def "should find test case and add a keyword step with new action word containing a param at last position in which the param value starts with a ="() {
 		given:
 		long parentTestCaseId = 2
@@ -300,7 +357,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -363,7 +420,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> null
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -450,7 +507,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
@@ -495,7 +552,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
@@ -547,7 +604,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Monday\"  ")
@@ -623,7 +680,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Friday\" of  \"May\"\"2020\"")
@@ -725,7 +782,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"=date\" of  \"May\"\"= Ye@r  \"")
@@ -789,7 +846,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		def tcParams = parentTestCase.getParameters()
 		tcParams.size() == 2
-		tcParams.collect{ it.name }.sort() == ["Ye_r", "date"]
+		tcParams.collect { it.name }.sort() == ["Ye_r", "date"]
 	}
 
 	def "should find test case and add keyword step with existing action word at last position via autocompletion"() {
@@ -816,7 +873,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStepViaAutoCompletion(parentTestCaseId, "THEN", "last")
@@ -868,7 +925,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStepViaAutoCompletion(parentTestCaseId, "THEN", "today is \"param1\"")
@@ -944,7 +1001,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_,_) >> existingActionWord
+		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
 		service.addKeywordTestStepViaAutoCompletion(parentTestCaseId, "THEN", "today is \"param1\" of \"param2\"\"param3\"")
@@ -1388,7 +1445,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		2 * keywordTestStepDao.findById(10L) >> step
 		1 * step.setKeyword(GIVEN)
 		//TODO-QUAN
-		1 * actionWordDao.findByTokenInCurrentProject("T-last-",_) >> existingActionWord
+		1 * actionWordDao.findByTokenInCurrentProject("T-last-", _) >> existingActionWord
 		0 * step.setActionWord(existingActionWord)
 	}
 
@@ -1585,7 +1642,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	class MockKeywordTestCase extends KeywordTestCase {
 		Long overId
 
-		MockKeywordTestCase(Long id){
+		MockKeywordTestCase(Long id) {
 			overId = id
 		}
 
