@@ -233,6 +233,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						});
 						th.text(paramHeaders[i]['name']);
 						th.attr('title', StringUtil.truncate(paramHeaders[i]['description'], 30));
+						th.attr('data-id', paramHeaders[i].id);
 						thAfter.after(th);
 						thAfter = th;
 					}
