@@ -20,13 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -43,7 +48,13 @@ import java.util.List;
 import java.util.Locale;
 
 @Controller
+@RequestMapping("/iterations/{iterationId}/automated-suite")
 public class IterationAutomatedSuiteManagerController {
+
+	private static final String ITERATION_ID = "iterationId";
+	private static final String AUTOMATED_SUITE_ID = "automatedSuiteId";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(IterationAutomatedSuiteManagerController.class);
 
 	@Inject
 	private AutomatedSuiteManagerService automatedSuiteManagerService;
@@ -57,7 +68,7 @@ public class IterationAutomatedSuiteManagerController {
 		.map("uuid", "id");
 
 	@ResponseBody
-	@RequestMapping(value = "/iterations/{iterationId}/automated-suite", params = RequestParams.S_ECHO_PARAM)
+	@GetMapping(params = RequestParams.S_ECHO_PARAM)
 	public DataTableModel getAutomatedSuiteListModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 													 final Locale locale) {
 
@@ -65,5 +76,18 @@ public class IterationAutomatedSuiteManagerController {
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
 		PagedCollectionHolder<List<AutomatedSuite>> holder = automatedSuiteManagerService.getAutomatedSuitesByIterationID(iterationId, paging, filter);
 		return new AutomatedSuiteTableModelHelper(locale, internationalizationHelper).buildDataModel(holder, params.getsEcho());
+	}
+
+	@GetMapping(value = "/{automatedSuiteId}/executions")
+	public ModelAndView getExecutionsForTestPlan(@PathVariable(AUTOMATED_SUITE_ID) String automatedSuiteId) {
+		LOGGER.debug("find model and view for executions of automated suite  #{}", automatedSuiteId);
+
+		List<Execution> executionList = automatedSuiteManagerService.findExecutionsByAutomatedTestSuiteId(automatedSuiteId);
+
+		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-automated-suites-row");
+
+		mav.addObject("executions", executionList);
+		return mav;
+
 	}
 }

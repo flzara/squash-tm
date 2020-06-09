@@ -35,6 +35,8 @@ define(['squash.translator', './table'], function(translator, table){
 
 		var conf = $.extend({}, origconf);
 
+		var baseURL = squashtm.app.contextRoot;
+
 		conf.messages = translator.get({
 			executionStatus : {
 				SETTLED : "execution.execution-status.SETTLED",
@@ -46,6 +48,10 @@ define(['squash.translator', './table'], function(translator, table){
 				READY	: "execution.execution-status.READY"
 			}
 		});
+
+		conf.urls = {
+			automatedSuiteUrl : baseURL + 'test-suites/'+conf.basic.iterationId+'/automated-suite/'
+		};
 
 		return conf;
 	}

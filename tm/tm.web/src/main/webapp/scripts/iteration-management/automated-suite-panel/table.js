@@ -56,11 +56,20 @@
  */
 
 define(
-	['jquery', 'squash.statusfactory', 'squashtable'],
-	function ($, statusfactory) {
+	['jquery', 'squash.translator', 'squash.statusfactory', 'squashtable'],
+	function ($, translator, statusfactory) {
 		"use strict";
 
 		function _rowCallbackReadFeatures($row, data, _conf) {
+
+			// execution toggle
+			var $exectoggle = $row.find('.exec-toggle');
+			if (data['has-executions']) {
+				$exectoggle.text(translator.get('automated-suite.execution-details'));
+			} else {
+				$exectoggle.removeClass("toggle-row");
+				$exectoggle.text(translator.get('automated-suite.no-execution'));
+			}
 
 			// execution status (read, thus selected using .status-display)
 			var status = data['status'],
@@ -96,6 +105,15 @@ define(
 			};
 
 			var squashSettings = {
+				toggleRows: {
+					'td.toggle-row': function (table, jqold, jqnew) {
+
+						var data = table.fnGetData(jqold.get(0)),
+							url = initconf.urls.automatedSuiteUrl + data['uuid'] + '/executions';
+
+						jqnew.load(url, function () {});
+					}
+				}
 			};
 
 			return {

@@ -64,6 +64,7 @@ public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<Automa
 		res.put("last-modified-on", i18nHelper.localizeDate(audit.getLastModifiedOn(), locale));
 		res.put("last-modified-by", HTMLCleanupUtils.escapeOrDefault(audit.getLastModifiedBy(), null));
 		res.put("status", suite.getExecutionStatus().getCanonicalStatus());
+		res.put("has-executions", !suite.getExecutionExtenders().isEmpty());
 		return res;
 	}
 }
