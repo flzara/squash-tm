@@ -47,10 +47,10 @@ number of columns.
   <table class="executions-table" id="automated-suite-${automatedSuite.id}">
     <thead>
     <tr class="executions-table-header">
-      <th style="width: 22.5%"></th>
-      <th class="width-tenperc"></th>
-      <th class="width-tenperc"></th>
       <th></th>
+      <th class="width-tenperc"></th>
+      <th class="width-tenperc"></th>
+      <th class="width-tenperc"></th>
       <th class="width-tenperc"></th>
     </tr>
     </thead>
@@ -70,18 +70,7 @@ number of columns.
           </span>
         </td>
         <td></td>
-        <td style="text-align: center">
-					<span>
-					<c:choose>
-            <c:when test="${ execution.lastExecutedBy != null }">
-              <em><c:out value="${ execution.lastExecutedBy }"/></em>
-            </c:when>
-            <c:otherwise>
-              <em><f:message key="squashtm.nodata"/> </em>
-            </c:otherwise>
-          </c:choose>
-					</span>
-        </td>
+        <td></td>
         <td style="text-align: center">
           <c:choose>
             <c:when test="${ execution.lastExecutedOn != null }">
