@@ -28,7 +28,7 @@ class AutomatedTestServerMappingIT extends DbunitMappingSpecification {
 	def "should persist a new AutomatedTestServer"(){
 
 		given :
-		URL baseUrl = new URL("http://www.squashtest.org/")
+		URL baseUrl = new URL("http://www.squashtest.com/")
 
 		and :
 		TestAutomationServer server = new TestAutomationServer("myserver", baseUrl, "bob", "robert", "jenkins")
