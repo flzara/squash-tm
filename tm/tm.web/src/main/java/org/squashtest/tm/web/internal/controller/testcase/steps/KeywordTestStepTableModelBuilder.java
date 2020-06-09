@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -32,6 +33,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
 	@Override
@@ -56,16 +58,24 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 
 	private String createWord(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
 		StringBuilder builder = new StringBuilder();
-		int index = 0;
 		for (ActionWordFragment fragment : fragments) {
 			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
 				ActionWordText text = (ActionWordText) fragment;
 				builder.append(text.getText());
 			} else {
-				builder.append("<span style=\"color: blue;\">").append(paramValues.get(index).getValue()).append("</span>");
-				++index;
+				appendParamValueInWord((ActionWordParameter) fragment, paramValues, builder);
 			}
 		}
 		return builder.toString();
+	}
+
+	private void appendParamValueInWord(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder builder) {
+		Optional<ActionWordParameterValue> paramValue =
+			paramValues.stream().filter(pv -> pv.getActionWordParam() != null && pv.getActionWordParam().getId().equals(param.getId())).findAny();
+		paramValue.ifPresent(
+			actionWordParameterValue -> builder.append("<span style=\"color: blue;\">")
+				.append(actionWordParameterValue.getValue())
+				.append("</span>")
+		);
 	}
 }

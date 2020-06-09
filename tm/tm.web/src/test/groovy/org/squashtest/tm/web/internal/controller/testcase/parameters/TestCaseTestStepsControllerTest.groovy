@@ -152,7 +152,6 @@ class TestCaseTestStepsControllerTest extends Specification {
 	def "should build table model for keyword test case steps"() {
 		given:
 		def actionWord1 = Mock(ActionWord)
-		actionWord1.getWord() >> "hello"
 		ActionWordText text1 = new ActionWordText("hello")
 		List<ActionWordFragment> fragments1 = new ArrayList<>()
 		fragments1.add(text1)
@@ -167,10 +166,10 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 		and:
 		def actionWord2 = Mock(ActionWord)
-		actionWord2.getWord() >> "how are \"you\" ?"
 		ActionWordText text2 = new ActionWordText("how are ")
 		ActionWordText text3 = new ActionWordText(" ?")
-		ActionWordParameter parameter = new ActionWordParameter("p1", "")
+		ActionWordParameter parameter = Mock()
+		parameter.getId() >> -50L
 		List<ActionWordFragment> fragments2 = new ArrayList<>()
 		fragments2.add(text2)
 		fragments2.add(parameter)
@@ -180,6 +179,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
 		List<ActionWordParameterValue> paramValues2 = new ArrayList<>()
 		ActionWordParameterValue value = new ActionWordParameterValue("you")
+		value.setActionWordParam(parameter)
 		paramValues2.add(value)
 		use(ReflectionCategory) {
 			TestStep.set field: "id", of: step2, to: 2L

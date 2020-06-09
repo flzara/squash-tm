@@ -40,7 +40,6 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		testStep.getId() >> -68L
 		testStep.getKeyword() >> Keyword.GIVEN
 		def actionWord1 = Mock(ActionWord)
-		actionWord1.getWord() >> "goodbye"
 		ActionWordText text1 = new ActionWordText("goodbye")
 		List<ActionWordFragment> fragments1 = new ArrayList<>()
 		fragments1.add(text1)
@@ -63,9 +62,9 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		testStep.getKeyword() >> Keyword.GIVEN
 
 		def actionWord = Mock(ActionWord)
-		actionWord.getWord() >> "hello \"Sunday\""
 		ActionWordText text = new ActionWordText("hello ")
-		ActionWordParameter parameter = new ActionWordParameter("p1", "")
+		ActionWordParameter parameter = Mock()
+		parameter.getId() >> -50L
 		List<ActionWordFragment> fragments = new ArrayList<>()
 		fragments.add(text)
 		fragments.add(parameter)
@@ -74,6 +73,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 		List<ActionWordParameterValue> values = new ArrayList<>();
 		ActionWordParameterValue value = new ActionWordParameterValue("Sunday")
+		value.setActionWordParam(parameter)
 		values.add(value)
 		testStep.getParamValues() >> values
 
@@ -83,7 +83,6 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		testStep2.getKeyword() >> Keyword.THEN
 
 		def actionWord2 = Mock(ActionWord)
-		actionWord2.getWord() >> "goodbye"
 		ActionWordText text2 = new ActionWordText("goodbye")
 		List<ActionWordFragment> fragments2 = new ArrayList<>()
 		fragments2.add(text2)
