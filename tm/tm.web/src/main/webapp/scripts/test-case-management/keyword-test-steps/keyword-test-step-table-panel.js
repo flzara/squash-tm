@@ -37,6 +37,19 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 
 			this.keyupTimer = undefined;
 			if (this.settings.isAutocompleteActive) {
+				this.actionWordInput.on('keydown', function (event) {
+					var searchInput = $(event.currentTarget);
+					var isAutoCompleteVisible = (searchInput.autocomplete('widget')).is(':visible');
+
+					//launch the addition when Enter is pressed and released
+					if (_.contains([13], event.which)) {
+						if (isAutoCompleteVisible) {
+							searchInput.autocomplete('close');
+						} else{
+							self.addKeywordTestStepFromButton();
+						}
+					}
+				});
 				this.actionWordInput.on('keyup', function (event) {
 					// not perform autocomplete if arrows are pressed
 					if (!_.contains([37, 38, 39, 40], event.which)) {
@@ -46,9 +59,7 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 					}
 				});
 				this.actionWordInput.autocomplete({
-					select: function (event, ui) {
-						self.addKeywordTestStepFromAutocomplete(self, event, ui);
-					}
+					select: function (event, ui) {}
 				});
 			}
 
@@ -204,31 +215,6 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 				minLength: 1
 			});
 			searchInput.autocomplete('enable');
-		},
-
-		addKeywordTestStepFromAutocomplete: function (self, event, ui) {
-			event.preventDefault();
-			var inputActionWord = ui.item.value;
-			var inputKeyword = this.keywordInput.val();
-
-			self.doAddKeywordTestStepViaAutoCompletion(inputKeyword, inputActionWord)
-				.done(function (testStepId) {
-					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
-				});
-
-		},
-
-		doAddKeywordTestStepViaAutoCompletion: function (keyword, actionWord) {
-			var objectData = {
-				keyword: keyword,
-				actionWord: actionWord
-			};
-			return $.ajax({
-				type: 'POST',
-				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step-via-auto-completion",
-				contentType: 'application/json',
-				data: JSON.stringify(objectData)
-			});
 		}
 	});
 	return KeywordTestStepTablePanel;

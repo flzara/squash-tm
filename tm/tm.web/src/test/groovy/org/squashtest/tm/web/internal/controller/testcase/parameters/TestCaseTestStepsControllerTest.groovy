@@ -338,38 +338,4 @@ class TestCaseTestStepsControllerTest extends Specification {
 		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
 	}
 
-	def "should add a keyword test step with given keyword and actionWord via autocompletion"() {
-		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
-		testStepModel.setKeyword("BUT")
-		testStepModel.setActionWord("add a BDD test step")
-
-		and:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> 2020
-
-		when:
-		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a BDD test step") >> testStep
-
-		then:
-		controller.addKeywordTestStepViaAutoCompletion(testStepModel, 1L) == 2020
-	}
-
-	def "should add a keyword test step with given keyword and parameterized actionWord via autocompletion"() {
-		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
-		testStepModel.setKeyword("BUT")
-		testStepModel.setActionWord("add a \"param1\" test \"param2\"")
-
-		and:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> 2020
-
-		when:
-		testCaseModificationService.addKeywordTestStepViaAutoCompletion(1L, "BUT", "add a \"param1\" test \"param2\"") >> testStep
-
-		then:
-		controller.addKeywordTestStepViaAutoCompletion(testStepModel, 1L) == 2020
-	}
-
 }

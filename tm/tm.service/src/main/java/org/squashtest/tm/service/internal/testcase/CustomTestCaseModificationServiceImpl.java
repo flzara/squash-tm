@@ -309,17 +309,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStepViaAutoCompletion(@Id long parentTestCaseId, String keyword, String actionWord) {
-		Keyword givenKeyword = Keyword.valueOf(keyword);
-		ActionWordParser parser = new ActionWordParser();
-		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(actionWord.trim());
-		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
-		return addKeywordTestStepViaAutoCompletion(parentTestCaseId, givenKeyword, inputActionWord, parameterValues, STEP_LAST_POS);
-	}
-
-	@Override
-	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
-	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		ActionWordParser parser = new ActionWordParser();
@@ -357,23 +346,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.debug("Action word exists in database.");
 			return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);
 		}
-	}
-
-	private KeywordTestStep addKeywordTestStepViaAutoCompletion(long parentTestCaseId, Keyword inputKeyword, ActionWord inputActionWord, List<ActionWordParameterValue> parameterValues, int index) {
-		KeywordTestStep newTestStep = new KeywordTestStep();
-		//set keyword to step
-		newTestStep.setKeyword(inputKeyword);
-		//set test case to step
-		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
-		newTestStep.setTestCase(parentTestCase);
-
-		Project currentProject = parentTestCase.getProject();
-
-		//check action word existence
-		ActionWord actionWord = getActionWordFromDB(inputActionWord, currentProject);
-
-		LOGGER.debug("Action word exists in database.");
-		return addActionWordToKeywordTestStepViaAutoCompletion(newTestStep, actionWord, parentTestCase, index);
 	}
 
 	private ActionWord getActionWordFromDB(ActionWord inputActionWord, Project currentProject) {
@@ -427,39 +399,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
 
-	private void insertDefaultValuesToDataBase(ActionWord inputActionWord, KeywordTestStep newTestStep) {
-		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
 
-		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
-			ActionWordParameter parameter = inputActionWordParameters.get(i);
-			ActionWordParameterValue newValue = new ActionWordParameterValue();
-			String defaultValue = parameter.getDefaultValue();
-			if (defaultValue.isEmpty()) {
-				newValue.setValue("\"\"");
-			} else {
-				newValue.setValue(parameter.getDefaultValue());
-			}
-			newValue.setActionWordParam(parameter);
-			newValue.setKeywordTestStep(newTestStep);
-			actionWordParamValueDao.persist(newValue);
-			newTestStep.addParamValues(newValue);
-		}
-	}
 
-	private KeywordTestStep addActionWordToKeywordTestStepViaAutoCompletion(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, int index) {
-		newTestStep.setActionWord(inputActionWord);
-		testStepDao.persist(newTestStep);
 
-		//add new param values to action word
-		insertDefaultValuesToDataBase(inputActionWord, newTestStep);
-
-		addStepToTestCase(newTestStep, parentTestCase, index);
-
-		addActionWordToItsFragment(inputActionWord);
-		inputActionWord.addStep(newTestStep);
-
-		return newTestStep;
-	}
 
 	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues, int index) {
 		newTestStep.setActionWord(inputActionWord);

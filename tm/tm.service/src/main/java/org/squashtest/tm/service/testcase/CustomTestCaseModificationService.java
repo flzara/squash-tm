@@ -68,15 +68,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord);
 
 	/**
-	 * Inserts the given {@link KeywordTestStep} in last position of the {@link TestCase} identified by the given id.
-	 * @param parentTestCaseId The id of the parent TestCase
-	 * @param keyword The new step Keyword
-	 * @param actionWord The new step ActionWord
-	 * @return The created KeywordTestStep
-	 */
-	KeywordTestStep addKeywordTestStepViaAutoCompletion(@Id long parentTestCaseId, String keyword, String actionWord);
-
-	/**
 	 * Inserts the given {@link KeywordTestStep} inserted at the index value in the {@link TestCase} identified by the given id.
 	 * @param parentTestCaseId The id of the parent TestCase
 	 * @param newTestStep The new KeywordTestStep
@@ -139,8 +130,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * The initial custom field values are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
 	 *
-	 * @param libraryId
-	 * @param testCase
 	 * @param customFieldValues
 	 */
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
@@ -150,8 +139,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * The initial custom field values are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
 	 *
-	 * @param libraryId
-	 * @param testCase
 	 * @param customFieldValues
 	 * @param index
 	 */
@@ -174,7 +161,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 *            the id of the test case
 	 * @param newPosition
 	 *            the position we want the first element of movedSteps to be once the operation is complete
-	 * @param movedSteps
+	 * @param stepIds
 	 *            the list of steps to move, sorted by rank among each others.
 	 */
 	void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds);
