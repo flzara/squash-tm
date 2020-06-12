@@ -36,7 +36,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 				var selIds = [];
 
 				if (!entityId) {
-					selIds = $("#keyword-test-step-table-" + conf.testCaseId).squashTable().getSelectedIds();
+					selIds = $("#keyword-test-step-table").squashTable().getSelectedIds();
 				}
 
 				if (!!entityId) {

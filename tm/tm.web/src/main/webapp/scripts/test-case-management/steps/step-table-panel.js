@@ -482,6 +482,9 @@ define(["jquery","squashtable/squashtable.collapser", "custom-field-values", "wo
 				_callStepContent(table, row);
 			}
 		});
+
+		// refresh the steps table when a parameter is renamed
+		eventBus.onContextual('parameter.name.update', refresh);
 	}
 
 	// ************************************ toolbar utility functions

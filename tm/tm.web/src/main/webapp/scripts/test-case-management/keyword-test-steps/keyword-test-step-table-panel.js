@@ -72,6 +72,9 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 			conf.permissions.writable = this.settings.permissions.isWritable;
 			conf.stepsTablePanel = this;
 			popups.init(conf);
+
+			// refresh the steps table when a parameter is renamed
+			eventBus.onContextual('parameter.name.update', self.refresh);
 		},
 
 		events: {
@@ -81,7 +84,7 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 
 		initKeywordTestStepTable: function (settings) {
 			var testCaseId = settings.testCaseId;
-			var table = $("#keyword-test-step-table-" + testCaseId);
+			var table = $("#keyword-test-step-table");
 			table.squashTable(
 				{
 					bServerSide: true,
@@ -97,7 +100,7 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 		},
 
 		refresh: function () {
-			$("#keyword-test-step-table-" + this.settings.testCaseId).squashTable().refreshRestore();
+			$("#keyword-test-step-table").squashTable().refreshRestore();
 		},
 
 		cleanInputs: function () {

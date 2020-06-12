@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.confirmdialog",
-		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable, notification, translator) {
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "squash.translator", "workspace.event-bus", "jquery.squash.confirmdialog",
+		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable, notification, translator, eventBus) {
 	var ParametersTable = Backbone.View.extend({
 
 		el : "#parameters-table",
@@ -200,7 +200,9 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 						self.trigger("parameter.name.update",{
 							id : data['entity-id'],
 							name : newname
-						});						
+						});
+						// trigger it with eventBus as well for parameters table
+						eventBus.trigger("parameter.name.update");
 					},
 					onerror : function(settings, original, xhr){
 						console.log(original);
