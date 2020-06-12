@@ -112,7 +112,7 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 
 		then :
 
-		result*.id as Set == ["-12345", "-6789"] as Set
+		result*.id as Set == ["-12345", "-6789", "-1111", "-2222"] as Set
 		result[0].id == "-6789"
 
 	}
@@ -124,7 +124,7 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 
 		expect :
 
-		suiteDao.countSuitesByIterationId(iterationId, filter) == 2
+		suiteDao.countSuitesByIterationId(iterationId, filter) == 4
 
 	}
 
@@ -140,7 +140,8 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 
 		then :
 
-		result*.id as List == ["-12345"]
+		result*.id as List == ["-12345", "-1111"]
+		result[0].id == "-12345"
 
 	}
 
@@ -151,7 +152,7 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 
 		expect :
 
-		suiteDao.countSuitesByTestSuiteId(testSuiteId, filter) == 1
+		suiteDao.countSuitesByTestSuiteId(testSuiteId, filter) == 2
 
 	}
 

@@ -42,7 +42,10 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,13 +63,27 @@ import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
 @Repository
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
-	private static final String UNCHECKED = "unchecked";
+	private static final String AUDIT = "audit";
+
+	private static final String AUTOMATED_SUITE_COUNT_STATUS = "automatedSuite.countStatuses";
+
+	private static final String CREATED_ON = "createdOn";
+
+	private static final String EXECUTION = "execution";
+
+	private static final String EXECUTION_EXTENDERS = "executionExtenders";
+
+	private static final String ID = "id";
 
 	private static final String ITERATION = "iteration";
 
+	private static final String TEST_PLAN = "testPlan";
+
+	private static final String TEST_SUITE = "testSuite";
+
 	private static final String TEST_SUITES = "testSuites";
 
-	private static final String AUTOMATED_SUITE_COUNT_STATUS = "automatedSuite.countStatuses";
+	private static final String UNCHECKED = "unchecked";
 
 	@PersistenceContext
 	private EntityManager em;
@@ -169,7 +186,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@Override
 	public List<AutomatedSuite> findAutomatedSuitesByTestSuiteID(Long suiteId, PagingAndMultiSorting paging, ColumnFiltering filter) {
 
-		return createQueryFindAutomatedSuites(TEST_SUITES, suiteId, paging).getResultList();
+		return createQueryFindAutomatedSuites(TEST_SUITE, suiteId, paging).getResultList();
 	}
 
 	private TypedQuery<AutomatedSuite> createQueryFindAutomatedSuites(String discriminatingEntityName, Long discriminatingEntityId, PagingAndMultiSorting paging) {
@@ -178,12 +195,8 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		Root<AutomatedSuite> root = criteriaQuery.from(AutomatedSuite.class);
 
 		criteriaQuery.distinct(true).select(root)
-			.where(root.join("executionExtenders")
-				.join("execution")
-				.join("testPlan")
-				.join(discriminatingEntityName)
-				.get("id").in(discriminatingEntityId))
-			.orderBy(builder.desc(root.join("audit").get("createdOn")));
+			.where(builder.or(getPredicateArray(root, discriminatingEntityName, discriminatingEntityId)))
+			.orderBy(builder.desc(root.join(AUDIT).get(CREATED_ON)));
 
 		TypedQuery<AutomatedSuite> query = em.createQuery(criteriaQuery);
 
@@ -204,7 +217,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@Override
 	public long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter) {
 
-		return createQueryCountAutomatedSuites(TEST_SUITES, suiteId).getSingleResult();
+		return createQueryCountAutomatedSuites(TEST_SUITE, suiteId).getSingleResult();
 	}
 
 	@Override
@@ -213,7 +226,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 		Query query = em.createNamedQuery(
 			AUTOMATED_SUITE_COUNT_STATUS);
-		query.setParameter("id", uuid);
+		query.setParameter(ID, uuid);
 
 		List<Object[]> tuples = query.getResultList();
 
@@ -230,15 +243,40 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		Root<AutomatedSuite> root = criteriaQuery.from(AutomatedSuite.class);
 
 		criteriaQuery.select(builder.countDistinct(root))
-			.where(root.join("executionExtenders")
-				.join("execution")
-				.join("testPlan")
-				.join(discriminatingEntityName)
-				.get("id").in(discriminatingEntityId));
+			.where(builder.or(getPredicateArray(root, discriminatingEntityName, discriminatingEntityId)));
 
 		TypedQuery<Long> query = em.createQuery(criteriaQuery);
 
 		return query;
+	}
+
+	private Predicate[] getPredicateArray(Root<AutomatedSuite> queryRoot, String discriminatingEntityName, Long discriminatingEntityId){
+
+		List<Predicate> predicateList = new ArrayList<>();
+
+		String discriminatingTestPlanAttributeName;
+
+		if(discriminatingEntityName.equals(ITERATION)){
+			discriminatingTestPlanAttributeName = ITERATION;
+
+			Predicate isIndirectlyLinkedToDiscriminatingEntity = queryRoot.join(TEST_SUITE, JoinType.LEFT).join(ITERATION, JoinType.LEFT).get(ID).in(discriminatingEntityId);
+			predicateList.add(isIndirectlyLinkedToDiscriminatingEntity);
+		} else {
+			discriminatingTestPlanAttributeName = TEST_SUITES;
+		}
+
+		Predicate hasExecutionsLinkedToDiscriminatingEntity = queryRoot.join(EXECUTION_EXTENDERS, JoinType.LEFT)
+			.join(EXECUTION, JoinType.LEFT)
+			.join(TEST_PLAN, JoinType.LEFT)
+			.join(discriminatingTestPlanAttributeName, JoinType.LEFT)
+			.get(ID).in(discriminatingEntityId);
+
+		Predicate isDirectlyLinkedToDiscriminatingEntity = queryRoot.join(discriminatingEntityName, JoinType.LEFT).get(ID).in(discriminatingEntityId);
+
+		predicateList.add(hasExecutionsLinkedToDiscriminatingEntity);
+		predicateList.add(isDirectlyLinkedToDiscriminatingEntity);
+
+		return predicateList.toArray(new Predicate[0]);
 	}
 
 	// TODO : either make it private (core Squash at least doesn't call it anywhere but here), either declare it in the interface

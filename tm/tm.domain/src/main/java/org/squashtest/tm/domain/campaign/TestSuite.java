@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
@@ -55,13 +56,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -126,6 +130,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName = "ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName = "ID"))
 	private List<IterationTestPlanItem> testPlan = new LinkedList<>();
+
+	@OneToMany(mappedBy = "testSuite")
+	private List<AutomatedSuite> automatedSuites = new ArrayList<>();
 
 	public TestSuite() {
 		super();

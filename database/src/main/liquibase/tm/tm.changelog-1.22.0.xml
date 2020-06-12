@@ -823,4 +823,17 @@
     </createIndex>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-891" author="aguilhem">
+    <comment>Automated Suite can be directly linked to an iteration or a test suite</comment>
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="ITERATION_ID" type="BIGINT">
+        <constraints references="ITERATION(ITERATION_ID)" nullable="true" foreignKeyName="fk_automated_suite_iteration" />
+      </column>
+      <column name="TEST_SUITE_ID" type="BIGINT">
+        <constraints references="TEST_SUITE(ID)" nullable="true" foreignKeyName="fk_automated_suite_test_suite" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+
 </databaseChangeLog>

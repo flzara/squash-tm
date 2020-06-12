@@ -41,6 +41,8 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -64,6 +66,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
@@ -120,7 +123,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Embedded
 	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
-        
+
         /**
          * Adding an iteration UUID for external reference (ex: from Squash TF) as per story SQUASH-167.
          */
@@ -128,7 +131,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
         @Column(name = "UUID")
         @Pattern(regexp = "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}")
         private String uuid;
-        
+
 	/*
 	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
 	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
@@ -168,6 +171,9 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private List<TestSuite> testSuites = new ArrayList<>();
 
+	@OneToMany(mappedBy = "iteration")
+	private List<AutomatedSuite> automatedSuites = new ArrayList<>();
+
         /**
          * Default constructor : any iteration shall have an UUID (Story SQUASH-167).
          */
@@ -175,7 +181,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
             UUID newUUID=UUID.randomUUID();
             this.uuid=newUUID.toString();
         }
-        
+
 	/**
 	 * flattened list of the executions
 	 */

@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.testautomation;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 
@@ -32,6 +34,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -106,6 +110,14 @@ public class AutomatedSuite implements HasExecutionStatus {
 
 	@Enumerated(EnumType.STRING)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
+
+	@ManyToOne
+	@JoinColumn(name = "ITERATION_ID")
+	private Iteration iteration;
+
+	@ManyToOne
+	@JoinColumn(name = "TEST_SUITE_ID")
+	private TestSuite testSuite;
 
 	/**
 	 * it's transient because we do not want to persist neither do we want to compute it too often.
