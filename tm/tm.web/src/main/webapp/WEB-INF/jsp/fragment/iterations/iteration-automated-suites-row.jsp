@@ -47,9 +47,10 @@ number of columns.
   <table class="executions-table" id="automated-suite-${automatedSuite.id}">
     <thead>
     <tr class="executions-table-header">
+      <th style="width: 2.5em"></th>
+      <th class="width-tenperc"></th>
+      <th class="width-tenperc"></th>
       <th></th>
-      <th class="width-tenperc"></th>
-      <th class="width-tenperc"></th>
       <th class="width-tenperc"></th>
       <th class="width-tenperc"></th>
     </tr>
@@ -57,6 +58,13 @@ number of columns.
     <tbody>
     <c:forEach items="${ executions }" var="execution" varStatus="status">
       <tr>
+        <td></td>
+        <td></td>
+        <td>
+          <span class="exec-status-label exec-status-${fn:toLowerCase(execution.executionStatus)}">
+            <f:message key="execution.execution-status.${execution.executionStatus}"/>
+          </span>
+        </td>
         <td>
           <a href="${showExecutionUrl}/${execution.id}">
             <span style="font-weight:bold;">Exec. ${status.index + 1} :</span>
@@ -64,12 +72,6 @@ number of columns.
             <span> <c:out value="(${(execution.datasetLabel == null || fn:length(execution.datasetLabel) == 0) ? labelNoDataset : execution.datasetLabel})"/> </span>
           </a>
         </td>
-        <td>
-          <span class="exec-status-label exec-status-${fn:toLowerCase(execution.executionStatus)}">
-            <f:message key="execution.execution-status.${execution.executionStatus}"/>
-          </span>
-        </td>
-        <td></td>
         <td></td>
         <td style="text-align: center">
           <c:choose>

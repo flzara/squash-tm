@@ -56,13 +56,13 @@
           <th class="no-user-select"
             data-def="map=entity-index, select, center,sWidth=2.5em">#</th>
           <th class="no-user-select"
-              data-def="map=uuid, sClass=toggle-row exec-toggle">
-          </th>
+              data-def="map=created-on, center, sWidth=10%"><f:message key="label.createdOn" /></th>
           <th class="no-user-select tp-th-status" data-def="map=status, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
           <th class="no-user-select"
-              data-def="map=created-on, center, sWidth=10%"><f:message key="label.createdOn" /></th>
+              data-def="map=uuid, sClass=toggle-row exec-toggle">
+          </th>
           <th class="no-user-select"
               data-def="map=created-by, center, sWidth=10%"><f:message key="label.createdBy" /></th>
           <th class="no-user-select"
