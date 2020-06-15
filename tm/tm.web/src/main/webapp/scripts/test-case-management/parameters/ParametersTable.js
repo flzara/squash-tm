@@ -201,7 +201,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 							id : data['entity-id'],
 							name : newname
 						});
-						// trigger it with eventBus as well for parameters table
+						// trigger it with eventBus as well for test steps table
 						eventBus.trigger("parameter.name.update");
 					},
 					onerror : function(settings, original, xhr){
