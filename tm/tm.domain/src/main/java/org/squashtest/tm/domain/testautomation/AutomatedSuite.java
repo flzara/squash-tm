@@ -124,6 +124,17 @@ public class AutomatedSuite implements HasExecutionStatus {
 	 */
 	private transient Boolean manualSlaveSelection;
 
+	public AutomatedSuite() {
+	}
+
+	public AutomatedSuite(Iteration iteration) {
+		this.iteration = iteration;
+	}
+
+	public AutomatedSuite(TestSuite testSuite) {
+		this.testSuite = testSuite;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -202,5 +213,13 @@ public class AutomatedSuite implements HasExecutionStatus {
 	@Override
 	public Set<ExecutionStatus> getLegalStatusSet() {
 		return null;
+	}
+
+	public Iteration getIteration() {
+		return iteration;
+	}
+
+	public TestSuite getTestSuite() {
+		return testSuite;
 	}
 }

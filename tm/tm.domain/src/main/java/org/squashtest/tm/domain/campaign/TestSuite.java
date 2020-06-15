@@ -58,7 +58,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
@@ -522,5 +521,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@Deprecated
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public List<AutomatedSuite> getAutomatedSuites() {
+		return automatedSuites;
 	}
 }
