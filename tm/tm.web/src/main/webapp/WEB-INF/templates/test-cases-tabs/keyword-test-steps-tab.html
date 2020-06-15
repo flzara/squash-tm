@@ -85,7 +85,7 @@
       <thead>
       <tr>
         <th data-def="map=step-index, select">#</th>
-        <th th:text="#{label.Keyword}" data-def="map=step-keyword"> </th>
+        <th th:text="#{label.Keyword}" data-def="map=step-keyword, sClass=step-keyword"> </th>
         <th th:utext="#{label.action}" data-def="map=step-action-word, sortable"> </th>
         <th th:attr="data-def='delete-button, map=empty-delete-holder'"></th>
       </tr>
@@ -142,6 +142,7 @@
           testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
           rootContext : /*[[@{/}]]*/"/squash",
           stepData : /*[[${stepData}]]*/[],
+          keywordList : /*[[${keywordList}]]*/[],
           testCaseId : /*[[${testCase.id}]]*/1,
           projectId : /*[[${projectId}]]*/4,
           isAutocompleteActive: /*[[${isAutocompleteActive}]]*/false,

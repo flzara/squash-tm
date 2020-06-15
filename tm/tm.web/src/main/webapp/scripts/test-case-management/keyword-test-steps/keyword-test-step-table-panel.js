@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"], function ($, Backbone, _, eventBus, popups, StringUtil, translator) {
+define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"],
+	function ($, Backbone, _, confman, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
@@ -85,12 +86,51 @@ define(["jquery", "backbone", "underscore", 'workspace.event-bus', "./popups", "
 		initKeywordTestStepTable: function (settings) {
 			var testCaseId = settings.testCaseId;
 			var table = $("#keyword-test-step-table");
+
+			function postfunction() {
+				console.log("toto");
+			}
 			table.squashTable(
 				{
 					bServerSide: true,
+					aoColumnDefs: [{aTargets: [1], sWidth: '25%'}],
 					aaData: settings.stepData,
 					iDeferLoading: settings.stepData.length,
-					sAjaxSource: '/squash/test-cases/' + testCaseId + '/steps/keyword-test-step-table'
+					sAjaxSource: '/squash/test-cases/' + testCaseId + '/steps/keyword-test-step-table',
+					fnDrawCallback: function() {
+						var self = this;
+						var rows = table.fnGetNodes();
+						rows.forEach(function(row) {
+							var $row = $(row),
+								  keywordCell = $row.find('td.step-keyword');
+
+							var sconf = confman.getJeditableSelect();
+							sconf.data = settings.keywordList;
+							sconf.callback = function(value) {
+								var td = this;
+								var row = td.parentNode;
+								var data = table.fnGetData(row);
+
+								data['step-keyword'] = value;
+							};
+
+							keywordCell.editable(function(value) {
+									var td = this;
+									var row = td.parentNode;
+									var rowModel = table.fnGetData(row);
+
+									var url = '/squash/test-cases/' + testCaseId + '/steps/' + rowModel['entity-id'] +'/keyword';
+									if (rowModel['step-keyword'] !== settings.keywordList[value]) {
+										$.ajax({
+											url: url,
+											type: 'POST',
+											data: {id: rowModel['entity-id'], value: settings.keywordList[value]}
+										});
+									}
+									return settings.keywordList[value];
+							}, sconf);
+						});
+					}
 				}, {
 					deleteButtons: {
 						delegate: "#delete-keyword-test-step-dialog",

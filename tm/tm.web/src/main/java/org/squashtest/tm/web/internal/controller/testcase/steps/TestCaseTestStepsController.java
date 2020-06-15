@@ -340,6 +340,14 @@ public class TestCaseTestStepsController {
 
 	}
 
+	@RequestMapping(value = "/{stepId}/keyword", method = RequestMethod.POST, params = {"id", VALUE})
+	@ResponseBody
+	public void changeStepKeyword(@PathVariable long stepId, @RequestParam(VALUE) String keyword) {
+		Keyword updatedKeyword = Keyword.valueOf(keyword);
+		testCaseModificationService.updateKeywordTestStep(stepId, updatedKeyword);
+		LOGGER.trace("TestCaseModificationController : updated keyword for step {}", stepId);
+	}
+
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
 		List<CustomFieldModel> models = new ArrayList<>(customFields.size());
 		for (CustomField field : customFields) {
