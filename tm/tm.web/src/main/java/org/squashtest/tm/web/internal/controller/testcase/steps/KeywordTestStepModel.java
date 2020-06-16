@@ -24,10 +24,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 
 import java.util.Locale;
-
-import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.addMissingDoubleQuoteIfAny;
 
 public class KeywordTestStepModel {
 
@@ -76,7 +75,7 @@ public class KeywordTestStepModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
-			String notBlank = messageSource.getMessage("message.notBlank",null, locale);
+			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
 
 			KeywordTestStepModel model = (KeywordTestStepModel) target;
 			String keyword = model.getKeyword();
@@ -90,7 +89,7 @@ public class KeywordTestStepModel {
 				errors.rejectValue("Action word in Keyword Test case", "message.notBlank", notBlank);
 			}
 
-			String noText = messageSource.getMessage("message.noText",null, locale);
+			String noText = messageSource.getMessage("message.noText", null, locale);
 			if (!validateTextExistence(actionWord)) {
 				errors.rejectValue("Action word in Keyword Test case", "message.noText", noText);
 			}
@@ -98,16 +97,16 @@ public class KeywordTestStepModel {
 		}
 
 		private boolean validateTextExistence(String actionWord) {
-			if (actionWord.contains("\"")){
+			if (actionWord.contains("\"")) {
 				return hasTextOutsideParameters(actionWord);
 			}
 			return true;
 		}
 
 		private boolean hasTextOutsideParameters(String actionWord) {
-			String updatedWord = addMissingDoubleQuoteIfAny(actionWord);
-			String removedBetweenTwoDoubleQuotes = updatedWord.replaceAll("\"[^\"]*\"", "");
-			return !removedBetweenTwoDoubleQuotes.trim().isEmpty();
+			ActionWordParser parser = new ActionWordParser();
+			parser.createActionWordFromKeywordTestStep(actionWord.trim());
+			return parser.doesActionWordHaveText();
 		}
 	}
 }

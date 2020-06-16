@@ -52,8 +52,8 @@ class KeywordTestCaseControllerTest  extends Specification{
 
 		def fragmentText3 = new ActionWordText(" param or ")
 
-		def fragmentParam = new ActionWordParameter("param1", "")
-		def fragmentParam2 = new ActionWordParameter("param2", "")
+		def fragmentParam = new ActionWordParameter("param1")
+		def fragmentParam2 = new ActionWordParameter("param2")
 
 		def actionWord1 = new ActionWord([singleFragmentText] as List)
 

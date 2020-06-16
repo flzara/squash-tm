@@ -654,9 +654,9 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
-	def "should add a keyword test step with a new action word containing parameters to test case in which some starts with ="() {
+	def "should add a keyword test step with a new action word containing parameters to test case in which some are in <>"() {
 		when:
-		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"= date\" of \"  = Ye@r \"  .   ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  <date> of < Ye@r >  .   ")
 
 		then:
 		createdKeywordTestStep != null
@@ -712,13 +712,13 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		paramValues.size() == 2
 		ActionWordParameterValue value1 = paramValues.get(0)
 		value1.id != null
-		value1.value == "= date"
+		value1.value == "<date>"
 		value1.actionWordParam == param1
 		value1.keywordTestStep == createdKeywordTestStep
 
 		ActionWordParameterValue value2 = paramValues.get(1)
 		value2.id != null
-		value2.value == "= Ye_r"
+		value2.value == "<Ye_r>"
 		value2.actionWordParam == param2
 		value2.keywordTestStep == createdKeywordTestStep
 
@@ -841,9 +841,9 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
-	def "should add a keyword test step with an existing action word that contains parameters in which some start with = to test case"() {
+	def "should add a keyword test step with an existing action word that contains parameters in which some are between <> to test case"() {
 		when:
-		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is \" =   d@te \" of \"=mon1h\" \"2020\"   ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is < d@te > of <mon1h> \"2020\"   ")
 
 		then:
 		createdKeywordTestStep != null
@@ -908,13 +908,13 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		paramValues.size() == 3
 		ActionWordParameterValue value1 = paramValues.get(0)
 		value1.id != null
-		value1.value == "= d_te"
+		value1.value == "<d_te>"
 		value1.actionWordParam == parameter
 		value1.keywordTestStep == createdKeywordTestStep
 
 		ActionWordParameterValue value2 = paramValues.get(1)
 		value2.id != null
-		value2.value == "= mon1h"
+		value2.value == "<mon1h>"
 		value2.actionWordParam == parameter2
 		value2.keywordTestStep == createdKeywordTestStep
 
@@ -926,11 +926,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
 		tcParams.size() == 2
-		Parameter tcParam1 = tcParams.toArray()[0]
-		tcParam1.name == "d_te"
-
-		Parameter tcParam2 = tcParams.toArray()[1]
-		tcParam2.name == "mon1h"
+		tcParams.collect { it.name }.sort() == ["d_te", "mon1h"]
 	}
 
 }

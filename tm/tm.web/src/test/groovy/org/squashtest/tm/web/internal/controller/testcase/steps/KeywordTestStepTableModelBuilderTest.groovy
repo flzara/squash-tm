@@ -63,8 +63,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 		def actionWord = Mock(ActionWord)
 		ActionWordText text = new ActionWordText("hello ")
-		ActionWordParameter parameter = Mock()
-		parameter.getId() >> -50L
+		ActionWordParameter parameter = new MockActionWordParameter(-50L)
 		List<ActionWordFragment> fragments = new ArrayList<>()
 		fragments.add(text)
 		fragments.add(parameter)
@@ -107,5 +106,74 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		item2.get("step-keyword") == "THEN"
 		item2.get("step-action-word") == "goodbye"
 		item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+	}
+
+	def "should build a raw model from 2 KeywordTestStep in which there is an Actionword with a Parameter associated with Test Case parameter"() {
+		given:
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> -99L
+		testStep.getKeyword() >> Keyword.GIVEN
+
+		def actionWord = Mock(ActionWord)
+		ActionWordText text = new ActionWordText("hello ")
+		ActionWordParameter parameter = new MockActionWordParameter(-50L)
+		List<ActionWordFragment> fragments = new ArrayList<>()
+		fragments.add(text)
+		fragments.add(parameter)
+		actionWord.getFragments() >> fragments
+		testStep.getActionWord() >> actionWord
+
+		List<ActionWordParameterValue> values = new ArrayList<>();
+		ActionWordParameterValue value = new ActionWordParameterValue("<dateOfWeek>")
+		value.setActionWordParam(parameter)
+		values.add(value)
+		testStep.getParamValues() >> values
+
+		and:
+		def testStep2 = Mock(KeywordTestStep)
+		testStep2.getId() >> -77L
+		testStep2.getKeyword() >> Keyword.THEN
+
+		def actionWord2 = Mock(ActionWord)
+		ActionWordText text2 = new ActionWordText("goodbye")
+		List<ActionWordFragment> fragments2 = new ArrayList<>()
+		fragments2.add(text2)
+		actionWord2.getFragments() >> fragments2
+		testStep2.getActionWord() >> actionWord2
+
+		when:
+		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)
+		then:
+		resultCollection.size() == 2
+		def item1 = resultCollection[0]
+		def item2 = resultCollection[1]
+
+		item1.size() == 5
+		item1.get("step-index") == "1"
+		item1.get("step-keyword") == "GIVEN"
+		item1.get("step-action-word") == "hello <span style=\"color: blue;\">&lt;dateOfWeek&gt;</span>"
+		item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+
+		item2.size() == 5
+		item2.get("step-index") == "2"
+		item2.get("step-keyword") == "THEN"
+		item2.get("step-action-word") == "goodbye"
+		item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+	}
+
+	class MockActionWordParameter extends  ActionWordParameter {
+		Long setId
+
+		MockActionWordParameter(Long setId) {
+			this.setId = setId
+		}
+
+		Long getId() {
+			return setId
+		}
+
+		void setId(Long newId) {
+			setId = newId
+		}
 	}
 }

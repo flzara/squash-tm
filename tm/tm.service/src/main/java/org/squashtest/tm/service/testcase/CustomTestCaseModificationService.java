@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param actionWord The new step ActionWord
 	 * @return The created KeywordTestStep
 	 */
-	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String actionWord);
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String actionWord);
 
 	/**
 	 * Inserts the given {@link KeywordTestStep} inserted at the index value in the {@link TestCase} identified by the given id.

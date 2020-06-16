@@ -117,6 +117,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -129,6 +130,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -298,10 +301,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
-	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, String keyword, String word) {
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String word) {
 		Keyword givenKeyword = Keyword.valueOf(keyword);
 		ActionWordParser parser = new ActionWordParser();
-		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(word.trim());
+		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(word.trim());
 		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
 		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, parameterValues, STEP_LAST_POS);
 	}
@@ -312,7 +315,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		ActionWordParser parser = new ActionWordParser();
-		ActionWord inputActionWord = parser.generateActionWordFromTextWithParamValue(newTestStep.getActionWord().createWord().trim());
+		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(newTestStep.getActionWord().createWord().trim());
 		List<ActionWordParameterValue> parameterValueMap = parser.getParameterValues();
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
 		return addKeywordTestStep(parentTestCaseId, inputKeyword, inputActionWord, parameterValueMap, index);
@@ -355,7 +358,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	private void insertNewValuesToDataBase(KeywordTestCase parentTestCase, ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
-		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
+		List<ActionWordParameter> inputActionWordParameters = inputActionWord.getActionWordParams();
 
 		for (int i = 0; i < inputActionWordParameters.size(); ++i) {
 			ActionWordParameter parameter = inputActionWordParameters.get(i);
@@ -371,7 +374,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 			//add test case param if needed
 			String valueStr = newValue.getValue().trim();
-			if (valueStr.startsWith("=")) {
+			Pattern pattern = Pattern.compile("<[^\"]+>");
+			Matcher matcher = pattern.matcher(valueStr);
+			if (matcher.matches()) {
 				String newValueValue = insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
 				newValue.setValue(newValueValue);
 			}
@@ -390,12 +395,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			new Parameter(newParamName, parentTestCase);
 			datasetModificationService.cascadeDatasetsUpdate(parentTestCase.getId());
 		}
-		return "= " + newParamName;
+		//re-add < and > for display
+		return "<" + newParamName + ">";
 	}
 
 	private String generateTestCaseParameter(String valueStr) {
-		String removedEqual = valueStr.substring(1);
+		//remove < and >
+		String removedEqual = valueStr.substring(1, valueStr.length()-1);
+		//replace extra spaces with _
 		String replacedSpacesWithUnderscores = removedEqual.trim().replaceAll("(\\s)+", "_");
+		//replace invalid chars with _ and return it
 		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
 
@@ -458,7 +467,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		String token = testStep.getActionWord().getToken();
 		if (updatedWord != null) {
 			String trimmedWord = updatedWord.trim();
-			ActionWord inputActionWord = new ActionWordParser().generateActionWordFromTextWithParamValue(trimmedWord);
+			ActionWord inputActionWord = new ActionWordParser().createActionWordFromKeywordTestStep(trimmedWord);
 			String inputToken = inputActionWord.getToken();
 			if (!inputToken.equals(token)) {
 				if (LOGGER.isDebugEnabled()) {
@@ -474,12 +483,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	//TODO-QUAN
 	private void addActionWordToKeywordTestStep(KeywordTestStep keywordTestStep, ActionWord actionWord) {
 		ActionWord inputActionWord = keywordTestStep.getActionWord();
-		List<ActionWordParameter> inputActionWordParams = inputActionWord.getFragmentsByClass(ActionWordParameter.class);
+		List<ActionWordParameter> inputActionWordParams = inputActionWord.getActionWordParams();
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding new action word");
 
 			LOGGER.debug("Action word exists in database. Adding new param values to their param value lists");
-			List<ActionWordParameter> actionWordParams = actionWord.getFragmentsByClass(ActionWordParameter.class);
+			List<ActionWordParameter> actionWordParams = actionWord.getActionWordParams();
 			//insertNewValuesToActionWordParamValueListInDataBase(inputActionWordParams, actionWordParams);
 			keywordTestStep.setActionWord(actionWord);
 		} else {

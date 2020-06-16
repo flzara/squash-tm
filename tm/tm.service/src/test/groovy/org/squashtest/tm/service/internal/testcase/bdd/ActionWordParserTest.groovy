@@ -20,29 +20,49 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd
 
-
 import org.squashtest.tm.domain.bdd.ActionWord
-import org.squashtest.tm.domain.bdd.ActionWordFragment
 import org.squashtest.tm.domain.bdd.ActionWordParameter
-import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class ActionWordParserTest extends Specification {
 
-	//*********** TEXT VALIDATION **************
-	def "Should throw error when creating an ActionWord without text" () {
+	def "Should throw error when creating an ActionWord exceeding 255 characters"() {
 		when:
-		new ActionWordParser().generateActionWordFromTextWithParamValue("\"This_is @n act1on-word\"")
+		new ActionWordParser().createActionWordFromKeywordTestStep("aaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaa \"ppppp\" aaaaaaaaaaaaaaaaaaaaaaaaaa \"pppppp\" aaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
 		then:
-		thrown(IllegalArgumentException)
+		IllegalArgumentException exception = thrown()
+		exception.message == "Action word cannot exceed 255 characters."
 	}
 
-	def "Should create an ActionWord without parameter whose texts contain special characters except for double quote"() {
+	def "Should throw error when creating an empty ActionWord"() {
 		when:
-		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n act1on-word with ('.,?/!§)")
+		new ActionWordParser().createActionWordFromKeywordTestStep("")
+
+		then:
+		IllegalArgumentException exception = thrown()
+		exception.message == "Action word cannot be empty."
+	}
+
+	@Unroll
+	def "Should throw error when creating an ActionWord without text"() {
+		when:
+		new ActionWordParser().createActionWordFromKeywordTestStep(word)
+
+		then:
+		IllegalArgumentException exception = thrown()
+		exception.message == "Action word must contain at least some texts."
+
+		where:
+		word << ["\"This_is @n act1on-word\"", "<tc p@ram>", "\"This_is @n act1on-word\"<tc p@ram>", "<tc p@ram>\"This_is @n act1on-word\"", "<Test with", "<test \""]
+	}
+
+	//*********** TEXT VALIDATION **************
+	def "Should create an ActionWord without parameter whose texts contain special characters except for double quote and <, >"() {
+		when:
+		ActionWord result = new ActionWordParser().createActionWordFromKeywordTestStep("This_is @n act1on-word with ('.,?/!§)")
 
 		then:
 		result.createWord() == "This_is @n act1on-word with ('.,?/!§)"
@@ -53,11 +73,33 @@ class ActionWordParserTest extends Specification {
 		def f1 = fragments.get(0)
 		f1.class.is(ActionWordText)
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
+	}
+
+	def "Should throw error when creating an ActionWord with < character at the end"() {
+		when:
+		new ActionWordParser().createActionWordFromKeywordTestStep("Test with <")
+
+		then:
+		IllegalArgumentException exception = thrown()
+		exception.message == "Test case parameter name cannot be empty."
+	}
+
+	@Unroll
+	def "Should throw error when creating an ActionWord with invalid character > in text"() {
+		when:
+		new ActionWordParser().createActionWordFromKeywordTestStep(word)
+
+		then:
+		IllegalArgumentException exception = thrown()
+		exception.message == "Action word text cannot contain '>' symbol."
+
+		where:
+		word << ["Invalid text with >", "Invalid text with > in the middle", "> at the beginning"]
 	}
 
 	def "Should create an ActionWord without parameter, any multi-spaces will be removed"() {
 		when:
-		ActionWord result = new ActionWordParser().generateActionWordFromTextWithParamValue("This_is @n    act1on-word with    ('.,?/!§)")
+		ActionWord result = new ActionWordParser().createActionWordFromKeywordTestStep("This_is @n    act1on-word with    ('.,?/!§)")
 
 		then:
 		result.createWord() == "This_is @n act1on-word with ('.,?/!§)"
@@ -69,22 +111,25 @@ class ActionWordParserTest extends Specification {
 		((ActionWordText) f1).getText() == "This_is @n act1on-word with ('.,?/!§)"
 	}
 
-	@Unroll
-	def "Should throw error when creating an ActionWord with invalid fragments"() {
-		when:
-			new ActionWordParser().generateActionWordFromTextWithParamValue(word)
-		then:
-			thrown IllegalArgumentException
-		where:
-			word << ["",
-					 "aaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaa \"ppppp\" aaaaaaaaaaaaaaaaaaaaaaaaaa \"pppppp\" aaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
-	}
 
 	//*********** PARAMETER VALIDATION **************
-	def "Should create an ActionWord with a parameter value at the end"() {
+	@Unroll
+	def "Should throw error when creating an ActionWord with invalid character > in an param value with free text"() {
+		when:
+		new ActionWordParser().createActionWordFromKeywordTestStep(word)
+		then:
+
+		IllegalArgumentException exception = thrown()
+		exception.message == "Action word parameter value cannot contain '>' symbol."
+
+		where:
+		word << ["This is an action word with \" > param\"", "This is an action word with \" a > param\"", "This is an action word with \" a param >\""]
+	}
+
+	def "Should create an ActionWord with a parameter value with free text"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("This is an action word with \"param\"")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with \"param\"")
 		def values = parser.getParameterValues()
 
 		then:
@@ -113,7 +158,7 @@ class ActionWordParserTest extends Specification {
 	def "Should create an ActionWord with a parameter value at the end but missing a double quote"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("This is an action word with \"param")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with \"param")
 		def values = parser.getParameterValues()
 
 		then:
@@ -139,7 +184,7 @@ class ActionWordParserTest extends Specification {
 	def "Should create an ActionWord with a parameter value which has spaces, special characters"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("This is an action word with \"     par@m   123    []   \"")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with \"     par@m   123    []   \"")
 		def values = parser.getParameterValues()
 
 		then:
@@ -164,7 +209,7 @@ class ActionWordParserTest extends Specification {
 	def "Should create an ActionWord with 3 parameter values: at the beginning, in the middle and at the end"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("\"This\" is   an \"action word\" with   \"param\"")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("\"This\" is   an \"action word\" with   \"param\"")
 		def values = parser.getParameterValues()
 
 		then:
@@ -206,7 +251,7 @@ class ActionWordParserTest extends Specification {
 	def "Should create an ActionWord with 4 parameter values: 1 at the beginning, 2 parameter values in the middle which are next to each other and 1 at the end"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("\"This\" is an\"action\"\"word\" with \"param\"")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("\"This\" is an\"action\"\"word\" with \"param\"")
 		def values = parser.getParameterValues()
 
 		then:
@@ -253,7 +298,7 @@ class ActionWordParserTest extends Specification {
 	def "Should create an ActionWord with 4 parameter values: 1 at the beginning, 2 parameter values in the middle which are separated by a space and 1 parameter value at the end"() {
 		when:
 		ActionWordParser parser = new ActionWordParser()
-		ActionWord result = parser.generateActionWordFromTextWithParamValue("\"This\" is an \"action\"    \"word\" with \"param\"")
+		ActionWord result = parser.createActionWordFromKeywordTestStep("\"This\" is an \"action\"    \"word\" with \"param\"")
 		def values = parser.getParameterValues()
 
 		then:
@@ -299,6 +344,166 @@ class ActionWordParserTest extends Specification {
 		values.get(1).getValue() == "action"
 		values.get(2).getValue() == "word"
 		values.get(3).getValue() == "param"
+	}
+
+	def "Should create an ActionWord with 1 parameter value between < and > characters"() {
+		when:
+		ActionWordParser parser = new ActionWordParser()
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with <TC par@m>")
+		def values = parser.getParameterValues()
+
+		then:
+		result.createWord() == "This is an action word with \"param1\""
+		result.getToken() == "TP-This is an action word with -"
+		def fragments = result.getFragments()
+		fragments.size() == 2
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "param1"
+		parameter.getDefaultValue() == ""
+
+		values.size() == 1
+		values.get(0).getValue() == "<TC_par_m>"
+	}
+
+	def "Should create an ActionWord with 1 parameter value after < character but missing > character"() {
+		when:
+		ActionWordParser parser = new ActionWordParser()
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with <TC par@m")
+		def values = parser.getParameterValues()
+
+		then:
+		result.createWord() == "This is an action word with \"param1\""
+		result.getToken() == "TP-This is an action word with -"
+		def fragments = result.getFragments()
+		fragments.size() == 2
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "param1"
+		parameter.getDefaultValue() == ""
+
+		values.size() == 1
+		values.get(0).getValue() == "<TC_par_m>"
+	}
+
+	def "Should create an ActionWord with 2 parameter values by missing a double quote but found a < character"() {
+		when:
+		ActionWordParser parser = new ActionWordParser()
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with \"param <TCparam>")
+		def values = parser.getParameterValues()
+
+		then:
+		result.createWord() == "This is an action word with \"param1\"\"param2\""
+		result.getToken() == "TPP-This is an action word with -"
+		def fragments = result.getFragments()
+		fragments.size() == 3
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "param1"
+		parameter.getDefaultValue() == ""
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordParameter)
+		ActionWordParameter parameter2 = (ActionWordParameter) f3
+		parameter2.getName() == "param2"
+		parameter2.getDefaultValue() == ""
+
+		values.size() == 2
+		values.get(0).getValue() == "param"
+		values.get(1).getValue() == "<TCparam>"
+	}
+
+	@Unroll
+	def "Should create an ActionWord with 2 parameter values"() {
+		when:
+		ActionWordParser parser = new ActionWordParser()
+		ActionWord result = parser.createActionWordFromKeywordTestStep(word)
+		def values = parser.getParameterValues()
+
+		then:
+		result.createWord() == "This is an action word with \"param1\" \"param2\""
+		result.getToken() == "TPTP-This is an action word with - -"
+		def fragments = result.getFragments()
+		fragments.size() == 4
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "param1"
+		parameter.getDefaultValue() == ""
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordText)
+		((ActionWordText) f3).getText() == " "
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordParameter)
+		ActionWordParameter parameter2 = (ActionWordParameter) f4
+		parameter2.getName() == "param2"
+		parameter2.getDefaultValue() == ""
+
+		values.size() == 2
+		values.get(0).getValue() == "<TC_param>"
+		values.get(1).getValue() == "param"
+
+		where:
+		word << ["This is an action word with <TC param> \"param\"", "This is an action word with <TC param> \"param"]
+	}
+
+	@Unroll
+	def "Should create an ActionWord with 1 parameter values by missing < character but found a double quote "() {
+		when:
+		ActionWordParser parser = new ActionWordParser()
+		ActionWord result = parser.createActionWordFromKeywordTestStep("This is an action word with <TC param \"param")
+		def values = parser.getParameterValues()
+
+		then:
+		result.createWord() == "This is an action word with \"param1\"\"param2\""
+		result.getToken() == "TPP-This is an action word with -"
+		def fragments = result.getFragments()
+		fragments.size() == 3
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		((ActionWordText) f1).getText() == "This is an action word with "
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordParameter)
+		ActionWordParameter parameter = (ActionWordParameter) f2
+		parameter.getName() == "param1"
+		parameter.getDefaultValue() == ""
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordParameter)
+		ActionWordParameter parameter2 = (ActionWordParameter) f3
+		parameter2.getName() == "param2"
+		parameter2.getDefaultValue() == ""
+
+		values.size() == 2
+		values.get(0).getValue() == "<TC_param>"
+		values.get(1).getValue() == "param"
 	}
 
 }

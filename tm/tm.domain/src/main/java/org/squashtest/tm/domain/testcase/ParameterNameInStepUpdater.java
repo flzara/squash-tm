@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 
 import java.util.List;
+
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 
 public class ParameterNameInStepUpdater implements TestStepVisitor {
 
@@ -57,10 +61,14 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 	@Override
 	public void visit(KeywordTestStep visited) {
 		List<ActionWordParameterValue> paramValues = visited.getParamValues();
+		String oldMatchingParamValue = ACTION_WORD_OPEN_GUILLEMET+oldParamName+ACTION_WORD_CLOSE_GUILLEMET;
+		String newMatchingParamValue = ACTION_WORD_OPEN_GUILLEMET+newParamName+ACTION_WORD_CLOSE_GUILLEMET;
+
 		if (paramValues != null) {
 			for (ActionWordParameterValue paramValue : paramValues) {
-				if (paramValue.getValue() != null && paramValue.getValue().startsWith("=")) {
-					paramValue.setValue(paramValue.getValue().replace(oldParamName, newParamName));
+				String currentValue = paramValue.getValue();
+				if (currentValue != null && oldMatchingParamValue.equals(currentValue)) {
+					paramValue.setValue(newMatchingParamValue);
 				}
 			}
 		}

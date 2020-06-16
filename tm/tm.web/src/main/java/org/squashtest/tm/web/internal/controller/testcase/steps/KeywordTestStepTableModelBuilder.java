@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
-import org.squashtest.tm.domain.bdd.ActionWordText;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
 	@Override
@@ -58,24 +60,29 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 
 	private String createWord(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
 		StringBuilder builder = new StringBuilder();
+		Consumer<ActionWordParameter> consumer = parameter -> {
+			appendParamValueToCreateWord(parameter, paramValues, builder);
+		};
+		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
+
 		for (ActionWordFragment fragment : fragments) {
-			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
-				ActionWordText text = (ActionWordText) fragment;
-				builder.append(text.getText());
-			} else {
-				appendParamValueInWord((ActionWordParameter) fragment, paramValues, builder);
-			}
+			fragment.accept(visitor);
 		}
 		return builder.toString();
 	}
 
-	private void appendParamValueInWord(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder builder) {
+	private void appendParamValueToCreateWord(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder builder) {
 		Optional<ActionWordParameterValue> paramValue =
 			paramValues.stream().filter(pv -> pv.getActionWordParam() != null && pv.getActionWordParam().getId().equals(param.getId())).findAny();
 		paramValue.ifPresent(
-			actionWordParameterValue -> builder.append("<span style=\"color: blue;\">")
-				.append(actionWordParameterValue.getValue())
-				.append("</span>")
+			actionWordParameterValue -> addParamValueToBuilder(builder, actionWordParameterValue)
 		);
+	}
+
+	private StringBuilder addParamValueToBuilder(StringBuilder builder, ActionWordParameterValue actionWordParameterValue) {
+		String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(actionWordParameterValue.getValue());
+		return builder.append("<span style=\"color: blue;\">")
+			.append(replaceHTMLCharactersStr)
+			.append("</span>");
 	}
 }

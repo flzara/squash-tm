@@ -25,101 +25,49 @@ import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.addMissingDoubleQuoteIfAny;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM_DEFAULT_VALUE;
 
 /**
  * @author qtran - created on 24/04/2020
  */
 public class ActionWordParser {
 
-	private boolean actionWordHavingText = false;
+	private static final String ACTION_WORD_PARAM_NAME_PREFIX = "param";
+
+	private static final String ACTION_WORD_UNDERSCORE = "_";
+
+	private boolean actionWordHasText = false;
 
 	private List<ActionWordFragment> fragmentList = new ArrayList<>();
 
 	private List<ActionWordParameterValue> parameterValues = new ArrayList<>();
 
-	public ActionWord generateActionWordFromTextWithParamValue(String trimmedWord) {
-		if (trimmedWord.length() > ActionWord.ACTION_WORD_MAX_LENGTH) {
-			throw new IllegalArgumentException("Action word cannot exceed 255 characters.");
-		}
-		//If the input word contains any double quote, do the fragmentation
-		if (trimmedWord.contains("\"")) {
-			//add the missing double quote if any
-			String updateWord = addMissingDoubleQuoteIfAny(trimmedWord);
-			//creating the fragment list
-			createFragmentsWithParamValue(updateWord);
-			//check if the fragment list contains at least one text element
-			if (!actionWordHavingText) {
-				throw new IllegalArgumentException("Action word must contain at least some texts.");
-			}
-		} else {
-			actionWordHavingText = true;
-			//otherwise  --> action word has no parameter
-			ActionWordText text = new ActionWordText(trimmedWord);
-			fragmentList.add(text);
-		}
-		//initiate the action word
-		ActionWord result = new ActionWord(fragmentList);
-		return result;
-	}
+	private StringBuilder actionWordTextBuilder = new StringBuilder();
 
-	private void createFragmentsWithParamValue(String word) {
-		boolean inDoubleQuotes = false;
-		int paramIndex = 0;
-		StringBuilder actionWordText = new StringBuilder();
-		StringBuilder actionWordParamValue = new StringBuilder();
+	private StringBuilder actionWordFreeValueParamValueBuilder = new StringBuilder();
 
-		for (int i = 0; i < word.length(); ++i) {
-			String currentChar = String.valueOf(word.charAt(i));
-			if ("\"".equals(currentChar)) {
-				//end of the current fragment
-				if (inDoubleQuotes) {
-					//this is the value of a param fragment
-					++paramIndex;
-					ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue.toString());
-					fragmentList.add(param);
-					actionWordParamValue.setLength(0);
-				} else if (actionWordText.length() > 0) {
-					//this is a text fragment if the currentChar is not empty
-					fragmentList.add(new ActionWordText(actionWordText.toString()));
-					updateHasTextBoolean();
-					actionWordText.setLength(0);
-				}
-				//change the status in/out of the double quotes
-				inDoubleQuotes = !inDoubleQuotes;
-			} else {
-				if (inDoubleQuotes) {
-					//continue to charge the current actionWordParamValue
-					actionWordParamValue.append(currentChar);
-				} else {
-					//continue to charge the current actionWordText
-					actionWordText.append(currentChar);
-				}
-			}
-		}
+	private StringBuilder actionWordTestCaseParamValueBuilder = new StringBuilder();
 
-		//add the last text
-		if (actionWordText.length() > 0) {
-			//this is a text fragment if the currentChar is not empty
-			fragmentList.add(new ActionWordText(actionWordText.toString()));
-			updateHasTextBoolean();
-		}
-	}
+	private int paramIndex = 0;
 
-	private void updateHasTextBoolean() {
-		if (!actionWordHavingText) {
-			actionWordHavingText = true;
+	private void raiseHasTextFlag() {
+		if (!actionWordHasText) {
+			actionWordHasText = true;
 		}
 	}
 
 	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
 		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
-		String paramName = "param" + paramIndex;
-		ActionWordParameter param = new ActionWordParameter(paramName, "");
+		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
+		ActionWordParameter param = new ActionWordParameter(paramName, ACTION_WORD_PARAM_DEFAULT_VALUE);
 		parameterValues.add(paramValue);
 		return param;
 	}
@@ -128,8 +76,151 @@ public class ActionWordParser {
 		return parameterValues;
 	}
 
-	public void setParameterValues(List<ActionWordParameterValue> parameterValues) {
-		this.parameterValues = parameterValues;
+	public ActionWord createActionWordFromKeywordTestStep(String trimmedInput) {
+		if (trimmedInput.length() > ActionWord.ACTION_WORD_MAX_LENGTH) {
+			throw new IllegalArgumentException("Action word cannot exceed 255 characters.");
+		}
+		if (trimmedInput.isEmpty()) {
+			throw new IllegalArgumentException("Action word cannot be empty.");
+		}
+
+		//If the input word contains any double quote or <, do the fragmentation
+		if (trimmedInput.contains(ACTION_WORD_DOUBLE_QUOTE) || trimmedInput.contains(ACTION_WORD_OPEN_GUILLEMET)) {
+			createFragmentsFromInput(trimmedInput);
+			if (!actionWordHasText) {
+				throw new IllegalArgumentException("Action word must contain at least some texts.");
+			}
+		}
+		//otherwise  --> action word has no parameter, let's save the text input into action word fragment list
+		else {
+			addTextIntoFragments(trimmedInput);
+		}
+		return new ActionWord(fragmentList);
+	}
+
+	private void createFragmentsFromInput(String trimmedInput) {
+		CharState charState = CharState.TEXT;
+
+		for (int i = 0; i < trimmedInput.length(); ++i) {
+			String currentChar = String.valueOf(trimmedInput.charAt(i));
+			charState = treatCurrentChar(currentChar, charState);
+		}
+
+		if (charState == CharState.TEXT) {
+			addTextIntoFragments(actionWordTextBuilder.toString());
+		}
+		else if (charState == CharState.FREE_VALUE) {
+			addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
+		}
+		else {
+			addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
+		}
+	}
+
+	private CharState treatCurrentChar(String currentChar, CharState charState) {
+		switch (charState) {
+			case TEXT:
+				return treatInputInTextState(currentChar);
+			case FREE_VALUE:
+				return treatInputInFreeValueState(currentChar);
+			case TC_PARAM_VALUE:
+				return treatInputInTestCaseParamValueState(currentChar);
+			default:
+				throw new IllegalArgumentException("Invalid action word input");
+		}
+	}
+
+	private CharState treatInputInTestCaseParamValueState(String currentChar) {
+		switch (currentChar) {
+			case ACTION_WORD_CLOSE_GUILLEMET:
+				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
+				return CharState.TEXT;
+			case ACTION_WORD_OPEN_GUILLEMET:
+				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
+				return CharState.TC_PARAM_VALUE;
+			case ACTION_WORD_DOUBLE_QUOTE:
+				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
+				return CharState.FREE_VALUE;
+			default:
+				actionWordTestCaseParamValueBuilder.append(currentChar);
+				return CharState.TC_PARAM_VALUE;
+		}
+	}
+
+	private void addTestCaseParamValueIntoFragments(String tcParamValueInput) {
+		String trimmedWord = tcParamValueInput.trim();
+		if (trimmedWord.isEmpty()) {
+			throw new IllegalArgumentException("Test case parameter name cannot be empty.");
+		}
+		++paramIndex;
+		String actionWordParamValue = createParamValueFromTestCaseParamValueInput(trimmedWord);
+		ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue);
+		fragmentList.add(param);
+		actionWordTestCaseParamValueBuilder.setLength(0);
+	}
+
+	private String createParamValueFromTestCaseParamValueInput(String trimmedWord) {
+		String removedExtraSpaces = ActionWordUtil.formatText(trimmedWord);
+		String replacedInvalidCharsWithUnderscores = removedExtraSpaces.replaceAll("[^\\w-]", ACTION_WORD_UNDERSCORE);
+		return ACTION_WORD_OPEN_GUILLEMET + replacedInvalidCharsWithUnderscores + ACTION_WORD_CLOSE_GUILLEMET;
+	}
+
+	private CharState treatInputInFreeValueState(String currentChar) {
+		switch (currentChar) {
+			case ACTION_WORD_CLOSE_GUILLEMET:
+				throw new IllegalArgumentException("Action word parameter value cannot contain '>' symbol.");
+			case ACTION_WORD_OPEN_GUILLEMET:
+				addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
+				return CharState.TC_PARAM_VALUE;
+			case ACTION_WORD_DOUBLE_QUOTE:
+				addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
+				return CharState.TEXT;
+			default:
+				actionWordFreeValueParamValueBuilder.append(currentChar);
+				return CharState.FREE_VALUE;
+		}
+	}
+
+	private void addFreeValueParamValueIntoFragments(String paramValueInput) {
+		++paramIndex;
+		ActionWordParameter param = initiateActionWordParameter(paramIndex, paramValueInput);
+		fragmentList.add(param);
+		actionWordFreeValueParamValueBuilder.setLength(0);
+	}
+
+	private CharState treatInputInTextState(String currentChar) {
+		switch (currentChar) {
+			case ACTION_WORD_CLOSE_GUILLEMET:
+				throw new IllegalArgumentException("Action word text cannot contain '>' symbol.");
+			case ACTION_WORD_OPEN_GUILLEMET:
+				addTextIntoFragments(actionWordTextBuilder.toString());
+				return CharState.TC_PARAM_VALUE;
+			case ACTION_WORD_DOUBLE_QUOTE:
+				addTextIntoFragments(actionWordTextBuilder.toString());
+				return CharState.FREE_VALUE;
+			default:
+				actionWordTextBuilder.append(currentChar);
+				return CharState.TEXT;
+		}
+	}
+
+	private void addTextIntoFragments(String inputText) {
+		if (!inputText.isEmpty()) {
+			ActionWordText text = new ActionWordText(inputText);
+			fragmentList.add(text);
+			raiseHasTextFlag();
+			actionWordTextBuilder.setLength(0);
+		}
+	}
+
+	enum CharState {
+		TEXT,
+		FREE_VALUE,
+		TC_PARAM_VALUE
+	}
+
+	public boolean doesActionWordHaveText() {
+		return actionWordHasText;
 	}
 }
 

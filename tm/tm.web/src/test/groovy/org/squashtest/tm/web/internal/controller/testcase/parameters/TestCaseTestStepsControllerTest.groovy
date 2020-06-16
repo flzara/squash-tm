@@ -168,8 +168,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		def actionWord2 = Mock(ActionWord)
 		ActionWordText text2 = new ActionWordText("how are ")
 		ActionWordText text3 = new ActionWordText(" ?")
-		ActionWordParameter parameter = Mock()
-		parameter.getId() >> -50L
+		ActionWordParameter parameter = new MockActionWordParameter(-50L)
 		List<ActionWordFragment> fragments2 = new ArrayList<>()
 		fragments2.add(text2)
 		fragments2.add(parameter)
@@ -334,8 +333,24 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L)
 
 		then:
-		NotReadablePropertyException ex = thrown()
-		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
+		IllegalArgumentException ex = thrown()
+		ex.message == "Action word must contain at least some texts."
+	}
+
+	class MockActionWordParameter extends  ActionWordParameter {
+		Long setId
+
+		MockActionWordParameter(Long setId) {
+			this.setId = setId
+		}
+
+		Long getId() {
+			return setId
+		}
+
+		void setId(Long newId) {
+			setId = newId
+		}
 	}
 
 }

@@ -338,7 +338,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value.getKeywordTestStep() == createdTestStep
 	}
 
-	def "should find test case and add a keyword step with new action word containing a param at last position in which the param value starts with a ="() {
+	def "should find test case and add a keyword step with new action word containing a param at last position in which the param value between <>"() {
 		given:
 		long parentTestCaseId = 2
 		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
@@ -361,7 +361,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with \"=   par@m 2 ?  - \"	")
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with <   par@m 2 ?  - >	")
 
 		then:
 		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "this is with \"param1\"" })
@@ -391,7 +391,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		values.size() == 1
 		def valueArray = values
 		ActionWordParameterValue value = valueArray.get(0)
-		value.getValue() == "= par_m_2___-"
+		value.getValue() == "<par_m_2___->"
 		value.getActionWordParam() == param
 		value.getKeywordTestStep() == createdTestStep
 
@@ -494,7 +494,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
 			getFragments() >> fragments
-			getFragmentsByClass(_) >> []
+			getActionWordParams() >> []
 		}
 		def project = Mock(Project)
 
@@ -539,7 +539,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			ActionWordText text = new ActionWordText("last")
 			fragments.add(text)
 			getFragments() >> fragments
-			getFragmentsByClass(_) >> []
+			getActionWordParams() >> []
 		}
 		def project = Mock(Project)
 
@@ -579,7 +579,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText = new ActionWordText("today is ")
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam = new ActionWordParameter("param1", "")
+		def actionWordParam = new ActionWordParameter("param1")
 		actionWordParams.add(actionWordParam)
 
 		inputFragments.add(actionWordText)
@@ -591,7 +591,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			createWord() >> "today is \"param1\""
 			getToken() >> "TP-today is -"
 			getFragments() >> inputFragments
-			getFragmentsByClass(_) >> actionWordParams
+			getActionWordParams() >> actionWordParams
 		}
 		def project = Mock(Project)
 
@@ -648,11 +648,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def actionWordText2 = new ActionWordText(" of ")
 
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam1 = new ActionWordParameter("param1", "")
+		def actionWordParam1 = new ActionWordParameter("param1")
 		actionWordParams.add(actionWordParam1)
-		def actionWordParam2 = new ActionWordParameter("param2", "")
+		def actionWordParam2 = new ActionWordParameter("param2")
 		actionWordParams.add(actionWordParam2)
-		def actionWordParam3 = new ActionWordParameter("param3", "")
+		def actionWordParam3 = new ActionWordParameter("param3")
 		actionWordParams.add(actionWordParam3)
 
 		inputFragments.add(actionWordText1)
@@ -667,7 +667,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
-			getFragmentsByClass(_) >> actionWordParams
+			getActionWordParams() >> actionWordParams
 		}
 		def project = Mock(Project)
 
@@ -742,7 +742,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value3.getKeywordTestStep() == createdTestStep
 	}
 
-	def "should find test case and add keyword step with existing action word containing many parameters in which some start with ="() {
+	def "should find test case and add keyword step with existing action word containing many parameters in which some are between <>"() {
 		given:
 		long parentTestCaseId = 2
 		def inputFragments = new ArrayList<ActionWordFragment>()
@@ -750,11 +750,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def actionWordText2 = new ActionWordText(" of ")
 
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam1 = new ActionWordParameter("param1", "")
+		def actionWordParam1 = new ActionWordParameter("param1")
 		actionWordParams.add(actionWordParam1)
-		def actionWordParam2 = new ActionWordParameter("param2", "")
+		def actionWordParam2 = new ActionWordParameter("param2")
 		actionWordParams.add(actionWordParam2)
-		def actionWordParam3 = new ActionWordParameter("param3", "")
+		def actionWordParam3 = new ActionWordParameter("param3")
 		actionWordParams.add(actionWordParam3)
 
 		inputFragments.add(actionWordText1)
@@ -769,7 +769,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
-			getFragmentsByClass(_) >> actionWordParams
+			getActionWordParams() >> actionWordParams
 		}
 		def project = Mock(Project)
 
@@ -785,7 +785,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"=date\" of  \"May\"\"= Ye@r  \"")
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   <date> of  \"May\"<Ye@r  >")
 
 		then:
 		1 * testStepDao.persist(_)
@@ -830,7 +830,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def values = createdTestStep.paramValues
 		values.size() == 3
 		ActionWordParameterValue value1 = values.get(0)
-		value1.getValue() == "= date"
+		value1.getValue() == "<date>"
 		value1.getActionWordParam() == param1
 		value1.getKeywordTestStep() == createdTestStep
 
@@ -840,7 +840,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value2.getKeywordTestStep() == createdTestStep
 
 		ActionWordParameterValue value3 = values.get(2)
-		value3.getValue() == "= Ye_r"
+		value3.getValue() == "<Ye_r>"
 		value3.getActionWordParam() == param3
 		value3.getKeywordTestStep() == createdTestStep
 

@@ -252,7 +252,13 @@ public class TestCaseTestStepsController {
 	public Long addKeywordTestStep(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
 		validateDto(keywordTestStepDto);
 		String keyword = keywordTestStepDto.getKeyword();
+		if (keyword == null) {
+			throw new IllegalArgumentException("Keyword cannot be null.");
+		}
 		String actionWord = keywordTestStepDto.getActionWord();
+		if (actionWord == null) {
+			throw new IllegalArgumentException("Action word cannot be null.");
+		}
 		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		return step.getId();
 	}
