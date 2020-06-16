@@ -41,6 +41,8 @@ import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
+import org.squashtest.tm.domain.bdd.BddScriptLanguage;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.AdministrableProject;
@@ -72,12 +74,14 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -160,6 +164,9 @@ public class ProjectAdministrationController {
 		availablePermissions.sort(Comparator.comparing(it -> internationalizationHelper.internationalize(
 			"user.project-rights." + it.getSimpleName() + ".label", locale)));
 
+		// BDD technologies and language
+
+
 		// Automation workflows
 		Map<String, String> automationWorkflows = getAvailableWorkflows(projectId, locale);
 		//if the automation plugin used checks if there is a configuration
@@ -193,27 +200,73 @@ public class ProjectAdministrationController {
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("jobUrls", jobUrls);
-		mav.addObject("adminproject", adminProject);
 		mav.addObject("templatesList", templatesList);
-		mav.addObject("availableTAServers", availableTAServers);
-		mav.addObject("availableScmServers", availableScmServers);
+		mav.addObject("userLicenseInformationData", userLicenseInformation);
+		// information panel
+		mav.addObject("adminproject", adminProject);
+		// bugtracker panel
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
+		// permission panel
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
-		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
-		mav.addObject("allowedStatuses", allowedStatuses);
+		// execution option panel
 		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
-		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
-		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
-		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
-		mav.addObject("userLicenseInformationData", userLicenseInformation);
-		mav.addObject("availableAutomationWorkflows", automationWorkflows);
+		// status option panel
+		mav.addObject("allowedStatuses", allowedStatuses);
+		// test automation management panel
+		mav.addObject("availableBddImplTechnologies", getAvailableBddImplTechnologies(locale));
+		mav.addObject("chosenBddImplTechnology", adminProject.getProject().getBddImplementationTechnology().name());
+		mav.addObject("availableBddScriptLanguages", getAvailableBddScriptLanguages(locale));
+		mav.addObject("chosenBddScriptLanguage", adminProject.getProject().getBddScriptLanguage().name());
 		mav.addObject("pluginAutomHasConf", pluginAutomHasConf);
+		mav.addObject("allowAutomationWorkflow", adminProject.allowAutomationWorkflow());
+		mav.addObject("chosenAutomationWorkflow", adminProject.getAutomationWorkflowType().getI18nKey());
+		mav.addObject("availableAutomationWorkflows", automationWorkflows);
+		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
+		mav.addObject("availableTAServers", availableTAServers);
+		mav.addObject("availableScmServers", availableScmServers);
+		// attachment panel
+		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 
 		return mav;
 	}
 
+	/**
+	 * Get all the available BddImplementationTechnologies as a Map.
+	 * The Keys are the Enum {@linkplain BddImplementationTechnology} names
+	 * and the values are the PascalCase translated values.
+	 * @param locale The locale for translation
+	 * @return The Map of the available BddImplementationTechnologies
+	 */
+	private Map<String, String> getAvailableBddImplTechnologies(Locale locale) {
+		return Arrays
+			.stream(BddImplementationTechnology.values())
+			.collect(Collectors.toMap(
+				BddImplementationTechnology::name,
+				bddImplTech -> internationalizationHelper.internationalize(
+					bddImplTech.getI18nKey(),
+					locale)));
+	}
+
+	/**
+	 * Get all the available BddScriptLanguages as a Map.
+	 * The Keys are the Enum {@linkplain BddScriptLanguage} names
+	 * and the values are the PascalCase translated values.
+	 * @param locale The locale for translation
+	 * @return The Map of the available BddScriptLanguages
+	 */
+	private Map<String, String> getAvailableBddScriptLanguages(Locale locale) {
+		return Arrays
+			.stream(BddScriptLanguage.values())
+			.collect(Collectors.toMap(
+				BddScriptLanguage::name,
+				bddScriptLanguage -> internationalizationHelper.internationalize(
+					bddScriptLanguage.getI18nKey(),
+					locale
+				)
+			));
+	}
 	/**
 	 *  Get all the available activated AutomationWorkflow Plugins for the given Project.
 	 * @param projectId The Project Id.

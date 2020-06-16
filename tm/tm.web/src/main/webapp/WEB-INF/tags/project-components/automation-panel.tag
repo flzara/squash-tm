@@ -61,9 +61,45 @@
       <c:set var="chosenAutomationWorkflow" value="NATIVE"/>
 </c:if>
 
+<c:set var="chosenBddImplTechnology" value="${chosenBddImplTechnology}" />
+<c:set var="chosenBddScriptLanguage" value="${chosenBddScriptLanguage}" />
+
 <comp:toggle-panel id="test-automation-management-panel" titleKey="project.testauto.panel.title" open="true">
 
   <jsp:attribute name="body">
+
+    <!-- BDD Script Technology -->
+    <div id="project-bdd-implementation-technology" class="display-table">
+      <div class="display-table-row">
+        <div class="display-table-cell">
+          <label class="display-table-cell">
+            <f:message key="label.project.bdd.implementation-technology" />
+          </label>
+        </div>
+        <div class="display-table-cell">
+          <div id="project-bdd-implementation-technology-select" style="display: inline;">
+            <c:out value="${availableBddImplTechnologies[chosenBddImplTechnology]}" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- BDD Script Language -->
+    <div id="project-bdd-script-language" class="display-table">
+      <div class="display-table-row">
+        <div class="display-table-cell">
+          <label class="display-table-cell">
+            <f:message key="label.project.bdd.script-language" />
+          </label>
+        </div>
+        <div class="display-table-cell">
+          <div id="project-bdd-script-language-select" style="display: inline;">
+            <c:out value="${availableBddScriptLanguages[chosenBddScriptLanguage]}" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br/>
 
     <!-- Automation Workflow Menu -->
     <div id="project-workflow-option-table" class="display-table">
@@ -484,9 +520,13 @@ require(["common"], function() {
           tmProjectURL : "${projectUrl}",
           availableServers: ${json:serialize(availableTAServers)},
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
-          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
           pluginAutomHasConf:"${pluginAutomHasConf}",
-          availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)}
+          availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)},
+          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          availableBddImplTechnologies: ${json:serialize(availableBddImplTechnologies)},
+          chosenBddImplTechnology: "${chosenBddImplTechnology}",
+          availableBddScriptLanguages: ${json:serialize(availableBddScriptLanguages)},
+          chosenBddScriptLanguage: "${chosenBddScriptLanguage}"
         };
 
         automationBlock.init(automationSettings);

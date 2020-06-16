@@ -44,6 +44,8 @@ import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
+import org.squashtest.tm.domain.bdd.BddScriptLanguage;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
@@ -1304,5 +1306,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			}
 					}
 		return isProjectUsingWorkflow;
+	}
+
+	@Override
+	public void changeBddImplTechnology(long projectId, String bddImplTechnology) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setBddImplementationTechnology(BddImplementationTechnology.valueOf(bddImplTechnology));
+	}
+
+	@Override
+	public void changeBddScriptLanguage(long projectId, String bddScriptLanguage) {
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setBddScriptLanguage(BddScriptLanguage.valueOf((bddScriptLanguage)));
 	}
 }

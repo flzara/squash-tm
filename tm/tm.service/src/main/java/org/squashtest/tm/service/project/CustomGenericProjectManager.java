@@ -316,4 +316,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void changeUseTreeStructureInScmRepo(long projectId, boolean activated);
 
 	boolean isProjectUsingWorkflow(long projectId);
+
+	void changeBddImplTechnology(long projectId, String bddImplTechnology);
+
+	void changeBddScriptLanguage(long projectId, String bddScriptLanguage);
 }

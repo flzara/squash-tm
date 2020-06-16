@@ -24,6 +24,8 @@ import org.hibernate.Session
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.actionword.ActionWordLibrary
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology
+import org.squashtest.tm.domain.bdd.BddScriptLanguage
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.customreport.CustomReportLibrary
@@ -774,5 +776,28 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		def result = manager.isProjectUsingWorkflow(9L)
 		then:
 		result == false
+	}
+
+	@Ignore(value = "Will be testable when another BddImplementationTechnology will be added")
+	def "#changeBddImplTechnology(long, String) - Should change the project Bdd Implementation Technology"() {
+		given:
+			Project project = new Project()
+			project.bddImplementationTechnology = BddImplementationTechnology.ROBOT
+			genericProjectDao.getOne(4L) >> project
+		when:
+			manager.changeBddImplTechnology(4L, "CUCUMBER")
+		then:
+			project.getBddImplementationTechnology() == BddImplementationTechnology.CUCUMBER
+	}
+
+	def "#changeBddScriptLanguage(long, String) - Should change the project Bdd Script Language"() {
+		given:
+			Project project = new Project()
+			project.bddScriptLanguage = BddScriptLanguage.SPANISH
+			genericProjectDao.getOne(4L) >> project
+		when:
+			manager.changeBddScriptLanguage(4L, "FRENCH")
+		then:
+			project.getBddScriptLanguage() == BddScriptLanguage.FRENCH
 	}
 }

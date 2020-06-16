@@ -22,9 +22,13 @@ package org.squashtest.tm.service.project
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology
+import org.squashtest.tm.domain.bdd.BddScriptLanguage
+import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -78,5 +82,28 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 			customGenericProjectManager.persist(project)
 		then:
 			thrown NameAlreadyInUseException
+	}
+
+	@Ignore(value = "Will be testable when another BddImplementationTechnology will be added")
+	def "#changeBddImplementationTechnology(long, String) - Should change the project Bdd Implementation Technology"() {
+		when:
+		"setup"
+		then:
+		genericProjectFinder.findById(-1L).bddScriptLanguage == BddImplementationTechnology.ROBOT
+		when:
+		customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
+		then:
+		genericProjectFinder.findById(-1L).bddScriptLanguage == BddImplementationTechnology.CUCUMBER
+	}
+
+	def "#changeBddScriptLanguage(long, String) - Should change the project Bdd Script Language"() {
+		when:
+			"setup"
+		then:
+			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.FRENCH
+		when:
+			customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
+		then:
+			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.GERMAN
 	}
 }

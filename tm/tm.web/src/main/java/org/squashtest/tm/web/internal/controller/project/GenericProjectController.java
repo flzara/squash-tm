@@ -446,6 +446,20 @@ public class GenericProjectController {
 
 	}
 
+	/* ------- BDD Technology and Language ------- */
+
+	@ResponseBody
+	@RequestMapping(value = PROJECT_ID_URL + "/bdd-impl-technology", method = RequestMethod.POST)
+	public void changeBddImplTechnology(@PathVariable long projectId, @RequestParam String bddImplTechnology) {
+		projectManager.changeBddImplTechnology(projectId, bddImplTechnology);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = PROJECT_ID_URL + "/bdd-script-language", method = RequestMethod.POST)
+	public void changeBddScriptLanguage(@PathVariable long projectId, @RequestParam String bddScriptLanguage) {
+		projectManager.changeBddScriptLanguage(projectId, bddScriptLanguage);
+	}
+
 	/* ------- Scm Serves & Repositories ------ */
 
 	@RequestMapping(value = PROJECT_ID_URL + "/scm-repository", method = RequestMethod.POST)
