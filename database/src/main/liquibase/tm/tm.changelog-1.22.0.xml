@@ -836,4 +836,15 @@
   </changeSet>
 
 
+  <changeSet id="tm-1.22.0-SQUASH-291-bdd-impl-techno-and-language" author="jlor">
+    <addColumn tableName="PROJECT">
+      <column name="BDD_IMPLEMENTATION_TECHNOLOGY" type="VARCHAR(30)" defaultValue="CUCUMBER">
+        <constraints nullable="false" />
+      </column>
+      <column name="BDD_SCRIPT_LANGUAGE" type="VARCHAR(30)" defaultValue="ENGLISH">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

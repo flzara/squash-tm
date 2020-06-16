@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.bdd.BddScriptLanguage;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -169,6 +171,14 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	@ManyToMany(mappedBy = "projects")
 	private Set<Milestone> milestones = new HashSet<>();
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private BddImplementationTechnology bddImplementationTechnology = BddImplementationTechnology.CUCUMBER;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private BddScriptLanguage bddScriptLanguage = BddScriptLanguage.ENGLISH;
 
 	private boolean allowTcModifDuringExec = false;
 
@@ -542,5 +552,19 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	public void setAutomationWorkflowType(AutomationWorkflowType automationWorkflowType) {
 		this.automationWorkflowType = automationWorkflowType;
+	}
+
+	public BddImplementationTechnology getBddImplementationTechnology() {
+		return bddImplementationTechnology;
+	}
+	public void setBddImplementationTechnology(BddImplementationTechnology bddImplementationTechnology) {
+		this.bddImplementationTechnology = bddImplementationTechnology;
+	}
+
+	public BddScriptLanguage getBddScriptLanguage() {
+		return bddScriptLanguage;
+	}
+	public void setBddScriptLanguage(BddScriptLanguage bddScriptLanguage) {
+		this.bddScriptLanguage = bddScriptLanguage;
 	}
 }
