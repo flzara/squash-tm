@@ -21,9 +21,11 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.hibernate.annotations.Type;
+import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
+import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Entity
 @Auditable
@@ -58,6 +61,14 @@ public class ActionWord implements ActionWordTreeEntity {
 	public static final String ACTION_WORD_TEXT_TOKEN = "T";
 
 	public static final String ACTION_WORD_PARAM_TOKEN = "P";
+
+	public static final String ACTION_WORD_DOUBLE_QUOTE = "\"";
+
+	public static final String ACTION_WORD_OPEN_GUILLEMET = "<";
+
+	public static final String ACTION_WORD_CLOSE_GUILLEMET = ">";
+
+	private static final String ACTION_WORD_TOKEN_TEXT_SEPARATOR = "-";
 
 	@Id
 	@Column(name = "ACTION_WORD_ID")
@@ -96,66 +107,49 @@ public class ActionWord implements ActionWordTreeEntity {
 		setToken(generateToken());
 	}
 
-/*	public ActionWord(String word) {
-		if (StringUtils.isBlank(word)) {
-			throw new IllegalArgumentException("Action word cannot be blank.");
-		}
-		String trimmedWord = word.trim();
-		if (trimmedWord.length() > ACTION_WORD_MAX_LENGTH) {
-			throw new IllegalArgumentException("Action word length cannot exceed 255 characters.");
-		}
-		this.word = trimmedWord;
-		this.token = ACTION_WORD_TEXT_TOKEN + "-" + ActionWordUtil.formatText(trimmedWord) + "-";
-	}*/
-
-/*	public ActionWord(String word, String token) {
-		this(word);
-		setToken(token);
-	}*/
-
 	public String createWord() {
 		StringBuilder builder = new StringBuilder();
+		Consumer<ActionWordParameter> consumer = parameter -> {
+			builder.append(ACTION_WORD_DOUBLE_QUOTE).append(parameter.getName()).append(ACTION_WORD_DOUBLE_QUOTE);
+		};
+		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 		for (ActionWordFragment fragment : fragments) {
-			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
-				ActionWordText text = (ActionWordText) fragment;
-				builder.append(text.getText());
-			} else {
-				ActionWordParameter parameter = (ActionWordParameter) fragment;
-				builder.append("\"").append(parameter.getName()).append("\"");
-			}
+			fragment.accept(visitor);
 		}
 		return builder.toString();
 	}
 
 	public String createWordWithDefaultValues() {
 		StringBuilder builder = new StringBuilder();
+		Consumer<ActionWordParameter> consumer = parameter -> {
+			builder.append(ACTION_WORD_DOUBLE_QUOTE).append(parameter.getDefaultValue()).append(ACTION_WORD_DOUBLE_QUOTE);
+		};
+		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 		for (ActionWordFragment fragment : fragments) {
-			if (ActionWordText.class.isAssignableFrom(fragment.getClass())){
-				ActionWordText text = (ActionWordText) fragment;
-				builder.append(text.getText());
-			} else {
-				ActionWordParameter parameter = (ActionWordParameter) fragment;
-				builder.append("\"").append(parameter.getDefaultValue()).append("\"");
-			}
+			fragment.accept(visitor);
 		}
 		return builder.toString();
 	}
 
-
-
 	public String generateToken() {
-		StringBuilder builder1 = new StringBuilder();
-		StringBuilder builder2 = new StringBuilder("-");
-		for (ActionWordFragment fragment : fragments) {
-			if (ActionWordParameter.class.isAssignableFrom(fragment.getClass())) {
-				builder1.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
-			} else {
-				builder1.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
-				ActionWordText text = (ActionWordText) fragment;
-				builder2.append(text.getText()).append("-");
+		StringBuilder prefixTokenBuilder = new StringBuilder();
+		StringBuilder textTokenBuilder = new StringBuilder(ACTION_WORD_TOKEN_TEXT_SEPARATOR);
+		ActionWordFragmentVisitor visitor = new ActionWordFragmentVisitor() {
+			@Override
+			public void visit(ActionWordText text) {
+				prefixTokenBuilder.append(ActionWord.ACTION_WORD_TEXT_TOKEN);
+				textTokenBuilder.append(text.getText()).append(ACTION_WORD_TOKEN_TEXT_SEPARATOR);
 			}
+
+			@Override
+			public void visit(ActionWordParameter parameter) {
+				prefixTokenBuilder.append(ActionWord.ACTION_WORD_PARAM_TOKEN);
+			}
+		};
+		for (ActionWordFragment fragment : fragments) {
+			fragment.accept(visitor);
 		}
-		return builder1.append(builder2).toString();
+		return prefixTokenBuilder.append(textTokenBuilder).toString();
 	}
 
 	public Long getId() {
@@ -186,12 +180,42 @@ public class ActionWord implements ActionWordTreeEntity {
 		keywordTestSteps.add(keywordTestStep);
 	}
 
-	public <T extends ActionWordFragment> List<T> getFragmentsByClass(Class<T> actionWordFragmentClass) {
-		List<T> result = new ArrayList<>();
-		for (ActionWordFragment fragment : getFragments()) {
-			if (actionWordFragmentClass.isAssignableFrom(fragment.getClass())) {
-				result.add((T) fragment);
+	public List<ActionWordParameter> getActionWordParams() {
+		List<ActionWordParameter> result = new ArrayList<>();
+		ActionWordFragmentVisitor visitor = new ActionWordFragmentVisitor() {
+			@Override
+			public void visit(ActionWordText text) {
+				//NOOP
 			}
+
+			@Override
+			public void visit(ActionWordParameter parameter) {
+				result.add(parameter);
+			}
+		};
+
+		for (ActionWordFragment fragment : getFragments()) {
+			fragment.accept(visitor);
+		}
+		return result;
+	}
+
+	public List<ActionWordText> getActionWordTexts() {
+		List<ActionWordText> result = new ArrayList<>();
+		ActionWordFragmentVisitor visitor = new ActionWordFragmentVisitor() {
+			@Override
+			public void visit(ActionWordText text) {
+				result.add(text);
+			}
+
+			@Override
+			public void visit(ActionWordParameter parameter) {
+				//NOOP
+			}
+		};
+
+		for (ActionWordFragment fragment : getFragments()) {
+			fragment.accept(visitor);
 		}
 		return result;
 	}

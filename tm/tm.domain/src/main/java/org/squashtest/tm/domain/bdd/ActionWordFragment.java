@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd;
 
+import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 import javax.persistence.Column;
@@ -72,4 +73,6 @@ public abstract class ActionWordFragment {
 	public void setActionWord(ActionWord actionWord) {
 		this.actionWord = actionWord;
 	}
+
+	public abstract void accept(ActionWordFragmentVisitor visitor);
 }

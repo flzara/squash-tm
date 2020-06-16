@@ -46,7 +46,7 @@ class ActionWordTest extends Specification {
 	def "should create an ActionWord with some fragments"() {
 		given:
 			def fragment1 = new ActionWordText("An action word with a ")
-			def fragment2 = new ActionWordParameter("name1", "")
+			def fragment2 = new ActionWordParameter("name1")
 			def fragment3 = new ActionWordText(" parameter !")
 		when:
 			ActionWord actionWord = new ActionWord([fragment1, fragment2, fragment3] as List)

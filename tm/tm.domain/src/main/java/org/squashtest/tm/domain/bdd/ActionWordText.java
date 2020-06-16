@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 
 import javax.persistence.Column;
@@ -29,6 +30,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 
 /**
  * @author qtran - created on 27/04/2020
@@ -45,18 +50,28 @@ public class ActionWordText extends ActionWordFragment {
 	public ActionWordText() {
 	}
 
+	@Override
+	public void accept(ActionWordFragmentVisitor visitor) {
+		visitor.visit(this);
+	}
+
 	public ActionWordText(String text) {
 		if (StringUtils.isEmpty(text)) {
 			throw new IllegalArgumentException("Action word text cannot be empty.");
 		}
-		if (text.contains("\"")) {
+		if (text.contains(ACTION_WORD_DOUBLE_QUOTE)) {
 			throw new IllegalArgumentException("Action word text cannot contain double quote.");
 		}
-
-		//Action word text can have space at the beginning or at the end; so do not trim it!
+		if (text.contains(ACTION_WORD_OPEN_GUILLEMET)) {
+			throw new IllegalArgumentException("Action word text cannot contain '<' symbol.");
+		}
+		if (text.contains(ACTION_WORD_CLOSE_GUILLEMET)) {
+			throw new IllegalArgumentException("Action word text cannot contain '>' symbol.");
+		}
 		if (text.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 			throw new IllegalArgumentException("Action word text length cannot exceed 255 characters.");
 		}
+		//Action word text can have space at the beginning or at the end; so DO NOT trim it!
 		this.text = ActionWordUtil.formatText(text);
 	}
 

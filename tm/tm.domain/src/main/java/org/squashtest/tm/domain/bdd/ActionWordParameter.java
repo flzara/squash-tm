@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.bdd;
 
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.Parameter;
 
@@ -34,6 +35,8 @@ import javax.validation.constraints.Size;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
+
 /**
  * @author qtran - created on 27/04/2020
  */
@@ -42,6 +45,7 @@ import java.util.regex.Pattern;
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 public class ActionWordParameter extends ActionWordFragment {
 
+	public static final String ACTION_WORD_PARAM_DEFAULT_VALUE = "";
 
 	@NotBlank
 	@Column(name = "NAME")
@@ -57,6 +61,11 @@ public class ActionWordParameter extends ActionWordFragment {
 	public ActionWordParameter() {
 	}
 
+	@Override
+	public void accept(ActionWordFragmentVisitor visitor) {
+		visitor.visit(this);
+	}
+
 	public ActionWordParameter(String name, String defaultValue) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Action word parameter name cannot be blank.");
@@ -68,18 +77,23 @@ public class ActionWordParameter extends ActionWordFragment {
 		checkIfParamNameIsValid(trimmedName);
 		this.name = trimmedName;
 
-		if (StringUtils.isNotEmpty(defaultValue)) {
-			if (defaultValue.contains("\"")) {
+		String trimmedDefaultValue = defaultValue.trim();
+		if (StringUtils.isNotEmpty(trimmedDefaultValue)) {
+			if (defaultValue.contains(ACTION_WORD_DOUBLE_QUOTE)) {
 				throw new IllegalArgumentException("Action word parameter default value cannot contain double quote.");
 			}
-			String trimmedDefaultValue = defaultValue.trim();
+
 			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 				throw new IllegalArgumentException("Action word parameter default value length cannot exceed 255 characters.");
 			}
 			this.defaultValue = ActionWordUtil.formatText(trimmedDefaultValue);
 		} else {
-			this.defaultValue = "";
+			this.defaultValue = ACTION_WORD_PARAM_DEFAULT_VALUE;
 		}
+	}
+
+	public ActionWordParameter(String name) {
+		this(name, ACTION_WORD_PARAM_DEFAULT_VALUE);
 	}
 
 	private void checkIfParamNameIsValid(String trimmedName) {

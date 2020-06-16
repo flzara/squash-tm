@@ -37,6 +37,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM_DEFAULT_VALUE;
+
 /**
  * @author qtran - created on 27/04/2020
  */
@@ -78,7 +80,7 @@ public class ActionWordParameterValue {
 			}
 			this.value = ActionWordUtil.formatText(trimmedValue);
 		} else {
-			this.value = "";
+			this.value = ACTION_WORD_PARAM_DEFAULT_VALUE;
 		}
 	}
 
