@@ -57,6 +57,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		result == "# language: en\nFeature: Disconnection test"
 	}
 
+	//TODO-QUAN
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		given:
 		KeywordTestCase keywordTestCase = new KeywordTestCase()

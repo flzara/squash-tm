@@ -20,9 +20,15 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
+import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordFragment;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -33,6 +39,10 @@ import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -73,7 +83,7 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 	@Override
 	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
-		//TODO: get Testcase's project for further functions: get project techno and language
+		//TODO-QUAN: get Testcase's project for further functions: get project techno and language
 		String language = "en";
 		Locale locale = new Locale(language);
 		String testCaseName = keywordTestCase.getName();
@@ -93,16 +103,64 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		builder.append("\tScenario: ").append(testCaseName).append("\n");
 		for(TestStep step : testSteps) {
 			KeywordTestStep keywordStep = (KeywordTestStep) step;
+			String stepActionWordScript = generateScriptFromActionWord(keywordStep);
 			String InternationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
 			builder
 				.append("\t\t")
 				.append(InternationalizedKeyword)
 				.append(" ")
-				.append(keywordStep.getActionWord().createWord())
+				.append(stepActionWordScript)
 				.append("\n");
 		}
 		String testStepScript = builder.toString();
+		//remove the last empty line
 		return testStepScript.substring(0, testStepScript.length()-1);
+	}
+
+	private String generateScriptFromActionWord(KeywordTestStep keywordTestStep) {
+		ActionWord actionWord = keywordTestStep.getActionWord();
+		List<ActionWordFragment> fragments = actionWord.getFragments();
+		List<ActionWordParameterValue> paramValues = keywordTestStep.getParamValues();
+		return generateStepScriptFromActionWordFragments(fragments, paramValues);
+	}
+
+	private String generateStepScriptFromActionWordFragments(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
+		StringBuilder builder = new StringBuilder();
+		Consumer<ActionWordParameter> consumer = parameter -> {
+			appendParamValueToGenerateScript(parameter, paramValues, builder);
+		};
+		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
+
+		for (ActionWordFragment fragment : fragments) {
+			fragment.accept(visitor);
+		}
+		return builder.toString();
+	}
+
+	private void appendParamValueToGenerateScript(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder builder) {
+		Optional<ActionWordParameterValue> paramValue =
+			paramValues.stream().filter(pv -> pv.getActionWordParam() != null && pv.getActionWordParam().getId().equals(param.getId())).findAny();
+		paramValue.ifPresent(
+			actionWordParameterValue -> updateBuilderWithParamValue(builder, actionWordParameterValue)
+		);
+	}
+
+	private StringBuilder updateBuilderWithParamValue(StringBuilder builder, ActionWordParameterValue actionWordParameterValue) {
+		String paramValue = actionWordParameterValue.getValue();
+		if ("\"\"".equals(paramValue)) {
+			return builder.append(paramValue);
+		}
+
+		Pattern pattern = Pattern.compile("<[^\"]+>");
+		Matcher matcher = pattern.matcher(paramValue);
+		if (matcher.matches()) {
+			//TODO-QUAN: to show the script content temporarily on page. To be removed when script is generated on file
+			String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(paramValue);
+			return builder.append(replaceHTMLCharactersStr);
+		}
+		return builder.append("\"")
+			.append(paramValue)
+			.append("\"");
 	}
 
 	private String generateScript(String testCaseName, String stepScript, String language) {
