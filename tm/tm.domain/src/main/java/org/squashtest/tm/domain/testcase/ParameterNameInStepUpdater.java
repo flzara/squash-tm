@@ -66,7 +66,7 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 		if (paramValues != null) {
 			for (ActionWordParameterValue paramValue : paramValues) {
 				String currentValue = paramValue.getValue();
-				if (currentValue != null && oldMatchingParamValue.equals(currentValue)) {
+				if (oldMatchingParamValue.equals(currentValue)) {
 					paramValue.setValue(newMatchingParamValue);
 				}
 			}

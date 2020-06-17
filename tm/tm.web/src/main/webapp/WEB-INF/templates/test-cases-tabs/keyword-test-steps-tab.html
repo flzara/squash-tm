@@ -43,7 +43,7 @@
         <div class="display-table-cell" style="padding-right: 1px;">
           <label>Add your keyword test step</label>
           <select id="keyword-input">
-            <option th:each="keyword : ${keywordList}" th:text="${keyword}">Given|When|Then|And|But</option>
+            <option th:each="keyword : ${keywordMap}" th:value="${keyword.key}" th:text="${keyword.value}">Given|When|Then|And|But</option>
           </select>
         </div>
         <div class="display-table-cell" style="padding-left: 1px;">
@@ -142,7 +142,7 @@
           testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
           rootContext : /*[[@{/}]]*/"/squash",
           stepData : /*[[${stepData}]]*/[],
-          keywordList : /*[[${keywordList}]]*/[],
+          keywordMap : /*[[${keywordMap}]]*/[],
           testCaseId : /*[[${testCase.id}]]*/1,
           projectId : /*[[${projectId}]]*/4,
           isAutocompleteActive: /*[[${isAutocompleteActive}]]*/false,
@@ -152,7 +152,7 @@
           permissions : {
             isWritable : /*[[${isWritable}]]*/true,
             isLinkable : /*[[${isLinkable}]]*/true,
-            isAttachable : /*[[${isAttachable}]]*/true
+            isAttachable : /*[[${isAttachable}]]*/true,
           }
         };
         testCaseManagement.initKeywordTestStepTablePanel(settings);

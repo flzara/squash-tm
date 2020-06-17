@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -74,6 +75,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -242,7 +244,7 @@ public class TestCaseTestStepsController {
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
-		model.addAttribute("keywordList", Keyword.values());
+		model.addAttribute("keywordMap", createKeywordMap());
 		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
@@ -348,10 +350,11 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(value = "/{stepId}/keyword", method = RequestMethod.POST, params = {"id", VALUE})
 	@ResponseBody
-	public void changeStepKeyword(@PathVariable long stepId, @RequestParam(VALUE) String keyword) {
+	public String changeStepKeyword(@PathVariable long stepId, @RequestParam(VALUE) String keyword) {
 		Keyword updatedKeyword = Keyword.valueOf(keyword);
 		testCaseModificationService.updateKeywordTestStep(stepId, updatedKeyword);
 		LOGGER.trace("TestCaseModificationController : updated keyword for step {}", stepId);
+		return internationalizationHelper.internationalize(updatedKeyword.i18nKeywordNameKey(), LocaleContextHolder.getLocale());
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
@@ -360,5 +363,13 @@ public class TestCaseTestStepsController {
 			models.add(converter.toJson(field));
 		}
 		return models;
+	}
+
+	private EnumMap<Keyword, String> createKeywordMap() {
+		EnumMap<Keyword, String> keywordMap = new EnumMap<>(Keyword.class);
+		for (Keyword keyword : Keyword.values()) {
+			keywordMap.put(keyword, internationalizationHelper.internationalize(keyword.i18nKeywordNameKey(), LocaleContextHolder.getLocale()));
+		}
+		return keywordMap;
 	}
 }
