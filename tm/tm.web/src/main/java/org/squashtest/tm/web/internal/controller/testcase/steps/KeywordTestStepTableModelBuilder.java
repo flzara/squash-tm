@@ -60,9 +60,9 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 
 	private String createWord(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
 		StringBuilder builder = new StringBuilder();
-		Consumer<ActionWordParameter> consumer = parameter -> {
+		Consumer<ActionWordParameter> consumer = parameter ->
 			appendParamValueToCreateWord(parameter, paramValues, builder);
-		};
+
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 
 		for (ActionWordFragment fragment : fragments) {

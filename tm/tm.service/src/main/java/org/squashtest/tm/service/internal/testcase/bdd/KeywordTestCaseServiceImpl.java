@@ -126,9 +126,9 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 	private String generateStepScriptFromActionWordFragments(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
 		StringBuilder builder = new StringBuilder();
-		Consumer<ActionWordParameter> consumer = parameter -> {
+		Consumer<ActionWordParameter> consumer = parameter ->
 			appendParamValueToGenerateScript(parameter, paramValues, builder);
-		};
+		
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 
 		for (ActionWordFragment fragment : fragments) {

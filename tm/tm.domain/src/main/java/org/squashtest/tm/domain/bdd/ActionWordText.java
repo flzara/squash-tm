@@ -50,11 +50,6 @@ public class ActionWordText extends ActionWordFragment {
 	public ActionWordText() {
 	}
 
-	@Override
-	public void accept(ActionWordFragmentVisitor visitor) {
-		visitor.visit(this);
-	}
-
 	public ActionWordText(String text) {
 		if (StringUtils.isEmpty(text)) {
 			throw new IllegalArgumentException("Action word text cannot be empty.");
@@ -73,6 +68,11 @@ public class ActionWordText extends ActionWordFragment {
 		}
 		//Action word text can have space at the beginning or at the end; so DO NOT trim it!
 		this.text = ActionWordUtil.formatText(text);
+	}
+
+	@Override
+	public void accept(ActionWordFragmentVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	public String getText() {

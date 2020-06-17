@@ -109,9 +109,9 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	public String createWord() {
 		StringBuilder builder = new StringBuilder();
-		Consumer<ActionWordParameter> consumer = parameter -> {
+		Consumer<ActionWordParameter> consumer = parameter ->
 			builder.append(ACTION_WORD_DOUBLE_QUOTE).append(parameter.getName()).append(ACTION_WORD_DOUBLE_QUOTE);
-		};
+
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 		for (ActionWordFragment fragment : fragments) {
 			fragment.accept(visitor);
@@ -121,9 +121,9 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	public String createWordWithDefaultValues() {
 		StringBuilder builder = new StringBuilder();
-		Consumer<ActionWordParameter> consumer = parameter -> {
+		Consumer<ActionWordParameter> consumer = parameter ->
 			builder.append(ACTION_WORD_DOUBLE_QUOTE).append(parameter.getDefaultValue()).append(ACTION_WORD_DOUBLE_QUOTE);
-		};
+
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, builder);
 		for (ActionWordFragment fragment : fragments) {
 			fragment.accept(visitor);

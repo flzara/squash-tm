@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 
 import java.util.List;

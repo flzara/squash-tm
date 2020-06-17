@@ -135,6 +135,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.WRITE_PARENT_TC_OR_ROLE_ADMIN;
@@ -396,7 +398,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			datasetModificationService.cascadeDatasetsUpdate(parentTestCase.getId());
 		}
 		//re-add < and > for display
-		return "<" + newParamName + ">";
+		return ACTION_WORD_OPEN_GUILLEMET + newParamName + ACTION_WORD_CLOSE_GUILLEMET;
 	}
 
 	private String generateTestCaseParameter(String valueStr) {

@@ -61,11 +61,6 @@ public class ActionWordParameter extends ActionWordFragment {
 	public ActionWordParameter() {
 	}
 
-	@Override
-	public void accept(ActionWordFragmentVisitor visitor) {
-		visitor.visit(this);
-	}
-
 	public ActionWordParameter(String name, String defaultValue) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Action word parameter name cannot be blank.");
@@ -94,6 +89,11 @@ public class ActionWordParameter extends ActionWordFragment {
 
 	public ActionWordParameter(String name) {
 		this(name, ACTION_WORD_PARAM_DEFAULT_VALUE);
+	}
+
+	@Override
+	public void accept(ActionWordFragmentVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	private void checkIfParamNameIsValid(String trimmedName) {
