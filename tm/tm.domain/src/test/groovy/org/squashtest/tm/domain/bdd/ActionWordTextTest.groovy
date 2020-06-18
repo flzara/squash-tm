@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd
 
+import org.squashtest.tm.exception.actionword.InvalidActionWordTextException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -45,7 +46,7 @@ class ActionWordTextTest extends Specification {
 		new ActionWordText(text)
 
 		then:
-		thrown IllegalArgumentException
+		thrown InvalidActionWordTextException
 
 		where:
 		text << [null, "", "a b\"c1 24", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd
 
-import spock.lang.Ignore
+
 import spock.lang.Specification
 import spock.lang.Unroll
 

@@ -23,6 +23,10 @@ package org.squashtest.tm.service.internal.testcase.bdd
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordText
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputException
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException
+import org.squashtest.tm.exception.actionword.InvalidActionWordTextException
+import org.squashtest.tm.exception.testcase.InvalidParameterNameException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -33,7 +37,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep("aaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaa \"ppppp\" aaaaaaaaaaaaaaaaaaaaaaaaaa \"pppppp\" aaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"ppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \"pppp\" aaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
 		then:
-		IllegalArgumentException exception = thrown()
+		InvalidActionWordInputException exception = thrown()
 		exception.message == "Action word cannot exceed 255 characters."
 	}
 
@@ -42,7 +46,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep("")
 
 		then:
-		IllegalArgumentException exception = thrown()
+		InvalidActionWordInputException exception = thrown()
 		exception.message == "Action word cannot be empty."
 	}
 
@@ -52,7 +56,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep(word)
 
 		then:
-		IllegalArgumentException exception = thrown()
+		InvalidActionWordInputException exception = thrown()
 		exception.message == "Action word must contain at least some texts."
 
 		where:
@@ -80,7 +84,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep("Test with <")
 
 		then:
-		IllegalArgumentException exception = thrown()
+		InvalidParameterNameException exception = thrown()
 		exception.message == "Test case parameter name cannot be empty."
 	}
 
@@ -90,7 +94,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep(word)
 
 		then:
-		IllegalArgumentException exception = thrown()
+		InvalidActionWordTextException exception = thrown()
 		exception.message == "Action word text cannot contain '>' symbol."
 
 		where:
@@ -119,7 +123,7 @@ class ActionWordParserTest extends Specification {
 		new ActionWordParser().createActionWordFromKeywordTestStep(word)
 		then:
 
-		IllegalArgumentException exception = thrown()
+		InvalidActionWordParameterValueException exception = thrown()
 		exception.message == "Action word parameter value cannot contain '>' symbol."
 
 		where:

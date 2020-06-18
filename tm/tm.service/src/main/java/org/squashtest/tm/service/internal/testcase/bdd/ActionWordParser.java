@@ -26,6 +26,10 @@ import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputException;
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
+import org.squashtest.tm.exception.actionword.InvalidActionWordTextException;
+import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,17 +82,17 @@ public class ActionWordParser {
 
 	public ActionWord createActionWordFromKeywordTestStep(String trimmedInput) {
 		if (trimmedInput.length() > ActionWord.ACTION_WORD_MAX_LENGTH) {
-			throw new IllegalArgumentException("Action word cannot exceed 255 characters.");
+			throw new InvalidActionWordInputException("Action word cannot exceed 255 characters.");
 		}
 		if (trimmedInput.isEmpty()) {
-			throw new IllegalArgumentException("Action word cannot be empty.");
+			throw new InvalidActionWordInputException("Action word cannot be empty.");
 		}
 
 		//If the input word contains any double quote or <, do the fragmentation
 		if (trimmedInput.contains(ACTION_WORD_DOUBLE_QUOTE) || trimmedInput.contains(ACTION_WORD_OPEN_GUILLEMET)) {
 			createFragmentsFromInput(trimmedInput);
 			if (!actionWordHasText) {
-				throw new IllegalArgumentException("Action word must contain at least some texts.");
+				throw new InvalidActionWordInputException("Action word must contain at least some texts.");
 			}
 		}
 		//otherwise  --> action word has no parameter, let's save the text input into action word fragment list
@@ -126,7 +130,7 @@ public class ActionWordParser {
 			case TC_PARAM_VALUE:
 				return treatInputInTestCaseParamValueState(currentChar);
 			default:
-				throw new IllegalArgumentException("Invalid action word input");
+				throw new InvalidActionWordInputException("Invalid action word input");
 		}
 	}
 
@@ -150,7 +154,7 @@ public class ActionWordParser {
 	private void addTestCaseParamValueIntoFragments(String tcParamValueInput) {
 		String trimmedWord = tcParamValueInput.trim();
 		if (trimmedWord.isEmpty()) {
-			throw new IllegalArgumentException("Test case parameter name cannot be empty.");
+			throw new InvalidParameterNameException("Test case parameter name cannot be empty.");
 		}
 		++paramIndex;
 		String actionWordParamValue = createParamValueFromTestCaseParamValueInput(trimmedWord);
@@ -168,7 +172,7 @@ public class ActionWordParser {
 	private CharState treatInputInFreeValueState(String currentChar) {
 		switch (currentChar) {
 			case ACTION_WORD_CLOSE_GUILLEMET:
-				throw new IllegalArgumentException("Action word parameter value cannot contain '>' symbol.");
+				throw new InvalidActionWordParameterValueException("Action word parameter value cannot contain '>' symbol.");
 			case ACTION_WORD_OPEN_GUILLEMET:
 				addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
 				return CharState.TC_PARAM_VALUE;
@@ -191,7 +195,7 @@ public class ActionWordParser {
 	private CharState treatInputInTextState(String currentChar) {
 		switch (currentChar) {
 			case ACTION_WORD_CLOSE_GUILLEMET:
-				throw new IllegalArgumentException("Action word text cannot contain '>' symbol.");
+				throw new InvalidActionWordTextException("Action word text cannot contain '>' symbol.");
 			case ACTION_WORD_OPEN_GUILLEMET:
 				addTextIntoFragments(actionWordTextBuilder.toString());
 				return CharState.TC_PARAM_VALUE;

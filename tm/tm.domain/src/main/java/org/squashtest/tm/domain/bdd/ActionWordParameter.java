@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterNameException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,11 +64,11 @@ public class ActionWordParameter extends ActionWordFragment {
 
 	public ActionWordParameter(String name, String defaultValue) {
 		if (StringUtils.isBlank(name)) {
-			throw new IllegalArgumentException("Action word parameter name cannot be blank.");
+			throw new InvalidActionWordParameterNameException("Action word parameter name cannot be blank.");
 		}
 		String trimmedName = name.trim();
 		if (trimmedName.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
-			throw new IllegalArgumentException("Action word parameter name length cannot exceed 255 characters.");
+			throw new InvalidActionWordParameterNameException("Action word parameter name length cannot exceed 255 characters.");
 		}
 		checkIfParamNameIsValid(trimmedName);
 		this.name = trimmedName;
@@ -75,11 +76,11 @@ public class ActionWordParameter extends ActionWordFragment {
 		String trimmedDefaultValue = defaultValue.trim();
 		if (StringUtils.isNotEmpty(trimmedDefaultValue)) {
 			if (defaultValue.contains(ACTION_WORD_DOUBLE_QUOTE)) {
-				throw new IllegalArgumentException("Action word parameter default value cannot contain double quote.");
+				throw new InvalidActionWordParameterNameException("Action word parameter default value cannot contain \", < or >.");
 			}
 
 			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
-				throw new IllegalArgumentException("Action word parameter default value length cannot exceed 255 characters.");
+				throw new InvalidActionWordParameterNameException("Action word parameter default value length cannot exceed 255 characters.");
 			}
 			this.defaultValue = ActionWordUtil.formatText(trimmedDefaultValue);
 		} else {
@@ -100,7 +101,7 @@ public class ActionWordParameter extends ActionWordFragment {
 		Pattern pattern = Pattern.compile("[^\\w-_]");
 		Matcher matcher = pattern.matcher(trimmedName);
 		if (matcher.find()) {
-			throw new IllegalArgumentException("Action word parameter name must contain only alphanumeric, dash or underscore characters.");
+			throw new InvalidActionWordParameterNameException("Action word parameter name must contain only alphanumeric, dash or underscore characters.");
 		}
 	}
 

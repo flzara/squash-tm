@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd
 
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -48,7 +49,7 @@ class ActionWordParamValueTest extends Specification {
 		new ActionWordParameterValue(value)
 
 		then:
-		thrown IllegalArgumentException
+		thrown InvalidActionWordParameterValueException
 
 		where:
 		value << ["a b\"c1 24", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]

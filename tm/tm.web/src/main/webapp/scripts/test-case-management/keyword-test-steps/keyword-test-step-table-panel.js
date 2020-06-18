@@ -130,6 +130,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		},
 
 		addKeywordTestStepFromButton: function () {
+			$(".action-word-input-error").text('');
 			var inputActionWord = this.actionWordInput.val();
 			this.addKeywordTestStep(inputActionWord);
 		},
@@ -137,9 +138,6 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		addKeywordTestStep: function (inputActionWord) {
 			var self = this;
 			if (this.isInputActionWordBlank(inputActionWord)) {
-				return;
-			}
-			if (!this.inputActionWordHasText(inputActionWord)) {
 				return;
 			}
 			var inputKeyword = this.keywordInput.val();
@@ -157,25 +155,6 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			} else {
 				return false;
 			}
-		},
-
-		inputActionWordHasText: function (inputActionWord) {
-			if (inputActionWord.includes('"')) {
-				return this.hasTextOutsideParameters(inputActionWord);
-			}
-			return true;
-		},
-
-		hasTextOutsideParameters: function (inputActionWord) {
-			var updatedWord = inputActionWord.trim();
-			var count = updatedWord.match(/"/g).length;
-			if (updatedWord.startsWith('"')) {
-				if (count === 1 || (count === 2 && updatedWord.endsWith('"'))) {
-					$('.action-word-input-error').text(translator.get("message.actionword.noText"));
-					return false;
-				}
-			}
-			return true;
 		},
 
 		doAddKeywordTestStep: function (keyword, actionWord) {

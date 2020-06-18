@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputException
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
@@ -333,7 +334,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L)
 
 		then:
-		IllegalArgumentException ex = thrown()
+		InvalidActionWordInputException ex = thrown()
 		ex.message == "Action word must contain at least some texts."
 	}
 

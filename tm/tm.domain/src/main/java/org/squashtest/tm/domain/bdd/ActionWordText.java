@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.bdd;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.actionword.ActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.exception.actionword.InvalidActionWordTextException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,19 +53,19 @@ public class ActionWordText extends ActionWordFragment {
 
 	public ActionWordText(String text) {
 		if (StringUtils.isEmpty(text)) {
-			throw new IllegalArgumentException("Action word text cannot be empty.");
+			throw new InvalidActionWordTextException("Action word text cannot be empty.");
 		}
 		if (text.contains(ACTION_WORD_DOUBLE_QUOTE)) {
-			throw new IllegalArgumentException("Action word text cannot contain double quote.");
+			throw new InvalidActionWordTextException("Action word text cannot contain double quote.");
 		}
 		if (text.contains(ACTION_WORD_OPEN_GUILLEMET)) {
-			throw new IllegalArgumentException("Action word text cannot contain '<' symbol.");
+			throw new InvalidActionWordTextException("Action word text cannot contain '<' symbol.");
 		}
 		if (text.contains(ACTION_WORD_CLOSE_GUILLEMET)) {
-			throw new IllegalArgumentException("Action word text cannot contain '>' symbol.");
+			throw new InvalidActionWordTextException("Action word text cannot contain '>' symbol.");
 		}
 		if (text.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
-			throw new IllegalArgumentException("Action word text length cannot exceed 255 characters.");
+			throw new InvalidActionWordTextException("Action word text length cannot exceed 255 characters.");
 		}
 		//Action word text can have space at the beginning or at the end; so DO NOT trim it!
 		this.text = ActionWordUtil.formatText(text);

@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.bdd;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,11 +73,11 @@ public class ActionWordParameterValue {
 	public ActionWordParameterValue(String value) {
 		if (StringUtils.isNotEmpty(value)) {
 			if (value.contains("\"")) {
-				throw new IllegalArgumentException("Action word parameter value cannot contain double quote.");
+				throw new InvalidActionWordParameterValueException("Action word parameter value cannot contain \", < or >.");
 			}
 			String trimmedValue = value.trim();
 			if (value.length() > ACTION_WORD_PARAM_VALUE_MAX_LENGTH) {
-				throw new IllegalArgumentException("Action word parameter value length cannot exceed 255 characters.");
+				throw new InvalidActionWordParameterValueException("Action word parameter value length cannot exceed 255 characters.");
 			}
 			this.value = ActionWordUtil.formatText(trimmedValue);
 		} else {
