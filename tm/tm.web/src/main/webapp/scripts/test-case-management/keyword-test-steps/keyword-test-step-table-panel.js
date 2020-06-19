@@ -98,7 +98,8 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 						var rows = table.fnGetNodes();
 						rows.forEach(function(row) {
 							var $row = $(row),
-								  keywordCell = $row.find('td.step-keyword');
+								  keywordCell = $row.find('td.step-keyword'),
+									actionWordCell = $row.find('td.step-action-word');
 
 							keywordCell.text(settings.keywordMap[keywordCell.text()]);
 							if (settings.permissions.isWritable) {
@@ -106,8 +107,13 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 								var sconf = confman.getJeditableSelect();
 								sconf.data = settings.keywordMap;
 								var rowModel = table.fnGetData($row);
-								var url = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/keyword';
-								keywordCell.editable(url, sconf);
+								var keywordUrl = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/keyword';
+								keywordCell.editable(keywordUrl, sconf);
+
+								// action-word editable configuration
+								var edconf = confman.getStdJeditable();
+								var actionWordUrl = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/action-word';
+								actionWordCell.editable(actionWordUrl, edconf);
 							}
 						});
 					}

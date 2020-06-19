@@ -357,6 +357,14 @@ public class TestCaseTestStepsController {
 		return internationalizationHelper.internationalize(updatedKeyword.i18nKeywordNameKey(), LocaleContextHolder.getLocale());
 	}
 
+	@RequestMapping(value = "/{stepId}/action-word", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeStepActionWord(@PathVariable long stepId, @RequestParam(VALUE) String actionWord) {
+		testCaseModificationService.updateKeywordTestStep(stepId, actionWord);
+		LOGGER.trace("TestCaseModificationController : updated action word for step {}", stepId);
+		return actionWord;
+	}
+
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
 		List<CustomFieldModel> models = new ArrayList<>(customFields.size());
 		for (CustomField field : customFields) {
