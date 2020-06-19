@@ -33,21 +33,17 @@
            isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK'))},
            isAttachable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH'))}">
 
-  <div>
-    <h4>This is the Keyword Test Step Page.</h4>
-  </div>
-  <br/>
   <div th:if="${isWritable}">
     <div class="display-table;">
       <div class="display-table-row">
         <div class="display-table-cell" style="padding-right: 1px;">
-          <label>Add your keyword test step</label>
+          <label th:text="#{title.AddTestStep}">Add a test step</label>
           <select id="keyword-input">
             <option th:each="keyword : ${keywordMap}" th:value="${keyword.key}" th:text="${keyword.value}">Given|When|Then|And|But</option>
           </select>
         </div>
         <div class="display-table-cell" style="padding-left: 1px;">
-          <input id="action-word-input" type="text" placeholder="(255 characters max)" maxlength="255" width="auto" size="80"/>
+          <input id="action-word-input" type="text" th:placeholder="#{testcase.bdd.action-word.placeholder}" maxlength="255" width="auto" size="80"/>
           <button id="add-keyword-test-step-btn" class="button" type="submit"
                   th:text="#{test-case.step.add.button}"
                   th:title="#{test-case.step.add.button}">Add</button>
