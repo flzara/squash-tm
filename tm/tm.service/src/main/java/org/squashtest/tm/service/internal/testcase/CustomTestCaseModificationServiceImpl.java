@@ -141,6 +141,7 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 import static org.squashtest.tm.service.security.Authorizations.READ_TC_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.WRITE_PARENT_TC_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.WRITE_TC_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.WRITE_TESTSTEP_OR_ROLE_ADMIN;
 
 /**
  * @author Gregory Fouquet
@@ -444,14 +445,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, KeywordTestStep updatedKeywordTestStep) {
 		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getKeyword());
 		updateKeywordTestStep(testStepId, updatedKeywordTestStep.getActionWord().createWord());
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, Keyword updatedKeyword) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
 		if (updatedKeyword != null && !updatedKeyword.equals(testStep.getKeyword())) {
@@ -463,7 +464,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, String updatedWord) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
 		String token = testStep.getActionWord().getToken();

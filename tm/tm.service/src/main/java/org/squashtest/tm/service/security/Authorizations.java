@@ -105,6 +105,9 @@ public final class Authorizations {
 	public static final String LINK_TESTSTEP = "hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')";
 	public static final String LINK_TESTSTEP_OR_ROLE_ADMIN = LINK_TESTSTEP + OR_HAS_ROLE_ADMIN;
 
+	public static final String WRITE_TESTSTEP = "hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep', 'WRITE')";
+	public static final String WRITE_TESTSTEP_OR_ROLE_ADMIN = WRITE_TESTSTEP + OR_HAS_ROLE_ADMIN;
+
 
 
 	/* -- CAMPAIGN FOLDERS -- */
