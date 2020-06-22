@@ -23,9 +23,7 @@ package org.squashtest.tm.domain.campaign;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Persister;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
@@ -71,7 +69,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @NamedQueries({
 	@NamedQuery(name = "IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query = "select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
