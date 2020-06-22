@@ -41,7 +41,6 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -170,7 +169,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private List<TestSuite> testSuites = new ArrayList<>();
 
-	@OneToMany(mappedBy = "iteration")
+	@OneToMany(mappedBy = "iteration", cascade = CascadeType.REMOVE)
 	private List<AutomatedSuite> automatedSuites = new ArrayList<>();
 
         /**
