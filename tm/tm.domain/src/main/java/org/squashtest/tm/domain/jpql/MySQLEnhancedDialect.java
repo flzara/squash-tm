@@ -27,8 +27,8 @@ package org.squashtest.tm.domain.jpql;
 
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,16 +38,26 @@ import java.util.Map.Entry;
  */
 public class MySQLEnhancedDialect extends MySQLDialect{
 
+	private static final String STRAIGHT_JOIN = "STRAIGHT_JOIN";
+
     public MySQLEnhancedDialect() {
         super();
-        
+
         Map<String, SQLFunction> extensions = HibernateDialectExtensions.getMysqlDialectExtensions();
         for (Entry<String, SQLFunction> extension : extensions.entrySet()){
             registerFunction(extension.getKey(), extension.getValue());
         }
-        
+
     }
-    
-    
-    
+
+    @Override
+	public String getQueryHintString(String sql, List<String> hints) {
+
+    	// Override of original dialect method which does nothing with query hint to apply STRAIGHT_JOIN hint.
+		if(hints.contains(STRAIGHT_JOIN)){
+			sql = sql.replaceAll("(select|SELECT)", "SELECT STRAIGHT_JOIN");
+		}
+
+		return sql;
+	}
 }

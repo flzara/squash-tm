@@ -191,6 +191,7 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 		and:
 		finder.findAllCustomFieldValues(_) >> []
+		autoSuiteDao.findAndFetchForAutomatedExecutionCreation(_) >> suite.getExecutionExtenders()
 
 		when :
 		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> executionOrder = service.prepareExecutionOrder(suite, true)

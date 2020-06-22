@@ -85,6 +85,8 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	private static final String UNCHECKED = "unchecked";
 
+	private static final String STRAIGHT_JOIN_HINT = "STRAIGHT_JOIN";
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -172,8 +174,12 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@Override
 	public List<AutomatedExecutionExtender> findAndFetchForAutomatedExecutionCreation(String suiteId) {
 		Query query = em.createNamedQuery("automatedSuite.fetchForAutomationExecution");
-		query.setParameter("suiteId", suiteId);
-		return query.getResultList();
+		//MariaDB optimizer makes strange join order optimization sometimes with this request, resulting in an extremely slow query.
+		//Therefore we add STRAIGHT_JOIN hint to force the respect of the original join order
+		org.hibernate.query.Query hibernateQuery = (org.hibernate.query.Query) query;
+		hibernateQuery.setParameter("suiteId", suiteId);
+		hibernateQuery.addQueryHint(STRAIGHT_JOIN_HINT);
+		return hibernateQuery.getResultList();
 	}
 
 	@Override

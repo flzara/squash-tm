@@ -475,10 +475,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	// security handled in the code
 	public void start(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
-		LOGGER.debug("- START FETCHING OPTIMIZED " + new Date());
-		List<AutomatedExecutionExtender> executionExtenders = autoSuiteDao.findAndFetchForAutomatedExecutionCreation(suite.getId());
-		LOGGER.debug("- FETCHED " + executionExtenders.size());
-		LOGGER.debug("- END FETCHING OPTIMIZED " + new Date());
+		List<AutomatedExecutionExtender> executionExtenders = getOptimizedExecutionsExtenders(suite);
 		LOGGER.debug("- START CHECKING EXECUTIONS PERMISSIONS " + new Date());
 		PermissionsUtils.checkPermission(permissionService, executionExtenders, EXECUTE);
 		LOGGER.debug("- END CHECKING EXECUTIONS PERMISSIONS " + new Date());
@@ -527,6 +524,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		if(!permissionService.hasRole(Roles.ROLE_TA_API_CLIENT)) {
 			throw new AccessDeniedException("Access is denied");
 		}
+		getOptimizedExecutionsExtenders(suite);
 		return collectAutomatedExecs(suite.getExecutionExtenders(), withAllCustomFields);
 	}
 
@@ -609,6 +607,14 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 			.filter(IterationTestPlanItem::isAutomated)
 			.map(IterationTestPlanItem::getId)
 			.collect(Collectors.toList());
+	}
+
+	private List<AutomatedExecutionExtender> getOptimizedExecutionsExtenders(AutomatedSuite suite){
+		LOGGER.debug("- START FETCHING OPTIMIZED " + new Date());
+		List<AutomatedExecutionExtender> executionExtenders = autoSuiteDao.findAndFetchForAutomatedExecutionCreation(suite.getId());
+		LOGGER.debug("- FETCHED " + executionExtenders.size());
+		LOGGER.debug("- END FETCHING OPTIMIZED " + new Date());
+		return executionExtenders;
 	}
 
 
