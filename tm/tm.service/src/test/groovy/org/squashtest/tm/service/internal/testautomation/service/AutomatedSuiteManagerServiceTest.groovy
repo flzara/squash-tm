@@ -21,10 +21,8 @@
 package org.squashtest.tm.service.internal.testautomation.service
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-import org.squashtest.tm.core.foundation.collection.DefaultSorting
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.campaign.Campaign
