@@ -56,13 +56,19 @@
  */
 
 define(
-	['jquery', 'squash.translator', 'squash.statusfactory', 'squashtable'],
-	function ($, translator, statusfactory) {
+	['jquery', 'squash.translator', 'squash.statusfactory', 'app/ws/squashtm.notification', 'squashtable'],
+	function ($, translator, statusfactory, notification) {
 		"use strict";
 
 		function _rowCallbackReadFeatures($row, data, _conf) {
 
-			// execution toggle
+			initExecutionToggle($row, data);
+
+			initReportDisplay($row, data);
+
+		}
+
+		function initExecutionToggle($row, data) {
 			var $exectoggle = $row.find('.exec-toggle');
 			if (data['has-executions']) {
 				$exectoggle.text(translator.get('automated-suite.execution-details'));
@@ -71,14 +77,54 @@ define(
 				$exectoggle.text(translator.get('automated-suite.no-execution'));
 			}
 
-			// execution status (read, thus selected using .status-display)
 			var status = data['status'],
 				$statustd = $row.find('.status-display'),
 				html = statusfactory.getHtmlFor(status);
 
-			$statustd.html(html); // remember : this will insert a <span>
-			// in the process
+			$statustd.html(html); // remember : this will insert a <span> in the process
+		}
 
+		function initReportDisplay($row, data) {
+
+			var resultURLList = data['result-urls'];
+
+			var hasOneReport = resultURLList !== null && resultURLList.length ===1;
+			var hasMultipleReport = resultURLList !== null && resultURLList.length > 1;
+
+			if (hasOneReport) {
+				createReportLink($row, resultURLList[0]);
+			} else if (hasMultipleReport) {
+				createReportListPopUp($row, resultURLList);
+			} else {
+				$row.find('.result-display').empty().text("/");
+			}
+		}
+
+		function createReportLink($row, resultUrl) {
+			var resultMessage = translator.get('automated-suite.result.label');
+			var resultLink = $('<a>', {'text': resultMessage, 'href': resultUrl, 'target': '_blank'});
+			$row.find('.result-display').empty().append(resultLink);
+		}
+
+		function createReportListPopUp($row, resultUrlList){
+			var resultMessage = translator.get('automated-suite.result-list.label');
+			var resultLink = $('<a>', {'id': 'result-list', 'text': resultMessage, 'href':''});
+			$row.find('.result-display').empty().append(resultLink);
+
+			$row.find('#result-list').click(function(evt){
+				evt.preventDefault();
+				var title = translator.get('automated-suite.result-list.title');
+
+				var listNode = $('<ul>');
+				resultUrlList.forEach(function(url){
+					var urlNode = $('<li>').append($('<a>', {'text': url, 'href': url, 'target': '_blank'}));
+					listNode.append(urlNode);
+				});
+
+				var list = listNode.prop('outerHTML');
+
+				notification.showInfo(title + "\n" + list);
+			});
 		}
 
 		function createTableConfiguration(initconf) {

@@ -61,7 +61,10 @@
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
           <th class="no-user-select"
-              data-def="map=uuid, sClass=toggle-row exec-toggle">
+              data-def="map=uuid, sWidth=30%, sClass=toggle-row exec-toggle">
+          </th>
+          <th class="no-user-select"
+              data-def="map=result-urls, center, sClass=result-display">
           </th>
           <th class="no-user-select"
               data-def="map=created-by, center, sWidth=10%"><f:message key="label.createdBy" /></th>

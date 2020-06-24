@@ -21,8 +21,9 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 
-import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -30,9 +31,14 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<AutomatedSuite> {
 
@@ -65,6 +71,20 @@ public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<Automa
 		res.put("last-modified-by", HTMLCleanupUtils.escapeOrDefault(audit.getLastModifiedBy(), null));
 		res.put("status", suite.getExecutionStatus().getCanonicalStatus());
 		res.put("has-executions", !suite.getExecutionExtenders().isEmpty());
+		res.put("result-urls", getResultURLList(suite));
 		return res;
+	}
+
+	private List<URL> getResultURLList(AutomatedSuite automatedSuite){
+		List<URL> urlList = new ArrayList<>();
+
+		if(automatedSuite.getResultURL() != null && !StringUtils.isBlank(automatedSuite.getResultURL().toString())){
+			urlList.add(automatedSuite.getResultURL());
+		} else {
+			urlList = automatedSuite.getExecutionExtenders().stream()
+				.map(AutomatedExecutionExtender::getResultURL).filter(Objects::nonNull)
+				.distinct().collect(Collectors.toList());
+		}
+		return urlList;
 	}
 }
