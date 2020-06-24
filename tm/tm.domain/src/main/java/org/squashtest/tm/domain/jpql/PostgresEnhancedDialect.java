@@ -27,8 +27,8 @@ package org.squashtest.tm.domain.jpql;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
 import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,13 +36,24 @@ import java.util.Map;
  * @author bsiri
  */
 public class PostgresEnhancedDialect extends PostgreSQL9Dialect {
-    
+
+	private static final String STRAIGHT_JOIN = "STRAIGHT_JOIN";
+
     public PostgresEnhancedDialect(){
         super();
-        
+
         Map<String, SQLFunction> extensions = HibernateDialectExtensions.getPostgresDialectExtensions();
         for (Map.Entry<String, SQLFunction> extension : extensions.entrySet()){
             registerFunction(extension.getKey(), extension.getValue());
         }
     }
+
+	@Override
+	public String getQueryHintString(String sql, List<String> hints) {
+
+		// Override of original dialect method so that STRAIGHT_JOIN custom hint doesn't mess with initial behavior.
+		hints.remove(STRAIGHT_JOIN);
+
+		return super.getQueryHintString(sql, hints);
+	}
 }
