@@ -847,4 +847,11 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-797" author="aguilhem">
+    <comment>Adds result url field to the automated suites</comment>
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="RESULT_URL" type="java.sql.Types.VARCHAR(300)" remarks="urls longer than 300 chars should go to hell"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

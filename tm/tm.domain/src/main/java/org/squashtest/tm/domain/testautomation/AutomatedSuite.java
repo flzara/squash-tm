@@ -40,6 +40,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -123,6 +124,8 @@ public class AutomatedSuite implements HasExecutionStatus {
 	 * it's transient because we do not want to persist neither do we want to compute it too often.
 	 */
 	private transient Boolean manualSlaveSelection;
+
+	private URL resultURL;
 
 	public AutomatedSuite() {
 	}
@@ -221,5 +224,13 @@ public class AutomatedSuite implements HasExecutionStatus {
 
 	public TestSuite getTestSuite() {
 		return testSuite;
+	}
+
+	public URL getResultURL() {
+		return resultURL;
+	}
+
+	public void setResultURL(URL resultURL) {
+		this.resultURL = resultURL;
 	}
 }
