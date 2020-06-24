@@ -20,19 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.service.internal.repository.CustomAttachmentDao;
 import org.squashtest.tm.service.internal.repository.CustomIterationTestPlanDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
