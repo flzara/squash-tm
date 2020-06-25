@@ -5643,7 +5643,7 @@ table.datepicker-table td.datepicker-table-col {
 .ui-button .ui-icon.exec-status-not_found,
 .sq-btn .ui-icon.exec-status-not_found,
 .exec-status-not_found {
-  background-image: url("../images/Icon_Yellow.png");
+  background-image: url("../images/Icon_White.png");
   /** sprite-ref: sprites-icons; */
   background-repeat: no-repeat;
 }
