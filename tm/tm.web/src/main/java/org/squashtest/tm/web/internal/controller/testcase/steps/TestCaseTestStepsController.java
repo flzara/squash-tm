@@ -77,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
@@ -244,7 +245,7 @@ public class TestCaseTestStepsController {
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
-		model.addAttribute("keywordMap", createKeywordMap());
+		model.addAttribute("keywordMap", createKeywordMap(keywordTestCase.getProject()));
 		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
@@ -373,10 +374,11 @@ public class TestCaseTestStepsController {
 		return models;
 	}
 
-	private EnumMap<Keyword, String> createKeywordMap() {
+	private EnumMap<Keyword, String> createKeywordMap(Project project) {
+		Locale locale = project.getBddScriptLanguage().getLocale();
 		EnumMap<Keyword, String> keywordMap = new EnumMap<>(Keyword.class);
 		for (Keyword keyword : Keyword.values()) {
-			keywordMap.put(keyword, internationalizationHelper.internationalize(keyword.i18nKeywordNameKey(), LocaleContextHolder.getLocale()));
+			keywordMap.put(keyword, internationalizationHelper.internationalize(keyword.i18nKeywordNameKey(), locale));
 		}
 		return keywordMap;
 	}

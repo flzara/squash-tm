@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.bdd;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
+import java.util.Locale;
+
 public enum BddScriptLanguage implements Internationalizable {
 	ENGLISH,
 	FRENCH,
@@ -34,4 +36,15 @@ public enum BddScriptLanguage implements Internationalizable {
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
+
+
+	public Locale getLocale() {
+		switch(name()) {
+			case "FRENCH": return Locale.FRENCH;
+			case "GERMAN": return Locale.GERMAN;
+			case "SPANISH": return new Locale("es");
+			default: return Locale.ENGLISH;
+		}
+	}
+
 }
