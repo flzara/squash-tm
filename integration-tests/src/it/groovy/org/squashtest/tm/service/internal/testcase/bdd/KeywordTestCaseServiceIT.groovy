@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd
 
+import org.springframework.context.MessageSource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.testcase.KeywordTestCase
@@ -41,6 +42,12 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 	@Inject
 	KeywordTestCaseService keywordTestCaseService
 
+	def messageSource = Mock(MessageSource)
+
+	def setup(){
+		keywordTestCaseService.messageSource = messageSource
+	}
+
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-6L)
@@ -52,11 +59,13 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 			"Feature: empty test"
 	}
 
-	//FIXME: keyword in Keyword test step is forcefully removed as no messageSource bean is found
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
 		when:
+			messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+			messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+			messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
 			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 			res ==
@@ -64,11 +73,122 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 Feature: Disconnection test
 
 	Scenario: Disconnection test
-		 I am connected
-		 I sign oùt
-		 Je suis déconnecté"""
+		Given I am connected
+		When I sign oùt
+		Then Je suis déconnecté"""
 	}
 
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-param-value-as-free-text.xml")
+	def "Should generate a Gherkin script with test steps containing parameter value as free text from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario: Daily test
+		Given Today is Monday
+		When It is "8 AM"
+		Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-TC-param-value-no-dataset.xml")
+	def "Should generate a Gherkin script with test steps containing parameter associated with a TC param as value from a KeywordTestCase but no dataset"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario: Daily test
+		Given Today is Monday
+		When It is &lt;time&gt;
+		Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-no-TC-param-value-but-dataset.xml")
+	def "Should generate a Gherkin script with test steps from a KeywordTestCase with dataset but no TC param"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario: Daily test
+		Given Today is Monday
+		When It is "time"
+		Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
+	def "Should generate a Gherkin script with test steps containing parameter associated with 1 TC param value and 1 dataset"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario Outline: Daily test
+		Given Today is Monday
+		When It is &lt;time&gt;
+		Then I am working
+
+		@dataset1
+		Examples:
+		| time |
+		| "12 AM" |"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset.xml")
+	def "Should generate a Gherkin script with test steps containing parameter associated with 2 TC param value and 1 dataset"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario Outline: Daily test
+		Given Today is Monday
+		When It is &lt;time&gt; in &lt;place&gt;
+		Then I am working
+
+		@dataset1
+		Examples:
+		| place | time |
+		| "Nice" | "12 AM" |"""
+	}
+
+	///////////////////////////////////////////////////////////////////////////
 	def "Should create a File name for a Keyword Test case"() {
 		given:
 		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)

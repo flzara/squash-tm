@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.bdd.BddImplementationTechnology
 import org.squashtest.tm.domain.bdd.BddScriptLanguage
-import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.unitils.dbunit.annotation.DataSet
