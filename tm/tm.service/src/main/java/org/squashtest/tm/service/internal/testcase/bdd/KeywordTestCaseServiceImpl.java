@@ -83,9 +83,8 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 	@Override
 	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
-		//TODO-QUAN: get Testcase's project for further functions: get project techno and language
-		String language = "en";
-		Locale locale = new Locale(language);
+		Locale locale = keywordTestCase.getProject().getBddScriptLanguage().getLocale();
+		String language = locale.toLanguageTag();
 		String testCaseName = keywordTestCase.getName();
 
 		List<TestStep> testSteps = keywordTestCase.getSteps();

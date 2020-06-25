@@ -23,11 +23,11 @@ package org.squashtest.tm.service.internal.testcase.bdd
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.ActionWordText
+import org.squashtest.tm.domain.bdd.BddScriptLanguage
 import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import spock.lang.Specification
 
@@ -45,10 +45,19 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		return new ActionWord([fragment] as List)
 	}
 
+	def createMockKeywordTestCase() {
+		KeywordTestCase keywordTestCase = Mock()
+		Project project = Mock()
+		project.getBddScriptLanguage() >> BddScriptLanguage.ENGLISH
+		keywordTestCase.getProject() >> project
+		keywordTestCase.getName() >> "Disconnection test"
+		return keywordTestCase
+	}
+
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Disconnection test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase()
+		keywordTestCase.getSteps() >> []
 
 		when:
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
@@ -60,16 +69,13 @@ class KeywordTestCaseServiceImplTest extends Specification {
 	//TODO-QUAN
 	def "Should generate a Gherkin script from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Disconnection test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase()
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("I am connécted"))
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I sign oùt"))
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am dîsconnect&d"))
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
 		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
