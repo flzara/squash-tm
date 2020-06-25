@@ -117,104 +117,14 @@ import java.util.Set;
  */
 public enum ExecutionStatus implements Internationalizable, Level {
 
-	SETTLED(11) {
-		@Override
-		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return needsComputation();
-		}
+	READY(1) {
 
-		@Override
-		public boolean isCanonical() {
-			return true;
-		}
-
-		@Override
-		public ExecutionStatus getCanonicalStatus() {
-			return SETTLED;
-		}
-
-		@Override
-		public boolean canBeDisabled() {
-			return true;
-		}
-
-		@Override
-		public boolean defaultEnabled() {
-			return false;
-		}
-	},
-
-	UNTESTABLE(9) {
-		@Override
-		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return needsComputation();
-		}
-
-		@Override
-		public boolean isCanonical() {
-			return true;
-		}
-
-		@Override
-		public ExecutionStatus getCanonicalStatus() {
-			return UNTESTABLE;
-		}
-
-		@Override
-		public boolean canBeDisabled() {
-			return true;
-		}
-
-		@Override
-		public boolean defaultEnabled() {
-			return true;
-		}
-	},
-
-	BLOCKED(6) {
-		@Override
-		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return ExecutionStatus.BLOCKED;
-		}
-
-		@Override
-		public boolean isCanonical() {
-			return true;
-		}
-
-		@Override
-		public ExecutionStatus getCanonicalStatus() {
-			return BLOCKED;
-		}
-	},
-
-	FAILURE(5) {
-		@Override
-		// the case 'former exec status blocked' is already ruled out in the trivialDeductions
-		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return ExecutionStatus.FAILURE;
-		}
-
-		@Override
-		public boolean isCanonical() {
-			return true;
-		}
-
-		@Override
-		public ExecutionStatus getCanonicalStatus() {
-			return FAILURE;
-		}
-	},
-
-	SUCCESS(3) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			ExecutionStatus newStatus;
 
 			if (formerExecutionStatus == ExecutionStatus.FAILURE) {
 				newStatus = ExecutionStatus.FAILURE;
-			} else if (formerStepStatus == ExecutionStatus.RUNNING && formerExecutionStatus == ExecutionStatus.READY) {
-				newStatus = ExecutionStatus.RUNNING;
 			} else {
 				newStatus = needsComputation();
 			}
@@ -229,7 +139,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
-			return SUCCESS;
+			return READY;
 		}
 	},
 
@@ -262,14 +172,15 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		}
 	},
 
-	READY(1) {
-
+	SUCCESS(3) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			ExecutionStatus newStatus;
 
 			if (formerExecutionStatus == ExecutionStatus.FAILURE) {
 				newStatus = ExecutionStatus.FAILURE;
+			} else if (formerStepStatus == ExecutionStatus.RUNNING && formerExecutionStatus == ExecutionStatus.READY) {
+				newStatus = ExecutionStatus.RUNNING;
 			} else {
 				newStatus = needsComputation();
 			}
@@ -284,7 +195,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
-			return READY;
+			return SUCCESS;
 		}
 	},
 
@@ -294,9 +205,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_WARNING#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
-							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
-							+ "already. Thanks for your help and happy Squash !");
+				"ExecutionStatus.TA_WARNING#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
+					+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
+					+ "already. Thanks for your help and happy Squash !");
 		}
 
 		@Override
@@ -315,11 +226,46 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		}
 	},
 
+	FAILURE(5) {
+		@Override
+		// the case 'former exec status blocked' is already ruled out in the trivialDeductions
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return ExecutionStatus.FAILURE;
+		}
+
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return FAILURE;
+		}
+	},
+
+	BLOCKED(6) {
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return ExecutionStatus.BLOCKED;
+		}
+
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return BLOCKED;
+		}
+	},
+
 	ERROR(7) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_ERROR#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
+				"ExecutionStatus.TA_ERROR#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -342,7 +288,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_NOT_RUN#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
+				"ExecutionStatus.TA_NOT_RUN#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -360,11 +306,41 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			return false;
 		}
 	},
+
+
+	UNTESTABLE(9) {
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return needsComputation();
+		}
+
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return UNTESTABLE;
+		}
+
+		@Override
+		public boolean canBeDisabled() {
+			return true;
+		}
+
+		@Override
+		public boolean defaultEnabled() {
+			return true;
+		}
+	},
+
+
 	NOT_FOUND(10) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_NOT_FOUND#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
+				"ExecutionStatus.TA_NOT_FOUND#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -375,6 +351,33 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return UNTESTABLE;
+		}
+
+		@Override
+		public boolean defaultEnabled() {
+			return false;
+		}
+	},
+
+	SETTLED(11) {
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return needsComputation();
+		}
+
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return SETTLED;
+		}
+
+		@Override
+		public boolean canBeDisabled() {
+			return true;
 		}
 
 		@Override
