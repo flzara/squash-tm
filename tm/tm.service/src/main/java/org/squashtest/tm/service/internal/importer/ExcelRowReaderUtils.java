@@ -24,6 +24,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,6 +184,12 @@ import java.util.Map;
 	 * @return String corresponding to the previous html with unmodified tags and the content between those tags is escaped
 	 */
 	public static String escapeHTMLInsideTags(String html) {
-		return Jsoup.parse(html).body().html();
+		Document doc = Jsoup.parse(html);
+
+		//SQUASH-990 : this will escape script balise
+		for (Element element : doc.select("script")) {
+			element.replaceWith(TextNode.createFromEncoded(element.toString(), null));
+		}
+		return doc.body().html();
 	}
 }
