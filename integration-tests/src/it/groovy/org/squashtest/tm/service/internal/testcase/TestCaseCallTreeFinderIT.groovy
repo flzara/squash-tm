@@ -33,7 +33,7 @@ import javax.inject.Inject
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
+class TestCaseCallTreeFinderIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder
