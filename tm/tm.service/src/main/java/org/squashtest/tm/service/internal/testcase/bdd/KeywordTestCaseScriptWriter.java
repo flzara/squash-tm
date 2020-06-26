@@ -145,9 +145,8 @@ public class KeywordTestCaseScriptWriter {
 			builder.append(replaceHTMLCharactersStr);
 			return;
 		}
-		builder.append("\"")
-			.append(paramValue)
-			.append("\"");
+		String updatedParamValue = updateNumberValue(paramValue);
+		builder.append(updatedParamValue);
 	}
 
 	private void addScenarioAndDatasetToBuilder(String testCaseName, Set<Dataset> datasetSet) {
@@ -210,16 +209,28 @@ public class KeywordTestCaseScriptWriter {
 	}
 
 	private void updateTwoParamLineBuilders(StringBuilder lineBuilder1, StringBuilder lineBuilder2, String paramName, String paramValue) {
-		lineBuilder1.append(VERTICAL_BAR)
+		updateLineBuilder(lineBuilder1, paramName);
+		String trimmedParamValue = paramValue.trim();
+		String updatedParamValue = updateNumberValue(trimmedParamValue);
+		updateLineBuilder(lineBuilder2, updatedParamValue);
+	}
+
+	private void updateLineBuilder(StringBuilder lineBuilder, String value) {
+		lineBuilder.append(VERTICAL_BAR)
 			.append(SPACE_CHAR)
-			.append(paramName)
+			.append(value)
 			.append(SPACE_CHAR);
-		lineBuilder2.append(VERTICAL_BAR)
-			.append(SPACE_CHAR)
-			.append(DOUBLE_QUOTE_CHAR)
-			.append(paramValue)
-			.append(DOUBLE_QUOTE_CHAR)
-			.append(SPACE_CHAR);
+	}
+
+	private String updateNumberValue(String paramValue) {
+		if (isNumber(paramValue)){
+			return paramValue;
+		}
+		return DOUBLE_QUOTE_CHAR + paramValue + DOUBLE_QUOTE_CHAR;
+	}
+
+	private boolean isNumber(String paramValue) {
+		return paramValue.matches("-?\\d+(([.,])\\d+)?");
 	}
 
 }

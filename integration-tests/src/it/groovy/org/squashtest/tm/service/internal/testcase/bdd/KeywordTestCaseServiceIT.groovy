@@ -98,6 +98,26 @@ Feature: Daily test
 		Then I am working"""
 	}
 
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-param-value-as-number.xml")
+	def "Should generate a Gherkin script with test steps containing parameter value as number from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario: Daily test
+		Given Today is Monday
+		When It is 8.5
+		Then I am working"""
+	}
+
 	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-TC-param-value-no-dataset.xml")
 	def "Should generate a Gherkin script with test steps containing parameter associated with a TC param as value from a KeywordTestCase but no dataset"() {
 		given:
@@ -185,7 +205,7 @@ Feature: Daily test
 		@dataset1
 		Examples:
 		| place | time |
-		| "Nice" | "12 AM" |"""
+		| "Nice" | 12 |"""
 	}
 
 	///////////////////////////////////////////////////////////////////////////
