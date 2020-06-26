@@ -24,6 +24,8 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.actionword.ActionWordLibrary;
+import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -45,6 +47,7 @@ import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectHelper;
+import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -84,21 +87,33 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	@Inject
 	private ObjectIdentityService objectIdentityService;
+
 	@Inject
 	private ProjectsPermissionManagementService projectPermissionManagementService;
+
 	@PersistenceContext
 	private EntityManager em;
+
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
+
+	@Inject
+	private ActionWordLibraryNodeDao awlnDao;
+
 	@Inject
 	private CustomReportLibraryNodeService crlnService;
+
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
-	@Inject private MilestoneBindingManagerService milestoneBindingManager;
+
+	@Inject
+	private MilestoneBindingManagerService milestoneBindingManager;
+
 	@Inject
 	private RemoteSynchronisationDao remoteSynchronisationDao;
+
 	@Inject
-	ProjectFilterDao projectFilterDao;
+	private ProjectFilterDao projectFilterDao;
 
 	@Override
 	public void deleteProject(long projectId) {
@@ -147,8 +162,13 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		GenericProject project = genericProjectDao.getOne(projectId);
 
 		deleteAllLibrariesContent(project);
+
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
 		deleteCustomReportLibrary(customReportLibrary);
+
+		ActionWordLibrary actionWordLibrary = project.getActionWordLibrary();
+		deleteActionWordLibraryNode(actionWordLibrary);
+
 		/*Tm-903*/
 		removeRemoteSynchronisation(projectId);
 
@@ -202,8 +222,16 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	private void deleteCustomReportLibraryNode(
-			CustomReportLibrary customReportLibrary) {
+		CustomReportLibrary customReportLibrary) {
 		CustomReportLibraryNode node = crlnDao.findNodeFromEntity(customReportLibrary);
+		node.setLibrary(null);
+		node.setEntity(null);
+		em.remove(node);
+		em.flush();
+	}
+
+	private void deleteActionWordLibraryNode(ActionWordLibrary actionWordLibrary) {
+		ActionWordLibraryNode node = awlnDao.findNodeFromEntity(actionWordLibrary);
 		node.setLibrary(null);
 		node.setEntity(null);
 		em.remove(node);
@@ -215,6 +243,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		long tclId = project.getTestCaseLibrary().getId();
 		long clId = project.getCampaignLibrary().getId();
 		long crlId = project.getCustomReportLibrary().getId();
+		long awlId = project.getActionWordLibrary().getId();
 		long arlId = project.getAutomationRequestLibrary().getId();
 
 		//remove arse for libraries
@@ -222,12 +251,14 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		projectPermissionManagementService.removeAllPermissionsFromObject(TestCaseLibrary.class, tclId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(CampaignLibrary.class, clId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(CustomReportLibrary.class, crlId);
+		projectPermissionManagementService.removeAllPermissionsFromObject(ActionWordLibrary.class, awlId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(AutomationRequestLibrary.class, arlId);
 		//remove aoi for libaries
 		objectIdentityService.removeObjectIdentity(rlId, RequirementLibrary.class);
 		objectIdentityService.removeObjectIdentity(tclId, TestCaseLibrary.class);
 		objectIdentityService.removeObjectIdentity(clId, CampaignLibrary.class);
 		objectIdentityService.removeObjectIdentity(crlId, CustomReportLibrary.class);
+		objectIdentityService.removeObjectIdentity(awlId, ActionWordLibrary.class);
 		objectIdentityService.removeObjectIdentity(arlId, AutomationRequestLibrary.class);
 		//remove arse for project
 		//and remove aoi for project

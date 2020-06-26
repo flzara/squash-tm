@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.deletion
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.actionword.ActionWordLibrary
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary
@@ -33,9 +34,12 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
-@UnitilsSupport
 @Transactional
-public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
+@UnitilsSupport
+class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
+
+	@Inject
+	private ProjectDao projectDao
 
 	@Inject
 	private ProjectDeletionHandlerImpl deletionHandler
@@ -43,40 +47,36 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 	private ObjectIdentityService objectIdentityService = Mock()
 
 	def setup(){
-		deletionHandler.objectIdentityService = objectIdentityService;
+		deletionHandler.objectIdentityService = objectIdentityService
 	}
-	@Inject
-	private ProjectDao projectDao
 
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project and libraries"(){
-
 		when :
-		def result = deletionHandler.deleteProject(-1)
-
+			deletionHandler.deleteProject(-1)
 		then :
-		!found(Project.class, -1L)
-		allDeleted ("CustomReportLibrary", [-11L])
-		allDeleted ("RequirementLibrary", [-12L])
-		allDeleted ("TestCaseLibrary", [-13L])
-		allDeleted ("CampaignLibrary", [-14L])
+			!found(Project.class, -1L)
+			allDeleted ("CustomReportLibrary", [-11L])
+			allDeleted ("RequirementLibrary", [-12L])
+			allDeleted ("TestCaseLibrary", [-13L])
+			allDeleted ("CampaignLibrary", [-14L])
+			allDeleted ("ActionWordLibrary", [-15L])
 	}
 
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project acls"(){
-
 		when :
-		def result = deletionHandler.deleteProject(-1)
-		getSession().flush();
+			deletionHandler.deleteProject(-1)
+			getSession().flush()
 		then :
-		! found(Project.class, -1L)
-
-		//		In integration test context ObjectIdentityService is as stub
-		//		this is why i use a mock here
-		1*objectIdentityService.removeObjectIdentity(-12L,RequirementLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(-13L,TestCaseLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(-14L,CampaignLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(-1L,Project.class)
+			! found(Project.class, -1L)
+			//		In integration test context ObjectIdentityService is as stub
+			//		this is why i use a mock here
+			1*objectIdentityService.removeObjectIdentity(-12L, RequirementLibrary.class)
+			1*objectIdentityService.removeObjectIdentity(-13L, TestCaseLibrary.class)
+			1*objectIdentityService.removeObjectIdentity(-14L, CampaignLibrary.class)
+			1*objectIdentityService.removeObjectIdentity(-15L, ActionWordLibrary.class)
+			1*objectIdentityService.removeObjectIdentity(-1L, Project.class)
 	}
 
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
