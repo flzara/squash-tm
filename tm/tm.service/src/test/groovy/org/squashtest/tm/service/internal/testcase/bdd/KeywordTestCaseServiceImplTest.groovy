@@ -27,9 +27,9 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.BddScriptLanguage
 import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.DatasetParamValue
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.Parameter
@@ -51,18 +51,18 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		return new ActionWord([fragment] as List)
 	}
 
-	def createMockKeywordTestCase() {
+	def createMockKeywordTestCase(String name) {
 		KeywordTestCase keywordTestCase = Mock()
 		Project project = Mock()
 		project.getBddScriptLanguage() >> BddScriptLanguage.ENGLISH
 		keywordTestCase.getProject() >> project
-		keywordTestCase.getName() >> "Disconnection test"
+		keywordTestCase.getName() >> name
 		return keywordTestCase
 	}
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = createMockKeywordTestCase()
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Disconnection test")
 		keywordTestCase.getSteps() >> []
 
 		when:
@@ -74,7 +74,8 @@ class KeywordTestCaseServiceImplTest extends Specification {
 
 	def "Should generate a Gherkin script with test steps containing only text from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = createMockKeywordTestCase()
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Disconnection test")
+		keywordTestCase.getDatasets() >> []
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("I am connécted"))
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I sign oùt"))
@@ -99,8 +100,8 @@ Feature: Disconnection test
 
 	def "Should generate a Gherkin script with test steps containing parameter value as free text from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
+		keywordTestCase.getDatasets() >> []
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -114,10 +115,7 @@ Feature: Disconnection test
 		step2.setParamValues(paramValues)
 
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
-
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
 		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
@@ -137,8 +135,8 @@ Feature: Daily test
 	@Unroll
 	def "Should generate a Gherkin script with test steps containing parameter value as a number from a KeywordTestCase"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
+		keywordTestCase.getDatasets() >> []
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -151,8 +149,7 @@ Feature: Daily test
 		List<ActionWordParameterValue> paramValues = [value1]
 		step2.setParamValues(paramValues)
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
+		keywordTestCase.getSteps() >> [step1, step2]
 
 		when:
 		2 * messageSource.getMessage(*_) >>> ["Given", "When"]
@@ -173,8 +170,8 @@ Feature: Daily test
 
 	def "Should generate a Gherkin script with test steps containing parameter associated with a TC param as value from a KeywordTestCase but no dataset"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
+		keywordTestCase.getDatasets() >> []
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -189,9 +186,7 @@ Feature: Daily test
 
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
 		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
@@ -210,8 +205,7 @@ Feature: Daily test
 
 	def "Should generate a Gherkin script with test steps from a KeywordTestCase with dataset but no param between <>"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -226,12 +220,13 @@ Feature: Daily test
 
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
-		def tcParam =  new Parameter("tcParam", keywordTestCase)
-		def dataset =  new Dataset("dataset1", keywordTestCase)
+		def tcParam =  new Parameter("tcParam")
+		keywordTestCase.getParameters() >> [tcParam]
+		def dataset =  new Dataset()
+		dataset.setName("dataset1")
+		keywordTestCase.getDatasets() >> [dataset]
 		def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 		dataset.addParameterValue(value)
 
@@ -252,8 +247,7 @@ Feature: Daily test
 
 	def "Should generate a Gherkin script with test steps from a KeywordTestCase with 1 dataset and 1 param between <>"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -268,12 +262,12 @@ Feature: Daily test
 
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		def tcParam =  new Parameter("time", keywordTestCase)
-		def dataset =  new Dataset("dataset1", keywordTestCase)
+		def dataset =  new Dataset()
+		dataset.setName("dataset1")
+		keywordTestCase.getDatasets() >> [dataset]
 		def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 		dataset.addParameterValue(value)
 
@@ -299,8 +293,7 @@ Feature: Daily test
 
 	def "Should generate a Gherkin script with test steps from a KeywordTestCase with 1 dataset and 2 param between <>"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Daily test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Daily test")
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
 
@@ -319,13 +312,13 @@ Feature: Daily test
 
 		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
 
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		def tcParam1 =  new Parameter("time", keywordTestCase)
 		def tcParam2 =  new Parameter("place", keywordTestCase)
-		def dataset =  new Dataset("dataset1", keywordTestCase)
+		def dataset =  new Dataset()
+		dataset.setName("dataset1")
+		keywordTestCase.getDatasets() >> [dataset]
 		def paramValue1 =  new DatasetParamValue(tcParam1, dataset,"9 AM")
 		def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
 		dataset.parameterValues = [paramValue1, paramValue2]
@@ -352,8 +345,7 @@ Feature: Daily test
 
 	def "Should generate a Gherkin script with test steps from a KeywordTestCase with 1 dataset and 2 param between <> with values as number"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Count test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Count test")
 
 		def fragment1 = new ActionWordText("I buy ")
 		def fragment2 = new ActionWordParameterMock(-1L, "param1", "10")
@@ -390,15 +382,14 @@ Feature: Daily test
 		List<ActionWordParameterValue> paramValues3 = [value3]
 		step3.setParamValues(paramValues3)
 
-
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		def tcParam1 =  new Parameter("total", keywordTestCase)
 		def tcParam2 =  new Parameter("less", keywordTestCase)
 		def tcParam3 =  new Parameter("left", keywordTestCase)
-		def dataset =  new Dataset("dataset1", keywordTestCase)
+		def dataset =  new Dataset()
+		dataset.setName("dataset1")
+		keywordTestCase.getDatasets() >> [dataset]
 		def paramValue1 =  new DatasetParamValue(tcParam1, dataset,"5")
 		def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"3")
 		def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
@@ -426,8 +417,7 @@ Feature: Count test
 
 	def "Should generate a Gherkin script with test steps from a KeywordTestCase with 1 dataset whose name contains spaces"() {
 		given:
-		KeywordTestCase keywordTestCase = new KeywordTestCase()
-		keywordTestCase.setName("Count test")
+		KeywordTestCase keywordTestCase = createMockKeywordTestCase("Count test")
 
 		def fragment1 = new ActionWordText("I buy ")
 		def fragment2 = new ActionWordParameterMock(-1L, "param1", "10")
@@ -464,15 +454,14 @@ Feature: Count test
 		List<ActionWordParameterValue> paramValues3 = [value3]
 		step3.setParamValues(paramValues3)
 
-
-		keywordTestCase.addStep(step1)
-		keywordTestCase.addStep(step2)
-		keywordTestCase.addStep(step3)
+		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		def tcParam1 =  new Parameter("total", keywordTestCase)
 		def tcParam2 =  new Parameter("less", keywordTestCase)
 		def tcParam3 =  new Parameter("left", keywordTestCase)
-		def dataset =  new Dataset("  dataset   1    ", keywordTestCase)
+		def dataset =  new Dataset()
+		dataset.setName("  dataset   1    ")
+		keywordTestCase.getDatasets() >> [dataset]
 		def paramValue1 =  new DatasetParamValue(tcParam1, dataset,"5")
 		def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"3")
 		def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
