@@ -57,8 +57,9 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 		Long tc = (Long) executeEntityNamedQuery("project.countNonFolderInTestCase", idParameter(projectId));
 		Long camp = (Long) executeEntityNamedQuery("project.countNonFolderInCampaign", idParameter(projectId));
 		Long customReport = (Long) executeEntityNamedQuery("project.countNonFolderInCustomReport", idParameter(projectId));
+		Long aw = (Long) executeEntityNamedQuery("project.countNonFolderInActionWord", idParameter(projectId));
 
-		return req + tc + camp + customReport;
+		return req + tc + camp + customReport + aw;
 	}
 
 	private SetQueryParametersCallback idParameter(final long id) {

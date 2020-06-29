@@ -501,6 +501,7 @@
 	@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
 	@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
 	@NamedQuery(name = "project.countNonFolderInCustomReport", query = "select count(crln) from CustomReportLibraryNode crln where crln.library.project.id = :projectId and crln.entityType not in ('LIBRARY','FOLDER')"),
+	@NamedQuery(name = "project.countNonFolderInActionWord", query = "select count(aw) from ActionWordLibraryNode aw where aw.library.project.id = :projectId and aw.entityType not in ('LIBRARY','FOLDER')"),
 	@NamedQuery(name = "Project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
 	@NamedQuery(name = "Project.findAllUsersWhoCreatedTestCases", query = "select distinct tc.audit.createdBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.createdBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),
