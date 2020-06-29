@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
@@ -51,6 +52,7 @@ public class KeywordTestCaseScriptWriter {
 	private static final String DOUBLE_TAB_CHAR = "\t\t";
 	private static final String NEW_LINE_CHAR = "\n";
 	private static final String SPACE_CHAR = " ";
+	private static final String UNDERSCORE_CHAR = "_";
 	private static final String VERTICAL_BAR = "|";
 	private static final String EXAMPLE = "Examples:";
 	private static final String ACROBAT_CHAR = "@";
@@ -180,45 +182,53 @@ public class KeywordTestCaseScriptWriter {
 
 
 	private String generateDatasetAndExampleScript(Dataset dataset) {
-		String datasetTagLine = DOUBLE_TAB_CHAR + ACROBAT_CHAR + dataset.getName() + NEW_LINE_CHAR;
+		String datasetTagLine = generateDatasetTagLine(dataset);
 		String exampleLine = DOUBLE_TAB_CHAR + EXAMPLE + NEW_LINE_CHAR;
+		String paramNameAndValueLines = generateDatasetParamNamesAndValues(dataset);
+		return datasetTagLine +	exampleLine + paramNameAndValueLines;
+	}
 
+	private String generateDatasetTagLine(Dataset dataset) {
+		String originalStr =  dataset.getName();
+		String trimmedAndRemovedExtraSpacesStr = ActionWordUtil.formatText(originalStr.trim());
+		String replacedSpacesStr = trimmedAndRemovedExtraSpacesStr.replaceAll(SPACE_CHAR, UNDERSCORE_CHAR);
+		return DOUBLE_TAB_CHAR + ACROBAT_CHAR + replacedSpacesStr + NEW_LINE_CHAR;
+	}
+
+	private String generateDatasetParamNamesAndValues(Dataset dataset) {
 		Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
 		Map<String, String> paramNameValueMap = datasetParamValues.stream()
 			.collect(Collectors.toMap(datasetParamValue -> datasetParamValue.getParameter().getName(),
 				DatasetParamValue::getParamValue));
 
 		TreeMap<String, String> sortedMap = new TreeMap<>(paramNameValueMap);
-
-		String paramNameAndValueLines = generateParamLines(sortedMap);
-
-		return datasetTagLine +	exampleLine + paramNameAndValueLines;
+		return generateSortedDatasetParamNamesAndValues(sortedMap);
 	}
 
-	private String generateParamLines(TreeMap<String, String> paramNames) {
+	private String generateSortedDatasetParamNamesAndValues(TreeMap<String, String> paramNames) {
 		StringBuilder lineBuilder1 = new StringBuilder();
 		lineBuilder1.append(DOUBLE_TAB_CHAR);
 		StringBuilder lineBuilder2 = new StringBuilder();
 		lineBuilder2.append(DOUBLE_TAB_CHAR);
 
-		paramNames.forEach((paramName, paramValue) -> updateTwoParamLineBuilders(lineBuilder1, lineBuilder2, paramName, paramValue));
+		paramNames.forEach((paramName, paramValue) -> addParamNameAndValueIntoTwoBuilders(lineBuilder1, lineBuilder2, paramName, paramValue));
 
 		lineBuilder1.append(VERTICAL_BAR).append(NEW_LINE_CHAR);
 		lineBuilder2.append(VERTICAL_BAR);
 		return lineBuilder1.append(lineBuilder2).toString();
 	}
 
-	private void updateTwoParamLineBuilders(StringBuilder lineBuilder1, StringBuilder lineBuilder2, String paramName, String paramValue) {
-		updateLineBuilder(lineBuilder1, paramName);
+	private void addParamNameAndValueIntoTwoBuilders(StringBuilder lineBuilder1, StringBuilder lineBuilder2, String paramName, String paramValue) {
+		addInfoIntoBuilder(lineBuilder1, paramName);
 		String trimmedParamValue = paramValue.trim();
 		String updatedParamValue = updateNumberValue(trimmedParamValue);
-		updateLineBuilder(lineBuilder2, updatedParamValue);
+		addInfoIntoBuilder(lineBuilder2, updatedParamValue);
 	}
 
-	private void updateLineBuilder(StringBuilder lineBuilder, String value) {
+	private void addInfoIntoBuilder(StringBuilder lineBuilder, String info) {
 		lineBuilder.append(VERTICAL_BAR)
 			.append(SPACE_CHAR)
-			.append(value)
+			.append(info)
 			.append(SPACE_CHAR);
 	}
 

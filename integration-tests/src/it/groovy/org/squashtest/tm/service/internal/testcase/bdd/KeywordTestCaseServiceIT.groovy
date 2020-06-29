@@ -208,6 +208,31 @@ Feature: Daily test
 		| "Nice" | 12 |"""
 	}
 
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset-name-with-spaces.xml")
+	def "Should generate a Gherkin script with test steps containing parameter associated with 2 TC param value and 1 dataset whose name contains spaces"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario Outline: Daily test
+		Given Today is Monday
+		When It is &lt;time&gt; in &lt;place&gt;
+		Then I am working
+
+		@dataset_1
+		Examples:
+		| place | time |
+		| "Nice" | 12 |"""
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	def "Should create a File name for a Keyword Test case"() {
 		given:
