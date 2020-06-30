@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.ActionWordText;
-import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.exception.actionword.InvalidActionWordInputException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordTextException;
@@ -37,7 +36,11 @@ import java.util.List;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_UNDERSCORE;
 import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM_DEFAULT_VALUE;
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.hasNumber;
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.isNumber;
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.replaceExtraSpacesInText;
 
 /**
  * @author qtran - created on 24/04/2020
@@ -45,8 +48,7 @@ import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM
 public class ActionWordParser {
 
 	private static final String ACTION_WORD_PARAM_NAME_PREFIX = "param";
-
-	private static final String ACTION_WORD_UNDERSCORE = "_";
+	private static final String ACTION_WORD_PARSER_SPACE_CHAR = " ";
 
 	private boolean actionWordHasText = false;
 
@@ -62,18 +64,8 @@ public class ActionWordParser {
 
 	private int paramIndex = 0;
 
-	private void raiseHasTextFlag() {
-		if (!actionWordHasText) {
-			actionWordHasText = true;
-		}
-	}
-
-	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
-		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
-		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
-		ActionWordParameter param = new ActionWordParameter(paramName, ACTION_WORD_PARAM_DEFAULT_VALUE);
-		parameterValues.add(paramValue);
-		return param;
+	public boolean doesActionWordHaveText() {
+		return actionWordHasText;
 	}
 
 	public List<ActionWordParameterValue> getParameterValues() {
@@ -95,9 +87,9 @@ public class ActionWordParser {
 				throw new InvalidActionWordInputException("Action word must contain at least some texts.");
 			}
 		}
-		//otherwise  --> action word has no parameter, let's save the text input into action word fragment list
+		//otherwise  --> action word has no "..." or <...>
 		else {
-			addTextIntoFragments(trimmedInput);
+			addTextContainingNumberIntoFragments(trimmedInput);
 		}
 		return new ActionWord(fragmentList);
 	}
@@ -111,12 +103,10 @@ public class ActionWordParser {
 		}
 
 		if (charState == CharState.TEXT) {
-			addTextIntoFragments(actionWordTextBuilder.toString());
-		}
-		else if (charState == CharState.FREE_VALUE) {
+			addTextContainingNumberIntoFragments(actionWordTextBuilder.toString());
+		} else if (charState == CharState.FREE_VALUE) {
 			addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
-		}
-		else {
+		} else {
 			addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
 		}
 	}
@@ -163,8 +153,22 @@ public class ActionWordParser {
 		actionWordTestCaseParamValueBuilder.setLength(0);
 	}
 
+	private void raiseHasTextFlag() {
+		if (!actionWordHasText) {
+			actionWordHasText = true;
+		}
+	}
+
+	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
+		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
+		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
+		ActionWordParameter param = new ActionWordParameter(paramName, ACTION_WORD_PARAM_DEFAULT_VALUE);
+		parameterValues.add(paramValue);
+		return param;
+	}
+
 	private String createParamValueFromTestCaseParamValueInput(String trimmedWord) {
-		String removedExtraSpaces = ActionWordUtil.formatText(trimmedWord);
+		String removedExtraSpaces = replaceExtraSpacesInText(trimmedWord);
 		String replacedInvalidCharsWithUnderscores = removedExtraSpaces.replaceAll("[^\\w-]", ACTION_WORD_UNDERSCORE);
 		return ACTION_WORD_OPEN_GUILLEMET + replacedInvalidCharsWithUnderscores + ACTION_WORD_CLOSE_GUILLEMET;
 	}
@@ -197,10 +201,10 @@ public class ActionWordParser {
 			case ACTION_WORD_CLOSE_GUILLEMET:
 				throw new InvalidActionWordTextException("Action word text cannot contain '>' symbol.");
 			case ACTION_WORD_OPEN_GUILLEMET:
-				addTextIntoFragments(actionWordTextBuilder.toString());
+				addTextContainingNumberIntoFragments(actionWordTextBuilder.toString());
 				return CharState.TC_PARAM_VALUE;
 			case ACTION_WORD_DOUBLE_QUOTE:
-				addTextIntoFragments(actionWordTextBuilder.toString());
+				addTextContainingNumberIntoFragments(actionWordTextBuilder.toString());
 				return CharState.FREE_VALUE;
 			default:
 				actionWordTextBuilder.append(currentChar);
@@ -208,13 +212,92 @@ public class ActionWordParser {
 		}
 	}
 
-	private void addTextIntoFragments(String inputText) {
+	private void addTextContainingNumberIntoFragments(String inputText) {
 		if (!inputText.isEmpty()) {
-			ActionWordText text = new ActionWordText(inputText);
-			fragmentList.add(text);
-			raiseHasTextFlag();
-			actionWordTextBuilder.setLength(0);
+			if (hasNumber(inputText)) {
+				fragmentTextContainingNumbers(inputText);
+			} else {
+				addTextIntoFragments(inputText);
+			}
 		}
+	}
+
+	private void addTextIntoFragments(String inputText) {
+		ActionWordText text = new ActionWordText(inputText);
+		fragmentList.add(text);
+		raiseHasTextFlag();
+		actionWordTextBuilder.setLength(0);
+	}
+
+	private void fragmentTextContainingNumbers(String inputText) {
+		String formattedInput = replaceExtraSpacesInText(inputText);
+		String firstAndLastSpaceControlledStr = addSymbolIfHasSpaceAtBeginningOrEndWord(formattedInput);
+		String[] strArrays = firstAndLastSpaceControlledStr.split(ACTION_WORD_PARSER_SPACE_CHAR);
+		StringBuilder builder = new StringBuilder();
+		boolean firstWordInStr = true;
+		for (String word : strArrays) {
+			firstWordInStr = separateTextAndNumberInWordAndAddThemToFragments(builder, firstWordInStr, word);
+		}
+		//add the last text
+		addWordWithoutNumberIntoFragments(builder);
+	}
+
+	private boolean separateTextAndNumberInWordAndAddThemToFragments(StringBuilder builder, boolean firstWordInStr, String word) {
+		if (isNumber(word)) {
+			treatNumberText(builder, word);
+		} else {
+			treatNonNumberText(builder, firstWordInStr, word);
+		}
+		return false;
+	}
+
+	private void treatNonNumberText(StringBuilder builder, boolean firstWordInStr, String word) {
+		if (firstWordInStr) {
+			treatFirstWord(builder, word);
+		} else {
+			treatNonFirstWord(builder, word);
+		}
+	}
+
+	private void treatNonFirstWord(StringBuilder builder, String word) {
+		builder.append(ACTION_WORD_PARSER_SPACE_CHAR);
+		if (!ACTION_WORD_DOUBLE_QUOTE.equals(word)) {
+			builder.append(word);
+		}
+	}
+
+	private void treatFirstWord(StringBuilder builder, String word) {
+		if (ACTION_WORD_DOUBLE_QUOTE.equals(word)) {
+			builder.append(ACTION_WORD_PARSER_SPACE_CHAR);
+		} else {
+			builder.append(word);
+		}
+	}
+
+	private void treatNumberText(StringBuilder builder, String word) {
+		if (builder.length() != 0) {
+			builder.append(ACTION_WORD_PARSER_SPACE_CHAR);
+		}
+		addWordWithoutNumberIntoFragments(builder);
+		addFreeValueParamValueIntoFragments(word);
+	}
+
+	private void addWordWithoutNumberIntoFragments(StringBuilder builder) {
+		if (builder.length() != 0) {
+			addTextIntoFragments(builder.toString());
+			builder.setLength(0);
+		}
+	}
+
+	private String addSymbolIfHasSpaceAtBeginningOrEndWord(String inputText) {
+		StringBuilder builder = new StringBuilder(inputText);
+		if (inputText.startsWith(ACTION_WORD_PARSER_SPACE_CHAR)) {
+			builder.insert(0, ACTION_WORD_DOUBLE_QUOTE);
+		}
+		if (inputText.endsWith(ACTION_WORD_PARSER_SPACE_CHAR)) {
+			builder.append(ACTION_WORD_DOUBLE_QUOTE);
+		}
+		return builder.toString();
 	}
 
 	enum CharState {
@@ -223,9 +306,6 @@ public class ActionWordParser {
 		TC_PARAM_VALUE
 	}
 
-	public boolean doesActionWordHaveText() {
-		return actionWordHasText;
-	}
 }
 
 

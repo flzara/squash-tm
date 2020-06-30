@@ -850,6 +850,90 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
+	def "should find test case and add a keyword step with new action word containing many parameter values as number"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def awLibraryNode = Mock(ActionWordLibraryNode)
+		awLibraryNode.getId() >> 4L
+		def awLibrary = Mock(ActionWordLibrary)
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
+		project.getActionWordLibrary() >> awLibrary
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+		parentTestCase.addStep(firstStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    \"this\" is with 1	\"2\"")
+
+		then:
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "\"param1\" is with \"param2\" \"param3\"" })
+		1 * testStepDao.persist(_)
+		3 * actionWordParamValueDao.persist(_)
+
+		parentTestCase.getSteps().size() == 2
+		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
+		ActionWord checkedActionWord = createdTestStep.actionWord
+		checkedActionWord.createWord() == "\"param1\" is with \"param2\" \"param3\""
+		checkedActionWord.getToken() == "PTPTP- is with - -"
+		def fragments = checkedActionWord.getFragments()
+		fragments.size() == 5
+
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordParameter.class)
+		def param1 = (ActionWordParameter) f1
+		param1.getName() == "param1"
+		param1.getDefaultValue() == ""
+
+		def f2 = fragments.get(1)
+		f2.class.is(ActionWordText.class)
+		((ActionWordText) f2).getText() == " is with "
+
+		def f3 = fragments.get(2)
+		f3.class.is(ActionWordParameter.class)
+		def param3 = (ActionWordParameter) f3
+		param3.getName() == "param2"
+		param3.getDefaultValue() == ""
+
+		def f4 = fragments.get(3)
+		f4.class.is(ActionWordText.class)
+		((ActionWordText) f4).getText() == " "
+
+		def f5 = fragments.get(4)
+		f5.class.is(ActionWordParameter.class)
+		def param5 = (ActionWordParameter) f5
+		param5.getName() == "param3"
+		param5.getDefaultValue() == ""
+
+		def values = createdTestStep.paramValues
+		values.size() == 3
+		ActionWordParameterValue value1 = values.get(0)
+		value1.getValue() == "this"
+		value1.getActionWordParam() == param1
+		value1.getKeywordTestStep() == createdTestStep
+
+		ActionWordParameterValue value2 = values.get(1)
+		value2.getValue() == "1"
+		value2.getActionWordParam() == param3
+		value2.getKeywordTestStep() != null
+
+		ActionWordParameterValue value3 = values.get(2)
+		value3.getValue() == "2"
+		value3.getActionWordParam() == param5
+		value3.getKeywordTestStep() != null
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	def "should find test case and add a step at last position"() {
 		given:
 		def testCase = new MockTC(3L, "tc1")
