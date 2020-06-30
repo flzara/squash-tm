@@ -644,9 +644,9 @@
       <url>${deploy-repo.release.url}</url>
     </repository>
     <snapshotRepository>
-      <id>squash-snapshot-deploy-repo</id>
+      <id>nexus-snapshots</id>
       <name>Squash snapshot deployment repo</name>
-      <url>${deploy-repo.snapshot.url}</url>
+      <url>${nexus-snapshots.url}</url>
     </snapshotRepository>
   </distributionManagement>
 
