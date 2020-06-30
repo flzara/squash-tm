@@ -68,7 +68,7 @@ public class ActionWordText extends ActionWordFragment {
 			throw new InvalidActionWordTextException("Action word text length cannot exceed 255 characters.");
 		}
 		//Action word text can have space at the beginning or at the end; so DO NOT trim it!
-		this.text = ActionWordUtil.formatText(text);
+		this.text = ActionWordUtil.replaceExtraSpacesInText(text);
 	}
 
 	@Override

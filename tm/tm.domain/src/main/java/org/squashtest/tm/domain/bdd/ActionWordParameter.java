@@ -82,7 +82,7 @@ public class ActionWordParameter extends ActionWordFragment {
 			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
 				throw new InvalidActionWordParameterNameException("Action word parameter default value length cannot exceed 255 characters.");
 			}
-			this.defaultValue = ActionWordUtil.formatText(trimmedDefaultValue);
+			this.defaultValue = ActionWordUtil.replaceExtraSpacesInText(trimmedDefaultValue);
 		} else {
 			this.defaultValue = ACTION_WORD_PARAM_DEFAULT_VALUE;
 		}

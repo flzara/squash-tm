@@ -79,7 +79,7 @@ public class ActionWordParameterValue {
 			if (value.length() > ACTION_WORD_PARAM_VALUE_MAX_LENGTH) {
 				throw new InvalidActionWordParameterValueException("Action word parameter value length cannot exceed 255 characters.");
 			}
-			this.value = ActionWordUtil.formatText(trimmedValue);
+			this.value = ActionWordUtil.replaceExtraSpacesInText(trimmedValue);
 		} else {
 			this.value = ACTION_WORD_PARAM_DEFAULT_VALUE;
 		}
