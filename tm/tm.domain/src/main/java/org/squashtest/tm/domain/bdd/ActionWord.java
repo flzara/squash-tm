@@ -68,6 +68,8 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	public static final String ACTION_WORD_CLOSE_GUILLEMET = ">";
 
+	public static final String ACTION_WORD_UNDERSCORE = "_";
+
 	private static final String ACTION_WORD_TOKEN_TEXT_SEPARATOR = "-";
 
 	@Id

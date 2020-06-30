@@ -44,6 +44,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_UNDERSCORE;
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.isNumber;
+
 /**
  * @author qtran - created on 24/06/2020
  */
@@ -52,11 +56,9 @@ public class KeywordTestCaseScriptWriter {
 	private static final String DOUBLE_TAB_CHAR = "\t\t";
 	private static final String NEW_LINE_CHAR = "\n";
 	private static final String SPACE_CHAR = " ";
-	private static final String UNDERSCORE_CHAR = "_";
 	private static final String VERTICAL_BAR = "|";
 	private static final String EXAMPLE = "Examples:";
 	private static final String ACROBAT_CHAR = "@";
-	private static final String DOUBLE_QUOTE_CHAR = "\"";
 
 	private boolean hasTCParamInScript = false;
 
@@ -92,10 +94,10 @@ public class KeywordTestCaseScriptWriter {
 		for(TestStep step : testSteps) {
 			KeywordTestStep keywordStep = (KeywordTestStep) step;
 			String stepActionWordScript = generateActionWordScript(keywordStep);
-			String InternationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
+			String internationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
 			builder
 				.append(DOUBLE_TAB_CHAR)
-				.append(InternationalizedKeyword)
+				.append(internationalizedKeyword)
 				.append(SPACE_CHAR)
 				.append(stepActionWordScript)
 				.append(NEW_LINE_CHAR);
@@ -190,8 +192,8 @@ public class KeywordTestCaseScriptWriter {
 
 	private String generateDatasetTagLine(Dataset dataset) {
 		String originalStr =  dataset.getName();
-		String trimmedAndRemovedExtraSpacesStr = ActionWordUtil.formatText(originalStr.trim());
-		String replacedSpacesStr = trimmedAndRemovedExtraSpacesStr.replaceAll(SPACE_CHAR, UNDERSCORE_CHAR);
+		String trimmedAndRemovedExtraSpacesStr = ActionWordUtil.replaceExtraSpacesInText(originalStr.trim());
+		String replacedSpacesStr = trimmedAndRemovedExtraSpacesStr.replaceAll(SPACE_CHAR, ACTION_WORD_UNDERSCORE);
 		return DOUBLE_TAB_CHAR + ACROBAT_CHAR + replacedSpacesStr + NEW_LINE_CHAR;
 	}
 
@@ -236,11 +238,7 @@ public class KeywordTestCaseScriptWriter {
 		if (isNumber(paramValue)){
 			return paramValue;
 		}
-		return DOUBLE_QUOTE_CHAR + paramValue + DOUBLE_QUOTE_CHAR;
-	}
-
-	private boolean isNumber(String paramValue) {
-		return paramValue.matches("-?\\d+(([.,])\\d+)?");
+		return ACTION_WORD_DOUBLE_QUOTE + paramValue + ACTION_WORD_DOUBLE_QUOTE;
 	}
 
 }
