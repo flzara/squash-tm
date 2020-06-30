@@ -30,13 +30,38 @@ public final class ActionWordUtil {
 		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
 	}
 
-	/**tThis method is to replace all extra-spaces by a single space, for ex:'this is    a    text' --> 'this is a text'
+	/**This method is to replace all extra-spaces by a single space, for ex:'this is    a    text' --> 'this is a text'
 	 *
 	 * @param text input text with extra spaces
 	 * @return text removed extra spaces
 	 */
-	public static String formatText(@NotNull String text) {
+	public static String replaceExtraSpacesInText(@NotNull String text) {
 		return text.replaceAll("[\\s]+", " ");
+	}
+
+	/**
+	 * This method is to check if the given input text contains some words as number (integer or float)
+	 * @param inputText source string
+	 * @return true if containing at least 1 number
+	 */
+    public static boolean hasNumber(@NotNull String inputText) {
+    	String formattedInput = replaceExtraSpacesInText(inputText);
+    	String[] strArrays = formattedInput.split("\\s");
+		for (String word : strArrays) {
+			if (isNumber(word)){
+				return true;
+			}
+		}
+		return false;
+    }
+
+	/**
+	 * This method is to check if the given input is a number (integer or float)
+	 * @param inputWord given word
+	 * @return true if is number
+	 */
+	public static boolean isNumber(String inputWord) {
+		return inputWord.matches("-?\\d+(([.,])\\d+)?");
 	}
 
 }
