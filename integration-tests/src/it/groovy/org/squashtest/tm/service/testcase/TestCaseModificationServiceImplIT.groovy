@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.testcase
 
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
@@ -35,7 +34,6 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
-import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
@@ -927,6 +925,201 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
 		tcParams.size() == 2
 		tcParams.collect { it.name }.sort() == ["d_te", "mon1h"]
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with a new action word containing parameters as numbers to test case"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  1   year with   0.5 month   and -10,5\"month\"   2 month  5 week 0,77   <tcParam>4 day   -13.5  semester   and  55    ")
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id != null
+		actionWord.createWord() == "\"param1\" year with \"param2\" month and \"param3\"\"param4\" \"param5\" month \"param6\" week \"param7\" \"param8\"\"param9\" day \"param10\" semester and \"param11\""
+		actionWord.token == "PTPTPPTPTPTPTPPTPTP- year with - month and - - month - week - - day - semester and -"
+		def fragments = actionWord.getFragments()
+		fragments.size() == 19
+
+		def f0 = fragments.get(0)
+		f0.class.is(ActionWordParameter)
+		def param1 = (ActionWordParameter) f0
+		param1.name == "param1"
+		param1.id != null
+		param1.defaultValue == ""
+		param1.actionWord == actionWord
+
+		def f1 = fragments.get(1)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == " year with "
+		text1.id != null
+		text1.actionWord == actionWord
+
+		def f2 = fragments.get(2)
+		f2.class.is(ActionWordParameter)
+		def param2 = (ActionWordParameter) f2
+		param2.name == "param2"
+		param2.defaultValue == ""
+
+		def f3 = fragments.get(3)
+		f3.class.is(ActionWordText)
+		def text2 = (ActionWordText) f3
+		text2.getText() == " month and "
+		text2.id != null
+
+		def f4 = fragments.get(4)
+		f4.class.is(ActionWordParameter)
+		def param3 = (ActionWordParameter) f4
+		param3.name == "param3"
+		param3.id != null
+
+		def f5 = fragments.get(5)
+		f5.class.is(ActionWordParameter)
+		def param4 = (ActionWordParameter) f5
+		param4.name == "param4"
+		param4.id != null
+
+		def f6 = fragments.get(6)
+		f6.class.is(ActionWordText)
+		def text3 = (ActionWordText) f6
+		text3.getText() == " "
+		text3.id != null
+
+		def f7 = fragments.get(7)
+		f7.class.is(ActionWordParameter)
+		def param5 = (ActionWordParameter) f7
+		param5.name == "param5"
+		param5.id != null
+
+		def f8 = fragments.get(8)
+		f8.class.is(ActionWordText)
+		def text4 = (ActionWordText) f8
+		text4.getText() == " month "
+		text4.id != null
+
+		def f9 = fragments.get(9)
+		f9.class.is(ActionWordParameter)
+		def param6 = (ActionWordParameter) f9
+		param6.name == "param6"
+		param6.id != null
+
+		def f10 = fragments.get(10)
+		f10.class.is(ActionWordText)
+		def text5 = (ActionWordText) f10
+		text5.getText() == " week "
+		text5.id != null
+
+		def f11 = fragments.get(11)
+		f11.class.is(ActionWordParameter)
+		def param7 = (ActionWordParameter) f11
+		param7.name == "param7"
+		param7.id != null
+
+		def f12 = fragments.get(12)
+		f12.class.is(ActionWordText)
+		def text6 = (ActionWordText) f12
+		text6.getText() == " "
+		text6.id != null
+
+		def f13 = fragments.get(13)
+		f13.class.is(ActionWordParameter)
+		def param8 = (ActionWordParameter) f13
+		param8.name == "param8"
+		param8.id != null
+
+		def f14 = fragments.get(14)
+		f14.class.is(ActionWordParameter)
+		def param9 = (ActionWordParameter) f14
+		param9.name == "param9"
+		param9.id != null
+
+		def f15 = fragments.get(15)
+		f15.class.is(ActionWordText)
+		def text7 = (ActionWordText) f15
+		text7.getText() == " day "
+		text7.id != null
+
+		def f16 = fragments.get(16)
+		f16.class.is(ActionWordParameter)
+		def param10 = (ActionWordParameter) f16
+		param10.name == "param10"
+		param10.id != null
+
+		def f17 = fragments.get(17)
+		f17.class.is(ActionWordText)
+		def text8 = (ActionWordText) f17
+		text8.getText() == " semester and "
+		text8.id != null
+
+		def f18 = fragments.get(18)
+		f18.class.is(ActionWordParameter)
+		def param11 = (ActionWordParameter) f18
+		param11.name == "param11"
+		param11.id != null
+		///////////////////////////////////////////////////
+
+		def paramValues = createdKeywordTestStep.paramValues
+		paramValues.size() == 11
+		ActionWordParameterValue value1 = paramValues.get(0)
+		value1.id != null
+		value1.value == "1"
+		value1.actionWordParam == param1
+		value1.keywordTestStep == createdKeywordTestStep
+
+		ActionWordParameterValue value2 = paramValues.get(1)
+		value2.id != null
+		value2.value == "0.5"
+		value2.actionWordParam == param2
+
+		ActionWordParameterValue value3 = paramValues.get(2)
+		value3.id != null
+		value3.value == "-10,5"
+		value3.actionWordParam == param3
+
+		ActionWordParameterValue value4 = paramValues.get(3)
+		value4.id != null
+		value4.value == "month"
+		value4.actionWordParam == param4
+
+		ActionWordParameterValue value5 = paramValues.get(4)
+		value5.id != null
+		value5.value == "2"
+		value5.actionWordParam == param5
+
+		ActionWordParameterValue value6 = paramValues.get(5)
+		value6.id != null
+		value6.value == "5"
+		value6.actionWordParam == param6
+
+		ActionWordParameterValue value7 = paramValues.get(6)
+		value7.id != null
+		value7.value == "0,77"
+		value7.actionWordParam == param7
+
+		ActionWordParameterValue value8 = paramValues.get(7)
+		value8.id != null
+		value8.value == "<tcParam>"
+		value8.actionWordParam == param8
+
+		ActionWordParameterValue value9 = paramValues.get(8)
+		value9.id != null
+		value9.value == "4"
+		value9.actionWordParam == param9
+
+		ActionWordParameterValue value10 = paramValues.get(9)
+		value10.id != null
+		value10.value == "-13.5"
+		value10.actionWordParam == param10
+
+		ActionWordParameterValue value11 = paramValues.get(10)
+		value11.id != null
+		value11.value == "55"
+		value11.actionWordParam == param11
 	}
 
 }

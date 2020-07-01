@@ -264,18 +264,35 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
-	def "should add a keyword test step with given keyword and parameterized actionWord in which value starts with ="() {
+	def "should add a keyword test step with given keyword and parameterized actionWord in which value is between <>"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
 		testStepModel.setKeyword("BUT")
-		testStepModel.setActionWord("add a \"BDD\" test \"=step\"")
+		testStepModel.setActionWord("add a \"BDD\" test <tcParam>")
 
 		and:
 		def testStep = Mock(KeywordTestStep)
 		testStep.getId() >> 2020
 
 		when:
-		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a \"BDD\" test \"=step\"") >> testStep
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a \"BDD\" test <tcParam>") >> testStep
+
+		then:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
+	def "should add a keyword test step with given keyword and parameterized actionWord in which values are numbers"() {
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add \"1\" and 2")
+
+		and:
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
+
+		when:
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add \"1\" and 2") >> testStep
 
 		then:
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
