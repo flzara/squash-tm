@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.22.0.IT14-SNAPSHOT</version>
+    <version>1.22.0.TF12</version>
   </parent>
 
   <artifactId>database.h2.fragment</artifactId>
