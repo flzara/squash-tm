@@ -69,6 +69,7 @@ import spock.lang.Unroll
 
 import static org.squashtest.tm.domain.bdd.Keyword.AND
 import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
+import static org.squashtest.tm.domain.bdd.Keyword.THEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
@@ -1296,27 +1297,41 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		res == steps
 	}
 
-	//TODO-QUAN
-	def "should update the keyword and the action word of a keyword step"() {
+	def "should update the keyword of a keyword step"() {
 		given:
 		def step = Mock(KeywordTestStep)
-		step.actionWord >> createBasicActionWord("first")
-		def existingActionWord = Mock(ActionWord) {
+		step.keyword >> GIVEN
+
+		when:
+		service.updateKeywordTestStep(10L, THEN)
+
+		then:
+		1 * keywordTestStepDao.findById(10L) >> step
+		1 * step.setKeyword(THEN)
+	}
+
+	def "should update the action word of a keyword step with same token but new parameter values"() {
+		given:
+		def actionWord = Mock(ActionWord) {
 			getId() >> -77L
-			getWord() >> "last"
-			getToken() >> "T-last-"
+			getToken() >> "TPT-I have - apples-"
+		}
+		def param1 = new ActionWordParameterValue("5")
+		long parentTestCaseId = 2
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		def step = Mock(KeywordTestStep) {
+			getActionWord() >> actionWord
+			getParamValues() >> [param1]
+			getTestCase() >> parentTestCase
 		}
 
 		when:
-		service.updateKeywordTestStep(10L, GIVEN)
-		service.updateKeywordTestStep(10L, "last   ")
+		service.updateKeywordTestStep(10L, "I have \"8\" apples")
 
 		then:
-		2 * keywordTestStepDao.findById(10L) >> step
-		1 * step.setKeyword(GIVEN)
-		//TODO-QUAN
-		1 * actionWordDao.findByTokenInCurrentProject("T-last-", _) >> existingActionWord
-		0 * step.setActionWord(existingActionWord)
+		1 * keywordTestStepDao.findById(10L) >> step
+		1 * keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		step.paramValues.get(0).value == "8"
 	}
 
 	def "should update the action and the expected result of a test step"() {

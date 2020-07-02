@@ -63,7 +63,7 @@ public class ActionWordParameterValue {
 	@JoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 	private ActionWordParameter actionWordParam;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "KEYWORD_TEST_STEP_ID")
 	private KeywordTestStep keywordTestStep;
 

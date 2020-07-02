@@ -56,6 +56,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
+import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
@@ -103,6 +104,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private KeywordTestCaseFinder keywordTestCaseFinder;
+
+	@Inject
+	private KeywordTestStepDao keywordTestStepDao;
 
 	@Autowired(required = false)
 	private ActionWordService actionWordService;
@@ -364,6 +368,13 @@ public class TestCaseTestStepsController {
 		testCaseModificationService.updateKeywordTestStep(stepId, actionWord);
 		LOGGER.trace("TestCaseModificationController : updated action word for step {}", stepId);
 		return actionWord;
+	}
+
+	@RequestMapping(value = "/{stepId}/action-word-html", method = RequestMethod.GET)
+	@ResponseBody
+	public String getActionWordHtml(@PathVariable long stepId) {
+		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
+		return new KeywordTestStepTableModelBuilder().createActionWordWithParamValues(keywordTestStep);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

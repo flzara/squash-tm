@@ -204,18 +204,20 @@ class TestCaseTestStepsControllerTest extends Specification {
 		res.sEcho == "echo"
 		res.aaData == [
 			[
-				"entity-id"          : "1",
-				"step-keyword"       : 'GIVEN',
-				"step-index"         : '1',
-				"empty-delete-holder": null,
-				"step-action-word"   : 'hello'
+				"entity-id"          	   : "1",
+				"step-keyword"       	   : 'GIVEN',
+				"step-index"        	   : '1',
+				"empty-delete-holder"	   : null,
+				"step-action-word"         : 'hello',
+				"step-action-word-unstyled": 'hello'
 			],
 			[
-				"entity-id"          : "2",
-				"step-keyword"       : 'AND',
-				"step-index"         : '2',
-				"empty-delete-holder": null,
-				"step-action-word"   : 'how are <span style=\"color: blue;\">you</span> ?'
+				"entity-id"          		: "2",
+				"step-keyword"       		: 'AND',
+				"step-index"         		: '2',
+				"empty-delete-holder"		: null,
+				"step-action-word"   		: 'how are <span style=\"color: blue;\">you</span> ?',
+				"step-action-word-unstyled" : 'how are "you" ?'
 			]]
 
 

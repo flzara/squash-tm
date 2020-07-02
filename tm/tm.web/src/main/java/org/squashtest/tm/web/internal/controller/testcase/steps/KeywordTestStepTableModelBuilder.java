@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestCaseScriptWriter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
@@ -47,11 +48,12 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
 		String actionWordWithParamValues = createActionWordWithParamValues(keywordTestStep);
 		item.put("step-action-word", actionWordWithParamValues);
+		item.put("step-action-word-unstyled", new KeywordTestCaseScriptWriter().generateActionWordScript(keywordTestStep));
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}
 
-	private String createActionWordWithParamValues(KeywordTestStep keywordTestStep) {
+	public String createActionWordWithParamValues(KeywordTestStep keywordTestStep) {
 		ActionWord actionWord = keywordTestStep.getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
 		List<ActionWordParameterValue> paramValues = keywordTestStep.getParamValues();

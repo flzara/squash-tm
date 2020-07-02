@@ -84,8 +84,10 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		},
 
 		initKeywordTestStepTable: function (settings) {
-			var testCaseId = settings.testCaseId;
-			var table = $("#keyword-test-step-table");
+			var self = this,
+				  testCaseId = settings.testCaseId,
+				  table = $("#keyword-test-step-table"),
+				  postActionWordFunction = self.postActionWordFunction(settings.testCaseUrl, table);
 
 			table.squashTable(
 				{
@@ -112,8 +114,8 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 								// action-word editable configuration
 								var edconf = confman.getStdJeditable();
-								var actionWordUrl = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/action-word';
-								actionWordCell.editable(actionWordUrl, edconf);
+								edconf.data = rowModel['step-action-word-unstyled'];
+								actionWordCell.editable(postActionWordFunction, edconf);
 							}
 						});
 					}
@@ -222,6 +224,30 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				minLength: 1
 			});
 			searchInput.autocomplete('enable');
+		},
+
+		postActionWordFunction: function(baseUrl, table) {
+			return function(value, editableSettings) {
+				var td = this,
+						row = td.parentNode,
+						rowModel = table.fnGetData(row),
+						actionWordCell = $(row).find('td.step-action-word'),
+						actionWordUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word';
+				$.ajax({
+					url: actionWordUrl,
+					type: 'POST',
+					data: {value: value}
+				}).done(function() {
+					var actionWordHtmlUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word-html';
+					$.ajax({
+						url: actionWordHtmlUrl,
+						type: 'GET'
+					}).done(function(actionWordHtml) {
+						actionWordCell.html(actionWordHtml);
+					});
+					editableSettings.data = value;
+				});
+			};
 		}
 	});
 	return KeywordTestStepTablePanel;

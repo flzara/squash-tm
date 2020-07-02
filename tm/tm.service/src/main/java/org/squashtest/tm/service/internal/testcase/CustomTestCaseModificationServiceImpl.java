@@ -339,14 +339,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
-			//set project to input action word
+
 			inputActionWord.setProject(currentProject);
-			//add test step
+
 			KeywordTestStep testStep = addActionWordToKeywordTestStep(newTestStep, inputActionWord, parentTestCase, parameterValues, index);
-			//add new action word node in library
-			ActionWordLibrary actionWordLibrary = currentProject.getActionWordLibrary();
-			ActionWordLibraryNode parentLibraryNode = actionWordLibraryNodeService.findNodeFromEntity(actionWordLibrary);
-			actionWordLibraryNodeService.createNewNode(parentLibraryNode.getId(), inputActionWord);
+
+			addNewActionWordNodeInLibrary(inputActionWord, currentProject);
+
 			return testStep;
 		} else {
 			LOGGER.debug("Action word exists in database.");
@@ -467,37 +466,77 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, String updatedWord) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(testStep.getTestCase().getId());
 		String token = testStep.getActionWord().getToken();
 		if (updatedWord != null) {
 			String trimmedWord = updatedWord.trim();
-			ActionWord inputActionWord = new ActionWordParser().createActionWordFromKeywordTestStep(trimmedWord);
+			ActionWordParser parser = new ActionWordParser();
+			ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(trimmedWord);
+			List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
 			String inputToken = inputActionWord.getToken();
-			if (!inputToken.equals(token)) {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
-				}
-				//TODO-QUAN: the whole method needs to be recoded
-				ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, null);
-				addActionWordToKeywordTestStep(testStep, actionWord);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
+			}
+			if (! inputToken.equals(token)) {
+				//TODO when token aren't the same
+			} else {
+				updateParamValuesAndInsertNewTcParamIfNeeded(testStep, parentTestCase, parameterValues);
+			}
+		} else {
+			throw new IllegalArgumentException("Action word cannot be null.");
+		}
+	}
+
+	private void updateParamValuesAndInsertNewTcParamIfNeeded(KeywordTestStep testStep, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues) {
+		List<ActionWordParameterValue> values = reorderParamValuesFromTestStepIfNeeded(testStep);
+
+		for (int i = 0; i < values.size(); i++) {
+			ActionWordParameterValue oldValue = values.get(i);
+			ActionWordParameterValue newValue = parameterValues.get(i);
+			doUpdateParamValuesAndInsertNewTcParamIfNeeded(oldValue, newValue, parentTestCase);
+		}
+	}
+
+	private void doUpdateParamValuesAndInsertNewTcParamIfNeeded(ActionWordParameterValue oldValue, ActionWordParameterValue newValue, KeywordTestCase parentTestCase) {
+		if (! oldValue.getValue().equals(newValue.getValue())) {
+			if (newValue.getValue().startsWith(ACTION_WORD_OPEN_GUILLEMET) && newValue.getValue().endsWith(ACTION_WORD_CLOSE_GUILLEMET)) {
+				String paramValue = insertNewTestCaseParamIfNeeded(parentTestCase, newValue.getValue());
+				oldValue.setValue(paramValue);
+			} else {
+				oldValue.setValue(newValue.getValue());
 			}
 		}
 	}
 
-	//TODO-QUAN
-	private void addActionWordToKeywordTestStep(KeywordTestStep keywordTestStep, ActionWord actionWord) {
-		ActionWord inputActionWord = keywordTestStep.getActionWord();
-		List<ActionWordParameter> inputActionWordParams = inputActionWord.getActionWordParams();
-		if (isNull(actionWord)) {
-			LOGGER.debug("adding new action word");
-
-			LOGGER.debug("Action word exists in database. Adding new param values to their param value lists");
-			List<ActionWordParameter> actionWordParams = actionWord.getActionWordParams();
-			//insertNewValuesToActionWordParamValueListInDataBase(inputActionWordParams, actionWordParams);
-			keywordTestStep.setActionWord(actionWord);
+	private List<ActionWordParameterValue> reorderParamValuesFromTestStepIfNeeded(KeywordTestStep testStep) {
+		List<ActionWordParameterValue> values = testStep.getParamValues();
+		if (values.size() < 2) {
+			return values;
 		} else {
-
+			return reorderParamValuesFromTestStep(values, testStep);
 		}
-		//addKeywordTestStepForActionWordParameterValue(keywordTestStep, inputActionWordParams);
+	}
+
+	// Issue with postgresql : we must reorder the param values
+	private List<ActionWordParameterValue> reorderParamValuesFromTestStep(List<ActionWordParameterValue> values, KeywordTestStep testStep) {
+		List<ActionWordParameterValue> orderedValues = new ArrayList<>();
+		int index;
+		for (ActionWordParameter orderedParam : testStep.getActionWord().getActionWordParams()) {
+			index = 0;
+			while (index < values.size() && ! values.get(index).getActionWordParam().getId().equals(orderedParam.getId())) {
+				index++;
+			}
+			if (index < values.size()) {
+				orderedValues.add(testStep.getParamValues().get(index));
+			}
+		}
+		return orderedValues;
+	}
+
+	private void addNewActionWordNodeInLibrary(ActionWord newActionWord, Project currentProject) {
+		ActionWordLibrary actionWordLibrary = currentProject.getActionWordLibrary();
+		ActionWordLibraryNode parentLibraryNode = actionWordLibraryNodeService.findNodeFromEntity(actionWordLibrary);
+		actionWordLibraryNodeService.createNewNode(parentLibraryNode.getId(), newActionWord);
 	}
 
 	//**********ACTION STEP************

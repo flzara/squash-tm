@@ -66,6 +66,10 @@ public class KeywordTestCaseScriptWriter {
 
 	private StringBuilder builder = new StringBuilder();
 
+	public KeywordTestCaseScriptWriter() {
+
+	}
+
 	public KeywordTestCaseScriptWriter(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
@@ -105,7 +109,7 @@ public class KeywordTestCaseScriptWriter {
 		builder.deleteCharAt(builder.length()-1);
 	}
 
-	private String generateActionWordScript(KeywordTestStep keywordTestStep) {
+	public String generateActionWordScript(KeywordTestStep keywordTestStep) {
 		ActionWord actionWord = keywordTestStep.getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
 		List<ActionWordParameterValue> paramValues = keywordTestStep.getParamValues();
