@@ -89,7 +89,7 @@
 
       <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
 
-      <column name="TOKEN" type="VARCHAR(255)">
+      <column name="TOKEN" type="VARCHAR(766)">
         <constraints nullable="false" />
       </column>
 
