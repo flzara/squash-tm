@@ -26,6 +26,15 @@ import spock.lang.Unroll
 
 class ActionWordParamValueTest extends Specification {
 
+	def "should throw exception when action word parameter value is null"() {
+		when:
+		new ActionWordParameterValue(null)
+
+		then:
+		InvalidActionWordParameterValueException ex = thrown()
+		ex.message == "Action word parameter value cannot be null."
+	}
+
 	@Unroll
 	def "should create an ActionWordParamValue"() {
 		when:
@@ -36,7 +45,6 @@ class ActionWordParamValueTest extends Specification {
 
 		where:
 		value                                 || expectedValue
-		null                                  || ""
 		""                                    || ""
 		"    "                                || ""
 		"hello tod@y is Monday 27/04/2020 ^^" || "hello tod@y is Monday 27/04/2020 ^^"
@@ -49,9 +57,12 @@ class ActionWordParamValueTest extends Specification {
 		new ActionWordParameterValue(value)
 
 		then:
-		thrown InvalidActionWordParameterValueException
+		InvalidActionWordParameterValueException ex = thrown()
+		ex.message == msg
 
 		where:
-		value << ["a b\"c1 24", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+		msg																		|	value
+		"Action word parameter value cannot contain \", < or >."				|	"a b\"c1 24"
+		"Action word parameter value length cannot exceed 255 characters."		|	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 	}
 }

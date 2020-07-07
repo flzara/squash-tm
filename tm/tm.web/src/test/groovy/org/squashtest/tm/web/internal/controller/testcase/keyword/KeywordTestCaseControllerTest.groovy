@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.service.actionword.ActionWordService
 import spock.lang.Specification
-import spock.lang.Unroll
 
 /**
  * @author qtran - created on 29/05/2020
@@ -52,8 +51,8 @@ class KeywordTestCaseControllerTest  extends Specification{
 
 		def fragmentText3 = new ActionWordText(" param or ")
 
-		def fragmentParam = new ActionWordParameter("param1")
-		def fragmentParam2 = new ActionWordParameter("param2")
+		def fragmentParam = new ActionWordParameter("param1", "")
+		def fragmentParam2 = new ActionWordParameter("param2", "")
 
 		def actionWord1 = new ActionWord([singleFragmentText] as List)
 
@@ -71,6 +70,5 @@ class KeywordTestCaseControllerTest  extends Specification{
 
 		then:
 		result.size() == 3
-
 	}
 }

@@ -618,7 +618,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def param1 = (ActionWordParameter) f2
 		param1.name == "param1"
 		param1.id != null
-		param1.defaultValue == ""
+		param1.defaultValue == "Friday"
 		param1.actionWord == actionWord
 
 		def f3 = fragments.get(2)
@@ -950,7 +950,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def param1 = (ActionWordParameter) f0
 		param1.name == "param1"
 		param1.id != null
-		param1.defaultValue == ""
+		param1.defaultValue == "1"
 		param1.actionWord == actionWord
 
 		def f1 = fragments.get(1)
@@ -964,7 +964,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		f2.class.is(ActionWordParameter)
 		def param2 = (ActionWordParameter) f2
 		param2.name == "param2"
-		param2.defaultValue == ""
+		param2.defaultValue == "0.5"
 
 		def f3 = fragments.get(3)
 		f3.class.is(ActionWordText)

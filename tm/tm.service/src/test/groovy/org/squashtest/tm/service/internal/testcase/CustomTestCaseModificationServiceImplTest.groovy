@@ -271,7 +271,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f2.class.is(ActionWordParameter.class)
 		def param = (ActionWordParameter) f2
 		param.getName() == "param1"
-		param.getDefaultValue() == ""
+		param.getDefaultValue() == "param"
 
 		def values = createdTestStep.paramValues
 		values.size() == 1
@@ -444,7 +444,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f1.class.is(ActionWordParameter.class)
 		def param1 = (ActionWordParameter) f1
 		param1.getName() == "param1"
-		param1.getDefaultValue() == ""
+		param1.getDefaultValue() == "this"
 
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText.class)
@@ -454,7 +454,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f3.class.is(ActionWordParameter.class)
 		def param3 = (ActionWordParameter) f3
 		param3.getName() == "param2"
-		param3.getDefaultValue() == ""
+		param3.getDefaultValue() == "param"
 
 		def f4 = fragments.get(3)
 		f4.class.is(ActionWordText.class)
@@ -464,7 +464,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f5.class.is(ActionWordParameter.class)
 		def param5 = (ActionWordParameter) f5
 		param5.getName() == "param3"
-		param5.getDefaultValue() == ""
+		param5.getDefaultValue() == "v@lue"
 
 		def values = createdTestStep.paramValues
 		values.size() == 3
@@ -580,7 +580,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText = new ActionWordText("today is ")
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam = new ActionWordParameter("param1")
+		def actionWordParam = new ActionWordParameter("param1", "")
 		actionWordParams.add(actionWordParam)
 
 		inputFragments.add(actionWordText)
@@ -649,11 +649,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def actionWordText2 = new ActionWordText(" of ")
 
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam1 = new ActionWordParameter("param1")
+		def actionWordParam1 = new ActionWordParameter("param1", "")
 		actionWordParams.add(actionWordParam1)
-		def actionWordParam2 = new ActionWordParameter("param2")
+		def actionWordParam2 = new ActionWordParameter("param2", "January")
 		actionWordParams.add(actionWordParam2)
-		def actionWordParam3 = new ActionWordParameter("param3")
+		def actionWordParam3 = new ActionWordParameter("param3", "2000")
 		actionWordParams.add(actionWordParam3)
 
 		inputFragments.add(actionWordText1)
@@ -717,13 +717,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f4.class.is(ActionWordParameter.class)
 		ActionWordParameter param2 = (ActionWordParameter) f4
 		param2.getName() == "param2"
-		param2.getDefaultValue() == ""
+		param2.getDefaultValue() == "January"
 
 		def f5 = fragments.get(4)
 		f5.class.is(ActionWordParameter.class)
 		ActionWordParameter param3 = (ActionWordParameter) f5
 		param3.getName() == "param3"
-		param3.getDefaultValue() == ""
+		param3.getDefaultValue() == "2000"
 
 		def values = createdTestStep.paramValues
 		values.size() == 3
@@ -751,11 +751,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def actionWordText2 = new ActionWordText(" of ")
 
 		def actionWordParams = new ArrayList<ActionWordParameter>()
-		def actionWordParam1 = new ActionWordParameter("param1")
+		def actionWordParam1 = new ActionWordParameter("param1", "")
 		actionWordParams.add(actionWordParam1)
-		def actionWordParam2 = new ActionWordParameter("param2")
+		def actionWordParam2 = new ActionWordParameter("param2", "")
 		actionWordParams.add(actionWordParam2)
-		def actionWordParam3 = new ActionWordParameter("param3")
+		def actionWordParam3 = new ActionWordParameter("param3", "")
 		actionWordParams.add(actionWordParam3)
 
 		inputFragments.add(actionWordText1)
@@ -893,7 +893,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f1.class.is(ActionWordParameter.class)
 		def param1 = (ActionWordParameter) f1
 		param1.getName() == "param1"
-		param1.getDefaultValue() == ""
+		param1.getDefaultValue() == "this"
 
 		def f2 = fragments.get(1)
 		f2.class.is(ActionWordText.class)
@@ -903,7 +903,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f3.class.is(ActionWordParameter.class)
 		def param3 = (ActionWordParameter) f3
 		param3.getName() == "param2"
-		param3.getDefaultValue() == ""
+		param3.getDefaultValue() == "1"
 
 		def f4 = fragments.get(3)
 		f4.class.is(ActionWordText.class)
@@ -913,7 +913,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		f5.class.is(ActionWordParameter.class)
 		def param5 = (ActionWordParameter) f5
 		param5.getName() == "param3"
-		param5.getDefaultValue() == ""
+		param5.getDefaultValue() == "2"
 
 		def values = createdTestStep.paramValues
 		values.size() == 3

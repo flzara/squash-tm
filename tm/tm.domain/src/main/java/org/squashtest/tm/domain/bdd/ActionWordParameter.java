@@ -46,8 +46,6 @@ import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
 @PrimaryKeyJoinColumn(name = "ACTION_WORD_FRAGMENT_ID")
 public class ActionWordParameter extends ActionWordFragment {
 
-	public static final String ACTION_WORD_PARAM_DEFAULT_VALUE = "";
-
 	@NotBlank
 	@Column(name = "NAME")
 	@Size(max = 255)
@@ -74,22 +72,14 @@ public class ActionWordParameter extends ActionWordFragment {
 		this.name = trimmedName;
 
 		String trimmedDefaultValue = defaultValue.trim();
-		if (StringUtils.isNotEmpty(trimmedDefaultValue)) {
-			if (defaultValue.contains(ACTION_WORD_DOUBLE_QUOTE)) {
-				throw new InvalidActionWordParameterNameException("Action word parameter default value cannot contain \", < or >.");
-			}
-
-			if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
-				throw new InvalidActionWordParameterNameException("Action word parameter default value length cannot exceed 255 characters.");
-			}
-			this.defaultValue = ActionWordUtil.replaceExtraSpacesInText(trimmedDefaultValue);
-		} else {
-			this.defaultValue = ACTION_WORD_PARAM_DEFAULT_VALUE;
+		if (defaultValue.contains(ACTION_WORD_DOUBLE_QUOTE)) {
+			throw new InvalidActionWordParameterNameException("Action word parameter default value cannot contain \", < or >.");
 		}
-	}
 
-	public ActionWordParameter(String name) {
-		this(name, ACTION_WORD_PARAM_DEFAULT_VALUE);
+		if (trimmedDefaultValue.length() > ACTION_WORD_FRAGMENT_INPUT_MAX_LENGTH) {
+			throw new InvalidActionWordParameterNameException("Action word parameter default value length cannot exceed 255 characters.");
+		}
+		this.defaultValue = ActionWordUtil.replaceExtraSpacesInText(trimmedDefaultValue);
 	}
 
 	@Override

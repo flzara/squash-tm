@@ -37,7 +37,6 @@ import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEME
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_UNDERSCORE;
-import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM_DEFAULT_VALUE;
 import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.hasNumber;
 import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.isNumber;
 import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.replaceExtraSpacesInText;
@@ -49,6 +48,7 @@ public class ActionWordParser {
 
 	private static final String ACTION_WORD_PARAM_NAME_PREFIX = "param";
 	private static final String ACTION_WORD_PARSER_SPACE_CHAR = " ";
+	private static final String ACTION_WORD_PARSER_EMPTY_CHAR = "";
 
 	private boolean actionWordHasText = false;
 
@@ -148,7 +148,10 @@ public class ActionWordParser {
 		}
 		++paramIndex;
 		String actionWordParamValue = createParamValueFromTestCaseParamValueInput(trimmedWord);
-		ActionWordParameter param = initiateActionWordParameter(paramIndex, actionWordParamValue);
+		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
+		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
+		ActionWordParameter param = new ActionWordParameter(paramName, ACTION_WORD_PARSER_EMPTY_CHAR);
+		parameterValues.add(paramValue);
 		fragmentList.add(param);
 		actionWordTestCaseParamValueBuilder.setLength(0);
 	}
@@ -157,14 +160,6 @@ public class ActionWordParser {
 		if (!actionWordHasText) {
 			actionWordHasText = true;
 		}
-	}
-
-	private ActionWordParameter initiateActionWordParameter(int paramIndex, String actionWordParamValue) {
-		ActionWordParameterValue paramValue = new ActionWordParameterValue(actionWordParamValue);
-		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
-		ActionWordParameter param = new ActionWordParameter(paramName, ACTION_WORD_PARAM_DEFAULT_VALUE);
-		parameterValues.add(paramValue);
-		return param;
 	}
 
 	private String createParamValueFromTestCaseParamValueInput(String trimmedWord) {
@@ -191,7 +186,10 @@ public class ActionWordParser {
 
 	private void addFreeValueParamValueIntoFragments(String paramValueInput) {
 		++paramIndex;
-		ActionWordParameter param = initiateActionWordParameter(paramIndex, paramValueInput);
+		ActionWordParameterValue paramValue = new ActionWordParameterValue(paramValueInput);
+		String paramName = ACTION_WORD_PARAM_NAME_PREFIX + paramIndex;
+		ActionWordParameter param = new ActionWordParameter(paramName, paramValueInput);
+		parameterValues.add(paramValue);
 		fragmentList.add(param);
 		actionWordFreeValueParamValueBuilder.setLength(0);
 	}

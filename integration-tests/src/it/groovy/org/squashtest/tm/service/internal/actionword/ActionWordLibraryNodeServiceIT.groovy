@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
 import org.squashtest.tm.service.internal.repository.ActionWordDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
@@ -57,8 +56,6 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	def  "should create a new action word node"() {
 		given:
 			ActionWord newActionWord = createBasicActionWord("a new action word")
-//			ActionWordText textFragment = new ActionWordText("a new action word")
-//			newActionWord.addFragment(textFragment)
 		when:
 			def newNode = actionWordLibraryNodeService.createNewNode(-1L, newActionWord)
 		then:

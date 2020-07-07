@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.bdd;
 
-import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
@@ -37,8 +36,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import static org.squashtest.tm.domain.bdd.ActionWordParameter.ACTION_WORD_PARAM_DEFAULT_VALUE;
 
 /**
  * @author qtran - created on 27/04/2020
@@ -71,18 +68,17 @@ public class ActionWordParameterValue {
 	}
 
 	public ActionWordParameterValue(String value) {
-		if (StringUtils.isNotEmpty(value)) {
-			if (value.contains("\"")) {
-				throw new InvalidActionWordParameterValueException("Action word parameter value cannot contain \", < or >.");
-			}
-			String trimmedValue = value.trim();
-			if (value.length() > ACTION_WORD_PARAM_VALUE_MAX_LENGTH) {
-				throw new InvalidActionWordParameterValueException("Action word parameter value length cannot exceed 255 characters.");
-			}
-			this.value = ActionWordUtil.replaceExtraSpacesInText(trimmedValue);
-		} else {
-			this.value = ACTION_WORD_PARAM_DEFAULT_VALUE;
+		if (value == null) {
+			throw new InvalidActionWordParameterValueException("Action word parameter value cannot be null.");
 		}
+		if (value.contains("\"")) {
+			throw new InvalidActionWordParameterValueException("Action word parameter value cannot contain \", < or >.");
+		}
+		String trimmedValue = value.trim();
+		if (value.length() > ACTION_WORD_PARAM_VALUE_MAX_LENGTH) {
+			throw new InvalidActionWordParameterValueException("Action word parameter value length cannot exceed 255 characters.");
+		}
+		this.value = ActionWordUtil.replaceExtraSpacesInText(trimmedValue);
 	}
 
 	public Long getId() {
