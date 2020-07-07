@@ -161,7 +161,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 
 		when :
-		deletionDao.removeAllSteps([-111L, -112L])
+		deletionDao.removeAllSteps([-111L, -112L, -113L, -114L])
 
 		getSession().flush()
 		getSession().clear()
@@ -169,16 +169,25 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		def testCaseAfter = findEntity(TestCase.class, -11L)
 
 		then :
-		! found("TEST_STEP", "TEST_STEP_id", -111L)
-		! found("TEST_STEP", "TEST_STEP_id", -112L)
+		! found("TEST_STEP", "TEST_STEP_ID", -111L)
+		! found("TEST_STEP", "TEST_STEP_ID", -112L)
+		! found("TEST_STEP", "TEST_STEP_ID", -113L)
+		! found("TEST_STEP", "TEST_STEP_ID", -114L)
 
-		! found("ACTION_TEST_STEP", "TEST_STEP_id", -111L)
-		! found("CALL_TEST_STEP", "TEST_STEP_id", -112L)
+		! found("ACTION_TEST_STEP", "TEST_STEP_ID", -111L)
+		! found("CALL_TEST_STEP", "TEST_STEP_ID", -112L)
+		! found("KEYWORD_TEST_STEP", "TEST_STEP_ID", -113L)
+		! found("KEYWORD_TEST_STEP", "TEST_STEP_ID", -114L)
+
+		! found("ACTION_WORD_PARAMETER_VALUE", "ACTION_WORD_PARAMETER_VALUE_ID", -1L)
+		! found("ACTION_WORD_PARAMETER_VALUE", "ACTION_WORD_PARAMETER_VALUE_ID", -2L)
 
 		! found("TEST_CASE_STEPS", "STEP_ID", -111L)
 		! found("TEST_CASE_STEPS", "STEP_ID", -112L)
+		! found("TEST_CASE_STEPS", "STEP_ID", -113L)
+		! found("TEST_CASE_STEPS", "STEP_ID", -114L)
 
-		testCaseAfter.steps.size()==0
+		testCaseAfter.steps.size() == 0
 	}
 
 

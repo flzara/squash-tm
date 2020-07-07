@@ -118,6 +118,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 			executeDeleteSQLQuery(NativeQueries.TESTSTEP_SQL_REMOVEACTIONSTEPS, TEST_STEP_IDS, testStepIds);
 			executeDeleteSQLQuery(NativeQueries.TESTSTEP_SQL_REMOVECALLSTEPS, TEST_STEP_IDS, testStepIds);
+			// SQUASH-1018 - constraint violation
+			executeDeleteSQLQuery(NativeQueries.TESTSTEP_SQL_REMOVEACTIONWORDPARAMVALUES, TEST_STEP_IDS, testStepIds);
 			executeDeleteSQLQuery(NativeQueries.TESTSTEP_SQL_REMOVEKEYWORDSTEPS, TEST_STEP_IDS, testStepIds);
 			executeDeleteSQLQuery(NativeQueries.TESTSTEP_SQL_REMOVETESTSTEPS, TEST_STEP_IDS, testStepIds);
 		}
