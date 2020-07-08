@@ -38,8 +38,8 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 	}
 
 	private String replace(String content) {
-		return content.replace(Parameter.getParamStringAsUsedInStep(oldParamName),
-				Parameter.getParamStringAsUsedInStep(newParamName));
+		return content.replace(Parameter.getParamStringAsUsedInStandardTestCase(oldParamName),
+				Parameter.getParamStringAsUsedInStandardTestCase(newParamName));
 	}
 
 	@Override
@@ -60,8 +60,8 @@ public class ParameterNameInStepUpdater implements TestStepVisitor {
 	@Override
 	public void visit(KeywordTestStep visited) {
 		List<ActionWordParameterValue> paramValues = visited.getParamValues();
-		String oldMatchingParamValue = ACTION_WORD_OPEN_GUILLEMET+oldParamName+ACTION_WORD_CLOSE_GUILLEMET;
-		String newMatchingParamValue = ACTION_WORD_OPEN_GUILLEMET+newParamName+ACTION_WORD_CLOSE_GUILLEMET;
+		String oldMatchingParamValue = Parameter.getParamStringAsUsedInKeywordTestCase(oldParamName);
+		String newMatchingParamValue = Parameter.getParamStringAsUsedInKeywordTestCase(newParamName);
 
 		if (paramValues != null) {
 			for (ActionWordParameterValue paramValue : paramValues) {

@@ -22,10 +22,12 @@ package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
@@ -52,6 +54,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
+
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TEST_CASE_ID"})})
@@ -181,7 +186,26 @@ public class Parameter implements Identified, RelatedToAuditable {
 	 * @return
 	 */
 	public String getParamStringAsUsedInStep() {
-		return getParamStringAsUsedInStep(this.name);
+		Wrapped<String> paramStringAsUsedInStep =  new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				paramStringAsUsedInStep.setValue(getParamStringAsUsedInStandardTestCase(name));
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				paramStringAsUsedInStep.setValue(getParamStringAsUsedInKeywordTestCase(name));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Scripted Test Case doesn't have any parameter.");
+			}
+		};
+
+		testCase.accept(visitor);
+		return paramStringAsUsedInStep.getValue();
 	}
 
 	private void updateParamNameInSteps(String newName) {
@@ -195,11 +219,21 @@ public class Parameter implements Identified, RelatedToAuditable {
 	/**
 	 * Returns {@link Parameter#USAGE_PREFIX} + p + {@link Parameter#USAGE_SUFFIX}
 	 *
-	 * @param parameterName
-	 * @return
+	 * @param parameterName the parameter name
+	 * @return the param String as used in a standard test case
 	 */
-	protected static String getParamStringAsUsedInStep(String parameterName) {
-		return Parameter.USAGE_PREFIX + parameterName + Parameter.USAGE_SUFFIX;
+	protected static String getParamStringAsUsedInStandardTestCase(String parameterName) {
+		return USAGE_PREFIX + parameterName + USAGE_SUFFIX;
+	}
+
+	/**
+	 * Returns {@link ActionWord#ACTION_WORD_OPEN_GUILLEMET} + p + {@link ActionWord#ACTION_WORD_CLOSE_GUILLEMET}
+	 *
+	 * @param parameterName the parameter name
+	 * @return the param String as used in a keyword test case
+	 */
+	protected static String getParamStringAsUsedInKeywordTestCase(String parameterName) {
+		return ACTION_WORD_OPEN_GUILLEMET + parameterName + ACTION_WORD_CLOSE_GUILLEMET;
 	}
 
 	public static Set<String> findUsedParameterNamesInString(String content) {

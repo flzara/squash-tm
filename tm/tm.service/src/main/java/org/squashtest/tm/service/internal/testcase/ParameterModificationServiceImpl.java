@@ -24,9 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -201,7 +205,26 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public boolean isUsed(long parameterId) {
 		Parameter parameter = parameterDao.getOne(parameterId);
 		long testCaseId = parameter.getTestCase().getId();
-		return testStepDao.stringIsFoundInStepsOfTestCase(parameter.getParamStringAsUsedInStep(), testCaseId);
+		Wrapped<Boolean> isUsed =  new Wrapped<>();
+		TestCaseVisitor visitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				isUsed.setValue(testStepDao.stringIsFoundInStepsOfTestCase(parameter.getParamStringAsUsedInStep(), testCaseId));
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+				isUsed.setValue(testStepDao.stringIsFoundInStepsOfKeywordTestCase(parameter.getParamStringAsUsedInStep(), testCaseId));
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Scripted Test Case doesn't have any parameter.");
+			}
+		};
+
+		parameter.getTestCase().accept(visitor);
+		return isUsed.getValue();
 	}
 
 	/**

@@ -52,6 +52,14 @@ public interface TestStepDao extends EntityDao<TestStep>{
 	boolean stringIsFoundInStepsOfTestCase(String stringToFind, long testCaseId);
 
 	/**
+	 * Will check if the string appears at least once in at least one step of the keyword test case matching the given id.
+	 *
+	 * @param stringToFind : the string to look for in the step
+	 * @param testCaseId : the id of the concerned TestCase
+	 * @return true if the string is found in one step of the concerned keyword test case
+	 */
+	boolean stringIsFoundInStepsOfKeywordTestCase(String stringToFind, long testCaseId);
+	/**
 	 * Find all {@link TestStep}, ordered by their index in the test case. This method MUST be used for steps that belong to the
 	 * the same test case. Typical use case : select the steps in good order for a copy.
 	 * @param testStepIds
