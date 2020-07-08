@@ -57,6 +57,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
+import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestCaseScriptWriter;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
@@ -375,6 +376,13 @@ public class TestCaseTestStepsController {
 	public String getActionWordHtml(@PathVariable long stepId) {
 		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
 		return new KeywordTestStepTableModelBuilder().createActionWordWithParamValues(keywordTestStep);
+	}
+
+	@RequestMapping(value = "/{stepId}/action-word-unstyled", method = RequestMethod.GET)
+	@ResponseBody
+	public String getActionWordUnstyled(@PathVariable long stepId) {
+		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
+		return new KeywordTestCaseScriptWriter().generateActionWordScript(keywordTestStep);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

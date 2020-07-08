@@ -245,7 +245,13 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 					}).done(function(actionWordHtml) {
 						actionWordCell.html(actionWordHtml);
 					});
-					editableSettings.data = value;
+					var actionWordUnstyledUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word-unstyled';
+					$.ajax({
+						url: actionWordUnstyledUrl,
+						type: 'GET'
+					}).done(function(actionWordUnstyled) {
+						editableSettings.data = actionWordUnstyled;
+					});
 				});
 			};
 		}

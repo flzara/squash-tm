@@ -57,7 +57,6 @@ public class KeywordTestCaseScriptWriter {
 	private static final String NEW_LINE_CHAR = "\n";
 	private static final String SPACE_CHAR = " ";
 	private static final String VERTICAL_BAR = "|";
-	private static final String EXAMPLE = "Examples:";
 	private static final String ACROBAT_CHAR = "@";
 
 	private boolean hasTCParamInScript = false;
