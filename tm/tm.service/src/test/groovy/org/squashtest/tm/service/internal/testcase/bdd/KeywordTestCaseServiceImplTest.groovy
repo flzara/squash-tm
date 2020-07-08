@@ -66,6 +66,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		keywordTestCase.getSteps() >> []
 
 		when:
+		2 * messageSource.getMessage(*_) >>> ["# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -84,7 +85,7 @@ class KeywordTestCaseServiceImplTest extends Specification {
 		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -118,7 +119,7 @@ Feature: Disconnection test
 		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -152,7 +153,7 @@ Feature: Daily test
 		keywordTestCase.getSteps() >> [step1, step2]
 
 		when:
-		2 * messageSource.getMessage(*_) >>> ["Given", "When"]
+		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -189,7 +190,7 @@ Feature: Daily test
 		keywordTestCase.getSteps() >> [step1, step2, step3]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -231,7 +232,7 @@ Feature: Daily test
 		dataset.addParameterValue(value)
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -272,7 +273,7 @@ Feature: Daily test
 		dataset.addParameterValue(value)
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -324,7 +325,7 @@ Feature: Daily test
 		dataset.parameterValues = [paramValue1, paramValue2]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -396,7 +397,7 @@ Feature: Daily test
 		dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:
@@ -468,7 +469,7 @@ Feature: Count test
 		dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 
 		when:
-		3 * messageSource.getMessage(*_) >>> ["Given", "When", "Then"]
+		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 		String result = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 
 		then:

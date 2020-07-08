@@ -52,6 +52,8 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-6L)
 		when:
+			messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+			messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 			res ==
@@ -66,6 +68,9 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 			messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 			messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 			messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+			messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+			messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+			messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
 			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 			res ==
@@ -86,6 +91,9 @@ Feature: Disconnection test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -106,6 +114,9 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -126,6 +137,9 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -146,6 +160,9 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -166,6 +183,10 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
+		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -191,6 +212,10 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
+		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==
@@ -216,6 +241,10 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
 		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
 		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
+		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
 		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
 		then:
 		res ==

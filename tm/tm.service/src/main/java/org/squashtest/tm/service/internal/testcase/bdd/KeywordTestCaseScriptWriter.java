@@ -77,19 +77,19 @@ public class KeywordTestCaseScriptWriter {
 	public String writeScript(List<TestStep> testSteps, Set<Dataset> datasetSet, String testCaseName, String language, Locale locale) {
 		if (!testSteps.isEmpty()) {
 			addAllStepsScriptWithoutScenarioToBuilder(testSteps, locale);
-			addScenarioAndDatasetToBuilder(testCaseName, datasetSet);
+			addScenarioAndDatasetToBuilder(testCaseName, datasetSet, locale);
 			hasTCParamInScript = false;
 		}
-		addLanguageAndFeatureToBuilder(testCaseName, language);
+		addLanguageAndFeatureToBuilder(testCaseName, language, locale);
 		return builder.toString();
 	}
 
-	private void addLanguageAndFeatureToBuilder(String testCaseName, String language) {
+	private void addLanguageAndFeatureToBuilder(String testCaseName, String language, Locale locale) {
 		StringBuilder subBuilder =  new StringBuilder();
-		subBuilder.append("# language: ")
+		subBuilder.append(messageSource.getMessage("testcase.bdd.script.label.language", null, locale))
 			.append(language)
 			.append(NEW_LINE_CHAR)
-			.append("Feature: ")
+			.append(messageSource.getMessage("testcase.bdd.script.label.feature", null, locale))
 			.append(testCaseName);
 		builder.insert(0, subBuilder);
 	}
@@ -157,12 +157,12 @@ public class KeywordTestCaseScriptWriter {
 		builder.append(updatedParamValue);
 	}
 
-	private void addScenarioAndDatasetToBuilder(String testCaseName, Set<Dataset> datasetSet) {
+	private void addScenarioAndDatasetToBuilder(String testCaseName, Set<Dataset> datasetSet, Locale locale) {
 		if (!datasetSet.isEmpty() && hasTCParamInScript) {
-			addScenarioToBuilder(testCaseName, "Scenario Outline: ");
-			generateAllDatasetAndExamplesScript(datasetSet);
+			addScenarioToBuilder(testCaseName, messageSource.getMessage("testcase.bdd.script.label.scenario-outline", null, locale));
+			generateAllDatasetAndExamplesScript(datasetSet, locale);
 		} else {
-			addScenarioToBuilder(testCaseName, "Scenario: ");
+			addScenarioToBuilder(testCaseName, messageSource.getMessage("testcase.bdd.script.label.scenario", null, locale));
 		}
 	}
 
@@ -177,9 +177,9 @@ public class KeywordTestCaseScriptWriter {
 		builder.insert(0, preBuilder);
 	}
 
-	private void generateAllDatasetAndExamplesScript(Set<Dataset> datasetSet) {
+	private void generateAllDatasetAndExamplesScript(Set<Dataset> datasetSet, Locale locale) {
 		for (Dataset dataset : datasetSet) {
-			String datasetScript = generateDatasetAndExampleScript(dataset);
+			String datasetScript = generateDatasetAndExampleScript(dataset, locale);
 			builder.append(NEW_LINE_CHAR)
 				.append(NEW_LINE_CHAR)
 				.append(datasetScript);
@@ -187,15 +187,15 @@ public class KeywordTestCaseScriptWriter {
 	}
 
 
-	private String generateDatasetAndExampleScript(Dataset dataset) {
+	private String generateDatasetAndExampleScript(Dataset dataset, Locale locale) {
 		String datasetTagLine = generateDatasetTagLine(dataset);
-		String exampleLine = DOUBLE_TAB_CHAR + EXAMPLE + NEW_LINE_CHAR;
+		String exampleLine = DOUBLE_TAB_CHAR + messageSource.getMessage("testcase.bdd.script.label.examples", null, locale) + NEW_LINE_CHAR;
 		String paramNameAndValueLines = generateDatasetParamNamesAndValues(dataset);
 		return datasetTagLine +	exampleLine + paramNameAndValueLines;
 	}
 
 	private String generateDatasetTagLine(Dataset dataset) {
-		String originalStr =  dataset.getName();
+		String originalStr = dataset.getName();
 		String trimmedAndRemovedExtraSpacesStr = ActionWordUtil.replaceExtraSpacesInText(originalStr.trim());
 		String replacedSpacesStr = trimmedAndRemovedExtraSpacesStr.replaceAll(SPACE_CHAR, ACTION_WORD_UNDERSCORE);
 		return DOUBLE_TAB_CHAR + ACROBAT_CHAR + replacedSpacesStr + NEW_LINE_CHAR;
