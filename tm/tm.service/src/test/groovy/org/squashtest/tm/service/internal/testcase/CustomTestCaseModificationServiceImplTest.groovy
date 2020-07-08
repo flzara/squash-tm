@@ -362,7 +362,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with <   par@m 2 ?  - >	")
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "    this is with <   param 2   - >	")
 
 		then:
 		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "this is with \"param1\"" })
@@ -392,14 +392,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		values.size() == 1
 		def valueArray = values
 		ActionWordParameterValue value = valueArray.get(0)
-		value.getValue() == "<par_m_2___->"
+		value.getValue() == "<param_2_->"
 		value.getActionWordParam() == param
 		value.getKeywordTestStep() == createdTestStep
 
 		def tcParams = parentTestCase.getParameters()
 		tcParams.size() == 1
 		Parameter tcParam = tcParams.toArray()[0]
-		tcParam.name == "par_m_2___-"
+		tcParam.name == "param_2_-"
 	}
 
 	def "should find test case and add a keyword step with new action word containing many parameter values"() {
@@ -786,7 +786,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
 
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   <date> of  \"May\"<Ye@r  >")
+		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   <date> of  \"May\"<Year  >")
 
 		then:
 		1 * testStepDao.persist(_)
@@ -841,13 +841,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value2.getKeywordTestStep() == createdTestStep
 
 		ActionWordParameterValue value3 = values.get(2)
-		value3.getValue() == "<Ye_r>"
+		value3.getValue() == "<Year>"
 		value3.getActionWordParam() == param3
 		value3.getKeywordTestStep() == createdTestStep
 
 		def tcParams = parentTestCase.getParameters()
 		tcParams.size() == 2
-		tcParams.collect { it.name }.sort() == ["Ye_r", "date"]
+		tcParams.collect { it.name }.sort() == ["Year", "date"]
 	}
 
 

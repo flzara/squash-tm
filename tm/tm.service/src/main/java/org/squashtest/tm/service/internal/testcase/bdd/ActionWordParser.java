@@ -90,6 +90,9 @@ public class ActionWordParser {
 		//otherwise  --> action word has no "..." or <...>
 		else {
 			addTextContainingNumberIntoFragments(trimmedInput);
+			if (!actionWordHasText) {
+				throw new InvalidActionWordInputException("Action word must contain at least some texts.");
+			}
 		}
 		return new ActionWord(fragmentList);
 	}
@@ -127,14 +130,12 @@ public class ActionWordParser {
 	private CharState treatInputInTestCaseParamValueState(String currentChar) {
 		switch (currentChar) {
 			case ACTION_WORD_CLOSE_GUILLEMET:
+				actionWordTestCaseParamValueBuilder.append(ACTION_WORD_CLOSE_GUILLEMET);
 				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
 				return CharState.TEXT;
 			case ACTION_WORD_OPEN_GUILLEMET:
-				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
-				return CharState.TC_PARAM_VALUE;
 			case ACTION_WORD_DOUBLE_QUOTE:
-				addTestCaseParamValueIntoFragments(actionWordTestCaseParamValueBuilder.toString());
-				return CharState.FREE_VALUE;
+				throw new InvalidParameterNameException("Test case parameter must be between < and >.");
 			default:
 				actionWordTestCaseParamValueBuilder.append(currentChar);
 				return CharState.TC_PARAM_VALUE;
@@ -142,9 +143,16 @@ public class ActionWordParser {
 	}
 
 	private void addTestCaseParamValueIntoFragments(String tcParamValueInput) {
-		String trimmedWord = tcParamValueInput.trim();
+		if (!tcParamValueInput.startsWith(ACTION_WORD_OPEN_GUILLEMET) || !tcParamValueInput.endsWith(ACTION_WORD_CLOSE_GUILLEMET)){
+			throw new InvalidParameterNameException("Test case parameter must be between < and >.");
+		}
+		String removedGuillemetStr = tcParamValueInput.substring(1, tcParamValueInput.length()-1);
+		String trimmedWord = removedGuillemetStr.trim();
 		if (trimmedWord.isEmpty()) {
 			throw new InvalidParameterNameException("Test case parameter name cannot be empty.");
+		}
+		if (!trimmedWord.matches("[\\w-\\s]+")) {
+			throw new InvalidParameterNameException("Test case parameter name can contain only alphanumeric, - and _ characters.");
 		}
 		++paramIndex;
 		String actionWordParamValue = createParamValueFromTestCaseParamValueInput(trimmedWord);
@@ -164,7 +172,7 @@ public class ActionWordParser {
 
 	private String createParamValueFromTestCaseParamValueInput(String trimmedWord) {
 		String removedExtraSpaces = replaceExtraSpacesInText(trimmedWord);
-		String replacedInvalidCharsWithUnderscores = removedExtraSpaces.replaceAll("[^\\w-]", ACTION_WORD_UNDERSCORE);
+		String replacedInvalidCharsWithUnderscores = removedExtraSpaces.replaceAll("[\\s]", ACTION_WORD_UNDERSCORE);
 		return ACTION_WORD_OPEN_GUILLEMET + replacedInvalidCharsWithUnderscores + ACTION_WORD_CLOSE_GUILLEMET;
 	}
 
@@ -173,6 +181,7 @@ public class ActionWordParser {
 			case ACTION_WORD_CLOSE_GUILLEMET:
 				throw new InvalidActionWordParameterValueException("Action word parameter value cannot contain '>' symbol.");
 			case ACTION_WORD_OPEN_GUILLEMET:
+				actionWordTestCaseParamValueBuilder.append(ACTION_WORD_OPEN_GUILLEMET);
 				addFreeValueParamValueIntoFragments(actionWordFreeValueParamValueBuilder.toString());
 				return CharState.TC_PARAM_VALUE;
 			case ACTION_WORD_DOUBLE_QUOTE:
@@ -199,6 +208,7 @@ public class ActionWordParser {
 			case ACTION_WORD_CLOSE_GUILLEMET:
 				throw new InvalidActionWordTextException("Action word text cannot contain '>' symbol.");
 			case ACTION_WORD_OPEN_GUILLEMET:
+				actionWordTestCaseParamValueBuilder.append(ACTION_WORD_OPEN_GUILLEMET);
 				addTextContainingNumberIntoFragments(actionWordTextBuilder.toString());
 				return CharState.TC_PARAM_VALUE;
 			case ACTION_WORD_DOUBLE_QUOTE:

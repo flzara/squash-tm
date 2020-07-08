@@ -654,7 +654,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with a new action word containing parameters to test case in which some are in <>"() {
 		when:
-		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  <date> of < Ye@r >  .   ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  <date> of < Year >  .   ")
 
 		then:
 		createdKeywordTestStep != null
@@ -716,13 +716,13 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWordParameterValue value2 = paramValues.get(1)
 		value2.id != null
-		value2.value == "<Ye_r>"
+		value2.value == "<Year>"
 		value2.actionWordParam == param2
 		value2.keywordTestStep == createdKeywordTestStep
 
 		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
 		tcParams.size() == 2
-		tcParams.collect { it.name }.sort() == ["Ye_r", "date"]
+		tcParams.collect { it.name }.sort() == ["Year", "date"]
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
@@ -841,7 +841,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with an existing action word that contains parameters in which some are between <> to test case"() {
 		when:
-		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is < d@te > of <mon1h> \"2020\"   ")
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "    today is < date > of <mon1h> \"2020\"   ")
 
 		then:
 		createdKeywordTestStep != null
@@ -906,7 +906,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		paramValues.size() == 3
 		ActionWordParameterValue value1 = paramValues.get(0)
 		value1.id != null
-		value1.value == "<d_te>"
+		value1.value == "<date>"
 		value1.actionWordParam == parameter
 		value1.keywordTestStep == createdKeywordTestStep
 
@@ -924,7 +924,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		def tcParams = createdKeywordTestStep.getTestCase().getParameters()
 		tcParams.size() == 2
-		tcParams.collect { it.name }.sort() == ["d_te", "mon1h"]
+		tcParams.collect { it.name }.sort() == ["date", "mon1h"]
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
