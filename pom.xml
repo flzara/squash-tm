@@ -624,8 +624,8 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-      <id>nexus-snapshots</id>
-      <url>${nexus-snapshots.url}</url>
+      <id>squash-snapshot-repo</id>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
     </repository>
 
     <!--
@@ -644,9 +644,9 @@
       <url>${deploy-repo.release.url}</url>
     </repository>
     <snapshotRepository>
-      <id>nexus-snapshots</id>
+      <id>squash-snapshot-deploy-repo</id>
       <name>Squash snapshot deployment repo</name>
-      <url>${nexus-snapshots.url}</url>
+      <url>${deploy-repo.snapshot.url}</url>
     </snapshotRepository>
   </distributionManagement>
 
