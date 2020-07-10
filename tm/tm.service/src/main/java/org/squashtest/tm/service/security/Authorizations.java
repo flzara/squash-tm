@@ -49,6 +49,7 @@ public final class Authorizations {
 	public static final String OR_HAS_ROLE_ADMIN = " or " + HAS_ROLE_ADMIN;
 
 	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('" + Roles.ROLE_ADMIN +"') or hasRole('"+ ROLE_TM_PROJECT_MANAGER +"')";
+	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER_OR_TA_API_CLIENT = HAS_ROLE_ADMIN_OR_PROJECT_MANAGER + "or hasRole('"+ Roles.ROLE_TA_API_CLIENT +"')";
 
 	/* -- MILESTONES -- */
 

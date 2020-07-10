@@ -131,7 +131,9 @@ import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER_OR_TA_API_CLIENT;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 
 @Service("CustomGenericProjectManager")
 @Transactional
@@ -715,7 +717,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER_OR_TA_API_CLIENT)
 	public Map<String, String> getPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId) {
 		return doGetPluginConfiguration(projectId, workspace, pluginId);
 	}
