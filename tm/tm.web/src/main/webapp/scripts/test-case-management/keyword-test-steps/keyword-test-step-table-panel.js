@@ -116,6 +116,20 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 								var edconf = confman.getStdJeditable();
 								edconf.data = rowModel['step-action-word-unstyled'];
 								actionWordCell.editable(postActionWordFunction, edconf);
+
+								actionWordCell.on('click', function() {
+									if (settings.isAutocompleteActive) {
+										actionWordCell.on('keyup', function (event) {
+											// not perform autocomplete if arrows are pressed
+											if (!_.contains([37, 38, 39, 40], event.which)) {
+												var projectId = self.settings.projectId;
+												var searchInput = $row.find('td.step-action-word input');
+												searchInput.autocomplete();
+												self.performAutocomplete(searchInput, projectId);
+											}
+										});
+									}
+								});
 							}
 						});
 					}
@@ -233,6 +247,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 						rowModel = table.fnGetData(row),
 						actionWordCell = $(row).find('td.step-action-word'),
 						actionWordUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word';
+
 				$.ajax({
 					url: actionWordUrl,
 					type: 'POST',

@@ -478,7 +478,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
 			}
 			if (! inputToken.equals(token)) {
-				//TODO when token aren't the same
+				ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, testStep.getTestCase().getProject().getId());
+
+				//remove all action word parameter values
+				if (! testStep.getParamValues().isEmpty()) {
+					testStep.getParamValues().clear();
+				}
+				if (isNull(actionWord)) {
+					updateKeywordTestStepWithNewActionWord(parentTestCase, testStep, inputActionWord, parameterValues);
+				} else {
+					updateKeywordTestStepWithExistingActionWord(parentTestCase, testStep, actionWord, parameterValues);
+				}
 			} else {
 				updateParamValuesAndInsertNewTcParamIfNeeded(testStep, parentTestCase, parameterValues);
 			}
@@ -506,6 +516,22 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				oldValue.setValue(newValue.getValue());
 			}
 		}
+	}
+
+	private void updateKeywordTestStepWithNewActionWord(KeywordTestCase parentTestCase, KeywordTestStep testStep, ActionWord inputActionWord, List<ActionWordParameterValue> parameterValues) {
+		Project currentProject = testStep.getTestCase().getProject();
+		inputActionWord.setProject(currentProject);
+		testStep.setActionWord(inputActionWord);
+
+		insertNewValuesToDataBase(parentTestCase, inputActionWord, testStep, parameterValues);
+
+		addNewActionWordNodeInLibrary(inputActionWord, currentProject);
+	}
+
+	private void updateKeywordTestStepWithExistingActionWord(KeywordTestCase parentTestCase,KeywordTestStep testStep, ActionWord actionWord, List<ActionWordParameterValue> parameterValues) {
+		testStep.setActionWord(actionWord);
+
+		insertNewValuesToDataBase(parentTestCase, actionWord, testStep, parameterValues);
 	}
 
 	private List<ActionWordParameterValue> reorderParamValuesFromTestStepIfNeeded(KeywordTestStep testStep) {
