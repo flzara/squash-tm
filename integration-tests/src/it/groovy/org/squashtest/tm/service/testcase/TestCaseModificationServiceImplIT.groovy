@@ -43,6 +43,8 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
+import static org.squashtest.tm.domain.bdd.Keyword.THEN
+
 @UnitilsSupport
 @RunWith(Sputnik)
 @Transactional
@@ -438,7 +440,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		obj.size() == 1
 		KeywordTestStep keywordTestStep = obj[0];
 		keywordTestStep.getId() == -3L
-		keywordTestStep.getKeyword() == Keyword.THEN
+		keywordTestStep.getKeyword() == THEN
 		keywordTestStep.getActionWord().createWord() == "GoodBye!"
 	}
 
@@ -734,7 +736,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		createdKeywordTestStep != null
 		createdKeywordTestStep.id != null
 
-		Keyword.THEN == createdKeywordTestStep.keyword
+		THEN == createdKeywordTestStep.keyword
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id == -78L
@@ -1122,4 +1124,77 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		value11.actionWordParam == param11
 	}
 
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the keyword of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		when:
+		service.updateKeywordTestStep(stepId, THEN)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.keyword == THEN
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the action word of a keyword test step with same token but new parameter values"() {
+		given:
+		def stepId = -19L
+
+		when:
+		service.updateKeywordTestStep(stepId, "I have <number> apples")
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.paramValues.size() == 1
+		step.paramValues[0].value == "<number>"
+		step.actionWord.id == -119
+		step.actionWord.token == "TPT-I have - apples-"
+		step.testCase.parameters.size() == 1
+		step.testCase.parameters[0].name == "number"
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the action word of a keyword test step with an existing action by removing a parameter"() {
+		given:
+		def stepId = -19L
+
+		when:
+		service.updateKeywordTestStep(stepId, "I have apples")
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.paramValues.size() == 0
+		step.actionWord.id == -118
+		step.actionWord.token == "T-I have apples-"
+		step.actionWord.fragments.size() == 1
+		step.actionWord.fragments[0].text == "I have apples"
+		step.testCase.parameters.size() == 0
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the action word of a keyword test step with a new action by adding a parameter and text"() {
+		given:
+		def stepId = -18L
+
+		when:
+		service.updateKeywordTestStep(stepId, "I have <number> <fruit> and \"vegetables\"")
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.paramValues.size() == 3
+		step.paramValues[0].value == "<number>"
+		step.paramValues[1].value == "<fruit>"
+		step.paramValues[2].value == "vegetables"
+		step.actionWord.id != -118
+		step.actionWord.token == "TPTPTP-I have - - and -"
+		step.actionWord.fragments.size() == 6
+		step.actionWord.fragments[0].text == "I have "
+		step.actionWord.fragments[2].text == " "
+		step.actionWord.fragments[4].text == " and "
+		step.testCase.parameters.size() == 2
+		step.testCase.parameters[0].name == "number"
+		step.testCase.parameters[1].name == "fruit"
+	}
 }
