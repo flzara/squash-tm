@@ -490,7 +490,7 @@ public class IterationModificationController {
 	public String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
 		LOGGER.trace("Add manual execution : creating execution");
 
-		Execution newExecution = iterationModService.addExecution(testPlanItemId);
+		Execution newExecution = iterationModService.addExecution(testPlanItemId, messageSource);
 
 		LOGGER.trace("Add manual execution : completed in");
 

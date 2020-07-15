@@ -57,7 +57,6 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
-import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestCaseScriptWriter;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
@@ -284,7 +283,7 @@ public class TestCaseTestStepsController {
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = {COPIED_STEP_ID_PARAM})
 	@ResponseBody
 	public boolean pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
-							 @RequestParam(value = "idPosition", required = true) long idPosition, @PathVariable long testCaseId) {
+							 @RequestParam(value = "idPosition") long idPosition, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
 		return testCaseModificationService.pasteCopiedTestSteps(testCaseId, idPosition, copiedStepIds);
@@ -347,7 +346,7 @@ public class TestCaseTestStepsController {
 	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode", "datasetId"})
 	@ResponseBody
 	public void changeParameterAssignationMode(@PathVariable("stepId") Long stepId,
-											   @RequestParam(value = "mode", required = true) ParameterAssignationMode mode,
+											   @RequestParam(value = "mode") ParameterAssignationMode mode,
 											   @RequestParam(value = "datasetId", required = false) Long datasetId) {
 
 		callStepManager.setParameterAssignationMode(stepId, mode, datasetId);
@@ -382,7 +381,7 @@ public class TestCaseTestStepsController {
 	@ResponseBody
 	public String getActionWordUnstyled(@PathVariable long stepId) {
 		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return new KeywordTestCaseScriptWriter().generateActionWordScript(keywordTestStep);
+		return keywordTestStep.writeTestStepActionWordScript();
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
