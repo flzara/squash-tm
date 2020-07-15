@@ -48,11 +48,11 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
-import org.squashtest.tm.service.servers.*;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
@@ -314,7 +314,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private void checkPermissions(User user) {
 		String currentLogin = userContextService.getUsername();
 
-		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole(Authorizations.ROLE_ADMIN)) {
+		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole(ROLE_ADMIN)) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
