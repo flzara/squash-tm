@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -59,6 +60,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 	void rename(long iterationId, String newName);
 
 	Execution addExecution(@Id long testPlanItemId);
+
+	Execution addExecution(@Id long testPlanItemId, MessageSource messageSource);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will

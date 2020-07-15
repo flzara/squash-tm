@@ -23,17 +23,12 @@ package org.squashtest.tm.service.internal.testcase.bdd;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 
 @Service
@@ -74,15 +69,7 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 	@Override
 	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
-		Locale locale = keywordTestCase.getProject().getBddScriptLanguage().getLocale();
-		String language = locale.toLanguageTag();
-
-		String testCaseName = keywordTestCase.getName();
-		List<TestStep> testSteps = keywordTestCase.getSteps();
-		Set<Dataset> datasetSet = keywordTestCase.getDatasets();
-
-		KeywordTestCaseScriptWriter writer = new KeywordTestCaseScriptWriter(messageSource);
-		return writer.writeScript(testSteps, datasetSet, testCaseName, language, locale);
+		return keywordTestCase.writeTestCaseScript(messageSource);
 	}
 
 }

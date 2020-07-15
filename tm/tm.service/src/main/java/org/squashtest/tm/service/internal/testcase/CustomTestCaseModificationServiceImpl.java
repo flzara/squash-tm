@@ -431,9 +431,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	private void addActionWordToItsFragment(ActionWord inputActionWord) {
 		List<ActionWordFragment> fragments = inputActionWord.getFragments();
-		fragments.forEach(actionWordFragment -> {
-			actionWordFragment.setActionWord(inputActionWord);
-		});
+		fragments.forEach(actionWordFragment ->
+			actionWordFragment.setActionWord(inputActionWord)
+		);
 	}
 
 	@Override

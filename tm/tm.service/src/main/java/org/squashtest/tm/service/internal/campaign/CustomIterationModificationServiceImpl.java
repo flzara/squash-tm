@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -92,6 +93,7 @@ import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.squashtest.tm.service.security.Authorizations.CREATE_CAMPAIGN_OR_ROLE_ADMIN;
@@ -112,6 +114,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String ITERATION_ID = "iterationId";
+
+	@Inject
+	private MessageSource messageSource;
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -279,6 +284,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
+	public Execution addExecution(long testPlanItemId, MessageSource messageSource) {
+		IterationTestPlanItem item = testPlanDao.findById(testPlanItemId);
+		Locale locale = item.getProject().getBddScriptLanguage().getLocale();
+		return addExecution(item, messageSource, locale);
+	}
+
+	@Override
 	@PreAuthorize(READ_ITERATION_OR_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Execution> findAllExecutions(long iterationId) {
@@ -381,7 +393,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		Execution execution = createExec(item);
+		Execution execution = createExec(item, null, null);
 		item.addExecution(execution);
 		for (TestSuite testSuite : item.getTestSuites()) {
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
@@ -391,12 +403,29 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return execution;
 	}
 
-	private Execution createExec(IterationTestPlanItem item) {
+	@Override
+	public Execution addExecution(IterationTestPlanItem item, MessageSource messageSource, Locale locale) throws TestPlanItemNotExecutableException {
+		Execution execution = createExec(item, messageSource, locale);
+		item.addExecution(execution);
+		for (TestSuite testSuite : item.getTestSuites()) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
+		}
+
+		operationsAfterAddingExec(execution);
+		return execution;
+	}
+
+	private Execution createExec(IterationTestPlanItem item, MessageSource messageSource, Locale locale) {
 		TestCase testCase = item.getReferencedTestCase();
 		testCaseCyclicCallChecker.checkNoCyclicCall(testCase);
 
 		// if passes, let's move to the next step
-		Execution execution = item.createExecution();
+		Execution execution;
+		if (messageSource != null && locale != null) {
+			execution = item.createExecution(messageSource, locale);
+		} else {
+			execution = item.createExecution(null, null);
+		}
 
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
@@ -523,7 +552,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		IterationTestPlanItem itpi = exec.getTestPlan();
 		executionModificationService.deleteExecution(exec);
 
-		Execution execution = createExec(itpi);
+		Execution execution = createExec(itpi, null, null);
 		itpi.addExecutionAtPos(execution, order);
 		operationsAfterAddingExec(execution);
 		return execution;

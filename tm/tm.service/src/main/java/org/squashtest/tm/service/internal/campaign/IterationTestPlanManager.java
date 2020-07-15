@@ -20,11 +20,14 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+
+import java.util.Locale;
 
 /**
  * @author Gregory Fouquet
@@ -33,6 +36,8 @@ import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 public interface IterationTestPlanManager {
 
 	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
+
+	Execution addExecution(IterationTestPlanItem item, MessageSource messageSource, Locale locale) throws TestPlanItemNotExecutableException;
 
 	void addTestSuite(Iteration iteration, TestSuite suite);
 
