@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
@@ -125,7 +127,7 @@ public class CallTestStep extends TestStep {
 
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset, MessageSource messageSource, Locale locale) {
 
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
 		List<ExecutionStep> returnList = new ArrayList<>(testSteps.size());
@@ -148,7 +150,7 @@ public class CallTestStep extends TestStep {
 
 
 		for (TestStep testStep : testSteps) {
-			returnList.addAll(testStep.createExecutionSteps(effective));
+			returnList.addAll(testStep.createExecutionSteps(effective, null, null));
 		}
 
 		return returnList;

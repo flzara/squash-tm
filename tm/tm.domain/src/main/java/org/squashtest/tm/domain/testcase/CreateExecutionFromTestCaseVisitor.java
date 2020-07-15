@@ -20,29 +20,38 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.KeywordExecution;
 import org.squashtest.tm.domain.execution.ScriptedExecution;
 
+import java.util.Locale;
+
 public class CreateExecutionFromTestCaseVisitor implements TestCaseVisitor {
 
 	private Dataset dataset;
 
+	private MessageSource messageSource;
+
+	private Locale locale;
+
 	private Wrapped<Execution> execution = new Wrapped<>();
 
-	public CreateExecutionFromTestCaseVisitor(Dataset dataset) {
+	public CreateExecutionFromTestCaseVisitor(Dataset dataset, MessageSource messageSource, Locale locale) {
 		this.dataset = dataset;
+		this.messageSource = messageSource;
+		this.locale = locale;
 	}
 
 	@Override
 	public void visit(TestCase testCase) {
-		execution.setValue(new Execution(testCase, dataset));
+		execution.setValue(new Execution(testCase, dataset, null, null));
 	}
 
 	@Override
 	public void visit(KeywordTestCase keywordTestCase) {
-		execution.setValue(new KeywordExecution(keywordTestCase));
+		execution.setValue(new KeywordExecution(keywordTestCase, dataset, messageSource, locale));
 	}
 
 	@Override

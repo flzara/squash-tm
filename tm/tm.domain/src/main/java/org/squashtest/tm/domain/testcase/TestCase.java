@@ -299,6 +299,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return copy;
 	}
 
+	public void accept(TestCaseVisitor visitor) {
+		visitor.visit(this);
+	}
+
 	protected void populateCopiedTestCaseAttributes(TestCase copy) {
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
@@ -927,9 +931,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.uuid = uuid;
 	}
 
-	public void accept(TestCaseVisitor visitor) {
-		visitor.visit(this);
-	}
 
 }
 

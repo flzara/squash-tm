@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.bdd.util;
 
 import javax.validation.constraints.NotNull;
 
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_DOUBLE_QUOTE;
+
 /**
  * @author qtran - created on 28/04/2020
  */
@@ -64,4 +66,15 @@ public final class ActionWordUtil {
 		return inputWord.matches("-?\\d+(([.,])\\d+)?");
 	}
 
+	/**
+	 * This method is to wrap two double quotes ("...") over a string
+	 * @param stringInput given input string
+	 * @return input string wrapped with two double quotes
+	 */
+	public static String updateNumberValue(String stringInput) {
+		if (isNumber(stringInput)){
+			return stringInput;
+		}
+		return ACTION_WORD_DOUBLE_QUOTE + stringInput + ACTION_WORD_DOUBLE_QUOTE;
+	}
 }

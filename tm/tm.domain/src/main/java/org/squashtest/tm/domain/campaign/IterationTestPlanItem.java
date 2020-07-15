@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.campaign;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Persister;
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
@@ -68,6 +69,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 
 @NamedQueries({
@@ -283,10 +285,10 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 *
 	 * @return the new execution
 	 */
-	public Execution createExecution() throws TestPlanItemNotExecutableException {
+	public Execution createExecution(MessageSource messageSource, Locale locale) throws TestPlanItemNotExecutableException {
 		checkExecutable();
 		CreateExecutionFromTestCaseVisitor createExecutionVisitor =
-			new CreateExecutionFromTestCaseVisitor(referencedDataset);
+			new CreateExecutionFromTestCaseVisitor(referencedDataset, messageSource, locale);
 		referencedTestCase.accept(createExecutionVisitor);
 		return createExecutionVisitor.getCreatedExecution();
 	}
@@ -297,7 +299,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 			throw new NotAutomatedException();
 		}
 
-		Execution execution = createExecution();
+		Execution execution = createExecution(null, null);
 
 		AutomatedExecutionExtender extender = new AutomatedExecutionExtender();
 		extender.setAutomatedTest(referencedTestCase.getAutomatedTest());

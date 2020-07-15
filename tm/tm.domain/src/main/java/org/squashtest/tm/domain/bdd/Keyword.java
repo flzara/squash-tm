@@ -22,13 +22,23 @@ package org.squashtest.tm.domain.bdd;
 
 public enum Keyword {
 	//these keywords MUST be displayed in this order (SQUASH-177)
-	GIVEN,
-	WHEN,
-	THEN,
-	AND,
-	BUT;
+	GIVEN("Given"),
+	WHEN("When"),
+	THEN("Then"),
+	AND("And"),
+	BUT("But");
+
+	public final String label;
+
+	Keyword(String label) {
+		this.label = label;
+	}
 
 	public String i18nKeywordNameKey() {
 		return "testcase.bdd.keyword.name." + this.name().toLowerCase();
+	}
+
+	public String getLabel() {
+		return label;
 	}
 }

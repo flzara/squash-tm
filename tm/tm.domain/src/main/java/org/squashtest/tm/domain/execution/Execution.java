@@ -25,6 +25,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
+import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -52,7 +53,6 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -64,7 +64,6 @@ import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
 import org.squashtest.tm.infrastructure.hibernate.ExecutionPersister;
 import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
-import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Basic;
@@ -103,6 +102,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -269,13 +269,13 @@ DenormalizedFieldHolder, BoundEntity {
 	 * @param testCase
 	 */
 	public Execution(TestCase testCase) {
-		this(testCase, null);
+		this(testCase, null, null, null);
 	}
 
-	public Execution(TestCase testCase, Dataset dataset) {
+	public Execution(TestCase testCase, Dataset dataset, MessageSource messageSource, Locale locale) {
 		fillParameterMapPrivately(dataset);
 		setReferencedTestCase(testCase);
-		populateSteps(dataset);
+		populateSteps(dataset, messageSource, locale);
 		populateAttachments();
 		setDatasetLabel(testCase, dataset);
 	}
@@ -326,9 +326,9 @@ DenormalizedFieldHolder, BoundEntity {
 		}
 	}
 
-	private void populateSteps(Dataset dataset) {
+	private void populateSteps(Dataset dataset, MessageSource messageSource, Locale locale) {
 		for (TestStep step : referencedTestCase.getSteps()) {
-			List<ExecutionStep> execList = step.createExecutionSteps(dataset);
+			List<ExecutionStep> execList = step.createExecutionSteps(dataset, messageSource, locale);
 			for (ExecutionStep executionStep : execList) {
 				addStep(executionStep);
 			}

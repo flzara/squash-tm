@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.testcase
 
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.execution.ExecutionStep
@@ -75,12 +77,12 @@ class KeywordTestStepTest extends Specification {
 		ActionWord actionWord = new ActionWord([fragmentText] as List)
 		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, actionWord)
 		when:
-		def res = keywordTestStep.createExecutionSteps(null)
+		def res = keywordTestStep.createExecutionSteps(null, null, null)
 		then:
 		res != null
 		res.size() == 1
 		ExecutionStep executionStep = res.get(0)
-		executionStep.action == "GIVEN hello"
+		executionStep.action == "Given hello"
 	}
 
 	def "shoud copy a KeywordTestStep"() {
@@ -100,6 +102,75 @@ class KeywordTestStepTest extends Specification {
 			def copyWord = copy.actionWord
 			copyWord.getId() == originalWord.getId()
 			copyWord.createWord() == originalWord.createWord()
+	}
 
+	//////////////////////////////////////////////////////////////////////////////////
+
+	def "Should generate a Gherkin script for Actionword containing only text"() {
+		expect:
+		new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday")).writeTestStepActionWordScript() == "Today is Monday"
+	}
+
+	def "Should generate a Gherkin script with test step containing text and param with free value"() {
+		given:
+		def fragment1 = new ActionWordText("It is ")
+		def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
+		def value1 = new ActionWordParameterValue(word)
+		value1.setActionWordParam(fragment2)
+		ActionWord actionWord2 = new ActionWord([fragment1, fragment2] as List)
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
+		List<ActionWordParameterValue> paramValues = [value1]
+		step2.setParamValues(paramValues)
+
+		when:
+		String result = step2.writeTestStepActionWordScript()
+
+		then:
+		result ==
+			"It is "+word
+
+		where:
+		word << ["10", "10.5", "10,5", "-10.5", "-10,5"]
+	}
+
+	def "Should generate a Gherkin script with test step containing text and param associated with a TC param"() {
+		given:
+		def fragment1 = new ActionWordText("It is ")
+		def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
+		def value1 = new ActionWordParameterValue("<time>")
+		value1.setActionWordParam(fragment2)
+		ActionWord actionWord2 = new ActionWord([fragment1, fragment2] as List)
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
+		List<ActionWordParameterValue> paramValues = [value1]
+		step2.setParamValues(paramValues)
+
+		when:
+		String result = step2.writeTestStepActionWordScript()
+
+		then:
+		result =="It is &lt;time&gt;"
+	}
+
+	def createBasicActionWord(String singleFragment) {
+		def fragment = new ActionWordText(singleFragment)
+		return new ActionWord([fragment] as List)
+	}
+
+	class ActionWordParameterMock extends ActionWordParameter {
+		private Long id
+
+		ActionWordParameterMock(Long id, String name, String defaultValue) {
+			this.setName(name)
+			this.setDefaultValue(defaultValue)
+			this.id = id
+		}
+
+		Long getId() {
+			return id
+		}
+
+		void setId(Long id) {
+			this.id = id
+		}
 	}
 }

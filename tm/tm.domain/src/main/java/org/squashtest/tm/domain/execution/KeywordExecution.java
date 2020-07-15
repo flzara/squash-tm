@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.domain.execution;
 
+import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.util.Locale;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "EXECUTION_ID")
@@ -34,6 +37,10 @@ public class KeywordExecution extends Execution {
 
 	public KeywordExecution(KeywordTestCase keywordTestCase) {
 		super(keywordTestCase);
+	}
+
+	public KeywordExecution(KeywordTestCase keywordTestCase, Dataset dataset, MessageSource messageSource, Locale locale) {
+		super(keywordTestCase, dataset, messageSource, locale);
 	}
 
 	@Override

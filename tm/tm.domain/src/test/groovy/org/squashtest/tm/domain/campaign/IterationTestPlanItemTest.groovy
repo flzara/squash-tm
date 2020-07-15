@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.campaign
 
+import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
@@ -111,7 +112,7 @@ public class IterationTestPlanItemTest extends Specification {
 	def "copy should preserve parameterization data"() {
 		given:
 		Dataset dataset = Mock(Dataset)
-		copySource.referencedDataset = dataset 
+		copySource.referencedDataset = dataset
 
 		when:
 		IterationTestPlanItem copy = copySource.createCopy()
@@ -125,7 +126,7 @@ public class IterationTestPlanItemTest extends Specification {
 		IterationTestPlanItem item = new IterationTestPlanItem()
 
 		when:
-		item.createExecution()
+		item.createExecution(null, null)
 
 		then:
 		thrown(TestPlanItemNotExecutableException)
@@ -194,7 +195,7 @@ public class IterationTestPlanItemTest extends Specification {
 	}
 
 	@Unroll
-	def "Should create a new ScriptedExecution with the right type"() {
+	def "Should create a new Execution with the right type"() {
 		given: "A TestCase"
 			TestCase testCase = newTestCase
 			InfoListItem infoListItem = new SystemListItem()
@@ -204,13 +205,30 @@ public class IterationTestPlanItemTest extends Specification {
 			IterationTestPlanItem itpi = new IterationTestPlanItem()
 			itpi.setReferencedTestCase(testCase)
 		when:
-			Execution exec = itpi.createExecution()
+			Execution exec = itpi.createExecution(null, null)
 		then:
 			expectedExecClass.isAssignableFrom(exec.class)
 		where:
 			newTestCase				| expectedExecClass
 			new TestCase()			| Execution.class
 			new ScriptedTestCase()	| ScriptedExecution.class
-			new KeywordTestCase()	| KeywordExecution.class
+	}
+
+	def "Should create a new KeywordExecution with the right type"() {
+		given: "A Keyword TestCase"
+		KeywordTestCase testCase = new KeywordTestCase()
+		InfoListItem infoListItem = new SystemListItem()
+		testCase.nature = infoListItem
+		testCase.type = infoListItem
+		and: "Message source and locale"
+		def msgSource = Mock(MessageSource)
+		def locale = Locale.FRENCH
+		and: "An ITPI"
+		IterationTestPlanItem itpi = new IterationTestPlanItem()
+		itpi.setReferencedTestCase(testCase)
+		when:
+		Execution exec = itpi.createExecution(msgSource, locale)
+		then:
+		KeywordExecution.class.isAssignableFrom(exec.class)
 	}
 }

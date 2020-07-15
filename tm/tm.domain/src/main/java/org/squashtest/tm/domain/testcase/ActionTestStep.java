@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.hibernate.annotations.Type;
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -45,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @Entity
@@ -150,7 +152,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset, MessageSource messageSource, Locale locale) {
 		List<ExecutionStep> returnList = new ArrayList<>(1);
 		ExecutionStep exec = new ExecutionStep(this, dataset);
 		returnList.add(exec);

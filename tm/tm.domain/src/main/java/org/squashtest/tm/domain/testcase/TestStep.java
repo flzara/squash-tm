@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.hibernate.annotations.Persister;
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.RelatedToAuditable;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -44,6 +45,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 
 
@@ -51,7 +53,7 @@ import java.util.List;
 /*
  * IF YOU CHANGE ANYTHING REGARDING THE HIBERNATE MAPPING IN THAT CLASS, LIKE THE UNDERLYING TABLES OR THE MAPPING,
  * PLEASE MIND THE CUSTOM PERSISTER BELOW (@Persister(impl=TestStepPersister.class)).
- * 
+ *
  *  see org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister
  */
 
@@ -119,7 +121,7 @@ public abstract class TestStep implements Identified, RelatedToAuditable {
 
 	public abstract void accept(TestStepVisitor visitor);
 
-	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
+	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset, MessageSource messageSource, Locale locale);
 
 	@Override
 	public List<AuditableMixin> getAssociatedAuditableList() {

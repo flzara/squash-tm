@@ -20,7 +20,13 @@
  */
 package org.squashtest.tm.domain.execution
 
+import org.springframework.context.MessageSource
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.infolist.UserListItem
@@ -159,7 +165,7 @@ class ExecutionTest extends Specification {
 
 		when :
 
-		Execution execWithDS = new Execution(tcA, dsA)
+		Execution execWithDS = new Execution(tcA, dsA, null, null)
 		Execution execNoDS = new Execution(tcA)
 
 		then :
@@ -172,8 +178,8 @@ class ExecutionTest extends Specification {
 		execNoDS.steps.collect { it.action }.join(", ") ==
 		"spongebob / glouglouglou, mclane / yippeekaiyay, &lt;no_value&gt; / &lt;no_value&gt;, &lt;no_value&gt; / &lt;no_value&gt;"
 
-	}		
-	
+	}
+
 	Parameter addParameter(String name, TestCase tc){
 		def p = new Parameter(name)
 		tc.addParameter p
@@ -191,4 +197,65 @@ class ExecutionTest extends Specification {
 		new CallTestStep(calledTestCase:tc, calledDataset:ds, delegateParameterValues:delegate)
 	}
 
+	def "should create the keyword execution steps with the correct parameter values according to which dataset is used"(){
+
+		given: "a simple keyword test case"
+
+		KeywordTestCase testCase = new KeywordTestCase(name:"b",
+			nature : new ListItemReference(code:"SOME_NATURE", infoList : Mock(InfoList)),
+			type : new ListItemReference(code:"SOME_TYPE", infoList : Mock(InfoList)))
+
+		def keyword = Keyword.GIVEN
+		def f1 = new ActionWordText("Today is ")
+		def f2 = new MockActionWordParameter(-4L,"param1", "Monday")
+		def actionWord = new ActionWord([f1, f2])
+		def paramValue = new ActionWordParameterValue("<dateOfWeek>")
+		paramValue.setActionWordParam(f2)
+		def paramValues = [paramValue]
+
+		testCase.addStep new KeywordTestStep(keyword: keyword, actionWord: actionWord, paramValues: paramValues)
+
+		def p1 = addParameter("dateOfWeek", testCase)
+		def ds1 = addDataset("dataset1", testCase, [ (p1) :"Thursday"])
+
+		testCase.addDataset(ds1)
+
+		and:
+		def messageSource = Mock(MessageSource)
+		def locale = Locale.FRENCH
+
+		when :
+		messageSource.getMessage(_, null, locale) >> "Given"
+		Execution execWithDS = new Execution(testCase, ds1, messageSource, locale)
+		Execution execNoDS = new Execution(testCase)
+
+		then :
+
+		def stepsWithDS = execWithDS.steps.collect{ it.action }.join(", ")
+
+		println stepsWithDS
+		stepsWithDS == "Given Today is Thursday"
+
+		execNoDS.steps.collect { it.action }.join(", ") ==
+			"Given Today is &lt;no_value&gt;"
+
+	}
+
+	class MockActionWordParameter extends ActionWordParameter{
+		private Long overId
+
+		MockActionWordParameter(Long overId, String name, String defaultValue) {
+			this.overId = overId
+			this.name = name
+			this.defaultValue = defaultValue
+		}
+
+		Long getId() {
+			return overId
+		}
+
+		void setId(Long overId) {
+			this.overId = overId
+		}
+	}
 }

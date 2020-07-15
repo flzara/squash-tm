@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.execution
 
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -31,13 +33,13 @@ import spock.lang.Timeout
 
 @Timeout(1)
 class ExecutionStepTest extends Specification {
-	
+
 	def "Should create an execution step for an ActionTestStep"() {
 		given:
 		ActionTestStep actionStep = new ActionTestStep(action: "action", expectedResult: "expectedResult")
 		Attachment attach1 = new Attachment("name")
 		actionStep.attachmentList.addAttachment(attach1)
-		
+
 		when:
 		ExecutionStep execStep = new ExecutionStep(actionStep)
 
@@ -58,34 +60,55 @@ class ExecutionStepTest extends Specification {
 		execStep.action == "GIVEN hello"
 		execStep.referencedTestStep == keywordTestStep
 	}
-	
+
+	def "Should create an execution step for an KeywordTestStep containing dataset"() {
+		given:
+		def fragmentText = new ActionWordText("hello ")
+		def fragmentParam = new ActionWordParameter("param1", "")
+		def paramValue = new ActionWordParameterValue("<date>")
+		paramValue.setActionWordParam(fragmentParam)
+		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord([fragmentText, fragmentParam] as List))
+		keywordTestStep.addParamValues(paramValue)
+
+		and:
+		ExecutionStep execStep = new ExecutionStep(keywordTestStep)
+		execStep.dataset = new HashMap<String, String>()
+		execStep.dataset.put("date", "Monday")
+
+		when:
+		def result = execStep.valueParams("hello <date>", ExecutionStep.KEYWORD_PARAM_PATTERN)
+
+		then:
+		result == '''hello Monday'''
+	}
+
 	def "Should replace the parameters"(){
 		given:
 		String toTest = '''Activation sur serveur ${srv} de ${param1} compte ${param1} Zenbox avec cle '${cleprincipale}' par la passerelle standard : ${param1}-Z'''
 		ActionTestStep actionStep = new ActionTestStep(action: "", expectedResult: "")
-		
+
 		Attachment attach1 = new Attachment("name")
 		actionStep.attachmentList.addAttachment(attach1)
 		ExecutionStep execStep = new ExecutionStep(actionStep)
-		execStep.dataset = new HashMap<String, String>();
-		execStep.dataset.put("param1", "value 1");
+		execStep.dataset = new HashMap<String, String>()
+		execStep.dataset.put("param1", "value 1")
 		execStep.dataset.put("srv", "http://192.168.2.24:8080/");
 		execStep.dataset.put("cleprincipale", "A")
-		
+
 		when :
-		
-		def result = execStep.valueParams(toTest)
-		
+
+		def result = execStep.valueParams(toTest, ExecutionStep.PARAM_PATTERN)
+
 		then :
-		
+
 		result == '''Activation sur serveur http://192.168.2.24:8080/ de value 1 compte value 1 Zenbox avec cle 'A' par la passerelle standard : value 1-Z'''
-		
-   
-		
+
+
+
 	}
-	
+
 	def "Should replace the parameters quickly in big string"(){
-		given: 
+		given:
 		String toTest = '''<p>
    Le mail a &eacute;t&eacute; re&ccedil;u :</p>
 <p style="margin-left:1.7pt;">
@@ -98,19 +121,19 @@ class ExecutionStepTest extends Specification {
    <br />
    &nbsp;</p>'''
 		ActionTestStep actionStep = new ActionTestStep(action: "", expectedResult: "")
-		
+
 		Attachment attach1 = new Attachment("name")
 		actionStep.attachmentList.addAttachment(attach1)
 		ExecutionStep execStep = new ExecutionStep(actionStep)
 		execStep.dataset = new HashMap<String, String>();
 		execStep.dataset.put("param1", "value 1");
-		
+
 		when :
-		
-		def result = execStep.valueParams(toTest)
-		
+
+		def result = execStep.valueParams(toTest, ExecutionStep.PARAM_PATTERN)
+
 		then :
-		
+
 		result == '''<p>
    Le mail a &eacute;t&eacute; re&ccedil;u :</p>
 <p style="margin-left:1.7pt;">
@@ -122,10 +145,10 @@ class ExecutionStepTest extends Specification {
 <p>
    <br />
    &nbsp;</p>'''
-		
-   
-		
+
+
+
 	}
-	
-	
+
+
 }

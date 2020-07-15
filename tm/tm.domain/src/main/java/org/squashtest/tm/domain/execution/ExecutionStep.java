@@ -20,14 +20,17 @@
  */
 package org.squashtest.tm.domain.execution;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
+import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -38,10 +41,10 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -71,10 +74,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
+import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 
 @Entity
 @Auditable
@@ -85,6 +92,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private static final String PARAM_PREFIX = "\\Q${\\E";
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
+	private static final String KEYWORD_PARAM_PATTERN = ACTION_WORD_OPEN_GUILLEMET + "([A-Za-z0-9_-]{1,255})" + ACTION_WORD_CLOSE_GUILLEMET;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
@@ -151,6 +159,12 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@Transient
 	private Map<String, String> dataset = new HashMap<>();
 
+	@Transient
+	private MessageSource messageSource;
+
+	@Transient
+	private Locale locale;
+
 	/**
 	 * Hibernate needs this.
 	 * And we need this in scripted executions
@@ -176,6 +190,15 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public ExecutionStep(KeywordTestStep keywordTestStep) {
 		this.action = keywordTestStep.getKeyword().toString() + " " + keywordTestStep.getActionWord().createWord();
 		referencedTestStep = keywordTestStep;
+	}
+
+	public ExecutionStep(KeywordTestStep keywordTestStep, Dataset dataset, MessageSource messageSource, Locale locale) {
+		this.messageSource = messageSource;
+		this.locale = locale;
+		fillParameterMapPrivately(dataset);
+		keywordTestStep.accept(this);
+		referencedTestStep = keywordTestStep;
+		//attachment list ???
 	}
 
 	public void fillParameterMap(Dataset dataset) {
@@ -306,13 +329,13 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public void visit(ActionTestStep visited) {
 		String originalAction = visited.getAction();
 		String originalExpectedResult = visited.getExpectedResult();
-		action = valueParams(originalAction);
-		expectedResult = valueParams(originalExpectedResult);
+		action = valueParams(originalAction, PARAM_PATTERN);
+		expectedResult = valueParams(originalExpectedResult, PARAM_PATTERN);
 	}
 
 
 
-	private String valueParams(String content){
+	private String valueParams(String content, String patternStr){
 
 		String result = null;
 
@@ -320,7 +343,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 			StringBuilder builder = new StringBuilder(content);
 
-			Pattern pattern = Pattern.compile(PARAM_PATTERN);
+			Pattern pattern = Pattern.compile(patternStr);
 			Matcher matcher = pattern.matcher(content);
 
 			// each time a replacement occurs in the stringbuilder deviates
@@ -354,10 +377,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 			result = builder.toString();
 		}
-
 		return result;
-
-
 	}
 
 	@Override
@@ -367,8 +387,17 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	@Override
-	public void visit(KeywordTestStep visited) {
-		throw new UnsupportedOperationException();
+	public void visit(KeywordTestStep keywordStep) {
+		String awWordScript = keywordStep.writeTestStepActionWordScript();
+		String unescapedAWWordScript = StringEscapeUtils.unescapeHtml4(awWordScript);
+		String replacedParamValueWord = valueParams(unescapedAWWordScript, KEYWORD_PARAM_PATTERN);
+		Keyword keyword = keywordStep.getKeyword();
+		if (messageSource != null && locale != null) {
+			String internationalizedKeyword = messageSource.getMessage(keyword.i18nKeywordNameKey(), null, locale);
+			this.action = internationalizedKeyword + " " + replacedParamValueWord;
+		} else {
+			this.action = keyword.getLabel() + " " + replacedParamValueWord;
+		}
 	}
 
 	@Override

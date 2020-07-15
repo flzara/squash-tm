@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.ActionWordFragment;
+import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -33,14 +38,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static javax.persistence.EnumType.STRING;
+import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.updateNumberValue;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
@@ -59,6 +68,9 @@ public class KeywordTestStep extends TestStep {
 	@NotNull
 	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
+
+	@Transient
+	private boolean hasTCParam = false;
 
 	public KeywordTestStep() {
 	}
@@ -85,9 +97,9 @@ public class KeywordTestStep extends TestStep {
 	}
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset, MessageSource messageSource, Locale locale) {
 		List<ExecutionStep> res = new ArrayList<>(1);
-		ExecutionStep executionStep = new ExecutionStep(this);
+		ExecutionStep executionStep = new ExecutionStep(this, dataset, messageSource, locale);
 		res.add(executionStep);
 		return res;
 	}
@@ -140,5 +152,57 @@ public class KeywordTestStep extends TestStep {
 
 	public void addParamValues(ActionWordParameterValue value) {
 		this.paramValues.add(value);
+	}
+
+	public String writeTestStepActionWordScript() {
+		ActionWord actionWord = getActionWord();
+		List<ActionWordFragment> fragments = actionWord.getFragments();
+		List<ActionWordParameterValue> paramValues = getParamValues();
+		return generateStepScriptFromActionWordFragments(fragments, paramValues);
+	}
+
+	private String generateStepScriptFromActionWordFragments(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
+		StringBuilder stepBuilder = new StringBuilder();
+		Consumer<ActionWordParameter> consumer = parameter ->
+			appendParamValueToGenerateScript(parameter, paramValues, stepBuilder);
+
+		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, stepBuilder);
+
+		for (ActionWordFragment fragment : fragments) {
+			fragment.accept(visitor);
+		}
+		return stepBuilder.toString();
+	}
+
+	private void appendParamValueToGenerateScript(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder stepBuilder) {
+		Optional<ActionWordParameterValue> paramValue =
+			paramValues.stream().filter(pv -> pv.getActionWordParam() != null && pv.getActionWordParam().getId().equals(param.getId())).findAny();
+		paramValue.ifPresent(
+			actionWordParameterValue -> updateBuilderWithParamValue(stepBuilder, actionWordParameterValue)
+		);
+	}
+
+	private void updateBuilderWithParamValue(StringBuilder builder, ActionWordParameterValue actionWordParameterValue) {
+		String paramValue = actionWordParameterValue.getValue();
+		if ("\"\"".equals(paramValue)) {
+			builder.append(paramValue);
+			return;
+		}
+
+		Pattern pattern = Pattern.compile("<[^\"]+>");
+		Matcher matcher = pattern.matcher(paramValue);
+		if (matcher.matches()) {
+			hasTCParam = true;
+			//TODO-QUAN: to show the script content temporarily on page. To be removed when script is generated on file
+			String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(paramValue);
+			builder.append(replaceHTMLCharactersStr);
+			return;
+		}
+		String updatedParamValue = updateNumberValue(paramValue);
+		builder.append(updatedParamValue);
+	}
+
+	public boolean hasTCParam() {
+		return hasTCParam;
 	}
 }
