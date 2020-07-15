@@ -35,8 +35,6 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.domain.servers.StoredCredentials;
-import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
@@ -47,10 +45,10 @@ import org.squashtest.tm.service.internal.dto.UserDto;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.internal.servers.StoredCredentialsManagerImpl;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
@@ -60,15 +58,15 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.ROLE_ADMIN;
 
 @Service("squashtest.tm.service.UserAccountService")
 @Transactional
@@ -316,7 +314,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private void checkPermissions(User user) {
 		String currentLogin = userContextService.getUsername();
 
-		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole(ROLE_ADMIN)) {
+		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole(Authorizations.ROLE_ADMIN)) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}

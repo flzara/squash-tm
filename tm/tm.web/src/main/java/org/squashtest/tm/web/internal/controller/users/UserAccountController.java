@@ -26,12 +26,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
@@ -43,10 +40,8 @@ import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials
 import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -57,7 +52,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.*;
 
-import static org.squashtest.tm.domain.servers.OAuth1aCredentials.SignatureMethod;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 //XSS ok bflessel

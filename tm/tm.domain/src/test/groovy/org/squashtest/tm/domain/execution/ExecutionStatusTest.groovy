@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.execution
 
-import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.execution.ExecutionStatusReport
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -37,9 +35,9 @@ class ExecutionStatusTest extends Specification {
 	def "checks the constant sets"(){
 
 		when :
-		def canonical = ExecutionStatus.getCanonicalStatusSet()
-		def terminal = ExecutionStatus.getTerminatedStatusSet()
-		def nonTerminal = ExecutionStatus.getNonTerminatedStatusSet()
+		def canonical = getCanonicalStatusSet()
+		def terminal = getTerminatedStatusSet()
+		def nonTerminal = getNonTerminatedStatusSet()
 
 
 		then :
@@ -76,7 +74,7 @@ class ExecutionStatusTest extends Specification {
 		]
 
 		when :
-		def canon = ExecutionStatus.toCanonicalStatusList(nonCanon)
+		def canon = toCanonicalStatusList(nonCanon)
 
 		then :
 		canon == [
@@ -112,33 +110,33 @@ class ExecutionStatusTest extends Specification {
 	def "a report with blocked statuses should produce a BLOCKED status"(){
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
-		ExecutionStatus.values().each { report.set(it, 3) }
+		values().each { report.set(it, 3) }
 
 		expect :
-		ExecutionStatus.computeNewStatus(report) == BLOCKED
+		computeNewStatus(report) == BLOCKED
 	}
 
 	def "a non-blocked report with error statuses should produce a FAILURE status"(){
 
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
-		ExecutionStatus.values().each { report.set(it, 3) }
+		values().each { report.set(it, 3) }
 		report.set(BLOCKED, 0)
 
 		expect :
-		FAILURE == ExecutionStatus.computeNewStatus(report)
+		FAILURE == computeNewStatus(report)
 	}
 
 	def "a non-blocked, non error, non not_run report with failure statuses should produce a FALURE status"(){
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
-		ExecutionStatus.values().each { report.set(it, 3) }
+		values().each { report.set(it, 3) }
 		report.set(BLOCKED, 0)
 		report.set(ERROR, 0)
 		report.set(NOT_RUN, 0)
 
 		expect :
-		ExecutionStatus.computeNewStatus(report) == FAILURE
+		computeNewStatus(report) == FAILURE
 	}
 
 	def "should compute new status RUNNING"(){
@@ -151,7 +149,7 @@ class ExecutionStatusTest extends Specification {
 		report.set(SETTLED, 3)
 
 		expect :
-		ExecutionStatus.computeNewStatus(report) == RUNNING
+		computeNewStatus(report) == RUNNING
 	}
 
 	@Unroll
@@ -161,7 +159,7 @@ class ExecutionStatusTest extends Specification {
 		statuses.each { report.set(it, 3) }
 
 		expect :
-		ExecutionStatus.computeNewStatus(report) == expected
+		computeNewStatus(report) == expected
 
 		where:
 		statuses                    | expected
@@ -193,10 +191,10 @@ class ExecutionStatusTest extends Specification {
 		def count = { it.name().length() }
 
 		ExecutionStatusReport report = new ExecutionStatusReport()
-		ExecutionStatus.values().each { report.set(it, count(it)) }
+		values().each { report.set(it, count(it)) }
 
 		and:
-		def expectedCount = ExecutionStatus.values().inject(0) { sum, elem -> sum + count(elem) } // "inject" means "reduce"
+		def expectedCount = values().inject(0) { sum, elem -> sum + count(elem) } // "inject" means "reduce"
 
 		expect:
 		expectedCount == report.total
@@ -212,7 +210,7 @@ class ExecutionStatusTest extends Specification {
 		report.has(expected)
 
 		where:
-		expected << ExecutionStatus.values()
+		expected << values()
 	}
 
 	@Unroll

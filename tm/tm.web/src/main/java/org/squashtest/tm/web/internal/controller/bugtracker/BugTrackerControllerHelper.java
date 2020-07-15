@@ -40,7 +40,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
@@ -94,8 +93,6 @@ public final class BugTrackerControllerHelper {
 		MessageSource messageSource) {
 
 		Execution execution = buggedStep.getExecution();
-//		TestCaseKind testCaseKind = execution.getReferencedTestCase().getKind();
-
 		List<ExecutionStep> executionSteps = execution.getSteps();
 		int totalStepNumber = executionSteps.size();
 		long buggedStepId = buggedStep.getId();
