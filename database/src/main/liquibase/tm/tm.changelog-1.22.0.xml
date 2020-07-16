@@ -159,7 +159,10 @@
 
     <dropColumn tableName="SCRIPTED_TC_EXTENDER" columnName="SCRIPTED_TC_EXTENDER_ID" />
     <renameTable oldTableName="SCRIPTED_TC_EXTENDER" newTableName="SCRIPTED_TEST_CASE" />
+    <dropForeignKeyConstraint baseTableName="SCRIPTED_TEST_CASE" constraintName="fk_scripted_extender_test_case"/>
     <renameColumn tableName="SCRIPTED_TEST_CASE" oldColumnName="TEST_CASE_ID" newColumnName="TCLN_ID" columnDataType="BIGINT" />
+    <addForeignKeyConstraint constraintName="fk_scripted_extender_test_case" baseTableName="SCRIPTED_TEST_CASE"
+                             baseColumnNames="TCLN_ID" referencedTableName="TEST_CASE" referencedColumnNames="TCLN_ID" />
     <addPrimaryKey tableName="SCRIPTED_TEST_CASE" columnNames="TCLN_ID" />
 
   </changeSet>
