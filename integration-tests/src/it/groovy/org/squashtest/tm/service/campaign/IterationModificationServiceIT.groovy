@@ -23,6 +23,7 @@ package org.squashtest.tm.service.campaign
 import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
+import org.springframework.context.MessageSource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.Iteration
@@ -154,6 +155,24 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		and: "denormalized fields are in right order"
 		result.get(0).value == "T"
 		result.get(1).value == "U"
+	}
+
+	//TODO
+	@DataSet("IterationModificationServiceIT.addManualKeywordExecutionWithDataset.xml")
+	def "should create a keyword execution with dataset"() {
+		given:
+		def msgSource = Mock(MessageSource)
+
+		when:
+		msgSource.getMessage(_, null, _) >> "Étant donné que"
+		Execution exec = iterService.addExecution(-1L, msgSource)
+
+		then:
+		def steps = exec.steps
+		steps.size() == 1
+		def step1 = steps[0]
+		def step1Action = step1.getAction()
+		step1Action == "Étant donné que Today is Friday"
 	}
 
 	@DataSet("IterationModificationServiceIT.denormalizedField.xml")
