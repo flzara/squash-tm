@@ -311,11 +311,9 @@ public class CustomFieldModelServiceImpl implements CustomFieldModelService {
 		return list.stream().collect(
 			groupingBy(CustomFieldBindingModel::getProjectId, //we groupBy project id
 				//and we groupBy bindable entity, with an initial map already initialized with empty lists as required per model.
-				groupingBy((CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
-					() -> {
-						//here we create the empty list, initial step of the reducing operation
-						return createEmptyCufMap();
-					},
+				groupingBy(
+					(CustomFieldBindingModel customFieldBindingModel) -> customFieldBindingModel.getBoundEntity().getEnumName(),
+					() -> createEmptyCufMap(), //here we create the empty list, initial step of the reducing operation
 					mapping(
 						Function.identity(),
 						toList()

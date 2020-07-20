@@ -226,9 +226,9 @@ public class AdvancedSearchQueryModelToConfiguredQueryConverter {
 			AdvancedSearchListFieldModel advancedSearchFieldModel = (AdvancedSearchListFieldModel) advancedSearchFormModelFieldMap.get(CAMPAIGN_FOLDER_ID);
 			List<String> folderIds = advancedSearchFieldModel.getValues();
 			List<EntityReference> scope = new ArrayList<>();
-			folderIds.forEach(item ->{
-				scope.add(new EntityReference(EntityType.CAMPAIGN_FOLDER, Long.parseLong(item)));
-			});
+			folderIds.forEach(item ->
+				scope.add(new EntityReference(EntityType.CAMPAIGN_FOLDER, Long.parseLong(item)))
+			);
 			configuredQuery.setScope(scope);
 		}
 

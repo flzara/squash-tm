@@ -123,20 +123,21 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
 												 .addFilter("assignedTo.login", username);
 
-		return innerFindAll(pageable, filterWithAssignee, (converter) -> {
+		return innerFindAll(pageable, filterWithAssignee, (converter) ->
 			// force equality comparison for the assigned user login
-			converter.compare("assignedTo.login").withEquality();
-		}, inProjectIds);
+			converter.compare("assignedTo.login").withEquality(),
+			inProjectIds);
 	}
 
 	@Override
 	public Page<AutomationRequest> findAllTransmitted(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds) {
 		ColumnFiltering filterWithTraitment = overrideStatusAndAssignedToFilter(columnFiltering, DEFAULT_TRANSMITTED_STATUS_FILTER, null);
 
-		return innerFindAll(pageable, filterWithTraitment, (converter) -> {
-			converter.compare("requestStatus").withIn()
-				.compare("assignedTo").isNull();
-		}, inProjectIds);
+		return innerFindAll(pageable, filterWithTraitment, (converter) ->
+			converter
+				.compare("requestStatus").withIn()
+				.compare("assignedTo").isNull(),
+			inProjectIds);
 	}
 
 	@Override
@@ -144,9 +145,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		LOGGER.debug("searching for automation requests, paged and filtered");
 
-		return innerFindAll(pageable, filtering, (converter) -> {
-			converter.compare("assignedTo.login").withEquality();
-		}, inProjectIds);
+		return innerFindAll(pageable, filtering, (converter) ->
+			converter.compare("assignedTo.login").withEquality(),
+			inProjectIds);
 
 	}
 
@@ -162,9 +163,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		ColumnFiltering effective = withStatusFilterOrDefault(filtering, DEFAULT_TO_VALIDATE_FILTER);
 
-		return innerFindAll(pageable, effective, (converter) -> {
-			converter.compare("requestStatus").withIn();
-		}, inProjectIds);
+		return innerFindAll(pageable, effective, (converter) ->
+			converter.compare("requestStatus").withIn(),
+			inProjectIds);
 
 	}
 
