@@ -40,4 +40,5 @@ tm/tm.web/src/main/resources/config/application-abo_mysql.properties
 tm/tm.web/src/main/resources/config/application-ak_mysql.properties
 tm/tm.web/src/main/resources/config/application-ak_postgresql.properties
 tm/tm.web/src/main/resources/config/application-mqt_postgresql.properties
+tm/tm.web/src/main/resources/config/application-mqt_mysql.properties
 tm/tm.web/node
