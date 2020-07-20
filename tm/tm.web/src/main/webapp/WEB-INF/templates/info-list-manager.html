@@ -74,24 +74,11 @@
     <div class='display-table-cell warning-cell'>
       <div class='delete-node-dialog-warning'></div>
     </div>
-    <div class='display-table-cell'>
+    <div class='display-table-cell' style="vertical-align: middle;">
       <span>{{first}}</span>
       <span class='red-warning-message'>{{second}}</span>
       <span>{{third}}</span>
       <span class='bold-warning-message'>{{fourth}}</span>
-      <br/>
-      <span class='red-warning-message'>{{warn-index}}</span>
-    </div>
-  </div>
-  </script>
-
-  <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
-  <div class='display-table-row'>
-    <div class='display-table-cell warning-cell'>
-      <div class='delete-node-dialog-warning'></div>
-    </div>
-    <div class='display-table-cell'>
-      <span class='red-warning-message' th:text="#{dialog.info-list.warning.reindex.after}">I shall reindex</span>
     </div>
   </div>
   </script>

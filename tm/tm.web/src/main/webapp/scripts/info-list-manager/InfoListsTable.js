@@ -43,7 +43,6 @@ define(
 			"message.infoList.bound.batchRemove.third",
 			"message.infoList.bound.batchRemove.fourth",
 			"message.noListSelected",
-			"dialog.info-list.warning.reindex.before",
 			"label.GotoIndex"
 		]);
 
@@ -99,24 +98,12 @@ define(
 			return removeTemplate.tpl;
 		}
 
-		function reindexTemplate() {
-			reindexTemplate.tpl = reindexTemplate.tpl || Handlebars.compile($("#confirm-remove-reindex").html());
-			return reindexTemplate.tpl;
-		}
-
-		function popupReindex() {
-			var buttonConf = [];
-			if (isAdmin) { buttonConf.push(gotoIndexButton); }
-			buttonConf.push(closeButton);
-			oneshot.show(messages.get("label.Delete"), reindexTemplate()(), {buttons: buttonConf});
-		}
-
 		function removeProps(batch) {
 			var flavor = batch ? "batchRemove." : "remove.";
 
 			return function (bound) {
 				var binding = bound ? "bound." : "";
-				var memo = {"warn-index": (bound ? messages.get("dialog.info-list.warning.reindex.before") : "")};
+				var memo = {};
 
 				return ["first", "second", "third", "fourth"].reduce(function (memo, item) {
 					memo[item] = messages.get("message.infoList." + binding + flavor + item);
@@ -309,7 +296,6 @@ define(
 				var props = removeProps(false /* not batch */);
 				var tpl = removeTemplate()(props(isBound));
 				oneshot.show(messages.get("label.Delete"), tpl, {width: "50%"}).done(function () {
-					if (isBound) { popupReindex();}
 					$.ajax(self.apiRoot + "/" + $(tgt).data("value"), {type: "DELETE"})
 						.done(self.refresh);
 				});
@@ -332,7 +318,6 @@ define(
 				var tpl = removeTemplate()(props(hasBound));
 
 				oneshot.show(messages.get("label.Delete"), tpl, {width: "50%"}).done(function () {
-					if (hasBound) { popupReindex(); }
 					var ids = rows.data().map(itemIdMapper).join(",");
 					$.ajax(self.apiRoot + "/" + ids, {type: "DELETE"})
 						.done(self.refresh);
