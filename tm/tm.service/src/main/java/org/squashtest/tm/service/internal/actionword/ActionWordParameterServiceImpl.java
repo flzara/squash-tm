@@ -22,15 +22,16 @@ package org.squashtest.tm.service.internal.actionword;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.actionword.ActionWordParameterService;
 import org.squashtest.tm.service.internal.repository.ActionWordParameterDao;
-import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 @Service
 @Transactional
@@ -53,9 +54,17 @@ public class ActionWordParameterServiceImpl implements ActionWordParameterServic
 	}
 
 	@Override
-	public String updateParameterDefaultValue(long parameterId, String newDefaultValue) {
+	public String updateParameterDefaultValue(long parameterId, @NotNull String newDefaultValue) {
 		ActionWordParameter parameter = actionWordParameterDao.getOne(parameterId);
-		parameter.setDefaultValue(newDefaultValue);
-		return newDefaultValue;
+
+		String updatedNewDefaultValue = ActionWordUtil.replaceExtraSpacesInText(newDefaultValue.trim());
+
+		if (updatedNewDefaultValue.contains("<")
+			|| updatedNewDefaultValue.contains(">")
+			|| updatedNewDefaultValue.contains("\"")){
+			throw new InvalidActionWordParameterValueException("The default value cannot contain <, > or \" character");
+		}
+		parameter.setDefaultValue(updatedNewDefaultValue);
+		return updatedNewDefaultValue;
 	}
 }
