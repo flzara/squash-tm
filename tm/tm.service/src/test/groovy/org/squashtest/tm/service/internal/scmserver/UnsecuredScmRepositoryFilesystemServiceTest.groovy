@@ -21,16 +21,13 @@
 package org.squashtest.tm.service.internal.scmserver
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang3.StringUtils
 import org.springframework.context.ApplicationEventPublisher
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
-import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseKind
 import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus

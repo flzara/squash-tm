@@ -23,8 +23,6 @@ package org.squashtest.tm.domain.tree;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 
-import java.util.List;
-
 /**
  * Interface for a tree node without data. The main goal of this API is to separate concern between
  * a tree node and the entity referenced by this tree node.

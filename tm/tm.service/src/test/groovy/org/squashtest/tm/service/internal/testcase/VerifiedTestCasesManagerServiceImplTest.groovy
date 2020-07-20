@@ -32,7 +32,11 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
 
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory

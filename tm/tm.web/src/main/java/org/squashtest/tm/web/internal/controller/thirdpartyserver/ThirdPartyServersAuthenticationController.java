@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
-import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;

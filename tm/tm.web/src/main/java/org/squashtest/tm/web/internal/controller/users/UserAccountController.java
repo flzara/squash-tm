@@ -23,7 +23,12 @@ package org.squashtest.tm.web.internal.controller.users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -46,11 +51,16 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerModificationController;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
@@ -82,9 +92,6 @@ public class UserAccountController {
 
 	@Inject
 	private UserAccountService userAccountService;
-
-	@Inject
-	private InternationalizationHelper i18nHelper;
 
 	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
@@ -155,7 +162,7 @@ public class UserAccountController {
 
 	}
 
-	@RequestMapping(value="/update", method=RequestMethod.POST, params={"initializing", "oldPassword", "newPassword"})
+	@RequestMapping(value="/update", method= RequestMethod.POST, params={"initializing", "oldPassword", "newPassword"})
 	@ResponseBody
 	public void changePassword(@ModelAttribute @Valid PasswordChangeForm form){
 		if (form.isInitializing()){

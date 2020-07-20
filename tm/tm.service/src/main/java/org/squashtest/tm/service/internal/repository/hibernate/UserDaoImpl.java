@@ -30,7 +30,6 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jooq.DSLContext;
-import org.jooq.Name;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -55,10 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_ADMIN;
-import static org.squashtest.tm.api.security.acls.Roles.ROLE_TA_API_CLIENT;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_USER;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
@@ -66,7 +63,6 @@ import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_AUTHORITY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_GROUP_MEMBER;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_PARTY;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_TEAM_MEMBER;
 import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
 
