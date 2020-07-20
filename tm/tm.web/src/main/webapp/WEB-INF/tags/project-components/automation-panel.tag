@@ -42,7 +42,6 @@
 <f:message var="noServerLabel" key="label.NoServer" />
 <f:message var="active" key="label.active" />
 <f:message var="inactive" key="label.inactive" />
-<f:message var="goToIndexLabel" key="label.GotoIndex" />
 
 <c:url var="listRemoteProjectsURL" value="/test-automation/servers/projects-list" />
 

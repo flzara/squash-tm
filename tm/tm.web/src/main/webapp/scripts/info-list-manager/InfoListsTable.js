@@ -42,8 +42,7 @@ define(
 			"message.infoList.bound.batchRemove.second",
 			"message.infoList.bound.batchRemove.third",
 			"message.infoList.bound.batchRemove.fourth",
-			"message.noListSelected",
-			"label.GotoIndex"
+			"message.noListSelected"
 		]);
 
 		// TODO revert that crap back to be58f1969577
@@ -64,26 +63,6 @@ define(
 
 		var itemsTableConf = window.squashtm.app.itemsTable;
 		console.log("table conf", itemsTableConf);
-
-		function buggerOffReindex(event) {
-			$(this).dialog("close").dialog("destroy");
-			this.remove();
-		}
-
-		var gotoIndexButton = {
-			'text': messages.get("label.GotoIndex"),
-			'click': function () {
-				buggerOffReindex.apply(this, arguments);
-				document.location.href = squashtm.app.contextRoot + "administration/indexes";
-			}
-		};
-
-		var closeButton = {
-			'text': messages.get("label.Close"),
-			'click': buggerOffReindex
-		};
-
-		var isAdmin = window.squashtm.app.isAdmin;
 
 		function selectTr($tr) {
 			$tr.removeClass("ui-state-highlight").addClass("ui-state-row-selected");
