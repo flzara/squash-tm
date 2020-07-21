@@ -35,11 +35,9 @@ import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.execution.KeywordExecution
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 

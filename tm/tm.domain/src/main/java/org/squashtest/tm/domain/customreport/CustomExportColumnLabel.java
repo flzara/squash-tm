@@ -43,8 +43,6 @@ import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.val;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
-import static org.squashtest.tm.jooq.domain.Tables.CORE_USER;
-import static org.squashtest.tm.jooq.domain.Tables.CUSTOM_FIELD;
 import static org.squashtest.tm.jooq.domain.Tables.DATASET;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_EXECUTION_STEPS;
