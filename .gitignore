@@ -1,6 +1,8 @@
 .settings/
 **/META-INF/
 bin/
+.m2/
+.npm/
 .project
 .classpath
 **/target/
