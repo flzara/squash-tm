@@ -311,6 +311,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void modifyWelcomeMessage(String welcomeMessage) {
 		if (configurationService.findConfiguration(WELCOME_MESSAGE_KEY) == null) {
 			configurationService.createNewConfiguration(WELCOME_MESSAGE_KEY, welcomeMessage);
@@ -320,6 +321,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void modifyLoginMessage(String loginMessage) {
 		if (configurationService.findConfiguration(LOGIN_MESSAGE_KEY) == null) {
 			configurationService.createNewConfiguration(LOGIN_MESSAGE_KEY, loginMessage);
