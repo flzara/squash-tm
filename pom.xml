@@ -467,6 +467,11 @@
             <!-- resource modules -->
             <exclude>tools/license-resources/src/main/resources/**/*.*</exclude>
             <exclude>tools/tools-resources/src/main/resources/**/*.*</exclude>
+
+            <!-- workspace-based maven local repository -->
+            <exclude>.m2/**</exclude>
+            <exclude>.npm/**</exclude>
+
             <!-- mercurial files-->
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
