@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -36,6 +37,8 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import javax.inject.Inject;
 import java.util.Collection;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
 @Transactional
 @Service("squashtest.tm.service.InfoListBindingManagerService")
 public class InfoListBindingManagerServiceImpl implements InfoListBindingManagerService {
@@ -48,6 +51,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	private InfoListDao infoListDao;
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void bindListToProjectReqCategory(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
@@ -68,6 +72,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void bindListToProjectTcNature(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
@@ -87,6 +92,7 @@ public class InfoListBindingManagerServiceImpl implements InfoListBindingManager
 	}
 
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void bindListToProjectTcType(long infoListId, long projectId) {
 		GenericProject project = genericProjectDao.getOne(projectId);
 		/* If Project is a bound Project, modifications must be done in the Template. */
