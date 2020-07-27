@@ -88,7 +88,7 @@ public class ActionWordParameter extends ActionWordFragment {
 	}
 
 	private void checkIfParamNameIsValid(String trimmedName) {
-		Pattern pattern = Pattern.compile("[^\\w-_]");
+		Pattern pattern = Pattern.compile("[^\\w-]");
 		Matcher matcher = pattern.matcher(trimmedName);
 		if (matcher.find()) {
 			throw new InvalidActionWordParameterNameException("Action word parameter name must contain only alphanumeric, dash or underscore characters.");

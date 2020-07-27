@@ -77,4 +77,9 @@ public final class ActionWordUtil {
 		}
 		return ACTION_WORD_DOUBLE_QUOTE + stringInput + ACTION_WORD_DOUBLE_QUOTE;
 	}
+
+	public static boolean isAlphaNumericOrDashOrUnderscoreOrPointOrCommaOrSpaceChar(String currentChar) {
+		return currentChar.matches("[\\w-.,\\s]");
+	}
+
 }
