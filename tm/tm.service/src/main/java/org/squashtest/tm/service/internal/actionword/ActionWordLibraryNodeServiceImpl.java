@@ -28,20 +28,12 @@ import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
-import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
-import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service

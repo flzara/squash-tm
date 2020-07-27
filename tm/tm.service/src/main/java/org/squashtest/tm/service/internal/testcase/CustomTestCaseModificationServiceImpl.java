@@ -97,7 +97,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
-import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
+import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestStepActionWordParser;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
@@ -307,7 +307,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String word) {
 		Keyword givenKeyword = Keyword.valueOf(keyword);
-		ActionWordParser parser = new ActionWordParser();
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
 		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(word.trim());
 		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
 		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, parameterValues, STEP_LAST_POS);
@@ -318,7 +318,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
-		ActionWordParser parser = new ActionWordParser();
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
 		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(newTestStep.getActionWord().createWord().trim());
 		List<ActionWordParameterValue> parameterValueMap = parser.getParameterValues();
 		LOGGER.debug("adding a new keyword test step to test case #{}", parentTestCaseId);
@@ -471,7 +471,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		String token = testStep.getActionWord().getToken();
 		if (updatedWord != null) {
 			String trimmedWord = updatedWord.trim();
-			ActionWordParser parser = new ActionWordParser();
+			KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
 			ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(trimmedWord);
 			List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
 			String inputToken = inputActionWord.getToken();

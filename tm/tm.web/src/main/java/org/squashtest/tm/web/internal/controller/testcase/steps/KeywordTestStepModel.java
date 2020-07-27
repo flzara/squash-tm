@@ -24,7 +24,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.squashtest.tm.service.internal.testcase.bdd.ActionWordParser;
+import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestStepActionWordParser;
 
 import java.util.Locale;
 
@@ -106,7 +106,7 @@ public class KeywordTestStepModel {
 		}
 
 		private boolean hasTextOutsideParameters(String actionWord) {
-			ActionWordParser parser = new ActionWordParser();
+			KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
 			parser.createActionWordFromKeywordTestStep(actionWord.trim());
 			return parser.doesActionWordHaveText();
 		}
