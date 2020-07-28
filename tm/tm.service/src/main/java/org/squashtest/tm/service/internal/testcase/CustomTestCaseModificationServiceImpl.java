@@ -470,35 +470,44 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(testStep.getTestCase().getId());
 		String token = testStep.getActionWord().getToken();
 		if (updatedWord != null) {
-			String trimmedWord = updatedWord.trim();
-			KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
-			ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(trimmedWord);
-			List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
-			String inputToken = inputActionWord.getToken();
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
-			}
-			if (! inputToken.equals(token)) {
-				ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, testStep.getTestCase().getProject().getId());
-
-				//remove all action word parameter values
-				if (! testStep.getParamValues().isEmpty()) {
-					testStep.getParamValues().clear();
-				}
-				if (isNull(actionWord)) {
-					updateKeywordTestStepWithNewActionWord(parentTestCase, testStep, inputActionWord, parameterValues);
-				} else {
-					updateKeywordTestStepWithExistingActionWord(parentTestCase, testStep, actionWord, parameterValues);
-				}
-			} else {
-				updateParamValuesAndInsertNewTcParamIfNeeded(testStep, parentTestCase, parameterValues);
-			}
+			updateActionWordWithNotNullInput(testStepId, updatedWord, testStep, parentTestCase, token);
 		} else {
 			throw new IllegalArgumentException("Action word cannot be null.");
 		}
 	}
 
-	private void updateParamValuesAndInsertNewTcParamIfNeeded(KeywordTestStep testStep, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues) {
+	private void updateActionWordWithNotNullInput(long testStepId, String updatedWord, KeywordTestStep testStep, KeywordTestCase parentTestCase, String token) {
+		String trimmedWord = updatedWord.trim();
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
+		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(trimmedWord);
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+		String inputToken = inputActionWord.getToken();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
+		}
+		if (! inputToken.equals(token)) {
+			updateActionWordWithoutChangingToken(testStep, parentTestCase, inputActionWord, parameterValues, inputToken);
+		} else {
+			updateActionWordWithChangingToken(testStep, parentTestCase, parameterValues);
+		}
+	}
+
+	private void updateActionWordWithoutChangingToken(KeywordTestStep testStep, KeywordTestCase parentTestCase, ActionWord inputActionWord, List<ActionWordParameterValue> parameterValues, String inputToken) {
+		ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, testStep.getTestCase().getProject().getId());
+
+		//remove all action word parameter values
+		List<ActionWordParameterValue> valueList = testStep.getParamValues();
+		if (! valueList.isEmpty()) {
+			valueList.clear();
+		}
+		if (isNull(actionWord)) {
+			updateKeywordTestStepWithNewActionWord(parentTestCase, testStep, inputActionWord, parameterValues);
+		} else {
+			updateKeywordTestStepWithExistingActionWord(parentTestCase, testStep, actionWord, parameterValues);
+		}
+	}
+
+	private void updateActionWordWithChangingToken(KeywordTestStep testStep, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues) {
 		List<ActionWordParameterValue> values = reorderParamValuesFromTestStepIfNeeded(testStep);
 
 		for (int i = 0; i < values.size(); i++) {
@@ -509,12 +518,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	private void doUpdateParamValuesAndInsertNewTcParamIfNeeded(ActionWordParameterValue oldValue, ActionWordParameterValue newValue, KeywordTestCase parentTestCase) {
-		if (! oldValue.getValue().equals(newValue.getValue())) {
-			if (newValue.getValue().startsWith(ACTION_WORD_OPEN_GUILLEMET) && newValue.getValue().endsWith(ACTION_WORD_CLOSE_GUILLEMET)) {
-				String paramValue = insertNewTestCaseParamIfNeeded(parentTestCase, newValue.getValue());
+		String newValueStr = newValue.getValue();
+		if (! oldValue.getValue().equals(newValueStr)) {
+			if (newValueStr.startsWith(ACTION_WORD_OPEN_GUILLEMET) && newValueStr.endsWith(ACTION_WORD_CLOSE_GUILLEMET)) {
+				String paramValue = insertNewTestCaseParamIfNeeded(parentTestCase, newValueStr);
 				oldValue.setValue(paramValue);
 			} else {
-				oldValue.setValue(newValue.getValue());
+				oldValue.setValue(newValueStr);
 			}
 		}
 	}

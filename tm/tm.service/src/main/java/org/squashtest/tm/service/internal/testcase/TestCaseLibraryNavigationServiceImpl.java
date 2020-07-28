@@ -414,12 +414,6 @@ public class TestCaseLibraryNavigationServiceImpl
 		}
 	}
 
-
-
-
-
-
-
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
@@ -430,8 +424,6 @@ public class TestCaseLibraryNavigationServiceImpl
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
 	}
-
-
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "

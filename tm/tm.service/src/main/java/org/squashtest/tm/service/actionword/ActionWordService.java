@@ -23,6 +23,6 @@ package org.squashtest.tm.service.actionword;
 import java.util.Collection;
 
 public interface ActionWordService {
-	Collection<String> findAllMatchingActionWords(Long projectId, String searchInput);
+	Collection<String> findAllMatchingActionWords(long projectId, String searchInput);
 	String changeDescription(long actionWordId, String newDescription);
 }
