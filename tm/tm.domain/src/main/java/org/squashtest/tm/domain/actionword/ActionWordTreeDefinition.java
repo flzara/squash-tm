@@ -24,10 +24,11 @@ import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 
 public enum ActionWordTreeDefinition implements TreeEntityDefinition {
 	LIBRARY(ActionWordNodeType.LIBRARY_NAME, true),
-	ACTION_WORD(ActionWordNodeType.ACTION_WORD_NAME, false);
+	ACTION_WORD(ActionWordNodeType.ACTION_WORD_NAME, false),
+	FOLDER(ActionWordNodeType.FOLDER_NAME, true);
 
 	private final String typeIdentifier;
-	private boolean container;
+	private final boolean container;
 
 	ActionWordTreeDefinition(String typeIdentifier, boolean container) {
 		this.typeIdentifier = typeIdentifier;

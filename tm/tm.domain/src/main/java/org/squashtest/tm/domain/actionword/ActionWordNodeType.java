@@ -22,5 +22,6 @@ package org.squashtest.tm.domain.actionword;
 
 public interface ActionWordNodeType {
 	String LIBRARY_NAME = "LIBRARY";
+	String FOLDER_NAME = "FOLDER";
 	String ACTION_WORD_NAME = "ACTION_WORD";
 }

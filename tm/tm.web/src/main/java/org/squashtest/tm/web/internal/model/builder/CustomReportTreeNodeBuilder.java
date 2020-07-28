@@ -74,8 +74,8 @@ public class CustomReportTreeNodeBuilder {
 
 		doPermissionCheck(builtNode,crln);
 
-		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
-		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
+		//A visitor would be elegant here and allows interface type development but we don't want hibernate to fetch each linked entity for each node
+		//and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
 		CustomReportTreeDefinition entityType = (CustomReportTreeDefinition) crln.getEntityType();//NO SONAR the argument for this method is a CustomReportLibraryNode so entity type is a CustomReportTreeDefinition
 
 		switch (entityType) {

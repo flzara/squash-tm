@@ -35,7 +35,6 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.exception.actionword.InvalidActionWordInputException
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
@@ -336,25 +335,6 @@ class TestCaseTestStepsControllerTest extends Specification {
 		then:
 		NotReadablePropertyException ex = thrown()
 		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
-	}
-
-	def "should throw exception when adding a keyword test step with no-text Action word"() {
-		given:
-		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
-		testStepModel.setKeyword("AND")
-		testStepModel.setActionWord("\"This is invalid action word\"")
-
-		and:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> 2020
-		testCaseModificationService.addKeywordTestStep(1L, "AND", "\"This is invalid action word\"") >> testStep
-
-		when:
-		controller.addKeywordTestStep(testStepModel, 1L)
-
-		then:
-		InvalidActionWordInputException ex = thrown()
-		ex.message == "Action word must contain at least some texts."
 	}
 
 	class MockActionWordParameter extends  ActionWordParameter {
