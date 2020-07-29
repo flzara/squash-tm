@@ -139,12 +139,16 @@ import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
 
 class DomainGraph {
 
+	private static final String ATTACHMENT_LIST = "attachmentList";
+	private static final String ATTACHMENTS = "attachments";
+	private static final String PROJECT = "project";
 	private InternalQueryModel internalQueryModel;
 
 	private InternalEntityType seed;
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
 
+	private static final String TEST_CASE = "testCase";
 	private static final String MILESTONES = "milestones";
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
@@ -189,7 +193,7 @@ class DomainGraph {
 		TraversableEntity itemNode = new TraversableEntity(ITEM_TEST_PLAN);
 		TraversableEntity executionNode = new TraversableEntity(EXECUTION);
 		TraversableEntity issueNode = new TraversableEntity(ISSUE);
-		TraversableEntity testcaseNode = new TraversableEntity(TEST_CASE);
+		TraversableEntity testcaseNode = new TraversableEntity(InternalEntityType.TEST_CASE);
 		TraversableEntity reqcoverageNode = new TraversableEntity(REQUIREMENT_VERSION_COVERAGE);
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
@@ -281,36 +285,36 @@ class DomainGraph {
 
 		// *******  since 1.20 *****
 		addEdge(testcaseNode, datasetNode, "datasets");
-		addEdge(datasetNode, testcaseNode, "testCase");
+		addEdge(datasetNode, testcaseNode, TEST_CASE);
 
 		addEdge(testcaseNode, paramNode, "parameters");
-		addEdge(paramNode, testcaseNode, "testCase");
+		addEdge(paramNode, testcaseNode, TEST_CASE);
 
 		// note : the unmapped reverse relation could be traversable using a JoinType.UNMAPPED (see above for example)
 		// but I won't add them because use-cases of using an attachment-list as a root entity are virtually non-existent.
-		addEdge(testcaseNode, tcAttlistNode, "attachmentList");
-		addEdge(tcAttlistNode, tcAttachmentNode, "attachments");
+		addEdge(testcaseNode, tcAttlistNode, ATTACHMENT_LIST);
+		addEdge(tcAttlistNode, tcAttachmentNode, ATTACHMENTS);
 
-		addEdge(rversionNode, rvAttlistNode, "attachmentList");
-		addEdge(rvAttlistNode, rvAttachmentNode,"attachments");
+		addEdge(rversionNode, rvAttlistNode, ATTACHMENT_LIST);
+		addEdge(rvAttlistNode, rvAttachmentNode, ATTACHMENTS);
 
-		addEdge(campaignNode, campAttlistNode, "attachmentList");
-		addEdge(campAttlistNode, campAttachmentNode,"attachments");
+		addEdge(campaignNode, campAttlistNode, ATTACHMENT_LIST);
+		addEdge(campAttlistNode, campAttachmentNode, ATTACHMENTS);
 
-		addEdge(testcaseNode, tcProjectNode, "project");
-		addEdge(tcProjectNode, testcaseNode, "project", JoinType.UNMAPPED);
+		addEdge(testcaseNode, tcProjectNode, PROJECT);
+		addEdge(tcProjectNode, testcaseNode, PROJECT, JoinType.UNMAPPED);
 
-		addEdge(requirementNode, reqProjectNode, "project");
-		addEdge(reqProjectNode, requirementNode, "project", JoinType.UNMAPPED);
+		addEdge(requirementNode, reqProjectNode, PROJECT);
+		addEdge(reqProjectNode, requirementNode, PROJECT, JoinType.UNMAPPED);
 
-		addEdge(campaignNode, campProjectNode, "project");
-		addEdge(campProjectNode, campaignNode, "project", JoinType.UNMAPPED);
+		addEdge(campaignNode, campProjectNode, PROJECT);
+		addEdge(campProjectNode, campaignNode, PROJECT, JoinType.UNMAPPED);
 
 		addEdge(itemNode, itemSuiteNode, "testSuites");
 		addEdge(itemSuiteNode, itemNode, "testPlan");
 
 		addEdge(testcaseNode, automationRequestNode, "automationRequest");
-		addEdge(automationRequestNode, testcaseNode, "testCase");
+		addEdge(automationRequestNode, testcaseNode, TEST_CASE);
 
 	}
 

@@ -58,6 +58,8 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	private static final boolean USE_HIERARCHY = true;
 
+	private static final String CANNOT_TRANSMIT_A_STANDARD_TEST_CASE = "Cannot transmit a Standard TestCase.";
+
 	@Inject
 	private ApplicationEventPublisher eventPublisher;
 
@@ -173,7 +175,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		TestCaseVisitor visitor = new TestCaseVisitor() {
 			@Override
 			public void visit(TestCase testCase) {
-				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+				throw new IllegalArgumentException(CANNOT_TRANSMIT_A_STANDARD_TEST_CASE);
 			}
 
 			@Override
@@ -253,7 +255,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		TestCaseVisitor visitor = new TestCaseVisitor() {
 			@Override
 			public void visit(TestCase testCase) {
-				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+				throw new IllegalArgumentException(CANNOT_TRANSMIT_A_STANDARD_TEST_CASE);
 			}
 
 			@Override
@@ -281,7 +283,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		TestCaseVisitor visitor = new TestCaseVisitor() {
 			@Override
 			public void visit(TestCase testCase) {
-				throw new IllegalArgumentException("Cannot transmit a Standard TestCase.");
+				throw new IllegalArgumentException(CANNOT_TRANSMIT_A_STANDARD_TEST_CASE);
 			}
 
 			@Override
