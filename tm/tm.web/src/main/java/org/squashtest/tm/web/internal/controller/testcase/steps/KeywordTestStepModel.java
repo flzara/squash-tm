@@ -52,7 +52,8 @@ public class KeywordTestStepModel {
 	public static class KeywordTestStepModelValidator implements Validator {
 
 		private static final String MESSAGE_NOT_BLANK = "message.notBlank";
-		
+		private static final String MESSAGE_NOT_NULL = "message.notNull";
+
 		private MessageSource messageSource;
 
 		public KeywordTestStepModelValidator(MessageSource messageSource) {
@@ -77,20 +78,20 @@ public class KeywordTestStepModel {
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
 			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, locale);
-			String notNull = messageSource.getMessage("message.notNull", null, locale);
+			String notNull = messageSource.getMessage(MESSAGE_NOT_NULL, null, locale);
 
 			KeywordTestStepModel model = (KeywordTestStepModel) target;
 			String keyword = model.getKeyword();
 			String actionWord = model.getActionWord();
 
 			if (keyword == null) {
-				errors.rejectValue("Keyword in Keyword Test case", "message.notNull", notNull);
+				errors.rejectValue("Keyword in Keyword Test case", MESSAGE_NOT_NULL, notNull);
 			} else if (keyword.isEmpty()) {
 				errors.rejectValue("Keyword in Keyword Test case", MESSAGE_NOT_BLANK, notBlank);
 			}
 
 			if (actionWord == null) {
-				errors.rejectValue("Action word in Keyword Test case", "message.notNull", notNull);
+				errors.rejectValue("Action word in Keyword Test case", MESSAGE_NOT_NULL, notNull);
 			} else if (actionWord.isEmpty()) {
 				errors.rejectValue("Action word in Keyword Test case", MESSAGE_NOT_BLANK, notBlank);
 			}

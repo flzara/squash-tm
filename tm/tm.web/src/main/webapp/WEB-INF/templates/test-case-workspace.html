@@ -23,262 +23,270 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{squashtm}">Squash</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title th:text="#{squashtm}">Squash</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-<!-- common head -->
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-<link rel="shortcut icon" type="image/x-icon" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css" />
-<!-- rich jeditable header -->
-<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
-<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
-<script type="text/javascript" th:inline="javascript">
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css"/>
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css"/>
+  <!-- rich jeditable header -->
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
-    	var squashtm = {};
-    	var pathname = window.location.pathname;
-    	squashtm.app = {
-    		locale : /*[[#{squashtm.locale}]]*/ 'fr',
-    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-    		testCaseWorkspaceConf : {
-				tree : {
-					model : /*[[${ rootModel }]]*/ '',
-					workspace : "test-case",
-					treeselector : "#tree",
-					selectedNode : /*[[${selectedNode}]]*/[]
-				},
-				treemenu: {
-  					wizards: /*[[${ wizards }]]*/ '',
-				},
-				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
-					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
-					workspace : pathname
-				},
-				activeMilestone : /*[[${activeMilestone}]]*/{}
-			},
-			userPrefs : /*[[${userPrefs}]]*/ '{'"squash.core.favorite.dashboard"':'12','"squash.core.favorite.color"':'blue'...}',
-      defaultInfoList : /*[[${defaultInfoLists}]]*/{},
-      testCaseImportance : /*[[${testCaseImportance}]]*/{},
-      testCaseStatus : /*[[${testCaseStatus}]]*/{},
-      requirementStatus : /*[[${requirementStatus}]]*/{},
-      requirementCriticality : /*[[${requirementCriticality}]]*/{},
-      executionStatus : /*[[${executionStatus}]]*/{},
+    var squashtm = {};
+    var pathname = window.location.pathname;
+    squashtm.app = {
+      locale: /*[[#{squashtm.locale}]]*/ 'fr',
+      contextRoot: /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      testCaseWorkspaceConf: {
+        tree: {
+          model: /*[[${ rootModel }]]*/ '',
+          workspace: "test-case",
+          treeselector: "#tree",
+          selectedNode: /*[[${selectedNode}]]*/[]
+        },
+        treemenu: {
+          wizards: /*[[${ wizards }]]*/ '',
+        },
+        toggleWS: {
+          expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+          collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
+          workspace: pathname
+        },
+        activeMilestone: /*[[${activeMilestone}]]*/{}
+      },
+      userPrefs: /*[[${userPrefs}]]*/ '{'
+      "squash.core.favorite.dashboard"':'
+      12','
+      "squash.core.favorite.color"':'
+      blue'...}',
+      defaultInfoList: /*[[${defaultInfoLists}]]*/{},
+      testCaseImportance: /*[[${testCaseImportance}]]*/{},
+      testCaseStatus: /*[[${testCaseStatus}]]*/{},
+      requirementStatus: /*[[${requirementStatus}]]*/{},
+      requirementCriticality: /*[[${requirementCriticality}]]*/{},
+      executionStatus: /*[[${executionStatus}]]*/{},
       userLicenseInformation: /*[[${userLicenseInformation}]]*/,
       dateLicenseInformation: /*[[${dateLicenseInformation}]]*/
-    	};
+    };
 
-    	squashtm.workspace = squashtm.workspace || {};
-    	squashtm.workspace.projects = /*[[${projects}]]*/ [];
+    squashtm.workspace = squashtm.workspace || {};
+    squashtm.workspace.projects = /*[[${projects}]]*/ [];
 
     /* ]]> */
-    </script>
-<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+  </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
-<script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/test-case-workspace.js}"
-  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
-<script type="text/javascript" th:inline="javascript">
+  <script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/test-case-workspace.js}"
+          src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
-      requirejs.config({
-          waitSeconds: 0
-      });
+    requirejs.config({
+      waitSeconds: 0
+    });
     /* ]]> */
-</script>
+  </script>
 
-<!--  initialize the wizards -->
-<div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='test-case')"/>
+  <!--  initialize the wizards -->
+  <div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='test-case')"/>
 
 </head>
 
 <body>
-  <div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
+<div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
 
-  <div id="workspace">
-    <div id="workspace-title">
-      <div class="snap-left">
-        <h2 th:text="#{workspace.test-case.title}">Espace Cas de test</h2>
-      </div>
-      <div class="snap-right">
-        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
-        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
-      </div>
+<div id="workspace">
+  <div id="workspace-title">
+    <div class="snap-left">
+      <h2 th:text="#{workspace.test-case.title}">Espace Cas de test</h2>
     </div>
-    <div th:remove="all">
-      <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
-      <!-- 		above the stacking context of the contextual content. -->
-      <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+    <div class="snap-right">
+      <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+      <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
     </div>
-    <div id="tree-panel-left" style="z-index: 1" class="left-frame">
-      <div class="position-layout-fix">
-        <div id="tabbed-pane"
-            th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
-           <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
-            <li class="tab">
-              <a href="#tree-pane" >
-              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
+  </div>
+  <div th:remove="all">
+    <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+    <!-- 		above the stacking context of the contextual content. -->
+    <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+  </div>
+  <div id="tree-panel-left" style="z-index: 1" class="left-frame">
+    <div class="position-layout-fix">
+      <div id="tabbed-pane"
+           th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
+        <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
+          <li class="tab">
+            <a href="#tree-pane">
+              <span id="testCaseDashboardMilestone" th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"
+                    class="clickable-item" style="text-decoration:none"></span>
               <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
+            </a>
+          </li>
+        </ul>
+        <div id="tree-pane">
+          <!-- ________________TREE MENU_______________ -->
+          <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
+            <div class="button-group">
+              <a id="tree-create-button" class="buttonmenu sq-icon-btn" th:title="#{label.create} +'...'"
+                 title="create" role="buttonmenu">
+                <span class="ui-icon ui-icon-plusthick"></span>
               </a>
-            </li>
-          </ul>
-          <div id="tree-pane">
-            <!-- ________________TREE MENU_______________ -->
-            <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
-              <div class="button-group">
-                <a id="tree-create-button" class="buttonmenu sq-icon-btn" th:title="#{label.create} +'...'"
-                  title="create" role="buttonmenu">
-                  <span class="ui-icon ui-icon-plusthick"></span>
-                </a>
-                <ul id="tree-create-menu" class="not-displayed">
-                  <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
-                  </li>
-                  <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
-                  </li>
-                  <li id="new-test-case-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.new-gherkin-test-case.label}+'...'">New Gherkin test case...</a>
-                  </li>
-                  <li id="new-keyword-test-case-tree-button" class="cursor-pointer">
-                    <a th:text="#{tree.button.new-bdd-test-case.label}+'...'">New BDD test case...</a>
-                  </li>
-                </ul>
-              </div>
+              <ul id="tree-create-menu" class="not-displayed">
+                <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
+                </li>
+                <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
+                </li>
+                <li id="new-test-case-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{tree.button.new-gherkin-test-case.label}+'...'">New Gherkin test case...</a>
+                </li>
+                <li id="new-keyword-test-case-tree-button" class="cursor-pointer">
+                  <a th:text="#{tree.button.new-bdd-test-case.label}+'...'">New BDD test case...</a>
+                </li>
+              </ul>
+            </div>
 
-              <div class="button-group">
-                <a id="copy-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
-                  title="copy node" role="button">
-                  <span class="ui-icon ui-icon-copy"></span>
-                </a>
-                <a id="paste-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
-                  title="paste node" role="button">
-                  <span class="ui-icon ui-icon-clipboard"></span>
-                </a>
-              </div>
+            <div class="button-group">
+              <a id="copy-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
+                 title="copy node" role="button">
+                <span class="ui-icon ui-icon-copy"></span>
+              </a>
+              <a id="paste-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
+                 title="paste node" role="button">
+                <span class="ui-icon ui-icon-clipboard"></span>
+              </a>
+            </div>
 
-              <div class="button-group">
-                <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
-                  title="rename node" role="button">
-                  <span class="ui-icon ui-icon-pencil"></span>
-                </a>
+            <div class="button-group">
+              <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
+                 title="rename node" role="button">
+                <span class="ui-icon ui-icon-pencil"></span>
+              </a>
 
 
-                <a id="tree-import-button" class="buttonmenu sq-icon-btn"
-                  th:title="#{squashtm.treemenu.import.label}+'...'" title="import export" role="buttonmenu">
-                  <span class="ui-icon ui-icon-transferthick-e-w"></span>
-                </a>
-                <ul id="tree-import-menu" class="not-displayed">
-                  <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Import}+'...'">Import ...</a>
-                  </li>
-                  <li id="create-tc-from-req-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Export.FromTestcaseToRequirement}+'...'">full ...</a>
-                  </li>
+              <a id="tree-import-button" class="buttonmenu sq-icon-btn"
+                 th:title="#{squashtm.treemenu.import.label}+'...'" title="import export" role="buttonmenu">
+                <span class="ui-icon ui-icon-transferthick-e-w"></span>
+              </a>
+              <ul id="tree-import-menu" class="not-displayed">
+                <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.Import}+'...'">Import ...</a>
+                </li>
+                <li id="create-tc-from-req-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.Export.FromTestcaseToRequirement}+'...'">full ...</a>
+                </li>
 
-                  <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Export}+'...'">full ...</a>
-                  </li>
+                <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.Export}+'...'">full ...</a>
+                </li>
 
-                  <li id="export-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
-                  </li>
+                <li id="export-gherkin-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
+                </li>
 
-                  <li id="transmit-for-automation-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.TransmitForAutomation}+'...'">full ...</a>
-                  </li>
+                <li id="transmit-for-automation-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.TransmitForAutomation}+'...'">full ...</a>
+                </li>
 
-                  <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
+                <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
                     th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
                     th:attr="data-module=${plugin.javascriptModuleName}">
-                    <a th:text="${plugin.name}+'...'">plugin ...</a>
+                  <a th:text="${plugin.name}+'...'">plugin ...</a>
+                </li>
+              </ul>
+            </div>
+            <div class="button-group">
+              <a id="search-tree-button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search"
+                 role="button">
+                <span class="ui-icon ui-icon-search"></span>
+              </a>
+            </div>
+            <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
+              <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
+                 title="wizards..." role="buttonmenu">
+                <span class="ui-icon ui-icon-star"></span>
+              </a>
+              <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
+                <ul id="ws-wizard-tree-menu">
+                  {{#each wizards}}
+                  <li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a title="{{this.tooltip}}">{{this.label}}...</a>
                   </li>
+                  {{/each}}
                 </ul>
-              </div>
-              <div class="button-group">
-                <a id="search-tree-button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search" role="button">
-                  <span class="ui-icon ui-icon-search"></span>
-                </a>
-              </div>
-              <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
-                <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
-                  title="wizards..." role="buttonmenu">
-                  <span class="ui-icon ui-icon-star"></span>
-                </a>
-                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
-								<ul id="ws-wizard-tree-menu">
-								{{#each wizards}}
-								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
-								{{/each}}
-								</ul>
-   							 </script>
-                <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
-								<form id="start-ws-wizard-form" action="{{url}}" method="post">
-								{{#each nodes}}
-                  <input type="hidden" id= "csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
-								{{/each}}
-							</form>
-    						</script>
-                <div id="start-ws-wizard-container" class="not-displayed"></div>
-              </div>
-
-              <div class="button-group snap-right">
-                <a id="delete-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.delete.label}+'...'"
-                  title="delete..." role="button">
-                  <span class="ui-icon ui-icon-trash"></span>
-                </a>
-              </div>
+              </script>
+              <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
+                <form id="start-ws-wizard-form" action="{{url}}" method="post">
+                  {{#each nodes}}
+                  <input type="hidden" id="csrf-token" th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
+                  {{/each}}
+                </form>
+              </script>
+              <div id="start-ws-wizard-container" class="not-displayed"></div>
             </div>
-            <!-- ____________________/TREE MENU_______________________ -->
-            <!--  ____________________HTML TREE__________________________ -->
 
-            <div th:remove="tag"
-              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
-              <div th:remove="tag" th:with="filter = ${projectFilter}">
-                <div class="tree-filter-reminder-div">
-                  <span th:class="${filter.enabled} ? '' : 'not-displayed'"
-                    th:text="#{tabbed_panel.tree.pane.filter.enabled.label}">filter enabled</span>
-                </div>
-
-                <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
-              </div>
+            <div class="button-group snap-right">
+              <a id="delete-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.delete.label}+'...'"
+                 title="delete..." role="button">
+                <span class="ui-icon ui-icon-trash"></span>
+              </a>
             </div>
-            <!-- /	_________________HTML TREE___________________ -->
           </div>
+          <!-- ____________________/TREE MENU_______________________ -->
+          <!--  ____________________HTML TREE__________________________ -->
+
+          <div th:remove="tag"
+               th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
+            <div th:remove="tag" th:with="filter = ${projectFilter}">
+              <div class="tree-filter-reminder-div">
+                  <span th:class="${filter.enabled} ? '' : 'not-displayed'"
+                        th:text="#{tabbed_panel.tree.pane.filter.enabled.label}">filter enabled</span>
+              </div>
+
+              <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
+            </div>
+          </div>
+          <!-- /	_________________HTML TREE___________________ -->
         </div>
       </div>
     </div>
-
-    <div id="contextual-content">
-      <!--empty -->
-    </div>
-
-
   </div>
-  <!-- _____________________TEST CASE TREE POPUPS______________________________ -->
 
-  <div id="treepopups-definition" class="not-displayed">
-
-    <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
-      title="new folder">
-
-      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-
-      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+  <div id="contextual-content">
+    <!--empty -->
+  </div>
 
 
-      <div data-def="state=confirm">
+</div>
+<!-- _____________________TEST CASE TREE POPUPS______________________________ -->
+
+<div id="treepopups-definition" class="not-displayed">
+
+  <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
+       title="new folder">
+
+    <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+
+
+    <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
           <td>
             <label for="add-folder-name" th:text="#{label.Name}">Name</label>
           </td>
           <td>
-            <input id="add-folder-name" type="text" size="50" maxlength="255" data-def="maininput" />
-            <br />
+            <input id="add-folder-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <br/>
             <span class="error-message name-error"></span>
           </td>
         </tr>
@@ -292,23 +300,25 @@
         </tr>
       </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
-        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
+        <input type="button" th:value="#{label.addAnother}" value="add another"
+               data-def="evt=add-another, state=confirm, mainbtn=confirm"/>
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm"/>
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
       </div>
-     </div>
     </div>
+  </div>
 
 
-    <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
-      title="new test case">
+  <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
+       title="new test case">
 
 
-      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+    <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
 
-      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
 
-      <div data-def="state=confirm">
+    <div data-def="state=confirm">
       <table class="add-node-attributes">
 
         <tr>
@@ -327,8 +337,8 @@
           </td>
 
           <td>
-            <input id="add-test-case-name" type="text" size="50" maxlength="255" data-def="maininput" />
-            <br />
+            <input id="add-test-case-name" type="text" size="50" maxlength="255" data-def="maininput"/>
+            <br/>
             <span class="error-message name-error"></span>
           </td>
         </tr>
@@ -338,8 +348,8 @@
           </td>
 
           <td>
-            <input id="add-test-case-reference" type="text" size="20" maxlength="50" />
-            <br />
+            <input id="add-test-case-reference" type="text" size="20" maxlength="50"/>
+            <br/>
             <span class="error-message reference-error"></span>
           </td>
         </tr>
@@ -355,382 +365,369 @@
 
       </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
-        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
-      </div>
-      </div>
-    </div>
-
-    <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
-      title="rename tree node">
-
-      <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-
-      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
-      <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
-
-      <div data-def="state=confirm">
-
-        <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
-          <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
-        </div>
-
-        <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
-        <input id="rename-tree-node-text" type="text" size="50" />
-        <br />
-        <span class="error-message name-error"></span>
-      </div>
-
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Confirm}" value="confirm"
-          data-def="evt=confirm, mainbtn=confirm, state=confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
-      </div>
-
-    </div>
-
-    <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
-      title="delete node">
-
-      <div data-def="state=pleasewait">
-        <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
-      </div>
-
-      <div class="not-displayed" data-def="state=confirm">
-
-        <div class="display-table-row">
-          <div class="display-table-cell warning-cell">
-            <div class="generic-error-signal"></div>
-          </div>
-          <div class="display-table-cell">
-            <p>
-              <span th:text="#{dialog.label.delete-node.label.start}">are you sure you want to delete this </span>
-              <span class='red-warning-message' th:text="#{dialog.label.delete-nodes.test-cases.label}">
-                campaigns </span>
-              <span th:text="#{dialog.label.delete-node.label.end}">??</span>
-            </p>
-
-            <div class="not-displayed delete-node-dialog-details">
-              <p th:text="#{dialog.delete-tree-node.details}">details :</p>
-              <ul>
-              </ul>
-            </div>
-
-            <p>
-              <span th:text="#{dialog.label.delete-node.label.cantbeundone}"> can't be undone </span>
-              <span class='bold-warning-message' th:text="#{dialog.label.delete-node.label.confirm}"> do you
-                confirm ? </span>
-            </p>
-
-          </div>
-        </div>
-      </div>
-
-       <!--
-      <div class="not-displayed" data-def="state=copyconfirm">        </div>
-
-     <div data-def="state=lol" >
-        <div class="delete-node-dialog-lol" style="overflow:visible; font-size:50px; font-weight:bold;"></div>
-      </div>  -->
-
-
-
-      <div class="not-displayed" data-def="state=rejected" th:text="#{dialog.label.delete-node.rejected}">delete
-        node rejected</div>
-
-      <div class="popup-dialog-buttonpane">
-        <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
-
-        <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" />
- <!--
-        <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" />
-        -->
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected" />
-
+        <input type="button" th:value="#{label.addAnother}" value="add another"
+               data-def="evt=add-another, state=confirm, mainbtn=confirm"/>
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm"/>
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
       </div>
     </div>
   </div>
 
+  <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
+       title="rename tree node">
 
-  <div th:remove="tag" th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
-    <!--  ================ IMPORT EXCEL POPUP =======================  -->
+    <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
 
-    <div id="import-excel-dialog" class="popup-dialog not-displayed" th:title="#{dialog.import-excel.title}">
+    <span data-def="state=milestone-denied"
+          th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
 
-      <div data-def="state=parametrization">
+    <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
 
-        <div>
-          <form th:action="@{/test-cases/importer}" action="http://localhost:8008/squash/test-cases/importer"
-            method="POST" enctype="multipart/form-data" class="display-table">
-            <div class="std-padding std-margin-top">
+    <div data-def="state=confirm">
 
-              <div class="grey-round-panel snap-left" style="width: 43%;">
-                <input id="xls-import-opt" type="radio" name="import-type" value="xls" class="centered"
-                  checked="checked" />
-                <span style="text-decoration: underline;">Excel</span>
-                <div class="nota-bene" th:text="#{test-case.import.dialog.excel.description}"></div>
-                <a th:href="@{/static/}+#{file.testcase.import.template.xls}"
-                  th:text="#{test-case.import.dialog.excel.template}">excel template </a>
-              </div>
-
-              <div class="grey-round-panel snap-right" style="width: 43%;">
-                <input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered" />
-                <span style="text-decoration: underline;">ZIP</span>
-                <div class="nota-bene" th:text="#{test-case.import.dialog.zip.description}">description</div>
-                <a th:href="@{/static/}+#{file.testcase.import.template.zip}"
-                  th:text="#{test-case.import.dialog.zip.template}">zip template </a>
-              </div>
-
-              <div class="unsnap"></div>
-
-            </div>
-
-            <div class="std-margin-top">
-              <div>
-                <div id="project-destination-row" class="display-table-row" style="visibility: hidden">
-                  <div class="display-table-cell">
-                    <label th:text="#{dialog.import.project.message}">project</label>
-                  </div>
-                  <div class="display-table-cell">
-                    <select id="import-project-list" name="projectId" style="width:90%;">
-                      <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
-                        th:utext="${lib.project.name}">project name</option>
-                    </select>
-                    <div class="icon-helper no-print small-margin-left" th:title="#{message.import.info.targetproject}"></div>
-                  </div>
-                </div>
-
-                <div class="display-table-row">
-                  <div class="display-table-cell">
-                    <label th:text="#{dialog.import-excel.test-case.filetype.message}">tc filetype</label>
-                  </div>
-                  <div class="display-table-cell">
-                    <input type="file" name="archive" size="20"
-                      accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12, application/zip" />
-                  </div>
-                </div>
-                <div class="display-table-row">
-                  <div class="display-table-cell">
-                    <label th:text="#{dialog.import.encoding.label}">import encoding label</label>
-                  </div>
-                  <div class="display-table-cell">
-                    <select name="zipEncoding">
-                      <option value="Cp858" th:text="'Windows '+#{dialog.import.encoding.default}">Windows
-                        encoding default</option>
-                      <option value="UTF8">UTF-8</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-        </div>
+      <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
+        <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
       </div>
 
-      <div data-def="state=confirm">
-        <div class="confirm-div">
-          <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
-          <span class="confirm-span confirm-file"></span>
+      <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
+      <input id="rename-tree-node-text" type="text" size="50"/>
+      <br/>
+      <span class="error-message name-error"></span>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" value="confirm"
+             data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn"/>
+    </div>
+
+  </div>
+
+  <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
+       title="delete node">
+
+    <div data-def="state=pleasewait">
+      <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+    </div>
+
+    <div class="not-displayed" data-def="state=confirm">
+
+      <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-error-signal"></div>
         </div>
-        <div class="confirm-div import-project-confirm not-displayed" th:with="libs=${editableLibraries}">
-          <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
-          <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}"></span>
-        </div>
-
-        <div th:text="#{dialog.import.confirm.message}">import confirm message</div>
-      </div>
-      <div data-def="state=progression">
-        <div class="waiting-loading centered minimal-height">
-          <div style="font-size: 1.5em; margin-top: 300px;" th:text="#{squashtm.processing}">processing ...</div>
-        </div>
-      </div>
-
-      <div class="import-summary" data-def="state=summary"></div>
-
-      <div class="import-summary" data-def="state=simulation-summary"></div>
-
-      <script id="zip-import-recap-tpl" type="text/x-handlebars-template">
-        <div><span><span th:remove="tag" th:text="#{dialog.import-excel.test-case.total}"></span>{{total}}</span></div>
-
-        <div><span  th:text="#{dialog.import-excel.test-case.success}">import success </span><span class="success-import span-bold span-green">{{success}}</span></div>
-
-
-        <div>
-          <span th:text="#{dialog.import-excel.test-case.failed}"></span>
-          <span class="failures-import span-bold {{failuresClass}}">{{notimported}} </span>
-        </div>
-        {{#unless createdOnly}}
-        <div class="import-excel-dialog-note">
-          <hr/>
-          <span th:text="#{dialog.import.summary.notes.label}"></span>
-          <ul>
-            {{#if hasRenamed}}
-            <li class="import-excel-dialog-renamed"><span th:text="#{dialog.import-excel.test-case.warnings.renamed}">renamed</span></li>
-            {{/if}}
-            {{#if hasModified}}
-            <li class="import-excel-dialog-modified"><span th:text="#{dialog.import-excel.test-case.warnings.modified}">modified</span></li>
-            {{/if}}
-            {{#if hasRejects}}
-            <li class="import-excel-dialog-extension"><span th:text="#{dialog.import-excel.test-case.warnings.extension}">extension</span></li>
-            {{/if}}
-          </ul>
-        </div>
-        {{/unless}}
-        </script>
-      <script id="xls-import-recap-tpl" type="text/x-handlebars-template">
-        <div>
-          <p class="cf">
-            <span class="snap-left ui-icon ui-icon-check"></span><span th:text="#{message.import.success}" th:remove="tag">import success</span>
-          </p>
+        <div class="display-table-cell">
           <p>
-          <table>
-            <thead>
-            <tr>
-              <th class="not visible"></th>
-              <th th:text="#{message.import.successRowCount}" ></th>
-              <th th:text="#{message.import.warningRowCount}" ></th>
-              <th th:text="#{message.import.failureRowCount}" ></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th th:text="#{label.testCases}" ></th>
-              <th class="txt-success">{{testCaseSuccesses}}</th>
-              <th class="txt-warn">{{testCaseWarnings}}</th>
-              <th class="txt-error">{{testCaseFailures}}</th>
-            </tr>
-            <tr>
-              <th th:text="#{label.testSteps}" ></th>
-              <th class="txt-success">{{testStepSuccesses}}</th>
-              <th class="txt-warn">{{testStepWarnings}}</th>
-              <th class="txt-error">{{testStepFailures}}</th>
-            </tr>
-            <tr>
-              <th th:text="#{label.parameters}" ></th>
-              <th class="txt-success">{{parameterSuccesses}}</th>
-              <th class="txt-warn">{{parameterWarnings}}</th>
-              <th class="txt-error">{{parameterFailures}}</th>
-            </tr>
-            <tr>
-              <th th:text="#{label.datasets}" ></th>
-              <th class="txt-success">{{datasetSuccesses}}</th>
-              <th class="txt-warn">{{datasetWarnings}}</th>
-              <th class="txt-error">{{datasetFailures}}</th>
-            </tr>
-
-            <tr>
-              <th th:text="#{label.coverage}" ></th>
-              <th class="txt-success">{{coverageSuccesses}}</th>
-              <th class="txt-warn">{{coverageWarnings}}</th>
-              <th class="txt-error">{{coverageFailures}}</th>
-            </tr>
-
-            </tbody>
-          </table>
+            <span th:text="#{dialog.label.delete-node.label.start}">are you sure you want to delete this </span>
+            <span class='red-warning-message' th:text="#{dialog.label.delete-nodes.test-cases.label}">
+                campaigns </span>
+            <span th:text="#{dialog.label.delete-node.label.end}">??</span>
           </p>
-          <p class="cf">
-            <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}" th:text="#{message.import.downloadLog}" > dowload log</a>
+
+          <div class="not-displayed delete-node-dialog-details">
+            <p th:text="#{dialog.delete-tree-node.details}">details :</p>
+            <ul>
+            </ul>
+          </div>
+
+          <p>
+            <span th:text="#{dialog.label.delete-node.label.cantbeundone}"> can't be undone </span>
+            <span class='bold-warning-message' th:text="#{dialog.label.delete-node.label.confirm}"> do you
+                confirm ? </span>
           </p>
+
         </div>
-        </script>
+      </div>
+    </div>
 
-      <script id="xls-import-recap-ko" type="text/x-handlebars-template">
-        <p th:text="#{message.import.error.format}"></p>
-		<ul>
-           	{{#if missingMandatoryColumns.length}}
-            	<li><span th:remove="tag" th:text="#{message.import.log.error.mandatoryColumns}"></span>{{missingMandatoryColumns}}.</li>
-           	{{/if}}
-           	{{#if duplicateColumns.length}}
-            	<li th:text="#{message.import.log.error.duplicateColumns}"></li>
-           	{{/if}}
-			{{#if actionValidationError}}
-      			<li th:text="#{squashtm.action.exception.sheetcorrupted.label }"></li>
-           	{{/if}}
-         </ul>
-        </script>
+    <!--
+   <div class="not-displayed" data-def="state=copyconfirm">        </div>
 
-      <div data-def="state=error-size">
-        <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
+  <div data-def="state=lol" >
+     <div class="delete-node-dialog-lol" style="overflow:visible; font-size:50px; font-weight:bold;"></div>
+   </div>  -->
+
+
+    <div class="not-displayed" data-def="state=rejected" th:text="#{dialog.label.delete-node.rejected}">delete
+      node rejected
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm"
+             data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
+
+      <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm"/>
+      <!--
+             <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" />
+             -->
+      <input type="button" th:value="#{label.Cancel}" value="cancel"
+             data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected"/>
+
+    </div>
+  </div>
+</div>
+
+
+<div th:remove="tag" th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
+  <!--  ================ IMPORT EXCEL POPUP =======================  -->
+
+  <div id="import-excel-dialog" class="popup-dialog not-displayed" th:title="#{dialog.import-excel.title}">
+
+    <div data-def="state=parametrization">
+
+      <div>
+        <form th:action="@{/test-cases/importer}" action="http://localhost:8008/squash/test-cases/importer"
+              method="POST" enctype="multipart/form-data" class="display-table">
+          <div class="std-padding std-margin-top">
+
+            <div class="grey-round-panel snap-left" style="width: 43%;">
+              <input id="xls-import-opt" type="radio" name="import-type" value="xls" class="centered"
+                     checked="checked"/>
+              <span style="text-decoration: underline;">Excel</span>
+              <div class="nota-bene" th:text="#{test-case.import.dialog.excel.description}"></div>
+              <a th:href="@{/static/}+#{file.testcase.import.template.xls}"
+                 th:text="#{test-case.import.dialog.excel.template}">excel template </a>
+            </div>
+
+            <div class="grey-round-panel snap-right" style="width: 43%;">
+              <input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered"/>
+              <span style="text-decoration: underline;">ZIP</span>
+              <div class="nota-bene" th:text="#{test-case.import.dialog.zip.description}">description</div>
+              <a th:href="@{/static/}+#{file.testcase.import.template.zip}"
+                 th:text="#{test-case.import.dialog.zip.template}">zip template </a>
+            </div>
+
+            <div class="unsnap"></div>
+
+          </div>
+
+          <div class="std-margin-top">
+            <div>
+              <div id="project-destination-row" class="display-table-row" style="visibility: hidden">
+                <div class="display-table-cell">
+                  <label th:text="#{dialog.import.project.message}">project</label>
+                </div>
+                <div class="display-table-cell">
+                  <select id="import-project-list" name="projectId" style="width:90%;">
+                    <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
+                            th:utext="${lib.project.name}">project name
+                    </option>
+                  </select>
+                  <div class="icon-helper no-print small-margin-left"
+                       th:title="#{message.import.info.targetproject}"></div>
+                </div>
+              </div>
+
+              <div class="display-table-row">
+                <div class="display-table-cell">
+                  <label th:text="#{dialog.import-excel.test-case.filetype.message}">tc filetype</label>
+                </div>
+                <div class="display-table-cell">
+                  <input type="file" name="archive" size="20"
+                         accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12, application/zip"/>
+                </div>
+              </div>
+              <div class="display-table-row">
+                <div class="display-table-cell">
+                  <label th:text="#{dialog.import.encoding.label}">import encoding label</label>
+                </div>
+                <div class="display-table-cell">
+                  <select name="zipEncoding">
+                    <option value="Cp858" th:text="'Windows '+#{dialog.import.encoding.default}">Windows
+                      encoding default
+                    </option>
+                    <option value="UTF8">UTF-8</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <div data-def="state=confirm">
+      <div class="confirm-div">
+        <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
+        <span class="confirm-span confirm-file"></span>
+      </div>
+      <div class="confirm-div import-project-confirm not-displayed" th:with="libs=${editableLibraries}">
+        <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
+        <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}"></span>
       </div>
 
-      <div class="error-type" data-def="state=error-type">
+      <div th:text="#{dialog.import.confirm.message}">import confirm message</div>
+    </div>
+    <div data-def="state=progression">
+      <div class="waiting-loading centered minimal-height">
+        <div style="font-size: 1.5em; margin-top: 300px;" th:text="#{squashtm.processing}">processing ...</div>
+      </div>
+    </div>
+
+    <div class="import-summary" data-def="state=summary"></div>
+
+    <div class="import-summary" data-def="state=simulation-summary"></div>
+
+    <script id="zip-import-recap-tpl" type="text/x-handlebars-template">
+      <div><span><span th:remove="tag" th:text="#{dialog.import-excel.test-case.total}"></span>{{total}}</span></div>
+
+      <div><span th:text="#{dialog.import-excel.test-case.success}">import success </span><span
+        class="success-import span-bold span-green">{{success}}</span></div>
+
+
+      <div>
+        <span th:text="#{dialog.import-excel.test-case.failed}"></span>
+        <span class="failures-import span-bold {{failuresClass}}">{{notimported}} </span>
+      </div>
+      {{#unless createdOnly}}
+      <div class="import-excel-dialog-note">
+        <hr/>
+        <span th:text="#{dialog.import.summary.notes.label}"></span>
+        <ul>
+          {{#if hasRenamed}}
+          <li class="import-excel-dialog-renamed"><span th:text="#{dialog.import-excel.test-case.warnings.renamed}">renamed</span>
+          </li>
+          {{/if}}
+          {{#if hasModified}}
+          <li class="import-excel-dialog-modified"><span th:text="#{dialog.import-excel.test-case.warnings.modified}">modified</span>
+          </li>
+          {{/if}}
+          {{#if hasRejects}}
+          <li class="import-excel-dialog-extension"><span th:text="#{dialog.import-excel.test-case.warnings.extension}">extension</span>
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+      {{/unless}}
+    </script>
+    <script id="xls-import-recap-tpl" type="text/x-handlebars-template">
+      <div>
+        <p class="cf">
+          <span class="snap-left ui-icon ui-icon-check"></span><span th:text="#{message.import.success}"
+                                                                     th:remove="tag">import success</span>
+        </p>
+        <p>
+        <table>
+          <thead>
+          <tr>
+            <th class="not visible"></th>
+            <th th:text="#{message.import.successRowCount}"></th>
+            <th th:text="#{message.import.warningRowCount}"></th>
+            <th th:text="#{message.import.failureRowCount}"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th th:text="#{label.testCases}"></th>
+            <th class="txt-success">{{testCaseSuccesses}}</th>
+            <th class="txt-warn">{{testCaseWarnings}}</th>
+            <th class="txt-error">{{testCaseFailures}}</th>
+          </tr>
+          <tr>
+            <th th:text="#{label.testSteps}"></th>
+            <th class="txt-success">{{testStepSuccesses}}</th>
+            <th class="txt-warn">{{testStepWarnings}}</th>
+            <th class="txt-error">{{testStepFailures}}</th>
+          </tr>
+          <tr>
+            <th th:text="#{label.parameters}"></th>
+            <th class="txt-success">{{parameterSuccesses}}</th>
+            <th class="txt-warn">{{parameterWarnings}}</th>
+            <th class="txt-error">{{parameterFailures}}</th>
+          </tr>
+          <tr>
+            <th th:text="#{label.datasets}"></th>
+            <th class="txt-success">{{datasetSuccesses}}</th>
+            <th class="txt-warn">{{datasetWarnings}}</th>
+            <th class="txt-error">{{datasetFailures}}</th>
+          </tr>
+
+          <tr>
+            <th th:text="#{label.coverage}"></th>
+            <th class="txt-success">{{coverageSuccesses}}</th>
+            <th class="txt-warn">{{coverageWarnings}}</th>
+            <th class="txt-error">{{coverageFailures}}</th>
+          </tr>
+
+          </tbody>
+        </table>
+        </p>
+        <p class="cf">
+          <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}"
+                                                                           th:text="#{message.import.downloadLog}">
+          dowload log</a>
+        </p>
+      </div>
+    </script>
+
+    <script id="xls-import-recap-ko" type="text/x-handlebars-template">
+      <p th:text="#{message.import.error.format}"></p>
+      <ul>
+        {{#if missingMandatoryColumns.length}}
+        <li><span th:remove="tag" th:text="#{message.import.log.error.mandatoryColumns}"></span>{{missingMandatoryColumns}}.
+        </li>
+        {{/if}}
+        {{#if duplicateColumns.length}}
+        <li th:text="#{message.import.log.error.duplicateColumns}"></li>
+        {{/if}}
+        {{#if actionValidationError}}
+        <li th:text="#{squashtm.action.exception.sheetcorrupted.label }"></li>
+        {{/if}}
+      </ul>
+    </script>
+
+    <div data-def="state=error-size">
+      <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
+    </div>
+
+    <div class="error-type" data-def="state=error-type">
         <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
 
            <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
           <span id="import-err-filetype">xls, xlsx, xlsm</span>
         </span>
-        <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;">
+      <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;">
           <span th:text="#{dialog.import.wrongfile.zip}" th:remove="tag">import wrong file</span>
           <span id="import-err-filetype">zip</span>
         </span>
-      </div>
+    </div>
 
-      <div class="error-type" data-def="state=error-null">
+    <div class="error-type" data-def="state=error-null">
         <span class="import-err-null-text" id="import-err-null-text">
           <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">no file</span>
         </span>
-      </div>
-
-      <div class="error-format" data-def="state=error-format"></div>
-      <div id="import-excel-dump" class="not-displayed dump"></div>
-
-      <div class="popup-dialog-buttonpane">
-        <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}" th:title="#{label.SimulateImport}"
-          data-def="evt=simulate, state=parametrization" />
-        <input type="button" th:value="#{label.Import}" value="importLabel" th:title="#{label.ImportSelectedFile}"
-          data-def="evt=import, state=parametrization simulation-summary, mainbtn=parametrization simulation-summary" />
-        <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
-          data-def="evt=confirm, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Close}" value="okLabel" data-def="evt=ok, state=summary simulation-summary, mainbtn=summary" />
-        <input type="button" th:value="#{label.Close}" value="okLabel"
-          data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
-        <input type="button" th:value="#{label.Close}" value="okLabel"
-          data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format" />
-        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  th:title="#{label.CancelImport}"
-          data-def="evt=cancel, state=parametrization confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancelLabel" th:title="#{label.CancelImport}"
-          data-def="evt=cancel-progression, state=progression" />
-      </div>
-
     </div>
 
-    <!--  ================ /IMPORT EXCEL POPUP ======================  -->
+    <div class="error-format" data-def="state=error-format"></div>
+    <div id="import-excel-dump" class="not-displayed dump"></div>
 
-    <!--  ================ /CREATE FROM REQUIREMENT POPUP ======================  -->
-    <!--<div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
-         title="create from requirement">
+    <div class="popup-dialog-buttonpane">
+      <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}"
+             th:title="#{label.SimulateImport}"
+             data-def="evt=simulate, state=parametrization"/>
+      <input type="button" th:value="#{label.Import}" value="importLabel" th:title="#{label.ImportSelectedFile}"
+             data-def="evt=import, state=parametrization simulation-summary, mainbtn=parametrization simulation-summary"/>
+      <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
+             data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
+      <input type="button" th:value="#{label.Close}" value="okLabel"
+             data-def="evt=ok, state=summary simulation-summary, mainbtn=summary"/>
+      <input type="button" th:value="#{label.Close}" value="okLabel"
+             data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
+      <input type="button" th:value="#{label.Close}" value="okLabel"
+             data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format"/>
+      <input type="button" th:value="#{label.Cancel}" value="cancelLabel" th:title="#{label.CancelImport}"
+             data-def="evt=cancel, state=parametrization confirm"/>
+      <input type="button" th:value="#{label.Cancel}" value="cancelLabel" th:title="#{label.CancelImport}"
+             data-def="evt=cancel-progression, state=progression"/>
+    </div>
 
-      <div>
-
-        <tr>
-          <td>
-            <label for="create-from-requirement-format" th:text="#{test-case.format.label}">Format</label>
-          </td>
-
-          <td>
-            <select id="create-from-requirement-format">
-              <option value="STANDARD"><span th:text="#{test-case.format.standard}">Classique</span></option>
-              <option value="GHERKIN"><span th:text="#{test-case.format.gherkin}">Classique</span></option>
-            </select>
-          </td>
-        </tr>
-      </div>
-
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Confirm}" value="confirm"
-               data-def="evt=confirm, mainbtn=confirm, state=confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
-      </div>
-
-    </div>-->
-
-    <!--  ================ /IMPORT LINK POPUP ======================  -->
   </div>
 
-  <div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
+  <!--  ================ /IMPORT EXCEL POPUP ======================  -->
+
+  <!--  ================ /CREATE FROM REQUIREMENT POPUP ======================  -->
+  <!--<div id="create-from-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
        title="create from requirement">
 
     <div>
@@ -755,166 +752,205 @@
       <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
     </div>
 
+  </div>-->
+
+  <!--  ================ /IMPORT LINK POPUP ======================  -->
+</div>
+
+<div id="create-from-requirement-dialog" class="popup-dialog not-displayed"
+     th:title="#{label.Export.FromTestcaseToRequirement}+'...'"
+     title="create from requirement">
+
+  <div>
+
+    <tr>
+      <td>
+        <label for="create-from-requirement-format" th:text="#{test-case.format.label}">Format</label>
+      </td>
+
+      <td>
+        <select id="create-from-requirement-format">
+          <option value="STANDARD"><span th:text="#{test-case.format.standard}">Classique</span></option>
+          <option value="GHERKIN"><span th:text="#{test-case.format.gherkin}">Classique</span></option>
+        </select>
+      </td>
+    </tr>
   </div>
-    <div id="export-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}"
-      th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
-      data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
 
-      <div data-def="state=main">
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Confirm}" value="confirm"
+           data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
+    <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn"/>
+  </div>
 
-        <div class="display-table" style="width: 100%">
-          <div style="display: table-column-group">
-            <div style="display: table-column"></div>
-            <div style="display: table-column; width: 70%"></div>
-          </div>
-          <div class="display-table-row">
-            <label th:text="#{dialog.rename.label}"> rename </label>
-            <div class="display-table-cell">
-              <input type="text" id="export-name-input" style="width: 100%" />
-            </div>
-          </div>
-          <div class="display-table-row">
-            <label th:text="#{label.ExportFormat}"> export format </label>
-            <div class="display-table-cell">
-              <select id="export-option">
-                <option value="csv">csv</option>
-                <option value="xls">xls</option>
-              </select>
-            </div>
-          </div>
-        </div>
+</div>
+<div id="export-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}"
+     th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
+     data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
 
-        <div class="std-margin-top">
-          <input type="checkbox" id="export-keepRteFormat" checked="checked" />
-          <span th:text="#{test-case.export.dialog.keeprteformat}"> keep rte format </span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"></div>
+  <div data-def="state=main">
+
+    <div class="display-table" style="width: 100%">
+      <div style="display: table-column-group">
+        <div style="display: table-column"></div>
+        <div style="display: table-column; width: 70%"></div>
+      </div>
+      <div class="display-table-row">
+        <label th:text="#{dialog.rename.label}"> rename </label>
+        <div class="display-table-cell">
+          <input type="text" id="export-name-input" style="width: 100%"/>
         </div>
       </div>
-
-      <div data-def="state=crossproerror">
-        <span th:text="#{message.exportRequirementCrossProjectError}"> export requirement cross project error </span>
+      <div class="display-table-row">
+        <label th:text="#{label.ExportFormat}"> export format </label>
+        <div class="display-table-cell">
+          <select id="export-option">
+            <option value="csv">csv</option>
+            <option value="xls">xls</option>
+          </select>
+        </div>
       </div>
-
-      <div data-def="state=nonodeserror">
-        <span th:text="#{message.exportRequirementNoNodeSelected}"> export requirement no node selected </span>
-      </div>
-
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
-         <input type="button" th:value="#{label.Close}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
-      </div>
-
     </div>
 
-  <!--  ================= EXPORT TC POPUP ======================= -->
-
-  <div id="export-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
-    th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
-    data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
-
-    <div data-def="state=main" class="std-margin-top">
-
-      <span th:text="#{test-case.export.dialog.message}">export message</span>
-
-      <div class="std-padding std-margin-top">
-
-        <div class="grey-round-panel snap-left" style="width: 43%;">
-          <input type="radio" name="format" data-val="xls" class="centered" checked="checked" id="export-format-excel"/>
-         <label for="export-format-excel" class="ui-helper-reset"> <span style="text-decoration: underline;">Excel</span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.excel.description}">export description</div></label>
-        </div>
-
-        <div class="grey-round-panel snap-right" style="width: 43%;">
-          <input type="radio" name="format" data-val="csv" class="centered" id="export-format-csv"/>
-           <label for="export-format-csv" class="ui-helper-reset"> <span style="text-decoration: underline;">CSV</span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}">csv description</div></label>
-        </div>
-
-        <div class="unsnap"></div>
-
-      </div>
-
-      <div class="std-margin-top">
-        <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
-        <input type="text" id="export-test-case-filename" size="255" style="width: 350px" />
-      </div>
-
-      <div class="std-margin-top">
-        <input type="checkbox" id="export-test-case-includecalls" />
-        <label th:text="#{test-case.export.dialog.includecall}"  for="export-test-case-includecalls" class="ui-helper-reset"/>
-        <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
-      </div>
-
-
-      <div class="std-margin-top">
-        <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked" />
-        <label th:text="#{test-case.export.dialog.keeprteformat}" for="export-test-case-keepRteFormat" class="ui-helper-reset">keep rte format</label>
-        <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
-          description</div>
-      </div>
-
-
-    </div>
-
-    <div data-def="state=nonodeserror" class="std-margin-top">
-      <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
-    </div>
-
-    <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
-         <input type="button" th:value="#{label.Close}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
+    <div class="std-margin-top">
+      <input type="checkbox" id="export-keepRteFormat" checked="checked"/>
+      <span th:text="#{test-case.export.dialog.keeprteformat}"> keep rte format </span>
+      <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"></div>
     </div>
   </div>
 
-
-  <!--  ================= /EXPORT TC POPUP =======================  -->
-
-  <!--  ================= EXPORT GHERKIN_STRATEGY POPUP ======================= -->
-
-
-  <div id="export-gherkin-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
-       th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
-       data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
-
-    <div data-def="state=main" class="std-margin-top">
-
-      <span th:text="#{test-case.export.dialog.message}">export message</span>
-
-      <div class="std-margin-top">
-        <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
-        <input type="text" id="export-gherkin-test-case-filename" size="255" style="width: 350px" />
-      </div>
-
-    </div>
-
-    <div data-def="state=nonodeserror" class="std-margin-top">
-      <span th:text="#{message.exportGherkinTestCaseNoNodeSelected}">export test case no node selected</span>
-    </div>
-
-    <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
-      <input type="button" th:value="#{label.Cancel}" value="cancel"
-             data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
-      <input type="button" th:value="#{label.Close}" value="cancel"
-             data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
-    </div>
+  <div data-def="state=crossproerror">
+    <span th:text="#{message.exportRequirementCrossProjectError}"> export requirement cross project error </span>
   </div>
 
-  <!--  ================= /EXPORT GHERKIN_STRATEGY POPUP ======================= -->
+  <div data-def="state=nonodeserror">
+    <span th:text="#{message.exportRequirementNoNodeSelected}"> export requirement no node selected </span>
+  </div>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Export}" value="export"
+           data-def="evt=confirm, mainbtn=main, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Cancel}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Close}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror"/>
+  </div>
+
+</div>
+
+<!--  ================= EXPORT TC POPUP ======================= -->
+
+<div id="export-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+     th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+     data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+  <div data-def="state=main" class="std-margin-top">
+
+    <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+    <div class="std-padding std-margin-top">
+
+      <div class="grey-round-panel snap-left" style="width: 43%;">
+        <input type="radio" name="format" data-val="xls" class="centered" checked="checked" id="export-format-excel"/>
+        <label for="export-format-excel" class="ui-helper-reset"> <span style="text-decoration: underline;">Excel</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.excel.description}">export description</div>
+        </label>
+      </div>
+
+      <div class="grey-round-panel snap-right" style="width: 43%;">
+        <input type="radio" name="format" data-val="csv" class="centered" id="export-format-csv"/>
+        <label for="export-format-csv" class="ui-helper-reset"> <span style="text-decoration: underline;">CSV</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}">csv description</div>
+        </label>
+      </div>
+
+      <div class="unsnap"></div>
+
+    </div>
+
+    <div class="std-margin-top">
+      <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+      <input type="text" id="export-test-case-filename" size="255" style="width: 350px"/>
+    </div>
+
+    <div class="std-margin-top">
+      <input type="checkbox" id="export-test-case-includecalls"/>
+      <label th:text="#{test-case.export.dialog.includecall}" for="export-test-case-includecalls"
+             class="ui-helper-reset"/>
+      <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
+    </div>
 
 
-  <!--  ================= MILESTONE POPUP =======================  -->
+    <div class="std-margin-top">
+      <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked"/>
+      <label th:text="#{test-case.export.dialog.keeprteformat}" for="export-test-case-keepRteFormat"
+             class="ui-helper-reset">keep rte format</label>
+      <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
+        description
+      </div>
+    </div>
 
-  <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
 
-  <!--  ================= /MILESTONE POPUP =======================  -->
+  </div>
 
-  <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
+  <div data-def="state=nonodeserror" class="std-margin-top">
+    <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
+  </div>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Export}" value="export"
+           data-def="evt=confirm, mainbtn=main, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Cancel}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Close}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror"/>
+  </div>
+</div>
+
+
+<!--  ================= /EXPORT TC POPUP =======================  -->
+
+<!--  ================= EXPORT GHERKIN_STRATEGY POPUP ======================= -->
+
+
+<div id="export-gherkin-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+     th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+     data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+  <div data-def="state=main" class="std-margin-top">
+
+    <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+    <div class="std-margin-top">
+      <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+      <input type="text" id="export-gherkin-test-case-filename" size="255" style="width: 350px"/>
+    </div>
+
+  </div>
+
+  <div data-def="state=nonodeserror" class="std-margin-top">
+    <span th:text="#{message.exportGherkinTestCaseNoNodeSelected}">export test case no node selected</span>
+  </div>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Export}" value="export"
+           data-def="evt=confirm, mainbtn=main, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Cancel}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Close}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror"/>
+  </div>
+</div>
+
+<!--  ================= /EXPORT GHERKIN_STRATEGY POPUP ======================= -->
+
+
+<!--  ================= MILESTONE POPUP =======================  -->
+
+<div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment"/>
+
+<!--  ================= /MILESTONE POPUP =======================  -->
+
+<!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
 </body>
 </html>
