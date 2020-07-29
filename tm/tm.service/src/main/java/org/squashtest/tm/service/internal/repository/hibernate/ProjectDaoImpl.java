@@ -45,6 +45,8 @@ import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 
 public class ProjectDaoImpl extends HibernateEntityDao<Project> implements CustomProjectDao {
 
+	private static final String PROJECT_ID = "projectId";
+
 	@Inject
 	private DSLContext DSL;
 
@@ -148,7 +150,7 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 	public LibraryPluginBinding findPluginForProject(Long projectId, PluginType pluginType) {
 		LibraryPluginBinding lpb;
 		javax.persistence.Query query = entityManager.createNamedQuery("Project.findPluginForProject");
-		query.setParameter("projectId", projectId);
+		query.setParameter(PROJECT_ID, projectId);
 		query.setParameter("pluginType",pluginType);
 		try{
 			lpb = (LibraryPluginBinding) query.getSingleResult();
@@ -168,14 +170,14 @@ public class ProjectDaoImpl extends HibernateEntityDao<Project> implements Custo
 	@Override
 	public BigInteger countActivePluginInProject(long projectId) {
 		Query query = em.createNativeQuery(NativeQueries.COUNT_ACTIVE_PLUGIN_IN_PROJECT);
-		query.setParameter("projectId", projectId);
+		query.setParameter(PROJECT_ID, projectId);
 		return (BigInteger) query.getSingleResult();
 	}
 
 	@Override
 	public Project fetchForAutomatedExecutionCreation(long projectId) {
 		Query query = em.createNamedQuery("Project.fetchForAutomatedExecutionCreation");
-		query.setParameter("projectId", projectId);
+		query.setParameter(PROJECT_ID, projectId);
 		return (Project) query.getSingleResult();
 	}
 

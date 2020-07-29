@@ -158,7 +158,8 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE = "testCase";
 	private static final String TEST_SPACE_CASE = "test case ";
 	private static final String TEST_CASE_ID = "testCaseId";
-	public static final String FINAL_STATE = "finalState";
+	private static final String FINAL_STATE = "finalState";
+	private static final String SQUASHTM_NODATA = "squashtm.nodata";
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
 		.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
@@ -368,20 +369,20 @@ public class TestCaseModificationController {
 					RemoteAutomationRequestExtender remoteAutomReq = automReq.getRemoteAutomationRequestExtender();
 					mav.addObject("remoteReqUrl", formatRemoteReqUrl(remoteAutomReq, locale));
 					mav.addObject("remoteIssueKey", remoteAutomReq.getRemoteIssueKey());
-					mav.addObject("remoteReqAssignedTo", (!isBlank(remoteAutomReq.getRemoteAssignedTo())? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("remoteReqAssignedTo", (!isBlank(remoteAutomReq.getRemoteAssignedTo())? remoteAutomReq.getRemoteAssignedTo(): internationalizationHelper.internationalize(SQUASHTM_NODATA, locale)));
 					mav.addObject("remoteReqStatusLabel", formatRemoteReqStatus(remoteAutomReq, locale));
-					mav.addObject("automReqLastTransmittedOn", (automReq.getTransmissionDate() != null ? automReq.getTransmissionDate() : internationalizationHelper.internationalize("squashtm.nodata", locale)));
+					mav.addObject("automReqLastTransmittedOn", (automReq.getTransmissionDate() != null ? automReq.getTransmissionDate() : internationalizationHelper.internationalize(SQUASHTM_NODATA, locale)));
 					mav.addObject("automatedTestCase", (remoteAutomReq.getRemoteRequestStatus().equals(finalStatusConfiged) ?
 						internationalizationHelper.internationalize("label.Yes", locale) : (remoteAutomReq.getRemoteRequestStatus() == null ?
-						internationalizationHelper.internationalize("squashtm.nodata", locale) : internationalizationHelper.internationalize("label.No", locale))));
+						internationalizationHelper.internationalize(SQUASHTM_NODATA, locale) : internationalizationHelper.internationalize("label.No", locale))));
 					mav.addObject("finalStatusConfiged", finalStatusConfiged);
 					mav.addObject("synchronizableIssueStatus", remoteAutomReq.getSynchronizableIssueStatus().name());
 				}
 			} else {
-				mav.addObject("remoteReqUrl", internationalizationHelper.internationalize("squashtm.nodata", locale));
-				mav.addObject("remoteReqAssignedTo",internationalizationHelper.internationalize("squashtm.nodata", locale));
-				mav.addObject("remoteReqStatusLabel", internationalizationHelper.internationalize("squashtm.nodata", locale));
-				mav.addObject("automatedTestCase",internationalizationHelper.internationalize("squashtm.nodata", locale));
+				mav.addObject("remoteReqUrl", internationalizationHelper.internationalize(SQUASHTM_NODATA, locale));
+				mav.addObject("remoteReqAssignedTo",internationalizationHelper.internationalize(SQUASHTM_NODATA, locale));
+				mav.addObject("remoteReqStatusLabel", internationalizationHelper.internationalize(SQUASHTM_NODATA, locale));
+				mav.addObject("automatedTestCase",internationalizationHelper.internationalize(SQUASHTM_NODATA, locale));
 				mav.addObject("automReqLastTransmittedOn",null);
 				mav.addObject("finalStatusConfiged",finalStatusConfiged);
 				mav.addObject("synchronizableIssueStatus","");
@@ -1027,7 +1028,7 @@ public class TestCaseModificationController {
 		if(remoteRequest.getRemoteRequestStatus() != null) {
 			return remoteRequest.getRemoteRequestStatus();
 		} else {
-			return internationalizationHelper.internationalize("squashtm.nodata", locale);
+			return internationalizationHelper.internationalize(SQUASHTM_NODATA, locale);
 		}
 	}
 
@@ -1035,7 +1036,7 @@ public class TestCaseModificationController {
 		if(remoteRequest.getRemoteRequestUrl() != null && !remoteRequest.getRemoteRequestUrl().isEmpty()) {
 			return remoteRequest.getRemoteRequestUrl();
 		} else {
-			return internationalizationHelper.internationalize("squashtm.nodata", locale);
+			return internationalizationHelper.internationalize(SQUASHTM_NODATA, locale);
 		}
 	}
 

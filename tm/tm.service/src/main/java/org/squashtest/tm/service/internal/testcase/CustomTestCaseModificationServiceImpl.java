@@ -154,6 +154,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
+	private static final String MILESTONES = "milestones";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -1334,7 +1335,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public Collection<Milestone> findAllMilestones(long testCaseId) {
 		LOGGER.debug("searching milestones that test case #{} belongs to", testCaseId);
 		Collection<Milestone> milestones = milestoneService.findAllMilestonesForTestCase(testCaseId);
-		traceResult(milestones, "milestones");
+		traceResult(milestones, MILESTONES);
 		return milestones;
 	}
 
@@ -1343,7 +1344,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public Collection<Milestone> findAssociableMilestones(long testCaseId) {
 		LOGGER.debug("searching milestones that test case #{} can bind to", testCaseId);
 		Collection<Milestone> milestones = milestoneService.findAssociableMilestonesToTestCase(testCaseId);
-		traceResult(milestones, "milestones");
+		traceResult(milestones, MILESTONES);
 		return milestones;
 	}
 
@@ -1364,7 +1365,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		LOGGER.trace("found {} candidates, now filtering according to status", milestones.size());
 		filterLockedAndPlannedStatus(milestones);
-		traceResult(milestones, "milestones");
+		traceResult(milestones, MILESTONES);
 		return milestones;
 	}
 
