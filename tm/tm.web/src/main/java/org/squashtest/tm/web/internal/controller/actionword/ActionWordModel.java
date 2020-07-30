@@ -31,7 +31,7 @@ import java.util.Locale;
  * @author qtran - created on 28/07/2020
  */
 public class ActionWordModel {
-	private String actionWord;
+	private String name;
 	private String description;
 
 	public String getDescription() {
@@ -42,12 +42,12 @@ public class ActionWordModel {
 		this.description = description;
 	}
 
-	public String getActionWord() {
-		return actionWord;
+	public String getName() {
+		return name;
 	}
 
-	public void setActionWord(String actionWord) {
-		this.actionWord = actionWord;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	//////////// VALIDATOR ////////////
@@ -80,11 +80,11 @@ public class ActionWordModel {
 			String notNull = messageSource.getMessage("message.notNull", null, locale);
 
 			ActionWordModel model = (ActionWordModel) target;
-			String actionWordContentInput = model.getActionWord();
+			String modelName = model.getName();
 
-			if (actionWordContentInput == null) {
+			if (modelName == null) {
 				errors.rejectValue("Action word in Library", "message.notNull", notNull);
-			} else if (actionWordContentInput.isEmpty()) {
+			} else if (modelName.isEmpty()) {
 				errors.rejectValue("Action word in Library", "message.notBlank", notBlank);
 			}
 		}
