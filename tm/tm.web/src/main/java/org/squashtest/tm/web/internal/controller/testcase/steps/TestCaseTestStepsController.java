@@ -359,7 +359,8 @@ public class TestCaseTestStepsController {
 		Keyword updatedKeyword = Keyword.valueOf(keyword);
 		testCaseModificationService.updateKeywordTestStep(stepId, updatedKeyword);
 		LOGGER.trace("TestCaseModificationController : updated keyword for step {}", stepId);
-		return internationalizationHelper.internationalize(updatedKeyword.i18nKeywordNameKey(), LocaleContextHolder.getLocale());
+		Locale locale = keywordTestStepDao.findById(stepId).getTestCase().getProject().getBddScriptLanguage().getLocale();
+		return internationalizationHelper.internationalize(updatedKeyword.i18nKeywordNameKey(), locale);
 	}
 
 	@RequestMapping(value = "/{stepId}/action-word", method = RequestMethod.POST, params = {VALUE})
