@@ -108,7 +108,7 @@ class KeywordTestStepTest extends Specification {
 
 	def "Should generate a Gherkin script for Actionword containing only text"() {
 		expect:
-		new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday")).writeTestStepActionWordScript() == "Today is Monday"
+		new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday")).writeTestStepActionWordScript(true) == "Today is Monday"
 	}
 
 	def "Should generate a Gherkin script with test step containing text and param with free value"() {
@@ -123,7 +123,7 @@ class KeywordTestStepTest extends Specification {
 		step2.setParamValues(paramValues)
 
 		when:
-		String result = step2.writeTestStepActionWordScript()
+		String result = step2.writeTestStepActionWordScript(true)
 
 		then:
 		result ==
@@ -145,10 +145,28 @@ class KeywordTestStepTest extends Specification {
 		step2.setParamValues(paramValues)
 
 		when:
-		String result = step2.writeTestStepActionWordScript()
+		String result = step2.writeTestStepActionWordScript(true)
 
 		then:
 		result =="It is &lt;time&gt;"
+	}
+
+	def "Should generate a Gherkin script with test step containing text and param associated with a TC param without escaping of arrow symbols"() {
+		given:
+		def fragment1 = new ActionWordText("It is ")
+		def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
+		def value1 = new ActionWordParameterValue("<time>")
+		value1.setActionWordParam(fragment2)
+		ActionWord actionWord2 = new ActionWord([fragment1, fragment2] as List)
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
+		List<ActionWordParameterValue> paramValues = [value1]
+		step2.setParamValues(paramValues)
+
+		when:
+		String result = step2.writeTestStepActionWordScript(false)
+
+		then:
+		result =="It is <time>"
 	}
 
 	def createBasicActionWord(String singleFragment) {

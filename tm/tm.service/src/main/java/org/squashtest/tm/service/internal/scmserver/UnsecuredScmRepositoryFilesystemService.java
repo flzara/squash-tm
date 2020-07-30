@@ -394,7 +394,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 			@Override
 			public void visit(KeywordTestCase keywordTestCase) {
-				content.setValue(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
+				content.setValue(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false));
 			}
 
 			@Override

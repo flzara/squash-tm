@@ -68,8 +68,8 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 	}
 
 	@Override
-	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase) {
-		return keywordTestCase.writeTestCaseScript(messageSource);
+	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase, boolean escapeArrows) {
+		return keywordTestCase.writeTestCaseScript(messageSource, escapeArrows);
 	}
 
 }

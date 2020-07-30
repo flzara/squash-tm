@@ -75,7 +75,7 @@ class KeywordTestCaseTest extends Specification {
 
 		when:
 		2 * messageSource.getMessage(*_) >>> ["# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result == "# language: en\nFeature: Disconnection test"
@@ -97,7 +97,7 @@ class KeywordTestCaseTest extends Specification {
 
 		when:
 		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -134,7 +134,7 @@ Feature: Disconnection test
 
 		when:
 		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -170,7 +170,7 @@ Feature: Daily test
 
 		when:
 		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -210,7 +210,7 @@ Feature: Daily test
 
 		when:
 		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -258,7 +258,7 @@ Feature: Daily test
 
 		when:
 		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -305,7 +305,7 @@ Feature: Daily test
 
 		when:
 		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -315,6 +315,58 @@ Feature: Daily test
 	Scenario Outline: Daily test
 		Given Today is Monday
 		When It is &lt;time&gt;
+		Then I am working
+
+		@dataset1
+		Examples:
+		| time |
+		| "9 AM" |"""
+	}
+
+	def "Should generate a Gherkin script with test steps from a KeywordTestCase with 1 dataset and 1 param between <> without escaping the arrow symbols"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("Daily test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("Today is Monday"))
+
+		def fragment1 = new ActionWordText("It is ")
+		def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
+		def value1 = new ActionWordParameterValue("<time>")
+		value1.setActionWordParam(fragment2)
+		ActionWord actionWord2 = new ActionWord([fragment1, fragment2] as List)
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
+		List<ActionWordParameterValue> paramValues = [value1]
+		step2.setParamValues(paramValues)
+
+		KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I am working"))
+
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		keywordTestCase.addStep(step3)
+
+		def tcParam =  new Parameter("time", keywordTestCase)
+		def dataset =  new Dataset()
+		dataset.setName("dataset1")
+
+		keywordTestCase.addDataset(dataset)
+
+		def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
+		dataset.addParameterValue(value)
+
+		when:
+		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		String result = keywordTestCase.writeTestCaseScript(messageSource, false)
+
+		then:
+		result ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario Outline: Daily test
+		Given Today is Monday
+		When It is <time>
 		Then I am working
 
 		@dataset1
@@ -363,7 +415,7 @@ Feature: Daily test
 
 		when:
 		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -439,7 +491,7 @@ Feature: Daily test
 
 		when:
 		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==
@@ -516,7 +568,7 @@ Feature: Count test
 
 		when:
 		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
-		String result = keywordTestCase.writeTestCaseScript(messageSource)
+		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
 		result ==

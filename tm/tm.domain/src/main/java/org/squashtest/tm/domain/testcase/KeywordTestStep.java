@@ -154,17 +154,17 @@ public class KeywordTestStep extends TestStep {
 		this.paramValues.add(value);
 	}
 
-	public String writeTestStepActionWordScript() {
+	public String writeTestStepActionWordScript(boolean escapeArrows) {
 		ActionWord actionWord = getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
 		List<ActionWordParameterValue> paramValues = getParamValues();
-		return generateStepScriptFromActionWordFragments(fragments, paramValues);
+		return generateStepScriptFromActionWordFragments(fragments, paramValues, escapeArrows);
 	}
 
-	private String generateStepScriptFromActionWordFragments(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues) {
+	private String generateStepScriptFromActionWordFragments(List<ActionWordFragment> fragments, List<ActionWordParameterValue> paramValues, boolean escapeArrows) {
 		StringBuilder stepBuilder = new StringBuilder();
 		Consumer<ActionWordParameter> consumer = parameter ->
-			appendParamValueToGenerateScript(parameter, paramValues, stepBuilder);
+			appendParamValueToGenerateScript(parameter, paramValues, stepBuilder, escapeArrows);
 
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, stepBuilder);
 
@@ -174,15 +174,15 @@ public class KeywordTestStep extends TestStep {
 		return stepBuilder.toString();
 	}
 
-	private void appendParamValueToGenerateScript(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder stepBuilder) {
+	private void appendParamValueToGenerateScript(ActionWordParameter param, List<ActionWordParameterValue> paramValues, StringBuilder stepBuilder, boolean escapeArrows) {
 		Optional<ActionWordParameterValue> paramValue =
 			paramValues.stream().filter(pv -> pv.getActionWordParam() != null && pv.getActionWordParam().getId().equals(param.getId())).findAny();
 		paramValue.ifPresent(
-			actionWordParameterValue -> updateBuilderWithParamValue(stepBuilder, actionWordParameterValue)
+			actionWordParameterValue -> updateBuilderWithParamValue(stepBuilder, actionWordParameterValue, escapeArrows)
 		);
 	}
 
-	private void updateBuilderWithParamValue(StringBuilder builder, ActionWordParameterValue actionWordParameterValue) {
+	private void updateBuilderWithParamValue(StringBuilder builder, ActionWordParameterValue actionWordParameterValue, boolean escapeArrows) {
 		String paramValue = actionWordParameterValue.getValue();
 		if ("\"\"".equals(paramValue)) {
 			builder.append(paramValue);
@@ -193,9 +193,12 @@ public class KeywordTestStep extends TestStep {
 		Matcher matcher = pattern.matcher(paramValue);
 		if (matcher.matches()) {
 			hasTCParam = true;
-			//TODO-QUAN: to show the script content temporarily on page. To be removed when script is generated on file
-			String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(paramValue);
-			builder.append(replaceHTMLCharactersStr);
+			if(escapeArrows) {
+				String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(paramValue);
+				builder.append(replaceHTMLCharactersStr);
+			} else {
+				builder.append(paramValue);
+			}
 			return;
 		}
 		String updatedParamValue = updateNumberValue(paramValue);

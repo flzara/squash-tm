@@ -23,7 +23,7 @@ package org.squashtest.tm.service.testcase.bdd;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
 public interface KeywordTestCaseService {
-	String writeScriptFromTestCase(KeywordTestCase keywordTestCase);
+	String writeScriptFromTestCase(KeywordTestCase keywordTestCase, boolean escapeArrows);
 
 	String createFileName(KeywordTestCase keywordTestCase);
 

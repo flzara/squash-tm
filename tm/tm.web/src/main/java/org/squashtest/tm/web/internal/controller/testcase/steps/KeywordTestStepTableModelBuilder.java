@@ -47,7 +47,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
 		String actionWordWithParamValues = createActionWordWithParamValues(keywordTestStep);
 		item.put("step-action-word", actionWordWithParamValues);
-		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript());
+		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

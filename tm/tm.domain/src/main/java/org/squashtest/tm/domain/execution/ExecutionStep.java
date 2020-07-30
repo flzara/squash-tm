@@ -388,7 +388,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	@Override
 	public void visit(KeywordTestStep keywordStep) {
-		String awWordScript = keywordStep.writeTestStepActionWordScript();
+		String awWordScript = keywordStep.writeTestStepActionWordScript(true);
 		String unescapedAWWordScript = StringEscapeUtils.unescapeHtml4(awWordScript);
 		String replacedParamValueWord = valueParams(unescapedAWWordScript, KEYWORD_PARAM_PATTERN);
 		Keyword keyword = keywordStep.getKeyword();

@@ -54,7 +54,7 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 		when:
 			messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 			messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
-			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 			res ==
 			"# language: en\n" +
@@ -71,7 +71,7 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 			messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 			messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 			messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
-			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 			res ==
 """# language: en
@@ -94,7 +94,7 @@ Feature: Disconnection test
 		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -117,7 +117,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -140,7 +140,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -163,7 +163,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario",null, _ as Locale) >> "Scenario: "
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -187,7 +187,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
 		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -196,6 +196,35 @@ Feature: Daily test
 	Scenario Outline: Daily test
 		Given Today is Monday
 		When It is &lt;time&gt;
+		Then I am working
+
+		@dataset1
+		Examples:
+		| time |
+		| "12 AM" |"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
+	def "Should generate a Gherkin script with test steps containing parameter associated with 1 TC param value and 1 dataset without escaping arrow symbols"() {
+		given:
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+		when:
+		messageSource.getMessage("testcase.bdd.keyword.name.given",null, _ as Locale) >> "Given"
+		messageSource.getMessage("testcase.bdd.keyword.name.when",null, _ as Locale) >> "When"
+		messageSource.getMessage("testcase.bdd.keyword.name.then",null, _ as Locale) >> "Then"
+		messageSource.getMessage("testcase.bdd.script.label.language",null, _ as Locale) >> "# language: "
+		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
+		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
+		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false)
+		then:
+		res ==
+			"""# language: en
+Feature: Daily test
+
+	Scenario Outline: Daily test
+		Given Today is Monday
+		When It is <time>
 		Then I am working
 
 		@dataset1
@@ -216,7 +245,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
 		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en
@@ -245,7 +274,7 @@ Feature: Daily test
 		messageSource.getMessage("testcase.bdd.script.label.feature",null, _ as Locale) >> "Feature: "
 		messageSource.getMessage("testcase.bdd.script.label.scenario-outline",null, _ as Locale) >> "Scenario Outline: "
 		messageSource.getMessage("testcase.bdd.script.label.examples",null, _ as Locale) >> "Examples:"
-		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase)
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
 		then:
 		res ==
 			"""# language: en

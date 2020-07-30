@@ -496,7 +496,7 @@ go home quickly before someone notices that the ITs are broken"""
 		}
 		keywordTestCaseService.buildFilenameMatchPattern(keywordTc) >> "777(_.*)?\\.feature"
 		keywordTestCaseService.createFileName(keywordTc) >> "777_keyword_test_case.feature"
-		keywordTestCaseService.writeScriptFromTestCase(keywordTc) >> script3
+		keywordTestCaseService.writeScriptFromTestCase(keywordTc, false) >> script3
 
 		when:
 		service.createOrUpdateScriptFile(scm, [updateTc, newTc, keywordTc])

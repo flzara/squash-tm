@@ -249,7 +249,7 @@ public class TestCaseTestStepsController {
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordMap", createKeywordMap(keywordTestCase.getProject()));
-		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase));
+		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 
@@ -381,7 +381,7 @@ public class TestCaseTestStepsController {
 	@ResponseBody
 	public String getActionWordUnstyled(@PathVariable long stepId) {
 		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return keywordTestStep.writeTestStepActionWordScript();
+		return keywordTestStep.writeTestStepActionWordScript(true);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

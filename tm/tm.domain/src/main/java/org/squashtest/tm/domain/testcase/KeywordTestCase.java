@@ -67,7 +67,7 @@ public class KeywordTestCase extends TestCase {
 		return copy;
 	}
 
-	public String writeTestCaseScript(MessageSource messageSource) {
+	public String writeTestCaseScript(MessageSource messageSource, boolean escapeArrows) {
 		StringBuilder builder = new StringBuilder();
 		List<TestStep> testSteps = getSteps();
 		Set<Dataset> datasetSet = getDatasets();
@@ -77,7 +77,7 @@ public class KeywordTestCase extends TestCase {
 		String language = locale.toLanguageTag();
 
 		if (!testSteps.isEmpty()) {
-			addAllStepsScriptWithoutScenarioToBuilder(builder, testSteps, locale, messageSource);
+			addAllStepsScriptWithoutScenarioToBuilder(builder, testSteps, locale, messageSource, escapeArrows);
 			addScenarioAndDatasetToBuilder(builder, testCaseName, datasetSet, locale, messageSource);
 			hasTCParamInTestCase = false;
 		}
@@ -85,10 +85,10 @@ public class KeywordTestCase extends TestCase {
 		return builder.toString();
 	}
 
-	private void addAllStepsScriptWithoutScenarioToBuilder(StringBuilder builder, List<TestStep> testSteps, Locale locale, MessageSource messageSource) {
+	private void addAllStepsScriptWithoutScenarioToBuilder(StringBuilder builder, List<TestStep> testSteps, Locale locale, MessageSource messageSource, boolean escapeArrows) {
 		for (TestStep step : testSteps) {
 			KeywordTestStep keywordStep = (KeywordTestStep) step;
-			String stepActionWordScript = keywordStep.writeTestStepActionWordScript();
+			String stepActionWordScript = keywordStep.writeTestStepActionWordScript(escapeArrows);
 			raiseHasTCParamFlag(keywordStep.hasTCParam());
 			String internationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
 			builder
