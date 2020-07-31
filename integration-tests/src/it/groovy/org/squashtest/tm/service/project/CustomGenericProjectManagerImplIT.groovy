@@ -83,16 +83,20 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 			thrown NameAlreadyInUseException
 	}
 
-	@Ignore(value = "Will be testable when another BddImplementationTechnology will be added")
 	def "#changeBddImplementationTechnology(long, String) - Should change the project Bdd Implementation Technology"() {
 		when:
-		"setup"
+			"setup"
 		then:
-		genericProjectFinder.findById(-1L).bddScriptLanguage == BddImplementationTechnology.ROBOT
+			genericProjectFinder.findById(-1L).bddImplementationTechnology == BddImplementationTechnology.CUCUMBER
 		when:
-		customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
+			customGenericProjectManager.changeBddImplTechnology(-1L, "ROBOT")
 		then:
-		genericProjectFinder.findById(-1L).bddScriptLanguage == BddImplementationTechnology.CUCUMBER
+			genericProjectFinder.findById(-1L).bddImplementationTechnology == BddImplementationTechnology.ROBOT
+		when:
+			customGenericProjectManager.changeBddImplTechnology(-1L, "CUCUMBER")
+		then:
+			genericProjectFinder.findById(-1L).bddImplementationTechnology == BddImplementationTechnology.CUCUMBER
+
 	}
 
 	def "#changeBddScriptLanguage(long, String) - Should change the project Bdd Script Language"() {
@@ -104,5 +108,9 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 			customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
 		then:
 			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.GERMAN
+		when:
+			customGenericProjectManager.changeBddScriptLanguage(-1L, "SPANISH")
+		then:
+			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.SPANISH
 	}
 }

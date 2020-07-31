@@ -23,7 +23,8 @@ package org.squashtest.tm.domain.bdd;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum BddImplementationTechnology implements Internationalizable {
-	CUCUMBER;
+	CUCUMBER,
+	ROBOT;
 
 	private static final String I18N_KEY_ROOT = "project.bdd.implementation-technology.";
 

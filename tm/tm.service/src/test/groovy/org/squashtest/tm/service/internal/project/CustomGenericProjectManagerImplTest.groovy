@@ -778,7 +778,6 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		result == false
 	}
 
-	@Ignore(value = "Will be testable when another BddImplementationTechnology will be added")
 	def "#changeBddImplTechnology(long, String) - Should change the project Bdd Implementation Technology"() {
 		given:
 			Project project = new Project()
@@ -788,6 +787,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 			manager.changeBddImplTechnology(4L, "CUCUMBER")
 		then:
 			project.getBddImplementationTechnology() == BddImplementationTechnology.CUCUMBER
+		when:
+			manager.changeBddImplTechnology(4L, "ROBOT")
+		then:
+			project.getBddImplementationTechnology() == BddImplementationTechnology.ROBOT
 	}
 
 	def "#changeBddScriptLanguage(long, String) - Should change the project Bdd Script Language"() {
