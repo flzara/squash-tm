@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.actionword;
 
 import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
+import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntityVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
@@ -65,13 +66,14 @@ public class ActionWordLibraryNodeBuilder implements ActionWordTreeEntityVisitor
 	/* Visitor methods */
 	@Override
 	public void visit(ActionWordLibrary actionWordLibrary) {
-		// NOOP
+		builtNode.setEntityType(ActionWordTreeDefinition.LIBRARY);
 	}
 
 	@Override
 	public void visit(ActionWord actionWord) {
 		linkToProject();
 		builtNode.setName(actionWord.createWord());
+		builtNode.setEntityType(ActionWordTreeDefinition.ACTION_WORD);
 	}
 
 	private void linkToProject() {
