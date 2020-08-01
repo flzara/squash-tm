@@ -26,6 +26,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service("ScmRepositoryFilesystemService")
@@ -68,6 +70,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	@Inject
 	private KeywordTestCaseService keywordTestCaseService;
+
+	@Inject
+	private MessageSource messageSource;
 
 	@Override
 	public void createWorkingFolderIfAbsent(ScmRepository scm) {
@@ -394,7 +399,12 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 			@Override
 			public void visit(KeywordTestCase keywordTestCase) {
-				content.setValue(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false));
+				StringBuilder sb = new StringBuilder(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false));
+				Locale locale = keywordTestCase.getProject().getBddScriptLanguage().getLocale();
+				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.test-case-importance", null, locale) + messageSource.getMessage(keywordTestCase.getImportance().getI18nKey(), null, locale) + "\n");
+				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.automation-status", null, locale) + messageSource.getMessage(keywordTestCase.getAutomationRequest().getRequestStatus().getI18nKey(), null, locale) + "\n");
+				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.automation-priority", null, locale) + keywordTestCase.getAutomationRequest().getAutomationPriority() + "\n");
+				content.setValue(sb.toString());
 			}
 
 			@Override

@@ -74,7 +74,7 @@ class KeywordTestCaseTest extends Specification {
 		keywordTestCase.notifyAssociatedWithProject(project)
 
 		when:
-		2 * messageSource.getMessage(*_) >>> ["# language: ", "Feature: "]
+		1 * messageSource.getMessage(*_) >>> ["Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -96,7 +96,7 @@ class KeywordTestCaseTest extends Specification {
 		keywordTestCase.addStep(step3)
 
 		when:
-		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -133,7 +133,7 @@ Feature: Disconnection test
 		keywordTestCase.addStep(step3)
 
 		when:
-		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -169,7 +169,7 @@ Feature: Daily test
 		keywordTestCase.addStep(step2)
 
 		when:
-		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "# language: ", "Feature: "]
+		4 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -209,7 +209,7 @@ Feature: Daily test
 		keywordTestCase.addStep(step3)
 
 		when:
-		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -257,7 +257,7 @@ Feature: Daily test
 		dataset.addParameterValue(value)
 
 		when:
-		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+		5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -304,7 +304,7 @@ Feature: Daily test
 		dataset.addParameterValue(value)
 
 		when:
-		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -356,7 +356,7 @@ Feature: Daily test
 		dataset.addParameterValue(value)
 
 		when:
-		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, false)
 
 		then:
@@ -414,7 +414,7 @@ Feature: Daily test
 		dataset.parameterValues = [paramValue1, paramValue2]
 
 		when:
-		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -490,7 +490,7 @@ Feature: Daily test
 		dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 
 		when:
-		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:
@@ -567,7 +567,7 @@ Feature: Count test
 		dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 
 		when:
-		7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+		6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 		String result = keywordTestCase.writeTestCaseScript(messageSource, true)
 
 		then:

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.scmserver
 
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
@@ -42,6 +43,8 @@ import spock.lang.Unroll
 
 import java.nio.file.Files
 
+import static org.squashtest.tm.domain.bdd.BddScriptLanguage.ENGLISH
+
 class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	private UnsecuredScmRepositoryFilesystemService service = new UnsecuredScmRepositoryFilesystemService()
@@ -51,6 +54,8 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 	private PathService pathService = Mock(PathService);
 
 	private ApplicationEventPublisher eventPublisher = Mock(ApplicationEventPublisher);
+
+	private MessageSource messageSource = Mock(MessageSource);
 
 	@Shared
 	private ScmRepository scm = new MockFactory().mockScmRepository(10L, "scmtest_", "squash"){
@@ -63,6 +68,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		service.pathService = pathService
 		service.eventPublisher = eventPublisher
 		service.keywordTestCaseService = keywordTestCaseService
+		service.messageSource = messageSource
 
 		def server = Mock(ScmServer)
 		server.getUrl() >> "http://github.com"
@@ -444,6 +450,12 @@ go home quickly before someone notices that the ITs are broken"""
 # Test case importance: LOW
 """
 
+		def metadata3 =
+			"""# Automation priority: 1
+# Automation status: Automated
+# Test case importance: Low
+"""
+
 		and: "the Gherkin test cases"
 		def scmServer = Mock(ScmServer) {
 			getUrl() >> "http://theUrl"
@@ -454,6 +466,7 @@ go home quickly before someone notices that the ITs are broken"""
 		def project = Mock(Project) {
 			isUseTreeStructureInScmRepo() >> false
 			getScmRepository() >> scmRepo
+			getBddScriptLanguage() >> ENGLISH
 		}
 
 		ScriptedTestCase newTc = Mock(ScriptedTestCase){
@@ -494,6 +507,12 @@ go home quickly before someone notices that the ITs are broken"""
 			getProject() >> project
 			accept(_) >> { TestCaseVisitor visitor -> visitor.visit(it) }
 		}
+		def locale = project.getBddScriptLanguage().getLocale()
+		messageSource.getMessage("testcase.bdd.script.label.test-case-importance", null, locale) >> "# Test case importance: "
+		messageSource.getMessage("testcase.bdd.script.label.automation-status", null, locale) >> "# Automation status: "
+		messageSource.getMessage("testcase.bdd.script.label.automation-priority", null, locale) >> "# Automation priority: "
+		messageSource.getMessage("test-case.importance.LOW", null, locale) >> "Low"
+		messageSource.getMessage("automation-request.request_status.AUTOMATED", null, locale) >> "Automated"
 		keywordTestCaseService.buildFilenameMatchPattern(keywordTc) >> "777(_.*)?\\.feature"
 		keywordTestCaseService.createFileName(keywordTc) >> "777_keyword_test_case.feature"
 		keywordTestCaseService.writeScriptFromTestCase(keywordTc, false) >> script3
@@ -512,7 +531,7 @@ go home quickly before someone notices that the ITs are broken"""
 
 		newScript.text == metadata1 + script1
 		updateScript.text == metadata2 + script2
-		keywordTcScript.text == script3
+		keywordTcScript.text == metadata3 + script3
 
 		cleanup:
 		clean newScript
