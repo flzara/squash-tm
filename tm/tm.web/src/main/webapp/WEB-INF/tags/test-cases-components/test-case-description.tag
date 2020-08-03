@@ -61,7 +61,7 @@
             <f:message key="test-case.format.gherkin"/>
           </c:when>
           <c:when test="${isKeywordTc}">
-            <f:message key="test-case.format.keyword"/>
+            <f:message key="test-case.format.bdd"/>
           </c:when>
           <c:otherwise>
             <f:message key="test-case.format.standard"/>
