@@ -27,15 +27,8 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.core.scm.api.exception.ScmException;
 import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
-import org.squashtest.tm.domain.testcase.TestCaseVisitor;
-import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import java.io.File;
 import java.io.IOException;

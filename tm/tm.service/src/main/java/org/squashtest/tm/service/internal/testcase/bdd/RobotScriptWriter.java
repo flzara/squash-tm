@@ -18,33 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.service.internal.testcase.bdd;
 
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
+import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 
-@Entity
-@PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class KeywordTestCase extends TestCase {
-	private static final String SCRIPT_LANGUAGE_LABEL = "# language: "; // SQUASH-1184
-
-	public static KeywordTestCase createBlankKeywordTestCase() {
-		KeywordTestCase res = new KeywordTestCase();
-		setAttributesAsNullForBlankTestCase(res);
-		return res;
-	}
+public class RobotScriptWriter implements BddScriptWriter {
 
 	@Override
-	public void accept(TestCaseVisitor visitor) {
-		visitor.visit(this);
-	}
-
-	@Override
-	public KeywordTestCase createCopy() {
-		KeywordTestCase copy = new KeywordTestCase();
-		populateCopiedTestCaseAttributes(copy);
-		return copy;
+	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
+		throw new UnsupportedOperationException();
 	}
 
 }

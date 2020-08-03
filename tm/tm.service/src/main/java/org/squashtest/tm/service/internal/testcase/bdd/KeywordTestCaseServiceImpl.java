@@ -23,10 +23,12 @@ package org.squashtest.tm.service.internal.testcase.bdd;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
-import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
+import org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy;
 
 import javax.inject.Inject;
 
@@ -42,7 +44,8 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 	public String createFileName(KeywordTestCase keywordTestCase) {
 		// Get techno from Project
 		// Get corresponding Strategy
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		KeywordTestCaseToFileStrategy strategy =
+			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
 		// Create fileName
 		return strategy.createFilenameFor(keywordTestCase);
 	}
@@ -51,7 +54,8 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 	public String createBackupFileName(KeywordTestCase keywordTestCase) {
 		// Get techno from Project
 		// Get corresponding Strategy
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		KeywordTestCaseToFileStrategy strategy =
+			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
 		// Create fileName
 		return strategy.backupFilenameFor(keywordTestCase);
 	}
@@ -62,14 +66,18 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 		// Get techno from Project
 		// Get corresponding Strategy
-		ScriptToFileStrategy strategy = ScriptToFileStrategy.strategyFor(TestCaseKind.KEYWORD);
+		KeywordTestCaseToFileStrategy strategy =
+			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
 		// Create fileName
 		return strategy.buildFilenameMatchPattern(keywordTestCase);
 	}
 
 	@Override
 	public String writeScriptFromTestCase(KeywordTestCase keywordTestCase, boolean escapeArrows) {
-		return keywordTestCase.writeTestCaseScript(messageSource, escapeArrows);
+		Project project = keywordTestCase.getProject();
+		BddImplementationTechnology bddImplementationTechnology = project.getBddImplementationTechnology();
+		KeywordTestCaseToFileStrategy strategy = KeywordTestCaseToFileStrategy.strategyFor(bddImplementationTechnology);
+		return strategy.getWritableFileContent(keywordTestCase, messageSource, escapeArrows);
 	}
 
 }

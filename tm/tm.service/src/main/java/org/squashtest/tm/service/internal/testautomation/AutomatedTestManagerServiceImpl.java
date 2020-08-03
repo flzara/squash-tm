@@ -34,7 +34,6 @@ import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy;
 
 import javax.inject.Inject;
 import java.io.IOException;

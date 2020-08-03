@@ -20,30 +20,33 @@
  */
 package org.squashtest.tm.service.testcase.scripted
 
-import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.KeywordTestCase
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.testcase.TestCaseKind.KEYWORD
-import static org.squashtest.tm.service.testcase.scripted.ScriptToFileStrategy.KEYWORD_STRATEGY
+import static KeywordTestCaseToFileStrategy.CUCUMBER_STRATEGY
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.CUCUMBER
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
+import static org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy.ROBOT_STRATEGY
 
-class ScriptToFileStrategyTest extends Specification{
+class KeywordTestCaseToFileStrategyTest extends Specification{
 
 	@Unroll("should select strategy '#strategy' for test case kind '#kind'")
 	def "should select strategy"() {
 		expect :
-		ScriptToFileStrategy.strategyFor(kind) == strategy
+		KeywordTestCaseToFileStrategy.strategyFor(kind) == strategy
 
 		where :
-		kind		|	strategy
-		KEYWORD		|	KEYWORD_STRATEGY
+		kind     	|	strategy
+		CUCUMBER	|	CUCUMBER_STRATEGY
+		ROBOT		|	ROBOT_STRATEGY
 	}
 
 	@Unroll("should turn '#id:#name' into '#result'")
 	def "should create a gherkin filename for a test case"() {
 
 		expect :
-		KEYWORD_STRATEGY.createFilenameFor(testcase) == result
+		CUCUMBER_STRATEGY.createFilenameFor(testcase) == result
 
 		where :
 		id 		| name										|	result									| testcase
@@ -59,10 +62,10 @@ class ScriptToFileStrategyTest extends Specification{
 		def testcase = tc(815, "Oh my God this test case has such a long name that I don't think it will fit under the filename length limit")
 
 		when :
-		def filename = KEYWORD_STRATEGY.createFilenameFor(testcase)
+		def filename = CUCUMBER_STRATEGY.createFilenameFor(testcase)
 
 		then :
-		filename.length() == ScriptToFileStrategy.FILENAME_MAX_SIZE
+		filename.length() == KeywordTestCaseToFileStrategy.FILENAME_MAX_SIZE
 		filename == "815_Oh_my_God_this_test_case_has_such_a_long_name_that_I_don_t_think_it_will_fit_under_the_f.feature"
 
 	}
@@ -73,21 +76,21 @@ class ScriptToFileStrategyTest extends Specification{
 		def testcase = tc(815, 256.times {"A"}+"RRGHH!")
 
 		when :
-		def filename = KEYWORD_STRATEGY.backupFilenameFor(testcase)
+		def filename = CUCUMBER_STRATEGY.backupFilenameFor(testcase)
 
 		then:
 		filename == "815.feature"
 	}
 
-	def "should build a pattern that will locate the filename that corresponds to a scripted test case"() {
+	def "should build a pattern that will locate the filename that corresponds to a keyword test case"() {
 
 		expect :
-		KEYWORD_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
+		CUCUMBER_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
 
 	}
 
 	def tc(id, name) {
-		Mock(TestCase){
+		Mock(KeywordTestCase){
 			getId() >> id
 			getName() >> name
 		}
