@@ -20,16 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters
 
-import org.springframework.beans.NotReadablePropertyException
+import org.springframework.validation.BindException
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.bdd.ActionWord
-import org.squashtest.tm.domain.bdd.ActionWordFragment
-import org.squashtest.tm.domain.bdd.ActionWordParameter
-import org.squashtest.tm.domain.bdd.ActionWordParameterValue
-import org.squashtest.tm.domain.bdd.ActionWordText
-import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.bdd.*
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep
@@ -314,8 +309,9 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L)
 
 		then:
-		NotReadablePropertyException ex = thrown()
-		ex.message == "Invalid property 'Keyword in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Keyword in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
+		BindException ex = thrown()
+		ex.message == "org.springframework.validation.BeanPropertyBindingResult: 1 errors\n" +
+			"Field error in object 'add-keyword-test-step' on field 'keyword': rejected value []; codes [message.notBlank.add-keyword-test-step.keyword,message.notBlank.keyword,message.notBlank.java.lang.String,message.notBlank]; arguments []; default message [null]"
 	}
 
 	def "should throw exception when adding a keyword test step with empty Action word"() {
@@ -333,8 +329,9 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L)
 
 		then:
-		NotReadablePropertyException ex = thrown()
-		ex.message == "Invalid property 'Action word in Keyword Test case' of bean class [org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel]: Bean property 'Action word in Keyword Test case' is not readable or has an invalid getter method: Does the return type of the getter match the parameter type of the setter?"
+		BindException ex = thrown()
+		ex.message == "org.springframework.validation.BeanPropertyBindingResult: 1 errors\n" +
+			"Field error in object 'add-keyword-test-step' on field 'actionWord': rejected value []; codes [message.notBlank.add-keyword-test-step.actionWord,message.notBlank.actionWord,message.notBlank.java.lang.String,message.notBlank]; arguments []; default message [null]"
 	}
 
 	class MockActionWordParameter extends  ActionWordParameter {

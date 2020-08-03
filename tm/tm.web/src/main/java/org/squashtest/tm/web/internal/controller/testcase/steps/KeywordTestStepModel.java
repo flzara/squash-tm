@@ -85,15 +85,15 @@ public class KeywordTestStepModel {
 			String actionWord = model.getActionWord();
 
 			if (keyword == null) {
-				errors.rejectValue("Keyword in Keyword Test case", MESSAGE_NOT_NULL, notNull);
+				errors.rejectValue("keyword", MESSAGE_NOT_NULL, notNull);
 			} else if (keyword.isEmpty()) {
-				errors.rejectValue("Keyword in Keyword Test case", MESSAGE_NOT_BLANK, notBlank);
+				errors.rejectValue("keyword", MESSAGE_NOT_BLANK, notBlank);
 			}
 
 			if (actionWord == null) {
-				errors.rejectValue("Action word in Keyword Test case", MESSAGE_NOT_NULL, notNull);
+				errors.rejectValue("actionWord", MESSAGE_NOT_NULL, notNull);
 			} else if (actionWord.isEmpty()) {
-				errors.rejectValue("Action word in Keyword Test case", MESSAGE_NOT_BLANK, notBlank);
+				errors.rejectValue("actionWord", MESSAGE_NOT_BLANK, notBlank);
 			}
 		}
 	}

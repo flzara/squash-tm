@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.actionword;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -76,16 +77,16 @@ public class ActionWordModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
-			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
-			String notNull = messageSource.getMessage("message.notNull", null, locale);
+			String notBlank = messageSource.getMessage("message.actionword.empty", null, locale);
+			String notNull = messageSource.getMessage("message.actionword.null", null, locale);
 
 			ActionWordModel model = (ActionWordModel) target;
 			String modelName = model.getName();
 
 			if (modelName == null) {
-				errors.rejectValue("Action word in Library", "message.notNull", notNull);
-			} else if (modelName.isEmpty()) {
-				errors.rejectValue("Action word in Library", "message.notBlank", notBlank);
+				errors.rejectValue("name", "message.notNull", notNull);
+			} else if (StringUtils.isBlank(modelName)) {
+				errors.rejectValue("name", "message.notBlank", notBlank);
 			}
 		}
 	}
