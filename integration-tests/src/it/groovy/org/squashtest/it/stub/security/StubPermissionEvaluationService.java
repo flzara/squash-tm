@@ -25,12 +25,16 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 public class StubPermissionEvaluationService implements PermissionEvaluationService {
 
-	Set<String> permissionsToRefuse = new HashSet<String>();
+	Set<String> permissionsToRefuse = new HashSet<>();
 
 	public StubPermissionEvaluationService() {
 		super();
@@ -87,7 +91,7 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 
 	@Override
 	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
-		Map<String, Boolean> res = new HashMap<String, Boolean>();
+		Map<String, Boolean> res = new HashMap<>();
 		for (String perm : permissions) {
 			res.put(perm, hasRoleOrPermissionOnObject(role, perm, entity));
 		}

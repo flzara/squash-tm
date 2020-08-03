@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.servers.EncryptionKeyChangedException;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.MissingEncryptionKeyException;

@@ -21,9 +21,7 @@
 package org.squashtest.tm.service.servers;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.tm.domain.servers.Credentials;
-import org.squashtest.tm.domain.servers.StoredCredentials;
 
 /**
  * <p>

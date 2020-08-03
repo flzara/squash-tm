@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
