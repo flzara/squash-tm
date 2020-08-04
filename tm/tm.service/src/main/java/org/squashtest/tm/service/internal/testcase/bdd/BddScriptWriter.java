@@ -22,6 +22,9 @@ package org.squashtest.tm.service.internal.testcase.bdd;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
+
+import java.util.Locale;
 
 public interface BddScriptWriter {
 
@@ -33,5 +36,14 @@ public interface BddScriptWriter {
 	 * @return the bdd script of the given test case
 	 */
 	String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows);
+
+	/**
+	 * Given a KeywordTestStep, write its corresponding bdd script.
+	 * @param testStep test step
+	 * @param messageSource the message source for potential translation
+	 * @param escapeArrows whether to escape arrow symbols
+	 * @return the bdd script of the given test step
+	 */
+	String writeBddStepScript(KeywordTestStep testStep, MessageSource messageSource, Locale locale, boolean escapeArrows);
 
 }

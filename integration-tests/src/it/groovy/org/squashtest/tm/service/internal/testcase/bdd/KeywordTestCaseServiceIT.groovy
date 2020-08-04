@@ -23,10 +23,12 @@ package org.squashtest.tm.service.internal.testcase.bdd
 import org.springframework.context.MessageSource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -48,6 +50,11 @@ class KeywordTestCaseServiceIT extends DbunitServiceSpecification {
 		keywordTestCaseService.messageSource = messageSource
 	}
 
+	def setupRobotProject(KeywordTestCase tc) {
+		tc.getProject().bddImplementationTechnology = BddImplementationTechnology.ROBOT
+	}
+
+	/* ----- Cucumber Scripts ----- */
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-6L)
@@ -281,7 +288,211 @@ Feature: Daily test
 		| "Nice" | 12 |"""
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	/* ----- Robot Framework ----- */
+	def "Should generate a Robot script without test steps from a KeywordTestCase"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-6L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+empty test"""
+	}
+
+	def "Should generate a Robot script from a KeywordTestCase"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Disconnection test
+	Given I am connected
+	When I sign oùt
+	Then Je suis déconnecté"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-param-value-as-free-text.xml")
+	def "Should generate a Robot script with test steps containing parameter value as free text from a KeywordTestCase"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Daily test
+	Given Today is Monday
+	When It is "8 AM"
+	Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-param-value-as-number.xml")
+	def "Should generate a Robot script with test steps containing parameter value as number from a KeywordTestCase"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Daily test
+	Given Today is Monday
+	When It is "8.5"
+	Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-TC-param-value-no-dataset.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with a TC param as value from a KeywordTestCase but no dataset"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Daily test
+	Given Today is Monday
+	When It is \${time}
+	Then I am working"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-no-TC-param-value-but-dataset.xml")
+	def "Should generate a Robot script with test steps from a KeywordTestCase with dataset but no TC param"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Daily test
+	Given Today is Monday
+	When It is "time"
+	Then I am working"""
+	}
+
+	@Ignore("It tests the future feature: generate a script with parameters.")
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with 1 TC param value and 1 dataset"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+Library		squash_tf.TFParamService
+
+*** Test Cases ***
+Daily test
+	\${time} = 	Get Param	time
+	
+	Given Today is Monday
+	When It is \${time}
+	Then I am working"""
+	}
+
+	@Ignore("It tests the future feature: generate a script with parameters.")
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with 1 TC param value and 1 dataset without escaping arrow symbols"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+		def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false)
+		then:
+			res	==
+"""*** Settings ***
+Resource	squash_resources.resource
+Library		squash_tf.TFParamService
+
+*** Test Cases ***
+Daily test
+	\${time} =	Get Param	time
+
+	Given Today is Monday
+	When It is \${time}
+	Then I am working"""
+	}
+
+	@Ignore
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with 2 TC param value and 1 dataset"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+Library 	squash_tf.TFParamService
+
+*** Test Cases ***
+Daily test
+	\${time} =	Get Param	time
+	\${place} =	Get Param	place
+
+	Given Today is Monday
+	When It is \${time} in \${place}
+	Then I am working"""
+	}
+
+	@Ignore
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset-name-with-spaces.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with 2 TC param value and 1 dataset whose name contains spaces"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
+			setupRobotProject(keywordTestCase)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+Library 	squash_tf.TFParamService
+
+*** Test Cases ***
+Daily test
+	\${time} =	Get Param	time
+	\${place} =	Get Param	place
+
+	Given Today is Monday
+	When It is \${time} in \${place}
+	Then I am working"""
+	}
+
+	/* ----- File System Methods ----- */
 	def "Should create a File name for a Keyword Test case"() {
 		given:
 		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)

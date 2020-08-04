@@ -48,7 +48,6 @@ public class CucumberScriptWriter implements BddScriptWriter {
 	private static final String VERTICAL_BAR = "|";
 	private static final String ACROBAT_CHAR = "@";
 
-	@Transient
 	private boolean hasTCParamInTestCase = false;
 
 	@Override
@@ -71,14 +70,11 @@ public class CucumberScriptWriter implements BddScriptWriter {
 	private void addAllStepsScriptWithoutScenarioToBuilder(StringBuilder builder, List<TestStep> testSteps, Locale locale, MessageSource messageSource, boolean escapeArrows) {
 		for (TestStep step : testSteps) {
 			KeywordTestStep keywordStep = (KeywordTestStep) step;
-			String stepActionWordScript = keywordStep.writeTestStepActionWordScript(escapeArrows);
+			String stepScript = writeBddStepScript(keywordStep, messageSource, locale, escapeArrows);
 			raiseHasTCParamFlag(keywordStep.hasTCParam());
-			String internationalizedKeyword = messageSource.getMessage(keywordStep.getKeyword().i18nKeywordNameKey(), null, locale);
 			builder
 				.append(DOUBLE_TAB_CHAR)
-				.append(internationalizedKeyword)
-				.append(SPACE_CHAR)
-				.append(stepActionWordScript)
+				.append(stepScript)
 				.append(NEW_LINE_CHAR);
 		}
 		builder.deleteCharAt(builder.length() - 1);
@@ -178,5 +174,12 @@ public class CucumberScriptWriter implements BddScriptWriter {
 			.append(messageSource.getMessage("testcase.bdd.script.label.feature", null, locale))
 			.append(testCaseName);
 		builder.insert(0, subBuilder);
+	}
+
+	@Override
+	public String writeBddStepScript(KeywordTestStep testStep, MessageSource messageSource, Locale locale, boolean escapeArrows) {
+		String internationalizedKeywordScript = messageSource.getMessage(testStep.getKeyword().i18nKeywordNameKey(), null, locale);
+		String actionWordScript = testStep.writeTestStepActionWordScript(escapeArrows);
+		return internationalizedKeywordScript + SPACE_CHAR + actionWordScript;
 	}
 }

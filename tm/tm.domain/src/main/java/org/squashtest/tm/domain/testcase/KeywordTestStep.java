@@ -104,56 +104,6 @@ public class KeywordTestStep extends TestStep {
 		return res;
 	}
 
-	@Override
-	public void setTestCase(@NotNull TestCase testCase) {
-
-		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
-			@Override
-			public void visit(TestCase testCase) {
-				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
-			}
-
-			@Override
-			public void visit(KeywordTestCase keywordTestCase) {
-			}
-
-			@Override
-			public void visit(ScriptedTestCase scriptedTestCase) {
-				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
-			}
-		};
-		testCase.accept(testCaseVisitor);
-		super.setTestCase(testCase);
-	}
-
-	public Keyword getKeyword() {
-		return keyword;
-	}
-
-	public ActionWord getActionWord() {
-		return actionWord;
-	}
-
-	public void setKeyword(Keyword keyword) {
-		this.keyword = keyword;
-	}
-
-	public void setActionWord(ActionWord actionWord) {
-		this.actionWord = actionWord;
-	}
-
-	public List<ActionWordParameterValue> getParamValues() {
-		return paramValues;
-	}
-
-	public void setParamValues(List<ActionWordParameterValue> paramValues) {
-		this.paramValues = paramValues;
-	}
-
-	public void addParamValues(ActionWordParameterValue value) {
-		this.paramValues.add(value);
-	}
-
 	public String writeTestStepActionWordScript(boolean escapeArrows) {
 		ActionWord actionWord = getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
@@ -208,4 +158,56 @@ public class KeywordTestStep extends TestStep {
 	public boolean hasTCParam() {
 		return hasTCParam;
 	}
+
+
+	@Override
+	public void setTestCase(@NotNull TestCase testCase) {
+
+		TestCaseVisitor testCaseVisitor = new TestCaseVisitor() {
+			@Override
+			public void visit(TestCase testCase) {
+				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
+			}
+
+			@Override
+			public void visit(KeywordTestCase keywordTestCase) {
+			}
+
+			@Override
+			public void visit(ScriptedTestCase scriptedTestCase) {
+				throw new IllegalArgumentException("Cannot add a Keyword Test Step outside a Keyword Test Case");
+			}
+		};
+		testCase.accept(testCaseVisitor);
+		super.setTestCase(testCase);
+	}
+
+	public Keyword getKeyword() {
+		return keyword;
+	}
+
+	public ActionWord getActionWord() {
+		return actionWord;
+	}
+
+	public void setKeyword(Keyword keyword) {
+		this.keyword = keyword;
+	}
+
+	public void setActionWord(ActionWord actionWord) {
+		this.actionWord = actionWord;
+	}
+
+	public List<ActionWordParameterValue> getParamValues() {
+		return paramValues;
+	}
+
+	public void setParamValues(List<ActionWordParameterValue> paramValues) {
+		this.paramValues = paramValues;
+	}
+
+	public void addParamValues(ActionWordParameterValue value) {
+		this.paramValues.add(value);
+	}
+
 }

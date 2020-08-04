@@ -31,17 +31,18 @@ import static org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileS
 
 class KeywordTestCaseToFileStrategyTest extends Specification{
 
-	@Unroll("should select strategy '#strategy' for test case kind '#kind'")
+	@Unroll("should select strategy '#strategy' for technology '#technology'")
 	def "should select strategy"() {
 		expect :
-		KeywordTestCaseToFileStrategy.strategyFor(kind) == strategy
+		KeywordTestCaseToFileStrategy.strategyFor(technology) == strategy
 
 		where :
-		kind     	|	strategy
+		technology  |	strategy
 		CUCUMBER	|	CUCUMBER_STRATEGY
 		ROBOT		|	ROBOT_STRATEGY
 	}
 
+	/* ----- Cucumber Technology ----- */
 	@Unroll("should turn '#id:#name' into '#result'")
 	def "should create a gherkin filename for a test case"() {
 
@@ -53,40 +54,66 @@ class KeywordTestCaseToFileStrategyTest extends Specification{
 		815		| "fetch my data"							|	"815_fetch_my_data.feature"				| tc(id, name)
 		815		| "r\u00E9cup\u00E8re mes donn\u00E9es"		|	"815_recupere_mes_donnees.feature"		| tc(id, name)
 		815		| "r\u00FCckgewinnung der Daten"			|	"815_ruckgewinnung_der_Daten.feature"	| tc(id, name)
-
 	}
 
 	def "should create a gherkin filename for a quite long test case name"() {
-
 		given :
-		def testcase = tc(815, "Oh my God this test case has such a long name that I don't think it will fit under the filename length limit")
-
+			def testcase = tc(815, "Oh my God this test case has such a long name that I don't think it will fit under the filename length limit")
 		when :
-		def filename = CUCUMBER_STRATEGY.createFilenameFor(testcase)
-
+			def filename = CUCUMBER_STRATEGY.createFilenameFor(testcase)
 		then :
-		filename.length() == KeywordTestCaseToFileStrategy.FILENAME_MAX_SIZE
-		filename == "815_Oh_my_God_this_test_case_has_such_a_long_name_that_I_don_t_think_it_will_fit_under_the_f.feature"
-
+			filename.length() == KeywordTestCaseToFileStrategy.FILENAME_MAX_SIZE
+			filename == "815_Oh_my_God_this_test_case_has_such_a_long_name_that_I_don_t_think_it_will_fit_under_the_f.feature"
 	}
 
 	def "should create the shortest gherkin filename possible"() {
-
 		given :
-		def testcase = tc(815, 256.times {"A"}+"RRGHH!")
-
+			def testcase = tc(815, 256.times {"A"}+"RRGHH!")
 		when :
-		def filename = CUCUMBER_STRATEGY.backupFilenameFor(testcase)
-
+			def filename = CUCUMBER_STRATEGY.backupFilenameFor(testcase)
 		then:
-		filename == "815.feature"
+			filename == "815.feature"
 	}
 
-	def "should build a pattern that will locate the filename that corresponds to a keyword test case"() {
-
+	def "should build a pattern that will locate the gherkin filename that corresponds to a keyword test case"() {
 		expect :
 		CUCUMBER_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.feature"
+	}
 
+	/* ----- Robot Technology -----*/
+	@Unroll("should turn '#id:#name' into '#result'")
+	def "should create a robot filename for a test case"() {
+		expect :
+		ROBOT_STRATEGY.createFilenameFor(testcase) == result
+		where :
+		id 		| name										|	result									| testcase
+		815		| "fetch my data"							|	"815_fetch_my_data.robot"				| tc(id, name)
+		815		| "r\u00E9cup\u00E8re mes donn\u00E9es"		|	"815_recupere_mes_donnees.robot"		| tc(id, name)
+		815		| "r\u00FCckgewinnung der Daten"			|	"815_ruckgewinnung_der_Daten.robot"		| tc(id, name)
+	}
+
+	def "should create a robot filename for a quite long test case name"() {
+		given :
+		def testcase = tc(815, "Oh my God this test case has such a long name that I don't think it will fit under the filename length limit")
+		when :
+		def filename = ROBOT_STRATEGY.createFilenameFor(testcase)
+		then :
+		filename.length() == KeywordTestCaseToFileStrategy.FILENAME_MAX_SIZE
+		filename == "815_Oh_my_God_this_test_case_has_such_a_long_name_that_I_don_t_think_it_will_fit_under_the_fil.robot"
+	}
+
+	def "should create the shortest robot filename possible"() {
+		given :
+		def testcase = tc(815, 256.times {"A"}+"RRGHH!")
+		when :
+		def filename = ROBOT_STRATEGY.backupFilenameFor(testcase)
+		then:
+		filename == "815.robot"
+	}
+
+	def "should build a pattern that will locate the robot filename that corresponds to a keyword test case"() {
+		expect :
+		ROBOT_STRATEGY.buildFilenameMatchPattern(tc(815, "name irrelevant")) == "815(_.*)?\\.robot"
 	}
 
 	def tc(id, name) {
