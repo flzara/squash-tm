@@ -47,6 +47,7 @@ public class CucumberScriptWriter implements BddScriptWriter {
 	private static final String SPACE_CHAR = " ";
 	private static final String VERTICAL_BAR = "|";
 	private static final String ACROBAT_CHAR = "@";
+	private static final String SCRIPT_LANGUAGE_LABEL = "# language: "; // SQUASH-1184
 
 	private boolean hasTCParamInTestCase = false;
 
@@ -168,7 +169,7 @@ public class CucumberScriptWriter implements BddScriptWriter {
 
 	private void addLanguageAndFeatureToBuilder(StringBuilder builder, String testCaseName, String language, Locale locale, MessageSource messageSource) {
 		StringBuilder subBuilder = new StringBuilder();
-		subBuilder.append(messageSource.getMessage("testcase.bdd.script.label.language", null, locale))
+		subBuilder.append(SCRIPT_LANGUAGE_LABEL)
 			.append(language)
 			.append(NEW_LINE_CHAR)
 			.append(messageSource.getMessage("testcase.bdd.script.label.feature", null, locale))

@@ -48,7 +48,7 @@ class CucumberScriptWriterTest extends Specification {
 			keywordTestCase.setName("Disconnection test")
 			keywordTestCase.notifyAssociatedWithProject(project)
 		when:
-			2 * messageSource.getMessage(*_) >>> ["# language: ", "Feature: "]
+			1 * messageSource.getMessage(*_) >>> ["Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result == "# language: en\nFeature: Disconnection test"
@@ -68,7 +68,7 @@ class CucumberScriptWriterTest extends Specification {
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -103,7 +103,7 @@ Feature: Disconnection test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -137,7 +137,7 @@ Feature: Daily test
 			keywordTestCase.addStep(step1)
 			keywordTestCase.addStep(step2)
 		when:
-			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "# language: ", "Feature: "]
+			4 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -174,7 +174,7 @@ Feature: Daily test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -220,7 +220,7 @@ Feature: Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "# language: ", "Feature: "]
+			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -265,7 +265,7 @@ Feature: Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -315,7 +315,7 @@ Feature: Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, false)
 		then:
 			result ==
@@ -371,7 +371,7 @@ Feature: Daily test
 			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
 			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -445,7 +445,7 @@ Feature: Daily test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
@@ -520,7 +520,7 @@ Feature: Count test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
+			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
 			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==

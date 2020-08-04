@@ -27,7 +27,6 @@ import javax.persistence.Transient;
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class KeywordTestCase extends TestCase {
-	private static final String SCRIPT_LANGUAGE_LABEL = "# language: "; // SQUASH-1184
 
 	public static KeywordTestCase createBlankKeywordTestCase() {
 		KeywordTestCase res = new KeywordTestCase();
