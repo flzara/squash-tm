@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator"],
+define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator", "squashtable"],
 	function ($, Backbone, _, confman, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
@@ -85,14 +85,35 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		initKeywordTestStepTable: function (settings) {
 			var self = this,
-				  testCaseId = settings.testCaseId,
 				  table = $("#keyword-test-step-table"),
-				  postActionWordFunction = self.postActionWordFunction(settings.testCaseUrl, table);
+				  postActionWordFunction = self.postActionWordFunction(settings.testCaseUrl, table),
+					dragHandle = '',
+					squashSettings = '';
+
+			if (settings.permissions.isWritable) {
+				dragHandle = 'drag-handle';
+				squashSettings = {
+					dataKeys: {
+						entityIndex: "step-index"
+					},
+					deleteButtons: {
+						delegate: "#delete-keyword-test-step-dialog",
+						tooltip: settings.language.deleteTitle
+					},
+					enableDnD: true,
+					functions: {
+						dropHandler: self.stepDropHandlerFactory(settings.testCaseUrl + '/steps/move')
+					}
+				};
+			}
 
 			table.squashTable(
 				{
 					bServerSide: true,
-					aoColumnDefs: [{aTargets: [1], sWidth: '25%'}],
+					aoColumnDefs: [
+						{aTargets: [0], mDataProp: 'step-index', sClass: 'select-handle centered '+ dragHandle},
+						{aTargets: [1], sWidth: '25%'}
+					],
 					aaData: settings.stepData,
 					iDeferLoading: settings.stepData.length,
 					sAjaxSource: settings.testCaseUrl + '/steps/keyword-test-step-table',
@@ -133,12 +154,16 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 							}
 						});
 					}
-				}, {
-					deleteButtons: {
-						delegate: "#delete-keyword-test-step-dialog",
-						tooltip: settings.language.deleteTitle
-					}
+				}, squashSettings);
+		},
+
+		stepDropHandlerFactory: function(dropUrl) {
+			var self = this;
+			return function stepHandler(dropData) {
+				$.post(dropUrl, dropData, function() {
+					self.refresh();
 				});
+			};
 		},
 
 		refresh: function () {
@@ -204,10 +229,9 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		makeTableUrls: function (conf) {
 			var tcUrl = conf.testCaseUrl;
-			var ctxUrl = conf.rootContext;
 
 			return {
-				deleteStep: tcUrl + "/steps",
+				deleteStep: tcUrl + "/steps"
 			};
 		},
 
