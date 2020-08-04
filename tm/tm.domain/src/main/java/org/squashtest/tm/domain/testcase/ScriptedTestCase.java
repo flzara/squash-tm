@@ -99,7 +99,6 @@ public class ScriptedTestCase extends TestCase {
 	public String computeScriptWithAppendedMetadata() {
 		StringBuilder sb = new StringBuilder(this.script);
 		sb.insert(0, "# Test case importance: " + this.getImportance() + "\n");
-		sb.insert(0, "# Automation status: " + this.getAutomationRequest().getRequestStatus() + "\n");
 		sb.insert(0, "# Automation priority: " + this.getAutomationRequest().getAutomationPriority() + "\n");
 		return sb.toString();
 	}

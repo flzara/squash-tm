@@ -169,7 +169,6 @@ class ScriptedTestCaseTest extends Specification {
 		def res = scriptedTestCase.computeScriptWithAppendedMetadata()
 		then:
 		res == """# Automation priority: 4
-# Automation status: AUTOMATION_IN_PROGRESS
 # Test case importance: HIGH
 """
 	}
@@ -188,7 +187,6 @@ class ScriptedTestCaseTest extends Specification {
 		def res = scriptedTestCase.computeScriptWithAppendedMetadata()
 		then:
 		res == """# Automation priority: 4
-# Automation status: AUTOMATION_IN_PROGRESS
 # Test case importance: HIGH
 this is a script"""
 	}

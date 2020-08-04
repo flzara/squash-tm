@@ -402,7 +402,6 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 				StringBuilder sb = new StringBuilder(keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, false));
 				Locale locale = keywordTestCase.getProject().getBddScriptLanguage().getLocale();
 				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.test-case-importance", null, locale) + messageSource.getMessage(keywordTestCase.getImportance().getI18nKey(), null, locale) + "\n");
-				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.automation-status", null, locale) + messageSource.getMessage(keywordTestCase.getAutomationRequest().getRequestStatus().getI18nKey(), null, locale) + "\n");
 				sb.insert(0, messageSource.getMessage("testcase.bdd.script.label.automation-priority", null, locale) + keywordTestCase.getAutomationRequest().getAutomationPriority() + "\n");
 				content.setValue(sb.toString());
 			}

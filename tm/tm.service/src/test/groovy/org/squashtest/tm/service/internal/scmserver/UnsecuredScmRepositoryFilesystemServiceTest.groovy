@@ -407,7 +407,6 @@ go home quickly before someone notices that the ITs are broken"""
 
 		def metadata =
 			"""# Automation priority: 2
-# Automation status: SUSPENDED
 # Test case importance: MEDIUM
 """
 
@@ -440,19 +439,16 @@ go home quickly before someone notices that the ITs are broken"""
 
 		def metadata1 =
 			"""# Automation priority: 1
-# Automation status: AUTOMATED
 # Test case importance: HIGH
 """
 
 		def metadata2 =
 			"""# Automation priority: 3
-# Automation status: AUTOMATION_IN_PROGRESS
 # Test case importance: LOW
 """
 
 		def metadata3 =
 			"""# Automation priority: 1
-# Automation status: Automated
 # Test case importance: Low
 """
 
@@ -509,7 +505,6 @@ go home quickly before someone notices that the ITs are broken"""
 		}
 		def locale = project.getBddScriptLanguage().getLocale()
 		messageSource.getMessage("testcase.bdd.script.label.test-case-importance", null, locale) >> "# Test case importance: "
-		messageSource.getMessage("testcase.bdd.script.label.automation-status", null, locale) >> "# Automation status: "
 		messageSource.getMessage("testcase.bdd.script.label.automation-priority", null, locale) >> "# Automation priority: "
 		messageSource.getMessage("test-case.importance.LOW", null, locale) >> "Low"
 		messageSource.getMessage("automation-request.request_status.AUTOMATED", null, locale) >> "Automated"
