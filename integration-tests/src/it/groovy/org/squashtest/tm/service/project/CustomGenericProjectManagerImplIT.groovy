@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.bdd.BddImplementationTechnology
 import org.squashtest.tm.domain.bdd.BddScriptLanguage
+import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.unitils.dbunit.annotation.DataSet
@@ -87,11 +88,16 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 		when:
 			"setup"
 		then:
-			genericProjectFinder.findById(-1L).bddImplementationTechnology == BddImplementationTechnology.CUCUMBER
+			GenericProject project = genericProjectFinder.findById(-1L)
+			project.bddImplementationTechnology == BddImplementationTechnology.CUCUMBER
+			project.bddScriptLanguage == BddScriptLanguage.FRENCH
 		when:
 			customGenericProjectManager.changeBddImplTechnology(-1L, "ROBOT")
 		then:
-			genericProjectFinder.findById(-1L).bddImplementationTechnology == BddImplementationTechnology.ROBOT
+			GenericProject reloadedProject = genericProjectFinder.findById(-1L)
+			reloadedProject.bddImplementationTechnology == BddImplementationTechnology.ROBOT
+			// check if choosing Robot set language to English
+			reloadedProject.bddScriptLanguage == BddScriptLanguage.ENGLISH
 		when:
 			customGenericProjectManager.changeBddImplTechnology(-1L, "CUCUMBER")
 		then:

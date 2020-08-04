@@ -300,10 +300,30 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 						if(self.chosenBddImplTechnology !== value) {
 							self.changeBddImplTechnology(value);
 							self.chosenBddImplTechnology = value;
+							if(value === 'ROBOT') {
+								if(self.chosenBddScriptLanguage !== 'ENGLISH') {
+									self.bddScriptLanguageSelector.setValue('ENGLISH');
+									self.changeBddScriptLanguage('ENGLISH')
+								}
+								self.lockBddImplLanguageSelect();
+							} else {
+								// init select jeditable again
+								self.bddScriptLanguageSelector = self.initBddScriptLanguageSelect();
+							}
 						}
 						return value;
 					}
 				});
+			},
+
+			/*
+      * Reforge the Repository Select. This is the only solution found to disable the Select.
+      */
+			lockBddImplLanguageSelect: function() {
+				var self = this;
+				$('#project-bdd-script-language-select').remove();
+				var newDiv = $("<div id='project-bdd-script-language-select' style='display: inline'>" + translator.get('language.ENGLISH') + "</div>");
+				$('#project-bdd-script-language-select-container').append(newDiv);
 			},
 
 			initBddScriptLanguageSelect: function() {

@@ -1312,8 +1312,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void changeBddImplTechnology(long projectId, String bddImplTechnology) {
+		BddImplementationTechnology newBddImplTechnology = BddImplementationTechnology.valueOf(bddImplTechnology);
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		genericProject.setBddImplementationTechnology(BddImplementationTechnology.valueOf(bddImplTechnology));
+		genericProject.setBddImplementationTechnology(newBddImplTechnology);
+		if(BddImplementationTechnology.ROBOT.equals(newBddImplTechnology)) {
+			genericProject.setBddScriptLanguage(BddScriptLanguage.ENGLISH);
+		}
 	}
 
 	@Override

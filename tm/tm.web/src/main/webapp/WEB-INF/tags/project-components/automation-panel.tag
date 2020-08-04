@@ -90,7 +90,7 @@
             <f:message key="label.project.bdd.script-language" />
           </label>
         </div>
-        <div class="display-table-cell">
+        <div id="project-bdd-script-language-select-container" class="display-table-cell">
           <div id="project-bdd-script-language-select" style="display: inline;">
             <c:out value="${availableBddScriptLanguages[chosenBddScriptLanguage]}" />
           </div>

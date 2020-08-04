@@ -788,9 +788,12 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 			project.getBddImplementationTechnology() == BddImplementationTechnology.CUCUMBER
 		when:
+			// check if choosing Robot set language to English
+			project.bddScriptLanguage = BddScriptLanguage.SPANISH
 			manager.changeBddImplTechnology(4L, "ROBOT")
 		then:
 			project.getBddImplementationTechnology() == BddImplementationTechnology.ROBOT
+			project.getBddScriptLanguage() == BddScriptLanguage.ENGLISH
 	}
 
 	def "#changeBddScriptLanguage(long, String) - Should change the project Bdd Script Language"() {
