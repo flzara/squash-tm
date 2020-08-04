@@ -87,11 +87,13 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			var self = this,
 				  table = $("#keyword-test-step-table"),
 				  postActionWordFunction = self.postActionWordFunction(settings.testCaseUrl, table),
-					dragHandle = '',
+					dragClass = '',
+					deleteClass = '',
 					squashSettings = '';
 
 			if (settings.permissions.isWritable) {
-				dragHandle = 'drag-handle';
+				dragClass = 'drag-handle';
+				deleteClass = 'delete-button';
 				squashSettings = {
 					dataKeys: {
 						entityIndex: "step-index"
@@ -111,8 +113,39 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				{
 					bServerSide: true,
 					aoColumnDefs: [
-						{aTargets: [0], mDataProp: 'step-index', sClass: 'select-handle centered '+ dragHandle},
-						{aTargets: [1], sWidth: '25%'}
+						{
+							bVisible: false,
+							bSortable: false,
+							aTargets: [0],
+							mDataProp: "entity-id"
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [1],
+							mDataProp: 'step-index',
+							sClass: 'select-handle centered '+ dragClass,
+							sWidth: '2em'
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [2],
+							mDataProp: 'step-keyword',
+							sClass: 'step-keyword',
+							sWidth: '25%'
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [3],
+							mDataProp: "step-action-word",
+							sClass: "step-action-word"
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [4],
+							mDataProp: 'empty-delete-holder',
+							sClass: 'centered ' + deleteClass,
+							sWidth: '2em'
+						}
 					],
 					aaData: settings.stepData,
 					iDeferLoading: settings.stepData.length,
