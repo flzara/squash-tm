@@ -254,7 +254,6 @@ Daily test
 	Then I am working"""
 	}
 
-	@Ignore("For the next ticket: Robot script with Dataset!")
 	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 1 param between <>"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
@@ -287,23 +286,22 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 			then:
 			result ==
 """*** Settings ***
 Resource	squash_resources.resource
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
 	\${time} =	Get Param	time
-	
+
 	Given Today is Monday
 	When It is \${time}
 	Then I am working"""
 	}
 
-	@Ignore("For the next ticket: Robot script with Dataset!")
 	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 1 param between <> without escaping the arrow symbols"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
@@ -336,23 +334,22 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, false)
 		then:
 			result ==
 """*** Settings ***
 Resource	squash_resources.resource
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
 	\${time} =	Get Param	time
-	
+
 	Given Today is Monday
 	When It is \${time}
 	Then I am working"""
 	}
 
-	@Ignore("For the next ticket: Robot script with Dataset!")
 	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <>"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
@@ -391,12 +388,12 @@ Daily test
 			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
 			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
 """*** Settings ***
 Resource	squash_resources.resource
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
@@ -408,7 +405,6 @@ Daily test
 	Then I am working"""
 	}
 
-	@Ignore("For the next ticket: Robot script with Dataset!")
 	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <> with values as number"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
@@ -465,25 +461,24 @@ Daily test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 			result ==
 """*** Settings ***
 Resource	squash_resources.resource
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Count test
-	\${left} =	Get Param	left
-	\${less} =	Get Param	less
 	\${total} =	Get Param	total
+	\${less} =	Get Param	less
+	\${left} =	Get Param	left
 
 	Given I buy \${total} tickets
 	When I give \${less} to my friend
 	Then I still have \${left} tickets"""
 	}
 
-	@Ignore("For the next ticket: Robot script with Dataset!")
 	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset whose name contains spaces"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
@@ -541,18 +536,18 @@ Count test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			7 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "# language: ", "Feature: "]
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
 		then:
 		result ==
 """*** Settings ***
 Resource	squash_resources.resource
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Count test
-	\${left} =	Get Param	left
-	\${less} =	Get Param	less
 	\${total} =	Get Param	total
+	\${less} =	Get Param	less
+	\${left} =	Get Param	left
 
 	Given I buy \${total} tickets
 	When I give \${less} to my friend

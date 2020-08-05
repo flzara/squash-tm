@@ -398,7 +398,6 @@ Daily test
 	Then I am working"""
 	}
 
-	@Ignore("It tests the future feature: generate a script with parameters.")
 	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
 	def "Should generate a Robot script with test steps containing parameter associated with 1 TC param value and 1 dataset"() {
 		given:
@@ -414,14 +413,13 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} = 	Get Param	time
-	
+	\${time} =	Get Param	time
+
 	Given Today is Monday
 	When It is \${time}
 	Then I am working"""
 	}
 
-	@Ignore("It tests the future feature: generate a script with parameters.")
 	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-1-TC-param-value-1-dataset.xml")
 	def "Should generate a Robot script with test steps containing parameter associated with 1 TC param value and 1 dataset without escaping arrow symbols"() {
 		given:
@@ -444,7 +442,6 @@ Daily test
 	Then I am working"""
 	}
 
-	@Ignore
 	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset.xml")
 	def "Should generate a Robot script with test steps containing parameter associated with 2 TC param value and 1 dataset"() {
 		given:
@@ -456,19 +453,18 @@ Daily test
 			res ==
 """*** Settings ***
 Resource	squash_resources.resource
-Library 	squash_tf.TFParamService
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
 	\${place} =	Get Param	place
+	\${time} =	Get Param	time
 
 	Given Today is Monday
 	When It is \${time} in \${place}
 	Then I am working"""
 	}
 
-	@Ignore
 	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset-name-with-spaces.xml")
 	def "Should generate a Robot script with test steps containing parameter associated with 2 TC param value and 1 dataset whose name contains spaces"() {
 		given:
@@ -480,12 +476,12 @@ Daily test
 			res ==
 """*** Settings ***
 Resource	squash_resources.resource
-Library 	squash_tf.TFParamService
+Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
 	\${place} =	Get Param	place
+	\${time} =	Get Param	time
 
 	Given Today is Monday
 	When It is \${time} in \${place}

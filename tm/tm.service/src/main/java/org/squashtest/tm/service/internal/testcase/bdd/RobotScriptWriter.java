@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -33,9 +34,11 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class RobotScriptWriter implements BddScriptWriter {
 
@@ -43,6 +46,12 @@ public class RobotScriptWriter implements BddScriptWriter {
 	private static final char SPACE_CHAR = ' ';
 	private static final char NEW_LINE_CHAR = '\n';
 	private static final char DOUBLE_QUOTE_CHAR = '\"';
+
+	private boolean hasTCParam;
+
+	public boolean hasTCParam() {
+		return hasTCParam;
+	}
 
 	/**
 	 * The implementation for Robot Framework
@@ -56,39 +65,59 @@ public class RobotScriptWriter implements BddScriptWriter {
 	@Override
 	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
 		StringBuilder stringBuilder = new StringBuilder();
-		boolean testCaseUsesDataSets = appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps());
-		boolean needToIncludeTfLibrary = !testCase.getDatasets().isEmpty() && testCaseUsesDataSets;
+		boolean needToIncludeTfLibrary = appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps(), testCase.getDatasets());
 		prependSettingsTable(stringBuilder, needToIncludeTfLibrary);
 		return stringBuilder.toString();
 	}
 
 	/**
-	 * Append the test cases table to the script and return whether the test case uses data sets.
+	 * Append the test cases table to the script and return whether the test case has and uses data sets.
 	 * @param stringBuilder string builder of the script
 	 * @param testCaseName name of the test case
 	 * @param steps set of steps in the test case
 	 * @return whether the test case uses data sets
 	 */
-	private boolean appendTestCasesTable(StringBuilder stringBuilder, String testCaseName, List<TestStep> steps) {
+	private boolean appendTestCasesTable(StringBuilder stringBuilder, String testCaseName, List<TestStep> steps, Set<Dataset> datasetSets) {
 		boolean hasTcParamInTestCase = false;
 		stringBuilder.append("*** Test Cases ***\n");
 		stringBuilder.append(testCaseName);
+		StringBuilder stepBuilder = new StringBuilder();
 		if(!steps.isEmpty()) {
-			stringBuilder.append(NEW_LINE_CHAR);
+			stepBuilder.append(NEW_LINE_CHAR);
 			for (TestStep step : steps) {
 				KeywordTestStep keywordStep = (KeywordTestStep) step;
 				String stepScript = writeBddStepScript(keywordStep,null, null, false);
 				if(!hasTcParamInTestCase) {
-					hasTcParamInTestCase = keywordStep.hasTCParam();
+					hasTcParamInTestCase = hasTCParam();
 				}
-				stringBuilder
+				stepBuilder
 					.append(TAB_CHAR)
 					.append(stepScript)
 					.append(NEW_LINE_CHAR);
 			}
-			stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+			stepBuilder.deleteCharAt(stepBuilder.length() - 1);
 		}
-		return hasTcParamInTestCase;
+		boolean needToIncludeTfLibrary = !datasetSets.isEmpty() && hasTcParamInTestCase;
+		if(needToIncludeTfLibrary) {
+			steps
+				.stream()
+				.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
+				.map(ActionWordParameterValue::getValue)
+				.distinct()
+				.forEachOrdered(value -> {
+					// if it is a tcParam, parse its name
+					Pattern pattern = Pattern.compile("<[^\"]+>");
+					Matcher matcher = pattern.matcher(value);
+					if(matcher.matches()) {
+						String paramName = value.substring(1, value.length()-1);
+						stringBuilder.append(NEW_LINE_CHAR);
+						stringBuilder.append("\t${" + paramName + "} =\tGet Param\t" + paramName);
+					}
+				});
+			stringBuilder.append(NEW_LINE_CHAR);
+		}
+		stringBuilder.append(stepBuilder);
+		return needToIncludeTfLibrary;
 	}
 
 	/**
@@ -102,9 +131,9 @@ public class RobotScriptWriter implements BddScriptWriter {
 	private void prependSettingsTable(StringBuilder stringBuilder, boolean includeSquashTfLibrary) {
 		StringBuilder prependBuilder = new StringBuilder();
 		prependBuilder.append("*** Settings ***\n");
-		prependBuilder.append("Resource	squash_resources.resource\n");
+		prependBuilder.append("Resource\tsquash_resources.resource\n");
 		if(includeSquashTfLibrary) {
-			prependBuilder.append("Library	squash_tf.TFParamService\n");
+			prependBuilder.append("Library\t\tsquash_tf.TFParamService\n");
 		}
 		prependBuilder.append(NEW_LINE_CHAR);
 		stringBuilder.insert(0, prependBuilder);
@@ -166,6 +195,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 		Pattern pattern = Pattern.compile("<[^\"]+>");
 		Matcher matcher = pattern.matcher(paramValue);
 		if(matcher.matches()) {
+			hasTCParam = true;
 			String replacedCharactersString =
 				paramValue.replace("<", "${").replace(">", "}");
 			stringBuilder.append(replacedCharactersString);
