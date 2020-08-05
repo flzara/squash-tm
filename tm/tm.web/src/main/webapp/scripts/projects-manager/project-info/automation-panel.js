@@ -303,7 +303,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 							if(value === 'ROBOT') {
 								if(self.chosenBddScriptLanguage !== 'ENGLISH') {
 									self.bddScriptLanguageSelector.setValue('ENGLISH');
-									self.changeBddScriptLanguage('ENGLISH')
+									self.changeBddScriptLanguage('ENGLISH');
 								}
 								self.lockBddImplLanguageSelect();
 							} else {
