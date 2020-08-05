@@ -28,11 +28,17 @@ import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 import javax.inject.Inject;
+import java.util.List;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -41,7 +47,13 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeService {
 
 	@Inject
+	protected PermissionEvaluationService permissionService;
+
+	@Inject
 	private ActionWordLibraryNodeDao actionWordLibraryNodeDao;
+
+	@Inject
+	private AWLNDeletionHandler deletionHandler;
 
 	@Override
 	public ActionWordLibraryNode findActionWordLibraryNodeById(Long nodeId) {
@@ -100,5 +112,18 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	public void renameNodeFromActionWord(ActionWord actionWord) {
 		ActionWordLibraryNode actionWordLibraryNode = findNodeFromEntity(actionWord);
 		actionWordLibraryNode.renameNode(actionWord.createWord());
+	}
+
+	@Override
+	public OperationReport delete(List<Long> nodeIds) {
+		for (Long id : nodeIds) {
+			TreeLibraryNode node = actionWordLibraryNodeDao.getOne(id);
+			checkPermission(new SecurityCheckableObject(node, "DELETE"));
+		}
+		return deletionHandler.deleteNodes(nodeIds);
+	}
+
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 }

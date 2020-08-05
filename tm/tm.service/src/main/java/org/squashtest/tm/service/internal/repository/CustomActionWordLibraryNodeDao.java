@@ -23,6 +23,12 @@ package org.squashtest.tm.service.internal.repository;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 
+import java.util.List;
+
 public interface CustomActionWordLibraryNodeDao {
 	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
+
+    List<Long> findAllFirstLevelDescendantIds(Long id);
+
+	List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds);
 }

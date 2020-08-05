@@ -25,6 +25,9 @@ import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.deletion.OperationReport;
+
+import java.util.List;
 
 public interface ActionWordLibraryNodeService {
 	/**
@@ -66,4 +69,9 @@ public interface ActionWordLibraryNodeService {
 	 * @param actionWord the given ActionWord
 	 */
 	void renameNodeFromActionWord(ActionWord actionWord);
+	/**
+	 * Delete one/many {@link ActionWordLibraryNode}
+	 * @param nodeIds Node Ids to be deleted
+	 */
+	OperationReport delete(List<Long> nodeIds);
 }

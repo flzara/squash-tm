@@ -968,6 +968,7 @@
 
 	// ActionWordNode
 	@NamedQuery(name="ActionWordLibraryNode.findNodeFromEntity",query="from ActionWordLibraryNode awln where awln.entityType = :entityType and awln.entityId = :entityId"),
+	@NamedQuery(name="ActionWordLibraryNodePathEdge.findAllFirstLevelDescendantIds",query="select distinct path.descendantId from ActionWordLibraryNodePathEdge path where path.ancestorId in (:ids) and path.depth=1"),
 
 	//Coverage stat 5433 and 5434
 	@NamedQuery(name = "iteration.findITPIByTestCaseGroupByStatus", query = "select  itpi.executionStatus,tc.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),

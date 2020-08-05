@@ -127,6 +127,7 @@ define(['jquery', 'app/util/StringUtil'], function ($, StringUtil) {
 		var specific = "";
 		var options = "";
 		switch (this.getDomType()) {
+			case "action-word":
 			case "folder" :
 			case "test-case" :
 			case "requirement" :

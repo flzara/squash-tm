@@ -23,13 +23,13 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.actionword.GetActionWordTreeDefinitionVisitor;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.GetCustomReportTreeDefinitionVisitor;
 import org.squashtest.tm.service.internal.repository.CustomActionWordLibraryNodeDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ActionWordLibraryNodeDaoImpl implements CustomActionWordLibraryNodeDao {
@@ -45,5 +45,19 @@ public class ActionWordLibraryNodeDaoImpl implements CustomActionWordLibraryNode
 		query.setParameter("entityType", visitor.getActionWordTreeDefinition());
 		query.setParameter("entityId", actionWordTreeEntity.getId());
 		return (ActionWordLibraryNode) query.getSingleResult();
+	}
+
+	@Override
+	public List<Long> findAllFirstLevelDescendantIds(Long nodeId) {
+		List<Long> ids = new ArrayList<>();
+		ids.add(nodeId);
+		return findAllFirstLevelDescendantIds(ids);
+	}
+
+	@Override
+	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
+		Query query = em.createNamedQuery("ActionWordLibraryNodePathEdge.findAllFirstLevelDescendantIds");
+		query.setParameter("ids", nodesIds);
+		return query.getResultList();
 	}
 }

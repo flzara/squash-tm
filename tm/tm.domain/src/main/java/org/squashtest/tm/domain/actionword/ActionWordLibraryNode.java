@@ -26,9 +26,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MetaValue;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -280,6 +277,10 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	@Override
 	public void removeChild(ActionWordTreeLibraryNode treeLibraryNode) {
-		throw new UnsupportedOperationException();
+		children.remove(treeLibraryNode);
+		//forcing hibernate to clean it's children list,
+		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
+		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint...
+		children = new ArrayList<>(children);
 	}
 }
