@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.exception.actionword.InvalidActionWordInputException;
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputNameException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterNameException;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class LibraryActionWordParser extends ActionWordParser {
 	private void checkIfInputContainInvalidChar(String trimmedInput, String invalidChar) {
 		if (trimmedInput.contains(invalidChar)) {
 			String exMsg = "Action word cannot contain '"+invalidChar+"' symbol.";
-			throw new InvalidActionWordInputException(exMsg);
+			throw new InvalidActionWordInputNameException(exMsg);
 		}
 	}
 

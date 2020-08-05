@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.actionword.InvalidActionWordInputException
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputNameException
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterNameException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -90,7 +91,7 @@ class LibraryActionWordParserTest extends Specification {
 		new LibraryActionWordParser().createActionWordInLibrary(word)
 
 		then:
-		InvalidActionWordInputException exception = thrown()
+		InvalidActionWordInputNameException exception = thrown()
 		exception.message == "Action word cannot contain '>' symbol."
 
 		where:
@@ -103,7 +104,7 @@ class LibraryActionWordParserTest extends Specification {
 		new LibraryActionWordParser().createActionWordInLibrary(word)
 
 		then:
-		InvalidActionWordInputException exception = thrown()
+		InvalidActionWordInputNameException exception = thrown()
 		exception.message == "Action word cannot contain '<' symbol."
 
 		where:
@@ -161,7 +162,7 @@ class LibraryActionWordParserTest extends Specification {
 		new LibraryActionWordParser().createActionWordInLibrary(word)
 		then:
 
-		InvalidActionWordInputException exception = thrown()
+		InvalidActionWordInputNameException exception = thrown()
 		exception.message == "Action word cannot contain '>' symbol."
 
 		where:
@@ -174,7 +175,7 @@ class LibraryActionWordParserTest extends Specification {
 		new LibraryActionWordParser().createActionWordInLibrary(word)
 		then:
 
-		InvalidActionWordInputException exception = thrown()
+		InvalidActionWordInputNameException exception = thrown()
 		exception.message == "Action word cannot contain '<' symbol."
 
 		where:
