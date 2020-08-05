@@ -857,4 +857,220 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-306-create-closure-table" author="mqtran">
+    <!-- CLOSURE -->
+    <comment>
+      closure table for action word library nodes. Its content is set and modified by 4 triggers
+    </comment>
+
+    <createTable tableName="AWLN_RELATIONSHIP_CLOSURE">
+
+      <column name="ANCESTOR_ID" type="BIGINT"
+              remarks="cle etrangere vers le noeud parent. La relation est parfois d'un noeud vers lui meme.">
+        <constraints nullable="false" foreignKeyName="fk_awln_relationship_clos_anc"
+                     references="ACTION_WORD_LIBRARY_NODE(AWLN_ID)" />
+      </column>
+
+      <column name="DESCENDANT_ID" type="BIGINT"
+              remarks="cle etrangere vers l'element fils. La relation est parfois d'un noeud vers lui meme.">
+        <constraints nullable="false" foreignKeyName="fk_awln_relationship_clos_desc"
+                     references="ACTION_WORD_LIBRARY_NODE(AWLN_ID)" />
+      </column>
+
+      <column name="DEPTH" type="SMALLINT"
+              remarks="stores how deep is the descendant element nested in the subtree of the ancestor element">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <createIndex tableName="AWLN_RELATIONSHIP_CLOSURE"
+                 indexName="idx_awln_relationship_clos_desc">
+      <column name="DESCENDANT_ID" />
+    </createIndex>
+
+    <createIndex tableName="AWLN_RELATIONSHIP_CLOSURE"
+                 indexName="idx_awln_relationship_clos_anc">
+      <column name="ANCESTOR_ID" />
+    </createIndex>
+
+    <addUniqueConstraint tableName="AWLN_RELATIONSHIP_CLOSURE" columnNames="ANCESTOR_ID, DESCENDANT_ID"/>
+
+    <!-- CLOSURE-->
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-306-closure-postgresql-trigger" author="mqtran" dbms="postgresql">
+    <comment>postgresql-triggers for AWLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a node : create auto reference in the closure table -->
+    <createProcedure>
+      drop trigger if exists ins_awln_after on ACTION_WORD_LIBRARY_NODE;
+      drop function if exists ins_awln_after();
+      create function ins_awln_after() returns trigger as $ins_awln_after$
+      begin
+      insert into AWLN_RELATIONSHIP_CLOSURE
+      values (new.awln_id, new.awln_id, 0);
+      return new;
+      end;
+      $ins_awln_after$ language plpgsql;
+
+      create trigger ins_awln_after after insert on ACTION_WORD_LIBRARY_NODE
+      for each row execute procedure ins_awln_after();
+
+    </createProcedure>
+
+
+    <!-- before suppression of a node : remove auto reference from the closure table -->
+    <createProcedure>
+      drop trigger if exists del_awln_before on ACTION_WORD_LIBRARY_NODE;
+      drop function if exists del_awln_before();
+      create function del_awln_before() returns trigger as $del_awln_before$
+      begin
+      delete from AWLN_RELATIONSHIP_CLOSURE
+      where ancestor_id = old.awln_id
+      and descendant_id = old.awln_id;
+      return old;
+      end;
+      $del_awln_before$ language plpgsql;
+
+      create trigger del_awln_before before delete on ACTION_WORD_LIBRARY_NODE
+      for each row execute procedure del_awln_before();
+
+    </createProcedure>
+
+
+    <!-- when two nodes are attached : attach the subtrees as well. -->
+    <createProcedure>
+      drop trigger if exists attach_awln_after on AWLN_RELATIONSHIP;
+      drop function if exists attach_awln_after();
+      create function attach_awln_after() returns trigger as $attach_awln_after$
+      begin
+      insert into AWLN_RELATIONSHIP_CLOSURE
+      select c1.ancestor_id, c2.descendant_id, c1.depth + c2.depth + 1
+      from AWLN_RELATIONSHIP_CLOSURE c1
+      cross join AWLN_RELATIONSHIP_CLOSURE c2
+      where c1.descendant_id = new.ancestor_id
+      and c2.ancestor_id = new.descendant_id;
+      return new;
+      end;
+      $attach_awln_after$ language plpgsql;
+
+      create trigger attach_awln_after after insert on AWLN_RELATIONSHIP
+      for each row execute procedure attach_awln_after();
+
+    </createProcedure>
+
+
+    <!-- when two nodes are detached : detach the subtrees as well -->
+    <createProcedure>
+      drop trigger if exists detach_awln_before on AWLN_RELATIONSHIP;
+      drop function if exists detach_awln_before();
+      create function detach_awln_before() returns trigger as $detach_awln_before$
+      begin
+      delete from AWLN_RELATIONSHIP_CLOSURE
+      where descendant_id in ( select descendant_id from AWLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+      and ancestor_id not in ( select descendant_id from AWLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+      ;
+      return old;
+      end;
+      $detach_awln_before$ language plpgsql;
+
+      create trigger detach_awln_before before delete on AWLN_RELATIONSHIP
+      for each row execute procedure detach_awln_before();
+
+    </createProcedure>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-306-closure-h2-trigger" author="mqtran" dbms="h2">
+
+    <comment>h2-triggers for AWLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a node : create auto reference in the closure table -->
+    <sql>
+      create trigger ins_awln_after after insert on
+      ACTION_WORD_LIBRARY_NODE
+      for each row call
+      "org.squashtest.csp.h2.triggers.AWLNAfterInsert";
+    </sql>
+
+
+    <!-- before suppression of a cl node : remove auto reference from the closure table -->
+    <sql>
+      create trigger del_awln_before before delete on
+      ACTION_WORD_LIBRARY_NODE
+      for each row call
+      "org.squashtest.csp.h2.triggers.AWLNBeforeDelete";
+    </sql>
+
+
+    <!-- when two nodes are attached : attach the subtrees as well. -->
+    <sql>
+      create trigger attach_awln_after after insert on AWLN_RELATIONSHIP
+      for each row call "org.squashtest.csp.h2.triggers.AWLNAfterAttach";
+    </sql>
+
+
+    <!-- when two cl nodes are detached : detach the subtrees as well -->
+    <sql>
+      create trigger detach_awln_before before delete on
+      AWLN_RELATIONSHIP
+      for each row call
+      "org.squashtest.csp.h2.triggers.AWLNBeforeDetach";
+    </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-306-closure-mysql-trigger" author="mqtran" dbms="mysql">
+    <comment>mysql-triggers for AWLN_RELATIONSHIP_CLOSURE table</comment>
+
+    <!-- after insertion of a node : create auto reference in the closure table -->
+    <sql>
+      create trigger ins_awln_after after insert on
+      ACTION_WORD_LIBRARY_NODE
+      for each row insert ignore into
+      AWLN_RELATIONSHIP_CLOSURE values (new.awln_id, new.awln_id, 0);
+    </sql>
+
+
+    <!-- before suppression of a cl node : remove auto reference from the closure table -->
+    <sql>
+      create trigger del_awln_before before delete on
+      ACTION_WORD_LIBRARY_NODE
+      for each row delete from
+      AWLN_RELATIONSHIP_CLOSURE where ancestor_id=old.awln_id and
+      descendant_id=old.awln_id;
+    </sql>
+
+
+    <!-- when two nodes are attached : attach the subtrees as well. -->
+    <sql>
+      create trigger attach_awln_after after insert on AWLN_RELATIONSHIP
+      for each row insert ignore into AWLN_RELATIONSHIP_CLOSURE
+      select
+      c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
+      from
+      AWLN_RELATIONSHIP_CLOSURE c1
+      cross join AWLN_RELATIONSHIP_CLOSURE c2
+      where c1.descendant_id = new.ancestor_id
+      and c2.ancestor_id = new.descendant_id;
+    </sql>
+
+
+    <!-- when two cl nodes are detached : detach the subtrees as well -->
+    <sql>
+      create trigger detach_awln_before before delete on
+      AWLN_RELATIONSHIP
+      for each row delete clos1 from
+      AWLN_RELATIONSHIP_CLOSURE clos1
+      join AWLN_RELATIONSHIP_CLOSURE clos2
+      on
+      clos1.descendant_id=clos2.descendant_id
+      left join
+      AWLN_RELATIONSHIP_CLOSURE clos3
+      on clos3.ancestor_id = clos2.ancestor_id
+      and clos3.descendant_id = clos1.ancestor_id
+      where
+      clos2.ancestor_id = old.descendant_id
+      and clos3.ancestor_id is null;
+    </sql>
+  </changeSet>
 </databaseChangeLog>
