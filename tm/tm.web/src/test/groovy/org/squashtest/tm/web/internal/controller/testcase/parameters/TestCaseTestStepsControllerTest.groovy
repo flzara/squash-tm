@@ -191,6 +191,10 @@ class TestCaseTestStepsControllerTest extends Specification {
 		params.setiDisplayStart(0)
 		params.setsEcho("echo")
 
+		and:
+		PagedCollectionHolder<List<ActionTestStep>> holder = new SinglePageCollectionHolder<List<ActionTestStep>>([step1, step2])
+		testCaseModificationService.findStepsByTestCaseIdFiltered(7L, _) >> holder
+
 		when:
 		def res = controller.getKeywordTestStepTableModel(7L, params)
 

@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -194,12 +193,11 @@ public class TestCaseTestStepsController {
 	@ResponseBody
 	public DataTableModel getKeywordTestStepTableModel (@PathVariable long testCaseId, DataTableDrawParameters params) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<TestStep> steps = testCase.getSteps();
 
 		Paging filter = new DataTablePaging(params);
 
-		PagedCollectionHolder<List<TestStep>> holder = new PagingBackedPagedCollectionHolder<>(filter, steps.size(), steps);
-
+		PagedCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
+			testCaseId, filter);
 		// generate the model
 		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
 		return builder.buildDataModel(holder, params.getsEcho());
