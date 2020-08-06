@@ -86,10 +86,8 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		initKeywordTestStepTable: function (settings) {
 			var self = this,
 				  table = $("#keyword-test-step-table"),
-				  postActionWordFunction = self.postActionWordFunction(settings.testCaseUrl, table),
-					dragClass = '',
-					deleteClass = '',
-					squashSettings = '';
+				  postModifyActionWordFunction = self.postModifyActionWordFunction(settings.testCaseUrl, table),
+					dragClass = '', deleteClass = '', squashSettings = '';
 
 			if (settings.permissions.isWritable) {
 				dragClass = 'drag-handle';
@@ -169,21 +167,9 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 								// action-word editable configuration
 								var edconf = confman.getStdJeditable();
 								edconf.data = rowModel['step-action-word-unstyled'];
-								actionWordCell.editable(postActionWordFunction, edconf);
+								actionWordCell.editable(postModifyActionWordFunction, edconf);
 
-								actionWordCell.on('click', function() {
-									if (settings.isAutocompleteActive) {
-										actionWordCell.on('keyup', function (event) {
-											// not perform autocomplete if arrows are pressed
-											if (!_.contains([37, 38, 39, 40], event.which)) {
-												var projectId = self.settings.projectId;
-												var searchInput = $row.find('td.step-action-word input');
-												searchInput.autocomplete();
-												self.performAutocomplete(searchInput, projectId);
-											}
-										});
-									}
-								});
+								self.manageAutocompleteOnActionWordCell(actionWordCell, settings, $row);
 							}
 						});
 					}
@@ -268,6 +254,23 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			};
 		},
 
+		manageAutocompleteOnActionWordCell: function(actionWordCell, settings, $row) {
+			var self = this;
+			actionWordCell.on('click', function() {
+				if (settings.isAutocompleteActive) {
+					actionWordCell.on('keyup', function (event) {
+						// not perform autocomplete if arrows are pressed
+						if (!_.contains([37, 38, 39, 40], event.which)) {
+							var projectId = settings.projectId;
+							var searchInput = $row.find('td.step-action-word input');
+							searchInput.autocomplete();
+							self.performAutocomplete(searchInput, projectId);
+						}
+					});
+				}
+			});
+		},
+
 		performAutocomplete: function (searchInput, projectId) {
 			searchInput.autocomplete('close');
 			searchInput.autocomplete('disable');
@@ -276,7 +279,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 			searchInput.autocomplete({
 				delay : 500,
-				source: function (request, response) {
+				source: function(request, response) {
 					$.ajax({
 						type: 'GET',
 						url: '/squash/keyword-test-cases/autocomplete',
@@ -284,11 +287,8 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 							projectId: projectId,
 							searchInput: searchInputValue
 						},
-						success: function (data) {
+						success: function(data) {
 							response(data);
-						},
-						error: function () {
-							alert("error handler!");
 						}
 					});
 				},
@@ -297,35 +297,57 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			searchInput.autocomplete('enable');
 		},
 
-		postActionWordFunction: function(baseUrl, table) {
+		postModifyActionWordFunction: function(baseUrl, table) {
+			var self = this;
 			return function(value, editableSettings) {
 				var td = this,
 						row = td.parentNode,
 						rowModel = table.fnGetData(row),
 						actionWordCell = $(row).find('td.step-action-word'),
-						actionWordUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word';
+						stepId = rowModel['entity-id'],
+						actionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
 
 				$.ajax({
 					url: actionWordUrl,
 					type: 'POST',
-					data: {value: value}
+					data: { value: value }
 				}).done(function() {
-					var actionWordHtmlUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word-html';
-					$.ajax({
-						url: actionWordHtmlUrl,
-						type: 'GET'
-					}).done(function(actionWordHtml) {
-						actionWordCell.html(actionWordHtml);
-					});
-					var actionWordUnstyledUrl = baseUrl + '/steps/' + rowModel['entity-id'] + '/action-word-unstyled';
-					$.ajax({
-						url: actionWordUnstyledUrl,
-						type: 'GET'
-					}).done(function(actionWordUnstyled) {
-						editableSettings.data = actionWordUnstyled;
-					});
+					self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
 				});
+				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
 			};
+		},
+
+		renderActionWordCell: function(baseUrl, stepId, actionWordCell) {
+			this.getActionWordHtmlFormat(baseUrl, stepId)
+				.done(function(actionWordHtml) {
+					actionWordCell.html(actionWordHtml);
+				});
+		},
+
+		saveNewActionWordInSettings: function(baseUrl, stepId, editableSettings) {
+			this.getActionWordUnstyledFormat(baseUrl, stepId)
+				.done(function(actionWordUnstyled) {
+					editableSettings.data = actionWordUnstyled;
+				});
+		},
+
+		// with html tags for parameters
+		getActionWordHtmlFormat: function(baseUrl, stepId) {
+			var actionWordHtmlUrl = baseUrl + '/steps/' + stepId + '/action-word-html';
+			return $.ajax({
+				url: actionWordHtmlUrl,
+				type: 'GET'
+			});
+		},
+
+		// ex: I have some "apples", the format to display when modifying
+		getActionWordUnstyledFormat: function(baseUrl, stepId) {
+			var actionWordUnstyledUrl = baseUrl + '/steps/' + stepId + '/action-word-unstyled';
+			return $.ajax({
+				url: actionWordUnstyledUrl,
+				type: 'GET'
+			});
 		}
 	});
 	return KeywordTestStepTablePanel;
