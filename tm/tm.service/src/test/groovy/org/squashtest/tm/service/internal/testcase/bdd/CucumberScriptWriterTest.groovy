@@ -40,6 +40,9 @@ class CucumberScriptWriterTest extends Specification {
 	def cucumberScriptWriter = new CucumberScriptWriter()
 
 	def messageSource = Mock(MessageSource)
+
+	def locale = new Locale("en")
+
 	Project project = new Project()
 
 	def "Should generate a Gherkin script without test steps from a KeywordTestCase"() {
@@ -49,7 +52,7 @@ class CucumberScriptWriterTest extends Specification {
 			keywordTestCase.notifyAssociatedWithProject(project)
 		when:
 			1 * messageSource.getMessage(*_) >>> ["Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result == "# language: en\nFeature: Disconnection test"
 	}
@@ -69,7 +72,7 @@ class CucumberScriptWriterTest extends Specification {
 			keywordTestCase.addStep(step3)
 		when:
 			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -104,7 +107,7 @@ Feature: Disconnection test
 			keywordTestCase.addStep(step3)
 		when:
 			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -138,7 +141,7 @@ Feature: Daily test
 			keywordTestCase.addStep(step2)
 		when:
 			4 * messageSource.getMessage(*_) >>> ["Given", "When", "Scenario: ", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -175,7 +178,7 @@ Feature: Daily test
 			keywordTestCase.addStep(step3)
 		when:
 			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -221,7 +224,7 @@ Feature: Daily test
 			dataset.addParameterValue(value)
 		when:
 			5 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario: ", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -266,7 +269,7 @@ Feature: Daily test
 			dataset.addParameterValue(value)
 		when:
 			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -316,7 +319,7 @@ Feature: Daily test
 			dataset.addParameterValue(value)
 		when:
 			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, false)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, false)
 		then:
 			result ==
 """# language: en
@@ -372,7 +375,7 @@ Feature: Daily test
 			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
 			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -446,7 +449,7 @@ Feature: Daily test
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
 			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en
@@ -521,7 +524,7 @@ Feature: Count test
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
 			6 * messageSource.getMessage(*_) >>> ["Given", "When", "Then", "Scenario Outline: ", "Examples:", "Feature: "]
-			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, locale, true)
 		then:
 			result ==
 """# language: en

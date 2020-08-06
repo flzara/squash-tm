@@ -52,15 +52,16 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 	/**
 	 * The implementation for Robot Framework
-	 * <li>does not need any translation: MessageSource is not used and null is safe</li>
+	 * <li>does not need any translation: MessageSource and Locale are not used and null them is safe</li>
 	 * <li>does not escape arrow symbols: escapeArrows is not used</li>
 	 * @param testCase the test case
 	 * @param messageSource unused message source
+	 * @param locale unused locale
 	 * @param escapeArrows whether to escape arrow symbols
-	 * @return the bdd script of the given KeywordTestCase
+	 * @return the Robot Script of the given KeywordTestCase
 	 */
 	@Override
-	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
+	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows) {
 		StringBuilder stringBuilder = new StringBuilder();
 		boolean needToIncludeTfLibrary = appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps(), testCase.getDatasets());
 		prependSettingsTable(stringBuilder, needToIncludeTfLibrary);

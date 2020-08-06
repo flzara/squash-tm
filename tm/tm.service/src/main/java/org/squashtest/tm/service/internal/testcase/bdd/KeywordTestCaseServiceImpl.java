@@ -24,6 +24,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
+import org.squashtest.tm.domain.bdd.BddScriptLanguage;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
@@ -31,6 +32,7 @@ import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy;
 
 import javax.inject.Inject;
+import java.util.Locale;
 
 
 @Service
@@ -77,7 +79,8 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		Project project = keywordTestCase.getProject();
 		BddImplementationTechnology bddImplementationTechnology = project.getBddImplementationTechnology();
 		KeywordTestCaseToFileStrategy strategy = KeywordTestCaseToFileStrategy.strategyFor(bddImplementationTechnology);
-		return strategy.getWritableFileContent(keywordTestCase, messageSource, escapeArrows);
+		Locale locale = project.getBddScriptLanguage().getLocale();
+		return strategy.getWritableFileContent(keywordTestCase, messageSource, locale, escapeArrows);
 	}
 
 }

@@ -28,6 +28,8 @@ import org.squashtest.tm.service.internal.testcase.bdd.BddScriptWriter;
 import org.squashtest.tm.service.internal.testcase.bdd.CucumberScriptWriter;
 import org.squashtest.tm.service.internal.testcase.bdd.RobotScriptWriter;
 
+import java.util.Locale;
+
 /**
  * These are the strategies that comes into play when a KeywordTestCase is dumped to a file.
  *
@@ -152,11 +154,12 @@ public enum KeywordTestCaseToFileStrategy {
 	 *
 	 * @param testCase the test case which script will be generated
 	 * @param messageSource the message source for potential translation
-	 * @param escapeArrows whether to escape arrow symbols
+	 * @param locale the locale for potential translation
+	 * @param escapeArrows whether to escape arrow symbols (for html purpose)
 	 * @return the content of the Script
 	 */
-	public String getWritableFileContent(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
-		return getScriptWriter().writeBddScript(testCase, messageSource, escapeArrows);
+	public String getWritableFileContent(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows) {
+		return getScriptWriter().writeBddScript(testCase, messageSource, locale, escapeArrows);
 	}
 
 	/* ----- Private Api ----- */
