@@ -137,11 +137,7 @@ public class KeywordTestStep extends TestStep {
 		if ("\"\"".equals(paramValue)) {
 			builder.append(paramValue);
 			return;
-		}
-
-		Pattern pattern = Pattern.compile("<[^\"]+>");
-		Matcher matcher = pattern.matcher(paramValue);
-		if (matcher.matches()) {
+		} else if (actionWordParameterValue.isLinkedToTestCaseParam()) {
 			hasTCParam = true;
 			if(escapeArrows) {
 				String replaceHTMLCharactersStr = StringEscapeUtils.escapeHtml4(paramValue);
@@ -149,10 +145,10 @@ public class KeywordTestStep extends TestStep {
 			} else {
 				builder.append(paramValue);
 			}
-			return;
+		} else {
+			String updatedParamValue = updateNumberValue(paramValue);
+			builder.append(updatedParamValue);
 		}
-		String updatedParamValue = updateNumberValue(paramValue);
-		builder.append(updatedParamValue);
 	}
 
 	public boolean hasTCParam() {

@@ -36,6 +36,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author qtran - created on 27/04/2020
@@ -43,6 +45,9 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "ACTION_WORD_PARAMETER_VALUE")
 public class ActionWordParameterValue {
+
+	public static final String REGEX_PARAM_VALUE_LINKED_TO_TEST_CASE_PARAM = "<[^\"]+>";
+
 	private static final int ACTION_WORD_PARAM_VALUE_MAX_LENGTH = 255;
 
 	@Id
@@ -79,6 +84,12 @@ public class ActionWordParameterValue {
 			throw new InvalidActionWordParameterValueException("Action word parameter value length cannot exceed 255 characters.");
 		}
 		this.value = ActionWordUtil.replaceExtraSpacesInText(trimmedValue);
+	}
+
+	public boolean isLinkedToTestCaseParam() {
+		Pattern pattern = Pattern.compile(REGEX_PARAM_VALUE_LINKED_TO_TEST_CASE_PARAM);
+		Matcher matcher = pattern.matcher(value);
+		return matcher.matches();
 	}
 
 	public Long getId() {

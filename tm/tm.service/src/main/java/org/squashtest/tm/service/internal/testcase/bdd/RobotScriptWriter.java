@@ -36,9 +36,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class RobotScriptWriter implements BddScriptWriter {
 
@@ -102,13 +99,10 @@ public class RobotScriptWriter implements BddScriptWriter {
 			steps
 				.stream()
 				.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
-				.map(ActionWordParameterValue::getValue)
 				.distinct()
-				.forEachOrdered(value -> {
-					// if it is a tcParam, parse its name
-					Pattern pattern = Pattern.compile("<[^\"]+>");
-					Matcher matcher = pattern.matcher(value);
-					if(matcher.matches()) {
+				.forEach(paramValue -> {
+					if(paramValue.isLinkedToTestCaseParam()) {
+						String value = paramValue.getValue();
 						String paramName = value.substring(1, value.length()-1);
 						stringBuilder.append(NEW_LINE_CHAR);
 						stringBuilder.append("\t${" + paramName + "} =\tGet Param\t" + paramName);
@@ -187,24 +181,16 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 	private void updateBuilderWithParamValue(StringBuilder stringBuilder, ActionWordParameterValue actionWordParameterValue, boolean escapeArrows) {
 		String paramValue = actionWordParameterValue.getValue();
-		if("\"\"".equals(paramValue)) {
+		if ("\"\"".equals(paramValue)) {
 			stringBuilder.append(paramValue);
-			return;
-		}
-
-		Pattern pattern = Pattern.compile("<[^\"]+>");
-		Matcher matcher = pattern.matcher(paramValue);
-		if(matcher.matches()) {
+		} else if (actionWordParameterValue.isLinkedToTestCaseParam()) {
 			hasTCParam = true;
 			String replacedCharactersString =
 				paramValue.replace("<", "${").replace(">", "}");
 			stringBuilder.append(replacedCharactersString);
-			return;
+		} else {
+			stringBuilder.append(DOUBLE_QUOTE_CHAR + paramValue + DOUBLE_QUOTE_CHAR);
 		}
-
-		stringBuilder.append(DOUBLE_QUOTE_CHAR + paramValue + DOUBLE_QUOTE_CHAR);
 	}
-
-
 }
 

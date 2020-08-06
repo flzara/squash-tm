@@ -375,11 +375,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			newValue.setActionWordParam(parameter);
 			newValue.setKeywordTestStep(newTestStep);
 
-			//add test case param if needed
-			String valueStr = newValue.getValue().trim();
-			Pattern pattern = Pattern.compile("<[^\"]+>");
-			Matcher matcher = pattern.matcher(valueStr);
-			if (matcher.matches()) {
+			if (newValue.isLinkedToTestCaseParam()) {
+				//add test case param if needed
+				String valueStr = newValue.getValue().trim();
 				String newValueValue = insertNewTestCaseParamIfNeeded(parentTestCase, valueStr);
 				newValue.setValue(newValueValue);
 			}
