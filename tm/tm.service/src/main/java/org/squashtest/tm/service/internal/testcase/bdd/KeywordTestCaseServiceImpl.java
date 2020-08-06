@@ -24,10 +24,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
-import org.squashtest.tm.domain.bdd.BddScriptLanguage;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy;
 
@@ -44,34 +42,17 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 
 	@Override
 	public String createFileName(KeywordTestCase keywordTestCase) {
-		// Get techno from Project
-		// Get corresponding Strategy
-		KeywordTestCaseToFileStrategy strategy =
-			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
-		// Create fileName
-		return strategy.createFilenameFor(keywordTestCase);
+		return getKeywordTestCaseToFileStrategy(keywordTestCase).createFilenameFor(keywordTestCase);
 	}
 
 	@Override
 	public String createBackupFileName(KeywordTestCase keywordTestCase) {
-		// Get techno from Project
-		// Get corresponding Strategy
-		KeywordTestCaseToFileStrategy strategy =
-			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
-		// Create fileName
-		return strategy.backupFilenameFor(keywordTestCase);
+		return getKeywordTestCaseToFileStrategy(keywordTestCase).backupFilenameFor(keywordTestCase);
 	}
 
 	@Override
 	public String buildFilenameMatchPattern(KeywordTestCase keywordTestCase) {
-		//TODO:refactoring me for all above methods!!!
-
-		// Get techno from Project
-		// Get corresponding Strategy
-		KeywordTestCaseToFileStrategy strategy =
-			KeywordTestCaseToFileStrategy.strategyFor(BddImplementationTechnology.CUCUMBER);
-		// Create fileName
-		return strategy.buildFilenameMatchPattern(keywordTestCase);
+		return getKeywordTestCaseToFileStrategy(keywordTestCase).buildFilenameMatchPattern(keywordTestCase);
 	}
 
 	@Override
@@ -81,6 +62,12 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		KeywordTestCaseToFileStrategy strategy = KeywordTestCaseToFileStrategy.strategyFor(bddImplementationTechnology);
 		Locale locale = project.getBddScriptLanguage().getLocale();
 		return strategy.getWritableFileContent(keywordTestCase, messageSource, locale, escapeArrows);
+	}
+
+	private KeywordTestCaseToFileStrategy getKeywordTestCaseToFileStrategy(KeywordTestCase keywordTestCase) {
+		Project project = keywordTestCase.getProject();
+		BddImplementationTechnology bddImplementationTechnology = project.getBddImplementationTechnology();
+		return KeywordTestCaseToFileStrategy.strategyFor(bddImplementationTechnology);
 	}
 
 }

@@ -29,9 +29,13 @@ import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.CUCUMBER
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
 
 @UnitilsSupport
 @Transactional
@@ -489,35 +493,49 @@ Daily test
 	}
 
 	/* ----- File System Methods ----- */
+
+	@Unroll("Should create a file name for #bddTechnology")
 	def "Should create a File name for a Keyword Test case"() {
-		given:
-		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
-
-		when:
-		def result = keywordTestCaseService.createFileName(keywordTestCase)
-
-		then:
-		result == "-4_Disconnection_test.feature"
+		given: "a keyword test case"
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
+			keywordTestCase.project.bddImplementationTechnology = bddTechnology
+		when: "I create the file name"
+			def result = keywordTestCaseService.createFileName(keywordTestCase)
+		then: "the result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER 		| "-4_Disconnection_test.feature"
+			ROBOT 			| "-4_Disconnection_test.robot"
 	}
 
+	@Unroll("Should create a backup file name for #bddTechnology")
 	def "Should create a backup File name for a Keyword Test case"(){
-		given:
-		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
-
-		when:
-		def result = keywordTestCaseService.createBackupFileName(keywordTestCase)
-
-		then:
-		result == "-4.feature"
+		given: "a keyword test case"
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
+			keywordTestCase.project.bddImplementationTechnology = bddTechnology
+		when: "I create the backup file name"
+			def result = keywordTestCaseService.createBackupFileName(keywordTestCase)
+		then: "the result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER		| "-4.feature"
+			ROBOT			| "-4.robot"
 	}
 
+	@Unroll("Should build name pattern for #bddTechnology")
 	def "Should build Pattern for a Keyword Test case"(){
-		given:
-		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
-		when:
-		def result = keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase)
-
-		then:
-		result == "-4(_.*)?\\.feature"
+		given: "a keyword test case"
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-4L)
+			keywordTestCase.project.bddImplementationTechnology = bddTechnology
+		when: "I build the file name pattern"
+			def result = keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase)
+		then: "the result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER		| "-4(_.*)?\\.feature"
+			ROBOT			| "-4(_.*)?\\.robot"
 	}
 }

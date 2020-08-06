@@ -33,47 +33,73 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.CUCUMBER
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
 
 class KeywordTestCaseServiceImplTest extends Specification {
 
 	KeywordTestCaseService keywordTestCaseService = new KeywordTestCaseServiceImpl()
+
 	def messageSource = Mock(MessageSource)
 
 	def setup(){
 		keywordTestCaseService.messageSource = messageSource
 	}
 
-	def "Should create a File name for a Keyword Test case"(){
-		given:
-		def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
-
-		when:
-		def result = keywordTestCaseService.createFileName(keywordTestCase)
-
-		then:
-		result == "777_Test_de_Deconnexion.feature"
+	@Unroll("Should create file name for #bddTechnology")
+	def "Should create a file name for a Keyword Test case"(){
+		given: "A Project"
+			def project = new Project()
+			project.setBddImplementationTechnology(bddTechnology)
+		and: "A KeywordTestCase"
+			def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
+			keywordTestCase.notifyAssociatedWithProject(project)
+		when: "I create the file name"
+			def result = keywordTestCaseService.createFileName(keywordTestCase)
+		then: "The result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER 		| "777_Test_de_Deconnexion.feature"
+			ROBOT			| "777_Test_de_Deconnexion.robot"
 	}
 
-	def "Should create a backup File name for a Keyword Test case"(){
-		given:
-		def keywordTestCase = new KeywordTCMock(777L)
-
-		when:
-		def result = keywordTestCaseService.createBackupFileName(keywordTestCase)
-
-		then:
-		result == "777.feature"
+	@Unroll("Should create backup file name for #bddTechnology")
+	def "Should create a backup file name for a Keyword Test case"(){
+		given: "A project"
+			def project = new Project()
+			project.setBddImplementationTechnology(bddTechnology)
+		and: "A KeywordTestCase"
+			def keywordTestCase = new KeywordTCMock(777L)
+			keywordTestCase.notifyAssociatedWithProject(project)
+		when: "I create the backup file name"
+			def result = keywordTestCaseService.createBackupFileName(keywordTestCase)
+		then: "The result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER 		| "777.feature"
+			ROBOT 			| "777.robot"
 	}
 
+	@Unroll("Should create name Pattern for #bddTechnology")
 	def "Should build Pattern for a Keyword Test case"(){
-		given:
-		def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
-
-		when:
-		def result = keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase)
-
-		then:
-		result == "777(_.*)?\\.feature"
+		given: "A project"
+			def project = new Project()
+			project.setBddImplementationTechnology(bddTechnology)
+		and: "A KeywordTestCase"
+			def keywordTestCase = new KeywordTCMock(777L, "Test de Déconnexion")
+			keywordTestCase.notifyAssociatedWithProject(project)
+		when: "I build the file name match pattern"
+			def result = keywordTestCaseService.buildFilenameMatchPattern(keywordTestCase)
+		then: "The result is as expected"
+			result == expectedResult
+		where:
+			bddTechnology	| expectedResult
+			CUCUMBER 		| "777(_.*)?\\.feature"
+			ROBOT			| "777(_.*)?\\.robot"
 	}
 
 	class KeywordTCMock extends KeywordTestCase {
@@ -209,20 +235,20 @@ I love fruit
 	}
 }
 
-	class ActionWordParameterMock extends ActionWordParameter {
-		private Long id
+class ActionWordParameterMock extends ActionWordParameter {
+	private Long id
 
-		ActionWordParameterMock(Long id, String name, String defaultValue) {
-			this.setName(name)
-			this.setDefaultValue(defaultValue)
-			this.id = id
-		}
-
-		Long getId() {
-			return id
-		}
-
-		void setId(Long id) {
-			this.id = id
-		}
+	ActionWordParameterMock(Long id, String name, String defaultValue) {
+		this.setName(name)
+		this.setDefaultValue(defaultValue)
+		this.id = id
 	}
+
+	Long getId() {
+		return id
+	}
+
+	void setId(Long id) {
+		this.id = id
+	}
+}
