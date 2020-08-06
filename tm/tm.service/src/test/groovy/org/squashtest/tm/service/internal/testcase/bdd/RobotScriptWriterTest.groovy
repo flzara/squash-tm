@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd
 
-import org.springframework.context.MessageSource
+
 import org.squashtest.tm.domain.bdd.ActionWord
 import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue
@@ -32,40 +32,23 @@ import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.Parameter
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW
 
 class RobotScriptWriterTest extends Specification {
 
 	def robotScriptWriter = new RobotScriptWriter()
 
-	def messageSource = Mock(MessageSource)
-
 	Project project = new Project()
-
-	AutomationRequest automationRequest = new AutomationRequest()
-
-	def setup() {
-		project.setBddImplementationTechnology(ROBOT)
-		automationRequest.setAutomationPriority(4)
-	}
 
 	/* ----- Test Case Script ----- */
 	def "Should generate a Robot script without test steps from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Disconnection test")
-			keywordTestCase.setImportance(LOW)
-			keywordTestCase.setAutomationRequest(automationRequest)
 			keywordTestCase.notifyAssociatedWithProject(project)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -89,7 +72,7 @@ Disconnection test"""
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -124,7 +107,7 @@ Disconnection test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -158,7 +141,7 @@ Daily test
 			keywordTestCase.addStep(step1)
 			keywordTestCase.addStep(step2)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -195,7 +178,7 @@ Daily test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -241,7 +224,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -286,7 +269,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 			then:
 			result ==
 """*** Settings ***
@@ -334,7 +317,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, false)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, false)
 		then:
 			result ==
 """*** Settings ***
@@ -388,7 +371,7 @@ Daily test
 			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
 			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -461,7 +444,7 @@ Daily test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -536,7 +519,7 @@ Count test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 		result ==
 """*** Settings ***
