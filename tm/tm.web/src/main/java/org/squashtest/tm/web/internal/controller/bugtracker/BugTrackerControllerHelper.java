@@ -107,8 +107,8 @@ public final class BugTrackerControllerHelper {
 
 			@Override
 			public void visit(KeywordTestCase keywordTestCase) {
-				throw new IllegalArgumentException("The Kind " + additionalInformation + " for a Test Case does not exist.");
-
+				additionalInformation.setValue(getAdditionalInformationForKeywordTestCase(
+					executionSteps, buggedStepId, totalStepNumber, locale, messageSource));
 			}
 
 			@Override
@@ -169,6 +169,55 @@ public final class BugTrackerControllerHelper {
 			builder.append(actionText);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale));
 			builder.append(expectedResult);
+			builder.append("\n\n\n");
+			if (step.getId().equals(buggedStepId)) {
+				break;
+			}
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * For a Keyword TestCase,
+	 * build the String that shows all ExecutionSteps before the bugged step + the bugged step itself.<br/>
+	 * The string will look like this : <br/>
+	 * <br>
+	 * <em>
+	 * 	=============================================<br>
+	 *  |    Step 1/N<br>
+	 *  =============================================<br>
+	 * 	--- Action ---<br>
+	 * 	action description<br>
+	 * 	<br>
+	 * 	<br>
+	 * 	=============================================<br>
+	 * 	|    Step 2/N<br>
+	 * 	=============================================<br>
+	 * 	...<br>
+	 * 	<br></em>
+	 *
+	 * @param executionSteps the list of Steps in the Execution
+	 * @param buggedStepId the id of the bugged Step
+	 * @param totalStepNumber the total number of Steps
+	 * @param locale the locale
+	 * @param messageSource the messageSource
+	 * @return the built String as described
+	 */
+	private static String getAdditionalInformationForKeywordTestCase(
+		List<ExecutionStep> executionSteps,
+		long buggedStepId,
+		int totalStepNumber,
+		Locale locale,
+		MessageSource messageSource) {
+
+		StringBuilder builder = new StringBuilder();
+		for (ExecutionStep step : executionSteps) {
+			appendStepTitle(locale, messageSource, totalStepNumber, builder, step);
+
+			String actionText = HTMLCleanupUtils.htmlToText(step.getAction());
+
+			builder.append(messageSource.getMessage("issue.default.additionalInformation.action", null, locale));
+			builder.append(actionText);
 			builder.append("\n\n\n");
 			if (step.getId().equals(buggedStepId)) {
 				break;
