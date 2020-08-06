@@ -1322,7 +1322,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void changeBddScriptLanguage(long projectId, String bddScriptLanguage) {
+		BddScriptLanguage newBddScriptLanguage = BddScriptLanguage.valueOf(bddScriptLanguage);
 		GenericProject genericProject = genericProjectDao.getOne(projectId);
-		genericProject.setBddScriptLanguage(BddScriptLanguage.valueOf((bddScriptLanguage)));
+		BddImplementationTechnology currentBddImplTechnology = genericProject.getBddImplementationTechnology();
+		if (BddImplementationTechnology.ROBOT.equals(currentBddImplTechnology)
+			&& !BddScriptLanguage.ENGLISH.equals(newBddScriptLanguage)) {
+			throw new IllegalArgumentException("No language other than English can be set for a Robot project.");
+		}
+		genericProject.setBddScriptLanguage(newBddScriptLanguage);
 	}
 }

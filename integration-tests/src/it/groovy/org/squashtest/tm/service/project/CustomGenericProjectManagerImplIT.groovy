@@ -119,4 +119,15 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 		then:
 			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.SPANISH
 	}
+
+	def "#changeBddScriptLanguage(long, String) - Should throw an IllegalArgumentException"() {
+		given:
+			def project = genericProjectFinder.findById(-1L)
+			project.setBddScriptLanguage(BddScriptLanguage.ENGLISH)
+			project.setBddImplementationTechnology(BddImplementationTechnology.ROBOT)
+		when:
+			customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
+		then:
+			thrown IllegalArgumentException
+	}
 }

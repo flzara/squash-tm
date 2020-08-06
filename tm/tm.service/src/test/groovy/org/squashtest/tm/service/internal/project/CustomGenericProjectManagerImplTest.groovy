@@ -806,4 +806,16 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 			project.getBddScriptLanguage() == BddScriptLanguage.FRENCH
 	}
+
+	def "#changeBddScriptLanguage(long, String) - Should throw an IllegalArgumentException"() {
+		given:
+			Project project = new Project()
+			project.bddScriptLanguage = BddScriptLanguage.ENGLISH
+			project.bddImplementationTechnology = BddImplementationTechnology.ROBOT
+			genericProjectDao.getOne(4L) >> project
+		when:
+			manager.changeBddScriptLanguage(4L, "FRENCH")
+		then:
+			thrown IllegalArgumentException
+	}
 }

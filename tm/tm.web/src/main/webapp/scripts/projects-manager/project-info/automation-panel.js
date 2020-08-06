@@ -320,7 +320,6 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
       * Reforge the Repository Select. This is the only solution found to disable the Select.
       */
 			lockBddImplLanguageSelect: function() {
-				var self = this;
 				$('#project-bdd-script-language-select').remove();
 				var newDiv = $("<div id='project-bdd-script-language-select' style='display: inline'>" + translator.get('language.ENGLISH') + "</div>");
 				$('#project-bdd-script-language-select-container').append(newDiv);
@@ -328,19 +327,23 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 			initBddScriptLanguageSelect: function() {
 				var self = this;
-				return new SelectJEditable({
-					componentId: "project-bdd-script-language-select",
-					jeditableSettings: {
-						data: self.availableBddScriptLanguages
-					},
-					target: function(value) {
-						if(self.chosenBddScriptLanguage !== value) {
-							self.changeBddScriptLanguage(value);
-							self.chosenBddScriptLanguage = value;
+				if (self.chosenBddImplTechnology === 'ROBOT') {
+					self.lockBddImplLanguageSelect();
+				} else {
+					return new SelectJEditable({
+						componentId: "project-bdd-script-language-select",
+						jeditableSettings: {
+							data: self.availableBddScriptLanguages
+						},
+						target: function (value) {
+							if (self.chosenBddScriptLanguage !== value) {
+								self.changeBddScriptLanguage(value);
+								self.chosenBddScriptLanguage = value;
+							}
+							return value;
 						}
-						return value;
-					}
-				});
+					});
+				}
 			},
 
 			changeBddImplTechnology: function(value) {
