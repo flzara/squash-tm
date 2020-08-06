@@ -44,12 +44,6 @@ public class RobotScriptWriter implements BddScriptWriter {
 	private static final char NEW_LINE_CHAR = '\n';
 	private static final char DOUBLE_QUOTE_CHAR = '\"';
 
-	private boolean hasTCParam;
-
-	public boolean hasTCParam() {
-		return hasTCParam;
-	}
-
 	/**
 	 * The implementation for Robot Framework
 	 * <li>does not need any translation: MessageSource and Locale are not used and null them is safe</li>
@@ -63,31 +57,31 @@ public class RobotScriptWriter implements BddScriptWriter {
 	@Override
 	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows) {
 		StringBuilder stringBuilder = new StringBuilder();
-		boolean needToIncludeTfLibrary = appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps(), testCase.getDatasets());
+		boolean needToIncludeTfLibrary =
+			!testCase.getDatasets().isEmpty() && testCase.containsStepsUsingTcParam();
+		appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps(), needToIncludeTfLibrary);
 		prependSettingsTable(stringBuilder, needToIncludeTfLibrary);
 		return stringBuilder.toString();
 	}
 
 	/**
-	 * Append the test cases table to the script and return whether the test case has and uses data sets.
+	 * Append the test cases table to the script.
 	 * @param stringBuilder string builder of the script
 	 * @param testCaseName name of the test case
 	 * @param steps set of steps in the test case
 	 * @return whether the test case uses data sets
 	 */
-	private boolean appendTestCasesTable(StringBuilder stringBuilder, String testCaseName, List<TestStep> steps, Set<Dataset> datasetSets) {
-		boolean hasTcParamInTestCase = false;
+	private void appendTestCasesTable(
+		StringBuilder stringBuilder, String testCaseName, List<TestStep> steps, boolean needToIncludeTfLibrary) {
+
 		stringBuilder.append("*** Test Cases ***\n");
 		stringBuilder.append(testCaseName);
-		StringBuilder stepBuilder = new StringBuilder();
+		StringBuilder stepBuilder = new	StringBuilder();
 		if(!steps.isEmpty()) {
 			stepBuilder.append(NEW_LINE_CHAR);
 			for (TestStep step : steps) {
 				KeywordTestStep keywordStep = (KeywordTestStep) step;
 				String stepScript = writeBddStepScript(keywordStep,null, null, false);
-				if(!hasTcParamInTestCase) {
-					hasTcParamInTestCase = hasTCParam();
-				}
 				stepBuilder
 					.append(TAB_CHAR)
 					.append(stepScript)
@@ -95,8 +89,8 @@ public class RobotScriptWriter implements BddScriptWriter {
 			}
 			stepBuilder.deleteCharAt(stepBuilder.length() - 1);
 		}
-		boolean needToIncludeTfLibrary = !datasetSets.isEmpty() && hasTcParamInTestCase;
 		if(needToIncludeTfLibrary) {
+			StringBuilder paramBuilder = new StringBuilder();
 			steps
 				.stream()
 				.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
@@ -105,14 +99,14 @@ public class RobotScriptWriter implements BddScriptWriter {
 					if(paramValue.isLinkedToTestCaseParam()) {
 						String value = paramValue.getValue();
 						String paramName = value.substring(1, value.length()-1);
-						stringBuilder.append(NEW_LINE_CHAR);
-						stringBuilder.append("\t${" + paramName + "} =\tGet Param\t" + paramName);
+						paramBuilder.append(NEW_LINE_CHAR);
+						paramBuilder.append("\t${" + paramName + "} =\tGet Param\t" + paramName);
 					}
 				});
-			stringBuilder.append(NEW_LINE_CHAR);
+			paramBuilder.append(NEW_LINE_CHAR);
+			stringBuilder.append(paramBuilder);
 		}
 		stringBuilder.append(stepBuilder);
-		return needToIncludeTfLibrary;
 	}
 
 	/**
@@ -185,7 +179,6 @@ public class RobotScriptWriter implements BddScriptWriter {
 		if ("\"\"".equals(paramValue)) {
 			stringBuilder.append(paramValue);
 		} else if (actionWordParameterValue.isLinkedToTestCaseParam()) {
-			hasTCParam = true;
 			String replacedCharactersString =
 				paramValue.replace("<", "${").replace(">", "}");
 			stringBuilder.append(replacedCharactersString);

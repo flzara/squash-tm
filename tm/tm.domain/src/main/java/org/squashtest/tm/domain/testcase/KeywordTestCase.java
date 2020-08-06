@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
@@ -34,9 +36,17 @@ public class KeywordTestCase extends TestCase {
 		return res;
 	}
 
-	@Override
-	public void accept(TestCaseVisitor visitor) {
-		visitor.visit(this);
+	/**
+	 * Check whether this KeywordTestCase contains at least one step which uses an ActionWordParameterValue
+	 * that is linked to a TestCase parameter.
+	 * @return whether at least one of the test case's steps uses an ActionWordParameterValue which is linked to a test case parameter
+	 */
+	public boolean containsStepsUsingTcParam() {
+		return this.getSteps().stream()
+			.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
+			.map(ActionWordParameterValue::isLinkedToTestCaseParam)
+			.reduce(Boolean::logicalOr)
+			.get();
 	}
 
 	@Override
@@ -46,4 +56,8 @@ public class KeywordTestCase extends TestCase {
 		return copy;
 	}
 
+	@Override
+	public void accept(TestCaseVisitor visitor) {
+		visitor.visit(this);
+	}
 }

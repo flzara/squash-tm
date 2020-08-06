@@ -64,4 +64,52 @@ class KeywordTestCaseTest extends Specification {
 			copiedStep.actionWord == sourceStep.actionWord
 			!copiedStep.is(sourceStep)
 	}
+
+	@Unroll
+	def "should compute whether this test case contains steps using ActionWordParamValues linked to test case parameters"() {
+		given: "A KeywordTestCase with some steps with params"
+			KeywordTestCase testCase = new KeywordTestCase()
+			testCase.setName("I love fruit")
+			testCase.notifyAssociatedWithProject(project)
+
+			def fragment1 = new ActionWordText("I have several ")
+			def fragment2 = new ActionWordParameter("fruit", "apples")
+			def fragment3 = new ActionWordText(" in my basket")
+			def actionWord1 = new ActionWord([fragment1, fragment2, fragment3])
+			def value2 = new ActionWordParameterValue("pears")
+			value2.setActionWordParam(fragment2)
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
+			step1.setParamValues([value2])
+
+			def fragment4 = new ActionWordText("I eat ")
+			def fragment5 = new ActionWordParameter("amount", "1")
+			def fragment6 = new ActionWordText(" kilograms")
+			def actionWord2 = new ActionWord([fragment4, fragment5, fragment6])
+			def value5 = new ActionWordParameterValue("0.7")
+			value5.setActionWordParam(fragment5)
+			KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
+			step2.setParamValues([value5])
+
+			def fragment7 = new ActionWordText("I am ")
+			def fragment8 = new ActionWordParameter("mood", "fine")
+			def fragment9 = new ActionWordText(" in my life")
+			def actionWord3 = new ActionWord([fragment7, fragment8, fragment9])
+			def value8 = new ActionWordParameterValue(valueParam)
+			value8.setActionWordParam(fragment8)
+			KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, actionWord3)
+			step3.setParamValues([value8])
+
+			testCase.addStep(step1)
+			testCase.addStep(step2)
+			testCase.addStep(step3)
+		when:
+			def res = testCase.containsStepsUsingTcParam()
+		then:
+			res == expectedResult
+		where:
+			valueParam | expectedResult
+			"<happy>"  | true
+			"happy"    | false
+	}
+
 }
