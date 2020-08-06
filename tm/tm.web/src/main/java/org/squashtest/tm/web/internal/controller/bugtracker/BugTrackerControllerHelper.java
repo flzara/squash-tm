@@ -61,9 +61,8 @@ import java.util.Map;
 public final class BugTrackerControllerHelper {
 
 	private static final String ISSUE_URL = "issue-url";
-	public static final String BT_PROJECT = "BtProject";
-	private static final String STANDARD = "STANDARD";
-	private static final String GHERKIN = "GHERKIN";
+	private static final String BT_PROJECT = "BtProject";
+	private static final String DESCRIPTION_STEPS_SEPARATION = "\n\n\n";
 
 	@Inject
 	private BugTrackersLocalService service;
@@ -169,7 +168,7 @@ public final class BugTrackerControllerHelper {
 			builder.append(actionText);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale));
 			builder.append(expectedResult);
-			builder.append("\n\n\n");
+			builder.append(DESCRIPTION_STEPS_SEPARATION);
 			if (step.getId().equals(buggedStepId)) {
 				break;
 			}
@@ -218,7 +217,7 @@ public final class BugTrackerControllerHelper {
 
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.action", null, locale));
 			builder.append(actionText);
-			builder.append("\n\n\n");
+			builder.append(DESCRIPTION_STEPS_SEPARATION);
 			if (step.getId().equals(buggedStepId)) {
 				break;
 			}
@@ -270,7 +269,7 @@ public final class BugTrackerControllerHelper {
 			String scriptText = HTMLCleanupUtils.htmlToText(scriptTextWithCarriageReturns);
 			builder.append(messageSource.getMessage("issue.default.additionalInformation.script", null, locale));
 			builder.append(scriptText);
-			builder.append("\n\n\n");
+			builder.append(DESCRIPTION_STEPS_SEPARATION);
 			if(step.getId().equals(buggedStepId)) {
 				break;
 			}
