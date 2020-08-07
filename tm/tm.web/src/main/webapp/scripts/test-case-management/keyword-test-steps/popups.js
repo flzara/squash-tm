@@ -84,6 +84,30 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 
 		}
 
+		function _initPreviewScript(conf) {
+
+			var previewScriptDialog = $("#preview-generated-script-dialog");
+
+			previewScriptDialog.formDialog({ width: 800 });
+
+			previewScriptDialog.on('formdialogopen', function() {
+				var thisDialog = $(this);
+				thisDialog.formDialog('setState', 'loading');
+				$.ajax({
+					url : squashtm.app.contextRoot + "keyword-test-cases/" + conf.testCaseId + "/generated-script",
+					type: 'GET'
+				}).then(function(generatedScript) {
+					var scriptToDisplay = generatedScript.split('\t').join('&emsp;&emsp;').split('\n').join('<br>');
+					thisDialog.find("div[data-def='state=main']").html(scriptToDisplay);
+					thisDialog.formDialog('setState', 'main');
+				})
+			});
+
+			previewScriptDialog.on('formdialogcancel', function () {
+				$(this).formDialog('close');
+			});
+		}
+
 
 		/*
 		 * needs :
@@ -98,6 +122,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 				if (conf.permissions.writable) {
 					_initDeleteStep(conf);
 				}
+				_initPreviewScript(conf);
 			}
 		};
 

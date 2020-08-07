@@ -80,7 +80,8 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		events: {
 			"click #add-keyword-test-step-btn": "addKeywordTestStepFromButton",
-			"click #delete-all-steps-button": "deleteSelectedTestSteps"
+			"click #delete-all-steps-button": "deleteSelectedTestSteps",
+			"click #preview-generated-script-button": "generateScript"
 		},
 
 		initKeywordTestStepTable: function (settings) {
@@ -240,6 +241,10 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			this.refresh();
 			this.cleanInputs();
 			eventBus.trigger('testStepsTable.stepAdded');
+		},
+
+		generateScript: function() {
+			$('#preview-generated-script-dialog').formDialog('open');
 		},
 
 		deleteSelectedTestSteps: function () {

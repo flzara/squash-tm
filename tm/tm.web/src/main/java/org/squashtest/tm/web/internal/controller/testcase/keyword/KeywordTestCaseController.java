@@ -22,17 +22,29 @@ package org.squashtest.tm.web.internal.controller.testcase.keyword;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.service.actionword.ActionWordService;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
+import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 
+import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.Collection;
 
 @Controller
 @RequestMapping("/keyword-test-cases")
 public class KeywordTestCaseController {
+
+	@Inject
+	KeywordTestCaseFinder keywordTestCaseFinder;
+
+	@Inject
+	private KeywordTestCaseService keywordTestCaseService;
 
 	@Autowired(required = false)
 	private ActionWordService actionWordService;
@@ -43,6 +55,13 @@ public class KeywordTestCaseController {
 		@RequestParam Long projectId,
 		@RequestParam String searchInput) {
 		return actionWordService.findAllMatchingActionWords(projectId, searchInput);
+	}
+
+	@ResponseBody
+	@RequestMapping("/{testCaseId}/generated-script")
+	public String getGeneratedScript(@PathVariable long testCaseId) {
+		KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(testCaseId);
+		return keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true);
 	}
 
 }

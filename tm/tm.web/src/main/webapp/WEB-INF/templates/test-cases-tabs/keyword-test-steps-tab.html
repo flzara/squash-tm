@@ -57,11 +57,14 @@
       </div>
     </div>
   </div>
-  <br/>
-  <div id="add-keyword-test-step-result"></div>
 
   <!-- ==================== toolbar definition =================== -->
   <div class="toolbar">
+    <button id="preview-generated-script-button"
+            class="button" th:text="#{label.Preview}" th:title="#{label.Preview}"
+            style="float: left;">
+    	preview
+    </button>
     <span class="group" th:if="${isWritable}">
 			<button id="delete-all-steps-button"
               data-icon="ui-icon-trash"
@@ -72,7 +75,6 @@
 			</button>
 		</span>
   </div>
-
   <!-- ==================== /toolbar definition =================== -->
 
   <!-- ==================== table definition =================== -->
@@ -91,18 +93,6 @@
       <!-- eager-loaded through data property of table -->
       </tbody>
     </table>
-
-    <!-- script -->
-    <br/>
-    <div>
-      <span>Generated script:</span>
-      <br/>
-      <br/>
-      <div style="background-color:#FDFDFD;">
-        <span style="font-family: monospace; font-size:18px;" th:utext="${#strings.replace(#strings.replace(generated_script,'&#9;','&emsp;&emsp;'),'&#10;','&lt;br&gt;')}"></span>
-      </div>
-
-    </div>
   </div>
   <!-- ==================== /table definition =================== -->
 
@@ -125,6 +115,22 @@
     </div>
   </div>
   <!-- ==================== /Remove Keyword Test Step Row Dialog ==================== -->
+
+  <!-- ==================== Preview Generated Script Dialog ==================== -->
+  <div id="preview-generated-script-dialog" class="not-displayed popup-dialog" th:title="#{dialog.keyword-test-case.generated-script.preview}">
+    <div class="display-table-row">
+      <div class="display-table-cell">
+        <div data-def="state=loading" th:text="#{message.PleaseWait}">loading</div>
+        <div data-def="state=main" style="font-family: monospace; font-size:14px; line-height: normal">
+          generate script
+        </div>
+      </div>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Close}" data-def="evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Preview Generated Script Dialog ==================== -->
 
   <script type="text/javascript" th:inline="javascript">
   /*<![CDATA[*/

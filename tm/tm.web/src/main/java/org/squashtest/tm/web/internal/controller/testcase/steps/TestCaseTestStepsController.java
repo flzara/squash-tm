@@ -98,9 +98,6 @@ public class TestCaseTestStepsController {
 	private CustomFieldHelperService cufHelperService;
 
 	@Inject
-	private KeywordTestCaseService keywordTestCaseService;
-
-	@Inject
 	private KeywordTestCaseFinder keywordTestCaseFinder;
 
 	@Inject
@@ -247,7 +244,6 @@ public class TestCaseTestStepsController {
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordMap", createKeywordMap(keywordTestCase.getProject()));
-		model.addAttribute("generated_script", keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true));
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 
