@@ -100,7 +100,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 					var scriptToDisplay = generatedScript.split('\t').join('&emsp;&emsp;').split('\n').join('<br>');
 					thisDialog.find("div[data-def='state=main']").html(scriptToDisplay);
 					thisDialog.formDialog('setState', 'main');
-				})
+				});
 			});
 
 			previewScriptDialog.on('formdialogcancel', function () {
