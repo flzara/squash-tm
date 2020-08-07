@@ -74,4 +74,11 @@ public interface ActionWordLibraryNodeService {
 	 * @param nodeIds Node Ids to be deleted
 	 */
 	OperationReport delete(List<Long> nodeIds);
+
+	/**
+	 * Get an Action word (not Library) Node path relative to its library/project
+	 * @param nodeId current node id
+	 * @return Action word node path
+	 */
+	String findActionWordLibraryNodePathById(Long nodeId);
 }

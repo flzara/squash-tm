@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.actionword.CannotDeleteActionWordException;
+import org.squashtest.tm.exception.actionword.InvalidActionWordParentNodeTypeException;
+import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
@@ -44,6 +46,8 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.FOLDER;
+import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.LIBRARY;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service
@@ -72,7 +76,7 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	@PreAuthorize("hasPermission(#nodeId, 'org.squashtest.tm.domain.actionword.ActionWordLibraryNode', 'READ') "
 		+ OR_HAS_ROLE_ADMIN)
 	public ActionWordLibrary findLibraryByNodeId(Long nodeId) {
-		return (ActionWordLibrary) findEntityAndCheckType(nodeId, ActionWordTreeDefinition.LIBRARY);
+		return (ActionWordLibrary) findEntityAndCheckType(nodeId, LIBRARY);
 	}
 
 	@Override
@@ -130,6 +134,27 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 			checkTestStepAssociation(node);
 		}
 		return deletionHandler.deleteNodes(nodeIds);
+	}
+
+	@Override
+	public String findActionWordLibraryNodePathById(Long nodeId) {
+		ActionWordLibraryNode node = actionWordLibraryNodeDao.getOne(nodeId);
+		StringBuilder result = new StringBuilder(node.getName());
+		result = addParentNameIntoNodePath(result, node);
+		return result.toString();
+	}
+
+	private StringBuilder addParentNameIntoNodePath(StringBuilder builder, ActionWordLibraryNode node) {
+		ActionWordLibraryNode parentNode = (ActionWordLibraryNode) node.getParent();
+		builder.insert(0,parentNode.getName()+"/");
+		switch (parentNode.getEntityType()) {
+			case FOLDER:
+				return addParentNameIntoNodePath(builder, parentNode);
+			case LIBRARY:
+				return builder;
+			default:
+				throw new InvalidActionWordParentNodeTypeException("Only Library or Folder Node Type can be an Action word node container.");
+		}
 	}
 
 	private void checkNodeIsNull(TreeLibraryNode node) {

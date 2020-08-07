@@ -132,7 +132,6 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	}
 
 	def "should delete various nodes"() {
-
 		when:
 		actionWordLibraryNodeService.delete(nodesIds)
 
@@ -152,4 +151,7 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-2L,-4L]		||	[-3L,-7L,-6L]														|	[-2L,-4L]
 		[-3L,-7L]		||	[-2L,-4L,-6L]														|	[-3L,-7L]
 	}
+
+	//TODO-QUAN
+	//add test for findActionWordLibraryNodePathById(Long nodeId)
 }
