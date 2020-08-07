@@ -131,7 +131,6 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 			node.library.project.name == "action word project"
 	}
 
-	//TODO-QUAN
 	def "should delete various nodes"() {
 
 		when:

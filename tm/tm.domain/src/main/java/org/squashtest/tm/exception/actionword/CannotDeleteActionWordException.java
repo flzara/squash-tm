@@ -18,19 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.exception.actionword;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-import java.util.Collection;
+/**
+ * @author qtran - created on 06/08/2020
+ */
+public class CannotDeleteActionWordException extends ActionException {
 
-public interface KeywordTestStepDao extends Repository<KeywordTestStep, Long> {
+	private static final long serialVersionUID = -980409041347597902L;
+	public CannotDeleteActionWordException(String message) {
+		super(message);
+	}
 
-	KeywordTestStep findById(long id);
-
-	@Query("FROM KeywordTestStep testStep WHERE testStep.actionWord.id = ?1")
-	Collection<KeywordTestStep> findByActionWord(Long id);
-
+	@Override
+	public String getI18nKey() {
+		return "squashtm.action.exception.cannot.delete.action-word";
+	}
 }

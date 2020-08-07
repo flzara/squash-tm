@@ -28,10 +28,13 @@ import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.exception.actionword.CannotDeleteActionWordException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -39,6 +42,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -51,6 +55,9 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 
 	@Inject
 	private ActionWordLibraryNodeDao actionWordLibraryNodeDao;
+
+	@Inject
+	private ActionWordDao actionWordDao;
 
 	@Inject
 	private AWLNDeletionHandler deletionHandler;
@@ -118,9 +125,26 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	public OperationReport delete(List<Long> nodeIds) {
 		for (Long id : nodeIds) {
 			TreeLibraryNode node = actionWordLibraryNodeDao.getOne(id);
+			checkNodeIsNull(node);
 			checkPermission(new SecurityCheckableObject(node, "DELETE"));
+			checkTestStepAssociation(node);
 		}
 		return deletionHandler.deleteNodes(nodeIds);
+	}
+
+	private void checkNodeIsNull(TreeLibraryNode node) {
+		if (node == null) {
+			throw new IllegalArgumentException("Action word to be deleted is not found.");
+		}
+	}
+
+	private void checkTestStepAssociation(TreeLibraryNode node) {
+		Long entityId = node.getEntityId();
+		ActionWord actionWord = actionWordDao.getOne(entityId);
+		Set<KeywordTestStep> testStepSet = actionWord.getKeywordTestSteps();
+		if (!testStepSet.isEmpty()){
+			throw new CannotDeleteActionWordException("Action word is currently in used by some test steps");
+		}
 	}
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
