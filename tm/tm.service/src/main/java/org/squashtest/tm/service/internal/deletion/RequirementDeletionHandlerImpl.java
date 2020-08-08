@@ -53,9 +53,11 @@ import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -92,8 +94,6 @@ RequirementNodeDeletionHandler {
 		return folderDao;
 	}
 
-	@PersistenceContext
-	private EntityManager em;
 
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
@@ -369,7 +369,7 @@ RequirementNodeDeletionHandler {
 	 * be deleted.</p>
 	 *
 	 *
-	 * <p>All of this is is handled for a good part by the logic in {@link #sortThatMess(List, Long)}</p>
+	 * <p>All of this is is handled for a good part by the logic in {@link #sortThatMess(List)}</p>
 	 *
 	 * (non-Javadoc)
 	 *

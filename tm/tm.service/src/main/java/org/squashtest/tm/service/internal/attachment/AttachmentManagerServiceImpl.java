@@ -24,7 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.attachment.*;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
@@ -39,7 +43,12 @@ import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /*
  * FIXME !
