@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,30 +29,30 @@ public interface DatatableMapper<KEY> {
 
 	/**
 	 * Registers a new mapping. 'key' is the name of the column in the datatable.
-	 * 
+	 *
 	 * @param key
 	 * @param mapping
 	 * @return
 	 */
 	DatatableMapper<KEY> map(KEY key, Mapping mapping);
-	
+
 	/**
 	 * Will map an attribute named 'attribute' of the model to the datatable column 'key'. Note that this
 	 * implementation is equivalent to  map(key, new SimpleMapping(attribute)).
-	 * 
+	 *
 	 * @param key : the key used to register. Usually corresponds to a column of the datatable.
-	 * @param attribute : the name of an attribute of a class 
+	 * @param attribute : the name of an attribute of a class
 	 * @return this
 	 */
 	DatatableMapper<KEY> map(KEY key, String attribute);
-	
-	
+
+
 	/**
 	 * Will map an attribute named 'attribute' of a class 'ownerType' to the datatable column 'key'. Note that this
 	 * implementation is equivalent to  map(key, new AttributeMapping(ownerType, attribute)).
-	 * 
+	 *
 	 * @param key : the key used to register. Usually corresponds to a column of the datatable.
-	 * @param attribute : the name of an attribute of a class 
+	 * @param attribute : the name of an attribute of a class
 	 * @param ownerType : the class that own the attribute  stated above
 	 * @return this
 	 */
@@ -62,10 +60,10 @@ public interface DatatableMapper<KEY> {
 
 
 	/**
-	 * 
-	 * @returns the String that represents the model mapping associated to that key. Note that what is returned depends on the 
-	 * implementation of DatatableMapper.Mapping actually used. 
-	 * 
+	 *
+	 * @returns the String that represents the model mapping associated to that key. Note that what is returned depends on the
+	 * implementation of DatatableMapper.Mapping actually used.
+	 *
 	 */
 	String getMapping(KEY key);
 
@@ -75,11 +73,11 @@ public interface DatatableMapper<KEY> {
 	 * @return
 	 */
 	List<KEY> getMappedKeys();
-	
+
 	public static interface Mapping{
-		
+
 		public String getMapping();
-		
+
 	}
-	
+
 }

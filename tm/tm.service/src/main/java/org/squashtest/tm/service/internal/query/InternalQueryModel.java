@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.query;
 
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.attachment.QAttachmentContent;
 import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnType;

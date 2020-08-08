@@ -26,15 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.function.Function;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

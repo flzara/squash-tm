@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.tf.automationrequest;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.api.plugin.PluginType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +36,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;

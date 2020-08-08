@@ -58,7 +58,6 @@ import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
-import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;

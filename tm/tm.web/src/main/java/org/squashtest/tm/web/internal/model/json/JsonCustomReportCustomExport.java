@@ -22,8 +22,6 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.EntityType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

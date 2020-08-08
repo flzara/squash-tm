@@ -24,7 +24,6 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;

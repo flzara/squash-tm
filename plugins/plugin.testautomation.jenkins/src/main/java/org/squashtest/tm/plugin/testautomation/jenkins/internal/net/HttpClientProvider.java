@@ -22,8 +22,6 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -80,7 +78,7 @@ public class HttpClientProvider {
 
 		}
 	}
-        
+
 	private final CloseableHttpClient client;
 
 	private final ClientHttpRequestFactory requestFactory;
@@ -107,8 +105,8 @@ public class HttpClientProvider {
 	 */
         /*
          * XXX Concurrency issues should virtually never happen, however remember that since Feat 6370 the same Jenkins instance
-         * could be addressed with different credentials : the project-manager own credential when fetching jenkins jobs, and 
-         * the regular credentials when an user execute the test, and this code does not shield the app from both event happening 
+         * could be addressed with different credentials : the project-manager own credential when fetching jenkins jobs, and
+         * the regular credentials when an user execute the test, and this code does not shield the app from both event happening
          * simultaneously.
          */
 	public CloseableHttpClient getClientFor(TestAutomationServer server) {

@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.ScopeType;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
-import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
 import org.squashtest.tm.domain.query.Operation;

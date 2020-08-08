@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 import javax.persistence.Column;

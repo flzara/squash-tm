@@ -23,7 +23,6 @@ package org.squashtest.tm.domain.customreport;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
-import org.squashtest.tm.domain.tree.TreeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

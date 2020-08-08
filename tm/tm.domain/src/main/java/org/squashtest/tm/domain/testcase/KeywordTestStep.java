@@ -45,8 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static javax.persistence.EnumType.STRING;
 import static org.squashtest.tm.domain.bdd.util.ActionWordUtil.updateNumberValue;

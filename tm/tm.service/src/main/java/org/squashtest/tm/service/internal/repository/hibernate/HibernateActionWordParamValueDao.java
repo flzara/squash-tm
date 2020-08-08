@@ -20,21 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.ActionWordParamValueDao;
-import org.squashtest.tm.service.internal.repository.TestStepDao;
 
-import java.util.List;
-import java.util.ListIterator;
 
 @Repository
 public class HibernateActionWordParamValueDao extends HibernateEntityDao<ActionWordParameterValue> implements ActionWordParamValueDao {

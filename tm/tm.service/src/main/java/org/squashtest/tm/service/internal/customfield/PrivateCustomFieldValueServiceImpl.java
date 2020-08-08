@@ -51,7 +51,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.management.relation.RoleStatus;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;

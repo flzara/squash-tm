@@ -24,7 +24,6 @@ import org.apache.commons.collections.Closure;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree;

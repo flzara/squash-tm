@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import org.squashtest.tm.api.plugin.Plugin;
 
 public interface AutomationWorkflow extends SynchronisationPlugin {
 

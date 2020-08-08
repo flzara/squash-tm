@@ -44,10 +44,7 @@ import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
 
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 
@@ -494,15 +491,15 @@ class QueryPlanner {
 
 
 	/*
-	 * Detects that the query plan contains all the entities we need to 
+	 * Detects that the query plan contains all the entities we need to
 	 * reach.
 	 */
 	private boolean isEveryEntityReachable(QueryPlan plan){
 
 		Set<InternalEntityType> targetEntities = internalQueryModel.getTargetEntities();
-		
+
 		List<InternalEntityType> planedEntities = plan.collectKeys();
-		
+
 		return planedEntities.containsAll(targetEntities);
 
 	}

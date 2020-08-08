@@ -25,11 +25,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.hibernate.sql.Alias;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.QueryAggregationColumn;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;

@@ -22,10 +22,7 @@ package org.squashtest.tm.service.campaign;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchQueryModel;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 

@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.execution.ExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsKeywordExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
 import org.squashtest.tm.domain.execution.ScriptedExecution;

@@ -24,7 +24,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 

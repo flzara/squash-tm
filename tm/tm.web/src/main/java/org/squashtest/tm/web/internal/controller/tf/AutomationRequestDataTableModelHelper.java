@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.testcase.GetKindTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -47,8 +46,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN;
 
 
 @Component

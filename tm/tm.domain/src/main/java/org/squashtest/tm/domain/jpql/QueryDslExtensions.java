@@ -21,11 +21,8 @@
 package org.squashtest.tm.domain.jpql;
 
 import com.querydsl.core.annotations.QueryDelegate;
-import com.querydsl.core.types.ConstantImpl;
-import com.querydsl.core.types.Templates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import ext.java.lang.QString;
@@ -54,7 +51,7 @@ public final class QueryDslExtensions {
 	 * The simple, no arg implementation.
 	 *
 	 * @param attributeConcat
-	 * @return 
+	 * @return
 	 */
 	@QueryDelegate(String.class)
 	public static StringExpression groupConcat(StringPath attributeConcat){

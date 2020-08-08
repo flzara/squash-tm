@@ -39,13 +39,10 @@ import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestC
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseParser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Abstract class for services whose purposes is to process executions of a test plan

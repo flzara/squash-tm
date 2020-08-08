@@ -26,7 +26,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 
 import javax.inject.Inject;

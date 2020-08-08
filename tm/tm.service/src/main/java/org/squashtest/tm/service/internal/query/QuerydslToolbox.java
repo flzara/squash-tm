@@ -23,18 +23,13 @@ package org.squashtest.tm.service.internal.query;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
@@ -77,7 +72,6 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
-import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper;
 
 class QuerydslToolbox {
 

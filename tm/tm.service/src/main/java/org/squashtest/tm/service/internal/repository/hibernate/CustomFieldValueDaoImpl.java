@@ -28,7 +28,6 @@ import org.jooq.SelectJoinStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customreport.CustomExportColumnLabel;
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.groupConcat;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;

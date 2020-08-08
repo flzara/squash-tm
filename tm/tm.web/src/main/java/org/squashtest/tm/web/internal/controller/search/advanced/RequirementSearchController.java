@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -45,20 +43,15 @@ import org.squashtest.tm.web.internal.controller.search.advanced.tablemodels.Req
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import javax.inject.Inject;
-import javax.swing.*;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -116,29 +109,29 @@ public class RequirementSearchController extends GlobalSearchController {
 		initSearchPageModel(pageModel, searchModel, associationType, associationId, REQUIREMENT);
 		return "requirement-search-input.html";
 	}
-	
+
 	// ******************* the result page handlers ****************
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params = "searchDomain="+REQUIREMENT)
 	public String showRequirementSearchResultPageWithSearchModel(Model pageModel,
-                                                          @RequestParam String searchModel, 
+                                                          @RequestParam String searchModel,
                                                           @RequestParam(required = false) String associationType,
                                                           @RequestParam(required = false) Long associationId) {
 
 		initResultModel(pageModel, searchModel, associationType, associationId, REQUIREMENT);
 		return "requirement-search-result.html";
 	}
-	
+
 
 	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params = "searchDomain="+REQUIREMENT)
 	public String showRequirementSearchResultPage(Model pageModel,
-	                                             @RequestParam(required = false) String associationType, 
+	                                             @RequestParam(required = false) String associationType,
 	                                             @RequestParam(required = false) Long associationId) {
 
 		initResultModel(pageModel, "", associationType, associationId, REQUIREMENT);
 		return "requirement-search-result.html";
 	}
-	
+
 
 
 	// ********************* other methods **********************************
@@ -148,7 +141,7 @@ public class RequirementSearchController extends GlobalSearchController {
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 	                                               @RequestParam(value = RequestParams.MODEL) String model,
-	                                               @RequestParam(required = false) String associationType, 
+	                                               @RequestParam(required = false) String associationType,
 	                                               @RequestParam(required = false) Long associationId)
 		throws IOException {
 

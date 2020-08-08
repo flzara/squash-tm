@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.apache.logging.log4j.util.Strings;
 import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
-import org.squashtest.tm.domain.tf.automationrequest.SynchronizableIssueStatus;
 
 public class JsonRemoteAutomationRequestExtender {
 

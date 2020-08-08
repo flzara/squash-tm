@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.model.viewmapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,20 +40,20 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		mappings = new LinkedHashMap<>(initialCapacity);
 	}
 
-	
-	
+
+
 	@Override
 	public DatatableMapper<KEY> map(KEY key, Mapping mapping) {
 		mappings.put(key,  mapping);
 		return this;
 	}
-	
+
 	@Override
 	public DatatableMapper<KEY> map(KEY key, String expression) {
 		mappings.put(key, new SimpleMapping(expression));
 		return this;
 	}
-	
+
 	@Override
 	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute, Class<?> ownerType) {
 		AttributeMapping register = new AttributeMapping(attribute, ownerType);
@@ -80,5 +79,5 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 	public List<KEY> getMappedKeys(){
 		return new ArrayList<KEY>(mappings.keySet());
 	}
-	
+
 }

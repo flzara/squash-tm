@@ -25,8 +25,6 @@ import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
 import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 import java.util.List;
 

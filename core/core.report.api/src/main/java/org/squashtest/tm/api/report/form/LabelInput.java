@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.api.report.form;
 
-import org.squashtest.tm.api.report.form.BasicInput;
-import org.squashtest.tm.api.report.form.Input;
-import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * @author jprioux

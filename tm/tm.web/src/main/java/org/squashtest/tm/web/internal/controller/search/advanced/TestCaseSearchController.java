@@ -53,11 +53,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -109,8 +107,8 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@Inject
 	@Named("testCaseWorkspaceDisplayService")
 	private WorkspaceDisplayService testCaseWorkspaceDisplayService;
-	
-	
+
+
 	// ************** the search test case page handlers *******************
 
 	@RequestMapping(method = RequestMethod.GET, params="searchDomain="+TESTCASE)
@@ -121,11 +119,11 @@ public class TestCaseSearchController extends GlobalSearchController {
 		initSearchPageModel(model, "", associationType, associationId, TESTCASE);
 		return  "test-case-search-input.html";
 	}
-	
-	
+
+
 	@RequestMapping(method = RequestMethod.POST, params="searchDomain="+TESTCASE)
 	public String showTestCaseSearchPageWithSearchModel(Model model,
-												 @RequestParam String searchModel, 
+												 @RequestParam String searchModel,
 												 @RequestParam(required = false) String associationType,
 												 @RequestParam(required = false) Long associationId) {
 
@@ -157,7 +155,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 
 
 	// ******************* the result page handlers ****************
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params="searchDomain="+TESTCASE)
 	public String showTestCaseSearchResultPageFilledWithSearchModel(Model model,
 	                                                              @RequestParam String searchModel,
@@ -169,14 +167,14 @@ public class TestCaseSearchController extends GlobalSearchController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params="searchDomain="+TESTCASE)
-	public String getTestCaseSearchResultPage(Model model, 
-											  @RequestParam(required = false) String associationType, 
+	public String getTestCaseSearchResultPage(Model model,
+											  @RequestParam(required = false) String associationType,
 											  @RequestParam(required = false) Long associationId) {
 
 		initResultModel(model,"", associationType, associationId, TESTCASE);
 		return "test-case-search-result.html";
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = RESULTS, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
 	public String showTestCaseViaRequirementSearchResultPageFilledWithSearchModel(Model model,
 	                                                              @RequestParam String searchModel,
@@ -188,16 +186,16 @@ public class TestCaseSearchController extends GlobalSearchController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = RESULTS, params="searchDomain="+TESTCASE_VIA_REQUIREMENT)
-	public String getTestCaseViaRequirementSearchResultPage(Model model, 
-											  @RequestParam(required = false) String associationType, 
+	public String getTestCaseViaRequirementSearchResultPage(Model model,
+											  @RequestParam(required = false) String associationType,
 											  @RequestParam(required = false) Long associationId) {
 
 		initResultModel(model,"", associationType, associationId, TESTCASE_VIA_REQUIREMENT);
 		return "test-case-search-result.html";
 	}
 
-		
-	
+
+
 	// ********************* other methods **********************************
 
 
@@ -206,7 +204,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 																  final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
-																  @RequestParam(required = false) String associationType, 
+																  @RequestParam(required = false) String associationType,
 																  @RequestParam(required = false) Long associationId)
 		throws IOException {
 
@@ -238,7 +236,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 												@RequestParam(value = RequestParams.MODEL) String model,
-												@RequestParam(required = false) String associationType, 
+												@RequestParam(required = false) String associationType,
 												@RequestParam(required = false) Long associationId)
 		throws IOException {
 

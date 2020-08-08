@@ -26,7 +26,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.tf.automationrequest.RemoteAutomationRequestExtender;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

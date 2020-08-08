@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 
-import javax.persistence.Transient;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;

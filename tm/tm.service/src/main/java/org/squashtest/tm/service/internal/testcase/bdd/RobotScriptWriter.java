@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -34,7 +33,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class RobotScriptWriter implements BddScriptWriter {

@@ -24,7 +24,6 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Transient;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")

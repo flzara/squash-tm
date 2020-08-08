@@ -22,8 +22,6 @@ package org.squashtest.tm.core.foundation.exception;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
-import java.util.Collections;
-
 
 public class ActionException extends RuntimeException implements Internationalizable {
 

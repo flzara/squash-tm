@@ -20,21 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportCustomExport;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
-import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.customreport.CustomReportTreeLibraryNode;
 import org.squashtest.tm.domain.customreport.GetCustomReportTreeDefinitionVisitor;
-import org.squashtest.tm.domain.report.ReportDefinition;
-import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
 
 import javax.persistence.EntityManager;

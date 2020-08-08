@@ -28,7 +28,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecu
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
