@@ -383,7 +383,7 @@
   <f:message var="executionComment" key="execution.description.panel.title"/>
   <comp:toggle-panel id="execution-description-panel" title="${executionComment}" open="true">
 		<jsp:attribute name="body">
-		<div id="execution-description" ${descrRicheditAttributes} >${hu:clean(execution.description)}></div>
+		<div id="execution-description" ${descrRicheditAttributes}>${hu:clean(execution.description)}</div>
 	</jsp:attribute>
   </comp:toggle-panel>
 
