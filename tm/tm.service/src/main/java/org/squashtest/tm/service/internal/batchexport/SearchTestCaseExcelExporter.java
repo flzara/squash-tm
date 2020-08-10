@@ -82,26 +82,20 @@ public class SearchTestCaseExcelExporter extends ExcelExporter {
 	}
 
 	@Override
-	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
+	protected void doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
 		TestCase tc = testCaseFinder.findById(tcm.getId());
-		int nbMilestone = tc.getMilestones().size();
-		int nbSteps = tc.getSteps().size();
-		int nbIteration = iterationFinder.findIterationContainingTestCase(tcm.getId()).size();
-		int cIdxOptional = cIdx;
-		if (projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
-			if(tc.getProject().isAllowAutomationWorkflow()) {
-				r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
-			} else {
-				r.createCell(cIdxOptional++).setCellValue("-");
-			}
-		}
-		if (milestonesEnabled) {
-			r.createCell(cIdxOptional++).setCellValue(nbMilestone);
-		}
-		r.createCell(cIdxOptional++).setCellValue(nbSteps);
-		r.createCell(cIdxOptional++).setCellValue(nbIteration);
+		cIdx = appendAutomationWorkflow(tc, r, cIdx, tcm);
 
-		return cIdxOptional;
+		if (milestonesEnabled) {
+			int nbMilestone = tc.getMilestones().size();
+			r.createCell(cIdx++).setCellValue(nbMilestone);
+		}
+
+		int nbSteps = tc.getSteps().size();
+		r.createCell(cIdx++).setCellValue(nbSteps);
+
+		int nbIteration = iterationFinder.findIterationContainingTestCase(tcm.getId()).size();
+		r.createCell(cIdx).setCellValue(nbIteration);
 	}
 
 }

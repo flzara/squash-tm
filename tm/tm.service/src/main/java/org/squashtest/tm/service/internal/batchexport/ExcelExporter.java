@@ -290,7 +290,7 @@ class ExcelExporter {
 				cIdx = appendScriptedTestCaseExtender(r, cIdx, tcm);
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
-				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);
+				doOptionnalAppendTestCases(r, cIdx, tcm);
 
 			} catch (IllegalArgumentException wtf) {
 				if (LOGGER.isWarnEnabled()) {
@@ -318,21 +318,23 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tcm.getTcScript());
 		} else {
 			r.createCell(cIdx++).setCellValue("");
-			r.createCell(cIdx++).setCellValue("");
 		}
 		return cIdx;
 	}
 
 
-	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) { //NOSONAR
+	protected void doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) { //NOSONAR
 		//extension point for optional columns
 		TestCase tc = testCaseFinder.findById(tcm.getId());
-		int cIdxOptional = cIdx;
+		appendAutomationWorkflow(tc, r, cIdx, tcm);
+	}
+
+	protected int appendAutomationWorkflow(TestCase tc, Row r, int cIdx, TestCaseModel tcm) {
 		if (projectFinder.countProjectsAllowAutomationWorkflow() > 0) {
-			if(tc.getProject().isAllowAutomationWorkflow()) {
-				r.createCell(cIdxOptional++).setCellValue(tcm.getAutomatable().name());
+			if (tc.getProject().isAllowAutomationWorkflow()) {
+				r.createCell(cIdx++).setCellValue(tcm.getAutomatable().name());
 			} else {
-				r.createCell(cIdxOptional++).setCellValue("-");
+				r.createCell(cIdx++).setCellValue("-");
 			}
 		}
 		return cIdx;
