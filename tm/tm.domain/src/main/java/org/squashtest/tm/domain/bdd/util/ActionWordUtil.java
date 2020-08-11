@@ -82,4 +82,9 @@ public final class ActionWordUtil {
 		return currentChar.matches("[\\w-.,\\s]");
 	}
 
+	public static boolean hasSameToken(String name1, String name2) {
+		String replaceParamInName1 = name1.replaceAll("\"[^\"]*\"","\"");
+		String replaceParamInName2 = name2.replaceAll("\"[^\"]*\"","\"");
+		return replaceParamInName1.equals(replaceParamInName2);
+	}
 }

@@ -26,6 +26,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MetaValue;
 import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -250,25 +251,16 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 		treeLibraryNode.isCoherentWithEntity();
 
 		String newChildName = treeLibraryNode.getName();
-		if (this.childNameAlreadyUsed(newChildName)) {
-			ActionWordTreeLibraryNode node = getContentNodeByName(newChildName);
-			throw new DuplicateNameException(node.getEntityType().getTypeName(), newChildName);
+		ActionWordTreeLibraryNode sameTokenNode = getContentNodeByToken(newChildName);
+		if (sameTokenNode != null) {
+			throw new DuplicateNameException(sameTokenNode.getEntityType().getTypeName(), newChildName);
 		}
 		this.getChildren().add(treeLibraryNode);
 	}
 
-	private boolean childNameAlreadyUsed(String newChildName) {
-		for (TreeLibraryNode child : children) {
-			if (child.getName().equals(newChildName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private ActionWordTreeLibraryNode getContentNodeByName (String name) {
+	private ActionWordTreeLibraryNode getContentNodeByToken (String newChildName) {
 		for (ActionWordTreeLibraryNode child : children) {
-			if (child.getName().equals(name)) {
+			if (ActionWordUtil.hasSameToken(child.getName(), newChildName)) {
 				return child;
 			}
 		}
