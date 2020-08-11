@@ -188,6 +188,10 @@
                   <a th:text="#{label.Export.gherkin}+'...'">full ...</a>
                 </li>
 
+                <li id="export-keyword-tree-button" class="ui-state-disabled cursor-pointer">
+                  <a th:text="#{label.Export.keyword}+'...'">full ...</a>
+                </li>
+
                 <li id="transmit-for-automation-tree-button" class="ui-state-disabled cursor-pointer">
                   <a th:text="#{label.TransmitForAutomation}+'...'">full ...</a>
                 </li>
@@ -940,6 +944,39 @@
 
 <!--  ================= /EXPORT GHERKIN_STRATEGY POPUP ======================= -->
 
+<!--  ================= EXPORT KEYWORD_STRATEGY POPUP ======================= -->
+
+
+<div id="export-keyword-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+     th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+     data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+  <div data-def="state=main" class="std-margin-top">
+
+    <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+    <div class="std-margin-top">
+      <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+      <input type="text" id="export-keyword-test-case-filename" size="255" style="width: 350px"/>
+    </div>
+
+  </div>
+
+  <div data-def="state=nonodeserror" class="std-margin-top">
+    <span th:text="#{message.exportKeywordTestCaseNoNodeSelected}">export test case no node selected</span>
+  </div>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" th:value="#{label.Export}" value="export"
+           data-def="evt=confirm, mainbtn=main, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Cancel}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror"/>
+    <input type="button" th:value="#{label.Close}" value="cancel"
+           data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror"/>
+  </div>
+</div>
+
+<!--  ================= /EXPORT GHERKIN_STRATEGY POPUP ======================= -->
 
 <!--  ================= MILESTONE POPUP =======================  -->
 

@@ -35,6 +35,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -45,6 +46,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -74,6 +76,7 @@ import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.FolderDao;
+import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
@@ -93,6 +96,7 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
+import org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -129,8 +133,8 @@ public class TestCaseLibraryNavigationServiceImpl
 	private static final String SOURCE_NODES_IDS = "sourceNodesIds";
 	private static final String TARGET_ID = "targetId";
 	private static final String TARGET_IDS = "targetIds";
-	private static final String FULL = "full";
 	private static final String SIMPLE = "simple";
+	private static final String EXTENSION_DELIMITER = ".";
 
 
 	@Inject
@@ -145,6 +149,8 @@ public class TestCaseLibraryNavigationServiceImpl
 
 	@Inject
 	private ScriptedTestCaseDao scriptedTestCaseDao;
+	@Inject
+	private KeywordTestCaseDao keywordTestCaseDao;
 
 	@Inject
 	private TestCaseImporter testCaseImporter;
@@ -646,6 +652,13 @@ public class TestCaseLibraryNavigationServiceImpl
 		return doGherkinExport(ids);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public File exportKeywordTestCaseAsScriptFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource) {
+		Collection<Long> ids = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		return doKeywordExport(ids, messageSource);
+	}
+
 	private File doGherkinExport(Collection<Long> ids) {
 		List<ScriptedTestCase> scriptedTestCases = scriptedTestCaseDao.findAllById(ids);
 
@@ -680,6 +693,43 @@ public class TestCaseLibraryNavigationServiceImpl
 		}
 	}
 
+	private File doKeywordExport(Collection<Long> ids, MessageSource messageSource) {
+		List<KeywordTestCase> keywordTestCases = keywordTestCaseDao.findAllById(ids);
+
+		FileOutputStream fileOutputStream = null;
+		try {
+			File zipFile = File.createTempFile("export-keyword-", ".zip");
+			fileOutputStream = new FileOutputStream(zipFile);
+			zipFile.deleteOnExit();
+
+			ArchiveOutputStream archive = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, fileOutputStream);
+
+			for (KeywordTestCase keywordTestCase : keywordTestCases) {
+				String name = "tc_" + keywordTestCase.getId();
+				BddImplementationTechnology technology = keywordTestCase.getProject().getBddImplementationTechnology();
+				KeywordTestCaseToFileStrategy strategy = KeywordTestCaseToFileStrategy.strategyFor(technology);
+				String extension = strategy.getExtension();
+
+				ZipArchiveEntry entry = new ZipArchiveEntry(String.join(EXTENSION_DELIMITER, name, extension));
+				archive.putArchiveEntry(entry);
+				archive.write(strategy.getWritableFileContent(keywordTestCase, messageSource, false).getBytes(Charset.forName("UTF-8")));
+				archive.closeArchiveEntry();
+			}
+
+			archive.close();
+			return zipFile;
+		} catch (IOException | ArchiveException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (fileOutputStream != null) {
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+					LOGGER.error("Unable to close FileOutputStream: ", e);
+				}
+			}
+		}
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")

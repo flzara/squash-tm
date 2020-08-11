@@ -154,12 +154,11 @@ public enum KeywordTestCaseToFileStrategy {
 	 *
 	 * @param testCase the test case which script will be generated
 	 * @param messageSource the message source for potential translation
-	 * @param locale the locale for potential translation
 	 * @param escapeArrows whether to escape arrow symbols (for html purpose)
 	 * @return the content of the Script
 	 */
-	public String getWritableFileContent(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows) {
-		return getScriptWriter().writeBddScript(testCase, messageSource, locale, escapeArrows);
+	public String getWritableFileContent(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
+		return getScriptWriter().writeBddScript(testCase, messageSource, escapeArrows);
 	}
 
 	/* ----- Private Api ----- */

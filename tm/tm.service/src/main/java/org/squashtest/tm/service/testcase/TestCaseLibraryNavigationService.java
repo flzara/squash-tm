@@ -217,6 +217,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 
 	File exportGherkinTestCaseAsFeatureFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource);
 
+	File exportKeywordTestCaseAsScriptFiles(List<Long> libraryIds, List<Long> nodeIds, MessageSource messageSource);
+
 	/**
 	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet.
 	 * The selection consists of :</p>

@@ -48,7 +48,7 @@ class RobotScriptWriterTest extends Specification {
 			keywordTestCase.setName("Disconnection test")
 			keywordTestCase.notifyAssociatedWithProject(project)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -72,7 +72,7 @@ Disconnection test"""
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -107,7 +107,7 @@ Disconnection test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -141,7 +141,7 @@ Daily test
 			keywordTestCase.addStep(step1)
 			keywordTestCase.addStep(step2)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -178,7 +178,7 @@ Daily test
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -224,7 +224,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -269,7 +269,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 			then:
 			result ==
 """*** Settings ***
@@ -317,7 +317,7 @@ Daily test
 			def value =  new DatasetParamValue(tcParam, dataset,"9 AM")
 			dataset.addParameterValue(value)
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, false)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, false)
 		then:
 			result ==
 """*** Settings ***
@@ -371,7 +371,7 @@ Daily test
 			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
 			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -444,7 +444,7 @@ Daily test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 			result ==
 """*** Settings ***
@@ -519,7 +519,7 @@ Count test
 			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
 			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
 		when:
-			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, null, true)
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
 		result ==
 """*** Settings ***

@@ -51,10 +51,11 @@ public class CucumberScriptWriter implements BddScriptWriter {
 	private boolean hasTCParamInTestCase = false;
 
 	@Override
-	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows) {
+	public String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows) {
 		StringBuilder builder = new StringBuilder();
 		List<TestStep> testSteps = testCase.getSteps();
 		String testCaseName = testCase.getName();
+		Locale locale = testCase.getProject().getBddScriptLanguage().getLocale();
 
 		if (!testSteps.isEmpty()) {
 			addAllStepsScriptWithoutScenarioToBuilder(builder, testSteps, locale, messageSource, escapeArrows);

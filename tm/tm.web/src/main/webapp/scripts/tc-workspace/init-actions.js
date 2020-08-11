@@ -217,6 +217,10 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				$("#export-gherkin-test-case-dialog").exportGherkinFeatureDialog("open");
 			});
 
+			$("#export-keyword-tree-button").on("click", function () {
+				$("#export-keyword-test-case-dialog").exportKeywordScriptsDialog("open");
+			});
+
 		  // ******************* automation ********************
 			if (zetree.get(':library').filter('[allowautomworkflow="true"]').length === 0) {
 				$("#transmit-for-automation-tree-button").hide();

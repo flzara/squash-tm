@@ -21,10 +21,17 @@
 package org.squashtest.tm.service.internal.testcase
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
+import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -32,10 +39,22 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.KeywordTestCaseDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
+
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.CUCUMBER
+import static org.squashtest.tm.domain.bdd.BddScriptLanguage.ENGLISH
+import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
+import static org.squashtest.tm.domain.bdd.Keyword.AND
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
@@ -47,6 +66,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	ScriptedTestCaseDao scriptedTestCaseDao = Mock()
+	KeywordTestCaseDao keywordTestCaseDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
 	CustomFieldBindingFinderService customFieldBindingFinderService  = Mock()
 
@@ -57,6 +77,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
 		service.scriptedTestCaseDao = scriptedTestCaseDao
+		service.keywordTestCaseDao = keywordTestCaseDao
 		service.customFieldBindingFinderService = customFieldBindingFinderService
 		service.customValueService = customValueService
 
@@ -220,6 +241,85 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		def lines2 = zipArchiveInputStream1.readLines()
 		lines2.size() == 2
 		lines2 == ["Feature: two","Scenario: one"]
+	}
+
+	def "should export some keyword test cases"(){
+		given:
+		def project1 = Mock(Project)
+		project1.bddImplementationTechnology >> ROBOT
+		project1.bddScriptLanguage >> ENGLISH
+
+		def testCase1 = Mock(KeywordTestCase)
+		testCase1.id >> 1L
+		testCase1.name >> "one"
+		testCase1.project >> project1
+		testCase1.datasets >> []
+
+		def project2 = Mock(Project)
+		project2.bddImplementationTechnology >> CUCUMBER
+		project2.bddScriptLanguage >> ENGLISH
+
+		def testCase2 = Mock(KeywordTestCase)
+		testCase2.id >> 2L
+		testCase2.name >> "two"
+		testCase2.project >> project2
+		testCase2.datasets >> []
+
+		def fragment1 = new ActionWordText("I have ")
+		def fragment2 = new ActionWordParameter()
+		fragment2.setId(-2L)
+		fragment2.setName("param1")
+		def fragment3 = new ActionWordText(" apples")
+		def actionWord = Mock(ActionWord) {
+			getId() >> -77L
+			getToken() >> "TPT-I have - apples-"
+			getFragments() >> [fragment1, fragment2, fragment3]
+		}
+		def param1 = new ActionWordParameterValue("5")
+		param1.setActionWordParam(fragment2)
+		def step1 = Mock(KeywordTestStep) {
+			getKeyword() >> GIVEN
+			getActionWord() >> actionWord
+			getParamValues() >> [param1]
+			getTestCase() >> testCase1
+		}
+		testCase1.steps >> [step1]
+
+		def param2 = new ActionWordParameterValue("3")
+		param2.setActionWordParam(fragment2)
+		def step2 = new KeywordTestStep()
+		step2.setKeyword(AND)
+		step2.setActionWord(actionWord)
+		step2.setParamValues([param2])
+		step2.setTestCase(testCase2)
+
+		testCase2.steps >> [step2]
+
+
+		and:
+		keywordTestCaseDao.findAllById(_) >> [testCase1, testCase2]
+		def messageSource = Mock(MessageSource)
+		3 * messageSource.getMessage(*_) >>> ["And", "Scenario: ", "Feature: "]
+
+		when:
+		File export = service.doKeywordExport([], messageSource);
+		String name = export.getName()
+
+		then:
+		export != null
+		name.matches("export-keyword-.*\\.zip")
+		def zipArchiveInputStream = new ZipArchiveInputStream(new FileInputStream(export), "UTF-8", true)
+		zipArchiveInputStream.nextEntry.name == "tc_1.robot"
+		def lines1 = zipArchiveInputStream.readLines()
+		lines1.size() == 6
+		lines1 == ["*** Settings ***", "Resource	squash_resources.resource", "", "*** Test Cases ***", "one", "\tGiven I have \"5\" apples"]
+
+		def zipArchiveInputStream1 = new ZipArchiveInputStream(new FileInputStream(export), "UTF-8", true)
+		zipArchiveInputStream1.nextEntry.name == "tc_1.robot"
+		zipArchiveInputStream1.nextEntry.name == "tc_2.feature"
+		def lines2 = zipArchiveInputStream1.readLines()
+		lines2.size() == 5
+		lines2 == ["# language: en", "Feature: two", "", "\tScenario: two", "\t\tAnd I have 3 apples"]
 	}
 
 }

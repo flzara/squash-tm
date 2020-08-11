@@ -32,11 +32,10 @@ public interface BddScriptWriter {
 	 * Given a KeywordTestCase, write its corresponding bdd script.
 	 * @param testCase the test case
 	 * @param messageSource the message source for potential translation
-	 * @param locale the locale for potential translation
 	 * @param escapeArrows whether to escape arrow symbols
 	 * @return the bdd script of the given test case
 	 */
-	String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, Locale locale, boolean escapeArrows);
+	String writeBddScript(KeywordTestCase testCase, MessageSource messageSource, boolean escapeArrows);
 
 	/**
 	 * Given a KeywordTestStep, write its corresponding bdd script.

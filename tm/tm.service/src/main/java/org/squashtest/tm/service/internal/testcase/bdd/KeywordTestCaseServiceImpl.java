@@ -60,8 +60,7 @@ public class KeywordTestCaseServiceImpl implements KeywordTestCaseService {
 		Project project = keywordTestCase.getProject();
 		BddImplementationTechnology bddImplementationTechnology = project.getBddImplementationTechnology();
 		KeywordTestCaseToFileStrategy strategy = KeywordTestCaseToFileStrategy.strategyFor(bddImplementationTechnology);
-		Locale locale = project.getBddScriptLanguage().getLocale();
-		return strategy.getWritableFileContent(keywordTestCase, messageSource, locale, escapeArrows);
+		return strategy.getWritableFileContent(keywordTestCase, messageSource, escapeArrows);
 	}
 
 	private KeywordTestCaseToFileStrategy getKeywordTestCaseToFileStrategy(KeywordTestCase keywordTestCase) {

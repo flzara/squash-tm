@@ -298,6 +298,20 @@ public class TestCaseLibraryNavigationController extends
 		return new FileSystemResource(file);
 	}
 
+	@RequestMapping(value = "/content/keyword-scripts", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
+		FILENAME, LIBRARIES, NODES})
+	@ResponseBody
+	public FileSystemResource exportKeywordScripts(Locale locale, @RequestParam(FILENAME) String filename,
+													@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
+													HttpServletResponse response)  {
+
+		response.setContentType(APPLICATION_SLASH_OCTET_STREAM);
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + filename + ".zip");
+
+		File file = testCaseLibraryNavigationService.exportKeywordTestCaseAsScriptFiles(libraryIds, nodeIds, getMessageSource());
+		return new FileSystemResource(file);
+	}
+
 	@RequestMapping(value = "/searchExports", produces = APPLICATION_SLASH_OCTET_STREAM, method = RequestMethod.GET, params = {
 		FILENAME, NODES, CALLS, RequestParams.RTEFORMAT})
 	@ResponseBody
