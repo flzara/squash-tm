@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
@@ -202,28 +203,56 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then: "the test case is copied"
 		nodes.get(0) instanceof TestCase
 		TestCase testCaseCopy = (TestCase) nodes.get(0)
+
 		and: "it has copies of steps"
 		KeywordTestCase.class.isAssignableFrom(testCaseCopy.class)
 		def testSteps = testCaseCopy.getSteps()
 		testSteps.size() == 3
-		and: "the first test step is Harry"
-		def firstStep = testSteps.get(0)
+
+		and: "the first test step is Harry \"lastName\""
+		KeywordTestStep firstStep = testSteps.get(0)
 		firstStep.getKeyword() == Keyword.GIVEN
 		def firstStepActionWord = firstStep.getActionWord()
 		firstStepActionWord.getId() == -1L
-		firstStepActionWord.createWord() == "HARRY"
-		and: "the second test step is Ron"
+		firstStepActionWord.createWord() == "HARRY \"lastName\""
+		def firstStepValues = firstStep.getParamValues()
+		firstStepValues.size() == 1
+		def value = firstStepValues.get(0)
+		value.value == "POTTER"
+		value.id != -1L
+		!value.linkedToTestCaseParam
+		value.actionWordParam.id == -4L
+		value.keywordTestStep.id != -1L
+
+		and: "the second test step is Ron <lastName>"
 		def secondStep = testSteps.get(1)
 		secondStep.getKeyword() == Keyword.AND
 		def secondStepActionWord = secondStep.getActionWord()
 		secondStepActionWord.getId() == -2L
-		secondStepActionWord.createWord() == "RON"
+		secondStepActionWord.createWord() == "RON \"param1\""
+		def secondStepValues = secondStep.getParamValues()
+		secondStepValues.size() == 1
+		def value2 = secondStepValues.get(0)
+		value2.value == "<WEASLEY>"
+		value2.id != -2L
+		value2.linkedToTestCaseParam
+		value2.actionWordParam.id == -5L
+		value2.keywordTestStep.id != -2L
+
 		and: "the third test step is Hermione"
 		def thirdStep = testSteps.get(2)
 		thirdStep.getKeyword() == Keyword.THEN
 		def thirdStepActionWord = thirdStep.getActionWord()
 		thirdStepActionWord.getId() == -3L
 		thirdStepActionWord.createWord() == "HERMIONE"
+
+		and: "Test case parameter"
+		def tcParams = testCaseCopy.getParameters()
+		tcParams.size() == 1
+		def tcParam = tcParams[0]
+		tcParam.id != -1L
+		tcParam.name == "WEASLEY"
+		tcParam.description == "who cares"
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste scripted tc with its script.xml")

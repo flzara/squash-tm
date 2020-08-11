@@ -86,7 +86,18 @@ public class KeywordTestStep extends TestStep {
 
 	@Override
 	public TestStep createCopy() {
-		return new KeywordTestStep(this.getKeyword(), this.getActionWord());
+		KeywordTestStep copied = new KeywordTestStep(this.getKeyword(), this.getActionWord());
+		copyTestStepParamValues(copied);
+		return copied;
+	}
+
+	private void copyTestStepParamValues(KeywordTestStep copied) {
+		for (ActionWordParameterValue value : this.getParamValues()) {
+			ActionWordParameterValue newValue = new ActionWordParameterValue(value.getValue());
+			newValue.setActionWordParam(value.getActionWordParam());
+			newValue.setKeywordTestStep(copied);
+			copied.addParamValues(newValue);
+		}
 	}
 
 	@Override
