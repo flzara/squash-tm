@@ -243,6 +243,10 @@ public class TestCaseTestStepsController {
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
 		model.addAttribute("keywordMap", createKeywordMap(keywordTestCase.getProject()));
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(keywordTestCase);
+		model.addAttribute("milestoneConf", milestoneConf);
+
 		return "test-cases-tabs/keyword-test-steps-tab.html";
 	}
 
