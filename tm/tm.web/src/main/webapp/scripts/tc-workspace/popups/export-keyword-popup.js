@@ -119,7 +119,7 @@ define(['jquery', 'tree', 'underscore',
 
 		function init() {
 
-			var dialog = $("#export-keyword-test-case-dialog").exportKeywordScriptsDialog({
+			$("#export-keyword-test-case-dialog").exportKeywordScriptsDialog({
 				tree: zetree.get()
 			});
 

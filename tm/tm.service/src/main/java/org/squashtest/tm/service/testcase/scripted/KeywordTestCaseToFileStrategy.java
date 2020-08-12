@@ -28,8 +28,6 @@ import org.squashtest.tm.service.internal.testcase.bdd.BddScriptWriter;
 import org.squashtest.tm.service.internal.testcase.bdd.CucumberScriptWriter;
 import org.squashtest.tm.service.internal.testcase.bdd.RobotScriptWriter;
 
-import java.util.Locale;
-
 /**
  * These are the strategies that comes into play when a KeywordTestCase is dumped to a file.
  *

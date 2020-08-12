@@ -383,8 +383,6 @@ public class TestCaseLibraryNavigationServiceImpl
 
 			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
-			// Issue 7714 - unicity constrainst violation due to double save
-			//createCustomFieldValuesForTestCase(testCase);
 			List<Long> milestones = new ArrayList<>();
 			milestoneService.findAssociableMilestonesToRequirementVersion(verison.getId()).forEach((e) -> milestones.add(e.getId()));
 			milestoneService.bindTestCaseToMilestones(testCase.getId(),milestones );
@@ -466,7 +464,6 @@ public class TestCaseLibraryNavigationServiceImpl
 			}
 			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
-			//createCustomFieldValuesForTestCase(testCase);
 			List<Long> milestones = new ArrayList<>();
 			milestoneService.findAssociableMilestonesToRequirementVersion(version.getId()).forEach((e) -> milestones.add(e.getId()));
 			verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(version,testCase);

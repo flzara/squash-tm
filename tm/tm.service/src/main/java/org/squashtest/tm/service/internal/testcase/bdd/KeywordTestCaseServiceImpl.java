@@ -30,7 +30,6 @@ import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 import org.squashtest.tm.service.testcase.scripted.KeywordTestCaseToFileStrategy;
 
 import javax.inject.Inject;
-import java.util.Locale;
 
 
 @Service
