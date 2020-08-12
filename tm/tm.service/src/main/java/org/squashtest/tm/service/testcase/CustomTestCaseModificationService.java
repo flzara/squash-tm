@@ -69,6 +69,16 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String actionWord);
 
 	/**
+	 * Inserts the given {@link KeywordTestStep} at the index value of the {@link TestCase} identified by the given id.
+	 * @param parentTestCaseId The id of the parent TestCase
+	 * @param keyword The new step Keyword
+	 * @param actionWord The new step ActionWord
+	 * @param index Position of the keywordTestStep in the testCase
+	 * @return The created KeywordTestStep
+	 */
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String actionWord, int index);
+
+	/**
 	 * Inserts the given {@link KeywordTestStep} inserted at the index value in the {@link TestCase} identified by the given id.
 	 * @param parentTestCaseId The id of the parent TestCase
 	 * @param newTestStep The new KeywordTestStep

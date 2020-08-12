@@ -257,8 +257,15 @@ public class TestCaseTestStepsController {
 
 		String keyword = keywordTestStepDto.getKeyword();
 		String actionWord = keywordTestStepDto.getActionWord();
+		int index = keywordTestStepDto.getIndex();
 
-		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
+		KeywordTestStep step;
+
+		if (index != 0) {
+			step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord, index);
+		} else {
+			step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
+		}
 		return step.getId();
 	}
 

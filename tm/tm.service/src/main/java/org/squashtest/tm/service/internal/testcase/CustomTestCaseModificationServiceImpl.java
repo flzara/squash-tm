@@ -314,6 +314,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String word, int index) {
+		Keyword givenKeyword = Keyword.valueOf(keyword);
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
+		ActionWord inputActionWord = parser.createActionWordFromKeywordTestStep(word.trim());
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+		return addKeywordTestStep(parentTestCaseId, givenKeyword, inputActionWord, parameterValues, index);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();

@@ -70,6 +70,7 @@ import spock.lang.Unroll
 import static org.squashtest.tm.domain.bdd.Keyword.AND
 import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 import static org.squashtest.tm.domain.bdd.Keyword.THEN
+import static org.squashtest.tm.domain.bdd.Keyword.WHEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
@@ -153,6 +154,41 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * testStepDao.persist(_)
 		parentTestCase.getSteps().size() == 2
 		parentTestCase.getSteps()[1].actionWord.createWord() == "last"
+
+	}
+
+	def "should find test case and add a keyword step with new action word at specific index"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		def awLibraryNode = Mock(ActionWordLibraryNode)
+		awLibraryNode.getId() >> 4L
+		def awLibrary = Mock(ActionWordLibrary)
+		def project = Mock(Project)
+
+		and:
+		parentTestCase.notifyAssociatedWithProject(project)
+		project.getActionWordLibrary() >> awLibrary
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+		def secondStep = new KeywordTestStep(THEN, createBasicActionWord("second"))
+		parentTestCase.addStep(firstStep)
+		parentTestCase.addStep(secondStep)
+
+		and:
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "WHEN", "between", 1)
+
+		then:
+		1 * actionWordLibraryNodeService.createNewNode(4L, { it.createWord() == "between" })
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 3
+		parentTestCase.getSteps()[1].actionWord.createWord() == "between"
 
 	}
 

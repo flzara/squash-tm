@@ -197,18 +197,26 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		},
 
 		addKeywordTestStepFromButton: function () {
+			var targetTestStepIndex = -1;
+			var $table = $(".test-steps-table");
+			var selectedIds = $table.squashTable().getSelectedIds();
+			if(selectedIds.length > 0){
+				var idTargetStep = selectedIds[selectedIds.length - 1];
+				targetTestStepIndex = $table.squashTable().getDataById(idTargetStep)["step-index"];
+			}
+
 			$(".action-word-input-error").text('');
 			var inputActionWord = this.actionWordInput.val();
-			this.addKeywordTestStep(inputActionWord);
+			this.addKeywordTestStep(inputActionWord, targetTestStepIndex);
 		},
 
-		addKeywordTestStep: function (inputActionWord) {
+		addKeywordTestStep: function (inputActionWord, index) {
 			var self = this;
 			if (this.isInputActionWordBlank(inputActionWord)) {
 				return;
 			}
 			var inputKeyword = this.keywordInput.val();
-			this.doAddKeywordTestStep(inputKeyword, inputActionWord)
+			this.doAddKeywordTestStep(inputKeyword, inputActionWord, index)
 				.done(function (testStepId) {
 					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
 				});
@@ -224,10 +232,11 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			}
 		},
 
-		doAddKeywordTestStep: function (keyword, actionWord) {
+		doAddKeywordTestStep: function (keyword, actionWord, index) {
 			var objectData = {
 				keyword: keyword,
-				actionWord: actionWord
+				actionWord: actionWord,
+				index: index
 			};
 			return $.ajax({
 				type: 'POST',

@@ -247,6 +247,24 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.addKeywordTestStep(testStepModel, 1L) == 2020
 	}
 
+	def "should add a keyword test step with given keyword and actionWord at sepcific index"() {
+		given:
+		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
+		testStepModel.setKeyword("BUT")
+		testStepModel.setActionWord("add a BDD test step")
+		testStepModel.setIndex(2)
+
+		and:
+		def testStep = Mock(KeywordTestStep)
+		testStep.getId() >> 2020
+
+		when:
+		testCaseModificationService.addKeywordTestStep(1L, "BUT", "add a BDD test step", 2) >> testStep
+
+		then:
+		controller.addKeywordTestStep(testStepModel, 1L) == 2020
+	}
+
 	def "should add a keyword test step with given keyword and parameterized actionWord"() {
 		given:
 		KeywordTestStepModel testStepModel = new KeywordTestStepModel()
