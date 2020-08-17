@@ -112,6 +112,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
 		// nothing to update
+		updateCustomFields(testCaseFolder);
 	}
 
 	@Override
@@ -131,12 +132,12 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	}
 
-	@Override
 	/**
 	 * TestSuite cannot be moved, if we go through this method it is because we moved  an iteration.
 	 * Hence there is no need to update executions because there were all updated when iteration was updated.
 	 *
 	 */
+	@Override
 	public void visit(TestSuite testSuite) {
 		updateCustomFields(testSuite);
 		updateIssues(issueDao.findAllForTestSuite(testSuite.getId()), testSuite.getProject());
@@ -183,7 +184,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	}
 
 	/**
-	 * @param entity
+	 * @param entity the curent entity to be updated
 	 * @see PrivateCustomFieldValueService#migrateCustomFieldValues(BoundEntity)
 	 */
 	public void updateCustomFields(BoundEntity entity) {
@@ -193,7 +194,6 @@ public class TreeNodeUpdater implements NodeVisitor {
 	/**
 	 * Will remove issue if they are bound to a bugtracker that is not the bugtracker of the current project.
 	 *
-	 * @param executions
 	 */
 	public void updateIssues(List<Issue> issues, Project project) {
 		for (Issue issue : issues) {
@@ -217,7 +217,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	 * <p>Of course we do so iif there is a matching TA project bound to the TM project,
 	 * namely if they refer to the same TA jobs.</p>
 	 *
-	 * @param testCase
+	 * @param testCase the current test case to be updated
 	 */
 	public void updateAutomationParams(TestCase testCase) {
 
