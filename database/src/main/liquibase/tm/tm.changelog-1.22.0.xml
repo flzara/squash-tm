@@ -1073,4 +1073,16 @@
       and clos3.ancestor_id is null;
     </sql>
   </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1107-aw-last-impl-techno-and-date" author="jlor">
+    <addColumn tableName="ACTION_WORD">
+      <column name="LAST_IMPLEMENTATION_TECHNOLOGY" type="VARCHAR(30)" remarks="Technology used for last implementation">
+        <constraints nullable="true" />
+      </column>
+      <column name="LAST_IMPLEMENTATION_DATE" type="DATETIME" remarks="Date of last implementation">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

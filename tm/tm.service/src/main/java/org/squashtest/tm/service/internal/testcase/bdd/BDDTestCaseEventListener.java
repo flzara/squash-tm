@@ -37,6 +37,7 @@ import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.domain.bdd.QActionWord;
 import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
@@ -48,11 +49,15 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.QKeywordTestCase;
+import org.squashtest.tm.domain.testcase.QKeywordTestStep;
 import org.squashtest.tm.domain.testcase.QScriptedTestCase;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
+import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -73,6 +78,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -120,6 +126,9 @@ public class BDDTestCaseEventListener {
 
 	@Inject
 	private MessageSource i18nHelper;
+
+	@Inject
+	private ActionWordDao actionWordDao;
 
 	@Autowired(required = false)
 	Collection<AutomationWorkflow> plugins = Collections.EMPTY_LIST;
@@ -308,6 +317,18 @@ public class BDDTestCaseEventListener {
 
 	}
 
+	/**
+	 * Once an AutomationRequest switches to Automated status, if its corresponding TestCase is a KeywordTestCase,
+	 * we must update the last Implementation Technology and Date of the ActionWords used in this corresponding TestCase.
+	 * @param event the event which just triggered
+	 */
+	@Order(200)
+	@EventListener(classes = {AutomationRequestStatusChangeEvent.class}, condition = "#event.newStatus == " + SPEL_ARSTATUS + ".AUTOMATED")
+	public void registerActionWordLastImplementationInformation(AutomationRequestStatusChangeEvent event) {
+		Collection<Long> automationRequestIds = event.getAutomationRequestIds();
+		actionWordDao.updateActionWordImplInfoFromAutomRequestIds(automationRequestIds);
+	}
+
 
 	// ************* internals **********************
 
@@ -408,7 +429,6 @@ public class BDDTestCaseEventListener {
 			.fetch();
 
 	}
-
 
 	/*
 	 * Returns the test cases that :

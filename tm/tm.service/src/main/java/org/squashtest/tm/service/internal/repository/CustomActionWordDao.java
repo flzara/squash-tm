@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.domain.bdd.ActionWord;
+import java.util.Collection;
 
-public interface ActionWordDao extends JpaRepository<ActionWord, Long>, CustomActionWordDao {
-	@Query("from ActionWord where token = :token and project.id = :projectId")
-	ActionWord findByTokenInCurrentProject(@Param("token") String inputToken, @Param("projectId") Long projectId);
+public interface CustomActionWordDao {
+	/**
+	 * Find all ActionWords used in the TestCases corresponding to the AutomationRequests which ids were given
+	 * then update their implementation information
+	 * with their owner Project's implementation technology and the current Date.
+	 * @param automationRequestIds the ids of the AutomationRequests which were transmitted
+	 */
+	void updateActionWordImplInfoFromAutomRequestIds(Collection<Long> automationRequestIds);
 }
