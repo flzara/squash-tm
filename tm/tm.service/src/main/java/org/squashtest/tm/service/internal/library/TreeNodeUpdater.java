@@ -101,11 +101,13 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	public void visit(CampaignFolder campaignFolder) {
 		// nothing to update
+		updateCustomFields(campaignFolder);
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
 		stripFolderSyncExtender(requirementFolder);
+		updateCustomFields(requirementFolder);
 	}
 
 
