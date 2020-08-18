@@ -47,8 +47,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersionLink;
 import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
-import org.squashtest.tm.domain.testcase.KeywordTestCase;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;

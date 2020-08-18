@@ -37,7 +37,6 @@ import org.squashtest.tm.api.wizard.AutomationWorkflow;
 import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.core.scm.spi.ScmConnector;
 import org.squashtest.tm.domain.IdCollector;
-import org.squashtest.tm.domain.bdd.QActionWord;
 import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
@@ -49,12 +48,9 @@ import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.QTestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.QKeywordTestCase;
-import org.squashtest.tm.domain.testcase.QKeywordTestStep;
 import org.squashtest.tm.domain.testcase.QScriptedTestCase;
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.tf.automationrequest.QAutomationRequest;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
@@ -63,7 +59,6 @@ import org.squashtest.tm.service.internal.repository.ScmRepositoryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.scmserver.ScmConnectorRegistry;
 import org.squashtest.tm.service.internal.tf.event.AutomationRequestStatusChangeEvent;
-import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
 import org.squashtest.tm.service.servers.CredentialsProvider;
@@ -78,7 +73,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,8 +88,6 @@ public class BDDTestCaseEventListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BDDTestCaseEventListener.class);
 
 	private static final String SPEL_ARSTATUS = "T(org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus)";
-
-	private static final String TYPE_WORKFLOW = "T(org.squashtest.tm.domain.project.AutomationWorkflowType)";
 
 	@PersistenceContext
 	private EntityManager em;
@@ -120,9 +112,6 @@ public class BDDTestCaseEventListener {
 
 	@Inject
 	private ProjectDao projectDao;
-
-	@Inject
-	private GenericProjectManagerService projectManager;
 
 	@Inject
 	private MessageSource i18nHelper;
