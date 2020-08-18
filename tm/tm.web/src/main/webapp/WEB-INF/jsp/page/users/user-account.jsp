@@ -307,7 +307,7 @@
         </div>
         <br/>
         <div align="justify" style="padding-left: 25px"><label> <f:message key="label.token.password"/></label> <br/>
-          <input type="password" class="user-mp" value="${String.valueOf(map[bugtracker.key].password) }" data-bind="password">
+          <input type="password" class="user-mp" data-bind="password">
         </div>
         <br/>
 
