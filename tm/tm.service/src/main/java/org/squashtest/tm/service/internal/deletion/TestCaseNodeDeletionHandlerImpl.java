@@ -297,7 +297,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			deletionDao.removeAllSteps(stepIds);
 			attachmentManager.removeAttachmentsAndLists(testStepAttachmentIds);
 
-
+			customValueService.deleteAllCustomFieldValues(BindableEntity.TESTCASE_FOLDER, folderIds);
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, tcIds);
 
 			datasetService.removeAllByTestCaseIds(tcIds);

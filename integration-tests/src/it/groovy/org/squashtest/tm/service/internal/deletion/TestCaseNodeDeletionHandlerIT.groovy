@@ -35,6 +35,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -143,6 +144,27 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 		def lib = findEntity(TestCaseLibrary.class, -1L)
 		lib.rootContent.size() == 0
+	}
+
+	/* this test is required after issue 1284 */
+	@Unroll
+	@DataSet("NodeDeletionHandlerTest.should delete tc folder cuf values.xml")
+	def "when a TC folder is removed, all of its CUF values/values options are also removed"(){
+		expect:
+		found(TestCaseFolder.class, -1L)
+		found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		when :
+		deletionHandler.deleteNodes([-1L])
+
+		then :
+		! found(TestCaseFolder.class, -1L)
+		! found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		! found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		where:
+		cufId << ([-1L, -2L, -3L, -4L, -5L, -6L, -7L])
 	}
 
 	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
