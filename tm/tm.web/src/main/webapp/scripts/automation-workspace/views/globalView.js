@@ -239,8 +239,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         var entityId = data["entity-id"];
 
                         var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
-                        var isGherkin = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase();
-                        if (data['script'] !== '-' && (data['isManual'] || data['script'] === null) && !isGherkin && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
+                        var isGherkinOrBDD = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase()
+																				|| data['format'].toLowerCase() === translator.get('test-case.format.keyword').toLowerCase();
+                        if (data['script'] !== '-' && (data['isManual'] || data['script'] === null) && !isGherkinOrBDD && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
                             cell.editable(url, editable);
                             cell.css({ "font-style": "italic" });
 
@@ -273,9 +274,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                                 }
                                 return false;// see comment above
                             });
-                        } else if (isGherkin && data['script'] !== '-' || data['script']!==null) {
+                        } else if (isGherkinOrBDD && data['script'] !== '-' || data['script'] !== null) {
                             cell.css({ 'color': 'gray', 'font-style': 'italic' });
-                        } else if (data['listScriptConflict'] !== null && data['listScriptConflict'].length!==1) {
+                        } else if (data['listScriptConflict'] !== null && data['listScriptConflict'].length !== 1) {
 							/*TM-13: list of script in conflict*/
 							cell.css({ 'color': 'gray', 'font-style': 'italic' });
 							cell.on('click', '.script-conflict', function(evt){
