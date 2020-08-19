@@ -33,7 +33,7 @@ import net.sf.jasperreports.engine.util.MarkupProcessorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.JEditorPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.LeafElement;
 import javax.swing.text.AttributeSet;
