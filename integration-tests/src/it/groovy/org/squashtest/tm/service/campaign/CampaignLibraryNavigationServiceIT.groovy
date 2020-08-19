@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.campaign
 
+import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
@@ -29,7 +30,10 @@ import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
@@ -570,5 +574,32 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	def findCampaign(id) {
 		session.load(Campaign, id)
+	}
+
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy to other project.xml")
+	def "should copy paste campaign folder with cuf values to other project"() {
+		given:
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
+
+		when:
+		List<CampaignLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then:
+		nodes.get(0) instanceof CampaignFolder
+		CampaignFolder folderCopy = (CampaignFolder) nodes.get(0)
+
+		and: "cufs are updated to match destination project's config"
+		def copiedFolderCUFValues = findCufValuesForEntity(BindableEntity.CAMPAIGN_FOLDER, folderCopy.id)
+		copiedFolderCUFValues.size() == 2
+		copiedFolderCUFValues.find { it.getBinding().id == -9L }.value == "campaign-1-cuf1"
+		copiedFolderCUFValues.find { it.getBinding().id == -11L }.value == "Monday"
+	}
+
+	def findCufValuesForEntity(BindableEntity tctype, long tcId) {
+		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
+		query.setParameter("id", tcId)
+		query.setParameter("type", tctype)
+		return query.list()
 	}
 }

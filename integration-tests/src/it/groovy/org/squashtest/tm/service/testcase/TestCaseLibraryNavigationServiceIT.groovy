@@ -371,6 +371,25 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
         values11.find { it.getBinding().id == -4L }.value == "default"
     }
 
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")
+	def "should copy paste test case folder with cuf values to other project"() {
+		given:
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
+
+		when:
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then:
+		nodes.get(0) instanceof TestCaseFolder
+		TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
+
+		and: "cufs are updated to match destination project's config"
+		def copiedFolderCUFValues = findCufValuesForEntity(BindableEntity.TESTCASE_FOLDER, folderCopy.id)
+		copiedFolderCUFValues.size() == 1
+		copiedFolderCUFValues.find { it.getBinding().id == -6L }.value == "folder-1-cuf1"
+	}
+
 	def findCufValuesForEntity(BindableEntity tctype, long tcId) {
 		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
 		query.setParameter("id", tcId)

@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.requirement
 
+import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.requirement.Requirement
@@ -465,5 +468,31 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		result == [-3L, -100L, null]
 	}
 
+	@DataSet("RequirementLibraryNavigationServiceIT.should copy to other project.xml")
+	def "should copy paste requirement folder with cuf values to other project"() {
+		given:
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
+
+		when:
+		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then:
+		nodes.get(0) instanceof RequirementFolder
+		RequirementFolder folderCopy = (RequirementFolder) nodes.get(0)
+
+		and: "cufs are updated to match destination project's config"
+		def copiedFolderCUFValues = findCufValuesForEntity(BindableEntity.REQUIREMENT_FOLDER, folderCopy.id)
+		copiedFolderCUFValues.size() == 2
+		copiedFolderCUFValues.find { it.getBinding().id == -9L }.value == "requirement-1-cuf1"
+		copiedFolderCUFValues.find { it.getBinding().id == -11L }.value == "Monday"
+	}
+
+	def findCufValuesForEntity(BindableEntity tctype, long tcId) {
+		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
+		query.setParameter("id", tcId)
+		query.setParameter("type", tctype)
+		return query.list()
+	}
 }
 
