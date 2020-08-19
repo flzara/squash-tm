@@ -23,11 +23,13 @@ package org.squashtest.tm.service.testautomation;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
@@ -37,8 +39,6 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 
 public interface AutomatedSuiteManagerService {
 

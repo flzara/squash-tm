@@ -50,11 +50,11 @@ import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
-import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
 import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.CUCUMBER
+import static org.squashtest.tm.domain.bdd.BddImplementationTechnology.ROBOT
 import static org.squashtest.tm.domain.bdd.BddScriptLanguage.ENGLISH
-import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 import static org.squashtest.tm.domain.bdd.Keyword.AND
+import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 

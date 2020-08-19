@@ -27,7 +27,11 @@ import org.squashtest.tm.exception.NotAllowedByLicenseException
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException
 import org.squashtest.tm.service.configuration.ConfigurationService
 import org.squashtest.tm.service.feature.FeatureManager
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.AdministrationDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.TeamDao
+import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.service.internal.repository.UsersGroupDao
 import org.squashtest.tm.service.internal.user.AdministrationServiceImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
 import org.squashtest.tm.service.security.acls.model.ObjectAclService

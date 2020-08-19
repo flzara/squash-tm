@@ -21,7 +21,11 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import org.springframework.context.MessageSource
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder

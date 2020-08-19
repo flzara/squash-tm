@@ -26,7 +26,11 @@ import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testcase.TestCaseKind
-import org.squashtest.tm.service.internal.testautomation.*
+import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
+import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
+import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
+import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Shared

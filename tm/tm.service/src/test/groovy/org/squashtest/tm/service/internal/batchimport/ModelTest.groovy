@@ -39,7 +39,10 @@ import spock.lang.Specification
 import javax.persistence.EntityManager
 import javax.persistence.Query
 
-import static org.squashtest.tm.service.internal.batchimport.Existence.*
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS
+import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_DELETED
 
 public class ModelTest extends Specification{
 

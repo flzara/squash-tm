@@ -33,6 +33,7 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;

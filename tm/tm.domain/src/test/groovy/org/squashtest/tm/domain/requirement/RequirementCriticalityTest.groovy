@@ -23,7 +23,10 @@ package org.squashtest.tm.domain.requirement
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import spock.lang.Specification
 
-import static org.squashtest.tm.domain.requirement.RequirementCriticality.*
+import static org.squashtest.tm.domain.requirement.RequirementCriticality.CRITICAL
+import static org.squashtest.tm.domain.requirement.RequirementCriticality.MAJOR
+import static org.squashtest.tm.domain.requirement.RequirementCriticality.MINOR
+import static org.squashtest.tm.domain.requirement.RequirementCriticality.UNDEFINED
 
 class RequirementCriticalityTest extends Specification {
 	def "should convert level into criticality"() {

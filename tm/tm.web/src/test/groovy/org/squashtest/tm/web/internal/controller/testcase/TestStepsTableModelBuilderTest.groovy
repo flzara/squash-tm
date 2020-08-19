@@ -22,7 +22,12 @@ package org.squashtest.tm.web.internal.controller.testcase
 
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder
 import spock.lang.Specification

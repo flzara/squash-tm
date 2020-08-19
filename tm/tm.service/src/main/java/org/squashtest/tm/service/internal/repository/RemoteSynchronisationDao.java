@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.synchronisation.RemoteSynchronisation;
+
 import java.util.List;
 
 public interface RemoteSynchronisationDao extends JpaRepository<RemoteSynchronisation,Long> {

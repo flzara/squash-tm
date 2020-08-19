@@ -22,11 +22,11 @@ package org.squashtest.tm.service.internal.query;
 
 import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.query.NaturalJoinStyle;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.ColumnType;
+import org.squashtest.tm.domain.query.NaturalJoinStyle;
 import org.squashtest.tm.domain.query.QueryAggregationColumn;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 import org.squashtest.tm.domain.query.QueryModel;
 import org.squashtest.tm.domain.query.QueryOrderingColumn;

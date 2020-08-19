@@ -27,7 +27,10 @@ import org.squashtest.tm.service.internal.batchimport.ParameterInstruction
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn.ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn.TC_OWNER_PATH
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn.TC_PARAM_DESCRIPTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn.TC_PARAM_NAME
 
 /**
  * @author Gregory Fouquet

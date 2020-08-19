@@ -27,7 +27,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testutils.MockFactory
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
-import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.exception.UnknownEntityException
 import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
@@ -36,8 +35,16 @@ import spock.lang.Unroll
 
 import java.lang.reflect.Modifier
 
-import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.*
-import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.*
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.M
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.N
+import static org.squashtest.tm.domain.testcase.TestCaseAutomatable.Y
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.AUTOMATION_IN_PROGRESS
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.READY_TO_TRANSMIT
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.REJECTED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.SUSPENDED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.TRANSMITTED
+import static org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus.WORK_IN_PROGRESS
 
 class TestCaseTest extends Specification {
 

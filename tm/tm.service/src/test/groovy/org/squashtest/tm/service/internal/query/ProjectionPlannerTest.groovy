@@ -20,12 +20,8 @@
  */
 package org.squashtest.tm.service.internal.query
 
-import org.hibernate.dialect.ColumnAliasExtractor
-import org.junit.Ignore
-import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.query.ColumnType
-import org.squashtest.tm.domain.query.DataType
-import org.squashtest.tm.domain.query.Operation
+
+import spock.lang.Specification
 
 /**
  *     This file is part of the Squashtest platform.
@@ -48,12 +44,11 @@ import org.squashtest.tm.domain.query.Operation
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import spock.lang.Specification
-
-import java.util.function.Function
-
-import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.createInternalModel
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkAggr
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkFilter
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkOrder
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkProj
 
 
 class ProjectionPlannerTest extends Specification {

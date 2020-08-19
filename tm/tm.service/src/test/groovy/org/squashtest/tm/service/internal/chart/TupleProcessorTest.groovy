@@ -1,4 +1,7 @@
 package org.squashtest.tm.service.internal.chart
+
+import com.querydsl.core.Tuple
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -20,7 +23,6 @@ package org.squashtest.tm.service.internal.chart
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.querydsl.core.Tuple
 import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ChartDefinition
 import org.squashtest.tm.domain.chart.MeasureColumn
@@ -36,9 +38,24 @@ import spock.lang.Unroll
 
 import java.text.SimpleDateFormat
 
-import static org.squashtest.tm.domain.query.DataType.*
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.NOT_RUN
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS
+import static org.squashtest.tm.domain.query.DataType.BOOLEAN
+import static org.squashtest.tm.domain.query.DataType.DATE
+import static org.squashtest.tm.domain.query.DataType.EXECUTION_STATUS
+import static org.squashtest.tm.domain.query.DataType.EXISTENCE
+import static org.squashtest.tm.domain.query.DataType.INFO_LIST_ITEM
+import static org.squashtest.tm.domain.query.DataType.LEVEL_ENUM
+import static org.squashtest.tm.domain.query.DataType.LIST
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.domain.query.DataType.STRING
+import static org.squashtest.tm.domain.query.DataType.TAG
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.HIGH
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.MEDIUM
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.VERY_HIGH
 
 class TupleProcessorTest extends Specification{
 

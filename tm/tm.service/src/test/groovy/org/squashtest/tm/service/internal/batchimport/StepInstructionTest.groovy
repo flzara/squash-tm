@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
-import org.squashtest.tm.service.internal.batchimport.*
 import spock.lang.Specification
 import spock.lang.Unroll
 

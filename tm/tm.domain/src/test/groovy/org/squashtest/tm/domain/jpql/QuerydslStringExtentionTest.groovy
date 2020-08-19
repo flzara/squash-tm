@@ -21,11 +21,9 @@
 package org.squashtest.tm.domain.jpql
 
 import ext.java.lang.QString
-import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
-import org.squashtest.tm.domain.testcase.QTestCase;
-
-
-import spock.lang.Specification;
+import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder
+import org.squashtest.tm.domain.testcase.QTestCase
+import spock.lang.Specification
 
 class QuerydslStringExtentionTest extends Specification{
 

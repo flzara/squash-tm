@@ -21,13 +21,13 @@
 package org.squashtest.tm.service.project;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;

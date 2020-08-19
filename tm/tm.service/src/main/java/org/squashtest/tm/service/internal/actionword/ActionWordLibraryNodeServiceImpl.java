@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.actionword.CannotDeleteActionWordException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParentNodeTypeException;
-import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
@@ -46,7 +45,6 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
-import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.FOLDER;
 import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.LIBRARY;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 

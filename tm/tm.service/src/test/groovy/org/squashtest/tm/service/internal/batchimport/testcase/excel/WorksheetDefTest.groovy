@@ -24,7 +24,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_PATH
 
 /**
  * @author Gregory Fouquet

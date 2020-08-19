@@ -22,7 +22,9 @@ package org.squashtest.tm.service.importer
 
 import spock.lang.Specification
 
-import static org.squashtest.tm.service.importer.ImportStatus.*
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
+import static org.squashtest.tm.service.importer.ImportStatus.OK
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING
 
 /**
  * @author Gregory Fouquet

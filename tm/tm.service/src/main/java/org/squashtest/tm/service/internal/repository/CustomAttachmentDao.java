@@ -26,6 +26,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.attachment.Attachment;
+
 import java.util.List;
 
 /**

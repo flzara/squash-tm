@@ -24,7 +24,12 @@ import org.springframework.validation.BindException
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.bdd.*
+import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
+import org.squashtest.tm.domain.bdd.ActionWordParameter
+import org.squashtest.tm.domain.bdd.ActionWordParameterValue
+import org.squashtest.tm.domain.bdd.ActionWordText
+import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestStep

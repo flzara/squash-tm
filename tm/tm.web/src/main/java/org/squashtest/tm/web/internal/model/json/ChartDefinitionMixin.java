@@ -47,11 +47,11 @@ import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.query.ColumnRole;
-import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.query.ColumnRole;
+import org.squashtest.tm.domain.query.SpecializedEntityType;
 
 import java.util.List;
 import java.util.Map;

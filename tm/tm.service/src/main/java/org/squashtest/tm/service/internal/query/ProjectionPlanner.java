@@ -20,6 +20,16 @@
  */
 package org.squashtest.tm.service.internal.query;
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.query.QueryAggregationColumn;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
+import org.squashtest.tm.domain.query.QueryOrderingColumn;
+import org.squashtest.tm.domain.query.QueryProjectionColumn;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,17 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.query.QueryAggregationColumn;
-import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
-
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import org.squashtest.tm.domain.query.QueryOrderingColumn;
-import org.squashtest.tm.domain.query.QueryProjectionColumn;
 
 /**
  * <p>

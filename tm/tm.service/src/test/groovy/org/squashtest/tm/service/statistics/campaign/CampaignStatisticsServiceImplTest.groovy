@@ -26,7 +26,10 @@ import spock.lang.Specification
 import javax.persistence.EntityManager
 import javax.persistence.Query
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS
 
 class CampaignStatisticsServiceImplTest extends Specification {
 

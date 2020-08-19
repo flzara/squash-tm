@@ -27,7 +27,11 @@ import org.squashtest.tm.service.internal.batchimport.StepInstruction
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.TC_OWNER_PATH
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.TC_STEP_ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.TC_STEP_EXPECTED_RESULT
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.TC_STEP_NUM
 
 /**
  * @author Gregory Fouquet

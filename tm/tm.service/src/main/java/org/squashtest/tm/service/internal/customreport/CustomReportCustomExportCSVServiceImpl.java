@@ -67,7 +67,6 @@ import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_ISSUES_CLOSURE;
 import static org.squashtest.tm.jooq.domain.Tables.EXECUTION_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.INFO_LIST_ITEM;
 import static org.squashtest.tm.jooq.domain.Tables.ISSUE;
-import static org.squashtest.tm.jooq.domain.Tables.ISSUE_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION;

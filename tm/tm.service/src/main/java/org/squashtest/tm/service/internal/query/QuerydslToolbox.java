@@ -21,16 +21,28 @@
 package org.squashtest.tm.service.internal.query;
 
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.querydsl.core.JoinExpression;
+import com.querydsl.core.types.Constant;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.FactoryExpression;
+import com.querydsl.core.types.Operator;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Ops.DateTimeOps;
+import com.querydsl.core.types.ParamExpression;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.TemplateExpression;
+import com.querydsl.core.types.Visitor;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.DateOperation;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -51,27 +63,14 @@ import org.squashtest.tm.domain.query.QueryStrategy;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
-import com.querydsl.core.JoinExpression;
-import com.querydsl.core.types.Constant;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.FactoryExpression;
-import com.querydsl.core.types.Operator;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Ops.DateTimeOps;
-import com.querydsl.core.types.ParamExpression;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.core.types.TemplateExpression;
-import com.querydsl.core.types.Visitor;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.DateOperation;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.SimpleExpression;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 class QuerydslToolbox {
 

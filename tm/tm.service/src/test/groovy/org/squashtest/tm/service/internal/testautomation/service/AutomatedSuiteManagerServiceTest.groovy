@@ -35,11 +35,17 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testautomation.*
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
+import org.squashtest.tm.domain.testautomation.AutomatedSuite
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
+import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl
@@ -49,8 +55,6 @@ import org.squashtest.tm.service.internal.testautomation.TestAutomationConnector
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
-import org.squashtest.tm.service.internal.repository.ExecutionDao
 import spock.lang.Specification
 
 import javax.inject.Provider

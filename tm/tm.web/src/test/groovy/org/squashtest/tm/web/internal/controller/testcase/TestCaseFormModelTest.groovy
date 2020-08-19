@@ -24,11 +24,6 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import static org.squashtest.tm.domain.testcase.TestCaseKind.GHERKIN
-import static org.squashtest.tm.domain.testcase.TestCaseKind.KEYWORD
-import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
 
 class TestCaseFormModelTest extends Specification {
 

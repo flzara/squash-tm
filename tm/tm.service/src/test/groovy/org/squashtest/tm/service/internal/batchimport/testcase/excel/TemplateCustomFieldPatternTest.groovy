@@ -23,7 +23,9 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.NO_CUSTOM_FIELD
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.STEP_CUSTOM_FIELD
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.TEST_CASE_CUSTOM_FIELD
 
 /**
  * @author Gregory Fouquet

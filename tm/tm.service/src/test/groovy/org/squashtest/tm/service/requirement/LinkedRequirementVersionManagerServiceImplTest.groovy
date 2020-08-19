@@ -22,7 +22,12 @@ package org.squashtest.tm.service.requirement
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.requirement.LinkedRequirementVersion
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.requirement.RequirementVersionLink
+import org.squashtest.tm.domain.requirement.RequirementVersionLinkType
 import org.squashtest.tm.service.audit.AuditModificationService
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao

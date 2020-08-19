@@ -33,12 +33,18 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
 import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.AttachmentDao
+import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
+import org.squashtest.tm.service.internal.repository.ExecutionDao
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao
+import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
 import spock.lang.Specification
 

@@ -23,14 +23,31 @@ import org.squashtest.tm.domain.EntityType
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.squashtest.tm.domain.query.*
+import org.squashtest.tm.domain.query.ColumnType
+import org.squashtest.tm.domain.query.QueryAggregationColumn
+import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryFilterColumn
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryOrderingColumn
+import org.squashtest.tm.domain.query.QueryProjectionColumn
+import org.squashtest.tm.domain.query.QueryStrategy
+import org.squashtest.tm.domain.query.SpecializedEntityType
 import org.squashtest.tm.service.query.ConfiguredQuery
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.query.ColumnType.*
-import static org.squashtest.tm.domain.query.QueryStrategy.*
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.ColumnType.CALCULATED
+import static org.squashtest.tm.domain.query.ColumnType.CUF
+import static org.squashtest.tm.domain.query.QueryStrategy.INLINED
+import static org.squashtest.tm.domain.query.QueryStrategy.MAIN
+import static org.squashtest.tm.domain.query.QueryStrategy.SUBQUERY
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_MILESTONE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP
 
 class InternalQueryModelTest extends Specification{
 

@@ -21,11 +21,12 @@
 package org.squashtest.tm.domain.bdd
 
 import spock.lang.Specification
-import static org.squashtest.tm.domain.bdd.Keyword.GIVEN;
-import static org.squashtest.tm.domain.bdd.Keyword.WHEN;
-import static org.squashtest.tm.domain.bdd.Keyword.THEN;
-import static org.squashtest.tm.domain.bdd.Keyword.AND;
-import static org.squashtest.tm.domain.bdd.Keyword.BUT;
+
+import static org.squashtest.tm.domain.bdd.Keyword.AND
+import static org.squashtest.tm.domain.bdd.Keyword.BUT
+import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
+import static org.squashtest.tm.domain.bdd.Keyword.THEN
+import static org.squashtest.tm.domain.bdd.Keyword.WHEN
 
 class KeywordTest extends Specification {
 

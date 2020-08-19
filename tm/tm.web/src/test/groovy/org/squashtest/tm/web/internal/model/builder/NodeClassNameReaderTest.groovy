@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
-import org.squashtest.tm.domain.campaign.*
+
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary

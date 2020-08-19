@@ -2,6 +2,7 @@ package org.squashtest.tm.service.internal.query
 
 import com.querydsl.core.types.Expression
 import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.EntityPathBase
 
 /**
  *     This file is part of the Squashtest platform.
@@ -24,11 +25,9 @@ import com.querydsl.core.types.dsl.BooleanExpression
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.PathBuilder
 import com.querydsl.jpa.hibernate.HibernateQuery
-import org.junit.Ignore
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.query.ColumnType

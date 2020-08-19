@@ -20,13 +20,16 @@
  */
 package org.squashtest.tm.service.requirement
 
-
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService
 import org.squashtest.tm.service.infolist.InfoListItemFinderService

@@ -27,7 +27,12 @@ import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstructi
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.TC_DATASET_NAME
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.TC_DATASET_PARAM_NAME
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.TC_DATASET_PARAM_VALUE
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.TC_OWNER_PATH
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.TC_PARAM_OWNER_PATH
 
 /**
  * @author Gregory Fouquet

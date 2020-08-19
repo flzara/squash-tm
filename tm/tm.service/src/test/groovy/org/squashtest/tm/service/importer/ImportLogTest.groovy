@@ -24,7 +24,9 @@ import org.squashtest.tm.service.internal.batchimport.DatasetTarget
 import spock.lang.Specification
 
 import static org.squashtest.tm.service.importer.EntityType.DATASET
-import static org.squashtest.tm.service.importer.ImportStatus.*
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
+import static org.squashtest.tm.service.importer.ImportStatus.OK
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING
 
 class ImportLogTest extends Specification {
 

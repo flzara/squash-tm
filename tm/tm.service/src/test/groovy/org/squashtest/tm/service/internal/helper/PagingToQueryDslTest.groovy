@@ -41,8 +41,13 @@ import java.text.SimpleDateFormat
 import java.time.temporal.Temporal
 
 import static org.squashtest.tm.domain.testcase.TestCaseImportance.MEDIUM
-import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.*
-import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter.CompOperator.*
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.BaseConverter
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter.CompOperator.DATE
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter.CompOperator.EQUALITY
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnFilteringConverter.CompOperator.LIKE
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.SortConverter
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.filterConverter
+import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.sortConverter
 
 class PagingToQueryDslTest extends Specification {
 

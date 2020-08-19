@@ -70,7 +70,6 @@ import spock.lang.Unroll
 import static org.squashtest.tm.domain.bdd.Keyword.AND
 import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 import static org.squashtest.tm.domain.bdd.Keyword.THEN
-import static org.squashtest.tm.domain.bdd.Keyword.WHEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()

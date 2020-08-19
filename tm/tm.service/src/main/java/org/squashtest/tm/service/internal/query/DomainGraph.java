@@ -21,6 +21,20 @@
 package org.squashtest.tm.service.internal.query;
 
 
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
+import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST;
@@ -45,7 +59,6 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIR
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTACHMENT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTLIST;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_MILESTONE;
@@ -53,20 +66,6 @@ import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_C
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_PROJECT;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP;
 import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_TYPE;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.service.internal.query.PlannedJoin.JoinType;
-import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
 
 /**
  * <p>

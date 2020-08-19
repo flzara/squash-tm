@@ -20,13 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import org.squashtest.tm.api.plugin.PluginType
+
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.customfield.BindableEntity
-import org.squashtest.tm.domain.library.*
+import org.squashtest.tm.domain.library.Copiable
+import org.squashtest.tm.domain.library.Folder
+import org.squashtest.tm.domain.library.Library
+import org.squashtest.tm.domain.library.LibraryNode
+import org.squashtest.tm.domain.library.NodeContainerVisitor
+import org.squashtest.tm.domain.library.NodeVisitor
+import org.squashtest.tm.domain.library.TreeNode
 import org.squashtest.tm.domain.project.GenericProject
-import org.squashtest.tm.domain.project.LibraryPluginBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding
 import org.squashtest.tm.exception.DuplicateNameException

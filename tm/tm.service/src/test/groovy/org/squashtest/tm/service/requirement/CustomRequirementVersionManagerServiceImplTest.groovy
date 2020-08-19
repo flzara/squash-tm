@@ -24,7 +24,6 @@ import org.hibernate.Session
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao

@@ -21,21 +21,33 @@
 package org.squashtest.tm.service.internal.campaign
 
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.campaign.*
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.UserListItem
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseVisitor
 import org.squashtest.tm.domain.users.User
-
 import org.squashtest.tm.service.attachment.AttachmentManagerService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.execution.ExecutionModificationService
 import org.squashtest.tm.service.internal.campaign.scripted.ScriptedTestCaseExecutionHelper
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.ExecutionDao
+import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
 import org.squashtest.tm.service.user.UserAccountService

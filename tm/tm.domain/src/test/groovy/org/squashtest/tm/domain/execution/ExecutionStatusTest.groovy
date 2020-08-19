@@ -23,7 +23,23 @@ package org.squashtest.tm.domain.execution
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.ERROR
+import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
+import static org.squashtest.tm.domain.execution.ExecutionStatus.NOT_FOUND
+import static org.squashtest.tm.domain.execution.ExecutionStatus.NOT_RUN
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SETTLED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS
+import static org.squashtest.tm.domain.execution.ExecutionStatus.UNTESTABLE
+import static org.squashtest.tm.domain.execution.ExecutionStatus.WARNING
+import static org.squashtest.tm.domain.execution.ExecutionStatus.computeNewStatus
+import static org.squashtest.tm.domain.execution.ExecutionStatus.getCanonicalStatusSet
+import static org.squashtest.tm.domain.execution.ExecutionStatus.getNonTerminatedStatusSet
+import static org.squashtest.tm.domain.execution.ExecutionStatus.getTerminatedStatusSet
+import static org.squashtest.tm.domain.execution.ExecutionStatus.toCanonicalStatusList
+import static org.squashtest.tm.domain.execution.ExecutionStatus.values
 
 /**
  * @author Gregory Fouquet

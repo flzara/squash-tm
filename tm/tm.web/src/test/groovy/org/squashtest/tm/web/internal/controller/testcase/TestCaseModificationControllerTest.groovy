@@ -25,7 +25,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.project.AutomationWorkflowType
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -47,7 +46,6 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 import org.squashtest.tm.web.testutils.MockFactory
 import spock.lang.Specification
 
-import javax.inject.Inject
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 

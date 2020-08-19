@@ -25,7 +25,11 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import spock.lang.Specification
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASET_PARAM_VALUES_SHEET
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET
 
 /**
  * @author Gregory Fouquet

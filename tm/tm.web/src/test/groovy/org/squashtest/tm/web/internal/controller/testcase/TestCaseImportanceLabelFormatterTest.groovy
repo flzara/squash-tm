@@ -25,7 +25,10 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.HIGH
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.MEDIUM
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.VERY_HIGH
 
 /**
  * @author Gregory Fouquet

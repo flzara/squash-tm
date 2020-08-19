@@ -33,7 +33,18 @@ import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceExceptio
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.ACTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_CREATED_BY
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_CREATED_ON
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_DESCRIPTION
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NATURE
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_PRE_REQUISITE
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_STATUS
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_TYPE
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_WEIGHT
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_WEIGHT_AUTO
 
 /**
  * @author Gregory Fouquet

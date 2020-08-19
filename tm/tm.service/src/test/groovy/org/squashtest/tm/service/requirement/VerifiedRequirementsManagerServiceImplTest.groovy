@@ -20,16 +20,27 @@
  */
 package org.squashtest.tm.service.requirement
 
-
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
-import org.squashtest.tm.domain.testcase.*
-
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
-import org.squashtest.tm.service.internal.repository.*
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl

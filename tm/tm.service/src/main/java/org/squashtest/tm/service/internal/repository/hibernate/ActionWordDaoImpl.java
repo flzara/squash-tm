@@ -35,7 +35,6 @@ import static org.squashtest.tm.jooq.domain.Tables.ACTION_WORD;
 import static org.squashtest.tm.jooq.domain.Tables.AUTOMATION_REQUEST;
 import static org.squashtest.tm.jooq.domain.Tables.KEYWORD_TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
-import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_STEPS;
 import static org.squashtest.tm.jooq.domain.tables.KeywordTestCase.KEYWORD_TEST_CASE;
 

@@ -58,7 +58,6 @@ import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestModificationService;
 
 import javax.inject.Inject;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;

@@ -47,7 +47,6 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.HashMap;
 import java.util.Map;
 

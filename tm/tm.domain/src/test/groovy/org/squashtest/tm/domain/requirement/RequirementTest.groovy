@@ -29,7 +29,10 @@ import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.domain.requirement.RequirementStatus.*
+import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED
+import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE
+import static org.squashtest.tm.domain.requirement.RequirementStatus.UNDER_REVIEW
+import static org.squashtest.tm.domain.requirement.RequirementStatus.WORK_IN_PROGRESS
 
 class RequirementTest extends Specification {
 

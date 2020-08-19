@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseKind
 
 import javax.servlet.http.HttpServletRequest
 

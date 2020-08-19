@@ -28,9 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.ColumnType;
 import org.squashtest.tm.domain.query.DataType;
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.query.ConfiguredQuery;
 import org.squashtest.tm.service.query.QueryProcessingService;
 

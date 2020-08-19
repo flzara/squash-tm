@@ -24,9 +24,6 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 
 import java.util.List;
 
-import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
-import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
-
 public class ParameterNameInStepUpdater implements TestStepVisitor {
 
 	private String oldParamName;

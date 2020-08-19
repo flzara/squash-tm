@@ -20,21 +20,22 @@
  */
 package org.squashtest.tm.service.internal.query
 
-import org.squashtest.tm.domain.query.QueryModel
-import org.squashtest.tm.domain.query.QueryProjectionColumn
-import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.testcase.TestCaseStatus
-
-import static org.squashtest.tm.domain.EntityType.*
 import org.squashtest.tm.domain.query.ColumnType
 import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.domain.query.QueryColumnPrototype
+import org.squashtest.tm.domain.query.QueryModel
+import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.query.SpecializedEntityType
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseKind
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.domain.EntityType.TEST_CASE
 
 
 class EnumHelperTest extends Specification{

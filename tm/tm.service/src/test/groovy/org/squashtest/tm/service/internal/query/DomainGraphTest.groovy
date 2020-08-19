@@ -2,6 +2,7 @@ package org.squashtest.tm.service.internal.query
 
 import org.squashtest.tm.service.internal.query.DomainGraph
 import org.squashtest.tm.service.internal.query.InternalEntityType
+import spock.lang.Specification
 
 /**
  *     This file is part of the Squashtest platform.
@@ -24,10 +25,40 @@ import org.squashtest.tm.service.internal.query.InternalEntityType
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*
+import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER
+import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTACHMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_ATTLIST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_MILESTONE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN_PROJECT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.DATASET
+import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ISSUE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_SUITE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER
+import static org.squashtest.tm.service.internal.query.InternalEntityType.PARAMETER
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_PROJECT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTACHMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_ATTLIST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_CATEGORY
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_COVERAGE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_MILESTONE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTACHMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_ATTLIST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_MILESTONE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_NATURE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_PROJECT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_TYPE
 
 class DomainGraphTest extends Specification {
 

@@ -21,11 +21,11 @@
 package org.squashtest.tm.web.internal.wizard
 
 import org.squashtest.tm.api.plugin.EntityReference
+import org.squashtest.tm.api.plugin.PluginType
 import org.squashtest.tm.api.widget.MenuItem
 import org.squashtest.tm.api.wizard.WorkspaceWizard
 import org.squashtest.tm.api.workspace.WorkspaceType
 import org.squashtest.tm.domain.campaign.CampaignLibrary
-import org.squashtest.tm.api.plugin.PluginType
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
@@ -33,7 +33,9 @@ import org.squashtest.tm.service.project.GenericProjectFinder
 import org.squashtest.tm.web.internal.plugins.manager.wizard.WorkspaceWizardManagerImpl
 import spock.lang.Specification
 
-import static org.squashtest.tm.api.workspace.WorkspaceType.*
+import static org.squashtest.tm.api.workspace.WorkspaceType.CAMPAIGN_WORKSPACE
+import static org.squashtest.tm.api.workspace.WorkspaceType.REQUIREMENT_WORKSPACE
+import static org.squashtest.tm.api.workspace.WorkspaceType.TEST_CASE_WORKSPACE
 
 /**
  * @author Gregory Fouquet

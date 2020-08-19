@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.query.ColumnRole;
 import org.squashtest.tm.domain.query.QueryColumnPrototypeInstance;
 import org.squashtest.tm.domain.query.SpecializedEntityType;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 

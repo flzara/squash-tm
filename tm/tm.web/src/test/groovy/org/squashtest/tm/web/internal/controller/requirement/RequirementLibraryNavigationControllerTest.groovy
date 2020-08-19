@@ -22,7 +22,12 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.infolist.ListItemReference
-import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder

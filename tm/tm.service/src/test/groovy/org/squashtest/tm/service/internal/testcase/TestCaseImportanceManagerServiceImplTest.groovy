@@ -31,7 +31,9 @@ import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 import static RequirementCriticality.*
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.HIGH
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.MEDIUM
 
 class TestCaseImportanceManagerServiceImplTest extends Specification {
 	TestCaseImportanceManagerServiceImpl service = new TestCaseImportanceManagerServiceImpl()

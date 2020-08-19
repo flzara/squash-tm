@@ -76,9 +76,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.squashtest.tm.domain.users.UsersGroup.ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-import static org.squashtest.tm.domain.users.UsersGroup.ADMIN;
 
 /**
  *

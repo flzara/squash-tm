@@ -29,7 +29,6 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeEntity;
 import org.squashtest.tm.domain.customreport.CustomReportTreeEntityVisitor;
 import org.squashtest.tm.domain.report.ReportDefinition;
-import org.squashtest.tm.domain.tree.TreeEntity;
 
 /**
  * Builder for new {@link CustomReportLibraryNode}.

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
 		version="2.0">
 	<tlib-version>1.0</tlib-version>
 	<short-name>workspace-utils</short-name>

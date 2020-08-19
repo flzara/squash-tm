@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.servers
 
-import org.junit.Ignore
+
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
-import org.squashtest.tm.domain.servers.*
+import org.squashtest.tm.domain.servers.AuthenticationPolicy
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.domain.servers.OAuth1aCredentials
+import org.squashtest.tm.domain.servers.ThirdPartyServer
 import org.squashtest.tm.service.servers.ManageableCredentials
 import org.squashtest.tm.service.servers.StoredCredentialsManager
 import org.squashtest.tm.service.servers.UserCredentialsCache

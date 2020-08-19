@@ -21,8 +21,12 @@
 package org.squashtest.tm.service.internal.servers
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.tm.domain.servers.*
+import org.squashtest.tm.domain.servers.AuthenticationProtocol
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
+import org.squashtest.tm.domain.servers.Credentials
+import org.squashtest.tm.domain.servers.StoredCredentials
 import org.squashtest.tm.domain.servers.StoredCredentials.ContentType
+import org.squashtest.tm.domain.servers.ThirdPartyServer
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.internal.repository.UserDao

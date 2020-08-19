@@ -1,4 +1,7 @@
 package org.squashtest.tm.service.internal.query
+
+import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -20,10 +23,18 @@ package org.squashtest.tm.service.internal.query
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity;
 import spock.lang.Specification
 import spock.lang.Unroll
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*
+
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ISSUE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_COVERAGE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE
 
 class QueryPlanTest extends Specification {
 

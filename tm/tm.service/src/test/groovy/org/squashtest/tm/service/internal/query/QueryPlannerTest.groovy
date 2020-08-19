@@ -1,4 +1,9 @@
 package org.squashtest.tm.service.internal.query
+
+import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.dsl.PathBuilder
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -20,7 +25,6 @@ package org.squashtest.tm.service.internal.query
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.query.NaturalJoinStyle
 import org.squashtest.tm.domain.query.QueryAggregationColumn
@@ -28,24 +32,38 @@ import org.squashtest.tm.domain.query.QueryFilterColumn
 import org.squashtest.tm.domain.query.QueryModel
 import org.squashtest.tm.domain.query.QueryProjectionColumn
 import org.squashtest.tm.domain.query.QueryStrategy
-import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.domain.testcase.TestCase;
-
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder
-import org.squashtest.tm.service.query.ConfiguredQuery;
+import org.squashtest.tm.domain.query.SpecializedEntityType.EntityRole
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.query.ConfiguredQuery
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*;
-import static org.squashtest.tm.domain.query.DataType.*;
-import static org.squashtest.tm.domain.query.ColumnType.*;
-import static org.squashtest.tm.domain.query.Operation.*;
-import static org.squashtest.tm.domain.testcase.QTestCase.testCase
 import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem
-
-
-import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.ColumnType.CALCULATED
+import static org.squashtest.tm.domain.query.ColumnType.CUF
+import static org.squashtest.tm.domain.query.DataType.INFO_LIST_ITEM
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.domain.query.DataType.STRING
+import static org.squashtest.tm.domain.query.Operation.COUNT
+import static org.squashtest.tm.domain.query.Operation.NONE
+import static org.squashtest.tm.domain.testcase.QTestCase.testCase
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_CATEGORY
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE_STEP
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.cov
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.itp
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkAggr
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkFilter
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkProj
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.r
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.tc
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.v
 
 class QueryPlannerTest extends Specification {
 

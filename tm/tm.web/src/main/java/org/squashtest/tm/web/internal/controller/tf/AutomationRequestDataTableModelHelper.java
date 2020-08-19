@@ -38,7 +38,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

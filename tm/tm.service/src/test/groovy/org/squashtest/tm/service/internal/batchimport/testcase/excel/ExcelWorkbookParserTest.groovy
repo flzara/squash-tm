@@ -35,7 +35,9 @@ import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceExceptio
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static org.squashtest.tm.service.importer.ImportMode.*
+import static org.squashtest.tm.service.importer.ImportMode.CREATE
+import static org.squashtest.tm.service.importer.ImportMode.DELETE
+import static org.squashtest.tm.service.importer.ImportMode.UPDATE
 
 /**
  * @author Gregory Fouquet

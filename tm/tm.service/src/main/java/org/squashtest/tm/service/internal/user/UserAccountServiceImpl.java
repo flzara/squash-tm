@@ -58,7 +58,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

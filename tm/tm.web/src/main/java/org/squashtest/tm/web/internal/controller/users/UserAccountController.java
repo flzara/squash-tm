@@ -54,7 +54,6 @@ import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerModificati
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;

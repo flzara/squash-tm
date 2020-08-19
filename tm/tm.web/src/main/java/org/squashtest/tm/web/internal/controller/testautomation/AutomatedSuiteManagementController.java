@@ -42,7 +42,6 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;

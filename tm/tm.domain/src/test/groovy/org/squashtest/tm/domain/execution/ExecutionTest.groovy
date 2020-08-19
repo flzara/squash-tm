@@ -30,7 +30,16 @@ import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.infolist.UserListItem
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.KeywordTestStep
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import spock.lang.Specification
 
 class ExecutionTest extends Specification {

@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
+import com.querydsl.core.types.EntityPath;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-
-import com.querydsl.core.types.EntityPath;
 
 /**
  * The {@link AdvancedSearchQueryModelToConfiguredQueryConverter} requires such an object that

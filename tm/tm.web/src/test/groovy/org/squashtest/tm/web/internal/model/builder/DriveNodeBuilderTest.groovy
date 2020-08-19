@@ -26,7 +26,10 @@ import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder
