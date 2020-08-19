@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -71,6 +72,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
@@ -423,6 +425,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		//empty of those campaigns
 		deleteCampaignContent(campaigns);
+
+		// delete Campaign CUF values
+		List<Long> folderIds = folders.stream().map(CampaignFolder::getId).collect(Collectors.toList());
+		customValueService.deleteAllCustomFieldValues(BindableEntity.CAMPAIGN_FOLDER, folderIds);
 
 		// now we can delete the folders as well
 		deletionDao.removeEntities(ids);

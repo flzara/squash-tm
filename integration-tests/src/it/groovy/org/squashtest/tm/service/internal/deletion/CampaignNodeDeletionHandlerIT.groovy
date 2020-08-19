@@ -479,5 +479,25 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 	}
 
+	/* this test is required after issue 1284 */
+	@Unroll
+	@DataSet("NodeDeletionHandlerTest.should delete campaign folder cuf values.xml")
+	def "when a campaign folder is removed, all of its CUF values/values options are also removed"(){
+		expect :
+		found(CampaignFolder.class, -1L)
+		found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		when:
+		deletionHandler.deleteNodes([-1L])
+
+		then:
+		!found(CampaignFolder.class, -1L)
+		!found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		!found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		where:
+		cufId << ([-1L, -2L, -3L, -4L, -5L, -6L, -7L])
+	}
 
 }
