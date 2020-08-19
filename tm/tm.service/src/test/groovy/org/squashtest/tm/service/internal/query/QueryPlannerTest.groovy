@@ -1,10 +1,3 @@
-package org.squashtest.tm.service.internal.query
-
-import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.PathBuilder
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -25,7 +18,12 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.internal.query
 
+import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.dsl.PathBuilder
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.query.NaturalJoinStyle
 import org.squashtest.tm.domain.query.QueryAggregationColumn
 import org.squashtest.tm.domain.query.QueryFilterColumn

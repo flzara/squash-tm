@@ -1,10 +1,3 @@
-package org.squashtest.tm.service.internal.query
-
-import org.squashtest.tm.service.internal.query.DomainGraph
-import org.squashtest.tm.service.internal.query.InternalEntityType
-import spock.lang.Specification
-import spock.lang.Unroll
-
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -25,7 +18,12 @@ import spock.lang.Unroll
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.internal.query
 
+import org.squashtest.tm.service.internal.query.DomainGraph
+import org.squashtest.tm.service.internal.query.InternalEntityType
+import spock.lang.Specification
+import spock.lang.Unroll
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST

@@ -1,8 +1,3 @@
-package org.squashtest.tm.service.internal.chart
-
-import com.querydsl.core.Tuple
-import org.squashtest.tm.domain.chart.AxisColumn
-
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -23,7 +18,10 @@ import org.squashtest.tm.domain.chart.AxisColumn
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.internal.chart
 
+import com.querydsl.core.Tuple
+import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ChartDefinition
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.customfield.CustomFieldOption
