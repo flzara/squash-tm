@@ -92,8 +92,5 @@
 <TEST_CASE_FOLDER TCLN_ID="-2"/>
 <TEST_CASE_LIBRARY_CONTENT CONTENT_ID="-2" LIBRARY_ID="-2" CONTENT_ORDER="0"/>
 <CUSTOM_FIELD_VALUE CFV_ID="-7" BOUND_ENTITY_ID="-2" BOUND_ENTITY_TYPE="TESTCASE_FOLDER" CFB_ID="-6" VALUE="folder-2-cuf1" FIELD_TYPE="CF" CF_ID="-1"/>
-
-<test_case_library_node />
-<test_case_folder/>
-<test_case/>
+  
 </dataset>

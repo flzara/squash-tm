@@ -144,6 +144,9 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 
 	private StringBuilder addParentNameIntoNodePath(StringBuilder builder, ActionWordLibraryNode node) {
 		ActionWordLibraryNode parentNode = (ActionWordLibraryNode) node.getParent();
+		if (parentNode == null) {
+			return builder;
+		}
 		builder.insert(0,parentNode.getName()+"/");
 		switch (parentNode.getEntityType()) {
 			case FOLDER:

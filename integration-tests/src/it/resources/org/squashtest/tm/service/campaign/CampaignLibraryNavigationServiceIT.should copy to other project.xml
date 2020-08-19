@@ -56,7 +56,4 @@
   <CUSTOM_FIELD_VALUE CFV_ID="-9" BOUND_ENTITY_ID="-2" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-9" VALUE="campaign-2-cuf1" FIELD_TYPE="CF"/>
   <CUSTOM_FIELD_VALUE CFV_ID="-11" BOUND_ENTITY_ID="-2" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-11" VALUE="campaign-2-cuf3" FIELD_TYPE="CF"/>
 
-  <test_case_library_node />
-  <test_case_folder/>
-  <test_case/>
 </dataset>

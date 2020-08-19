@@ -31,6 +31,7 @@ import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
 import org.squashtest.tm.service.internal.repository.ActionWordDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -151,6 +152,19 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-3L,-7L]		||	[-2L,-4L,-6L]														|	[-3L,-7L]
 	}
 
-	//TODO-QUAN
-	//add test for findActionWordLibraryNodePathById(Long nodeId)
+	@Unroll
+	def "should return Action word node path relative to its project"(){
+		expect:
+		actionWordLibraryNodeService.findActionWordLibraryNodePathById(nodeId) == nodePath
+
+		where:
+		nodeId			| nodePath
+		-1L				| "action word project"
+		-2L				| "action word project/press the red button"
+		-3L				| "action word project/today is \"param1\""
+		-4L				| "action word project/I have \"number\" of \"fruit\""
+		-5L				| "another project"
+		-6L				| "another project/another day"
+		-7L				| "another project/\"param1\" + \"param2\" = \"param3\""
+	}
 }
