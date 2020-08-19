@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.hibernate.HibernateQuery;
@@ -78,20 +77,23 @@ import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.ColumnF
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.filterConverter;
 import static org.squashtest.tm.service.internal.helper.PagingToQueryDsl.sortConverter;
 
-
 public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AutomationRequestDaoImpl.class);
 
 	private static final String ILLEGAL_STATUS = "One or more AutomationRequest do not have the expected status";
 
-	private static final String DEFAULT_TRANSMITTED_STATUS_FILTER = String.join(PagingToQueryDsl.LIST_SEPARATOR, AUTOMATION_IN_PROGRESS.toString(), TRANSMITTED.toString());
 	private static final String DEFAULT_GLOBAL_STATUS_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, WORK_IN_PROGRESS.toString(), TRANSMITTED.toString(), AUTOMATED.toString() );
+	private static final String DEFAULT_TRANSMITTED_STATUS_FILTER = String.join(PagingToQueryDsl.LIST_SEPARATOR, AUTOMATION_IN_PROGRESS.toString(), TRANSMITTED.toString());
 	private static final String DEFAULT_TO_VALIDATE_FILTER = 	String.join(PagingToQueryDsl.LIST_SEPARATOR, SUSPENDED.toString(), WORK_IN_PROGRESS.toString(), REJECTED.toString() );
 
-	private static final String ASSIGNED_TO_LOGIN = "assignedTo.login";
-	private static final String REQUEST_STATUS = "requestStatus";
 	private static final String ASSIGNED_TO = "assignedTo";
+	private static final String ASSIGNED_TO_LOGIN = "assignedTo.login";
+	private static final String REQ_IDS = "reqIds";
+	private static final String REQUEST_IDS = "requestIds";
+	private static final String REQUEST_STATUS = "requestStatus";
+	private static final String TRANSMITTED_BY = "transmittedBy";
+	private static final String TRANSMITTED_ON = "transmittedOn";
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -127,9 +129,11 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		ColumnFiltering filterWithAssignee = new SimpleColumnFiltering(filtering)
 												 .addFilter(ASSIGNED_TO_LOGIN, username);
 
-		return innerFindAll(pageable, filterWithAssignee, (converter) ->
+		return innerFindAll(
+			pageable,
+			filterWithAssignee,
 			// force equality comparison for the assigned user login
-			converter.compare(ASSIGNED_TO_LOGIN).withEquality(),
+			converter -> converter.compare(ASSIGNED_TO_LOGIN).withEquality(),
 			inProjectIds);
 	}
 
@@ -137,8 +141,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public Page<AutomationRequest> findAllTransmitted(Pageable pageable, ColumnFiltering columnFiltering, Collection<Long> inProjectIds) {
 		ColumnFiltering filterWithTraitment = overrideStatusAndAssignedToFilter(columnFiltering, DEFAULT_TRANSMITTED_STATUS_FILTER, null);
 
-		return innerFindAll(pageable, filterWithTraitment, (converter) ->
-			converter
+		return innerFindAll(
+			pageable,
+			filterWithTraitment,
+			converter -> converter
 				.compare(REQUEST_STATUS).withIn()
 				.compare(ASSIGNED_TO).isNull(),
 			inProjectIds);
@@ -149,8 +155,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		LOGGER.debug("searching for automation requests, paged and filtered");
 
-		return innerFindAll(pageable, filtering, (converter) ->
-			converter.compare(ASSIGNED_TO_LOGIN).withEquality(),
+		return innerFindAll(
+			pageable,
+			filtering,
+			converter -> converter.compare(ASSIGNED_TO_LOGIN).withEquality(),
 			inProjectIds);
 
 	}
@@ -167,12 +175,13 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 		ColumnFiltering effective = withStatusFilterOrDefault(filtering, DEFAULT_TO_VALIDATE_FILTER);
 
-		return innerFindAll(pageable, effective, (converter) ->
-			converter.compare(REQUEST_STATUS).withIn(),
+		return innerFindAll(
+			pageable,
+			effective,
+			(converter) -> converter.compare(REQUEST_STATUS).withIn(),
 			inProjectIds);
 
 	}
-
 
 	@Override
 	public Integer countAutomationRequestForCurrentUser(Long idUser) {
@@ -249,7 +258,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
 			"where req.id in :reqIds and req.requestStatus in :allowedStatuses")
 			.setParameter(REQUEST_STATUS, requestStatus)
-			.setParameter("reqIds", reqIds)
+			.setParameter(REQ_IDS, reqIds)
 			.setParameter("allowedStatuses", allowedStatuses)
 			.executeUpdate();
 
@@ -288,10 +297,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 	public void updateStatusToTransmitted(List<Long> reqIds, User transmittedBy) {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest ar SET ar.transmissionDate = :transmittedOn, " +
 			"ar.requestStatus = :requestStatus, ar.transmittedBy = :transmittedBy where ar.id in :requestIds")
-			.setParameter("transmittedOn", new Timestamp(new Date().getTime()))
+			.setParameter(TRANSMITTED_ON, new Timestamp(new Date().getTime()))
 			.setParameter(REQUEST_STATUS, TRANSMITTED)
-			.setParameter("transmittedBy", transmittedBy)
-			.setParameter("requestIds", reqIds).executeUpdate();
+			.setParameter(TRANSMITTED_BY, transmittedBy)
+			.setParameter(REQUEST_IDS, reqIds).executeUpdate();
 
 			if(reqIds.size() != automationRequestUpdates) {
 				throw new IllegalAutomationRequestStatusException(ILLEGAL_STATUS);
@@ -319,7 +328,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		int automationRequestUpdates = entityManager.createQuery("UPDATE AutomationRequest req SET req.requestStatus = :requestStatus " +
 			"where req.id in :reqIds and req.requestStatus in :initialStatus and req.transmissionDate is not null")
 			.setParameter(REQUEST_STATUS, requestStatus)
-			.setParameter("reqIds", reqIds)
+			.setParameter(REQ_IDS, reqIds)
 			.setParameter("initialStatus", initialStatus)
 			.executeUpdate();
 
@@ -379,7 +388,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		int automationRequestUpdates = entityManager
 			.createQuery("UPDATE AutomationRequest ar SET ar.assignedTo = :assignee, ar.assignmentDate = :assignedOn where ar.id in :reqIds")
 			.setParameter("assignee", user)
-			.setParameter("reqIds", reqIds)
+			.setParameter(REQ_IDS, reqIds)
 			.setParameter("assignedOn", new Timestamp(new Date().getTime()))
 			.executeUpdate();
 		if(reqIds.size() != automationRequestUpdates) {
@@ -413,19 +422,14 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 
 	}
 
-
-
 	private long countRequests(HibernateQuery<AutomationRequest> baseQuery){
 
 		// clone the base query
 		HibernateQuery<AutomationRequest> countRequest = baseQuery.clone();
 
 		// counting
-		long count = countRequest.fetchCount();
-
-		return count;
+		return countRequest.fetchCount();
 	}
-
 
 	private HibernateQuery<AutomationRequest> createFindAllBaseQuery(Collection<Long> inProjectIds){
 
@@ -433,10 +437,10 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		QTestCase testCase = QTestCase.testCase;
 		QProject project = QProject.project1;
 		QUser assignedTo = new QUser(ASSIGNED_TO);
-		QUser transmittedBy = new QUser("transmittedBy");
+		QUser transmittedBy = new QUser(TRANSMITTED_BY);
 		QUser createdBy = new QUser("createdBy");
 
-		HibernateQuery<AutomationRequest> querydslRequest = (HibernateQuery<AutomationRequest>) new ExtendedHibernateQueryFactory(getSession())
+		return (HibernateQuery<AutomationRequest>) new ExtendedHibernateQueryFactory(getSession())
 					.from(request)
 					.leftJoin(request.testCase, testCase)
 					.leftJoin(testCase.project, project)
@@ -447,13 +451,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 						.and(request.testCase.automatable.eq(TestCaseAutomatable.Y))
 						.and(project.allowAutomationWorkflow.isTrue())
 						.and(project.automationWorkflowType.eq(AutomationWorkflowType.NATIVE)));
-
-
-		return querydslRequest;
 	}
-
-
-
 
 	private Predicate toQueryDslPredicate(ColumnFiltering filtering, FilterOverride override) {
 		ColumnFilteringConverter converter = filterConverter(AutomationRequest.class)
@@ -463,7 +461,7 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .typeFor("testCase.kind").isClass(TestCaseKind.class)
 				   .typeFor("id", "automationPriority").isClass(Long.class)
 			       .typeFor("testCase.id").isClass(Long.class)
-			       .typeFor("createdBy", "transmittedBy", ASSIGNED_TO).isClass(Long.class)
+			       .typeFor("createdBy", TRANSMITTED_BY, ASSIGNED_TO).isClass(Long.class)
 				   // filter operation not mentioned here are considered as Equality (or Like if the property is a String)
 				   .compare(
 					   "transmissionDate",
@@ -488,7 +486,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		return effective;
 	}
 
-
 	private ColumnFiltering overrideStatusFilter(ColumnFiltering filtering, String statusFilter){
 		return new SimpleColumnFiltering(filtering)
 				 .addFilter(REQUEST_STATUS,statusFilter);
@@ -508,7 +505,6 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 		return effective;
 	}
 
-
 	private OrderSpecifier<?>[] toQueryDslSorting(Sort sort) {
 		return sortConverter(AutomationRequest.class)
 				   .from(sort)
@@ -516,13 +512,9 @@ public class AutomationRequestDaoImpl implements CustomAutomationRequestDao {
 				   .build();
 	}
 
-
-
-
 	private Session getSession(){
 		return entityManager.unwrap(Session.class);
 	}
-
 
 	private static interface FilterOverride extends Consumer<ColumnFilteringConverter>{};
 
