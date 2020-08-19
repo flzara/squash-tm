@@ -42,7 +42,11 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
-import org.squashtest.tm.core.foundation.collection.*
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting
+import org.squashtest.tm.core.foundation.collection.Filtering
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

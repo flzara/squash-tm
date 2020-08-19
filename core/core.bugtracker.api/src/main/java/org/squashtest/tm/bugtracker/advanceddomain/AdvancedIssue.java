@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
 import org.squashtest.tm.bugtracker.definition.RemoteFieldStub;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
@@ -30,6 +27,9 @@ import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.bugtracker.definition.RemoteVersion;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 

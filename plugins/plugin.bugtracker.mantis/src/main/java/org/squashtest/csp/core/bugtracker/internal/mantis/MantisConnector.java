@@ -20,14 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
-import java.math.BigInteger;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -46,6 +38,14 @@ import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectVersionData;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of the {@link BugTrackerConnector} for Mantis. Delegates to a unique instance of

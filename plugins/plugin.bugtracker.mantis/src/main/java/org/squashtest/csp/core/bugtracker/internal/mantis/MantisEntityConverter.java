@@ -20,12 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.Category;
@@ -41,6 +35,12 @@ import org.squashtest.csp.core.bugtracker.mantis.binding.IssueData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ObjectRef;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectVersionData;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public final class MantisEntityConverter {
 	private MantisEntityConverter() {

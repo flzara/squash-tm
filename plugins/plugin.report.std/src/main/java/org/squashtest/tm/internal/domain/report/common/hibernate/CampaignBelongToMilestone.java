@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.util.List;
-
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.squashtest.tm.domain.campaign.Campaign;
+
+import java.util.List;
 
 
 

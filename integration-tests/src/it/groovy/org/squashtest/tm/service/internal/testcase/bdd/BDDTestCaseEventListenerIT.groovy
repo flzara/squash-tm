@@ -22,10 +22,9 @@ package org.squashtest.tm.service.internal.testcase.bdd
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.testcase.bdd.BDDTestCaseEventListener
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-
-import org.squashtest.tm.service.internal.testcase.bdd.BDDTestCaseEventListener
 
 import javax.inject.Inject
 

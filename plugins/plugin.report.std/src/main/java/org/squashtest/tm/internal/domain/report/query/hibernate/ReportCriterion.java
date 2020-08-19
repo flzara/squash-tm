@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.internal.domain.report.query.hibernate;
 
-import java.util.Arrays;
-
 import org.hibernate.criterion.Criterion;
 import org.squashtest.tm.internal.domain.report.query.QueryOperator;
+
+import java.util.Arrays;
 
 /**
  * This class explicitly designs a criterion for a HibernateReportQuery.

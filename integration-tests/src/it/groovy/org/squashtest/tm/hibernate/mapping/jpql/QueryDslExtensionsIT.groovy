@@ -20,17 +20,12 @@
  */
 package org.squashtest.tm.hibernate.mapping.jpql
 
-import org.hibernate.Session
+
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.jpql.ExtOps
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-import org.squashtest.tm.domain.project.QProject
 import org.squashtest.tm.domain.query.QQueryColumnPrototype
-import org.squashtest.tm.domain.query.QQueryFilterColumn
-import org.squashtest.tm.domain.query.QQueryProjectionColumn
-import org.squashtest.tm.domain.requirement.QRequirement
 import spock.lang.Ignore
-
 
 /*
 	No dataset here, the content of QUERY_COLUMN_PROTOTYPE is enough for our test needs

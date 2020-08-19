@@ -1,5 +1,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import org.springframework.transaction.annotation.Transactional
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -21,10 +23,8 @@ package org.squashtest.tm.service.internal.repository.hibernate
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.service.internal.repository.ScmRepositoryDao
-
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

@@ -20,14 +20,14 @@
  */
 package org.squashtest.csp.core.bugtracker.core;
 
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.io.ResourceLoader;
+
+import java.util.Locale;
 
 public class NamespacedBugtrackerMessageSource implements MessageSource, ResourceLoaderAware {
 

@@ -24,7 +24,6 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.core.foundation.collection.Sorting
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.execution.ExecutionStatusReport
 import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
@@ -34,13 +33,11 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 
 import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
-import static org.squashtest.tm.domain.execution.ExecutionStatus.ERROR
 import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
 import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
 import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING
 import static org.squashtest.tm.domain.execution.ExecutionStatus.SETTLED
-import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS;
-
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS
 
 @UnitilsSupport
 @DataSet("HibernateAutomatedSuiteDaoIT.sandbox.xml")

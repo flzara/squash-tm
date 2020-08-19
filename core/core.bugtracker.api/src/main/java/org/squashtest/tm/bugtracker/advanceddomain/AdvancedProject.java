@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
-import java.util.Collection;
-
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+
+import java.util.Collection;
 
 public class AdvancedProject implements RemoteProject {
 

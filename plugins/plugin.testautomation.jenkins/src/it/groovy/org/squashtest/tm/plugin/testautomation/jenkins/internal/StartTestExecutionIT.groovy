@@ -20,26 +20,19 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-import org.apache.http.client.HttpClient
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
-import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
-import org.squashtest.tm.service.configuration.ConfigurationService
-import spock.lang.Specification
-
-import javax.security.auth.callback.Callback
-import java.net.URL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
+import org.squashtest.tm.service.internal.configuration.CallbackUrlProvider
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

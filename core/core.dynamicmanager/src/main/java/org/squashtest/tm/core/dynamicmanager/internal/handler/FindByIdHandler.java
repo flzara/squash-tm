@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.core.annotation.AnnotationUtils;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
 /**
  * {@link DynamicComponentInvocationHandler} which handles <code>@Entity findById(long id)</code> or <code>@Entity findById(Serializable id)</code> method. Fetches an entity using its id.

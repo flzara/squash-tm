@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.plugin.report.std.query;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.internal.domain.report.common.hibernate.HibernateExecutionProgressQuery;
 import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet

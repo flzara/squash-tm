@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.api.report.form;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author Gregory

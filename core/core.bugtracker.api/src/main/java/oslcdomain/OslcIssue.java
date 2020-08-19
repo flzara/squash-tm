@@ -20,10 +20,6 @@
  */
 package oslcdomain;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedProject;
 import org.squashtest.tm.bugtracker.advanceddomain.FieldValue;
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
@@ -33,6 +29,10 @@ import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.bugtracker.definition.RemoteVersion;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OslcIssue implements RemoteIssue {
 

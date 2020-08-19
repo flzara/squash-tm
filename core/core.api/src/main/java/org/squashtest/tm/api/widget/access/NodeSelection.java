@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.api.widget.access;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.core.foundation.lang.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Gregory Fouquet

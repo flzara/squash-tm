@@ -24,7 +24,11 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.campaign.*
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException

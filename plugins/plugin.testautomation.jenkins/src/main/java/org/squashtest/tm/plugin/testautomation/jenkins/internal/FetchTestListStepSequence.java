@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStage.GATHER_RESULT;
-
-import java.util.NoSuchElementException;
-
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -32,6 +28,10 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
+
+import java.util.NoSuchElementException;
+
+import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStage.GATHER_RESULT;
 
 class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSequence {
 

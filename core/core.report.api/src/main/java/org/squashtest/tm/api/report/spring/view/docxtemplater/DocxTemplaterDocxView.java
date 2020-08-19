@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.api.report.spring.view.docxtemplater;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.view.AbstractView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 
 

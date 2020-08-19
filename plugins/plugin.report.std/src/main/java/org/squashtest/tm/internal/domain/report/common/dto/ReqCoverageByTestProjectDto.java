@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 

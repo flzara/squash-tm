@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
+import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-
-import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean;
 
 /**
  * Interface for a {@link InvocationHandler} object used by a Dynamic Component

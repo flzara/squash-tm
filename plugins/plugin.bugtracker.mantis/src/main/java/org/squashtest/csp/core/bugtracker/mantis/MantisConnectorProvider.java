@@ -20,10 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.mantis;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.internal.mantis.MantisConnector;
@@ -31,6 +27,10 @@ import org.squashtest.csp.core.bugtracker.internal.mantis.MantisExceptionConvert
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 

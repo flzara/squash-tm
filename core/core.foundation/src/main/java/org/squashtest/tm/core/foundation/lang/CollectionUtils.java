@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

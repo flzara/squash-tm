@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.api.report.docxtemplater;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.View;
@@ -31,6 +27,10 @@ import org.squashtest.tm.api.report.ReportView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.query.ReportQuery;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DocxTemplaterView extends Labelled implements ReportView, InitializingBean {
 

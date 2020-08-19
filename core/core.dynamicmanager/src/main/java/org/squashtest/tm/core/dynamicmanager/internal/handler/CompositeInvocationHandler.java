@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
+
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
 
 /**
  * This {@link InvocationHandler} holds a list of {@link DynamicComponentInvocationHandler}. When this object is asked

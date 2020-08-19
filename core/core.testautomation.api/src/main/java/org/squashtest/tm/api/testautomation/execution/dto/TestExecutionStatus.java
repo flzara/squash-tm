@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.api.testautomation.execution.dto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * This class encapsulates test execution status updates.

@@ -26,8 +26,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 
-import javax.validation.constraints.NotNull
-
 /**
  * Not @Component because it has to be marked as @Primary
  */

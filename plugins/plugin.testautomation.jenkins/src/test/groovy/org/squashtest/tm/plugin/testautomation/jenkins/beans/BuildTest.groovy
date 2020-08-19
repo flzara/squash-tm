@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans
 
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Action;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
-
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.Action
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build
 import spock.lang.Specification
 
 class BuildTest extends Specification {

@@ -31,7 +31,6 @@ import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-import javax.persistence.PersistenceException
 
 @UnitilsSupport
 @Transactional

@@ -27,7 +27,11 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.infolist.ListItemReference
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
@@ -42,7 +46,12 @@ import javax.sql.DataSource
 
 import static org.squashtest.tm.service.importer.ImportStatus.FAILURE
 import static org.squashtest.tm.service.importer.ImportStatus.WARNING
-import static org.squashtest.tm.service.internal.batchimport.Messages.*
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_NOT_AN_ACTIONSTEP
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_REMOVE_CALLED_TC
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_STEPINDEX_EMPTY
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_STEPINDEX_NEGATIVE
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_STEP_NOT_EXISTS
+import static org.squashtest.tm.service.internal.batchimport.Messages.ERROR_TC_ALREADY_EXISTS
 
 /**
  <b> To walk you through that dataset :</b><br/><br/>

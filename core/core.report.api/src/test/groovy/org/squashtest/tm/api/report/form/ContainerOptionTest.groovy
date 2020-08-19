@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.api.report.form
 
-import org.squashtest.tm.api.report.form.ContainerOption;
-import org.squashtest.tm.api.report.form.Input;
-
+import org.squashtest.tm.api.report.form.ContainerOption
+import org.squashtest.tm.api.report.form.Input
 import spock.lang.Specification
 
 /**

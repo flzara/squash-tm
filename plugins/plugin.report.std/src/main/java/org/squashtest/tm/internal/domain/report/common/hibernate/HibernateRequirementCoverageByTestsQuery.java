@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,6 +35,16 @@ import org.squashtest.tm.internal.domain.report.common.dto.ReqCoverageByTestRequ
 import org.squashtest.tm.internal.domain.report.common.dto.ReqCoverageByTestStatType;
 import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  *

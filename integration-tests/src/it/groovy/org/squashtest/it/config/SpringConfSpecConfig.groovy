@@ -24,7 +24,6 @@ import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
-import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Role
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration

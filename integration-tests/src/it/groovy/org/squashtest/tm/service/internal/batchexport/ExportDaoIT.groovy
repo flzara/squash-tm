@@ -36,7 +36,6 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD
-import static org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel
 
 @UnitilsSupport
 @Transactional

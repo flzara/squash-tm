@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
+import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 
 /**
  * @author Gregory Fouquet

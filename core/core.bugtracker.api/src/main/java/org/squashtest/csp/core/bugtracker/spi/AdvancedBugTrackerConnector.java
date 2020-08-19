@@ -20,9 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.spi;
 
-import java.net.URL;
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
@@ -31,6 +28,9 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.advanceddomain.FieldValue;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+
+import java.net.URL;
+import java.util.List;
 
 public interface AdvancedBugTrackerConnector extends BugtrackerConnectorBase {
 

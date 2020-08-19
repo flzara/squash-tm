@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
+import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
 /**
  * Build definition i.e. all the information required to run a bunch of automated tests from the same squash ta project

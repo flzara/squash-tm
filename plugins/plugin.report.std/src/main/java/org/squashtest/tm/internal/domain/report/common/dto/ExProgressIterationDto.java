@@ -20,13 +20,13 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
 
 public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 

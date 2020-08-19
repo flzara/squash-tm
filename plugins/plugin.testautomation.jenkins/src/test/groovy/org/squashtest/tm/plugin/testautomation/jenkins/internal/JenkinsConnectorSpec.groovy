@@ -27,7 +27,6 @@ import org.apache.http.impl.client.CloseableHttpClient
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID
-
 import spock.lang.Specification
 
 abstract class JenkinsConnectorSpec extends Specification {

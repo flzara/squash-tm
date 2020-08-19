@@ -20,15 +20,14 @@
  */
 package org.springframework.web.servlet.view.jasperreports;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.jasperreports.engine.JasperPrint;
-
 import org.springframework.ui.jasperreports.JasperReportsUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 /**
  * Extends {@code AbstractJasperReportsView} to provide basic rendering logic

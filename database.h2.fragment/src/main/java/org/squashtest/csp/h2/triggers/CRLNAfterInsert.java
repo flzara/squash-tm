@@ -20,12 +20,12 @@
  */
 package org.squashtest.csp.h2.triggers;
 
+import org.h2.tools.TriggerAdapter;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.h2.tools.TriggerAdapter;
 
 /**
  *  Triggered after a new CustomReportLibraryNode had been inserted. It will insert into the relationship 

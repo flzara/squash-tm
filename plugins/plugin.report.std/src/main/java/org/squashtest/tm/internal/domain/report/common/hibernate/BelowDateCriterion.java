@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.internal.domain.report.query.QueryOperator;
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /*
  * this ReportCriterion is exactly wysiwyg

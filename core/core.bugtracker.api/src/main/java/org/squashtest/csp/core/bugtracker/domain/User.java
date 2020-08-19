@@ -20,11 +20,11 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import org.squashtest.tm.bugtracker.definition.RemoteUser;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.squashtest.tm.bugtracker.definition.RemoteUser;
 
 /**
  * @author bsiri

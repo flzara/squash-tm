@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.api.report.query;
 
-import java.util.Map;
-
 import org.squashtest.tm.api.report.criteria.Criteria;
+
+import java.util.Map;
 
 /**
  * {@link ReportQuery} which does not run any query.

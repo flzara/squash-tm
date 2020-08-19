@@ -20,10 +20,14 @@
  */
 package org.squashtest.it.config
 
-import org.mockito.mock.MockName
+
 import org.spockframework.mock.MockNature
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.context.annotation.*
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.FilterType
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.squashtest.tm.service.bugtracker.BugTrackersService

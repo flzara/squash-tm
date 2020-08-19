@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.hibernate.mapping.jpql
 
-import org.squashtest.it.basespecs.DatasourceDependantSpecification
+
 import org.squashtest.it.basespecs.DbunitDaoSpecification
-import org.squashtest.tm.domain.testcase.Dataset
 import spock.lang.Ignore
 
 /**

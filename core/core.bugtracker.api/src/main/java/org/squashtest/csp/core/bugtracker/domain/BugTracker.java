@@ -20,16 +20,15 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 import javax.validation.constraints.NotBlank;
-import org.squashtest.tm.domain.servers.ThirdPartyServer;
+import javax.validation.constraints.Size;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Entity
 @Table(name = "BUGTRACKER")

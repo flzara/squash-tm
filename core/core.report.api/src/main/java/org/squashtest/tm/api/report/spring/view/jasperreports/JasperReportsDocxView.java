@@ -22,7 +22,6 @@ package org.squashtest.tm.api.report.spring.view.jasperreports;
 
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
-
 import org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsSingleFormatView;
 
 public class JasperReportsDocxView extends

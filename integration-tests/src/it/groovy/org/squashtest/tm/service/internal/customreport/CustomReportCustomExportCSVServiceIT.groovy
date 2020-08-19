@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.internal.customreport
 
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
-import spock.unitils.UnitilsSupport
-import org.springframework.transaction.annotation.Transactional
 import org.jooq.Record
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.service.customreport.CustomReportCustomExportCSVService
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
-import java.util.Set
-import org.squashtest.tm.domain.EntityType
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 

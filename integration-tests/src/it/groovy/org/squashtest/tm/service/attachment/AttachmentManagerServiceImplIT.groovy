@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.attachment.AttachmentContent
-import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode

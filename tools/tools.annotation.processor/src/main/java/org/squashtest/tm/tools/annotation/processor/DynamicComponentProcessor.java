@@ -20,13 +20,7 @@
  */
 package org.squashtest.tm.tools.annotation.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -40,8 +34,13 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Gregory Fouquet

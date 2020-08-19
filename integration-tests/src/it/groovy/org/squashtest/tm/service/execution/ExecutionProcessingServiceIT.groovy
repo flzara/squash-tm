@@ -34,7 +34,12 @@ import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+import static org.squashtest.tm.domain.execution.ExecutionStatus.BLOCKED
+import static org.squashtest.tm.domain.execution.ExecutionStatus.FAILURE
+import static org.squashtest.tm.domain.execution.ExecutionStatus.READY
+import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING
+import static org.squashtest.tm.domain.execution.ExecutionStatus.SUCCESS
+import static org.squashtest.tm.domain.execution.ExecutionStatus.UNTESTABLE
 
 @NotThreadSafe
 @UnitilsSupport

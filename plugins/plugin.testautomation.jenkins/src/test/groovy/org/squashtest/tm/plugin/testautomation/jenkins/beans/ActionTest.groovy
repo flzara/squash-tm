@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans
 
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Action;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
-
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.Action
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 class ActionTest extends Specification {
 

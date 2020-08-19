@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.core.foundation.collection
 
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 class SortingOrderTest extends Specification {
 	@Unroll("Should coerce code #code into SortOrder #expectedOrder")

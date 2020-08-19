@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This {@link DynamicComponentInvocationHandler} handles any method which signature matches

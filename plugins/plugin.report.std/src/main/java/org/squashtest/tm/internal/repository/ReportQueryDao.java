@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor;
 import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException;
+
+import java.util.List;
 
 public interface ReportQueryDao {
 	boolean doesSupportFlavor(ReportQueryFlavor flavor);

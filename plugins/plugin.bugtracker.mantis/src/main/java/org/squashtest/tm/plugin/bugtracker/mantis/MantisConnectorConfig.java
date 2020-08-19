@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.plugin.bugtracker.mantis;
 
-import javax.inject.Inject;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,6 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.squashtest.csp.core.bugtracker.core.NamespacedBugtrackerMessageSource;
 import org.squashtest.tm.api.config.SquashPathProperties;
+
+import javax.inject.Inject;
 
 /**
  * @author Gregory Fouquet

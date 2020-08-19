@@ -20,22 +20,6 @@
  */
 package org.springframework.web.servlet.view.jasperreports;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TimeZone;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
 import net.sf.jasperreports.engine.JRException;
@@ -49,7 +33,6 @@ import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.core.io.Resource;
@@ -58,6 +41,22 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * Base class for all JasperReports views. Applies on-the-fly compilation

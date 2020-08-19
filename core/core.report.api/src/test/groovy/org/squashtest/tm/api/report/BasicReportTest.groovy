@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.api.report
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
-import org.squashtest.tm.api.report.criteria.Criteria;
-
-import spock.lang.Specification;
+import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.View
+import org.squashtest.tm.api.report.criteria.Criteria
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

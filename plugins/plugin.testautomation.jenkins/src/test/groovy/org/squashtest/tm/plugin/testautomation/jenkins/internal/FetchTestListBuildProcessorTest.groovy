@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor
@@ -29,7 +28,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckB
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild
-
 import spock.lang.Specification
 
 class FetchTestListBuildProcessorTest extends Specification {

@@ -20,15 +20,14 @@
  */
 package org.springframework.web.servlet.view.jasperreports;
 
+import net.sf.jasperreports.engine.JasperPrint;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JasperPrint;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.util.CollectionUtils;
 
 /**
  * JasperReports view class that allows for the actual rendering format

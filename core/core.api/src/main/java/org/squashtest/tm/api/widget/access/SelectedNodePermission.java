@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.api.widget.access;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.api.widget.TreeNodeType;
 import org.squashtest.tm.core.foundation.lang.Assert;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Access rule meaning : some kind of node has to be selected, and user need a permission on this node.

@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
-import org.apache.http.client.methods.HttpUriRequest
-import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
-import spock.lang.Specification
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor
 
 class StartBuildTest extends JenkinsConnectorSpec {
 

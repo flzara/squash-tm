@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.plugin.report.std.query;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.common.dto.HasMilestoneLabel;
 import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
 import org.squashtest.tm.plugin.report.std.service.ReportService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Superclass of legacy query adapters

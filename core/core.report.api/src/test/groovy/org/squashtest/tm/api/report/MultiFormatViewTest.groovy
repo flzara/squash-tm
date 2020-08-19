@@ -18,16 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.report;
+package org.squashtest.tm.api.report
 
-import static org.junit.Assert.*;
-
-import org.springframework.context.MessageSource;
-import org.squashtest.tm.api.report.jasperreports.JasperReportsView;
-import org.squashtest.tm.api.report.query.ReportQuery;
-
-import net.sf.jasperreports.engine.JRParameter;
-import spock.lang.Specification;
+import net.sf.jasperreports.engine.JRParameter
+import org.springframework.context.MessageSource
+import org.squashtest.tm.api.report.jasperreports.JasperReportsView
+import org.squashtest.tm.api.report.query.ReportQuery
+import spock.lang.Specification
 
 class MultiFormatViewTest extends Specification {
 	JasperReportsView view = new JasperReportsView();

@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+
+import javax.persistence.EntityManager;
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIds(Collection<Long> id)</code>

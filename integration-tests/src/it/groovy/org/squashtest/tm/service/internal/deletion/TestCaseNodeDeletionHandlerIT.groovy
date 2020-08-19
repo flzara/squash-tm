@@ -23,9 +23,15 @@ package org.squashtest.tm.service.internal.deletion
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet

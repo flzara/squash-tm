@@ -23,11 +23,10 @@ package org.squashtest.tm.service.internal.repository
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.EntityReference
 import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateExecutionStepDao
+import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
-import org.unitils.dbunit.annotation.DataSet
 import javax.inject.Inject
 
 @DataSet

@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.Collection;
+import org.squashtest.tm.core.dynamicmanager.exception.NamedQueryLookupException;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.core.dynamicmanager.exception.NamedQueryLookupException;
-import org.squashtest.tm.core.foundation.collection.Paging;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
 /**
  * This {@link InvocationHandler} looks up a hibernate named query which name matches <code>EntityType.methodName</code>

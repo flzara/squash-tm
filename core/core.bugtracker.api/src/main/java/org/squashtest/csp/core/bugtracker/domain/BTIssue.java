@@ -20,12 +20,11 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-import java.util.Date;
-
-import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+
+import java.util.Date;
 
 /**
  * Bug-tracker-agnostic representation of an issue / ticket

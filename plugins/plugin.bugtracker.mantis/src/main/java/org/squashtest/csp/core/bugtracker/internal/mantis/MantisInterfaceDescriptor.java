@@ -21,16 +21,14 @@
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
 
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Locale;
 
 
 @Component

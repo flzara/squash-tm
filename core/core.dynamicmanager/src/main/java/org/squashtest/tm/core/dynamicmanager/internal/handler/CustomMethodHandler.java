@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.reflect.Method;
-
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 
 /**
  * This handler delegates to a custom manager when possible.

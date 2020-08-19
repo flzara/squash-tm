@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.core.foundation.lang
 
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 class PathUtilsTest extends Specification {
 

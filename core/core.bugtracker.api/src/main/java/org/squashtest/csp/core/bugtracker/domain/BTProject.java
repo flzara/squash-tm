@@ -20,11 +20,11 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 /**
  *

@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.api.report;
 
-import java.util.Map;
-
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
+
+import java.util.Map;
 
 /**
  * Defines the interface of a Report.

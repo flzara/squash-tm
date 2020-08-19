@@ -20,12 +20,7 @@
  */
 package org.squashtest.tm.api.report.jasperreports;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sf.jasperreports.engine.JRParameter;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -36,6 +31,10 @@ import org.squashtest.tm.api.report.ReportView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.query.ReportQuery;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author bsiri

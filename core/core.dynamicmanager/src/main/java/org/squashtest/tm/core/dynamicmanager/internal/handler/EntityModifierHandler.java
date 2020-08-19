@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
+import org.springframework.util.ReflectionUtils;
+import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
+
+import javax.persistence.EntityManager;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.util.ReflectionUtils;
-import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
 
 /**
  * {@link InvocationHandler} which handles proxy calls which should modify an entity. These calls should have a

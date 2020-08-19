@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.api.widget
 
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.squashtest.tm.api.widget.InternationalizedMenuItem;
-import org.squashtest.tm.core.foundation.i18n.Labelled;
-
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
+import org.squashtest.tm.api.widget.InternationalizedMenuItem
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory　Fouquet

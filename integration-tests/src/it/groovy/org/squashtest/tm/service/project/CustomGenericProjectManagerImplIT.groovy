@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject

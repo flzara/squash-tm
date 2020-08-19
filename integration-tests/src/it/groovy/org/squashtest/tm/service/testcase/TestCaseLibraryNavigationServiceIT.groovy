@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.testcase
 
 import org.hibernate.Query
-import org.hibernate.Session
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional

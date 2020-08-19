@@ -29,8 +29,6 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-import java.sql.Timestamp
-import java.time.LocalDateTime
 
 @DataSet
 @UnitilsSupport

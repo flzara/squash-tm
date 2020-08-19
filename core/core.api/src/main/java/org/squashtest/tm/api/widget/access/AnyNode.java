@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.api.widget.access;
 
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.core.foundation.lang.Assert;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet

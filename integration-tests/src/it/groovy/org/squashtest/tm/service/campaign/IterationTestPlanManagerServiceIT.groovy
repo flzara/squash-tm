@@ -24,7 +24,11 @@ import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.utils.CollectionComparisonUtils
-import org.squashtest.tm.core.foundation.collection.*
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
+import org.squashtest.tm.core.foundation.collection.DefaultSorting
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll

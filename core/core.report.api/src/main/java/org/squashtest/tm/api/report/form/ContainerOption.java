@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.api.report.form;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Option which contains another input.

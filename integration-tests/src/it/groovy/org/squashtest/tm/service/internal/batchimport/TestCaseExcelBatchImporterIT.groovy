@@ -27,8 +27,8 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportLog
 import org.unitils.dbunit.annotation.DataSet

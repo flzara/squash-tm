@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.net
 
-import org.squashtest.tm.domain.servers.OAuth1aCredentials
+
 import spock.lang.Specification
 
 class OAuthUtilsTests extends Specification {

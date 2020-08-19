@@ -24,7 +24,12 @@ import org.spockframework.util.NotThreadSafe
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException
-import org.squashtest.csp.core.bugtracker.domain.*
+import org.squashtest.csp.core.bugtracker.domain.BTIssue
+import org.squashtest.csp.core.bugtracker.domain.BTProject
+import org.squashtest.csp.core.bugtracker.domain.Category
+import org.squashtest.csp.core.bugtracker.domain.Priority
+import org.squashtest.csp.core.bugtracker.domain.User
+import org.squashtest.csp.core.bugtracker.domain.Version
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting

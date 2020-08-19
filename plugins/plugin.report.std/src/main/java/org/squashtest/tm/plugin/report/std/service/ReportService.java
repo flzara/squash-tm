@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.plugin.report.std.service;
 
-import java.util.List;
-
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
+
+import java.util.List;
 
 
 public interface ReportService {

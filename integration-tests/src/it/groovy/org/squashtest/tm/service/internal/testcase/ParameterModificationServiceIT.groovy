@@ -22,7 +22,11 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.testcase.*
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.DatasetModificationService

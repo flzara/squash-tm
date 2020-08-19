@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Property;
 import org.squashtest.tm.internal.domain.report.query.QueryOperator;
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /*
  * This ReportCriterion will check if the value at the given propertyPath is an element of the list of parameters.

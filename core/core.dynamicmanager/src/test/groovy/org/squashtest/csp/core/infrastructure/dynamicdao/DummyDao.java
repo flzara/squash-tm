@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicdao;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+
+import java.util.List;
 
 
 /**

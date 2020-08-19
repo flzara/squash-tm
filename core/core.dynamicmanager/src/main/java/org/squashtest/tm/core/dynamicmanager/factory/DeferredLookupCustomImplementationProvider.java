@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.core.dynamicmanager.factory;
 
-import javax.inject.Provider;
-import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+
+import javax.inject.Provider;
+import javax.validation.constraints.NotNull;
 
 /**
  * Provides a custom implementation for a dynamic manager. The custom implementation is fetched from the bean factory

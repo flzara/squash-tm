@@ -24,11 +24,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
@@ -38,6 +33,10 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.JobList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class JsonParser {

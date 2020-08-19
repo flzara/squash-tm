@@ -22,14 +22,13 @@ package org.squashtest.tm.api.wizard;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.squashtest.tm.api.plugin.EntityReference;
+import org.squashtest.tm.api.plugin.PluginType;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
-import org.squashtest.tm.api.plugin.PluginType;
 
 import javax.annotation.PostConstruct;
-
 import java.util.HashMap;
 import java.util.Map;
 

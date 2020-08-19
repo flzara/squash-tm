@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -45,6 +42,9 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+
+import java.io.IOException;
+import java.net.URL;
 
 /*
  * TODO : have the client shutdown and disposed of when it is not needed after a certain amount

@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.internal.domain.report.query;
 
-import java.util.Collection;
-
 import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
+
+import java.util.Collection;
 
 /**
  * 

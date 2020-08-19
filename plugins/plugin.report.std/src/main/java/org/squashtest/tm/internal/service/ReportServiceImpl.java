@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.internal.service;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
@@ -31,6 +27,9 @@ import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException
 import org.squashtest.tm.internal.repository.ReportQueryDao;
 import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
 import org.squashtest.tm.plugin.report.std.service.ReportService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service("squashtest.tm.service.ReportService")
 @Transactional(readOnly = true)

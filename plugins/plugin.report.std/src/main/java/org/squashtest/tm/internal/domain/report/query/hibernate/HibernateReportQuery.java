@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.internal.domain.report.query.hibernate;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor;
 import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is an implementation of ReportQuery meant for a Hibernate repository.

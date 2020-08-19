@@ -20,13 +20,13 @@
  */
 package org.springframework.web.servlet.view.jasperreports;
 
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
+
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.sql.DataSource;
-
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 /**
  * {@link org.springframework.web.servlet.ViewResolver} implementation that

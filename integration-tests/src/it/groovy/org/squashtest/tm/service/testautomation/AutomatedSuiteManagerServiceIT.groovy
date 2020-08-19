@@ -32,9 +32,9 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 
 import javax.inject.Inject
 

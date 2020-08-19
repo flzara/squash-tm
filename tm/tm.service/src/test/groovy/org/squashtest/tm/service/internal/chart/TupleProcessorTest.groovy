@@ -1,6 +1,7 @@
 package org.squashtest.tm.service.internal.chart
 
 import com.querydsl.core.Tuple
+import org.squashtest.tm.domain.chart.AxisColumn
 
 /**
  *     This file is part of the Squashtest platform.
@@ -23,7 +24,6 @@ import com.querydsl.core.Tuple
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ChartDefinition
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.customfield.CustomFieldOption

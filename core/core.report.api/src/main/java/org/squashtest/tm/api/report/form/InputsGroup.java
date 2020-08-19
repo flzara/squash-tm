@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.api.report.form;
 
+import org.squashtest.tm.core.foundation.i18n.Labelled;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * This input holds other inputs but has no value.

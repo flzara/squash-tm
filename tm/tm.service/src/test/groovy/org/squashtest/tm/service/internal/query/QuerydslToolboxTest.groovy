@@ -1,9 +1,3 @@
-package org.squashtest.tm.service.internal.query
-
-import com.querydsl.core.types.Expression
-import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.core.types.dsl.EntityPathBase
-
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -24,7 +18,11 @@ import com.querydsl.core.types.dsl.EntityPathBase
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.internal.query
 
+import com.querydsl.core.types.Expression
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.PathBuilder
 import com.querydsl.jpa.hibernate.HibernateQuery

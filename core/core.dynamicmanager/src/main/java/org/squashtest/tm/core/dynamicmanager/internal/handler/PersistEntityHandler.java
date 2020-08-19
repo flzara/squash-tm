@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.reflect.Method;
-
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 
 /**
  * @author Gregory Fouquet

@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder

@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.core.bugtracker.net;
 
-import com.google.api.client.auth.oauth.OAuthSigner;
 import com.google.api.client.auth.oauth.OAuthHmacSigner;
-import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.auth.oauth.OAuthParameters;
+import com.google.api.client.auth.oauth.OAuthRsaSigner;
+import com.google.api.client.auth.oauth.OAuthSigner;
 import com.google.api.client.http.GenericUrl;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.codec.binary.Base64;

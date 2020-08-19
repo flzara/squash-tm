@@ -21,9 +21,7 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net
 
 import org.squashtest.tm.domain.testautomation.AutomatedTest
-import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import spock.lang.Specification
 
 class HttpRequestFactoryTest extends Specification {

@@ -20,13 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
-import java.rmi.RemoteException;
-import java.util.Locale;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -34,6 +27,12 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.rmi.RemoteException;
+import java.util.Locale;
 
 
 /**

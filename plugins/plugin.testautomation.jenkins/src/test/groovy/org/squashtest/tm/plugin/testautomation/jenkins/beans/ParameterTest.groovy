@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans
 
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
-
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter
 import spock.lang.Specification
-
 
 class ParameterTest extends Specification {
 	

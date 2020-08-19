@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.api.security.authentication;
 
-import org.springframework.context.annotation.Conditional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

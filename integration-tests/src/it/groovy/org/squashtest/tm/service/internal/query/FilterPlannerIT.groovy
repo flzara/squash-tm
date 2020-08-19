@@ -31,7 +31,12 @@ import org.squashtest.tm.domain.query.DataType
 import org.squashtest.tm.domain.query.Operation
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
-import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
+
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.cov
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.createInternalModel
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkFilter
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.tc
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.v
 
 @NotThreadSafe
 @UnitilsSupport

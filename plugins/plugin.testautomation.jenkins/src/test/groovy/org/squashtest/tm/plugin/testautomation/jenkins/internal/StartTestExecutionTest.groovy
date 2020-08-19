@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
+import org.springframework.http.client.ClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
-import org.springframework.http.client.ClientHttpRequestFactory
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
 import spock.lang.Specification
 

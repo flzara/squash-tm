@@ -20,21 +20,7 @@
  */
 package org.squashtest.tm.api.report.spring.view.jasperreports;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.jasperreports.engine.JasperPrint;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsView;
@@ -43,6 +29,18 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsHtmlView;
 import org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView;
 import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 import org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extended {@link JasperReportsMultiFormatView}. It manages the same formats as {@link JasperReportsMultiFormatView}

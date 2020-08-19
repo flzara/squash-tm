@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.api.report;
 
-import java.util.Map;
-
 import org.springframework.web.servlet.View;
 import org.squashtest.tm.api.report.criteria.Criteria;
+
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet.

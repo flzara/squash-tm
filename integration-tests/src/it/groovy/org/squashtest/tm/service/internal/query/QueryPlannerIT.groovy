@@ -37,7 +37,16 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import static org.squashtest.tm.service.internal.query.InternalEntityType.*
+import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST
+import static org.squashtest.tm.service.internal.query.InternalEntityType.CAMPAIGN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.EXECUTION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ISSUE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITEM_TEST_PLAN
+import static org.squashtest.tm.service.internal.query.InternalEntityType.ITERATION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.service.internal.query.InternalEntityType.REQUIREMENT_VERSION_COVERAGE
+import static org.squashtest.tm.service.internal.query.InternalEntityType.TEST_CASE
 
 /**
  * This class will test the {@link QueryPlanner}. It role is to create the

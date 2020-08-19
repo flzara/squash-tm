@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.core.dynamicmanager.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ArbitraryQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
@@ -33,6 +28,10 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.FindAllByIdsHandle
 import org.squashtest.tm.core.dynamicmanager.internal.handler.FindByIdHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ListOfEntitiesFinderNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandler;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

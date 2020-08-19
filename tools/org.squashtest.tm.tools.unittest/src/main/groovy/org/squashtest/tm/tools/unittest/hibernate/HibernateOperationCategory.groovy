@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.tools.unittest.hibernate
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.hibernate.Transaction
 
 class HibernateOperationCategory {
 	static def doInSession(SessionFactory sf, def closure) {

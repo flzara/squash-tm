@@ -18,17 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.dynamicmanager;
-
-
-import javax.persistence.EntityManager;
+package org.squashtest.csp.core.infrastructure.dynamicmanager
 
 import org.springframework.beans.factory.BeanFactory
 import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
-
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
 import javax.persistence.Query
 
 class DynamicManagerFactoryBeanTest extends Specification{

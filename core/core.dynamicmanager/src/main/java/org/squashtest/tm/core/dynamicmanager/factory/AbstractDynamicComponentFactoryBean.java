@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.core.dynamicmanager.factory;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -40,6 +31,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CompositeInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CustomMethodHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
+
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is an abstract Spring bean factory for "dynamic components". A "dynamic component" is a Spring managed

@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.tools.annotation.processor;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 
 /**
  * Consumes {@link DynamicManager} annotated interfacrs and produces spring configuration accordlingly.

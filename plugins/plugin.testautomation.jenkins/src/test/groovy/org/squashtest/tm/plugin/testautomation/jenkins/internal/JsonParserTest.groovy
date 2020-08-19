@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-
-
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
 import spock.lang.Specification
 
 class JsonParserTest extends Specification {

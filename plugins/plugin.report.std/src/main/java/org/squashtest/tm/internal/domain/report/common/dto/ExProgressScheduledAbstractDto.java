@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+
 import java.util.Date;
 import java.util.List;
-
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
 public class ExProgressScheduledAbstractDto extends ExProgressAbstractDto{
 

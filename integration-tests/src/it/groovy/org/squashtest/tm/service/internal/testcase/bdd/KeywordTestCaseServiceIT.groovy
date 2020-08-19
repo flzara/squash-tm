@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.unitils.dbunit.annotation.DataSet
-import spock.lang.Ignore
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 

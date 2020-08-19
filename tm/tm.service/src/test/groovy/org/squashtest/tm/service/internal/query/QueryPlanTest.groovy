@@ -1,7 +1,3 @@
-package org.squashtest.tm.service.internal.query
-
-import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity
-
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
@@ -22,7 +18,9 @@ import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.internal.query
 
+import org.squashtest.tm.service.internal.query.QueryPlan.TraversedEntity
 import spock.lang.Specification
 import spock.lang.Unroll
 

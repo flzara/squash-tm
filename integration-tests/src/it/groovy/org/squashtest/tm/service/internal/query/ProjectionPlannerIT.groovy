@@ -27,26 +27,40 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
-import org.squashtest.tm.domain.query.ColumnType
-import org.squashtest.tm.domain.query.DataType
-import org.squashtest.tm.domain.query.Operation
-import org.squashtest.tm.domain.EntityType
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import spock.lang.Ignore
-import spock.lang.Unroll
-
-import static org.squashtest.tm.domain.query.ColumnType.*
-import static org.squashtest.tm.domain.query.DataType.*
-import static org.squashtest.tm.domain.query.Operation.*
-import static org.squashtest.tm.domain.EntityType.*
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.persistence.Query
-import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
+
+import static org.squashtest.tm.domain.EntityType.EXECUTION
+import static org.squashtest.tm.domain.EntityType.ITERATION
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION
+import static org.squashtest.tm.domain.EntityType.TEST_CASE
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.DataType.DATE
+import static org.squashtest.tm.domain.query.DataType.LEVEL_ENUM
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.domain.query.Operation.BY_MONTH
+import static org.squashtest.tm.domain.query.Operation.BY_YEAR
+import static org.squashtest.tm.domain.query.Operation.COUNT
+import static org.squashtest.tm.domain.query.Operation.NONE
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.cov
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.createInternalModel
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.exec
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.ite
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.itp
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkAggr
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkOrder
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkProj
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.r
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.tc
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.v
 
 @NotThreadSafe
 @UnitilsSupport

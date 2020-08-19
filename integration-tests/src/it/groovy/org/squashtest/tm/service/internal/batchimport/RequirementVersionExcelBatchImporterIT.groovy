@@ -25,7 +25,11 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.it.stub.security.UserContextHelper
-import org.squashtest.tm.domain.requirement.*
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.requirement.RequirementVersionLink
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.importer.EntityType
 import org.squashtest.tm.service.importer.ImportLog

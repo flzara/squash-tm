@@ -20,12 +20,12 @@
  */
 package org.squashtest.csp.h2.triggers;
 
+import org.h2.tools.TriggerAdapter;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.h2.tools.TriggerAdapter;
 
 /**
  * Triggered before a CustomReportLibraryNode is detached from its parent. It will cut from the 

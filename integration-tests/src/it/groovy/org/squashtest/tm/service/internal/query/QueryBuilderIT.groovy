@@ -37,12 +37,15 @@ import org.squashtest.tm.service.query.ConfiguredQuery
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
-
-import static org.squashtest.tm.domain.query.ColumnType.*
-import static org.squashtest.tm.domain.query.DataType.*
-import static org.squashtest.tm.domain.query.Operation.*
-import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.*
 import javax.persistence.Query
+
+import static org.squashtest.tm.domain.query.ColumnType.ATTRIBUTE
+import static org.squashtest.tm.domain.query.DataType.NUMERIC
+import static org.squashtest.tm.domain.query.Operation.GREATER
+import static org.squashtest.tm.domain.query.Operation.NONE
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkAggr
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkOrder
+import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkProj
 
 @NotThreadSafe
 @UnitilsSupport

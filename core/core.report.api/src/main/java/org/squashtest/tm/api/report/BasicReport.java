@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.api.report;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.Input;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
+
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Basic implementation od a {@link Report}. This class should be used in report plugins to describe reports.

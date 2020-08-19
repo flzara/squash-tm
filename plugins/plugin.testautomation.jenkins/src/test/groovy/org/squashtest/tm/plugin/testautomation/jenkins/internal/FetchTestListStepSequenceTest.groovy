@@ -32,7 +32,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.Gather
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild
-
 import spock.lang.Specification
 
 class FetchTestListStepSequenceTest extends Specification {

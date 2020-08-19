@@ -30,7 +30,6 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-import javax.persistence.PersistenceException
 
 @Transactional
 @UnitilsSupport

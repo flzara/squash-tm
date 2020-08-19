@@ -27,7 +27,12 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.requirement.RequirementStatisticsService
-import org.squashtest.tm.service.statistics.requirement.*
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundDescriptionStatistics
+import org.squashtest.tm.service.statistics.requirement.RequirementBoundTestCasesStatistics
+import org.squashtest.tm.service.statistics.requirement.RequirementCoverageStatistics
+import org.squashtest.tm.service.statistics.requirement.RequirementCriticalityStatistics
+import org.squashtest.tm.service.statistics.requirement.RequirementStatusesStatistics
+import org.squashtest.tm.service.statistics.requirement.RequirementValidationStatistics
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

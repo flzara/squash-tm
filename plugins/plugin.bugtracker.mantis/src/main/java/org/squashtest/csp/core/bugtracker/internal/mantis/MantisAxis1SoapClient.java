@@ -20,13 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-
-import javax.xml.rpc.ServiceException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerLocalException;
@@ -40,6 +33,12 @@ import org.squashtest.csp.core.bugtracker.mantis.binding.ObjectRef;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectData;
 import org.squashtest.csp.core.bugtracker.mantis.binding.ProjectVersionData;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
+
+import javax.xml.rpc.ServiceException;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
 
 /**
  * Provides a soap client to a mantis bugtracker
