@@ -432,6 +432,10 @@ RequirementNodeDeletionHandler {
 		if (!folderIds.isEmpty()) {
 			List<Long> attachmentsLists = attachmentManager.getAttachmentsListsFromRequirementFolders(folderIds);
 			List<ExternalContentCoordinates> pairContentIdListId = attachmentManager.getListIDbyContentIdForAttachmentLists(attachmentsLists);
+
+			// delete Campaign CUF values
+			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_FOLDER, folderIds);
+
 			deletionDao.removeEntities(folderIds);
 			report.addRemoved(folderIds, "folder");
 

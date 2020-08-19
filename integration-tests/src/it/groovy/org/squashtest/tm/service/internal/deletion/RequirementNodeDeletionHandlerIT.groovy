@@ -36,6 +36,7 @@ import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHan
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -233,6 +234,26 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
     }
 
+	/* this test is required after issue 1284 */
+	@Unroll
+	@DataSet("NodeDeletionHandlerTest.should delete req folder cuf values.xml")
+	def "when a requirement folder is removed, all of its CUF values/values options are also removed"(){
+		expect :
+		found(RequirementFolder.class, -1L)
+		found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		when:
+		deletionHandler.deleteNodes([-1L])
+
+		then:
+		!found(RequirementFolder.class, -1L)
+		!found("CUSTOM_FIELD_VALUE", "CFV_ID", cufId as Long)
+		!found("CUSTOM_FIELD_VALUE_OPTION", "CFV_ID", -6L)
+
+		where:
+		cufId << ([-1L, -2L, -3L, -4L, -5L, -6L, -7L])
+	}
 
     @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
     def "should delete a requirement in a hierarchy"(){
