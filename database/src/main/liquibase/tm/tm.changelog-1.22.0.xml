@@ -1150,68 +1150,67 @@
     </sql>
   </changeSet>
 
-  <!--  TODO-QUAN  -->
   <changeSet id="tm-1.22.0-SQUASH-1284-migration-mysql" author="qtran" dbms="mysql">
     <comment>Remove all CUF values and CUF value options attaching to any deleted Test Case folder for postgresql</comment>
     <sql>
       DELETE FROM CUSTOM_FIELD_VALUE_OPTION
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN TEST_CASE_FOLDER tcf
-      ON cfv.bound_entity_id = tcf.tcln_id
-      WHERE cfv.bound_entity_type = 'TESTCASE_FOLDER'
-      AND tcf.tcln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
       );
 
       DELETE FROM CUSTOM_FIELD_VALUE
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN TEST_CASE_FOLDER tcf
-      ON cfv.bound_entity_id = tcf.tcln_id
-      WHERE cfv.bound_entity_type = 'TESTCASE_FOLDER'
-      AND tcf.tcln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
       );
     </sql>
 
     <comment>Remove all CUF values and CUF value options attaching to any deleted Campaign folder for postgresql</comment>
     <sql>
       DELETE FROM CUSTOM_FIELD_VALUE_OPTION
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN CAMPAIGN_FOLDER cf
-      ON cfv.bound_entity_id = cf.cln_id
-      WHERE cfv.bound_entity_type = 'CAMPAIGN_FOLDER'
-      AND cf.cln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
       );
 
       DELETE FROM CUSTOM_FIELD_VALUE
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN CAMPAIGN_FOLDER cf
-      ON cfv.bound_entity_id = cf.cln_id
-      WHERE cfv.bound_entity_type = 'CAMPAIGN_FOLDER'
-      AND cf.cln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
       );
     </sql>
 
     <comment>Remove all CUF values and CUF value options attaching to any deleted Requirement folder for postgresql</comment>
     <sql>
       DELETE FROM CUSTOM_FIELD_VALUE_OPTION
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN REQUIREMENT_FOLDER rf
-      ON cfv.bound_entity_id = rf.rln_id
-      WHERE cfv.bound_entity_type = 'REQUIREMENT_FOLDER'
-      AND rf.rln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN REQUIREMENT_FOLDER rf
+        ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+        AND rf.RLN_ID is null
       );
 
       DELETE FROM CUSTOM_FIELD_VALUE
-      WHERE cfv_id in (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN REQUIREMENT_FOLDER rf
-      ON cfv.bound_entity_id = rf.rln_id
-      WHERE cfv.bound_entity_type = 'REQUIREMENT_FOLDER'
-      AND rf.rln_id is null
+      WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN REQUIREMENT_FOLDER rf
+        ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+        AND rf.RLN_ID is null
       );
     </sql>
   </changeSet>

@@ -198,4 +198,76 @@
     <comment>Check that automated suites' status is good (h2, no migration)</comment>
   </changeSet>
 
+  <!-- Testing migration for non-folder associated CUSTOM_FIELD_VALUE_OPTION/CUSTOM_FIELD_VALUE deletion in SQUASH-1284 -->
+  <changeSet id="tm-1.22.0-SQUASH-1284-cuf-value-value-option-removal" author="mqtran" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+          SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+          LEFT JOIN REQUIREMENT_FOLDER rf
+          ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+          WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+          AND rf.RLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+          SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+          LEFT JOIN REQUIREMENT_FOLDER rf
+          ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+          WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+          AND rf.RLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
+        );
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no Cuf value options/Cuf value is left when its associated requirement/test case/campaign folder is deleted</comment>
+  </changeSet>
+
 </databaseChangeLog>
