@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-
+import org.springframework.context.MessageSource
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.customfield.BindableEntity
@@ -36,11 +36,13 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.security.annotation.AclConstrainedObject
+import org.squashtest.tm.service.internal.dto.RawValueModel
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.library.LibraryNavigationService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification
 
 class LibraryNavigationControllerTest extends Specification {
@@ -57,17 +59,24 @@ class LibraryNavigationControllerTest extends Specification {
 		controller.activeMilestoneHolder = activeMilestoneHolder
 		Optional<Long> activeMilestoneId = Optional.of(-9000L)
 		controller.activeMilestoneHolder.activeMilestoneId >> activeMilestoneId
+
+		use(ReflectionCategory) {
+			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
+		}
 	}
 
 	def "should add folder to root of library and return folder node model"() {
 		given:
-		DummyFolder folder = new DummyFolder()
+		FolderFormModel folderModel = new FolderFormModel()
+		folderModel.setName("dummy folder")
+		folderModel.setDescription("dummy description")
+		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder)
+		def res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * service.addFolderToLibrary(10, folder)
+		1 * service.addFolderToLibrary(10, _, [:])
 		res != null
 	}
 
@@ -102,13 +111,16 @@ class LibraryNavigationControllerTest extends Specification {
 
 	def "should add folder to folder content and return folder node model"() {
 		given:
-		DummyFolder folder = new DummyFolder();
+		FolderFormModel folderModel = new FolderFormModel()
+		folderModel.setName("dummy folder")
+		folderModel.setDescription("dummy description")
+		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folderModel)
 
 		then:
-		1 * service.addFolderToFolder(100, folder)
+		1 * service.addFolderToFolder(100, _, [:])
 		res != null
 	}
 
@@ -136,6 +148,11 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		new JsTreeNode()
+	}
+
+	@Override
+	protected DummyFolder createFolderFromModel(FolderFormModel folderModel) {
+		new DummyFolder()
 	}
 
 	@Override

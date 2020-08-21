@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.internal.dto.RawValueModel
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode
 import org.squashtest.tm.service.internal.requirement.RequirementWorkspaceDisplayService
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
@@ -35,6 +36,7 @@ import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.FolderFormModel
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
@@ -71,18 +73,17 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 
 	def "should add folder to root of library and return folder node model"() {
 		given:
-		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use(ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: folder, to: 100L
-		}
+		FolderFormModel folderModel = new FolderFormModel()
+		folderModel.setName("new folder")
+		folderModel.setDescription("new description")
+		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
 		when:
-		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
+		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
+		1 * requirementLibraryNavigationService.addFolderToLibrary(10, _, [:])
 		res.title == "new folder"
-		res.attr['resId'] == "100"
 		res.attr['rel'] == "folder"
 	}
 
@@ -138,18 +139,17 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 
 	def "should add folder to folder content and return folder node model"() {
 		given:
-		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use(ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: folder, to: 100L
-		}
+		FolderFormModel folderModel = new FolderFormModel()
+		folderModel.setName("new folder")
+		folderModel.setDescription("new description")
+		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folderModel)
 
 		then:
-		1 * requirementLibraryNavigationService.addFolderToFolder(100, folder)
+		1 * requirementLibraryNavigationService.addFolderToFolder(100, _, [:])
 		res.title == "new folder"
-		res.attr['resId'] == "100"
 		res.attr['rel'] == "folder"
 	}
 

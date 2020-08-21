@@ -66,6 +66,7 @@ import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
+import org.squashtest.tm.web.internal.controller.generic.FolderFormModel;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -297,6 +298,14 @@ public class CampaignLibraryNavigationController extends
 		}
 
 		return builder.setNode(model).build();
+	}
+
+	@Override
+	protected CampaignFolder createFolderFromModel(FolderFormModel folderModel) {
+		CampaignFolder folder = new CampaignFolder();
+		folder.setName(folderModel.getName());
+		folder.setDescription(folderModel.getDescription());
+		return folder;
 	}
 
 	@ResponseBody

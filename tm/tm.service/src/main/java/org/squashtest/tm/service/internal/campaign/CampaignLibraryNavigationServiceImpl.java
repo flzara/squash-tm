@@ -504,10 +504,22 @@ public class CampaignLibraryNavigationServiceImpl
 	}
 
 	@Override
+	@PreventConcurrent(entityType = CampaignLibraryNode.class)
+	public void addFolderToFolder(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
+		super.addFolderToFolder(destinationId, newFolder, customFields);
+	}
+
+	@Override
 	@PreventConcurrent(entityType = CampaignLibrary.class)
 	public void addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder) {
 		super.addFolderToLibrary(destinationId, newFolder);
 		generateCUF(newFolder);
+	}
+
+	@Override
+	@PreventConcurrent(entityType = CampaignLibrary.class)
+	public void addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
+		super.addFolderToLibrary(destinationId, newFolder, customFields);
 	}
 
 	private void generateCUF(CampaignFolder newFolder){

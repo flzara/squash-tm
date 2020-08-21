@@ -195,7 +195,7 @@ RequirementLibraryFinderService {
 	List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
 
 	List<Long> findAllRequirementIdsInMilestone(Milestone activeMilestone);
-	
+
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	@Override
 	List<RequirementLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds);

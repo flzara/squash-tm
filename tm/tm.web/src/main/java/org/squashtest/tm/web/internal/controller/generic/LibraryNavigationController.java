@@ -31,6 +31,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,6 +95,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	private static final Logger LOGGER = LoggerFactory.getLogger(LibraryNavigationController.class);
 	private static final String FOLDERS = "folders";
 	private static final String DRIVES = "drives";
+	private static final String MODEL_ATTRIBUTE_ADD_FOLDER = "add-folder";
 	@Inject
 	protected CustomReportDashboardService customReportDashboardService;
 	@Inject
@@ -115,6 +119,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
+
+	protected abstract FOLDER createFolderFromModel(FolderFormModel folderModel);
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
@@ -143,9 +149,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@SuppressWarnings("unchecked")
 	public final JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-	                                                         @Valid @RequestBody FOLDER newFolder) {
+	                                                         @RequestBody FolderFormModel folderModel) throws BindException {
 
-		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
+		FOLDER newFolder = validateModelAndGetFolder(folderModel);
+
+		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder, folderModel.getCustomFieldsMap());
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
@@ -155,9 +163,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@SuppressWarnings("unchecked")
 	public final JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-	                                                    @Valid @RequestBody FOLDER newFolder) {
+	                                                    @RequestBody FolderFormModel folderModel) throws BindException {
 
-		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
+		FOLDER newFolder = validateModelAndGetFolder(folderModel);
+
+		getLibraryNavigationService().addFolderToFolder(folderId, newFolder, folderModel.getCustomFieldsMap());
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
@@ -379,6 +389,18 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
+
+	private FOLDER validateModelAndGetFolder(FolderFormModel folderModel) throws BindException {
+		BindingResult validation = new BeanPropertyBindingResult(folderModel, MODEL_ATTRIBUTE_ADD_FOLDER);
+		FolderFormModel.FolderFormModelValidator validator = new FolderFormModel.FolderFormModelValidator(getMessageSource());
+		validator.validate(folderModel, validation);
+
+		if (validation.hasErrors()) {
+			throw new BindException(validation);
+		}
+
+		return createFolderFromModel(folderModel);
+	}
 
 	// ************************ other utils *************************
 

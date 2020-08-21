@@ -178,29 +178,27 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void addFolderToLibrary(long destinationId, FOLDER newFolder) {
-		// fetch
-		LIBRARY container = getLibraryDao().findById(destinationId);
-		// check
-		checkPermission(new SecurityCheckableObject(container, CREATE));
-
-		// proceed
-		container.addContent((NODE) newFolder);
-		getFolderDao().persist(newFolder);
+		doAddFolderToLibrary(destinationId, newFolder);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	public void addFolderToLibrary(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
+		doAddFolderToLibrary(destinationId, newFolder);
+
+		addCustomFieldsToFolder(customFields, newFolder);
+	}
+
+	@Override
 	public void addFolderToFolder(long destinationId, FOLDER newFolder) {
-		// fetch
-		FOLDER container = getFolderDao().findById(destinationId);
-		// check
-		checkPermission(new SecurityCheckableObject(container, CREATE));
+		doAddFolderToFolder(destinationId, newFolder);
+	}
 
-		container.addContent((NODE) newFolder);
-		getFolderDao().persist(newFolder);
+	@Override
+	public void addFolderToFolder(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
+		doAddFolderToFolder(destinationId, newFolder);
 
+		addCustomFieldsToFolder(customFields, newFolder);
 	}
 
 	@Override
@@ -414,6 +412,35 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			}
 		}
 		return effective;
+	}
+
+	private void addCustomFieldsToFolder(Map<Long, RawValue> customFields, FOLDER newFolder) {
+		if (customFields != null && !customFields.isEmpty()) {
+			createCustomFieldValues(newFolder);
+			initCustomFieldValues(newFolder, customFields);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void doAddFolderToLibrary(long destinationId, FOLDER newFolder) {
+
+		LIBRARY container = getLibraryDao().findById(destinationId);
+
+		checkPermission(new SecurityCheckableObject(container, CREATE));
+
+		container.addContent((NODE) newFolder);
+		getFolderDao().persist(newFolder);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void doAddFolderToFolder(long destinationId, FOLDER newFolder) {
+
+		FOLDER container = getFolderDao().findById(destinationId);
+
+		checkPermission(new SecurityCheckableObject(container, CREATE));
+
+		container.addContent((NODE) newFolder);
+		getFolderDao().persist(newFolder);
 	}
 
 }

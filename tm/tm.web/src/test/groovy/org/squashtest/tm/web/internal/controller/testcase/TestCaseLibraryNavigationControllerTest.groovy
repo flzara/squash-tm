@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.service.internal.dto.RawValueModel
 import org.squashtest.tm.service.internal.dto.json.JsTreeNode.State
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder
@@ -35,6 +36,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.user.UserAccountService
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.web.internal.controller.generic.FolderFormModel
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
@@ -148,17 +150,17 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 
 	def "should create folder at root of library and return folder tree model"() {
 		given:
-		TestCaseFolder folder = Mock{
-			getId() >> 50
-			getName() >> "folder"
-		}
+		FolderFormModel folderModel = new FolderFormModel()
+		folderModel.setName("new folder")
+		folderModel.setDescription("new description")
+		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder)
+		def res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, folder)
-		res.attr['resId'] == "50"
+		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, _, [:])
+		res.title == "new folder"
 	}
 
 	def "should create test case at root of library and return test case edition view"() {
