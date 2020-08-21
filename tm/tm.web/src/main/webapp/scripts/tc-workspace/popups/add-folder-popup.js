@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], function($, zetree, rules){
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'jquery.squash.formdialog'], function($, zetree, cufValuesManager, projects, rules){
 
 
 
@@ -29,10 +29,39 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			description : dialog.find('#add-folder-description').val()
 		};
 
+		var cufParams = dialog.data('cuf-values-support').readValues();
+
+		$.extend(params, cufParams);
+
 		return tree.jstree('postNewNode', 'new-folder', params, false);
 	}
 
 
+	function addCufHandler(dialog, tree) {
+		var table = dialog.find('table.add-node-attributes');
+		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({
+			table: table
+		});
+
+		dialog.on('formdialogopen', function () {
+			var projectId = tree.jstree('get_selected').getProjectId();
+			var project = projects.findProject(projectId);
+			var bindings = project.customFieldBindings['TESTCASE_FOLDER'];
+			var cufs = $.map(bindings, function (b) { return b.customField; });
+			cufHandler.loadPanel(cufs);
+
+		});
+
+		dialog.on('formdialogcleanup', function () {
+			cufHandler.reset();
+		});
+
+		dialog.on('formdialogclose', function () {
+			cufHandler.destroy();
+		});
+
+		dialog.data('cuf-values-support', cufHandler);
+	}
 	function init(){
 
 		var dialog = $("#add-folder-dialog").formDialog();
@@ -41,10 +70,10 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 		// Added to cancel the open if no rights
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');
-			
+
 			if (! rules.canCreateFolder(node)){
-				/* Acknowledged by Safi, David and Gregory : 
-				 * Inactivated buttons and item-menu should not be clickable. 
+				/* Acknowledged by Safi, David and Gregory :
+				 * Inactivated buttons and item-menu should not be clickable.
 				 * No error popup should be visible despite the fact a lot of these error popup have been implemented since 1.11.
 				 * Due to event flow bug in jQuery, we cant't prevent the popup 'onopen' event to be triggered,
 				 * so it was decided to close the popup immediately if rules check function return false,
@@ -63,10 +92,10 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			else{
 				dialog.formDialog('setState','confirm');
 				var name = node.getName();
-				dialog.find("#new-folder-tree-button").val(name);				
-			}			
+				dialog.find("#new-folder-tree-button").val(name);
+			}
 		});
-		
+
 		// end
 
 		dialog.on('formdialogadd-close', function(){
@@ -84,7 +113,7 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-
+		addCufHandler(dialog, tree);
 	}
 
 	return {
