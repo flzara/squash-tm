@@ -327,8 +327,10 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 					data: { value: value }
 				}).done(function() {
 					self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
+					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+				}).fail(function() {
+					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
 				});
-				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
 			};
 		},
 
