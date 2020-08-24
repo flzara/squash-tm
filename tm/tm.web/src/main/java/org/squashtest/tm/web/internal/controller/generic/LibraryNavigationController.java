@@ -67,7 +67,6 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -120,8 +119,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
-	protected abstract FOLDER createFolderFromModel(FolderFormModel folderModel);
-
 	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
@@ -151,9 +148,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	public final JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
 	                                                         @RequestBody FolderFormModel folderModel) throws BindException {
 
-		FOLDER newFolder = validateModelAndGetFolder(folderModel);
+		validateFolderModel(folderModel);
 
-		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder, folderModel.getCustomFieldsMap());
+		FOLDER newFolder = getLibraryNavigationService().addFolderToLibrary(libraryId, folderModel.toDTO());
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
@@ -165,9 +162,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	public final JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
 	                                                    @RequestBody FolderFormModel folderModel) throws BindException {
 
-		FOLDER newFolder = validateModelAndGetFolder(folderModel);
+		validateFolderModel(folderModel);
 
-		getLibraryNavigationService().addFolderToFolder(folderId, newFolder, folderModel.getCustomFieldsMap());
+		FOLDER newFolder = getLibraryNavigationService().addFolderToFolder(folderId, folderModel.toDTO());
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
@@ -390,7 +387,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	protected abstract WorkspaceDisplayService workspaceDisplayService();
 
-	private FOLDER validateModelAndGetFolder(FolderFormModel folderModel) throws BindException {
+	private void validateFolderModel(FolderFormModel folderModel) throws BindException {
 		BindingResult validation = new BeanPropertyBindingResult(folderModel, MODEL_ATTRIBUTE_ADD_FOLDER);
 		FolderFormModel.FolderFormModelValidator validator = new FolderFormModel.FolderFormModelValidator(getMessageSource());
 		validator.validate(folderModel, validation);
@@ -398,10 +395,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-
-		return createFolderFromModel(folderModel);
 	}
-
 	// ************************ other utils *************************
 
 	protected static class Messages {

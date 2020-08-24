@@ -78,12 +78,19 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 		folderModel.setDescription("new description")
 		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
+		and:
+		RequirementFolder reqFolder = new RequirementFolder(name: "new folder", description: "new description")
+		use(ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: reqFolder, to: 100L
+		}
+
 		when:
 		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * requirementLibraryNavigationService.addFolderToLibrary(10, _, [:])
+		1 * requirementLibraryNavigationService.addFolderToLibrary(10, _) >> reqFolder
 		res.title == "new folder"
+		res.attr['resId'] == "100"
 		res.attr['rel'] == "folder"
 	}
 
@@ -144,14 +151,20 @@ class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecificati
 		folderModel.setDescription("new description")
 		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
+		and:
+		RequirementFolder reqFolder = new RequirementFolder(name: "new folder", description: "new description")
+		use(ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: reqFolder, to: 100L
+		}
+
 		when:
 		JsTreeNode res = controller.addNewFolderToFolderContent(100, folderModel)
 
 		then:
-		1 * requirementLibraryNavigationService.addFolderToFolder(100, _, [:])
+		1 * requirementLibraryNavigationService.addFolderToFolder(100, _) >> reqFolder
 		res.title == "new folder"
+		res.attr['resId'] == "100"
 		res.attr['rel'] == "folder"
 	}
-
 
 }

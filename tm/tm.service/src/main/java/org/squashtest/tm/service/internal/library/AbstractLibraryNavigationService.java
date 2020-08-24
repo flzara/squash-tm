@@ -183,10 +183,12 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	public void addFolderToLibrary(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
+	public FOLDER addFolderToLibrary(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
 		doAddFolderToLibrary(destinationId, newFolder);
 
 		addCustomFieldsToFolder(customFields, newFolder);
+
+		return newFolder;
 	}
 
 	@Override
@@ -195,10 +197,12 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	public void addFolderToFolder(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
+	public FOLDER addFolderToFolder(long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields) {
 		doAddFolderToFolder(destinationId, newFolder);
 
 		addCustomFieldsToFolder(customFields, newFolder);
+
+		return newFolder;
 	}
 
 	@Override

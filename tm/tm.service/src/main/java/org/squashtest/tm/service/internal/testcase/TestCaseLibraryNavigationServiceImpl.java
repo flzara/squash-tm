@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.library.NewFolderDto;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -114,6 +115,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY;
 import static org.squashtest.tm.jooq.domain.Tables.TEST_CASE_LIBRARY_NODE;
@@ -324,6 +326,15 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
+	public TestCaseFolder addFolderToLibrary(@Id long destinationId, NewFolderDto folderDto) {
+		TestCaseFolder newFolder = (TestCaseFolder) folderDto.toFolder(TEST_CASE_FOLDER);
+		return addFolderToLibrary(destinationId, newFolder, folderDto.getCustomFields());
+	}
+
+	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
@@ -343,6 +354,15 @@ public class TestCaseLibraryNavigationServiceImpl
 		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
 		generateCustomField(newFolder);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
+	public TestCaseFolder addFolderToFolder(@Id long destinationId, NewFolderDto folderDto) {
+		TestCaseFolder newFolder = (TestCaseFolder) folderDto.toFolder(TEST_CASE_FOLDER);
+		return addFolderToFolder(destinationId, newFolder, folderDto.getCustomFields());
 	}
 
 	@Override

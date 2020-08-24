@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.library.NewFolderDto;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -88,10 +89,17 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	/**
 	 *{@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 * @param destinationId the parent library id
-	 * @param newFolder the new folder to add*
+	 * @param newFolder the new folder to add
 	 * @param customFields the customField values associated to the new folder
 	 */
-	void addFolderToLibrary(@Id long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields);
+	FOLDER addFolderToLibrary(@Id long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields);
+
+	/**
+	 *{@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
+	 * @param destinationId the parent library id
+	 * @param folderDto the new folder dto
+	 */
+	FOLDER addFolderToLibrary(@Id long destinationId, NewFolderDto folderDto);
 
 	/**
 	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
@@ -106,7 +114,14 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 * @param newFolder the new folder to add
 	 * @param customFields the customField values associated to the new folder
 	 */
-	void addFolderToFolder(@Id long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields);
+	FOLDER addFolderToFolder(@Id long destinationId, FOLDER newFolder, Map<Long, RawValue> customFields);
+
+	/**
+	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
+	 * @param destinationId the parent folder id
+	 * @param folderDto the new folder dto
+	 */
+	FOLDER addFolderToFolder(@Id long destinationId, NewFolderDto folderDto);
 
 	FOLDER findFolder(long folderId);
 

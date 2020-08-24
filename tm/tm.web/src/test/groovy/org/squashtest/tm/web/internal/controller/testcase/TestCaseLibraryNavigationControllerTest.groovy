@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -155,12 +157,20 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		folderModel.setDescription("new description")
 		folderModel.setCustomFields(new RawValueModel.RawValueModelMap())
 
+		and:
+		TestCaseFolder tcFolder = new TestCaseFolder(name: "new folder", description: "new description")
+		use(ReflectionCategory) {
+			TestCaseLibraryNode.set field: "id", of: tcFolder, to: 100L
+		}
+
 		when:
 		def res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, _, [:])
+		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, _) >> tcFolder
 		res.title == "new folder"
+		res.attr['resId'] == "100"
+		res.attr['rel'] == "folder"
 	}
 
 	def "should create test case at root of library and return test case edition view"() {

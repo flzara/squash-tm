@@ -55,7 +55,6 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.fromreq.ReqToTestCaseConfiguration;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.generic.FolderFormModel;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -131,14 +130,6 @@ public class TestCaseLibraryNavigationController extends
 		}
 
 		return builder.setNode(node).build();
-	}
-
-	@Override
-	protected TestCaseFolder createFolderFromModel(FolderFormModel folderModel) {
-		TestCaseFolder folder = new TestCaseFolder();
-		folder.setName(folderModel.getName());
-		folder.setDescription(folderModel.getDescription());
-		return folder;
 	}
 
 	/*

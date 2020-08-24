@@ -27,6 +27,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.library.NewFolderDto;
 import org.squashtest.tm.service.internal.dto.RawValueModel;
 
 import java.util.HashMap;
@@ -69,12 +70,19 @@ public class FolderFormModel {
 	}
 
 	@JsonIgnore
-	public Map<Long, RawValue> getCustomFieldsMap() {
+	public NewFolderDto toDTO() {
+		NewFolderDto dto = new NewFolderDto();
+
+		dto.setName(name);
+		dto.setDescription(description);
+
 		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
 		for (Map.Entry<Long, RawValueModel> entry : customFields.entrySet()) {
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
-		return cufs;
+		dto.setCustomFields(cufs);
+
+		return dto;
 	}
 
 	public static class FolderFormModelValidator implements Validator {
@@ -83,19 +91,18 @@ public class FolderFormModel {
 
 		private MessageSource messageSource;
 
-		public void setMessageSource(MessageSource messageSource) {
-			this.messageSource = messageSource;
-		}
-
-
 		public FolderFormModelValidator(MessageSource messageSource) {
 			super();
 			this.messageSource = messageSource;
 		}
 
+		public void setMessageSource(MessageSource messageSource) {
+			this.messageSource = messageSource;
+		}
+
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return clazz.equals(FolderFormModel.class);
+			return clazz.equals(NewFolderDto.class);
 		}
 
 		@Override

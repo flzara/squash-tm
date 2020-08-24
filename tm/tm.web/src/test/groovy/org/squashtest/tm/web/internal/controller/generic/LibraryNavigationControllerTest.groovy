@@ -76,7 +76,7 @@ class LibraryNavigationControllerTest extends Specification {
 		def res = controller.addNewFolderToLibraryRootContent(10, folderModel)
 
 		then:
-		1 * service.addFolderToLibrary(10, _, [:])
+		1 * service.addFolderToLibrary(10, _)
 		res != null
 	}
 
@@ -120,7 +120,7 @@ class LibraryNavigationControllerTest extends Specification {
 		JsTreeNode res = controller.addNewFolderToFolderContent(100, folderModel)
 
 		then:
-		1 * service.addFolderToFolder(100, _, [:])
+		1 * service.addFolderToFolder(100, _)
 		res != null
 	}
 
@@ -148,11 +148,6 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		new JsTreeNode()
-	}
-
-	@Override
-	protected DummyFolder createFolderFromModel(FolderFormModel folderModel) {
-		new DummyFolder()
 	}
 
 	@Override

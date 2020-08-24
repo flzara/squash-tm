@@ -52,7 +52,6 @@ import org.squashtest.tm.service.requirement.RequirementStatisticsService;
 import org.squashtest.tm.service.statistics.requirement.RequirementStatisticsBundle;
 import org.squashtest.tm.service.workspace.WorkspaceDisplayService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.generic.FolderFormModel;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -245,13 +244,6 @@ public class RequirementLibraryNavigationController extends
 		return applyActiveMilestoneFilter(builder).setNode(resource).build();
 	}
 
-	@Override
-	protected RequirementFolder createFolderFromModel(FolderFormModel folderModel) {
-		RequirementFolder folder = new RequirementFolder();
-		folder.setName(folderModel.getName());
-		folder.setDescription(folderModel.getDescription());
-		return folder;
-	}
 
 	private RequirementLibraryTreeNodeBuilder applyActiveMilestoneFilter(RequirementLibraryTreeNodeBuilder builder) {
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();

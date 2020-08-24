@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.library.NewFolderDto;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
@@ -110,6 +111,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
 import static org.squashtest.tm.service.security.Authorizations.CREATE_REQFOLDER_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.CREATE_REQLIBRARY_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.CREATE_REQUIREMENT_OR_ROLE_ADMIN;
@@ -282,6 +284,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType=RequirementLibrary.class)
+	public RequirementFolder addFolderToLibrary(@Id long destinationId, NewFolderDto folderDto) {
+		RequirementFolder newFolder = (RequirementFolder) folderDto.toFolder(REQUIREMENT_FOLDER);
+		return addFolderToLibrary(destinationId, newFolder, folderDto.getCustomFields());
+	}
+
+	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE' )"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
@@ -298,6 +309,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 		// and then create the custom field values, as a better fix for [Issue 2061]
 		createAllCustomFieldValues(newFolder);
 		generateCuf(newFolder);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE' )"
+		+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType=RequirementLibraryNode.class)
+	public RequirementFolder addFolderToFolder(@Id long destinationId, NewFolderDto folderDto) {
+		RequirementFolder newFolder = (RequirementFolder) folderDto.toFolder(REQUIREMENT_FOLDER);
+		return addFolderToFolder(destinationId, newFolder, folderDto.getCustomFields());
 	}
 
 	private void generateCuf(RequirementFolder newFolder){

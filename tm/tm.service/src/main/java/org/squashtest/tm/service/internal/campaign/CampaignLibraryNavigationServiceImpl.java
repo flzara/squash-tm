@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.library.NewFolderDto;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -89,6 +90,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
@@ -505,8 +507,15 @@ public class CampaignLibraryNavigationServiceImpl
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
-	public void addFolderToFolder(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
-		super.addFolderToFolder(destinationId, newFolder, customFields);
+	public CampaignFolder addFolderToFolder(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
+		return super.addFolderToFolder(destinationId, newFolder, customFields);
+	}
+
+	@Override
+	@PreventConcurrent(entityType = CampaignLibraryNode.class)
+	public CampaignFolder addFolderToFolder(@Id long destinationId, NewFolderDto folderDto) {
+		CampaignFolder newFolder = (CampaignFolder) folderDto.toFolder(CAMPAIGN_FOLDER);
+		return addFolderToFolder(destinationId, newFolder, folderDto.getCustomFields());
 	}
 
 	@Override
@@ -518,8 +527,15 @@ public class CampaignLibraryNavigationServiceImpl
 
 	@Override
 	@PreventConcurrent(entityType = CampaignLibrary.class)
-	public void addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
-		super.addFolderToLibrary(destinationId, newFolder, customFields);
+	public CampaignFolder addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder, Map<Long, RawValue> customFields) {
+		return super.addFolderToLibrary(destinationId, newFolder, customFields);
+	}
+
+	@Override
+	@PreventConcurrent(entityType = CampaignLibrary.class)
+	public CampaignFolder addFolderToLibrary(@Id long destinationId, NewFolderDto folderDto) {
+		CampaignFolder newFolder = (CampaignFolder) folderDto.toFolder(CAMPAIGN_FOLDER);
+		return addFolderToLibrary(destinationId, newFolder, folderDto.getCustomFields());
 	}
 
 	private void generateCUF(CampaignFolder newFolder){
