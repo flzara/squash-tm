@@ -32,8 +32,8 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.customfield.RawValue
+import org.squashtest.tm.domain.library.NewFolderDto
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
@@ -44,6 +44,8 @@ import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN_FOLDER
 
 @UnitilsSupport
 @Transactional
@@ -594,6 +596,58 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		copiedFolderCUFValues.size() == 2
 		copiedFolderCUFValues.find { it.getBinding().id == -9L }.value == "campaign-1-cuf1"
 		copiedFolderCUFValues.find { it.getBinding().id == -11L }.value == "Monday"
+	}
+
+	@DataSet("CampaignLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in an existing folder"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def campaignFolder = navService.addFolderToFolder(-10L, folderDto)
+
+		then:
+		campaignFolder.name == "new folder"
+		campaignFolder.description == "new description"
+		campaignFolder.boundEntityType == CAMPAIGN_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(CAMPAIGN_FOLDER, campaignFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
+	}
+
+	@DataSet("CampaignLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in a library"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def campaignFolder = navService.addFolderToLibrary(-1L, folderDto)
+
+		then:
+		campaignFolder.name == "new folder"
+		campaignFolder.description == "new description"
+		campaignFolder.boundEntityType == CAMPAIGN_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(CAMPAIGN_FOLDER, campaignFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
 	}
 
 	def findCufValuesForEntity(BindableEntity tctype, long tcId) {

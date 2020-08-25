@@ -23,10 +23,10 @@ package org.squashtest.tm.service.requirement
 import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
-import org.squashtest.tm.domain.campaign.CampaignFolder
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.customfield.RawValue
+import org.squashtest.tm.domain.library.NewFolderDto
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
@@ -41,6 +41,8 @@ import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_FOLDER
 
 @UnitilsSupport
 @Transactional
@@ -267,8 +269,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		requirement.versions.size() == 2
 		RequirementVersion firstV = requirement.versions.find { it.name == "version100" }
 		RequirementVersion currV = requirement.versions.find { it.name == "version102" }
-		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, currV.id).get(0).value == "current-cuf"
-		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, firstV.id).get(0).value == "first-cuf"
+		findCufValuesForEntity(BindableEntity.REQUIREMENT_VERSION, currV.id).get(0).value == "current-cuf"
+		findCufValuesForEntity(BindableEntity.REQUIREMENT_VERSION, firstV.id).get(0).value == "first-cuf"
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move reqs to other project.xml")
@@ -305,7 +307,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then: "expected result verified"
 	}
 
-	private List<CustomFieldValue> findCufValueForEntity(BindableEntity entity, long entityId) {
+	private List<CustomFieldValue> findCufValuesForEntity(BindableEntity entity, long entityId) {
 		em.createQuery("from CustomFieldValue cufV where cufV.boundEntityType = :type and cufV.boundEntityId = :id")
 			.setParameter("type", entity)
 			.setParameter("id", entityId)
@@ -482,17 +484,63 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder folderCopy = (RequirementFolder) nodes.get(0)
 
 		and: "cufs are updated to match destination project's config"
-		def copiedFolderCUFValues = findCufValuesForEntity(BindableEntity.REQUIREMENT_FOLDER, folderCopy.id)
+		def copiedFolderCUFValues = findCufValuesForEntity(REQUIREMENT_FOLDER, folderCopy.id)
 		copiedFolderCUFValues.size() == 2
 		copiedFolderCUFValues.find { it.getBinding().id == -9L }.value == "requirement-1-cuf1"
 		copiedFolderCUFValues.find { it.getBinding().id == -11L }.value == "Monday"
 	}
 
-	def findCufValuesForEntity(BindableEntity tctype, long tcId) {
-		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
-		query.setParameter("id", tcId)
-		query.setParameter("type", tctype)
-		return query.list()
+	@DataSet("RequirementLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in an existing folder"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def reqFolder = navService.addFolderToFolder(-10L, folderDto)
+
+		then:
+		reqFolder.name == "new folder"
+		reqFolder.description == "new description"
+		reqFolder.boundEntityType == REQUIREMENT_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(REQUIREMENT_FOLDER, reqFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
 	}
+
+	@DataSet("RequirementLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in a library"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def reqFolder = navService.addFolderToLibrary(-1L, folderDto)
+
+		then:
+		reqFolder.name == "new folder"
+		reqFolder.description == "new description"
+		reqFolder.boundEntityType == REQUIREMENT_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(REQUIREMENT_FOLDER, reqFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
+	}
+
 }
 

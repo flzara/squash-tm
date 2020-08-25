@@ -28,6 +28,8 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.bdd.Keyword
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.customfield.RawValue
+import org.squashtest.tm.domain.library.NewFolderDto
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.KeywordTestStep
@@ -52,6 +54,8 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+
+import static org.squashtest.tm.domain.customfield.BindableEntity.TESTCASE_FOLDER
 
 @UnitilsSupport
 @Transactional
@@ -385,7 +389,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
 
 		and: "cufs are updated to match destination project's config"
-		def copiedFolderCUFValues = findCufValuesForEntity(BindableEntity.TESTCASE_FOLDER, folderCopy.id)
+		def copiedFolderCUFValues = findCufValuesForEntity(TESTCASE_FOLDER, folderCopy.id)
 		copiedFolderCUFValues.size() == 1
 		copiedFolderCUFValues.find { it.getBinding().id == -6L }.value == "folder-1-cuf1"
 	}
@@ -488,6 +492,57 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
     }
 
+	@DataSet("TestCaseLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in an existing folder"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def tcFolder = navService.addFolderToFolder(-10L, folderDto)
+
+		then:
+		tcFolder.name == "new folder"
+		tcFolder.description == "new description"
+		tcFolder.boundEntityType == TESTCASE_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(TESTCASE_FOLDER, tcFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
+	}
+
+	@DataSet("TestCaseLibraryNavigationServiceIT.create folder with cufs.xml")
+	def "should create a folder with cufs in a library"() {
+		given:
+		def folderDto = new NewFolderDto()
+		folderDto.name = "new folder"
+		folderDto.description = "new description"
+		def customFields = new HashMap<Long, RawValue>()
+		customFields.put(-2L, new RawValue("new cuf value"))
+		customFields.put(-3L, new RawValue("2020-08-24"))
+		folderDto.customFields = customFields
+
+		when:
+		def tcFolder = navService.addFolderToLibrary(-1L, folderDto)
+
+		then:
+		tcFolder.name == "new folder"
+		tcFolder.description == "new description"
+		tcFolder.boundEntityType == TESTCASE_FOLDER
+
+		and:
+		def folderCUFValues = findCufValuesForEntity(TESTCASE_FOLDER, tcFolder.id)
+		folderCUFValues.size() == 2
+		folderCUFValues.find { it.getBinding().id == -6L }.value == "new cuf value"
+		folderCUFValues.find { it.getBinding().id == -7L }.value == "2020-08-24"
+	}
 
     @DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
     def "should not move in his hierarchy"() {
