@@ -57,6 +57,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 						var projectId = self.settings.projectId;
 						var searchInput = $(event.currentTarget);
 						self.performAutocomplete(searchInput, projectId);
+						self.correctAutocompleteWidth(searchInput);
 					}
 				});
 				this.actionWordInput.autocomplete({
@@ -279,6 +280,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 							var searchInput = $row.find('td.step-action-word input');
 							searchInput.autocomplete();
 							self.performAutocomplete(searchInput, projectId);
+							self.correctAutocompleteWidth(searchInput);
 						}
 					});
 				}
@@ -309,6 +311,12 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				minLength: 1
 			});
 			searchInput.autocomplete('enable');
+		},
+
+		// SQUASH-1303
+		correctAutocompleteWidth: function(searchInput) {
+			var autocompleteMaxWidth = window.innerWidth - searchInput.offset().left - 15;
+			$('.ui-autocomplete').css({'max-width': autocompleteMaxWidth +'px', 'margin-right':'10px'});
 		},
 
 		postModifyActionWordFunction: function(baseUrl, table) {
