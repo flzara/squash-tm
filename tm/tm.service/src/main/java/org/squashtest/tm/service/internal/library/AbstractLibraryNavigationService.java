@@ -419,8 +419,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	private void addCustomFieldsToFolder(Map<Long, RawValue> customFields, FOLDER newFolder) {
+		createCustomFieldValues(newFolder);
 		if (customFields != null && !customFields.isEmpty()) {
-			createCustomFieldValues(newFolder);
 			initCustomFieldValues(newFolder, customFields);
 		}
 	}
