@@ -278,7 +278,7 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time}
@@ -326,7 +326,7 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time}
@@ -380,8 +380,8 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
-	\${place} =	Get Param	place
+	\${time} =	Get Test Param	DS_time
+	\${place} =	Get Test Param	DS_place
 
 	Given Today is Monday
 	When It is \${time} in \${place}
@@ -453,71 +453,68 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Count test
-	\${total} =	Get Param	total
-	\${less} =	Get Param	less
-	\${left} =	Get Param	left
+	\${total} =	Get Test Param	DS_total
+	\${less} =	Get Test Param	DS_less
+	\${left} =	Get Test Param	DS_left
 
 	Given I buy \${total} tickets
 	When I give \${less} to my friend
 	Then I still have \${left} tickets"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset whose name contains spaces"() {
+	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <> used twice"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
-			keywordTestCase.setName("Count test")
+			keywordTestCase.setName("Working test")
 			keywordTestCase.notifyAssociatedWithProject(project)
 
-			def fragment1 = new ActionWordText("I buy ")
-			def fragment2 = new ActionWordParameterMock(-1L, "param1", "10")
-			def value1 = new ActionWordParameterValue("<total>")
-			value1.setActionWordParam(fragment2)
-			def fragment3 = new ActionWordText(" tickets")
+			def fragment1 = new ActionWordText("it is Monday")
 
-			ActionWord actionWord1 = new ActionWord([fragment1, fragment2, fragment3] as List)
+			ActionWord actionWord1 = new ActionWord([fragment1] as List)
 			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
-			List<ActionWordParameterValue> paramValues1 = [value1]
-			step1.setParamValues(paramValues1)
 
-
-			def fragment4 = new ActionWordText("I give ")
+			def fragment4 = new ActionWordText("it is ")
 			def fragment5 = new ActionWordParameterMock(-2L, "param1", "10")
-			def value2 = new ActionWordParameterValue("<less>")
+			def value2 = new ActionWordParameterValue("<time>")
 			value2.setActionWordParam(fragment5)
-			def fragment6 = new ActionWordText(" to my friend")
+			def fragment6 = new ActionWordText(" in ")
+			def fragment2 = new ActionWordParameterMock(-1L, "param2", "Paris")
+			def value1 = new ActionWordParameterValue("<place>")
+			value1.setActionWordParam(fragment2)
 
-			ActionWord actionWord2 = new ActionWord([fragment4, fragment5, fragment6] as List)
+			ActionWord actionWord2 = new ActionWord([fragment4, fragment5, fragment6, fragment2] as List)
 			KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, actionWord2)
-			List<ActionWordParameterValue> paramValues2 = [value2]
+			List<ActionWordParameterValue> paramValues2 = [value2, value1]
 			step2.setParamValues(paramValues2)
 
-			def fragment7 = new ActionWordText("I still have ")
+			def fragment7 = new ActionWordText("I work at ")
 			def fragment8 = new ActionWordParameterMock(-3L, "param1", "10")
-			def value3 = new ActionWordParameterValue("<left>")
+			def value3 = new ActionWordParameterValue("<time>")
 			value3.setActionWordParam(fragment8)
-			def fragment9 = new ActionWordText(" tickets")
+			def fragment9 = new ActionWordText(" in ")
+			def fragment10 = new ActionWordParameterMock(-4L, "param2", "Paris")
+			def value4 = new ActionWordParameterValue("<place>")
+			value4.setActionWordParam(fragment10)
 
-			ActionWord actionWord3 = new ActionWord([fragment7, fragment8, fragment9] as List)
+			ActionWord actionWord3 = new ActionWord([fragment7, fragment8, fragment9, fragment10] as List)
 			KeywordTestStep step3 = new KeywordTestStep(Keyword.THEN, actionWord3)
-			List<ActionWordParameterValue> paramValues3 = [value3]
+			List<ActionWordParameterValue> paramValues3 = [value3, value4]
 			step3.setParamValues(paramValues3)
 
 			keywordTestCase.addStep(step1)
 			keywordTestCase.addStep(step2)
 			keywordTestCase.addStep(step3)
 
-			def tcParam1 =  new Parameter("total", keywordTestCase)
-			def tcParam2 =  new Parameter("less", keywordTestCase)
-			def tcParam3 =  new Parameter("left", keywordTestCase)
+			def tcParam1 =  new Parameter("time", keywordTestCase)
+			def tcParam2 =  new Parameter("place", keywordTestCase)
 			def dataset =  new Dataset()
 			dataset.setName("  dataset   1    ")
 
 			keywordTestCase.addDataset(dataset)
 
-			def paramValue1 =  new DatasetParamValue(tcParam1, dataset,"5")
-			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"3")
-			def paramValue3 =  new DatasetParamValue(tcParam3, dataset,"two")
-			dataset.parameterValues = [paramValue1, paramValue2, paramValue3]
+			def paramValue1 =  new DatasetParamValue(tcParam1, dataset,"6AM")
+			def paramValue2 =  new DatasetParamValue(tcParam2, dataset,"London")
+			dataset.parameterValues = [paramValue1, paramValue2]
 		when:
 			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
 		then:
@@ -527,14 +524,13 @@ Resource	squash_resources.resource
 Library		squash_tf.TFParamService
 
 *** Test Cases ***
-Count test
-	\${total} =	Get Param	total
-	\${less} =	Get Param	less
-	\${left} =	Get Param	left
+Working test
+	\${time} =	Get Test Param	DS_time
+	\${place} =	Get Test Param	DS_place
 
-	Given I buy \${total} tickets
-	When I give \${less} to my friend
-	Then I still have \${left} tickets"""
+	Given it is Monday
+	When it is \${time} in \${place}
+	Then I work at \${time} in \${place}"""
 	}
 
 	/* ----- Test Step Script Generation ----- */

@@ -30,10 +30,15 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class RobotScriptWriter implements BddScriptWriter {
 
@@ -91,19 +96,27 @@ public class RobotScriptWriter implements BddScriptWriter {
 			steps
 				.stream()
 				.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
-				.distinct()
+				.filter(distinctByKey(ActionWordParameterValue::getValue))
 				.forEach(paramValue -> {
 					if(paramValue.isLinkedToTestCaseParam()) {
 						String value = paramValue.getValue();
 						String paramName = value.substring(1, value.length()-1);
 						paramBuilder.append(NEW_LINE_CHAR);
-						paramBuilder.append("\t${" + paramName + "} =\tGet Param\t" + paramName);
+						paramBuilder.append("\t${" + paramName + "} =\tGet Test Param\tDS_" + paramName);
 					}
 				});
 			paramBuilder.append(NEW_LINE_CHAR);
 			stringBuilder.append(paramBuilder);
 		}
 		stringBuilder.append(stepBuilder);
+	}
+
+	/**
+	 * Predicate used to filter a stream by distinct attribute.
+	 */
+	private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Set<Object> seen = new HashSet<>();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 
 	/**

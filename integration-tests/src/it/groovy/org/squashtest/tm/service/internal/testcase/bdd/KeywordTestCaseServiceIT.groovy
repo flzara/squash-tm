@@ -416,7 +416,7 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time}
@@ -438,7 +438,7 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${time} =	Get Param	time
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time}
@@ -460,16 +460,16 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${place} =	Get Param	place
-	\${time} =	Get Param	time
+	\${place} =	Get Test Param	DS_place
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time} in \${place}
 	Then I am working"""
 	}
 
-	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-1-dataset-name-with-spaces.xml")
-	def "Should generate a Robot script with test steps containing parameter associated with 2 TC param value and 1 dataset whose name contains spaces"() {
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-2-TC-param-value-used-twice.xml")
+	def "Should generate a Robot script with test steps containing parameter associated with 1 TC param value used twice and 1 dataset"() {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-14L)
 			setupRobotProject(keywordTestCase)
@@ -483,12 +483,12 @@ Library		squash_tf.TFParamService
 
 *** Test Cases ***
 Daily test
-	\${place} =	Get Param	place
-	\${time} =	Get Param	time
+	\${place} =	Get Test Param	DS_place
+	\${time} =	Get Test Param	DS_time
 
 	Given Today is Monday
 	When It is \${time} in \${place}
-	Then I am working"""
+	Then I am working at \${time} in \${place}"""
 	}
 
 	/* ----- File System Methods ----- */
