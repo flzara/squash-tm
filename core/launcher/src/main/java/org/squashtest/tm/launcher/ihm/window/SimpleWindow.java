@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.launcher.ihm.window;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,6 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class SimpleWindow extends JFrame {

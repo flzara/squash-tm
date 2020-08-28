@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.hibernate.Query
+
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.customfield.BindableEntity

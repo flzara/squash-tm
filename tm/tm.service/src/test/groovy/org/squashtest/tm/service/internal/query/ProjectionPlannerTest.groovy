@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.query
 import spock.lang.Specification
 
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.createInternalModel
-
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkAggr
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkFilter
 import static org.squashtest.tm.service.internal.query.QueryEngineTestUtils.mkOrder

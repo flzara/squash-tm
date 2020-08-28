@@ -24,6 +24,7 @@ import org.squashtest.tm.service.internal.query.DomainGraph
 import org.squashtest.tm.service.internal.query.InternalEntityType
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATED_TEST
 import static org.squashtest.tm.service.internal.query.InternalEntityType.AUTOMATION_REQUEST

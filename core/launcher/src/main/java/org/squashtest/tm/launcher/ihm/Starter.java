@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.launcher.ihm;
 
+import org.squashtest.tm.launcher.ihm.window.SimpleWindow;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import org.squashtest.tm.launcher.ihm.window.SimpleWindow;
 
 // IGNOREVIOLATIONS:FILE Don't bother rule-checking this app, it is pretty useless anyway
 public class Starter {
