@@ -291,12 +291,11 @@ public class UserAccountController {
 
 		ManageableCredentials credentials = credManager.findCurrentUserCredentials(bugtrackerId);
 
-		try{
+		try {
 			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
-		}
-		catch(BugTrackerRemoteException ex){
+		} catch(BugTrackerRemoteException ex) {
 			// need to rethrow the same exception, with a message in the expected user language
-			LOGGER.debug("server-app credentials test failed : ", ex);
+			LOGGER.debug("server-app credentials test failed for current user with orig credentials : ", ex);
 			throw new CannotConnectBugtrackerException(ex);
 		}
 	}

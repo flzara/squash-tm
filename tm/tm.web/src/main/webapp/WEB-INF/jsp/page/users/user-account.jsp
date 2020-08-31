@@ -472,7 +472,7 @@
 
           if (loginInput !== "" && mpInput !== "") {
             if (isOrigCredentials(container, loginInput, mpInput)) {
-              squashtm.notification.showWarning(translator.get("label.orig-savecredentials"));
+              squashtm.notification.showInfo(translator.get("label.orig-savecredentials"));
             } else {
               $.ajax({
                 url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
