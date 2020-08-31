@@ -26,12 +26,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
@@ -43,21 +40,19 @@ import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials
 import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.OAuth1aTemporaryTokens;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerModificationController;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.squashtest.tm.domain.servers.OAuth1aCredentials.SignatureMethod;
+import static org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.retrieveAsteriskedPassword;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 //XSS ok bflessel
@@ -90,9 +85,6 @@ public class UserAccountController {
 	private UserAccountService userAccountService;
 
 	@Inject
-	private InternationalizationHelper i18nHelper;
-
-	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
 		this.permissionFinder = permissionFinder;
 	}
@@ -123,7 +115,7 @@ public class UserAccountController {
 		boolean hasLocalPassword = userService.hasCurrentUserPasswordDefined();
 
 		Map<BugTracker, ManageableCredentials> bugtrackerMap = this.getPairedBugtrackerAndManagedCredentials();
-
+		Map<Long, String> asterikedPasswordMap = retrieveAsteriskedPasswordMap(bugtrackerMap);
 
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
@@ -138,7 +130,7 @@ public class UserAccountController {
 		mav.addObject("bugtrackerMode", bugtrackerMode);
 		mav.addObject("hasLocalPassword", hasLocalPassword);
 		mav.addObject("bugtrackerCredentialsMap", bugtrackerMap);
-
+		mav.addObject("asterikedPasswordMap", asterikedPasswordMap);
 
 		// also, active milestone
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
@@ -152,7 +144,7 @@ public class UserAccountController {
 							);
 			mav.addObject("activeMilestone", jsMilestone);
 		}
-		
+
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
 		mav.addObject("canManageLocalPassword", canManageLocalPassword);
@@ -289,5 +281,15 @@ public class UserAccountController {
 
 	}
 
+	private Map<Long, String> retrieveAsteriskedPasswordMap(Map<BugTracker, ManageableCredentials> bugTrackerMap) {
+		return bugTrackerMap.entrySet()
+			.stream()
+			.collect(
+				Collectors.toMap(
+					b -> b.getKey().getId(),
+					c -> retrieveAsteriskedPassword(c.getValue().getImplementedProtocol(), c.getValue())
+				)
+			);
+	}
 
 }

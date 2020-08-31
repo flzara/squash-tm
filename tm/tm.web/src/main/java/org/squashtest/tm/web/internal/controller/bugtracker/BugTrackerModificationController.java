@@ -54,6 +54,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.retrieveAsteriskedPassword;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 // XSS OK - bflessel
@@ -72,7 +73,7 @@ public class BugTrackerModificationController {
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinder;
-	
+
 	@Inject
 	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
 
@@ -84,8 +85,12 @@ public class BugTrackerModificationController {
 		BugTracker bugTracker = bugtrackerFinder.findById(bugtrackerId);
 		String jsonBugtrackerKinds = findJsonBugTrackerKinds();
 		ThirdPartyServerCredentialsManagementBean authBean = makeAuthBean(bugTracker, locale);
+		// SQUASH-1305
+		String asteriskedPassword = retrieveAsteriskedPassword(bugTracker.getAuthenticationProtocol(), authBean.getCredentials());
+
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-info");
 		mav.addObject("bugtracker", bugTracker);
+		mav.addObject("asteriskedPassword", asteriskedPassword);
 		mav.addObject("bugtrackerKinds", jsonBugtrackerKinds);
 		mav.addObject("authConf", authBean);
 		return mav;
@@ -202,15 +207,13 @@ public class BugTrackerModificationController {
 
 
 	private ThirdPartyServerCredentialsManagementBean makeAuthBean(BugTracker bugTracker, Locale locale){
-		
+
 		ThirdPartyServerCredentialsManagementBean bean = credentialsBeanHelper.initializeFor(bugTracker, locale);
 
 		AuthenticationProtocol[] availableProtos = bugtrackerModificationService.getSupportedProtocols(bugTracker);
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
-		
+
 		return bean;
-
 	}
-
 
 }

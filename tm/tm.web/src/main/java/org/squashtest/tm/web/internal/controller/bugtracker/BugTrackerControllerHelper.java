@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -36,10 +37,13 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.bugtracker.RequirementVersionIssueOwnership;
+import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -53,12 +57,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.squashtest.tm.domain.servers.AuthenticationProtocol.BASIC_AUTH;
+
 // XSS OK - bflessel
 @Component
 public final class BugTrackerControllerHelper {
 
 	private static final String ISSUE_URL = "issue-url";
 	public static final String BT_PROJECT = "BtProject";
+	private static final String ASTERISK_LABEL = "*";
 
 	@Inject
 	private BugTrackersLocalService service;
@@ -326,7 +334,15 @@ public final class BugTrackerControllerHelper {
 		}
 	}
 
+	// SQUASH-1305
+	public static String retrieveAsteriskedPassword(AuthenticationProtocol bugtrackerAuthProtocol, ManageableCredentials credentials) {
+		return BASIC_AUTH.equals(bugtrackerAuthProtocol) && credentials != null ? retrieveAsterikedBasicAuthPassword(credentials) : EMPTY;
+	}
 
+	private static String retrieveAsterikedBasicAuthPassword(ManageableCredentials credentials) {
+		BasicAuthenticationCredentials basicAuthCreds = (BasicAuthenticationCredentials) credentials;
+		return StringUtils.repeat(ASTERISK_LABEL, basicAuthCreds.getPassword().length);
+	}
 
 	/* *****************************************************************
 	 *

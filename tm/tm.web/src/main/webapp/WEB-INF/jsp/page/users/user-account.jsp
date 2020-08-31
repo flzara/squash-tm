@@ -287,6 +287,7 @@
         </div>
   <br/>
   <c:set var="map" value="${bugtrackerCredentialsMap}"/>
+  <c:set var="passwordMap" value="${asterikedPasswordMap}"/>
   <c:forEach items="${bugtrackerCredentialsMap}" var="bugtracker">
   <div style="display:inline-flex;padding: 15px;">
     <div class="display-table container-credential std-border std-border-radius"
@@ -303,11 +304,11 @@
         <div align="justify" style="padding-left: 25px"><label><f:message
           key="label.Login"/></label>
           <br/>
-          <input type="text" class="user-login" value="${map[bugtracker.key].username}" data-bind="username">
+          <input type="text" class="user-login" data-orig="${map[bugtracker.key].username}" value="${map[bugtracker.key].username}" data-bind="username">
         </div>
         <br/>
         <div align="justify" style="padding-left: 25px"><label> <f:message key="label.token.password"/></label> <br/>
-          <input type="password" class="user-mp" data-bind="password">
+         <input type="password" class="user-mp" data-orig="${passwordMap[bugtracker.key.id]}" value="${passwordMap[bugtracker.key.id]}" data-bind="password">
         </div>
         <br/>
 
@@ -461,74 +462,96 @@
 
         });
 
-    $(".credentials-btn").on('click', function (saveCred) {
-      var btn = saveCred.currentTarget;
-      var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
-      var jquerybtn = $(btn);
-      var container = jquerybtn.parents(".container-credential");
+        $(".credentials-btn").on('click', function (saveCred) {
+          var btn = saveCred.currentTarget;
+          var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
+          var jquerybtn = $(btn);
+          var container = jquerybtn.parents(".container-credential");
+          var loginInput = container.find(".user-login").val();
+          var mpInput = container.find(".user-mp").val();
 
-      if (container.find(".user-login").val() != "" && container.find(".user-mp").val() != "") {
-        var loginInput = container.find(".user-login").val();
-        var mpInput = container.find(".user-mp").val();
-
-        $.ajax({
-          url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
-          method: "POST",
-          data: {
-            username: loginInput,
-            password: mpInput
-          },
-        }).success(function () {
-          squashtm.notification.showInfo(translator.get("label.savecredentials"))
+          if (loginInput !== "" && mpInput !== "") {
+            if (isOrigCredentials(container, loginInput, mpInput)) {
+              squashtm.notification.showInfo(translator.get("label.orig-savecredentials"));
+            } else {
+              $.ajax({
+                url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
+                method: "POST",
+                data: {
+                  username: loginInput,
+                  password: mpInput
+                },
+              }).success(function () {
+                squashtm.notification.showInfo(translator.get("label.savecredentials"));
+              });
+            }
+          } else {
+            squashtm.notification.showWarning(translator.get("label.savecredentials.failed"));
+          }
         });
-      }
-      else {
-        squashtm.notification.showWarning(translator.get("label.savecredentials.failed")) };
 
+        $(".remove-btn").on('click', function (remove) {
+          var btn = remove.currentTarget;
+          var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
 
+          $.ajax({
+            url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
+            method: "DELETE"
+          }).success((function () {
+            squashtm.notification.showInfo(translator.get("label.revoke.token.success"))
+          }))
+        });
 
-    });
+        $(".test-credentials-btn").on('click', function (testCred) {
+          var btn = testCred.currentTarget;
+          var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
+          var prot = btn.attributes["data-bind"].value;
+          var jquerybtn = $(btn);
+          var container = jquerybtn.parents(".container-credential");
+          var loginInput = container.find(".user-login").val();
+          var mpInput = container.find(".user-mp").val();
+          var testCredentialsUrl = "user-account/bugtracker/" + bugtrackerId + "/credentials/validator";
 
-    $(".remove-btn").on('click', function (remove) {
-      var btn = remove.currentTarget;
-      var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
+          if (isOrigCredentials(container, loginInput, mpInput)) {
+            testOrigCredentials(testCredentialsUrl).success(function () {
+              testCredentialsSuccessMessage();
+            });
+          } else {
+            testCredentials(testCredentialsUrl, loginInput, mpInput, prot).success(function () {
+              testCredentialsSuccessMessage();
+            });
+          }
+        });
 
-      $.ajax({
-        url: "user-account/bugtracker/" + bugtrackerId + "/credentials",
-        method: "DELETE"
-      }).success((function () {
-        squashtm.notification.showInfo(translator.get("label.revoke.token.success"))
-      }))
+        var isOrigCredentials = function(container, loginInput, mpInput) {
+          return container.find("input[class='user-login']")[0].getAttribute("data-orig") === loginInput
+            && container.find("input[class='user-mp']")[0].getAttribute("data-orig") === mpInput;
+        };
 
+        var testCredentials = function(url, loginInput, mpInput, prot) {
+          return $.ajax({
+            url: url,
+            method: "POST",
+            data: {
+              username: loginInput,
+              password: mpInput,
+              type: prot
+            }
+          });
+        };
 
-    });
-
-    $(".test-credentials-btn").on('click', function (testCred) {
-      var btn = testCred.currentTarget;
-      var bugtrackerId = btn.attributes["data-bugtrackerid"].value;
-      var prot = btn.attributes["data-bind"].value;
-      var jquerybtn = $(btn);
-      var container = jquerybtn.parents(".container-credential");
-      var loginInput = container.find(".user-login").val();
-      var mpInput = container.find(".user-mp").val();
-
-
-      $.ajax({
-        url: "user-account/bugtracker/" + bugtrackerId + "/credentials/validator",
-        method: "POST",
-        data: {
-          username: loginInput,
-          password: mpInput,
-          type: prot
+        var testOrigCredentials = function(url) {
+          return $.ajax({
+            url: url,
+            method: "POST"
+          });
         }
 
-      }).success(function () {
-        squashtm.notification.showInfo(translator.get("label.connexion.success"))
-      })
+        var testCredentialsSuccessMessage = function() {
+          return squashtm.notification.showInfo(translator.get("label.connexion.success"));
+        };
+
     });
-
-
-  });
   });
 </script>
 
