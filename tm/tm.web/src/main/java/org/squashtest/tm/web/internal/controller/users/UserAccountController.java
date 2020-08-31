@@ -60,7 +60,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.retrieveAsteriskedPassword;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 //XSS ok bflessel
@@ -123,7 +125,7 @@ public class UserAccountController {
 		boolean hasLocalPassword = userService.hasCurrentUserPasswordDefined();
 
 		Map<BugTracker, ManageableCredentials> bugtrackerMap = this.getPairedBugtrackerAndManagedCredentials();
-
+		Map<Long, String> asterikedPasswordMap = retrieveAsteriskedPasswordMap(bugtrackerMap);
 
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
@@ -138,6 +140,7 @@ public class UserAccountController {
 		mav.addObject("bugtrackerMode", bugtrackerMode);
 		mav.addObject("hasLocalPassword", hasLocalPassword);
 		mav.addObject("bugtrackerCredentialsMap", bugtrackerMap);
+		mav.addObject("asterikedPasswordMap", asterikedPasswordMap);
 
 
 		// also, active milestone
@@ -152,7 +155,7 @@ public class UserAccountController {
 							);
 			mav.addObject("activeMilestone", jsMilestone);
 		}
-		
+
 		// if the local password manageable ?
 		boolean canManageLocalPassword = authenticationProviderContext.isInternalProviderEnabled();
 		mav.addObject("canManageLocalPassword", canManageLocalPassword);
@@ -282,6 +285,22 @@ public class UserAccountController {
 		}
 	}
 
+	@RequestMapping(value= "bugtracker/{bugtrackerId}/credentials/validator", method = RequestMethod.POST)
+	@ResponseBody
+	public void testCredentials(@PathVariable(BUGTRACKER_ID)  long bugtrackerId){
+
+		ManageableCredentials credentials = credManager.findCurrentUserCredentials(bugtrackerId);
+
+		try{
+			userAccountService.testCurrentUserCredentials(bugtrackerId, credentials);
+		}
+		catch(BugTrackerRemoteException ex){
+			// need to rethrow the same exception, with a message in the expected user language
+			LOGGER.debug("server-app credentials test failed : ", ex);
+			throw new CannotConnectBugtrackerException(ex);
+		}
+	}
+
 	@RequestMapping(value="bugtracker/{bugtrackerId}/credentials", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteUserCredentials (@PathVariable (BUGTRACKER_ID) long bugtrackerId) {
@@ -289,5 +308,15 @@ public class UserAccountController {
 
 	}
 
+	private Map<Long, String> retrieveAsteriskedPasswordMap(Map<BugTracker, ManageableCredentials> bugTrackerMap) {
+		return bugTrackerMap.entrySet()
+			.stream()
+			.collect(
+				Collectors.toMap(
+					b -> b.getKey().getId(),
+					c -> retrieveAsteriskedPassword(c.getValue().getImplementedProtocol(), c.getValue())
+				)
+			);
+	}
 
 }

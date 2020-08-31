@@ -231,7 +231,7 @@
 					</div>
 					<div>
 						<label><f:message key="label.Password"/></label>
-						<input type="password" data-bind="password">
+						<input type="password" value="${asteriskedPassword}" data-bind="password">
 					</div>
 				</div>
 				</script>

@@ -42,7 +42,6 @@ import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementHelper;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -61,6 +60,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.squashtest.tm.web.internal.controller.RequestParams.S_ECHO_PARAM;
+import static org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.retrieveAsteriskedPassword;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import static org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY;
 
@@ -96,8 +96,6 @@ public class ScmServerModificationController {
 	private ScmServerCredentialsService credentialsService;
 	@Inject
 	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
-	@Inject
-	private InternationalizationHelper i18nHelper;
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -107,9 +105,12 @@ public class ScmServerModificationController {
 		Set<String> scmServerKinds = scmServerRegistry.getRegisteredScmKinds();
 		List<ScmRepository> scmRepositories = scmRepositoryManager.findByScmServerOrderByPath(scmServerId);
 		ThirdPartyServerCredentialsManagementBean authConf = makeAuthBean(scmServer, locale);
+		// SQUASH-1305
+		String asteriskedPassword = retrieveAsteriskedPassword(scmServer.getAuthenticationProtocol(), authConf.getCredentials());
 
 		ModelAndView mav = new ModelAndView("scm-servers/scm-server-details.html");
 		mav.addObject("scmServer", scmServer);
+		mav.addObject("asteriskedPassword", asteriskedPassword);
 		mav.addObject("scmServerKinds", scmServerKinds);
 		mav.addObject("scmRepositories", scmRepositories);
 		mav.addObject("authConf", authConf);
@@ -179,16 +180,16 @@ public class ScmServerModificationController {
 
 
 	private ThirdPartyServerCredentialsManagementBean makeAuthBean(ScmServer server, Locale locale){
-		
+
 		ThirdPartyServerCredentialsManagementBean bean = credentialsBeanHelper.initializeFor(server, locale);
 
 		AuthenticationProtocol[] availableProtos = credentialsService.getSupportedProtocols(server);
 		bean.setAvailableProtos(Arrays.asList(availableProtos));
-		
+
 		// force auth policy to app level, no other is supported
 		bean.setAuthPolicy(AuthenticationPolicy.APP_LEVEL);
 		bean.setFeatureAuthPolicySelection(false);
-		
+
 		//also the credentials are not optional, and are not testable
 		bean.setFeatureTestCredentialsButton(false);
 		bean.setAppLevelCredsAreOptional(false);
