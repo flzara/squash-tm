@@ -252,18 +252,20 @@
   </comp:toggle-panel>
 
   <%----------------------------------- Prerequisites -----------------------------------------------%>
-
+  <c:if test="${not isKeywordExecution}">
   <comp:toggle-panel id="execution-prerequisite-panel"
                      titleKey="generics.prerequisite.title"
                      open="${ not empty hu:clean(execution.prerequisite) }">
 		<jsp:attribute name="body">
-		<div id="execution-prerequisite-table" class="display-table">
-      <div class="display-table-row">
-        <div class="display-table-cell">${ hu:clean(execution.prerequisite) }</div>
-      </div>
-    </div>
+
+		    <div id="execution-prerequisite-table" class="display-table">
+          <div class="display-table-row">
+            <div class="display-table-cell">${ hu:clean(execution.prerequisite) }</div>
+          </div>
+        </div>
 	</jsp:attribute>
   </comp:toggle-panel>
+  </c:if>
 
   <%----------------------------------- Verified Requirements -----------------------------------------------%>
   <comp:toggle-panel id="execution-verified-requirement-panel"

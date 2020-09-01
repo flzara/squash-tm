@@ -44,7 +44,9 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.IsKeywordExecutionVisitor;
 import org.squashtest.tm.domain.execution.IsScriptedExecutionVisitor;
+import org.squashtest.tm.domain.execution.IsStandardExecutionVisitor;
 import org.squashtest.tm.domain.execution.ScriptedExecution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -184,16 +186,22 @@ public class ExecutionModificationController {
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 
+		mav.addObject("execution", execution);
+
 		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
 		execution.accept(executionVisitor);
 		boolean isExecutionScripted = executionVisitor.isScripted();
-
-		mav.addObject("execution", execution);
 		mav.addObject("isExecutionScripted", isExecutionScripted);
+
 		if(isExecutionScripted) {
 			ScriptedExecution scriptedExecution = scriptedExecutionFinder.findById(executionId);
 			mav.addObject("executionScriptName", scriptedExecution.getScriptName());
 		}
+
+		IsKeywordExecutionVisitor keywordExecutionVisitor = new IsKeywordExecutionVisitor();
+		execution.accept(keywordExecutionVisitor);
+		boolean isKeywordExecution = keywordExecutionVisitor.isKeyword();
+		mav.addObject("isKeywordExecution", isKeywordExecution);
 
 		mav.addObject("referencedTc", referencedTc);
 		mav.addObject("executionRank", rank + 1);
@@ -226,10 +234,10 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		IsScriptedExecutionVisitor executionVisitor = new IsScriptedExecutionVisitor();
-		execution.accept(executionVisitor);
+		IsStandardExecutionVisitor visitor = new IsStandardExecutionVisitor();
+		execution.accept(visitor);
 
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, executionVisitor.isScripted());
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected, visitor.isStandard());
 		return columnDefs;
 	}
 
@@ -328,9 +336,9 @@ public class ExecutionModificationController {
 			columns.addAll(baseColumns);
 		}
 
-		private List<AoColumnDef> getAoColumnDfvDefs(boolean editable, boolean isBugtrackerConnected, boolean isScripted) {
+		private List<AoColumnDef> getAoColumnDfvDefs(boolean editable, boolean isBugtrackerConnected, boolean isStandard) {
 			columns.get(columns.size() - 2).setbVisible(editable);
-			columns.get(3).setbVisible(!isScripted);
+			columns.get(3).setbVisible(isStandard);
 			columns.get(columns.size() - 4).setbVisible(editable && isBugtrackerConnected);
 			addATargets(columns);
 			return columns;
