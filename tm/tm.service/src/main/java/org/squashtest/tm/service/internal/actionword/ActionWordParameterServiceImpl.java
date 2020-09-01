@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.util.ActionWordUtil;
+import org.squashtest.tm.exception.actionword.InvalidActionWordInputException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.actionword.ActionWordParameterService;
@@ -47,10 +48,21 @@ public class ActionWordParameterServiceImpl implements ActionWordParameterServic
 	public String renameParameter(long parameterId, String newName) {
 		ActionWordParameter parameter = actionWordParameterDao.getOne(parameterId);
 		parameter.setName(newName);
-		// update ActionWordLibraryNode name
 		ActionWord actionWord = parameter.getActionWord();
+
+		checkNewActionWordLength(actionWord);
+
+		// update ActionWordLibraryNode name
 		actionWordLibraryNodeService.renameNodeFromActionWord(actionWord);
 		return newName;
+	}
+
+	private void checkNewActionWordLength(ActionWord actionWord) {
+		String newWord = actionWord.createWord();
+		String newWordWithDefaultValues = actionWord.createWordWithDefaultValues();
+		if (newWord.length() > 255 || newWordWithDefaultValues.length() > 255 ) {
+			throw new InvalidActionWordInputException("Invalid action word input");
+		}
 	}
 
 	@Override
@@ -65,6 +77,10 @@ public class ActionWordParameterServiceImpl implements ActionWordParameterServic
 			throw new InvalidActionWordParameterValueException("The default value cannot contain <, > or \" character");
 		}
 		parameter.setDefaultValue(updatedNewDefaultValue);
+		ActionWord actionWord = parameter.getActionWord();
+
+		checkNewActionWordLength(actionWord);
+
 		return updatedNewDefaultValue;
 	}
 }
