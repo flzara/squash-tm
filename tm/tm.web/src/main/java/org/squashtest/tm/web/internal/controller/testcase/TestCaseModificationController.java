@@ -28,6 +28,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -584,6 +585,12 @@ public class TestCaseModificationController {
 		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale));
 	}
 
+	@GetMapping(value = "/prerequisite")
+	@ResponseBody
+	public String getTestCasePrerequisite(@PathVariable long testCaseId){
+		String testCasePrerequisite = testCaseModificationService.getPrerequisite(testCaseId);
+		return HTMLCleanupUtils.cleanHtml(testCasePrerequisite);
+	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-prerequisite", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody

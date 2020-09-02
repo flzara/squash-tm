@@ -250,6 +250,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestCase section ***************************** */
 
 	@Override
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
+	public String getPrerequisite(long testCaseId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		return testCase.getPrerequisite();
+	}
+
+	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 
@@ -411,15 +418,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	private String generateTestCaseParameter(String valueStr) {
 		//remove < and >
-		String removedEqual = valueStr.substring(1, valueStr.length()-1);
+		String removedEqual = valueStr.substring(1, valueStr.length() - 1);
 		//replace extra spaces with _
 		String replacedSpacesWithUnderscores = removedEqual.trim().replaceAll("(\\s)+", "_");
 		//replace invalid chars with _ and return it
 		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
-
-
-
 
 
 	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues, int index) {
@@ -492,7 +496,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
 		}
-		if (! inputToken.equals(token)) {
+		if (!inputToken.equals(token)) {
 			updateActionWordWithoutChangingToken(testStep, parentTestCase, inputActionWord, parameterValues, inputToken);
 		} else {
 			updateActionWordWithChangingToken(testStep, parentTestCase, parameterValues);
@@ -504,7 +508,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		//remove all action word parameter values
 		List<ActionWordParameterValue> valueList = testStep.getParamValues();
-		if (! valueList.isEmpty()) {
+		if (!valueList.isEmpty()) {
 			valueList.clear();
 		}
 		if (isNull(actionWord)) {
@@ -526,7 +530,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	private void doUpdateParamValuesAndInsertNewTcParamIfNeeded(ActionWordParameterValue oldValue, ActionWordParameterValue newValue, KeywordTestCase parentTestCase) {
 		String newValueStr = newValue.getValue();
-		if (! oldValue.getValue().equals(newValueStr)) {
+		if (!oldValue.getValue().equals(newValueStr)) {
 			if (newValueStr.startsWith(ACTION_WORD_OPEN_GUILLEMET) && newValueStr.endsWith(ACTION_WORD_CLOSE_GUILLEMET)) {
 				String paramValue = insertNewTestCaseParamIfNeeded(parentTestCase, newValueStr);
 				oldValue.setValue(paramValue);
@@ -546,7 +550,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		addNewActionWordNodeInLibrary(inputActionWord, currentProject);
 	}
 
-	private void updateKeywordTestStepWithExistingActionWord(KeywordTestCase parentTestCase,KeywordTestStep testStep, ActionWord actionWord, List<ActionWordParameterValue> parameterValues) {
+	private void updateKeywordTestStepWithExistingActionWord(KeywordTestCase parentTestCase, KeywordTestStep testStep, ActionWord actionWord, List<ActionWordParameterValue> parameterValues) {
 		testStep.setActionWord(actionWord);
 
 		insertNewValuesToDataBase(parentTestCase, actionWord, testStep, parameterValues);
@@ -567,7 +571,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		int index;
 		for (ActionWordParameter orderedParam : testStep.getActionWord().getActionWordParams()) {
 			index = 0;
-			while (index < values.size() && ! values.get(index).getActionWordParam().getId().equals(orderedParam.getId())) {
+			while (index < values.size() && !values.get(index).getActionWordParam().getId().equals(orderedParam.getId())) {
 				index++;
 			}
 			if (index < values.size()) {

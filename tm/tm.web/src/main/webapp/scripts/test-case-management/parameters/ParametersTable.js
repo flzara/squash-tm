@@ -35,7 +35,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 			this.refresh = $.proxy(this._refresh, this);
 			this._configureTable.call(this);
 			this._configureRemoveParametersDialogs.call(this);
-			
+
 			this.table.on("parameter.description.update", this.updateParameterDescription);
 		},
 
@@ -94,7 +94,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 				$('td.delete-button', row).html(''); // remove the delete button
 			}
 		},
-		
+
 		_configureTable : function() {
 			var self = this;
 			$(this.el).squashTable(self._dataTableSettings(self), self._squashSettings(self));
@@ -108,7 +108,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 			this.discriminateInheritedVerifications(row, data, displayIndex);
 			return row;
 		},
-		
+
 		_parametersTableDrawCallback : function(oSettings){
 			var table = $("#"+oSettings.sInstance);
 			// prevent parameter-description cells to turn into editable
@@ -179,9 +179,9 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 				if (!pattern.test(value)){
 					notification.showError(translator.get("message.parameterInvalidPattern"));
 					return settings.oldName;
-				
+
 				} else {
-					
+
 					$.ajax({
 						url : urlPOST,
 						data : {"value" :value },
@@ -191,7 +191,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 					return value;
 				}
 			};
-			
+
 			new SimpleJEditable({
 				targetUrl : validate,
 				component : component,
@@ -217,15 +217,15 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 		_refresh : function() {
 			this.table.fnDraw(false);
 		},
-		
+
 		_updateParameterDescription : function(event, result){
 			var id = result['id'];
-			
+
 			// get parameter description (richEditable) from the squashTable and converts it to a simple String
 			var description = $.trim(this.table.getRowsByIds([id]).eq(0).find('td.parameter-description').text());
-			
+
 			this.trigger('parameter.description.update', {
-				id : id, 
+				id : id,
 				description : description
 				});
 		}

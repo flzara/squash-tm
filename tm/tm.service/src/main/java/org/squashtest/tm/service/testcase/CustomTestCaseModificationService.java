@@ -53,6 +53,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
 
+	String getPrerequisite(long testCaseId);
+
 	void rename(long testCaseId, String newName);
 
 	void changeReference(long testCaseId, String reference);

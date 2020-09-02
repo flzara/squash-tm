@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squash.configmanager", "../ParameterValidationNameHelper", "jquery.squash.jeditable"],
-		function($, Backbone, _, confman, paramNameValidation ) {
+define([ "jquery", "workspace.event-bus", "backbone", "underscore", "squash.configmanager", "../ParameterValidationNameHelper", "jquery.squash.jeditable"],
+		function($, eventBus, Backbone, _, confman, paramNameValidation ) {
 
 			var PrerequisitePanel = Backbone.View.extend({
 
@@ -37,6 +37,17 @@ define([ "jquery", "backbone", "underscore", "squash.configmanager", "../Paramet
 						$('#test-case-prerequisite').richEditable(richEditSettings).addClass("editable");
 					}
 
+					// refresh the prerequisite table when a parameter is renamed
+					eventBus.onContextual('parameter.name.update', function(){
+						$.ajax({
+							url: richEditSettings.url+"/prerequisite",
+							type: "GET",
+							contentType: "application/json;charset=UTF-8"
+						}).success(function (data) {
+							$('#test-case-prerequisite').html(data);
+						});
+					});
+
 				},
 
 				events : {
@@ -44,5 +55,6 @@ define([ "jquery", "backbone", "underscore", "squash.configmanager", "../Paramet
 				}
 
 			});
+
 			return PrerequisitePanel;
 });

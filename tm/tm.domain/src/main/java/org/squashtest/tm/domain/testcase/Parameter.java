@@ -114,8 +114,8 @@ public class Parameter implements Identified, RelatedToAuditable {
 	}
 
 	/**
-	 * A detached copy means it belong to no test case yet
-	 * @return
+	 *
+	 * @return A detached copy means it belong to no test case yet
 	 */
 	public Parameter detachedCopy() {
 		Parameter p = new Parameter(name);
@@ -129,25 +129,43 @@ public class Parameter implements Identified, RelatedToAuditable {
 
 	public void setName(String newName) {
 		if (this.name != null) {
-			if (!this.name.equals(newName)) {
-				checkForHomonymesAndUpdateSteps(newName);
-				this.name = newName;
-			}
+			setNotNullName(newName);
 		} else {
 			this.name = newName;
 		}
-
 	}
 
-	private void checkForHomonymesAndUpdateSteps(String newName) {
-		if (this.testCase != null) {
-			Parameter homonyme = this.testCase.findParameterByName(newName);
-			if (homonyme != null) {
-				throw new DuplicateNameException(this.name, newName);
+	private void setNotNullName(String newName) {
+		if (!this.name.equals(newName) ) {
+			TestCase thisTestCase = this.testCase;
+			if (thisTestCase != null) {
+				checkForHomonymes(newName, thisTestCase);
+				updateParamNameInSteps(newName, thisTestCase);
+				updateParamNameInPrerequisite(newName, thisTestCase);
 			}
-			updateParamNameInSteps(newName);
-
+			this.name = newName;
 		}
+	}
+
+	private void checkForHomonymes(String newName, TestCase thisTestCase) {
+		Parameter homonyme = thisTestCase.findParameterByName(newName);
+		if (homonyme != null) {
+			throw new DuplicateNameException(this.name, newName);
+		}
+	}
+
+	private void updateParamNameInSteps(String newName, TestCase thisTestCase) {
+		for (TestStep step : thisTestCase.getSteps()) {
+			step.accept(new ParameterNameInStepUpdater(this.name, newName));
+		}
+	}
+
+	private void updateParamNameInPrerequisite(String newName, TestCase thisTestCase) {
+		String prerequisite = thisTestCase.getPrerequisite();
+		String oldParamPattern = Parameter.getParamStringAsUsedInStandardTestCase(this.name);
+		String newParamPattern = Parameter.getParamStringAsUsedInStandardTestCase(newName);
+		String newPrerequisite = prerequisite.replace(oldParamPattern, newParamPattern);
+		this.testCase.setPrerequisite(newPrerequisite);
 	}
 
 	public String getDescription() {
@@ -168,7 +186,7 @@ public class Parameter implements Identified, RelatedToAuditable {
 	 *
 	 * @see TestCase#addParameter(Parameter)
 	 *
-	 * @param testCase
+	 * @param testCase current test case
 	 */
 	public void setTestCase(@NotNull TestCase testCase) {
 		this.testCase = testCase;
@@ -181,9 +199,8 @@ public class Parameter implements Identified, RelatedToAuditable {
 	}
 
 	/**
-	 * Returns {@link Parameter#USAGE_PREFIX} + {@link Parameter#name} + {@link Parameter#USAGE_SUFFIX}
 	 *
-	 * @return
+	 * @return {@link Parameter#USAGE_PREFIX} + {@link Parameter#name} + {@link Parameter#USAGE_SUFFIX}
 	 */
 	public String getParamStringAsUsedInStep() {
 		Wrapped<String> paramStringAsUsedInStep =  new Wrapped<>();
@@ -206,14 +223,6 @@ public class Parameter implements Identified, RelatedToAuditable {
 
 		testCase.accept(visitor);
 		return paramStringAsUsedInStep.getValue();
-	}
-
-	private void updateParamNameInSteps(String newName) {
-		if (this.getTestCase() != null) {
-			for (TestStep step : this.getTestCase().getSteps()) {
-				step.accept(new ParameterNameInStepUpdater(this.name, newName));
-			}
-		}
 	}
 
 	/**
