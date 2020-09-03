@@ -51,8 +51,6 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	private static final String NONE = "NONE";
 	private static final String I18N_KEY_NONE = "label.None";
 	private static final String NATIVE = "NATIVE";
-	private static final String REMOTE = "REMOTE_WORKFLOW";
-	private static final String I18N_KEY_REMOTE = "label.Remote";
 	private static final String I18N_KEY_NATIVE = "label.Native";
 
 	@Inject
@@ -81,9 +79,6 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 		Map<String, String> result = new LinkedHashMap<>();
 		result.put(NONE, i18nHelper.internationalize(I18N_KEY_NONE, locale));
 		result.put(NATIVE, i18nHelper.internationalize(I18N_KEY_NATIVE, locale));
-		if (!plugins.isEmpty()) {
-			result.put(REMOTE, i18nHelper.internationalize(I18N_KEY_REMOTE, locale));
-		}
 
 		return result;
 	}
