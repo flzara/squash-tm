@@ -622,7 +622,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 		});
 		$('#project-workflows-select').on('click', function() {
 			var selectOption= $("option[value='REMOTE_WORKFLOW']");
-			selectOption.attr("disabled", true);
+			selectOption.prop("disabled", true);
 		});
 
 
