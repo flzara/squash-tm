@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.22.0.IT19</version>
+  <version>1.22.0.IT20-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -592,7 +592,7 @@
   <scm>
     <connection>scm:git:${project.basedir}</connection>
     <developerConnection>scm:git:${project.basedir}</developerConnection>
-    <tag>squash-tm-1.22.0.IT19</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
