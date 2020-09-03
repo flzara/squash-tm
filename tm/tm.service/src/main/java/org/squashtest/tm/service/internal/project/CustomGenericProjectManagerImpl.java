@@ -713,7 +713,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		List<Long> automationRequestIds = automationRequests.stream().map(AutomationRequest::getId).collect(Collectors.toList());
 
 		// delete remote automation request extenders
-		remoteAutomationRequestExtenderDao.deleteByAutomationRequestIds(automationRequestIds);
+		if(!automationRequestIds.isEmpty()){
+			remoteAutomationRequestExtenderDao.deleteByAutomationRequestIds(automationRequestIds);
+		}
 	}
 
 	@Override
