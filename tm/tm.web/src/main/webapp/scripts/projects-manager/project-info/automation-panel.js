@@ -486,7 +486,12 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 			},
 			reforgeWorkflowsCombobox: function(newType) {
 				var self = this;
-				var displayedWorkflow = self.automationWorkflows[newType];
+				var displayedWorkflow;
+				if ('REMOTE_WORKFLOW' === newType) {
+					displayedWorkflow = translator.get('label.Remote');
+				} else {
+					displayedWorkflow = self.automationWorkflows[newType];
+				}
 				if(displayedWorkflow === undefined || displayedWorkflow === null) {
 					displayedWorkflow = self.automationWorkflows['NONE'];
 				}

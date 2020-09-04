@@ -52,6 +52,8 @@ public class AutomationWorkflowPluginManagerImpl implements AutomationWorkflowPl
 	private static final String I18N_KEY_NONE = "label.None";
 	private static final String NATIVE = "NATIVE";
 	private static final String I18N_KEY_NATIVE = "label.Native";
+	private static final String REMOTE = "REMOTE_WORKFLOW";
+	private static final String I18N_KEY_REMOTE = "label.Remote";
 
 	@Inject
 	private InternationalizationHelper i18nHelper;

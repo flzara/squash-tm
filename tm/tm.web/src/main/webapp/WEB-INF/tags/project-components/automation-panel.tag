@@ -56,9 +56,13 @@
 
 <c:set var="inputSize" value="50" />
 
-<c:if test="${! availableAutomationWorkflows.containsKey(chosenAutomationWorkflow)}">
-      <c:set var="chosenAutomationWorkflow" value="NATIVE"/>
-</c:if>
+<c:choose>
+  <c:when test="chosenAutomationWorkflow == 'REMOTE_WORKFLOW'"/>
+  <c:when test="${! availableAutomationWorkflows.containsKey(chosenAutomationWorkflow)}">
+    <c:set var="chosenAutomationWorkflow" value="NATIVE"/>
+  </c:when>
+  <c:otherwise/>
+</c:choose>
 
 <c:set var="chosenBddImplTechnology" value="${chosenBddImplTechnology}" />
 <c:set var="chosenBddScriptLanguage" value="${chosenBddScriptLanguage}" />
