@@ -200,6 +200,9 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				this.chosenAutomationWorkflow = conf.chosenAutomationWorkflow;
 				this.pluginAutomHasConf = conf.pluginAutomHasConf;
 				this.workflowSelector = this.initAutomationWorkflowSelect();
+				if (this.chosenAutomationWorkflow === 'REMOTE_WORKFLOW'){
+					$("#project-workflows-select").text(translator.get('label.Remote'));
+				}
 
 				this.availableBddImplTechnologies = conf.availableBddImplTechnologies;
 				this.chosenBddImplTechnology = conf.chosenBddImplTechnology;
@@ -407,7 +410,7 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 
 					target: function(value) {
 						var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
-						//if NONE or SQUASH disabled plugin
+						//if NONE or SQUASH : disable plugin
 						if(value!=="REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW"){
 							if(self.pluginAutomHasConf === "true"){
 								disabledPluginWAPopup.formDialog("open");

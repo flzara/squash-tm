@@ -57,7 +57,9 @@
 <c:set var="inputSize" value="50" />
 
 <c:choose>
-  <c:when test="chosenAutomationWorkflow == 'REMOTE_WORKFLOW'"/>
+  <c:when test="${chosenAutomationWorkflow == 'REMOTE_WORKFLOW'}">
+    <c:set var="chosenAutomationWorkflow" value="REMOTE_WORKFLOW"/>
+  </c:when>
   <c:when test="${! availableAutomationWorkflows.containsKey(chosenAutomationWorkflow)}">
     <c:set var="chosenAutomationWorkflow" value="NATIVE"/>
   </c:when>
@@ -513,7 +515,7 @@ require(["common"], function() {
       $(function(){
         var chosenAutomationWorkflow = "${chosenAutomationWorkflow}";
         var availableAutomationWorkflows = "${availableAutomationWorkflows}";
-        if (availableAutomationWorkflows.indexOf(chosenAutomationWorkflow) === -1) {
+        if (availableAutomationWorkflows.indexOf(chosenAutomationWorkflow) === -1 && chosenAutomationWorkflow !== "REMOTE_WORKFLOW") {
             chosenAutomationWorkflow = "NATIVE";
         }
 
@@ -525,7 +527,7 @@ require(["common"], function() {
           TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id},
           pluginAutomHasConf:"${pluginAutomHasConf}",
           availableAutomationWorkflows: ${json:serialize(availableAutomationWorkflows)},
-          chosenAutomationWorkflow: "${chosenAutomationWorkflow}",
+          chosenAutomationWorkflow: chosenAutomationWorkflow,
           availableBddImplTechnologies: ${json:serialize(availableBddImplTechnologies)},
           chosenBddImplTechnology: "${chosenBddImplTechnology}",
           availableBddScriptLanguages: ${json:serialize(availableBddScriptLanguages)},
