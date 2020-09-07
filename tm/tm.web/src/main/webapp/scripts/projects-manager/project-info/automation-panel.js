@@ -628,10 +628,6 @@ define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTA
 				});
 			}
 		});
-		$('#project-workflows-select').on('click', function() {
-			var selectOption= $("option[value='REMOTE_WORKFLOW']");
-			selectOption.prop("disabled", true);
-		});
 
 
 		// *************************************** automation panel **********************************************

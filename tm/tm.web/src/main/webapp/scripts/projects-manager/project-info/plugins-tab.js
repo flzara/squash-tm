@@ -144,7 +144,11 @@ define(
 				}
 
 				table.on('change', 'input[type="checkbox"]', function(evt){
-						var btn = $(evt.currentTarget);
+					var selectBoxCancelBtn = $('#project-workflows-select button[type="cancel"]');
+					if (selectBoxCancelBtn.length == 1) {
+						selectBoxCancelBtn.click();
+					}
+					var btn = $(evt.currentTarget);
 						var $row = btn.parents('tr').first();
 						var checked = btn[0].checked;
 						var pluginType = table.fnGetData($row.get(0))['pluginType'];
