@@ -1095,6 +1095,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
+	private void copyImplementationTechnologyAndScriptLanguage(GenericProject target, GenericProject source) {
+		target.setBddImplementationTechnology(source.getBddImplementationTechnology());
+		target.setBddScriptLanguage(source.getBddScriptLanguage());
+	}
+
 	private void copyAutomationWorkflowSettings(GenericProject target, GenericProject source) {
 		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
 		target.setAutomationWorkflowType(source.getAutomationWorkflowType());
@@ -1168,6 +1173,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			copyBugtrackerSettings(target, source);
 		}
 		if (params.isCopyAutomatedProjects()) {
+			copyImplementationTechnologyAndScriptLanguage(target, source);
 			copyTestAutomationSettings(target, source);
 			copyAutomationWorkflowSettings(target, source);
 		}
@@ -1201,8 +1207,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if(target.getBugtrackerBinding() == null) {
 			copyBugtrackerSettings(target, source);
 		}
-		target.setAllowAutomationWorkflow(source.isAllowAutomationWorkflow());
-		target.setAutomationWorkflowType(source.getAutomationWorkflowType());
+		copyImplementationTechnologyAndScriptLanguage(target, source);
+		copyAutomationWorkflowSettings(target, source);
 		if(target.getTestAutomationServer() == null) {
 			copyTestAutomationSettings(target, source);
 		}
