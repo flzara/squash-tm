@@ -477,7 +477,9 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 						$(parentTr.find("td:not(:first)")).addClass("disabled-transparent");
 						var switchButton = $(parentTr.find(".switch-button-button"));
 						switchButton.css("left","-1px");
-						switchButton.prop("checked", true);
+						var checkBox = $(parentTr.find("input[type='checkbox']"));
+						// checkBox.change();
+						// checkBox.prop("checked", false);
 					}
 				}
 
@@ -485,9 +487,10 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					self.workflowSelector.setValue(self.chosenAutomationWorkflow);
 					WTF.showError(xhr.statusText);
 				}).success(function () {
+					var oldAutomationWorkflow = self.chosenAutomationWorkflow;
 					self.chosenAutomationWorkflow = workflowType;
 
-					if (self.chosenAutomationWorkflow != "REMOTE_WORKFLOW") {
+					if (self.chosenAutomationWorkflow != "REMOTE_WORKFLOW" && oldAutomationWorkflow === "REMOTE_WORKFLOW") {
 						//toggle the button in plugin tab
 						manuallyDisableWAJplugin();
 					}
