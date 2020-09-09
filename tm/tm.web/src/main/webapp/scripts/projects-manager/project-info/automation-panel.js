@@ -489,9 +489,16 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					self.chosenAutomationWorkflow = "REMOTE_WORKFLOW";
 				} else {
 					displayedWorkflow = self.automationWorkflows[newType];
+					self.pluginAutomHasConf = newType;
 				}
 				if (displayedWorkflow === undefined || displayedWorkflow === null) {
 					displayedWorkflow = self.automationWorkflows['NONE'];
+					self.pluginAutomHasConf = 'NONE';
+				}
+				if (newType === 'NONE') {
+					self.toggleScmPanel(false);
+				} else {
+					self.toggleScmPanel(true);
 				}
 				$('#project-workflows-select').text(displayedWorkflow);
 			},
