@@ -263,20 +263,12 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				eventBus.onContextual('project.plugin.toggled', function (event, string) {
 					self.reloadWorkflowsComboBox(self, string);
 				});
+			},
 
-			/*	var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
-
-				disabledPluginWAPopup.on("formdialogconfirm", function () {
-					var saveConf = $("#save-conf").prop("checked");
-					self.disablePlugin(self, saveConf);
-					disabledPluginWAPopup.formDialog("close");
-				});
-
-				disabledPluginWAPopup.on("formdialogcancel", function () {
-					disabledPluginWAPopup.formDialog("close");
-					self.reloadWorkflowsComboBox(self, self.chosenAutomationWorkflow);
-				});
-*/
+			manuallyTogglePluginCheckBoxButton: function () {
+				$($($("td").filter(function () {
+					return $(this).text() == translator.get('automation.workflow.name');
+				}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
 			},
 
 			disablePlugin: function (self, saveConf) {
@@ -284,9 +276,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				/*disable the plugin with or without keeping the configuration*/
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*save change*/
-					$($($("td").filter(function() {
-						return $(this).text() == "Workflow Automatisation Jira";
-					}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
+					this.manuallyTogglePluginCheckBoxButton();
 					self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 				});
 			},
@@ -412,18 +402,13 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					},
 
 					target: function (value) {
-						//var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 						//if NONE or SQUASH : disable plugin
 						if (value !== "REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW") {
 							if (self.pluginAutomHasConf === "true") {
-								//disabledPluginWAPopup.formDialog("open");
-								$($($("td").filter(function() {
-									return $(this).text() == "Workflow Automatisation Jira";
-								}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
+								self.manuallyTogglePluginCheckBoxButton();
 							} else {
 								self.disablePlugin(self, false);
 							}
-
 						} else {
 							self.saveChangeAutomationWorkflow(value);
 						}
@@ -472,23 +457,6 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 			changeAutomationWorkflow: function (workflowType) {
 				var self = this;
 
-				function manuallyDisableWAJplugin() {
-					var wajPluginName = translator.get('automation.workflow.name');
-					var parentTr = $($("td").filter(function() {
-						return $(this).text() == wajPluginName;
-					}).closest("tr"));
-					if (parentTr.length === 1){
-						$(parentTr.find("span")[0]).removeClass("off").addClass("on");
-					 	$(parentTr.find("span")[1]).removeClass("on").addClass("off");
-						$(parentTr.find("td:not(:first)")).addClass("disabled-transparent");
-						var switchButton = $(parentTr.find(".switch-button-button"));
-						switchButton.css("left","-1px");
-						var checkBox = $(parentTr.find("input[type='checkbox']"));
-						// checkBox.change();
-						// checkBox.prop("checked", false);
-					}
-				}
-
 				self.doChangeAutomationWorkflow(workflowType).error(function (xhr) {
 					self.workflowSelector.setValue(self.chosenAutomationWorkflow);
 					WTF.showError(xhr.statusText);
@@ -496,6 +464,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					var oldAutomationWorkflow = self.chosenAutomationWorkflow;
 					self.chosenAutomationWorkflow = workflowType;
 
+					//TODO-QUAN: remove it ???
 					if (self.chosenAutomationWorkflow != "REMOTE_WORKFLOW" && oldAutomationWorkflow === "REMOTE_WORKFLOW") {
 						//toggle the button in plugin tab
 						//manuallyDisableWAJplugin();
