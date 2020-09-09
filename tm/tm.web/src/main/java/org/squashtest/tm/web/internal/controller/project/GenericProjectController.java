@@ -484,12 +484,13 @@ public class GenericProjectController {
 												@RequestParam("saveConf") Boolean saveConf) {
 
 		LibraryPluginBinding lpb= projectDao.findPluginForProject(projectId, PluginType.AUTOMATION);
-		WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
-		if(saveConf){
-			projectManager.disablePluginAndSaveConf(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
-		}else{
-			projectManager.disablePluginForWorkspace(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
-
+		if (lpb != null) {
+			WorkspaceWizard plugin = pluginManager.findById(lpb.getPluginId());
+			if (saveConf) {
+				projectManager.disablePluginAndSaveConf(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
+			} else {
+				projectManager.disablePluginForWorkspace(projectId, Collections.singletonList(WorkspaceType.TEST_CASE_WORKSPACE), plugin.getId());
+			}
 		}
 	}
 

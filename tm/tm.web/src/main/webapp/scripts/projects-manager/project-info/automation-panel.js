@@ -260,8 +260,10 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 
 				/********* Disabled plugin popup*/
 
-				eventBus.onContextual('project.plugin.toggled', function (event, string) {
-					self.reloadWorkflowsComboBox(self, string);
+				eventBus.onContextual('project.plugin.toggled', function (event, newType) {
+					if ($('#project-workflows-select').text() !== self.automationWorkflows['NATIVE'] || newType === 'REMOTE_WORKFLOW') {
+						self.reloadWorkflowsComboBox(self, newType);
+					}
 				});
 			},
 
@@ -276,7 +278,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				/*disable the plugin with or without keeping the configuration*/
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*save change*/
-					this.manuallyTogglePluginCheckBoxButton();
+					self.manuallyTogglePluginCheckBoxButton();
 					self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 				});
 			},
@@ -461,15 +463,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					self.workflowSelector.setValue(self.chosenAutomationWorkflow);
 					WTF.showError(xhr.statusText);
 				}).success(function () {
-					var oldAutomationWorkflow = self.chosenAutomationWorkflow;
 					self.chosenAutomationWorkflow = workflowType;
-
-					//TODO-QUAN: remove it ???
-					if (self.chosenAutomationWorkflow != "REMOTE_WORKFLOW" && oldAutomationWorkflow === "REMOTE_WORKFLOW") {
-						//toggle the button in plugin tab
-						//manuallyDisableWAJplugin();
-					}
-
 					self.changeWorkflowDialogAfter.formDialog('open');
 					self.toggleScmPanel(self.isAWorkflow(workflowType));
 				});
