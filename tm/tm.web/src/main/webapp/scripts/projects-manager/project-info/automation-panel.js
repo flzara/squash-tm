@@ -264,7 +264,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					self.reloadWorkflowsComboBox(self, string);
 				});
 
-				var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
+			/*	var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 
 				disabledPluginWAPopup.on("formdialogconfirm", function () {
 					var saveConf = $("#save-conf").prop("checked");
@@ -276,7 +276,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					disabledPluginWAPopup.formDialog("close");
 					self.reloadWorkflowsComboBox(self, self.chosenAutomationWorkflow);
 				});
-
+*/
 			},
 
 			disablePlugin: function (self, saveConf) {
@@ -284,6 +284,9 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				/*disable the plugin with or without keeping the configuration*/
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*save change*/
+					$($($("td").filter(function() {
+						return $(this).text() == "Workflow Automatisation Jira";
+					}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
 					self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 				});
 			},
@@ -409,11 +412,14 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					},
 
 					target: function (value) {
-						var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
+						//var disabledPluginWAPopup = $("#disabled-plugin-wa").formDialog();
 						//if NONE or SQUASH : disable plugin
 						if (value !== "REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW") {
 							if (self.pluginAutomHasConf === "true") {
-								disabledPluginWAPopup.formDialog("open");
+								//disabledPluginWAPopup.formDialog("open");
+								$($($("td").filter(function() {
+									return $(this).text() == "Workflow Automatisation Jira";
+								}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
 							} else {
 								self.disablePlugin(self, false);
 							}
@@ -492,7 +498,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 
 					if (self.chosenAutomationWorkflow != "REMOTE_WORKFLOW" && oldAutomationWorkflow === "REMOTE_WORKFLOW") {
 						//toggle the button in plugin tab
-						manuallyDisableWAJplugin();
+						//manuallyDisableWAJplugin();
 					}
 
 					self.changeWorkflowDialogAfter.formDialog('open');
