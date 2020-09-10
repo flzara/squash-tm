@@ -148,6 +148,7 @@ define(
 					selectBoxCancelBtn.click();
 				}
 				var btn = $(evt.currentTarget);
+				var selectedWAOption = btn.prop("chosenAutomationWorkflowOption");
 				var $row = btn.parents('tr').first();
 				var checked = btn[0].checked;
 				var pluginType = table.fnGetData($row.get(0))['pluginType'];
@@ -174,7 +175,7 @@ define(
 
 				var url = urlPlugin(projectId, pluginId);
 				var method = (btn[0].checked) ? 'POST' : 'DELETE';
-				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : selectedWAOption;
 				if (checked === false) {
 					if (data['hasConf'] === true && pluginId != "squash.tm.wizard.campaignassistant") {
 						disabledPluginPopup.formDialog("open");
@@ -184,7 +185,7 @@ define(
 					}
 				} else {
 					$.ajax({url: url, type: 'POST'}).success(function () {
-						/*when we activate or deactivate the plugin, we update the automation workflow list*/
+						/*when we activate the plugin, we update the automation workflow list*/
 						if (pluginType == 'AUTOMATION') {
 							updateAutomationWorkflowSelect(checked, projectId);
 							eventBus.trigger("project.plugin.toggled", newType);
@@ -206,7 +207,7 @@ define(
 				var $row = btn.parents('tr').first();
 				var pluginType = table.fnGetData($row.get(0))['pluginType'];
 				var projectId = conf.projectId;
-				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : 'NONE';
+				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : btn.prop("chosenAutomationWorkflowOption");
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*when we activate or deactivate the plugin, we update the automation workflow list*/
 					if (pluginType === 'AUTOMATION') {
@@ -225,7 +226,7 @@ define(
 				$("#saveConf").prop("checked", true);
 				var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
-				disabledPluginPopup.on("formdialogconfirm", function () {
+				disabledPluginPopup.one("formdialogconfirm", function () {
 					var saveConf = $("#saveConf").prop("checked");
 					disablePlugin(url, checked, btn, data, saveConf);
 					disabledPluginPopup.formDialog("close");

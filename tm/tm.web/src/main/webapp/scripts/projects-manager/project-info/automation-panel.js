@@ -263,14 +263,18 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				eventBus.onContextual('project.plugin.toggled', function (event, newType) {
 					if ($('#project-workflows-select').text() !== self.automationWorkflows['NATIVE'] || newType === 'REMOTE_WORKFLOW') {
 						self.reloadWorkflowsComboBox(self, newType);
+					} else {
+						self.changeAutomationWorkflow(newType);
 					}
 				});
 			},
 
-			manuallyTogglePluginCheckBoxButton: function () {
-				$($($("td").filter(function () {
+			manuallyTogglePluginCheckBoxButton: function (value) {
+				var checkedButton = $($($("td").filter(function () {
 					return $(this).text() == translator.get('automation.workflow.name');
-				}).closest("tr")).find("input[type='checkbox']")[0]).switchButton('option', 'checked', false);
+				}).closest("tr")).find("input[type='checkbox']")[0]);
+				checkedButton.prop("chosenAutomationWorkflowOption", value);
+				checkedButton.switchButton('option', 'checked', false);
 			},
 
 			disablePlugin: function (self, saveConf) {
@@ -278,7 +282,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				/*disable the plugin with or without keeping the configuration*/
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*save change*/
-					self.manuallyTogglePluginCheckBoxButton();
+					self.manuallyTogglePluginCheckBoxButton("NONE");
 					self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
 				});
 			},
@@ -407,7 +411,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 						//if NONE or SQUASH : disable plugin
 						if (value !== "REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW") {
 							if (self.pluginAutomHasConf === "true") {
-								self.manuallyTogglePluginCheckBoxButton();
+								self.manuallyTogglePluginCheckBoxButton(value);
 							} else {
 								self.disablePlugin(self, false);
 							}
@@ -489,11 +493,11 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					self.chosenAutomationWorkflow = "REMOTE_WORKFLOW";
 				} else {
 					displayedWorkflow = self.automationWorkflows[newType];
-					self.pluginAutomHasConf = newType;
+					self.chosenAutomationWorkflow = newType;
 				}
 				if (displayedWorkflow === undefined || displayedWorkflow === null) {
 					displayedWorkflow = self.automationWorkflows['NONE'];
-					self.pluginAutomHasConf = 'NONE';
+					self.chosenAutomationWorkflow = 'NONE';
 				}
 				if (newType === 'NONE') {
 					self.toggleScmPanel(false);
