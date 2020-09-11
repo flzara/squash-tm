@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.service.annotation;
 
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
-import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,17 +28,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used on methods which modify a {@linkplain MilestoneMember}.
- * Such methods should be preceded by a verification checking if the modified {@linkplain MilestoneMember}
- * is bound to a locked {@linkplain Milestone} and throw a {@linkplain MilestoneForbidModificationException} if so.
+ * This annotation is similar to {@linkplain CheckLockedMilestone}
+ * but is used on methods which modify <b>multiple</b> {@linkplain MilestoneMember}s.
+ * <br/>
+ * See {@linkplain CheckLockedMilestone} annotation for main documentation.
  * <p/>
- * The argument which conveys the entity's id has to be annotated with @{@linkplain Id}.
+ * The argument which conveys the entities' ids has to be annotated with @{@linkplain Ids}.
  * <p/>
  * This annotation is managed by the aspect {@linkplain CheckLockedMilestoneAspect}.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CheckLockedMilestone {
+public @interface CheckLockedMilestones {
 	/**
 	 * Class of the {@linkplain MilestoneMember} which is modified by the annotated method.
 	 */

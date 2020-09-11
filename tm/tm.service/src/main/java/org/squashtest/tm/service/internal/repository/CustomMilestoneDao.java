@@ -51,6 +51,8 @@ public interface CustomMilestoneDao {
 	// hence this specific method
 	boolean isTestCaseMilestoneModifiable(long testCaseId);
 
+	boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds);
+
 	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
 
 	Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId);

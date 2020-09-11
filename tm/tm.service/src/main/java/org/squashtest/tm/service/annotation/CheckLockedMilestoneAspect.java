@@ -38,8 +38,11 @@ import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * This aspect manages {@linkplain CheckLockedMilestone} annotation.
@@ -49,9 +52,9 @@ import java.util.Map;
 public class CheckLockedMilestoneAspect {
 
 	private static final String ADVISING_METHOD = "Advising method {}{}.";
-	private static final String FOUND_ID_IN_METHOD = "Found required @Id on arg #{} of method {}.";
-	private static final String ILLEGAL_ID_PARAMETER = "The found parameter annotated @Id cannot be cast to a long.";
-	private static final String LOCKED_MILESTONE_MESSAGE = "This test case is bound to a locked milestone. It can't be modified";
+	private static final String FOUND_ID_IN_METHOD = "Found required @{} on arg #{} of method {}.";
+	private static final String LOCKED_MILESTONE_MESSAGE = "This element is bound to a locked milestone. It can't be modified";
+	private static final String LOCKED_MILESTONES_MESSAGE = "At least one element is bound to a locked milestone. It can't be modified";
 	private static final String MISSING_ID_PARAMETER = "Could not find any argument annotated @Id in @CheckLockedMilestone method %s%s. This must be a structural programming error.";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CheckLockedMilestone.class);
@@ -62,7 +65,7 @@ public class CheckLockedMilestoneAspect {
 	@Around(
 		value = "execution(@org.squashtest.tm.service.annotation.CheckLockedMilestone * * (..)) && @annotation(args)",
 		argNames = "args")
-	public void checkLockedMilestone(ProceedingJoinPoint pjp, CheckLockedMilestone args) throws Throwable {
+	public Object checkLockedMilestone(ProceedingJoinPoint pjp, CheckLockedMilestone args) throws Throwable {
 		long id = findEntityId(pjp);
 		Class<? extends MilestoneMember> entityType = args.entityType();
 
@@ -77,24 +80,53 @@ public class CheckLockedMilestoneAspect {
 		if (isEntityBoundToLockedMilestone) {
 			throw new MilestoneForbidModificationException(LOCKED_MILESTONE_MESSAGE);
 		}
-		pjp.proceed();
+		return pjp.proceed();
 	}
 
 	private long findEntityId(ProceedingJoinPoint pjp) {
+		return findAnnotatedParamValue(pjp, Id.class);
+	}
+
+	@Around(
+		value = "execution(@org.squashtest.tm.service.annotation.CheckLockedMilestones * * (..)) && @annotation(args)",
+		argNames = "args")
+	public Object checkLockedMilestoneMultiple(ProceedingJoinPoint pjp, CheckLockedMilestones args) throws Throwable {
+		Collection<Long> ids = findEntitiesIds(pjp);
+		Class<? extends MilestoneMember> entityType = args.entityType();
+
+		boolean areEntitiesBoundToLockedMilestone;
+		switch (entityType.getSimpleName()) {
+			case "TestCase":
+				areEntitiesBoundToLockedMilestone = milestoneDao.areTestCasesBoundToLockedMilestone(ids);
+				break;
+			default:
+				throw new UnsupportedOperationException();
+		}
+		if (areEntitiesBoundToLockedMilestone) {
+			throw new MilestoneForbidModificationException(LOCKED_MILESTONES_MESSAGE);
+		}
+		return pjp.proceed();
+	}
+
+	private Collection<Long> findEntitiesIds(ProceedingJoinPoint pjp) {
+		return findAnnotatedParamValue(pjp, Ids.class);
+	}
+
+	private <T> T findAnnotatedParamValue(ProceedingJoinPoint pjp, Class<? extends Annotation> idAnnotation) {
 		MethodSignature signature = (MethodSignature) pjp.getSignature();
 		Method method = signature.getMethod();
 		LOGGER.trace(ADVISING_METHOD, signature.getDeclaringTypeName(), method.getName());
 
-		Object annotatedParameter = null;
+		T annotatedParameter = null;
 		Annotation[][] annotations = method.getParameterAnnotations();
 
 		argsLoop:
 		for (int iArg = 0; iArg < annotations.length; iArg++) {
 			Annotation[] currentArgAnnotations = annotations[iArg];
 			for (int jAnn = 0; jAnn < currentArgAnnotations.length; jAnn++) {
-				if (Id.class.equals(currentArgAnnotations[jAnn].annotationType())) {
-					LOGGER.trace(FOUND_ID_IN_METHOD, iArg, method.getName());
-					annotatedParameter = pjp.getArgs()[iArg];
+				if (idAnnotation.equals(currentArgAnnotations[jAnn].annotationType())) {
+					LOGGER.trace(FOUND_ID_IN_METHOD, idAnnotation.getSimpleName(), iArg, method.getName());
+					annotatedParameter = (T) pjp.getArgs()[iArg];
 					break argsLoop;
 				}
 			}
@@ -105,13 +137,7 @@ public class CheckLockedMilestoneAspect {
 				String.format(MISSING_ID_PARAMETER, signature.getDeclaringTypeName(), method.getName()));
 		}
 
-		long result;
-		try {
-			result = (long) annotatedParameter;
-		} catch (ClassCastException ex) {
-			throw new IllegalArgumentException(ILLEGAL_ID_PARAMETER);
-		}
-		return result;
+		return annotatedParameter;
 	}
 
 }

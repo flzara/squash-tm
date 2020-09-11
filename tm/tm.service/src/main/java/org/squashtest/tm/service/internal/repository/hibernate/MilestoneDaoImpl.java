@@ -153,6 +153,14 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
 	}
 
+	@Override
+	public boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds) {
+		Query query = entityManager.createNamedQuery("testCase.findTestCasesWithMilestonesHavingStatuses");
+		query.setParameter("testCaseIds", testCaseIds);
+		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		return !query.getResultList().isEmpty();
+	}
+
 	private boolean doesTestCaseBelongToMilestonesWithStatus(long testCaseId, MilestoneStatus... statuses) {
 		Query query = entityManager.createNamedQuery("testCase.findTestCasesWithMilestonesHavingStatuses");
 		query.setParameter("testCaseIds", Collections.singletonList(testCaseId));
