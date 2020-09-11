@@ -32,7 +32,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
-
+			this.initTableStyle(this.settings);
 			this.actionWordInput = $('#action-word-input');
 			this.keywordInput = $('#keyword-input');
 
@@ -176,6 +176,13 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 						});
 					}
 				}, squashSettings);
+		},
+
+		// SQUASH-
+		initTableStyle: function(settings) {
+			if (settings.permissions.isWritable) {
+				$('.table-tab-wrap').css('margin-top', '25px');
+			}
 		},
 
 		stepDropHandlerFactory: function(dropUrl) {
