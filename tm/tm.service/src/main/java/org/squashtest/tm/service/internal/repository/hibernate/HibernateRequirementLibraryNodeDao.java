@@ -91,7 +91,7 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 		List<RequirementLibraryNode> content = project.getRequirementLibrary().getContent();
 
 		for (RequirementLibraryNode requirementLibraryNode : content) {
-			if (requirementLibraryNode.getName().equals(effectiveSplits.get(1))) {
+			if (requirementLibraryNode != null && requirementLibraryNode.getName().equals(effectiveSplits.get(1))) {
 				parent = requirementLibraryNode;
 			}
 		}
