@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
@@ -64,7 +66,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void persist(Dataset dataset, long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void persist(Dataset dataset, @Id long testCaseId) {
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(testCaseId, dataset.getName());
 
 		if (sameName != null) {

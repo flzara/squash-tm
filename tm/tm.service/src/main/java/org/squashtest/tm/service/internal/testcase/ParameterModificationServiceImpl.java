@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -90,7 +92,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#addNewParameterToTestCase(Parameter, long)
 	 */
 	@Override
-	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void addNewParameterToTestCase(Parameter parameter, @Id long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		IsScriptedTestCaseVisitor testCaseVisitor = new IsScriptedTestCaseVisitor();
 		if (testCaseVisitor.isScripted()) {

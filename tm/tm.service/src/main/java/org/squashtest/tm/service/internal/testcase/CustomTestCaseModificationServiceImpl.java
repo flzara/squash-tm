@@ -78,6 +78,7 @@ import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
@@ -258,7 +259,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void rename(long testCaseId, String newName) throws DuplicateNameException {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void rename(@Id long testCaseId, String newName) throws DuplicateNameException {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
@@ -272,7 +274,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeReference(long testCaseId, String reference) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void changeReference(@Id long testCaseId, String reference) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
@@ -285,7 +288,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeImportance(long testCaseId, TestCaseImportance importance) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void changeImportance(@Id long testCaseId, TestCaseImportance importance) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		LOGGER.debug("changing test case #{} importance from '{}' to '{}' ", testCase.getId(), testCase.getImportance(), importance);
 		testCase.setImportance(importance);
@@ -592,6 +596,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep) {
 
 		return addActionTestStep(parentTestCaseId, newTestStep, STEP_LAST_POS);
@@ -602,6 +607,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index) {
 
 		LOGGER.debug("adding a new action step to test case #{}", parentTestCaseId);
@@ -620,6 +626,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 											Map<Long, RawValue> customFieldValues) {
 
@@ -632,6 +639,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 											Map<Long, RawValue> customFieldValues, int index) {
 
@@ -674,6 +682,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Deprecated
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public void changeTestStepPosition(@Id long testCaseId, long testStepId, int newStepPosition) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		int index = findTestStepInTestCase(testCase, testStepId);
@@ -686,6 +695,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -700,6 +710,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public void removeStepFromTestCase(@Id long testCaseId, long testStepId) {
 		LOGGER.debug("deleting step #{} from test case #{}", testStepId, testCaseId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -710,6 +721,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public void removeStepFromTestCaseByIndex(@Id long testCaseId, int index) {
 		LOGGER.debug("deleting step at index {} from test case #{}", index, testCaseId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -752,6 +764,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public List<TestStep> removeListOfSteps(@Id long testCaseId, List<Long> testStepIds) {
 
 		if (LOGGER.isDebugEnabled()) {
@@ -785,6 +798,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		LOGGER.debug("copying step #{} of test case #{} and inserting at position {}", copiedTestStepId, testCaseId, position);
@@ -794,6 +808,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public boolean pasteCopiedTestSteps(@Id long testCaseId, long idInsertion, List<Long> copiedTestStepIds) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		if (LOGGER.isDebugEnabled()) {
@@ -806,6 +821,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId) {
 		LOGGER.debug("copying step #{} into test case #{} at last position", copiedTestStepId, testCaseId);
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(copiedTestStepId), null);
@@ -814,6 +830,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	@CheckLockedMilestone(entityType = TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("copying {} steps into test case #{} at last position", copiedTestStepIds.size(), testCaseId);
@@ -1041,7 +1058,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	public void removeAutomation(long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void removeAutomation(@Id long testCaseId) {
 		LOGGER.debug("unbinding test case #{} from automated test", testCaseId);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -1165,7 +1183,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	// TODO : secure this
-	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public TestCase addNewTestCaseVersion(@Id long originalTcId, TestCase newVersionData) {
 
 		LOGGER.debug("creating new version of test case #{}", originalTcId);
 
@@ -1224,7 +1243,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void addParametersFromPrerequisite(long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void addParametersFromPrerequisite(@Id long testCaseId) {
 		LOGGER.debug("adding test case #{} parameters from its attribute 'prerequisite'", testCaseId);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		Set<String> parameters = testCase.findUsedParamsNamesInPrerequisite();
@@ -1242,7 +1262,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeNature(long testCaseId, String natureCode) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void changeNature(@Id long testCaseId, String natureCode) {
 		LOGGER.debug("changing test case #{} nature to '{}'", testCaseId, natureCode);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem nature = infoListItemService.findByCode(natureCode);
@@ -1257,7 +1278,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeType(long testCaseId, String typeCode) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void changeType(@Id long testCaseId, String typeCode) {
 		LOGGER.trace("changing test case #{} type to : '{}'", testCaseId, typeCode);
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem type = infoListItemService.findByCode(typeCode);
@@ -1463,7 +1485,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean changeAutomatable(TestCaseAutomatable automatable, Long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public boolean changeAutomatable(TestCaseAutomatable automatable, @Id Long testCaseId) {
 		TestCase tc = testCaseDao.findById(testCaseId);
 		if (tc.getProject().isAllowAutomationWorkflow()) {
 			if (!automatable.equals(tc.getAutomatable())) {

@@ -58,6 +58,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.CheckLockedMilestones;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -1109,6 +1110,7 @@ public class TestCaseLibraryNavigationServiceImpl
 	@PreventConcurrents(batchsLocks = {
 		@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = TARGET_IDS, coercer = TCLNAndParentIdsCoercerForList.class),
 		@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = TARGET_IDS, coercer = TestCaseLibraryIdsCoercerForList.class)})
+	@CheckLockedMilestones(entityType = TestCase.class)
 	public OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds) {
 		return super.deleteNodes(targetIds);
 	}

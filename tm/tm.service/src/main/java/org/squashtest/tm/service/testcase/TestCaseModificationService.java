@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
@@ -37,13 +39,16 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	 * @param newDescription new description
 	 */
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
-	void changeDescription(long testCaseId, String newDescription);
+	@CheckLockedMilestone(entityType = TestCase.class)
+	void changeDescription(@Id long testCaseId, String newDescription);
 
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
-	void changeStatus(long testCaseId, TestCaseStatus status);
+	@CheckLockedMilestone(entityType = TestCase.class)
+	void changeStatus(@Id long testCaseId, TestCaseStatus status);
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	void changePrerequisite(long testCaseId, String newPrerequisite);
+	@CheckLockedMilestone(entityType = TestCase.class)
+	void changePrerequisite(@Id long testCaseId, String newPrerequisite);
 
 }
