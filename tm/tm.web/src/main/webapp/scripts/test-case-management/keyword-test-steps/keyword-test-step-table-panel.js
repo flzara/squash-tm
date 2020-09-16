@@ -178,7 +178,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				}, squashSettings);
 		},
 
-		// SQUASH-
+		// SQUASH-1450
 		initTableStyle: function(settings) {
 			if (settings.permissions.isWritable) {
 				$('.table-tab-wrap').css('margin-top', '25px');
