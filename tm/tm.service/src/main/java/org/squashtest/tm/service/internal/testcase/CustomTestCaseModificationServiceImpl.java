@@ -133,6 +133,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static org.apache.logging.log4j.util.Strings.EMPTY;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_OPEN_GUILLEMET;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
@@ -153,6 +154,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
 	private static final String MILESTONES = "milestones";
+	private static final String SLASH_SEPARATOR = "/";
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -1547,16 +1549,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't
 		// count.
-		String path = testPath.replaceFirst("^/", "");
-		int idxSlash = path.indexOf('/');
-
-		String projectLabel = path.substring(0, idxSlash);
-		String testName = path.substring(idxSlash + 1);
+		String path = testPath.replaceFirst("^/", EMPTY);
 
 		TestCase tc = testCaseDao.findById(testCaseId);
 		GenericProject tmproject = tc.getProject();
 
 		Collection<TestAutomationProject> taProjects = tmproject.getTestAutomationProjects();
+
+		String projectLabel = retrieveProjectLabelFromPath(path, taProjects);
+		String testName = path.replace(projectLabel + SLASH_SEPARATOR, EMPTY);
 
 		if (LOGGER.isTraceEnabled()) {
 			List<String> taProjectNames = taProjects.stream()
@@ -1579,6 +1580,25 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return new Couple<>(tap.get().getId(), testName);
 	}
 
+	//SQUASH-1149 : retrieve project label from path is tricky when there are folders
+	private String retrieveProjectLabelFromPath(String path, Collection<TestAutomationProject> taProjects) {
+		int index;
+		String updatedPath = path;
+		String projectLabel;
+
+		do {
+			index = updatedPath.lastIndexOf(SLASH_SEPARATOR);
+			updatedPath = updatedPath.substring(0, index);
+			String pathToCheck = updatedPath;
+			projectLabel = taProjects.stream()
+								.map(TestAutomationProject::getLabel)
+								.filter(p -> p.equals(pathToCheck))
+								.findFirst()
+								.orElse(EMPTY);
+		} while (updatedPath.contains(SLASH_SEPARATOR) && projectLabel.equals(EMPTY));
+
+		return projectLabel;
+	}
 
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {
 		TestStep original;
