@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.DomainException;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -71,7 +73,8 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	 * @see CustomTestStepModificationService#updateTestStep(Long, String, String, Map)
 	 */
 	@Override
-	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, RawValue> cufValues) {
+	@CheckLockedMilestone(entityType = TestStep.class)
+	public void updateTestStep(@Id Long testStepId, String action, String expectedResult, Map<Long, RawValue> cufValues) {
 		List<DomainException> exceptions = new ArrayList<>();
 		TestStep step = testStepDao.findById(testStepId);
 		updateCufValues(step, cufValues, exceptions);

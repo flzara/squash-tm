@@ -450,4 +450,12 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 			.fetch();
 	}
 
+	@Override
+	public boolean isTestStepBoundToLockedMilestone(long testStepId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForTestStep");
+		query.setParameter("stepId", testStepId);
+		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		return !query.getResultList().isEmpty();
+	}
+
 }

@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is similar to {@linkplain CheckLockedMilestone}
- * but is used on methods which modify <b>multiple</b> {@linkplain MilestoneMember}s.
+ * but is used on methods which modify <b>multiple</b> {@linkplain MilestoneMember}s or their components.
  * <br/>
  * See {@linkplain CheckLockedMilestone} annotation for main documentation.
  * <p/>

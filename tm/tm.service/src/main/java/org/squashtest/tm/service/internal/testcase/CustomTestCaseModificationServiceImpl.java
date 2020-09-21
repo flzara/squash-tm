@@ -650,8 +650,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@CheckLockedMilestone(entityType = TestStep.class)
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public void updateTestStepAction(long testStepId, String newAction) {
+	public void updateTestStepAction(@Id long testStepId, String newAction) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()) {
@@ -663,8 +664,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@CheckLockedMilestone(entityType = TestStep.class)
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
+	public void updateTestStepExpectedResult(@Id long testStepId, String newExpectedResult) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 
 		if (LOGGER.isDebugEnabled()) {

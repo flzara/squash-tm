@@ -30,8 +30,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used on methods which modify a {@linkplain MilestoneMember}.
- * Such methods should be preceded by a verification checking if the modified {@linkplain MilestoneMember}
+ * This annotation is used on methods which modify a {@linkplain MilestoneMember} or one of its component.
+ * Such methods should be preceded by a verification checking if the modified {@linkplain MilestoneMember} or component
  * is bound to a locked {@linkplain Milestone} and throw a {@linkplain MilestoneForbidModificationException} if so.
  * <p/>
  * The argument which conveys the entity's id has to be annotated with @{@linkplain Id}.
@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckLockedMilestone {
 	/**
-	 * Class of the {@linkplain MilestoneMember} which is modified by the annotated method.
+	 * Class of the {@linkplain MilestoneMember} or the component which is modified by the annotated method.
 	 */
-	Class<? extends MilestoneMember> entityType();
+	Class entityType();
 }

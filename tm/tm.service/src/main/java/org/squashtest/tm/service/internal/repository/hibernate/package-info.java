@@ -1062,6 +1062,28 @@
 	@NamedQuery(name="AutomationRequest.updateConflictAssociation", query = "UPDATE AutomationRequest ar SET ar.conflictAssociation = :conflictAssociation WHERE ar.testCase.id = :testCaseId"),
 
 
+	// Locked Milestones
+	@NamedQuery(name = "Milestone.findLockedMilestonesForTestStep",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+					"(select directMilestone.id " +
+					"from TestStep ts " +
+					"inner join ts.testCase tc " +
+					"inner join tc.milestones directMilestone " +
+					"where ts.id = :stepId " +
+					"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select indirectMilestone.id " +
+					"from TestStep ts " +
+					"inner join ts.testCase tc " +
+					"inner join tc.requirementVersionCoverages rvc " +
+					"inner join rvc.verifiedRequirementVersion rv " +
+					"inner join rv.milestones indirectMilestone " +
+					"where ts.id = :stepId " +
+					"and indirectMilestone.status in (:statuses))")
+
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

@@ -41,18 +41,6 @@ public interface CustomMilestoneDao {
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
 
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneDeletable(long testCaseId);
-
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneModifiable(long testCaseId);
-
-	boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds);
-
 	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
 
 	Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId);
@@ -97,4 +85,23 @@ public interface CustomMilestoneDao {
 
 	void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId);
 
+	/**
+	 * Check whether some milestone could block the deletion of this test case.
+	 * The said milestone could also be inherited by verified requirements hence this specific method.
+	 * @param testCaseId
+	 * @return Whether the TestCase with the given id is deletable.
+	 */
+	boolean isTestCaseMilestoneDeletable(long testCaseId);
+
+	/**
+	 * Check whether some milestone could block the modification of this test case.
+	 * The said milestone could also be inherited by verified requirements hence this specific method.
+	 * @param testCaseId
+	 * @return Whether the TestCase with the given id is modifiable.
+	 */
+	boolean isTestCaseMilestoneModifiable(long testCaseId);
+
+	boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds);
+
+	boolean isTestStepBoundToLockedMilestone(long testStepId);
 }

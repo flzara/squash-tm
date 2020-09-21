@@ -67,12 +67,15 @@ public class CheckLockedMilestoneAspect {
 		argNames = "args")
 	public Object checkLockedMilestone(ProceedingJoinPoint pjp, CheckLockedMilestone args) throws Throwable {
 		long id = findEntityId(pjp);
-		Class<? extends MilestoneMember> entityType = args.entityType();
+		Class entityType = args.entityType();
 
 		boolean isEntityBoundToLockedMilestone;
 		switch (entityType.getSimpleName()) {
 			case "TestCase":
 				isEntityBoundToLockedMilestone = milestoneDao.isTestCaseMilestoneModifiable(id);
+				break;
+			case "TestStep":
+				isEntityBoundToLockedMilestone = milestoneDao.isTestStepBoundToLockedMilestone(id);
 				break;
 			default:
 				throw new UnsupportedOperationException();
@@ -111,6 +114,7 @@ public class CheckLockedMilestoneAspect {
 	private Collection<Long> findEntitiesIds(ProceedingJoinPoint pjp) {
 		return findAnnotatedParamValue(pjp, Ids.class);
 	}
+
 
 	private <T> T findAnnotatedParamValue(ProceedingJoinPoint pjp, Class<? extends Annotation> idAnnotation) {
 		MethodSignature signature = (MethodSignature) pjp.getSignature();
