@@ -60,6 +60,7 @@
     <jaxb.version>2.3.1</jaxb.version>
     <jericho-html.version>3.3</jericho-html.version>
     <mysql-connector-java.version>5.1.39</mysql-connector-java.version>
+    <override.apache-httpclient.version>4.5.12</override.apache-httpclient.version>
     <poi.version>3.12</poi.version>
 
     <!-- warning : querysdl.version should match that of spring-data-jpa -->
@@ -221,6 +222,23 @@
           <exclusion>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- Issue TMSUP-2195 - Override version provided by Spring Boot -->
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${override.apache-httpclient.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jcl</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
