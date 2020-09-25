@@ -56,9 +56,6 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 		}
 		TestCase testCase;
 		switch (testCaseKind) {
-			case STANDARD:
-				testCase = TestCase.createBlankTestCase();
-				break;
 			case GHERKIN:
 				testCase = getBlankScriptedTestCase(row);
 				break;
@@ -66,7 +63,8 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 				testCase = KeywordTestCase.createBlankKeywordTestCase();
 				break;
 			default:
-				throw new IllegalArgumentException("Unknown TestCaseKind: " + testCaseKind);
+				//SQUASH-1562
+				testCase = TestCase.createBlankTestCase();
 		}
 		return new TestCaseInstruction(new TestCaseTarget(), testCase);
 	}
