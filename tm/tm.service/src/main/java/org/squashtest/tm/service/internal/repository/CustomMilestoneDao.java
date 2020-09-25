@@ -27,14 +27,15 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CustomMilestoneDao {
-	interface HolderConsumer {
+
+    interface HolderConsumer {
 		void consume(MilestoneHolder holder);
 	}
 
 	List<Long> findAllMilestoneIds();
-	
+
 	List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds);
-	
+
 
 
 	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
@@ -104,4 +105,6 @@ public interface CustomMilestoneDao {
 	boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds);
 
 	boolean isTestStepBoundToLockedMilestone(long testStepId);
+
+	boolean isParameterBoundToLockedMilestone(long paramId);
 }

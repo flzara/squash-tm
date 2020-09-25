@@ -77,8 +77,11 @@ public class CheckLockedMilestoneAspect {
 			case "TestStep":
 				isEntityBoundToLockedMilestone = milestoneDao.isTestStepBoundToLockedMilestone(id);
 				break;
+			case "Parameter":
+				isEntityBoundToLockedMilestone = milestoneDao.isParameterBoundToLockedMilestone(id);
+				break;
 			default:
-				throw new UnsupportedOperationException();
+				throw new UnsupportedOperationException("Cannot check locked milestones for entity type " + entityType.getSimpleName());
 		}
 		if (isEntityBoundToLockedMilestone) {
 			throw new MilestoneForbidModificationException(LOCKED_MILESTONE_MESSAGE);

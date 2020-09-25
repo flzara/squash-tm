@@ -1082,7 +1082,28 @@
 					"inner join rvc.verifiedRequirementVersion rv " +
 					"inner join rv.milestones indirectMilestone " +
 					"where ts.id = :stepId " +
-					"and indirectMilestone.status in (:statuses))")
+					"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForParameter",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directMilestone.id " +
+				"from Parameter p " +
+				"inner join p.testCase tc " +
+				"inner join tc.milestones directMilestone " +
+				"where p.id = :paramId " +
+				"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectMilestone.id " +
+				"from Parameter p " +
+				"inner join p.testCase tc " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectMilestone " +
+				"where p.id = :paramId " +
+				"and indirectMilestone.status in (:statuses))")
 
 })
 //@formatter:on

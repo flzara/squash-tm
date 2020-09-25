@@ -36,21 +36,39 @@ class MilestoneDaoIT extends DbunitDaoSpecification {
 	@Inject
 	MilestoneDao milestoneDao
 
-	def "isTestStepModifiableRegardingMilestones(long) - Should not find any milestone blocking the test step modification"() {
+	def "isTestStepBoundToLockedMilestone(long) - Should not find any milestone blocking the test step modification"() {
 		expect:
 		!milestoneDao.isTestStepBoundToLockedMilestone(-1L)
 	}
 
 	/* The TestStep belongs to a TestCase bound to a Planned|Locked Milestone */
-	def "isTestStepModifiableRegardingMilestones(long) - Should find a locked milestone directly blocking the test step modification"() {
+	def "isTestStepBoundToLockedMilestone(long) - Should find a locked milestone directly blocking the test step modification"() {
 		expect:
 		milestoneDao.isTestStepBoundToLockedMilestone(-2L)
 	}
 
 	/* The TestStep belongs to a TestCase verifying a RequirementVersion bound to a Planned|Locked Milestone */
-	def "isTestStepModifiableRegardingMilestones(long) - Should find a locked milestone indirectly blocking the test step modification"() {
+	def "isTestStepBoundToLockedMilestone(long) - Should find a locked milestone indirectly blocking the test step modification"() {
 		expect:
 		milestoneDao.isTestStepBoundToLockedMilestone(-3L)
 
 	}
+
+	def "isParameterBoundToLockedMilestone(long) - Should not find any milestone blocking the parameter modification"() {
+		expect:
+		!milestoneDao.isParameterBoundToLockedMilestone(-1L)
+	}
+
+	/* The Parameter belongs to a TestCase bound to a Planned|Locked Milestone */
+	def "isParameterBoundToLockedMilestone(long) - Should find a locked milestone directly blocking the parameter modification"() {
+		expect:
+		milestoneDao.isParameterBoundToLockedMilestone(-2L)
+	}
+
+	/* The Parameter belongs to a TestCase verifying a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isParameterBoundToLockedMilestone(long) - Should find a locked milestone indirectly blocking the parameter modification"() {
+		expect:
+		milestoneDao.isParameterBoundToLockedMilestone(-3L)
+	}
+
 }
