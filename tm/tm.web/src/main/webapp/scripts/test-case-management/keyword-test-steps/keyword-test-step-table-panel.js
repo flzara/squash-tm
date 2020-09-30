@@ -33,6 +33,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
 			this.initTableStyle(this.settings);
+			this.initTableDetails();
 			this.actionWordInput = $('#action-word-input');
 			this.keywordInput = $('#keyword-input');
 
@@ -89,7 +90,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			var self = this,
 				  table = $("#keyword-test-step-table"),
 				  postModifyActionWordFunction = self.postModifyActionWordFunction(settings.testCaseUrl, table),
-					dragClass = '', deleteClass = '', squashSettings = '';
+					dragClass = '', deleteClass = '', squashSettings = {};
 
 			if (settings.permissions.isWritable) {
 				dragClass = 'drag-handle';
@@ -108,6 +109,40 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 					}
 				};
 			}
+
+			var moreSettings = {
+				toggleRows : {
+					'td.toggle-row': function (table, jqold, jqnew) {
+
+						var data = table.fnGetData(jqold.get(0));
+
+/*						jqnew.load(settings.testCaseUrl + '/steps/' + data['entity-id'] + '/details', function() {
+
+							if (settings.permissions.isWritable) {
+								var richEditSettings = confman.getJeditableCkeditor();
+								richEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
+								jqnew.find('.step-datatable').richEditable(richEditSettings).addClass("editable");
+							}
+
+						});*/
+
+						var datatable = data['step-datatable'] != null ? data['step-datatable'] : "";
+						jqnew.html(
+							'<td colspan="5">'+
+								'<label>Datatable</label>'+
+								'<span class="step-datatable">'+datatable+'</span>'+
+							'</td>'
+						);
+						if (settings.permissions.isWritable) {
+							var richEditSettings = confman.getJeditableCkeditor();
+							richEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
+							jqnew.find('.step-datatable').richEditable(richEditSettings).addClass("editable");
+						}
+					}
+				}
+			};
+
+			$.extend(squashSettings, moreSettings);
 
 			table.squashTable(
 				{
@@ -142,6 +177,13 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 							bVisible: true,
 							bSortable: false,
 							aTargets: [4],
+							mDataProp: "toggle-step-details",
+							sClass: 'centered toggle-row',
+							sWidth: '2em'
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [5],
 							mDataProp: 'empty-delete-holder',
 							sClass: 'centered ' + deleteClass,
 							sWidth: '2em'
@@ -183,6 +225,20 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			if (settings.permissions.isWritable) {
 				$('.table-tab-wrap').css('margin-top', '25px');
 			}
+		},
+
+		initTableDetails: function() {
+			var table = $("#keyword-test-step-table").squashTable();
+			var rows = table.fnGetNodes();
+			rows.forEach(function(row) {
+				var $row = $(row),
+					toggleCell = $row.find('td.toggle-row'),
+					rowModel = table.fnGetData($row);
+
+				if (rowModel['step-datatable'] != null) {
+					$(toggleCell.find('span')[1]).click();
+				}
+			});
 		},
 
 		stepDropHandlerFactory: function(dropUrl) {

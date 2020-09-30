@@ -212,6 +212,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-index"        	   : '1',
 				"empty-delete-holder"	   : null,
 				"step-action-word"         : 'hello',
+				"toggle-step-details"	   : null,
 				"step-action-word-unstyled": 'hello'
 			],
 			[
@@ -220,6 +221,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-index"         		: '2',
 				"empty-delete-holder"		: null,
 				"step-action-word"   		: 'how are <span style=\"color: blue;\">you</span> ?',
+				"toggle-step-details"	   : null,
 				"step-action-word-unstyled" : 'how are "you" ?'
 			]]
 

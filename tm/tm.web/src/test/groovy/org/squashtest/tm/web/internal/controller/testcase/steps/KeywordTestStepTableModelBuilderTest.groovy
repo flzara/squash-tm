@@ -48,7 +48,6 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		when:
 		Map<String, String> resultItem1 = builder.buildItemData(testStep)
 		then:
-		resultItem1.size() == 6
 		resultItem1.get("step-index") == "0"
 		resultItem1.get("step-keyword") == "GIVEN"
 		resultItem1.get("step-action-word") == "goodbye"
@@ -95,13 +94,11 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		def item1 = resultCollection[0]
 		def item2 = resultCollection[1]
 
-		item1.size() == 6
 		item1.get("step-index") == "1"
 		item1.get("step-keyword") == "GIVEN"
 		item1.get("step-action-word") == "hello <span style=\"color: blue;\">Sunday</span>"
 		item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
-		item2.size() == 6
 		item2.get("step-index") == "2"
 		item2.get("step-keyword") == "THEN"
 		item2.get("step-action-word") == "goodbye"
@@ -148,13 +145,11 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		def item1 = resultCollection[0]
 		def item2 = resultCollection[1]
 
-		item1.size() == 6
 		item1.get("step-index") == "1"
 		item1.get("step-keyword") == "GIVEN"
 		item1.get("step-action-word") == "hello <span style=\"color: blue;\">&lt;dateOfWeek&gt;</span>"
 		item1.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
 
-		item2.size() == 6
 		item2.get("step-index") == "2"
 		item2.get("step-keyword") == "THEN"
 		item2.get("step-action-word") == "goodbye"

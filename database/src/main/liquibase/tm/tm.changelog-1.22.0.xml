@@ -124,6 +124,10 @@
       <column name="KEYWORD" type="java.sql.Types.VARCHAR(20)" remarks="A keyword test step keyword">
         <constraints nullable="false" />
       </column>
+
+      <!-- SQUASH-1476 - Add DATATABLE column in KEYWORD_TEST_STEP table -->
+      <column name="DATATABLE" type="TEXT" remarks="A keyword test step datatable">
+      </column>
     </createTable>
 
     <createIndex tableName="KEYWORD_TEST_STEP" indexName="idx_fk_keyword_test_step_action_word">

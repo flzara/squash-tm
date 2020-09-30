@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.hibernate.annotations.Type;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
@@ -35,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -66,6 +68,11 @@ public class KeywordTestStep extends TestStep {
 	@NotNull
 	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
+
+	@Lob
+	@Column(name = "DATATABLE")
+	@Type(type = "org.hibernate.type.TextType")
+	private String datatable;
 
 	@Transient
 	private boolean hasTCParam = false;
@@ -215,4 +222,11 @@ public class KeywordTestStep extends TestStep {
 		this.paramValues.add(value);
 	}
 
+	public String getDatatable() {
+		return datatable;
+	}
+
+	public void setDatatable(String datatable) {
+		this.datatable = datatable;
+	}
 }

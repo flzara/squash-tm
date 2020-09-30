@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bdd.Keyword;
@@ -382,6 +383,30 @@ public class TestCaseTestStepsController {
 	public String getActionWordUnstyled(@PathVariable long stepId) {
 		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
 		return keywordTestStep.writeTestStepActionWordScript(true);
+	}
+
+	@RequestMapping(value = "/{stepId}/details", method = RequestMethod.GET)
+	public ModelAndView getKeywordStepDetails(@PathVariable long stepId) {
+
+		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
+
+		ModelAndView mav = new ModelAndView("fragment/test-steps/keyword-step-details");
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(keywordTestStep.getTestCase());
+
+		mav.addObject("datatable", keywordTestStep.getDatatable());
+		mav.addObject("entity-id", stepId);
+		mav.addObject("milestoneConf", milestoneConf);
+		return mav;
+
+	}
+
+	@RequestMapping(value = "/{stepId}/datatable", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepDatatable(@PathVariable long stepId, @RequestParam(VALUE) String datatable) {
+		testCaseModificationService.updateKeywordTestStepDatatable(stepId, datatable);
+		LOGGER.trace("TestCaseModificationController : updated datatable for step {}", stepId);
+		return datatable;
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

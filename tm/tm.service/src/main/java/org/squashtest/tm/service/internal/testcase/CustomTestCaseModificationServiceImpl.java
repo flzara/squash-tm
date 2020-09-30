@@ -478,6 +478,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
+	public void updateKeywordTestStepDatatable(long testStepId, String updatedDatatable) {
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		if (updatedDatatable != null && !updatedDatatable.equals(testStep.getDatatable())) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} datatable to '{}'", testStepId, updatedDatatable);
+			}
+			testStep.setDatatable(updatedDatatable);
+		}
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, String updatedWord) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(testStep.getTestCase().getId());
