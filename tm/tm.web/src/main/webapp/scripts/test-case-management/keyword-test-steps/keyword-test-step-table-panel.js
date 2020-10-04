@@ -128,14 +128,19 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 						var datatable = data['step-datatable'] != null ? data['step-datatable'] : "";
 						jqnew.html(
-							'<td colspan="5">'+
+							'<td colspan="1"></td><td colspan="2">'+
 								'<label>Datatable</label>'+
 								'<span class="step-datatable">'+datatable+'</span>'+
-							'</td>'
+							'</td><td colspan="2"></td>'
 						);
 						if (settings.permissions.isWritable) {
 							var richEditSettings = confman.getJeditableCkeditor();
 							richEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
+							richEditSettings.onsubmit = function(settings, original) {
+								var area = $('textarea', original);
+								data['step-datatable'] = CKEDITOR.instances[area.attr('id')].getData();
+							};
+
 							jqnew.find('.step-datatable').richEditable(richEditSettings).addClass("editable");
 						}
 					}
@@ -244,10 +249,22 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		stepDropHandlerFactory: function(dropUrl) {
 			var self = this;
 			return function stepHandler(dropData) {
+				dropData.newIndex = self.calculateRealNewIndex(dropData.newIndex);
 				$.post(dropUrl, dropData, function() {
 					self.refresh();
 				});
 			};
+		},
+
+		calculateRealNewIndex: function(rowIndex) {
+			var rows = $("#keyword-test-step-table tr");
+			var detailsRowNumber = 0;
+			for (var i = 1 ; i <= rowIndex ; i++) {
+				if ($(rows[i]).attr('role') !== 'row') {
+					detailsRowNumber++;
+				}
+			}
+			return parseInt(rowIndex - detailsRowNumber);
 		},
 
 		refresh: function () {
