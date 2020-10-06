@@ -85,6 +85,21 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 							}
 						});
 
+						this.gitRepositoryUrlEditable = new SimpleJEditable({
+							targetUrl :this.settings.urls.testCaseUrl,
+							componentId : "test-case-git-repository-url",
+							jeditableSettings : {
+								maxlength : 255
+							}
+						});
+
+						this.automatedTestReference = new SimpleJEditable({
+							targetUrl :this.settings.urls.testCaseUrl,
+							componentId : "test-case-automated-test-reference",
+							jeditableSettings : {
+								maxlength : 255
+							}
+						});
 
 						this.statusEditable = new SelectJEditable({
 							target : this.postStatus,

@@ -37,6 +37,7 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,10 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void rename(long testCaseId, String newName);
 
 	void changeReference(long testCaseId, String reference);
+
+	void changeGitRepositoryUrl(long testCaseId, URL gitRepositoryUrl);
+
+	void changeAutomatedTestReference(long testCaseId, String automatedTestReference);
 
 	void changeImportance(long testCaseId, TestCaseImportance importance);
 

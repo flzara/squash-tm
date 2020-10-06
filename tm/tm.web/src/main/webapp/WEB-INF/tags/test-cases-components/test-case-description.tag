@@ -81,6 +81,17 @@
 			<div class="display-table-cell" id="test-case-description">${hu:clean(testCase.description)}</div>
 		</div>
 
+    <div class="display-table-row">
+      <label class="display-table-cell" for="test-case-git-repository-url"><f:message
+        key="test-case.git.repository.url.label"/></label>
+      <div class="display-table-cell" id="test-case-git-repository-url"><c:out value="${ testCase.gitRepositoryUrl }" escapeXml="true"/></div>
+    </div>
+
+    <div class="display-table-row">
+      <label class="display-table-cell" for="test-case-automated-test-reference"><f:message
+        key="test-case.automated.test.reference.label"/></label>
+      <div class="display-table-cell" id="test-case-automated-test-reference"><c:out value="${ testCase.automatedTestReference }" escapeXml="true"/></div>
+    </div>
 
 		<div class="display-table-row">
 			<label for="test-case-status" class="display-table-cell"><f:message

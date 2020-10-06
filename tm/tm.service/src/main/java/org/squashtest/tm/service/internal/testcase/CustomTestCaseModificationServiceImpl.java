@@ -98,6 +98,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestStepActionWordParser;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseAutomatedTestReferenceChangeEvent;
+import org.squashtest.tm.service.internal.testcase.event.TestCaseGitRepositoryUrlChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
@@ -118,6 +120,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -283,6 +286,30 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCase.setReference(reference);
 		eventPublisher.publishEvent(new TestCaseReferenceChangeEvent(testCaseId, reference));
 
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void changeGitRepositoryUrl(long testCaseId, URL gitRepositoryUrl) {
+
+		TestCase testCase = testCaseDao.findById(testCaseId);
+
+		LOGGER.debug("changing test case #{} git repository url from '{}' to '{}' ", testCase.getId(), testCase.getGitRepositoryUrl(), gitRepositoryUrl);
+
+		testCase.setGitRepositoryUrl(gitRepositoryUrl);
+		eventPublisher.publishEvent(new TestCaseGitRepositoryUrlChangeEvent(testCaseId, gitRepositoryUrl));
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void changeAutomatedTestReference(long testCaseId, String automatedTestReference) {
+
+		TestCase testCase = testCaseDao.findById(testCaseId);
+
+		LOGGER.debug("changing test case #{} automated test reference from '{}' to '{}' ", testCase.getId(), testCase.getAutomatedTestReference(), automatedTestReference);
+
+		testCase.setAutomatedTestReference(automatedTestReference);
+		eventPublisher.publishEvent(new TestCaseAutomatedTestReferenceChangeEvent(testCaseId, automatedTestReference));
 	}
 
 	@Override

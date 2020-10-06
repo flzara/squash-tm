@@ -63,6 +63,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -138,6 +139,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	protected InfoListItem type = null;
 
+	@Column(name = "GIT_REPOSITORY_URL")
+	private URL gitRepositoryUrl = null;
+
+	@Column(name = "AUTOMATED_TEST_REFERENCE")
+	private String automatedTestReference = null;
 
 	@NotNull
 	@Enumerated(STRING)
@@ -453,6 +459,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void setType(@NotNull InfoListItem type) {
 		this.type = type;
+	}
+
+	public URL getGitRepositoryUrl() {
+		return gitRepositoryUrl;
+	}
+
+	public void setGitRepositoryUrl(URL gitRepositoryUrl) {
+		this.gitRepositoryUrl = gitRepositoryUrl;
+	}
+
+	public String getAutomatedTestReference() {
+		return automatedTestReference;
+	}
+
+	public void setAutomatedTestReference(String automatedTestReference) {
+		this.automatedTestReference = automatedTestReference;
 	}
 
 	public TestCaseStatus getStatus() {
