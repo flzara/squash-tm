@@ -65,6 +65,11 @@
             style="float: left;">
     	preview
     </button>
+    <button id="show-details-button"
+            class="button" th:text="#{label.ShowDetails}" th:title="#{label.ShowDetails}"
+            style="float: left;margin-left:10px;">
+      show details
+    </button>
     <span class="group" th:if="${isWritable}">
 			<button id="delete-all-steps-button"
               data-icon="ui-icon-trash"

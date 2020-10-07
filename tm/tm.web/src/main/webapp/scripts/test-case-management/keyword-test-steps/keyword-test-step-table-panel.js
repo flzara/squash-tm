@@ -91,7 +91,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 		events: {
 			"click #add-keyword-test-step-btn": "addKeywordTestStepFromButton",
 			"click #delete-all-steps-button": "deleteSelectedTestSteps",
-			"click #preview-generated-script-button": "generateScript"
+			"click #preview-generated-script-button": "generateScript",
+			"click #show-details-button": "initTableDetails"
 		},
 
 		initKeywordTestStepTable: function (settings) {
@@ -124,12 +125,13 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 
 						var data = table.fnGetData(jqold.get(0));
 						var datatable = data['step-datatable'] != null ? data['step-datatable'] : "";
+						var datatableLabel = translator.get('testcase.bdd.step.datatable.label');
 
 						jqnew.html(
 							'<td colspan="1"></td>' +
 							'<td colspan="2">'+
 								'<div class="display-table-row controls control-group">' +
-									'<label class="control-label display-table-cell" style="vertical-align:top;">Datatable</label>'+
+									'<label class="control-label display-table-cell" style="vertical-align:top;">'+datatableLabel+'</label>'+
 									'<span class="display-table-cell step-datatable" style="white-space: pre-line">'+datatable+'</span>'+
 								'</div>' +
 							'</td>' +
@@ -258,7 +260,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 					toggleCell = $row.find('td.toggle-row'),
 					rowModel = table.fnGetData($row);
 
-				if (rowModel['step-datatable'] != null) {
+				if (rowModel['step-datatable'] != null && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
 					$(toggleCell.find('span')[1]).click();
 				}
 			});
@@ -337,8 +339,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 				keyword: keyword,
 				actionWord: actionWord,
 				index: index
-			};
-			return $.ajax({
+			};return $.ajax(
+			{
 				type: 'POST',
 				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step",
 				contentType: 'application/json',
