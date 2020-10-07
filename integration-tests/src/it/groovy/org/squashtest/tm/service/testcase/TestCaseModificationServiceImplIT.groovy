@@ -219,6 +219,30 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		tc.reference == tcNewRef
 	}
 
+	def "should change a test case source code repository URL"() {
+		given:
+		def tcNewSourceCodeRepositoryUrl = new URL("http://test")
+
+		when:
+		service.changeSourceCodeRepositoryUrl(testCaseId, tcNewSourceCodeRepositoryUrl)
+		def tc = service.findById(testCaseId)
+
+		then:
+		tc.sourceCodeRepositoryUrl == tcNewSourceCodeRepositoryUrl
+	}
+
+	def "should change a test case automated test reference"() {
+		given:
+		def tcNewRef = "the new ref"
+
+		when:
+		service.changeAutomatedTestReference(testCaseId, tcNewRef)
+		def tc = service.findById(testCaseId)
+
+		then:
+		tc.automatedTestReference == tcNewRef
+	}
+
 	@DataSet("TestCaseModificationServiceImplIT.should update a test step action.xml")
 	def "should update a test step action "() {
 		given:
