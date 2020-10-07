@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
@@ -49,7 +50,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-action-word", actionWordWithParamValues);
 		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
 		item.put("toggle-step-details", null);
-		item.put("step-datatable", keywordTestStep.getDatatable());
+		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : null);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

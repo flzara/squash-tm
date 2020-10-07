@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator", "squashtable"],
-	function ($, Backbone, _, confman, eventBus, popups, StringUtil, translator) {
+define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator", "squashtable"],
+	function ($, Backbone, _, basic, confman, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
@@ -32,8 +32,11 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
-			this.initTableStyle(this.settings);
+			if (this.settings.permissions.isWritable) {
+				this.initTableStyle(this.settings);
+			}
 			this.initTableDetails();
+			this.basicInit();
 			this.actionWordInput = $('#action-word-input');
 			this.keywordInput = $('#keyword-input');
 
@@ -80,6 +83,11 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			eventBus.onContextual('parameter.name.update', self.refresh);
 		},
 
+		basicInit : function() {
+			basic.init();
+
+		},
+
 		events: {
 			"click #add-keyword-test-step-btn": "addKeywordTestStepFromButton",
 			"click #delete-all-steps-button": "deleteSelectedTestSteps",
@@ -115,33 +123,41 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 					'td.toggle-row': function (table, jqold, jqnew) {
 
 						var data = table.fnGetData(jqold.get(0));
-
-/*						jqnew.load(settings.testCaseUrl + '/steps/' + data['entity-id'] + '/details', function() {
-
-							if (settings.permissions.isWritable) {
-								var richEditSettings = confman.getJeditableCkeditor();
-								richEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
-								jqnew.find('.step-datatable').richEditable(richEditSettings).addClass("editable");
-							}
-
-						});*/
-
 						var datatable = data['step-datatable'] != null ? data['step-datatable'] : "";
+
 						jqnew.html(
-							'<td colspan="1"></td><td colspan="2">'+
-								'<label>Datatable</label>'+
-								'<span class="step-datatable">'+datatable+'</span>'+
-							'</td><td colspan="2"></td>'
+							'<td colspan="1"></td>' +
+							'<td colspan="2">'+
+								'<div class="display-table-row controls control-group">' +
+									'<label class="control-label display-table-cell" style="vertical-align:top;">Datatable</label>'+
+									'<span class="display-table-cell step-datatable" style="white-space: pre-line">'+datatable+'</span>'+
+								'</div>' +
+							'</td>' +
+							'<td colspan="2"></td>'
 						);
+
 						if (settings.permissions.isWritable) {
-							var richEditSettings = confman.getJeditableCkeditor();
-							richEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
-							richEditSettings.onsubmit = function(settings, original) {
+
+							var textEditSettings = confman.getStdJeditable();
+							textEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
+							textEditSettings.type = "textarea";
+							textEditSettings.rows = 10;
+							textEditSettings.cols = 80;
+							textEditSettings.onsubmit = function(settings, original) {
 								var area = $('textarea', original);
-								data['step-datatable'] = CKEDITOR.instances[area.attr('id')].getData();
+								data['step-datatable'] = jqnew.find('.step-datatable').val();
 							};
 
-							jqnew.find('.step-datatable').richEditable(richEditSettings).addClass("editable");
+							jqnew.find('.step-datatable').customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
+							jqnew.find('.step-datatable').on('click', function() {
+								var $area = $(jqnew.find('textarea')[0]);
+								if ($area.val() !== '') {
+									$area.val(StringUtil.unescape($area.val()));
+								} else {
+									var defaultValue = "| param1 | param2 | param3 |\n| value1 | value2 | value3 |";
+									$area.val(defaultValue);
+								}
+							});
 						}
 					}
 				}
@@ -227,8 +243,10 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		// SQUASH-1450
 		initTableStyle: function(settings) {
-			if (settings.permissions.isWritable) {
+			if ($($('.action-word-input-error')[0]).text() === "") {
 				$('.table-tab-wrap').css('margin-top', '25px');
+			} else {
+				$('.table-tab-wrap').css('margin-top', '48px');
 			}
 		},
 
@@ -289,6 +307,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			$(".action-word-input-error").text('');
 			var inputActionWord = this.actionWordInput.val();
 			this.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+			this.initTableStyle();
 		},
 
 		addKeywordTestStep: function (inputActionWord, index) {

@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bdd.Keyword;
@@ -406,7 +407,7 @@ public class TestCaseTestStepsController {
 	public String changeKeywordStepDatatable(@PathVariable long stepId, @RequestParam(VALUE) String datatable) {
 		testCaseModificationService.updateKeywordTestStepDatatable(stepId, datatable);
 		LOGGER.trace("TestCaseModificationController : updated datatable for step {}", stepId);
-		return datatable;
+		return HtmlUtils.htmlEscape(datatable);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
