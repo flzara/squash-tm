@@ -296,8 +296,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		LOGGER.debug("changing test case #{} git repository url from '{}' to '{}' ", testCase.getId(), testCase.getGitRepositoryUrl(), gitRepositoryUrl);
 
-		testCase.setGitRepositoryUrl(gitRepositoryUrl);
-		eventPublisher.publishEvent(new TestCaseGitRepositoryUrlChangeEvent(testCaseId, gitRepositoryUrl));
+		testCase.setSourceCodeRepositoryUrl(sourceCodeRepositoryUrl);
 	}
 
 	@Override
@@ -309,7 +308,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} automated test reference from '{}' to '{}' ", testCase.getId(), testCase.getAutomatedTestReference(), automatedTestReference);
 
 		testCase.setAutomatedTestReference(automatedTestReference);
-		eventPublisher.publishEvent(new TestCaseAutomatedTestReferenceChangeEvent(testCaseId, automatedTestReference));
 	}
 
 	@Override

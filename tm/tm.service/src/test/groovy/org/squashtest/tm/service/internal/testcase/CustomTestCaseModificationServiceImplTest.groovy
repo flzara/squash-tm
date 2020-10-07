@@ -58,8 +58,6 @@ import org.squashtest.tm.service.internal.repository.KeywordTestStepDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
-import org.squashtest.tm.service.internal.testcase.event.TestCaseAutomatedTestReferenceChangeEvent
-import org.squashtest.tm.service.internal.testcase.event.TestCaseGitRepositoryUrlChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
 import org.squashtest.tm.service.testcase.DatasetModificationService
@@ -1219,9 +1217,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setGitRepositoryUrl(new URL("http://test"))
 
 		1 * testCaseDao.findById(10L) >> tc
-		1 * eventPublisher.publishEvent({
-			it instanceof TestCaseGitRepositoryUrlChangeEvent && it.testCaseId == 10L && it.newGitRepositoryUrl == new URL("http://test")
-		})
 	}
 
 	def "should change the automated test reference of a test case"() {
@@ -1238,9 +1233,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setAutomatedTestReference("reref")
 
 		1 * testCaseDao.findById(10L) >> tc
-		1 * eventPublisher.publishEvent({
-			it instanceof TestCaseAutomatedTestReferenceChangeEvent && it.testCaseId == 10L && it.newAutomatedTestReference == "reref"
-		})
 	}
 
 	def "should change the importance of a test case"() {
