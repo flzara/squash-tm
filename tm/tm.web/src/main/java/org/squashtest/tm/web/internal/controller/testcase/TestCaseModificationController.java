@@ -571,18 +571,18 @@ public class TestCaseModificationController {
 		return formatInfoItem(newType, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-git-repository-url", VALUE}, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-source-code-repository-url", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String changeGitRepositoryUrl(@RequestParam(VALUE)String testCaseGitRepositoryUrlAsString, @PathVariable long testCaseId) throws MalformedURLException {
+	public String changeSourceCodeRepositoryUrl(@RequestParam(VALUE)String testCaseSourceCodeRepositoryUrlAsString, @PathVariable long testCaseId) throws MalformedURLException {
 
-		testCaseGitRepositoryUrlAsString = testCaseGitRepositoryUrlAsString.substring(0, Math.min(testCaseGitRepositoryUrlAsString.length(), 255));
-		URL testCaseGitRepositoryUrl = UrlUtils.toUrl(testCaseGitRepositoryUrlAsString);
-		testCaseModificationService.changeGitRepositoryUrl(testCaseId, testCaseGitRepositoryUrl);
+		testCaseSourceCodeRepositoryUrlAsString = testCaseSourceCodeRepositoryUrlAsString.substring(0, Math.min(testCaseSourceCodeRepositoryUrlAsString.length(), 255));
+		URL testCaseSourceCodeRepositoryUrl = UrlUtils.toUrl(testCaseSourceCodeRepositoryUrlAsString);
+		testCaseModificationService.changeSourceCodeRepositoryUrl(testCaseId, testCaseSourceCodeRepositoryUrl);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated git repository url to " + testCaseGitRepositoryUrl);
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated git repository url to " + testCaseSourceCodeRepositoryUrl);
 		}
 
-		return HtmlUtils.htmlEscape(testCaseGitRepositoryUrl.toString());
+		return HtmlUtils.htmlEscape(testCaseSourceCodeRepositoryUrlAsString);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automated-test-reference", VALUE}, produces = "text/plain;charset=UTF-8")

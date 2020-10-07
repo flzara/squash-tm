@@ -60,7 +60,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void changeReference(long testCaseId, String reference);
 
-	void changeGitRepositoryUrl(long testCaseId, URL gitRepositoryUrl);
+	void changeSourceCodeRepositoryUrl(long testCaseId, URL sourceCodeRepositoryUrl);
 
 	void changeAutomatedTestReference(long testCaseId, String automatedTestReference);
 

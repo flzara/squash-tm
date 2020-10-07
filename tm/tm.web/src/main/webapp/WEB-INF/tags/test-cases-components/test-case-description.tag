@@ -82,9 +82,9 @@
 		</div>
 
     <div class="display-table-row">
-      <label class="display-table-cell" for="test-case-git-repository-url"><f:message
-        key="test-case.git.repository.url.label"/></label>
-      <div class="display-table-cell" id="test-case-git-repository-url"><c:out value="${ testCase.gitRepositoryUrl }" escapeXml="true"/></div>
+      <label class="display-table-cell" for="test-case-source-code-repository-url"><f:message
+        key="test-case.source.code.repository.url.label"/></label>
+      <div class="display-table-cell" id="test-case-source-code-repository-url"><c:out value="${ testCase.sourceCodeRepositoryUrl }" escapeXml="true"/></div>
     </div>
 
     <div class="display-table-row">

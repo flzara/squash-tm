@@ -98,8 +98,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.testcase.bdd.KeywordTestStepActionWordParser;
-import org.squashtest.tm.service.internal.testcase.event.TestCaseAutomatedTestReferenceChangeEvent;
-import org.squashtest.tm.service.internal.testcase.event.TestCaseGitRepositoryUrlChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
@@ -290,11 +288,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeGitRepositoryUrl(long testCaseId, URL gitRepositoryUrl) {
+	public void changeSourceCodeRepositoryUrl(long testCaseId, URL sourceCodeRepositoryUrl) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		LOGGER.debug("changing test case #{} git repository url from '{}' to '{}' ", testCase.getId(), testCase.getGitRepositoryUrl(), gitRepositoryUrl);
+		LOGGER.debug("changing test case #{} git repository url from '{}' to '{}' ", testCase.getId(), testCase.getSourceCodeRepositoryUrl(), sourceCodeRepositoryUrl);
 
 		testCase.setSourceCodeRepositoryUrl(sourceCodeRepositoryUrl);
 	}

@@ -1211,10 +1211,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		when:
-		service.changeGitRepositoryUrl(10L, new URL("http://test"))
+		service.changeSourceCodeRepositoryUrl(10L, new URL("http://test"))
 
 		then:
-		1 * tc.setGitRepositoryUrl(new URL("http://test"))
+		1 * tc.setSourceCodeRepositoryUrl(new URL("http://test"))
 
 		1 * testCaseDao.findById(10L) >> tc
 	}

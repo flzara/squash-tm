@@ -139,8 +139,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	protected InfoListItem type = null;
 
-	@Column(name = "GIT_REPOSITORY_URL")
-	private URL gitRepositoryUrl = null;
+	@Column(name = "SOURCE_CODE_REPOSITORY_URL")
+	private URL sourceCodeRepositoryUrl = null;
 
 	@Column(name = "AUTOMATED_TEST_REFERENCE")
 	private String automatedTestReference = null;
@@ -461,12 +461,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.type = type;
 	}
 
-	public URL getGitRepositoryUrl() {
-		return gitRepositoryUrl;
+	public URL getSourceCodeRepositoryUrl() {
+		return sourceCodeRepositoryUrl;
 	}
 
-	public void setGitRepositoryUrl(URL gitRepositoryUrl) {
-		this.gitRepositoryUrl = gitRepositoryUrl;
+	public void setSourceCodeRepositoryUrl(URL sourceCodeRepositoryUrl) {
+		this.sourceCodeRepositoryUrl = sourceCodeRepositoryUrl;
 	}
 
 	public String getAutomatedTestReference() {

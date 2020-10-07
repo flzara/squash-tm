@@ -1223,9 +1223,9 @@
     </sql>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-1466-test-case-git-repository-url" author="akatz">
+  <changeSet id="tm-1.22.0-SQUASH-1466-test-case-source-code-repository-url" author="akatz">
     <addColumn tableName="TEST_CASE">
-      <column name="GIT_REPOSITORY_URL" type="VARCHAR(255)" remarks="The url of the git repository where the test lies">
+      <column name="SOURCE_CODE_REPOSITORY_URL" type="VARCHAR(255)" remarks="The url of the source code repository where the test lies">
         <constraints nullable="true" />
       </column>
       <column name="AUTOMATED_TEST_REFERENCE" type="VARCHAR(255)" remarks="The path to the test">
