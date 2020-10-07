@@ -151,5 +151,56 @@ define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable",
 		}
 	});
 
+	$.widget('squash.customTextEditable', {
+
+		options : confman.getStdJeditable(),
+
+		_init : function(){
+			var defoptions = this.options;
+
+			this.element.each(function(){
+				var $this = $(this);
+
+				// configure
+				var stropt = $this.data('def');
+				var options = (!! stropt) ? attrparser.parse(stropt) : {};
+				var inbetweenoptions = {};
+				if ($this.hasClass("large")) {
+					inbetweenoptions.width = "100%";
+				}
+
+				var finaloptions = $.extend(true, inbetweenoptions, defoptions, options);
+
+				finaloptions.onerror =  function(settings, self, xhr){
+					var spanError = $("<span/>" ,{
+						'class':'error-message'
+					});
+					self.reset();
+					self.click();
+					$(self).append(spanError);
+					xhr.label = spanError;
+					$(spanError).on("mouseover",function(){ spanError.fadeOut('slow').remove(); });
+				};
+
+				// enhance the callback if needed
+				if (finaloptions.callback !== undefined){
+					var oldc = finaloptions.callback;
+					finaloptions.callback = function(value, settings){
+						var fixedvalue = $("<span/>").html(value).text();
+						// sometimes the callback can be passed as string representing,
+						// the function name.
+						// we must then look for this function.
+						var call = (typeof oldc === "string") ? window[oldc] : oldc;
+						window[oldc](fixedvalue, settings);
+					};
+				}
+
+				// invoke
+				$this.editable(finaloptions.url, finaloptions);
+
+			});
+		}
+	});
+
 });
 
