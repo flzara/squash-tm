@@ -66,11 +66,10 @@
     	preview
     </button>
     <button id="show-details-button"
-            class="button" th:text="#{label.ShowDetails}" th:title="#{label.ShowDetails}"
-            style="float: left;margin-left:10px;">
+            class="button" th:text="#{label.ShowDetails}" th:title="#{label.ShowDetails}">
       show details
     </button>
-    <span class="group" th:if="${isWritable}">
+    <span th:if="${isWritable}">
 			<button id="delete-all-steps-button"
               data-icon="ui-icon-trash"
               class="button"

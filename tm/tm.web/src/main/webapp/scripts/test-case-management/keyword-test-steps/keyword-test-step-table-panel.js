@@ -128,8 +128,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 						var datatableLabel = translator.get('testcase.bdd.step.datatable.label');
 
 						jqnew.html(
-							'<td colspan="1"></td>' +
-							'<td colspan="2">'+
+							'<td colspan="2"></td>' +
+							'<td colspan="1">'+
 								'<div class="display-table-row controls control-group">' +
 									'<label class="control-label display-table-cell" style="vertical-align:top;">'+datatableLabel+'</label>'+
 									'<span class="display-table-cell step-datatable" style="white-space: pre-line">'+datatable+'</span>'+
@@ -147,19 +147,21 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 							textEditSettings.cols = 80;
 							textEditSettings.onsubmit = function(settings, original) {
 								var area = $('textarea', original);
-								data['step-datatable'] = jqnew.find('.step-datatable').val();
+								data['step-datatable'] = $(jqnew.find('textarea')[0]).val();
 							};
 
 							jqnew.find('.step-datatable').customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
-							jqnew.find('.step-datatable').on('click', function() {
-								var $area = $(jqnew.find('textarea')[0]);
-								if ($area.val() !== '') {
-									$area.val(StringUtil.unescape($area.val()));
-								} else {
-									var defaultValue = "| param1 | param2 | param3 |\n| value1 | value2 | value3 |";
-									$area.val(defaultValue);
-								}
-							});
+							if (! jqnew.find('.step-datatable').hasClass("editable")) {
+								jqnew.find('span.step-datatable').on('click', function() {
+									var $area = $(jqnew.find('textarea')[0]);
+									if ($area.val() !== '') {
+										$area.val(StringUtil.unescape($area.val()));
+									} else {
+										var defaultValue = "| param1 | param2 | param3 |\n| value1 | value2 | value3 |";
+										$area.val(defaultValue);
+									}
+								});
+							}
 						}
 					}
 				}
