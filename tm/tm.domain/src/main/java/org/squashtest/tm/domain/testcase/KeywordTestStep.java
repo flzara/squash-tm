@@ -95,6 +95,7 @@ public class KeywordTestStep extends TestStep {
 	public TestStep createCopy() {
 		KeywordTestStep copied = new KeywordTestStep(this.getKeyword(), this.getActionWord());
 		copyTestStepParamValues(copied);
+		copyTestStepDetails(copied);
 		return copied;
 	}
 
@@ -105,6 +106,10 @@ public class KeywordTestStep extends TestStep {
 			newValue.setKeywordTestStep(copied);
 			copied.addParamValues(newValue);
 		}
+	}
+
+	private void copyTestStepDetails(KeywordTestStep copied) {
+		copied.setDatatable(this.getDatatable());
 	}
 
 	@Override
