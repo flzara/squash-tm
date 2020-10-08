@@ -139,9 +139,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	protected InfoListItem type = null;
 
+	/**
+	 * Used by Squash TF 2 to know where to find automated test case source code repository
+	 */
 	@Column(name = "SOURCE_CODE_REPOSITORY_URL")
 	private URL sourceCodeRepositoryUrl = null;
 
+	/**
+	 * Used by Squash TF 2 to know where to find the automated test in automation project
+	 */
 	@Column(name = "AUTOMATED_TEST_REFERENCE")
 	private String automatedTestReference = null;
 
@@ -544,7 +550,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @return
 	 */
 	protected boolean isActuallyAutomated() {
-		return getProject().isTestAutomationEnabled() && automatedTest != null;
+		return (getProject().isTestAutomationEnabled() && automatedTest != null)
+			|| (sourceCodeRepositoryUrl != null && !StringUtils.isBlank(sourceCodeRepositoryUrl.toString()) && !StringUtils.isBlank(automatedTestReference));
 	}
 
 	// ***************** (detached) custom field section *************
