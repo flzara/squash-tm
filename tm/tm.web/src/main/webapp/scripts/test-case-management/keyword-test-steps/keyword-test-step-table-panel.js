@@ -151,17 +151,17 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 							};
 
 							jqnew.find('.step-datatable').customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
-							if (! jqnew.find('.step-datatable').hasClass("editable")) {
-								jqnew.find('span.step-datatable').on('click', function() {
-									var $area = $(jqnew.find('textarea')[0]);
-									if ($area.val() !== '') {
-										$area.val(StringUtil.unescape($area.val()));
-									} else {
-										var defaultValue = "| param1 | param2 | param3 |\n| value1 | value2 | value3 |";
+							jqnew.find('.step-datatable').on('click', function() {
+								var $area = $(jqnew.find('textarea')[0]);
+								if ($area.val() !== '') {
+									$area.val(StringUtil.unescape($area.val()));
+								} else {
+									if (data['step-datatable'] == null || data['step-datatable'] === '') {
+										var defaultValue = translator.get('testcase.bdd.step.datatable.default-value');
 										$area.val(defaultValue);
 									}
-								});
-							}
+								}
+							});
 						}
 					}
 				}
@@ -262,7 +262,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 					toggleCell = $row.find('td.toggle-row'),
 					rowModel = table.fnGetData($row);
 
-				if (rowModel['step-datatable'] != null && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
+				if (rowModel['step-datatable'] != null && rowModel['step-datatable'] !== '' && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
 					$(toggleCell.find('span')[1]).click();
 				}
 			});
