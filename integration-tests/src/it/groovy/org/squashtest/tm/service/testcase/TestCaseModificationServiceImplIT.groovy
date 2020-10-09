@@ -221,7 +221,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 	def "should change a test case source code repository URL"() {
 		given:
-		def tcNewSourceCodeRepositoryUrl = new URL("http://test")
+		def tcNewSourceCodeRepositoryUrl ="http://test"
 
 		when:
 		service.changeSourceCodeRepositoryUrl(testCaseId, tcNewSourceCodeRepositoryUrl)

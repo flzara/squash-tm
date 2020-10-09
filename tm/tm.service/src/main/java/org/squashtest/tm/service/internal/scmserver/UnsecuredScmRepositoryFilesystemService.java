@@ -478,7 +478,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		String automatedTestReference = String.format("%s/%s", manifest.getScm().getWorkingFolderPath(), manifest.getRelativePath(testCaseFile));
 
 		testCaseModificationService.changeAutomatedTestReference(testCase.getId(), PathUtils.cleanMultipleSlashes(automatedTestReference));
-		testCaseModificationService.changeSourceCodeRepositoryUrl(testCase.getId(), UrlUtils.toUrl(sourceCodeRepositoryUrl));
+		testCaseModificationService.changeSourceCodeRepositoryUrl(testCase.getId(), sourceCodeRepositoryUrl);
 
 	}
 

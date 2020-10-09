@@ -161,7 +161,8 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 
 			var tableId = table.attr("id");
 			$(tableId + "_filter").hide();
-			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script,.assigned-script, .tp-th-uuid, .tp-th-conflictAssociation')
+			table.find('.tp-th-project-name,.tp-th-id,.tp-th-reference,.tp-th-label,.tp-th-priority,.tp-th-script,.assigned-script, ' +
+				'.tp-th-uuid, .tp-th-conflictAssociation, .scm-url, .automated-test-reference')
 				.append("<input class='th_input filter_input'/>");
 
 			$('.tp-th-label .th_input').css('width', '90%');

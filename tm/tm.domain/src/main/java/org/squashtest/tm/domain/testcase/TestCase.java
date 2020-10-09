@@ -143,7 +143,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * Used by Squash TF 2 to know where to find automated test case source code repository
 	 */
 	@Column(name = "SOURCE_CODE_REPOSITORY_URL")
-	private URL sourceCodeRepositoryUrl = null;
+	@org.hibernate.validator.constraints.URL
+	private String sourceCodeRepositoryUrl = null;
 
 	/**
 	 * Used by Squash TF 2 to know where to find the automated test in automation project
@@ -467,11 +468,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.type = type;
 	}
 
-	public URL getSourceCodeRepositoryUrl() {
+	public String getSourceCodeRepositoryUrl() {
 		return sourceCodeRepositoryUrl;
 	}
 
-	public void setSourceCodeRepositoryUrl(URL sourceCodeRepositoryUrl) {
+	public void setSourceCodeRepositoryUrl(String sourceCodeRepositoryUrl) {
 		this.sourceCodeRepositoryUrl = sourceCodeRepositoryUrl;
 	}
 
@@ -551,7 +552,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	protected boolean isActuallyAutomated() {
 		return (getProject().isTestAutomationEnabled() && automatedTest != null)
-			|| (sourceCodeRepositoryUrl != null && !StringUtils.isBlank(sourceCodeRepositoryUrl.toString()) && !StringUtils.isBlank(automatedTestReference));
+			|| (sourceCodeRepositoryUrl != null && !StringUtils.isBlank(sourceCodeRepositoryUrl) && !StringUtils.isBlank(automatedTestReference));
 	}
 
 	// ***************** (detached) custom field section *************

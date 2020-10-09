@@ -288,7 +288,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeSourceCodeRepositoryUrl(long testCaseId, URL sourceCodeRepositoryUrl) {
+	public void changeSourceCodeRepositoryUrl(long testCaseId, String sourceCodeRepositoryUrl) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 

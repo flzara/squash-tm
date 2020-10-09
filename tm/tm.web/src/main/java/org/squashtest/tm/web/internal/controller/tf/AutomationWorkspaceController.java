@@ -99,7 +99,9 @@ public class AutomationWorkspaceController {
 		.map("requestId", "id")
 		.map("assigned-to", "assignedTo.login")
 	    .map("uuid", "testCase.uuid")
-		.map("listScriptConflict", "testCase.automationRequest.conflictAssociation");
+		.map("listScriptConflict", "testCase.automationRequest.conflictAssociation")
+		.map("scm-url", "testCase.sourceCodeRepositoryUrl")
+		.map("automated-test-reference", "testCase.automatedTestReference");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
