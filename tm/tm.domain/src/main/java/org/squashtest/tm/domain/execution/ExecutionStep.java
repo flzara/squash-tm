@@ -189,6 +189,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	public ExecutionStep(KeywordTestStep keywordTestStep) {
 		this.action = keywordTestStep.getKeyword().toString() + " " + keywordTestStep.getActionWord().createWord();
+		addKeywordStepDetails(keywordTestStep);
 		referencedTestStep = keywordTestStep;
 	}
 
@@ -397,6 +398,15 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 			this.action = internationalizedKeyword + " " + replacedParamValueWord;
 		} else {
 			this.action = keyword.getLabel() + " " + replacedParamValueWord;
+		}
+		addKeywordStepDetails(keywordStep);
+	}
+
+	private void addKeywordStepDetails(KeywordTestStep keywordStep) {
+		if (keywordStep.getDatatable() != null) {
+			String details = "<br/>" +
+				keywordStep.getDatatable().replaceAll("\n", "<br/>");
+			this.action += details;
 		}
 	}
 
