@@ -30,7 +30,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;

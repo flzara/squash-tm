@@ -37,7 +37,6 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 import javax.validation.constraints.NotNull;
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
