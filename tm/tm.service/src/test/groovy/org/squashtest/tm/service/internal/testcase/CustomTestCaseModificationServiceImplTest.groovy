@@ -1377,6 +1377,23 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * step.setKeyword(THEN)
 	}
 
+	def "should update the datatable of a keyword step"() {
+		given:
+		def step = Mock(KeywordTestStep)
+		step.datatable >> ""
+
+		and:
+		def updatedDatatable = """| product | price |
+| Expresso | 0.40 |"""
+
+		when:
+		service.updateKeywordTestStepDatatable(10L, updatedDatatable)
+
+		then:
+		1 * keywordTestStepDao.findById(10L) >> step
+		1 * step.setDatatable(updatedDatatable)
+	}
+
 	def "should update the action word of a keyword step with same token but new parameter values"() {
 		given:
 		def actionWord = Mock(ActionWord) {
