@@ -144,7 +144,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#removeAllByTestCaseIds(List)
 	 */
 	@Override
-	@CheckLockedMilestones(entityType = TestCase.class)
 	public void removeAllByTestCaseIds(@Ids List<Long> testCaseIds) {
 		// note : hibernate bulk delete don't care of cascade delete so we have to remove the values by ourselves
 		this.parameterDao.removeAllValuesByTestCaseIds(testCaseIds);
