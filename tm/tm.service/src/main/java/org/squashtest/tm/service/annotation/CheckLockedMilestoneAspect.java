@@ -80,6 +80,9 @@ public class CheckLockedMilestoneAspect {
 			case "Parameter":
 				isEntityBoundToLockedMilestone = milestoneDao.isParameterBoundToLockedMilestone(id);
 				break;
+			case "Dataset":
+				isEntityBoundToLockedMilestone = milestoneDao.isDatasetBoundToLockedMilestone(id);
+				break;
 			default:
 				throw new UnsupportedOperationException("Cannot check locked milestones for entity type " + entityType.getSimpleName());
 		}

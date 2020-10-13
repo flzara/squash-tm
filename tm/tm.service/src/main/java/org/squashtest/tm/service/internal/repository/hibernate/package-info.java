@@ -1103,6 +1103,27 @@
 				"inner join rvc.verifiedRequirementVersion rv " +
 				"inner join rv.milestones indirectMilestone " +
 				"where p.id = :paramId " +
+				"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForDataset",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directMilestone.id " +
+				"from Dataset ds " +
+				"inner join ds.testCase tc " +
+				"inner join tc.milestones directMilestone " +
+				"where ds.id = :datasetId " +
+				"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectMilestone.id " +
+				"from Dataset ds " +
+				"inner join ds.testCase tc " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectMilestone " +
+				"where ds.id = :datasetId " +
 				"and indirectMilestone.status in (:statuses))")
 
 })

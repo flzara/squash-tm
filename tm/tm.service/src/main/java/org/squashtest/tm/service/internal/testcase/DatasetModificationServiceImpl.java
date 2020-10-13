@@ -103,7 +103,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 
 	@Override
-	public void removeById(long datasetId) {
+	@CheckLockedMilestone(entityType = Dataset.class)
+	public void removeById(@Id long datasetId) {
 		Optional<Dataset> optDatadataset = this.datasetDao.findById(datasetId);
 		if (optDatadataset.isPresent()){
 			remove(optDatadataset.get());
@@ -119,7 +120,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void changeName(long datasetId, String newName) {
+	@CheckLockedMilestone(entityType = Dataset.class)
+	public void changeName(@Id long datasetId, String newName) {
 
 		Dataset dataset = datasetDao.getOne(datasetId);
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(dataset.getTestCase().getId(), dataset.getName());
