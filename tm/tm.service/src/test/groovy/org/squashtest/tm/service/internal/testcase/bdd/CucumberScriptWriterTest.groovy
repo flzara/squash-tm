@@ -84,6 +84,70 @@ Feature: Disconnection test
 		Then I am dîsconnect&d"""
 	}
 
+	def "Should generate a Gherkin script with test steps containing datatables from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("User list test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("the following tabs are displayed"))
+		step1.setDatatable(
+"""| tabName |
+| users |
+| teams |"""
+		)
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("the following users are listed"))
+		step2.setDatatable(
+"""| username | mail |
+| martin4 | martin4@gmail.com |
+| damien2 | damien2@gmail.com |"""
+		)
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		when:
+		4 * messageSource.getMessage(*_) >>> ["Then", "Then", "Scenario: ", "Feature: "]
+		String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+		then:
+		result ==
+			"""# language: en
+Feature: User list test
+
+	Scenario: User list test
+		Then the following tabs are displayed
+			| tabName |
+			| users |
+			| teams |
+		Then the following users are listed
+			| username | mail |
+			| martin4 | martin4@gmail.com |
+			| damien2 | damien2@gmail.com |"""
+	}
+
+	def "Should generate a Gherkin script with test steps containing null and empty datatables from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("User list test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("the following tabs are displayed"))
+		step1.setDatatable("")
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("the following users are listed"))
+		step2.setDatatable(null)
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		when:
+		4 * messageSource.getMessage(*_) >>> ["Then", "Then", "Scenario: ", "Feature: "]
+		String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+		then:
+		result ==
+			"""# language: en
+Feature: User list test
+
+	Scenario: User list test
+		Then the following tabs are displayed
+		Then the following users are listed"""
+	}
+
 	def "Should generate a Gherkin script with test steps containing parameter value as free text from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
