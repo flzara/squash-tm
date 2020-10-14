@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
@@ -431,8 +432,12 @@ public class CampaignLibraryNavigationController extends
 	@ResponseBody
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
 	public List<JsTreeNode> getLinkablesRootModel() {
-		List<Long> linkableCampaigntLibraryIds = campaignLibraryFinderService.findLinkableCampaignLibraries().stream()
-			.map(CampaignLibrary::getId).collect(Collectors.toList());
+		List<Long> linkableCampaigntLibraryIds =
+			campaignLibraryFinderService.
+				findLinkableCampaignLibraries().stream()
+				.map(CampaignLibrary::getProject)
+				.map(GenericProject::getId)
+				.collect(Collectors.toList());
 		return createLinkableLibrariesModel(linkableCampaigntLibraryIds);
 	}
 
