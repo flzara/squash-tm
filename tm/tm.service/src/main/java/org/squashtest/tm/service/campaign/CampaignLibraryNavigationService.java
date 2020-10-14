@@ -119,13 +119,6 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	List<TestSuite> findIterationContent(long iterationId);
 
 	/**
-	 * @param
-	 * @return
-	 */
-	@Override
-	List<CampaignLibrary> findLinkableCampaignLibraries();
-
-	/**
 	 * that method should investigate the consequences of the deletion request of iterations, and return a report about
 	 * what will happen.
 	 *
