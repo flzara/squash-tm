@@ -574,6 +574,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
+					getSelectedTcIdsWithNoTF2FieldsFilled: function (table) {
+						var selectedRows = table.getSelectedRows();
+						var datas = table.fnGetData();
+						var ids = [];
+						$(selectedRows).each(function (index, data) {
+							var idx = data._DT_RowIndex;
+							var tcId = datas[idx]["entity-id"];
+							var scmUrl = datas[idx]["scm-url"];
+							var automatedTestReference = datas[idx]["automated-test-reference"];
+							if(scmUrl === "" || automatedTestReference === ""){
+								ids.push(tcId);
+							}
+						});
+						return ids;
+					},
+
             checkScriptAutoIsAbsent: function (table) {
                 var count = 0;
                 var selectedRows = table.getSelectedRows();
@@ -678,14 +694,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-											self.trySquashTAScriptAssociation(tcIds).done(function(map){
-												if(Object.keys(map).length === 0){
-													self.updateStatus(domtable, "AUTOMATED");
-												} else {
-													domtable.refresh();
-													notification.showWarning(translator.get("automation.notification.script.none"));
-												}
-											});
+                    	var eligibleTcIdsToScriptAssociation = self.getSelectedTcIdsWithNoTF2FieldsFilled(domtable);
+                    	if(eligibleTcIdsToScriptAssociation.length === 0){
+												self.updateStatus(domtable, "AUTOMATED");
+											} else {
+												self.trySquashTAScriptAssociation(eligibleTcIdsToScriptAssociation).done(function(map){
+													if(Object.keys(map).length === 0){
+														self.updateStatus(domtable, "AUTOMATED");
+													} else {
+														domtable.refresh();
+														notification.showWarning(translator.get("automation.notification.script.none"));
+													}
+												});
+											}
 										}
                 });
 
