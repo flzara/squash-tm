@@ -82,4 +82,19 @@ class MilestoneDaoIT extends DbunitDaoSpecification {
 		milestoneDao.isDatasetBoundToLockedMilestone(-3L)
 	}
 
+	def "isDatasetParamValueBoundToLockedMilestone(long) - Should not find any milestone blocking the dataset parameter value modification"() {
+		expect:
+		!milestoneDao.isDatasetParamValueBoundToLockedMilestone(-1L)
+	}
+	/* The DatasetParamValue belongs to a TestCase bound to a Planned|Locked Milestone */
+	def "isDatasetParamValueBoundToLockedMilestone(long) - Should find a locked milestone directly blocking the dataset parameter value modification"() {
+		expect:
+		milestoneDao.isDatasetParamValueBoundToLockedMilestone(-2L)
+	}
+	/* The DatasetParamValue belongs to a TestCase verifying a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isDatasetParamValueBoundToLockedMilestone(long) - Should find a locked milestone indirectly blocking the dataset parameter value modification"() {
+		expect:
+		milestoneDao.isDatasetParamValueBoundToLockedMilestone(-3L)
+	}
+
 }

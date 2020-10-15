@@ -54,6 +54,7 @@
   <TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-1" STEP_ORDER="0" />
   <PARAMETER PARAM_ID="-1" NAME="free_parameter" TEST_CASE_ID="-1" DESCRIPTION="a free parameter"/>
   <DATASET DATASET_ID="-1" TEST_CASE_ID="-1" NAME="free_dataset"/>
+  <DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-1" DATASET_ID="-1" PARAM_ID="-1" PARAM_VALUE="a free dataset parameter value"/>
 
   <MILESTONE_TEST_CASE MILESTONE_ID="-2" TEST_CASE_ID="-1" />
   <MILESTONE_TEST_CASE MILESTONE_ID="-3" TEST_CASE_ID="-1" />
@@ -66,6 +67,7 @@
   <TEST_CASE_STEPS TEST_CASE_ID="-2" STEP_ID="-2" STEP_ORDER="0" />
   <PARAMETER PARAM_ID="-2" NAME="directly_locked_parameter" TEST_CASE_ID="-2" DESCRIPTION="a directly locked parameter"/>
   <DATASET DATASET_ID="-2" TEST_CASE_ID="-2" NAME="directly_locked_dataset"/>
+  <DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-2" DATASET_ID="-2" PARAM_ID="-2" PARAM_VALUE="a directly locked dataset parameter value"/>
 
   <MILESTONE_TEST_CASE MILESTONE_ID="-1" TEST_CASE_ID="-2" />
   <MILESTONE_TEST_CASE MILESTONE_ID="-2" TEST_CASE_ID="-2" />
@@ -90,8 +92,9 @@
   <TEST_CASE TCLN_ID="-3" VERSION="1" PREREQUISITE="" UUID="3a1b2c3d4e5" />
   <TEST_STEP TEST_STEP_ID="-3" />
   <TEST_CASE_STEPS TEST_CASE_ID="-3" STEP_ID="-3" STEP_ORDER="0" />
-  <PARAMETER PARAM_ID="-3" NAME="indirectly_locked_parameter" TEST_CASE_ID="-3" DESCRIPTION="a indirectly locked parameter"/>
+  <PARAMETER PARAM_ID="-3" NAME="indirectly_locked_parameter" TEST_CASE_ID="-3" DESCRIPTION="an indirectly locked parameter"/>
   <DATASET DATASET_ID="-3" TEST_CASE_ID="-3" NAME="indirectly_locked_dataset"/>
+  <DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="-3" DATASET_ID="-3" PARAM_ID="-3" PARAM_VALUE="an indirectly locked dataset parameter value"/>
 
   <REQUIREMENT_VERSION_COVERAGE VERIFIED_REQ_VERSION_ID="-1" VERIFYING_TEST_CASE_ID="-3" />
 

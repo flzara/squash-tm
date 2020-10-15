@@ -28,7 +28,7 @@ import java.util.List;
 
 public interface CustomMilestoneDao {
 
-	interface HolderConsumer {
+    interface HolderConsumer {
 		void consume(MilestoneHolder holder);
 	}
 
@@ -109,4 +109,6 @@ public interface CustomMilestoneDao {
 	boolean isParameterBoundToLockedMilestone(long paramId);
 
 	boolean isDatasetBoundToLockedMilestone(long datasetId);
+
+	boolean isDatasetParamValueBoundToLockedMilestone(long datasetParamValueId);
 }

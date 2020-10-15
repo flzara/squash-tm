@@ -51,6 +51,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.squashtest.tm.domain.milestone.MilestoneStatus.LOCKED;
+import static org.squashtest.tm.domain.milestone.MilestoneStatus.PLANNED;
+import static org.squashtest.tm.domain.milestone.MilestoneStatus.getAllStatusAllowingObjectBind;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_CLASS;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_OBJECT_IDENTITY;
 import static org.squashtest.tm.jooq.domain.Tables.ACL_RESPONSIBILITY_SCOPE_ENTRY;
@@ -72,6 +75,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	private static final String TESTCASE_ID= "testCaseId";
 	private static final String ABOUT_TO_FETCH_ENTITIES = "About to fetch entities {}" ;
 	private static final String FETCHING_BOUND_ENTITIES = "Fetching bound entities with query named {}" ;
+	private static final List<MilestoneStatus> MILESTONE_LOCKING_STATUSES = Arrays.asList(PLANNED, LOCKED);
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -85,7 +89,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId) {
 		Query query = entityManager.createNamedQuery("milestone.findAssociableMilestonesForTestCase");
 		query.setParameter(TESTCASE_ID, testCaseId);
-		query.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
+		query.setParameter(VALID_STATUS, getAllStatusAllowingObjectBind());
 		return query.getResultList();
 	}
 
@@ -145,19 +149,19 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	 */
 	@Override
 	public boolean isTestCaseMilestoneDeletable(long testCaseId) {
-		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
+		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, PLANNED, LOCKED);
 	}
 
 	@Override
 	public boolean isTestCaseMilestoneModifiable(long testCaseId) {
-		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
+		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, PLANNED, LOCKED);
 	}
 
 	@Override
 	public boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds) {
 		Query query = entityManager.createNamedQuery("testCase.findTestCasesWithMilestonesHavingStatuses");
 		query.setParameter("testCaseIds", testCaseIds);
-		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
 		return !query.getResultList().isEmpty();
 	}
 
@@ -174,7 +178,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId) {
 		Query q = entityManager.createNamedQuery("milestone.findAssociableMilestonesForRequirementVersion");
 		q.setParameter(VERSION_ID, versionId);
-		q.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
+		q.setParameter(VALID_STATUS, getAllStatusAllowingObjectBind());
 		return q.getResultList();
 	}
 
@@ -182,7 +186,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId) {
 		Query q = entityManager.createNamedQuery("milestone.findAssociableMilestonesForCampaign");
-		q.setParameter(VALID_STATUS, MilestoneStatus.getAllStatusAllowingObjectBind());
+		q.setParameter(VALID_STATUS, getAllStatusAllowingObjectBind());
 		q.setParameter(CAMPAIGN_ID, campaignId);
 		return q.getResultList();
 	}
@@ -454,7 +458,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public boolean isTestStepBoundToLockedMilestone(long testStepId) {
 		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForTestStep");
 		query.setParameter("stepId", testStepId);
-		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
 		return !query.getResultList().isEmpty();
 	}
 
@@ -462,7 +466,7 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public boolean isParameterBoundToLockedMilestone(long paramId) {
 		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForParameter");
 		query.setParameter("paramId", paramId);
-		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
 		return !query.getResultList().isEmpty();
 	}
 
@@ -470,7 +474,15 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 	public boolean isDatasetBoundToLockedMilestone(long datasetId) {
 		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForDataset");
 		query.setParameter("datasetId", datasetId);
-		query.setParameter("statuses", Arrays.asList(MilestoneStatus.PLANNED, MilestoneStatus.LOCKED));
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
+
+	@Override
+	public boolean isDatasetParamValueBoundToLockedMilestone(long datasetParamValueId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForDatasetParamValue");
+		query.setParameter("datasetParamValueId", datasetParamValueId);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
 		return !query.getResultList().isEmpty();
 	}
 }

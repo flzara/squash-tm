@@ -133,7 +133,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void changeParamValue(long datasetParamValueId, String value) {
+	@CheckLockedMilestone(entityType = DatasetParamValue.class)
+	public void changeParamValue(@Id long datasetParamValueId, String value) {
 		DatasetParamValue paramValue = datasetParamValueDao.getOne(datasetParamValueId);
 		paramValue.setParamValue(value);
 	}
