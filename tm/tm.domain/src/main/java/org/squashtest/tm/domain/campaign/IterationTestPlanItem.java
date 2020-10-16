@@ -307,7 +307,17 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		execution.setAutomatedExecutionExtender(extender);
 
 		return execution;
+	}
 
+	public Execution createAutomatedExecutionTF2() {
+		Execution execution = createExecution(null, null);
+
+		AutomatedExecutionExtender extender = new AutomatedExecutionExtender();
+		extender.setAutomatedTest(referencedTestCase.getAutomatedTest());
+		extender.setExecution(execution);
+		execution.setAutomatedExecutionExtender(extender);
+
+		return execution;
 	}
 
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
