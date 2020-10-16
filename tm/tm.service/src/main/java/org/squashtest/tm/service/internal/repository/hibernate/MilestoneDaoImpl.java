@@ -485,4 +485,21 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
 		return !query.getResultList().isEmpty();
 	}
+
+	@Override
+	public boolean isAttachmentListBoundToLockedMilestone(long attachmentListId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForAttachmentList");
+		query.setParameter("attachmentListId", attachmentListId);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
+
+	@Override
+	public boolean isAttachmentBoundToLockedMilestone(long attachmentId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForAttachment");
+		query.setParameter("attachmentId", attachmentId);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
+
 }

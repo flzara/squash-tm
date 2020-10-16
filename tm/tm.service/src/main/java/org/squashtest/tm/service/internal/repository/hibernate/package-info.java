@@ -1147,7 +1147,81 @@
 			"inner join rvc.verifiedRequirementVersion rv " +
 			"inner join rv.milestones indirectMilestone " +
 			"where dspv.id = :datasetParamValueId " +
-			"and indirectMilestone.status in (:statuses))")
+			"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForAttachmentList",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directTestCaseMilestone.id " +
+				"from TestCase tc " +
+				"inner join tc.attachmentList al " +
+				"inner join tc.milestones directTestCaseMilestone " +
+				"where al.id = :attachmentListId " +
+				"and directTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectTestCaseMilestone.id " +
+				"from TestCase tc " +
+				"inner join tc.attachmentList al " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectTestCaseMilestone " +
+				"where al.id = :attachmentListId " +
+				"and indirectTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select requirementMilestone.id " +
+				"from RequirementVersion rv " +
+				"inner join rv.attachmentList al " +
+				"inner join rv.milestones requirementMilestone " +
+				"where al.id = :attachmentListId " +
+				"and requirementMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select campaignMilestone.id " +
+				"from Campaign c " +
+				"inner join c.attachmentList al " +
+				"inner join c.milestones campaignMilestone " +
+				"where al.id = :attachmentListId " +
+				"and campaignMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForAttachment",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+					"(select directTestCaseMilestone.id " +
+					"from TestCase tc " +
+					"inner join tc.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join tc.milestones directTestCaseMilestone " +
+					"where a.id = :attachmentId " +
+					"and directTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select indirectTestCaseMilestone.id " +
+					"from TestCase tc " +
+					"inner join tc.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join tc.requirementVersionCoverages rvc " +
+					"inner join rvc.verifiedRequirementVersion rv " +
+					"inner join rv.milestones indirectTestCaseMilestone " +
+					"where a.id = :attachmentId " +
+					"and indirectTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select requirementMilestone.id " +
+					"from RequirementVersion rv " +
+					"inner join rv.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join rv.milestones requirementMilestone " +
+					"where a.id = :attachmentId " +
+					"and requirementMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select campaignMilestone.id " +
+					"from Campaign c " +
+					"inner join c.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join c.milestones campaignMilestone " +
+					"where a.id = :attachmentId " +
+					"and campaignMilestone.status in (:statuses))")
 
 })
 //@formatter:on

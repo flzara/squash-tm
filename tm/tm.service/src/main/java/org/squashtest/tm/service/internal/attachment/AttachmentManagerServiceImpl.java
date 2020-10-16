@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.attachment.RawAttachment;
 import org.squashtest.tm.service.audit.AuditModificationService;
@@ -91,7 +93,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private AuditModificationService auditModificationService;
 
 	@Override
-	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) throws IOException {
+	@CheckLockedMilestone(entityType = AttachmentList.class)
+	public Long addAttachment(@Id long attachmentListId, RawAttachment rawAttachment) throws IOException {
 		AttachmentContent content = getAttachmentRepository().createContent(rawAttachment, attachmentListId);
 
 		Attachment attachment = new Attachment();
@@ -128,7 +131,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void removeAttachmentFromList(long attachmentListId, long attachmentId) throws IOException {
+	@CheckLockedMilestone(entityType = AttachmentList.class)
+	public void removeAttachmentFromList(@Id long attachmentListId, long attachmentId) throws IOException {
 		Attachment attachment = findAttachment(attachmentId);
 		//save for FileSystemRepository
 		Long attachmentContentId = attachment.getContent().getId();
@@ -141,14 +145,16 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException {
+	@CheckLockedMilestone(entityType = AttachmentList.class)
+	public void removeListOfAttachments(@Id long attachmentListId, List<Long> attachmentIds) throws IOException {
 		for (Long attachmentId : attachmentIds) {
 			removeAttachmentFromList(attachmentListId, attachmentId);
 		}
 	}
 
 	@Override
-	public void renameAttachment(long attachmentId, String newName) {
+	@CheckLockedMilestone(entityType = Attachment.class)
+	public void renameAttachment(@Id long attachmentId, String newName) {
 		Attachment attachment = attachmentDao.getOne(attachmentId);
 		attachment.setShortName(newName);
 	}

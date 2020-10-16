@@ -97,4 +97,38 @@ class MilestoneDaoIT extends DbunitDaoSpecification {
 		milestoneDao.isDatasetParamValueBoundToLockedMilestone(-3L)
 	}
 
+	def "isAttachmentListBoundToLockedMilestone(long) - Should not find any milestone blocking a test case attachment list modification"() {
+		expect:
+		!milestoneDao.isAttachmentListBoundToLockedMilestone(-1L)
+	}
+	/* The AttachmentList belongs to a TestCase bound to a Planned|Locked Milestone */
+	def "isAttachmentListBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a test case attachment list modification"() {
+		expect:
+		milestoneDao.isAttachmentListBoundToLockedMilestone(-2L)
+	}
+	/* The AttachmentList belongs to a TestCase verifying a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isAttachmentListBoundToLockedMilestone(long) - Should find a locked milestone indirectly blocking a test case attachment list modification"() {
+		expect:
+		milestoneDao.isAttachmentListBoundToLockedMilestone(-3L)
+	}
+
+	def "isAttachmentListBoundToLockedMilestone(long) - Should not find any milestone blocking a requirement version attachment list modification"() {
+		expect:
+		!milestoneDao.isAttachmentListBoundToLockedMilestone(-4L)
+	}
+	/* The AttachmentList belongs to a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isAttachmentListBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a requirement version attachment list modification"() {
+		expect:
+		milestoneDao.isAttachmentListBoundToLockedMilestone(-5L)
+	}
+
+	def "isAttachmentListBoundToLockedMilestone(long) - Should not find any milestone blocking a campaign attachment list modification"() {
+		expect:
+		!milestoneDao.isAttachmentListBoundToLockedMilestone(-6L)
+	}
+	/* The AttachmentList belongs to a Campaign bound to a Planned|Locked Milestone */
+	def "isAttachmentListBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a campaign attachment list modification"() {
+		expect:
+		milestoneDao.isAttachmentListBoundToLockedMilestone(-7L)
+	}
 }
