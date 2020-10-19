@@ -60,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
+import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.service.testcase.DatasetModificationService
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
@@ -72,25 +73,26 @@ import static org.squashtest.tm.domain.bdd.Keyword.GIVEN
 import static org.squashtest.tm.domain.bdd.Keyword.THEN
 
 class CustomTestCaseModificationServiceImplTest extends Specification {
-	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
-	TestCaseDao testCaseDao = Mock()
-	KeywordTestCaseDao keywordTestCaseDao = Mock()
-	TestStepDao testStepDao = Mock()
-	KeywordTestStepDao keywordTestStepDao = Mock()
-	ActionWordDao actionWordDao = Mock()
-	ActionWordParamValueDao actionWordParamValueDao = Mock()
-	ActionWordLibraryNodeService actionWordLibraryNodeService = Mock()
-	GenericNodeManagementService testCaseManagementService = Mock()
-	TestCaseNodeDeletionHandler deletionHandler = Mock()
-	PrivateCustomFieldValueService cufValuesService = Mock()
-	ParameterModificationService parameterModificationService = Mock()
-	UnsecuredAutomatedTestManagerService taService = Mock()
-	AttachmentManagerService attachmentManagerService = Mock()
-	IterationTestPlanFinder iterationTestPlanFinder = Mock()
 	ActionTestStepDao actionStepDao = Mock()
-	InfoListItemFinderService infoListItemService = Mock()
+	ActionWordDao actionWordDao = Mock()
+	ActionWordLibraryNodeService actionWordLibraryNodeService = Mock()
+	ActionWordParamValueDao actionWordParamValueDao = Mock()
 	ApplicationEventPublisher eventPublisher = Mock()
+	AttachmentManagerService attachmentManagerService = Mock()
+	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	DatasetModificationService datasetModificationService = Mock()
+	InfoListItemFinderService infoListItemService = Mock()
+	IterationTestPlanFinder iterationTestPlanFinder = Mock()
+	KeywordTestCaseDao keywordTestCaseDao = Mock()
+	KeywordTestStepDao keywordTestStepDao = Mock()
+	GenericNodeManagementService testCaseManagementService = Mock()
+	ParameterModificationService parameterModificationService = Mock()
+	PrivateCustomFieldValueService cufValuesService = Mock()
+	ProjectFinder projectFinder = Mock()
+	TestCaseDao testCaseDao = Mock()
+	TestCaseNodeDeletionHandler deletionHandler = Mock()
+	TestStepDao testStepDao = Mock()
+	UnsecuredAutomatedTestManagerService taService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -116,11 +118,86 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionWordParamValueDao = actionWordParamValueDao
 		service.actionWordLibraryNodeService = actionWordLibraryNodeService
 		service.datasetModificationService = datasetModificationService
+		service.projectFinder = projectFinder
 	}
 
 	def createBasicActionWord(String singleFragment) {
 		def fragment = new ActionWordText(singleFragment)
 		return new ActionWord([fragment] as List)
+	}
+
+	def "getActionWordFromDB(ActionWord, long, List<Long>) - Should find several matching ActionWords and return the one from current project"() {
+		given:
+			def token = "TPTPT-I have - - in my basket-"
+		and:
+			def currentProjectId = 1L
+			def readableProjectIds = [currentProjectId, 2L, 3L]
+
+			def project1 = Mock(Project)
+			project1.getId() >> currentProjectId
+			def actionWord1 = Mock(ActionWord)
+			actionWord1.getProject() >> project1
+
+			def project2 = Mock(Project)
+			project2.getId() >> 2L
+			def actionWord2 = Mock(ActionWord)
+			actionWord2.getProject() >> project2
+
+
+			def project3 = Mock(Project)
+			project3.getId() >> 3L
+			def actionWord3 = Mock(ActionWord)
+			actionWord3.getProject() >> project3
+		and:
+			actionWordDao.findByTokenInProjects(_, _) >> [actionWord1, actionWord2, actionWord3]
+		when:
+			def result = service.getActionWordFromDB(token, currentProjectId, readableProjectIds)
+		then:
+			result == actionWord1
+	}
+
+	def "getActionWordFromDB(ActionWord, long, List<Long>) - Should find several matching ActionWord and return the one from the project of smallest id"() {
+		given:
+			def token = "TPTPT-I have - - in my basket-"
+		and:
+			def currentProjectId = 1L
+			def readableProjectIds = [currentProjectId, 2L, 3L]
+
+			def project2 = Mock(Project)
+			project2.getId() >> 2L
+			def actionWord2 = Mock(ActionWord)
+			actionWord2.getProject() >> project2
+
+			def project3 = Mock(Project)
+			project3.getId() >> 3L
+			def actionWord3 = Mock(ActionWord)
+			actionWord3.getProject() >> project3
+
+			def project4 = Mock(Project)
+			project4.getId() >> 4L
+			def actionWord4 = Mock(ActionWord)
+			actionWord4.getProject() >> project4
+		and:
+			actionWordDao.findByTokenInProjects(_, _) >> [actionWord3, actionWord2, actionWord4]
+		when:
+			def result = service.getActionWordFromDB(token, currentProjectId, readableProjectIds)
+		then:
+			result == actionWord2
+	}
+
+	def "getActionWordFromDB(ActionWord, long, List<Long>) - Should find no matching ActionWord and return null"() {
+		given:
+			def token = "TPTPT-I have - - in my basket-"
+		and:
+			def currentProjectId = 1L
+			def readableProjectIds = [currentProjectId, 2L, 3L]
+		and:
+			def emptyList = []
+			actionWordDao.findByTokenInProjects(_, _) >> emptyList
+		when:
+			def result = service.getActionWordFromDB(token, currentProjectId, readableProjectIds)
+		then:
+			result == null
 	}
 
 	def "should find test case and add a keyword step with new action word at last position"() {
@@ -131,6 +208,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -142,7 +220,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -164,6 +242,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -177,7 +256,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -199,6 +278,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -211,7 +291,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		projectFinder.findAllReadableIds() >> [1L]
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -235,6 +316,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -242,7 +324,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
 		parentTestCase.addStep(firstStep)
 
@@ -268,6 +350,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -279,7 +362,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -325,6 +408,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -336,7 +420,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -382,6 +466,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -393,7 +478,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -445,6 +530,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -456,7 +542,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -519,11 +605,16 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		value3.getKeywordTestStep() != null
 	}
 
-	def "should find test case and add keyword step with existing action word at last position"() {
+	def "should find test case and add keyword step with existing action word from current project at last position"() {
 		given:
-		long parentTestCaseId = 2
-		KeywordTestCase parentTestCase = new KeywordTestCase()
-		def existingActionWord = Mock(ActionWord) {
+			def project = Mock(Project)
+			project.getId() >> 1L
+		and:
+			long parentTestCaseId = 2
+			KeywordTestCase parentTestCase = new KeywordTestCase()
+		and:
+			def existingActionWordInCurrentProject = Mock(ActionWord) {
+			getProject() >> project
 			getId() >> -77L
 			createWord() >> "last"
 			List<ActionWordFragment> fragments = new ArrayList<>()
@@ -531,43 +622,104 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			fragments.add(text)
 			getFragments() >> fragments
 			getActionWordParams() >> []
-		}
-		def project = Mock(Project)
-
+			}
+			def actionWord2 = Mock(ActionWord) {
+				getProject() >> Mock(Project) {
+					getId() >> 2L
+				}
+			}
+			def actionWord3 = Mock(ActionWord) {
+				getProject() >> Mock(Project) {
+					getId() >> 3L
+				}
+			}
 		and:
-		parentTestCase.notifyAssociatedWithProject(project)
-
+			parentTestCase.notifyAssociatedWithProject(project)
 		and:
-		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
-		parentTestCase.addStep(firstStep)
-
+			def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+			parentTestCase.addStep(firstStep)
 		and:
-		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
-
+			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+			actionWordDao.findByTokenInProjects(_, _) >> [actionWord2, existingActionWordInCurrentProject, actionWord3]
 		when:
-		service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
-
+			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
 		then:
-		1 * testStepDao.persist(_)
-		parentTestCase.getSteps().size() == 2
-		KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
-		ActionWord checkedActionWord = createdTestStep.actionWord
-		checkedActionWord.getId() == -77L
-		checkedActionWord.createWord() == "last"
+			1 * testStepDao.persist(_)
+			parentTestCase.getSteps().size() == 2
+			KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
+			ActionWord checkedActionWord = createdTestStep.actionWord
+			checkedActionWord.getId() == -77L
+			checkedActionWord.createWord() == "last"
 
-		def fragments = checkedActionWord.getFragments()
-		fragments.size() == 1
+			def fragments = checkedActionWord.getFragments()
+			fragments.size() == 1
 
-		def f1 = fragments.get(0)
-		f1.class.is(ActionWordText.class)
-		((ActionWordText) f1).getText() == "last"
+			def f1 = fragments.get(0)
+			f1.class.is(ActionWordText.class)
+			((ActionWordText) f1).getText() == "last"
+	}
+
+	def "should find test case and add keyword step with existing action word from another project at last position"() {
+		given:
+			long parentTestCaseId = 2
+			KeywordTestCase parentTestCase = new KeywordTestCase()
+		and:
+			def actionWord1 = Mock(ActionWord) {
+				getId() >> -50L
+				getProject() >> Mock(Project) {
+					getId() >> 10L
+				}
+				createWord() >> "last"
+				List<ActionWordFragment> fragments = new ArrayList<>()
+				ActionWordText text = new ActionWordText("last")
+				fragments.add(text)
+				getFragments() >> fragments
+				getActionWordParams() >> []
+			}
+			def actionWord2 = Mock(ActionWord) {
+				getProject() >> Mock(Project) {
+					getId() >> 11L
+				}
+			}
+			def actionWord3 = Mock(ActionWord) {
+				getProject() >> Mock(Project) {
+					getId() >> 12L
+				}
+			}
+		and:
+			parentTestCase.notifyAssociatedWithProject(Mock(Project) { getId() >> 1L })
+		and:
+			def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+			parentTestCase.addStep(firstStep)
+		and:
+			keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+			actionWordDao.findByTokenInProjects(_, _) >> [actionWord2, actionWord1, actionWord3]
+		when:
+			service.addKeywordTestStep(parentTestCaseId, "THEN", "last")
+		then:
+			1 * testStepDao.persist(_)
+			parentTestCase.getSteps().size() == 2
+			KeywordTestStep createdTestStep = parentTestCase.getSteps()[1]
+			ActionWord checkedActionWord = createdTestStep.actionWord
+			checkedActionWord.getId() == -50L
+			checkedActionWord.createWord() == "last"
+
+			def fragments = checkedActionWord.getFragments()
+			fragments.size() == 1
+
+			def f1 = fragments.get(0)
+			f1.class.is(ActionWordText.class)
+			((ActionWordText) f1).getText() == "last"
 	}
 
 	def "should find test case and add keyword step with existing action word containing spaces at last position"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
 		long parentTestCaseId = 2
 		KeywordTestCase parentTestCase = new KeywordTestCase()
+		and:
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			createWord() >> "last"
@@ -576,8 +728,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			fragments.add(text)
 			getFragments() >> fragments
 			getActionWordParams() >> []
+			getProject() >> project
 		}
-		def project = Mock(Project)
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -588,7 +740,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "      last   ")
@@ -612,6 +764,11 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should find test case and add keyword step with existing action word containing a parameter"() {
 		given:
 		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		and:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText = new ActionWordText("today is ")
 		def actionWordParams = new ArrayList<ActionWordParameter>()
@@ -621,15 +778,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		inputFragments.add(actionWordText)
 		inputFragments.add(actionWordParam)
 
-		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			createWord() >> "today is \"param1\""
 			getToken() >> "TP-today is -"
 			getFragments() >> inputFragments
 			getActionWordParams() >> actionWordParams
+			getProject() >> project
 		}
-		def project = Mock(Project)
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -640,7 +796,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Monday\"  ")
@@ -678,7 +834,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should find test case and add keyword step with existing action word containing many parameters"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
 		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+		and:
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText1 = new ActionWordText("today is ")
 		def actionWordText2 = new ActionWordText(" of ")
@@ -697,15 +858,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		inputFragments.add(actionWordParam2)
 		inputFragments.add(actionWordParam3)
 
-		KeywordTestCase parentTestCase = new KeywordTestCase()
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
 			getActionWordParams() >> actionWordParams
+			getProject() >> project
 		}
-		def project = Mock(Project)
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -716,7 +876,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   \"Friday\" of  \"May\"\"2020\"")
@@ -780,7 +940,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should find test case and add keyword step with existing action word containing many parameters in which some are between <>"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
 		long parentTestCaseId = 2
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		and:
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText1 = new ActionWordText("today is ")
 		def actionWordText2 = new ActionWordText(" of ")
@@ -799,15 +964,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		inputFragments.add(actionWordParam2)
 		inputFragments.add(actionWordParam3)
 
-		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def existingActionWord = Mock(ActionWord) {
 			getId() >> -77L
 			createWord() >> "today is \"param1\" of \"param2\"\"param3\""
 			getToken() >> "TPTPP-today is - of "
 			getFragments() >> inputFragments
 			getActionWordParams() >> actionWordParams
+			getProject() >> project
 		}
-		def project = Mock(Project)
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -818,7 +982,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.addKeywordTestStep(parentTestCaseId, "THEN", "today is   <date> of  \"May\"<Year  >")
@@ -894,6 +1058,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
 		def project = Mock(Project)
+		project.getId() >> 1L
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -905,7 +1070,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> null
+		actionWordDao.findByTokenInProjects(_, _) >> []
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
@@ -1449,21 +1614,24 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should update the action word of a keyword step with an existing action by removing a parameter"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
+		long parentTestCaseId = 2
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		parentTestCase.notifyAssociatedWithProject(project)
+		and:
 		def actionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getToken() >> "TPT-I have - apples-"
 		}
 
 		def param1 = new ActionWordParameterValue("5")
-		long parentTestCaseId = 2
-		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def step = Mock(KeywordTestStep) {
 			getActionWord() >> actionWord
 			getParamValues() >> [param1]
 			getTestCase() >> parentTestCase
 		}
-		def project = Mock(Project)
-		parentTestCase.notifyAssociatedWithProject(project)
 
 		and:
 		def inputFragments = new ArrayList<ActionWordFragment>()
@@ -1477,12 +1645,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getToken() >> "T-I have apples-"
 			getFragments() >> inputFragments
 			getActionWordParams() >> []
+			getProject() >> project
 		}
 
 		and:
 		keywordTestStepDao.findById(10L) >> step
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.updateKeywordTestStep(10L, "I have apples")
@@ -1542,21 +1711,23 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should update the action word of a keyword step with an existing action by adding a parameter"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
+		long parentTestCaseId = 2
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		parentTestCase.notifyAssociatedWithProject(project)
+		and:
 		def actionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getToken() >> "T-I have apples-"
 		}
-
-		long parentTestCaseId = 2
-		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		and:
 		def step = Mock(KeywordTestStep) {
 			getActionWord() >> actionWord
 			getTestCase() >> parentTestCase
 			getParamValues() >> []
 		}
-		def project = Mock(Project)
-		parentTestCase.notifyAssociatedWithProject(project)
-
 		and:
 		def inputFragments = new ArrayList<ActionWordFragment>()
 		def actionWordText1 = new ActionWordText("I have ")
@@ -1573,12 +1744,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getToken() >> "TPT-I have - apples-"
 			getFragments() >> inputFragments
 			getActionWordParams() >> actionWordParams
+			getProject() >> project
 		}
 
 		and:
 		keywordTestStepDao.findById(10L) >> step
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
 		service.updateKeywordTestStep(10L, "I have <number> apples")
@@ -1590,6 +1762,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	def "should update the action word of a keyword step with an existing action by adding a text"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+		and:
 		def actionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getToken() >> "TP-I am - -"
@@ -1605,7 +1780,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		def awLibraryNode = Mock(ActionWordLibraryNode)
 		awLibraryNode.getId() >> 4L
 		def awLibrary = Mock(ActionWordLibrary)
-		def project = Mock(Project)
 
 		and:
 		parentTestCase.notifyAssociatedWithProject(project)
@@ -1627,12 +1801,13 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getToken() >> "TPT-I am - years old-"
 			getFragments() >> inputFragments
 			getActionWordParams() >> actionWordParams
+			getProject() >> project
 		}
 
 		and:
 		keywordTestStepDao.findById(10L) >> step
 		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
-		actionWordDao.findByTokenInCurrentProject(_, _) >> existingActionWord
+		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:

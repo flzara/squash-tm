@@ -103,6 +103,7 @@ import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChange
 import org.squashtest.tm.service.internal.testcase.event.TestCaseScriptAutoChangeEvent;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
@@ -122,6 +123,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -248,6 +250,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private DatasetModificationService datasetModificationService;
 
+	@Inject
+	private ProjectFinder projectFinder;
+
 
 	/* *************** TestCase section ***************************** */
 
@@ -373,10 +378,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
 		newTestStep.setTestCase(parentTestCase);
 
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds();
 		Project currentProject = parentTestCase.getProject();
 
-		//check action word existence
-		ActionWord actionWord = getActionWordFromDB(inputActionWord, currentProject);
+		//check action word existence in readable projects
+		ActionWord actionWord = getActionWordFromDB(inputActionWord.getToken(), currentProject.getId(), readableProjectIds);
 
 		if (isNull(actionWord)) {
 			LOGGER.debug("adding test step with new action word");
@@ -394,10 +400,53 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-	private ActionWord getActionWordFromDB(ActionWord inputActionWord, Project currentProject) {
-		Long projectId = currentProject.getId();
-		String token = inputActionWord.getToken();
-		return actionWordDao.findByTokenInCurrentProject(token, projectId);
+	/**
+	 * Given an transient input action word token, finds all action words with a matching token among all projects the
+	 * current user can read and return
+	 * <ol>
+	 *	<li>the action word from the current project if exists</li>
+	 *	<li>the action word from the project of smallest id if not</li>
+	 *	<li>null if none exists</li>
+	 * </ol>
+	 * @param inputToken input action word token
+	 * @param currentProjectId id of the current project
+	 * @param readableProjectIds ids of all readable projects
+	 * @return
+	 * <ol>
+	 * <li>the action word with matching token from the current project if exists</li>
+	 * <li>the action word with matching token from the project with the smallest id if not</li>
+	 * <li>null if none exists</li>
+	 * </ol>
+	 */
+	private ActionWord getActionWordFromDB(String inputToken, long currentProjectId, List<Long> readableProjectIds) {
+		List<ActionWord> matchingActionWords = actionWordDao.findByTokenInProjects(inputToken, readableProjectIds);
+		if(matchingActionWords.isEmpty()) {
+			return null;
+		}
+		Optional<ActionWord> actionWordFromCurrentProject =
+			getMatchingActionWordFromCurrentProject(currentProjectId, matchingActionWords);
+		if(actionWordFromCurrentProject.isPresent()) {
+			return actionWordFromCurrentProject.get();
+		}
+		Optional<ActionWord> actionWordFromOtherProjectWithSmallestId =
+			getMatchingActionWordFromProjectWithSmallestId(matchingActionWords);
+		if(actionWordFromOtherProjectWithSmallestId.isPresent()) {
+			return actionWordFromOtherProjectWithSmallestId.get();
+		}
+		return null;
+	}
+
+	private Optional<ActionWord> getMatchingActionWordFromCurrentProject(long currentProjectId, List<ActionWord> matchingActionWords) {
+		return matchingActionWords
+			.stream()
+			.filter(actionWord -> currentProjectId == actionWord.getProject().getId())
+			.findAny();
+	}
+
+	private Optional<ActionWord> getMatchingActionWordFromProjectWithSmallestId(List<ActionWord> matchingActionWords) {
+		return matchingActionWords
+			.stream()
+			.min(Comparator.comparing(actionWord -> actionWord.getProject().getId()));
 	}
 
 	private void insertNewValuesToDataBase(KeywordTestCase parentTestCase, ActionWord inputActionWord, KeywordTestStep newTestStep, List<ActionWordParameterValue> parameterValueMap) {
@@ -539,8 +588,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-	private void updateActionWordWithoutChangingToken(KeywordTestStep testStep, KeywordTestCase parentTestCase, ActionWord inputActionWord, List<ActionWordParameterValue> parameterValues, String inputToken) {
-		ActionWord actionWord = actionWordDao.findByTokenInCurrentProject(inputToken, testStep.getTestCase().getProject().getId());
+	private void updateActionWordWithoutChangingToken(
+		KeywordTestStep testStep,
+		KeywordTestCase parentTestCase,
+		ActionWord inputActionWord,
+		List<ActionWordParameterValue> parameterValues,
+		String inputToken) {
+
+		long currentProjectId = testStep
+			.getTestCase()
+			.getProject()
+			.getId();
+		List<Long> readableProjectIds = projectFinder.findAllReadableIds();
+		ActionWord actionWord = getActionWordFromDB(inputToken, currentProjectId, readableProjectIds);
 
 		//remove all action word parameter values
 		List<ActionWordParameterValue> valueList = testStep.getParamValues();
