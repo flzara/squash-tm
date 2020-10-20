@@ -67,7 +67,7 @@ number of columns.
         </td>
         <td>
           <a href="${showExecutionUrl}/${execution.id}">
-            <span style="font-weight:bold;">Exec. ${status.index + 1} :</span>
+            <span style="font-weight:bold;">&#35; ${status.index + 1} :</span>
             <span> <c:out value="${ execution.name }"/> </span>
             <span> <c:out value="(${(execution.datasetLabel == null || fn:length(execution.datasetLabel) == 0) ? labelNoDataset : execution.datasetLabel})"/> </span>
           </a>
