@@ -28,6 +28,11 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import java.util.List;
 
 public interface ActionWordDao extends JpaRepository<ActionWord, Long>, CustomActionWordDao {
+
+	@Query("from ActionWord where token = :token and project.id = :projectId")
+	ActionWord findByTokenInCurrentProject(@Param("token") String inputToken, @Param("projectId") Long projectId);
+
 	@Query("from ActionWord where token = :token and project.id in (:projectIds)")
 	List<ActionWord> findByTokenInProjects(@Param("token") String inputToken, @Param("projectIds") List<Long> projectIds);
+
 }
