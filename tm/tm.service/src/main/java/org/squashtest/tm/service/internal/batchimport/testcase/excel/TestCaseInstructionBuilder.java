@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -28,8 +30,12 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
+import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
 
 import javax.validation.constraints.NotNull;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
 
@@ -40,6 +46,8 @@ import static org.squashtest.tm.domain.testcase.TestCaseKind.STANDARD;
  *
  */
 class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn, TestCaseInstruction> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseInstructionBuilder.class);
+
 	public TestCaseInstructionBuilder(@NotNull WorksheetDef<TestCaseSheetColumn> worksheetDef) {
 		super(worksheetDef);
 	}
@@ -50,9 +58,17 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	@Override
 	protected TestCaseInstruction createInstruction(Row row) {
 		StdColumnDef<TestCaseSheetColumn> columnDef = worksheetDef.getColumnDef(TestCaseSheetColumn.TC_KIND);
-		TestCaseKind testCaseKind = STANDARD;
-		if(columnDef != null) {
-			testCaseKind = getValue(row, columnDef);
+		TestCaseKind testCaseKind = null;
+		if (columnDef != null) {
+			try {
+				testCaseKind = getValue(row, columnDef);
+			} catch (CannotCoerceException cce) {
+				String testCaseKinds = Arrays.stream(TestCaseKind.values()).map(Enum::toString).collect(Collectors.joining(","));
+				LOGGER.debug("The value for TC_KIND does not exist for the corresponded enum. Authorized values are : {}. Then, default value STANDARD will be assigned.", testCaseKinds, cce);
+			}
+		}
+		if (testCaseKind == null) {
+			testCaseKind = STANDARD;
 		}
 		TestCase testCase;
 		switch (testCaseKind) {

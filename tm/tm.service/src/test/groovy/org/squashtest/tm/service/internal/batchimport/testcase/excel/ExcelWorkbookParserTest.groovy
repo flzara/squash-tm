@@ -310,19 +310,23 @@ class ExcelWorkbookParserTest extends Specification {
 
 	}
 
-	def "should cast exception when invalid values inside test case scripted extender"() {
+	//SQUASH-1562
+	def "should not cast exception and create a STANDARD test case when invalid values inside test case scripted extender"() {
 		given:
 		Resource xls = new ClassPathResource("batchimport/testcase/import-incorrect-scripted-tc.xlsx")
 
 		and:
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+		def instructions = parser.getTestCaseInstructions()
 
 		when:
 		parser.parse().releaseResources()
 
 		then:
-		thrown CannotCoerceException.class
+		Instruction<TestCaseTarget> instruction = instructions.get(0)
 
-
+		TestCase testCase = instruction.getTestCase()
+		TestCase.class.isAssignableFrom(testCase.class)
 	}
+
 }
