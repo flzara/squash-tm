@@ -174,7 +174,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 			@Override
 			public void visit(KeywordTestStep visited) {
-				throw new UnsupportedOperationException();
+				// noop
 			}
 		};
 		for (TestStep step : testCase.getSteps()) {
