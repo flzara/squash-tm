@@ -72,4 +72,11 @@ public interface ScmRepositoryManagerService {
 	 * False otherwise.
 	 */
 	boolean isOneRepositoryBoundToProject(Collection<Long> scmRepositoryIds);
+
+	/**
+	 * Find URLs of the repositories declared in the application containing the given input value
+	 * @param inputValue the value that a scm repository's URL must contain to be return
+	 * @return the list of scm repositories' URL containing the given input value.
+	 */
+	List<String> findMatchingScmRepositoriesUrl(String inputValue);
 }

@@ -18,28 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.controller.scm;
 
-import org.squashtest.tm.domain.scm.ScmRepository;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.service.scmserver.ScmRepositoryManagerService;
 
+import javax.inject.Inject;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-public interface CustomScmRepositoryDao {
-	/**
-	 * Retrieve the Test Cases grouped by ScmRepository they should be committed into.
-	 * @param testCaseIds The Collection of Test Case ids.
-	 * @return A Map of Test Case Sets mapped by ScmRepository
-	 */
-	Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
+@Controller
+@RequestMapping("/scm-repositories")
+public class ScmRepositoryController {
 
+	@Inject
+	ScmRepositoryManagerService scmRepositoryManagerService;
 
-	/**
-	 * Find URLs of the repositories declared in the application.
-	 * @return the list of scm repositories' URL declared in the application.
-	 */
-	List<String> findDeclaredScmRepositoriesUrl();
+	@ResponseBody
+	@RequestMapping("/autocomplete")
+	public Collection<String> findAllMatchingScmRepositoryUrl(@RequestParam String searchInput) {
+		return scmRepositoryManagerService.findMatchingScmRepositoriesUrl(searchInput);
+	}
 }

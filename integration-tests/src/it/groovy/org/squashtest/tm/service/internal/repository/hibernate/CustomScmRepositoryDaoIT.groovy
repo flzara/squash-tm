@@ -71,4 +71,13 @@ class CustomScmRepositoryDaoIT extends DbunitDaoSpecification {
 
 	}
 
+	@DataSet("CustomScmRepositoryDaoIT.xml")
+	def "should find scm repositories' URL"(){
+		when:
+		def res = scmRepositoryDao.findDeclaredScmRepositoriesUrl()
+		then:
+		res != null
+		res.size() == 2
+	}
+
 }

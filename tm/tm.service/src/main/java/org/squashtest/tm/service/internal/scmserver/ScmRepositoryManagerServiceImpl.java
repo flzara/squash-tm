@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
@@ -190,6 +191,12 @@ public class ScmRepositoryManagerServiceImpl implements ScmRepositoryManagerServ
 	@Override
 	public boolean isOneRepositoryBoundToProject(Collection<Long> scmRepositoryIds) {
 		return scmRepositoryDao.isOneRepositoryBoundToProject(scmRepositoryIds);
+	}
+
+	@Override
+	public List<String> findMatchingScmRepositoriesUrl(String inputValue) {
+		List<String> repositoriesUrl = scmRepositoryDao.findDeclaredScmRepositoriesUrl();
+		return repositoriesUrl.stream().filter(url -> url.contains(inputValue)).collect(Collectors.toList());
 	}
 
 	@Override
