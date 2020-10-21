@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd
 
-
+import org.squashtest.tm.domain.project.Project
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -42,7 +42,6 @@ class ActionWordTest extends Specification {
 			"wôrd; wïth sp&cia! charActers?" 	||	"wôrd; wïth sp&cia! charActers?"	|| "T-wôrd; wïth sp&cia! charActers?-"
 	}
 
-	@Unroll
 	def "should create an ActionWord with some fragments"() {
 		given:
 			def fragment1 = new ActionWordText("An action word with a ")
@@ -53,5 +52,36 @@ class ActionWordTest extends Specification {
 		then:
 			actionWord.createWord() == "An action word with a \"name1\" parameter !"
 			actionWord.generateToken() == "TPT-An action word with a - parameter !-"
+	}
+
+	def "should copy an ActionWord"() {
+		given:
+			def project = Mock(Project) {
+				getId() >> 90L
+			}
+		and:
+			def fragment1 = new ActionWordText("An action word with a ")
+			fragment1.setId(71L)
+			def fragment2 = new ActionWordParameter("name1", "")
+			fragment1.setId(72L)
+			def fragment3 = new ActionWordText(" parameter !")
+			fragment1.setId(73L)
+		and:
+			ActionWord awSource = new ActionWord([fragment1, fragment2, fragment3] as List)
+			awSource.setDescription("Il s'agit d'une action avec paramètres.")
+			awSource.setProject(project)
+		when:
+			ActionWord awCopy = awSource.createCopy()
+		then:
+			awCopy != null
+			awCopy.getProject() == project
+			awCopy.createWord() == awSource.createWord()
+			awCopy.getName() == awSource.getName()
+			awCopy.generateToken() == awSource.generateToken()
+			awCopy.getDescription() == awSource.getDescription()
+			awCopy.getFragments().every {
+				it.getId() == null
+				it.getActionWord() == awCopy
+			}
 	}
 }

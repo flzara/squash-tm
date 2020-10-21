@@ -25,6 +25,7 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
@@ -35,6 +36,8 @@ import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.ACTION_WORD
 
 @DataSet
 @Transactional
@@ -96,7 +99,7 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 			node != null
 			node.id == -2L
 			node.name == "press the red button"
-			node.entityType == ActionWordTreeDefinition.ACTION_WORD
+			node.entityType == ACTION_WORD
 
 			node.children != null
 			node.children.size() == 0
@@ -167,4 +170,49 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 		-6L				| "another project/another day"
 		-7L				| "another project/\"param1\" + \"param2\" = \"param3\""
 	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "copyNodes(List<Long>, long) - Should copy three action word nodes into an empty library"() {
+		when:
+			actionWordLibraryNodeService.copyNodes([-2L, -3L, -4L], -7L)
+			em.flush()
+			em.clear()
+		then:
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 3
+			children.every {
+				it.getId() != null
+				! it.getName().isEmpty()
+				it.getLibrary().getId() == -3L
+				it.getParent() == targetLibraryNode
+				it.getChildren().isEmpty()
+				it.getEntityType() == ACTION_WORD
+
+				ActionWord aw = it.getEntity()
+				aw.getId() != null
+				! aw.getName().isEmpty()
+				! aw.getDescription().isEmpty()
+				aw.getProject().getId() == -3L
+				aw.getKeywordTestSteps().size() == 0
+				! aw.generateToken().isEmpty()
+				List<ActionWordFragment> fragments = aw.getFragments()
+				! fragments.isEmpty()
+				fragments.every {
+					it.getId() != null
+					it.getActionWord() == aw
+				}
+			}
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "copyNodes(List<Long>, long) - Should try to copy an action word node with an existing name into a library"() {
+		when:
+			actionWordLibraryNodeService.copyNodes([-2L], -5L)
+			em.flush()
+			em.clear()
+		then:
+			thrown UnsupportedOperationException
+	}
+
 }

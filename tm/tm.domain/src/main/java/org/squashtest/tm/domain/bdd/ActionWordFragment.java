@@ -75,4 +75,7 @@ public abstract class ActionWordFragment {
 	}
 
 	public abstract void accept(ActionWordFragmentVisitor visitor);
+
+	public abstract ActionWordFragment createCopy();
+
 }

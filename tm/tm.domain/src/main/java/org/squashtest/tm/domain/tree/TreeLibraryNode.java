@@ -56,4 +56,6 @@ public interface TreeLibraryNode extends Identified {
 	 */
 	void renameNode(String newName);
 
+	boolean childNameAlreadyUsed(String childName);
+
 }

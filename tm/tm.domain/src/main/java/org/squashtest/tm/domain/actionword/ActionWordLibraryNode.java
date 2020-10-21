@@ -154,6 +154,16 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 	}
 
 	@Override
+	public boolean childNameAlreadyUsed(String newChildName) {
+		for (TreeLibraryNode child : children) {
+			if (child.getName().equals(newChildName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean hasContent() {
 		if (!getEntityType().isContainer()) {
 			return false;

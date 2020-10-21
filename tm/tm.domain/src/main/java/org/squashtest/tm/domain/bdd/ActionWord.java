@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -291,7 +292,19 @@ public class ActionWord implements ActionWordTreeEntity {
 
 	@Override
 	public ActionWordTreeEntity createCopy() {
-		throw new UnsupportedOperationException();
+		List<ActionWordFragment> fragmentsCopy = copyFragments();
+		ActionWord copy = new ActionWord(fragmentsCopy);
+		fragmentsCopy.stream().forEach(fragment -> fragment.setActionWord(copy));
+		copy.setDescription(this.getDescription());
+		copy.setProject(this.getProject());
+		return copy;
+	}
+
+	private List<ActionWordFragment> copyFragments() {
+		return this.getFragments()
+			.stream()
+			.map(ActionWordFragment::createCopy)
+			.collect(Collectors.toList());
 	}
 
 	/* TreeEntity methods */

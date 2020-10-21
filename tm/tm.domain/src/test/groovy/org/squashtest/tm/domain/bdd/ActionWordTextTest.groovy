@@ -51,4 +51,20 @@ class ActionWordTextTest extends Specification {
 		where:
 		text << [null, "", "a b\"c1 24", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 	}
+
+	def "should create a copy of an ActionWordText"() {
+		given:
+			def source = new ActionWordText("a simple action")
+			source.setId(6L)
+		and:
+			def actionWord = new ActionWord([source])
+			source.setActionWord(actionWord)
+		when:
+			ActionWordText copy = source.createCopy()
+		then:
+			copy.getId() == null
+			copy.getActionWord() == null
+			copy.getText() == "a simple action"
+	}
+
 }
