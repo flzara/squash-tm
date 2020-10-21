@@ -142,15 +142,12 @@ public class ActionWordLibraryNode implements ActionWordTreeLibraryNode {
 
 	@Override
 	public void isCoherentWithEntity() {
-		// FIXME: This method was temporarily commented before moving createWord() method in ActionWord class.
-		/*
 		String nodeName = getName();
 		String entityName = getEntity().getName();
 		if (!nodeName.equals(entityName)) {
 			String message = "Cannot add a library node with name %s to represent an entity with different name %s.";
 			throw new IllegalArgumentException(String.format(message, nodeName, entityName));
 		}
-		*/
 	}
 
 	@Override
