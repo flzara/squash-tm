@@ -61,7 +61,7 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	private EntityManager em;
 
 	@Inject
-	private DSLContext DSL;
+	private DSLContext dsl;
 
 	@Override
 	public Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
@@ -99,7 +99,7 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 	public List<String> findDeclaredScmRepositoriesUrl() {
 		List<String> repositoriesUrl = new ArrayList<>();
 
-		DSL.select(THIRD_PARTY_SERVER.URL, SCM_REPOSITORY.NAME)
+		dsl.select(THIRD_PARTY_SERVER.URL, SCM_REPOSITORY.NAME)
 			.from(SCM_REPOSITORY)
 			.innerJoin(THIRD_PARTY_SERVER).on(SCM_REPOSITORY.SERVER_ID.eq(THIRD_PARTY_SERVER.SERVER_ID))
 			.fetch()
