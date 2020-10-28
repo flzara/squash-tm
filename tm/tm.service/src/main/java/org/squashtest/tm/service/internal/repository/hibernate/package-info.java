@@ -268,7 +268,7 @@
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByAutomationRequestIds", query = "select tc from TestCase tc join fetch tc.automationRequest ar inner join fetch ar.project pr where ar.id in (:requestIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByUuid", query = "select tc from TestCase tc where tc.uuid = :uuid"),
-	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr inner join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.class = TestCase"),
+	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr left outer join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.class = TestCase"),
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
 	 *  name of the class, because the client code assumes this will be the
