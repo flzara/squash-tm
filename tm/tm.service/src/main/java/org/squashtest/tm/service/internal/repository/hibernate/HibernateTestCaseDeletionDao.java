@@ -244,25 +244,25 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		}
 
 		Select<Record1<Long>> itemIdsToRemove = getIterationTestPlanItemsWithoutExecution(testCasesToRemove);
-		Select<Record1<Long>> itemIdsToReorder = getIterationTestPlanItemsToReorder(testCasesToRemove, itemIdsToRemove);
+		Select<Record1<Long>> itemIdsToReorder = getIterationTestPlanItemsToReorder(itemIdsToRemove);
 
 		Map<Long, Result<ItemTestPlanListRecord>> itemsByIteration = fetchIterationItemsToReorder(itemIdsToReorder);
 		Map<Long, Result<TestSuiteTestPlanItemRecord>> itemsByTestSuite = fetchTestSuiteItemsToReorder(itemIdsToRemove);
 
-		nullifyReferencedTestCaseForExecutedITPIs(testCasesToRemove);
 		deleteAffectedIterationTestPlanItemsAndBindings(itemIdsToRemove, itemIdsToReorder);
 
 		batchInsertReorderedIterationItems(itemsByIteration);
 		batchInsertReorderedTestSuiteItems(itemsByTestSuite);
+		nullifyReferencedTestCaseForExecutedITPIs(testCasesToRemove);
 	}
 
-	private Select<Record1<Long>> getIterationTestPlanItemsToReorder(List<Long> testCasesToRemove, Select<Record1<Long>> itemIdsToRemove) {
+	private Select<Record1<Long>> getIterationTestPlanItemsToReorder(Select<Record1<Long>> itemIdsToRemove) {
 		Select<Record1<Long>> affectedIterationIds = DSL
 			.select(ITEM_TEST_PLAN_LIST.ITERATION_ID)
 			.from(ITEM_TEST_PLAN_LIST)
 			.join(ITERATION_TEST_PLAN_ITEM)
 			.on(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
-			.where(ITERATION_TEST_PLAN_ITEM.TCLN_ID.in(testCasesToRemove));
+			.where(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.in(itemIdsToRemove));
 
 		return DSL.select(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID)
 			.from(ITERATION_TEST_PLAN_ITEM)

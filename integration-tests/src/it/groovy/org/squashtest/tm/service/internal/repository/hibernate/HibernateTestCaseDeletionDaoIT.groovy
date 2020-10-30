@@ -259,7 +259,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	@DataSet("NodeDeletionHandlerTest.should update iteration test plan after TC deletion.xml")
 	def "should update iteration test plan after TC deletion"(){
 		when :
-		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-1L, -3L]);
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-1L, -3L])
 
 		then :
 		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -12L)
@@ -310,6 +310,19 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		it3.testPlans[1].id == -33L
 		it3.testPlans[2].id == -34L
 		it3.testPlans[3].id == -31L
+	}
+
+	@DataSet("NodeDeletionHandlerTest.should update iteration test plan after TC deletion.xml")
+	def "should remove test case reference without reordering test plans for ITPI with execution"(){
+		when :
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-4L])
+
+		then :
+		def itpi = findEntity(IterationTestPlanItem.class, -14L)
+		itpi != null
+		itpi.referencedTestCase == null
+
+		! found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -34L)
 	}
 
 	@DataSet("NodeDeletionDaoTest.should disassociate exec steps.xml")
