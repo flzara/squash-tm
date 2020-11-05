@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-core</artifactId>
-    <version>1.22.0.IT24</version>
+    <version>1.22.0.IT25-SNAPSHOT</version>
   </parent>
 
   <artifactId>core.foundation</artifactId>
