@@ -43,7 +43,7 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 
 	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) throws IOException;
 
-	void renameAttachment(long attachmentId, String newName);	
+	void renameAttachment(long attachmentId, String newName);
 	/**
 	 * Writes attachment content into the given stream.
 	 * @param attachmentId
@@ -84,5 +84,9 @@ public interface AttachmentManagerService extends AttachmentFinderService {
 	List<ExternalContentCoordinates> getListPairContentIDListIDForRequirementVersions(List<Long> requirementVersionIds);
 
 	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionSteps(Collection<ExecutionStep> executionSteps);
+
+	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionStepsIds(List<Long> executionStepsIds);
+
+	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionIds(List<Long> executionStepsIds);
 
 }

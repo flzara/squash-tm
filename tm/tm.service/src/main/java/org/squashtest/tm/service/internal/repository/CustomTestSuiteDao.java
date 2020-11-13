@@ -73,4 +73,5 @@ public interface CustomTestSuiteDao {
 
 	ExecutionStatusReport getStatusReport(Long id);
 
+    List<TestSuite> findAllByExecutionIds(List<Long> executionIds);
 }

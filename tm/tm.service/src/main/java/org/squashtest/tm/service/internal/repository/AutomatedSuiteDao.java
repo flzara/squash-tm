@@ -31,11 +31,12 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 
-public interface AutomatedSuiteDao{
+public interface AutomatedSuiteDao {
 
 	void delete(AutomatedSuite suite);
 
@@ -156,4 +157,12 @@ public interface AutomatedSuiteDao{
 	long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter);
 
 	ExecutionStatusReport getStatusReport(String uuid);
+
+	/**
+	 * Get all ids of AutomatedSuites which were created before the given date.
+	 * @param limitDateTime
+	 */
+	List<String> getOldAutomatedSuiteIds(LocalDateTime limitDateTime);
+
+	void deleteAllByIds(List<String> automatedExecutionIds);
 }

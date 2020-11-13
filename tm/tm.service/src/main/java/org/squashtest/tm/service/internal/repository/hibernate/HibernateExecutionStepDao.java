@@ -106,5 +106,23 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		return result;
 	}
 
+	@Override
+	public List<Long> findAllIdsByExecutionIds(List<Long> executionIds) {
+		if (executionIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		javax.persistence.Query fetchQuery = entityManager.createNamedQuery("ExecutionStep.findAllIdsByExecutionIds");
+		fetchQuery.setParameter("executionIds", executionIds);
+		return fetchQuery.getResultList();
+	}
 
+	@Override
+	public void deleteAllByIds(List<Long> executionStepIds) {
+		if (executionStepIds.isEmpty()) {
+			return;
+		}
+		javax.persistence.Query fetchQuery = entityManager.createNamedQuery("ExecutionStep.deleteAllByIds");
+		fetchQuery.setParameter("executionStepIds", executionStepIds);
+		fetchQuery.executeUpdate();
+	}
 }

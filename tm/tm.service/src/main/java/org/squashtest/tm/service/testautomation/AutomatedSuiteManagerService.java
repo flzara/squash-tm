@@ -140,6 +140,11 @@ public interface AutomatedSuiteManagerService {
 	void delete(String automatedSuiteId);
 
 	/**
+	 * Clean all AutomatedSuites which are older than a specific age.
+	 */
+	void cleanOldSuites();
+
+	/**
 	 * Given the id of an {@link AutomatedSuite}, returns its content as tests grouped by projects.
 	 *
 	 * @param autoSuiteId

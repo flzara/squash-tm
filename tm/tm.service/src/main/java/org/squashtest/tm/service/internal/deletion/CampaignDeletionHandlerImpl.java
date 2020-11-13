@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -56,6 +57,7 @@ import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
@@ -73,6 +75,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
@@ -97,6 +100,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private TestSuiteDao suiteDao;
+
+	@Inject
+	private ExecutionStepDao executionStepDao;
 
 	@Inject
 	private AutomatedTestDao autoTestDao;
@@ -548,6 +554,43 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		attachmentManager.deleteContents(pairContentIDListIDSteps);
 	}
 
+
+	@Override
+	public void bulkDeleteExecutions(List<Execution> executions) {
+		List<Long> executionIds = executions.stream()
+			.map(Execution::getId)
+			.collect(Collectors.toList());
+
+		List<ExternalContentCoordinates> pairContentIDListIDSteps = deleteExecSteps(executionIds);
+		List<ExternalContentCoordinates> pairContentIDListIDExec = attachmentManager.getListPairContentIDListIDForExecutionIds(executionIds);
+
+		List<TestSuite> testSuites = suiteDao.findAllByExecutionIds(executionIds);
+
+		for (Execution execution : executions) {
+			IterationTestPlanItem testPlanItem = execution.getTestPlan();
+			testPlanItem.getExecutions().removeIf(
+				currentExec -> currentExec.getId().equals(execution.getId()));
+			testPlanItem.updateExecutionStatus();
+			deletionDao.removeEntity(execution);
+		}
+
+		for (TestSuite testSuite : testSuites) {
+				customTestSuiteModificationService.updateExecutionStatus(testSuite);
+		}
+
+		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, executionIds);
+		customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION, executionIds);
+
+		List<ExternalContentCoordinates> attachmentContentToDelete =
+			Stream.concat(
+				pairContentIDListIDExec.stream(),
+				pairContentIDListIDSteps.stream())
+				.collect(Collectors.toList());
+		attachmentManager.deleteContents(attachmentContentToDelete);
+
+		autoTestDao.pruneOrphans();
+	}
+
 	/*
 	 * we just remove the content of a campaign here. The actual removal of the campaign will be processed in the
 	 * calling methods.
@@ -673,6 +716,22 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deletionDao.removeEntity(step);
 		}
 
+		return pairContentIDListID;
+	}
+
+	private List<ExternalContentCoordinates> deleteExecSteps(List<Long> executionsIds) {
+		List<Long> executionStepIds = executionStepDao.findAllIdsByExecutionIds(executionsIds);
+		//saving path Content for FileSystem Repository
+		List<ExternalContentCoordinates> pairContentIDListID = null;
+		if (!executionStepIds.isEmpty()) {
+			pairContentIDListID = attachmentManager.getListPairContentIDListIDForExecutionStepsIds(executionsIds);
+		} else {
+			return new ArrayList<>();
+		}
+		// now we can delete them
+		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION_STEP, executionStepIds);
+		customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION_STEP, executionStepIds);
+		executionStepDao.deleteAllByIds(executionStepIds);
 		return pairContentIDListID;
 	}
 

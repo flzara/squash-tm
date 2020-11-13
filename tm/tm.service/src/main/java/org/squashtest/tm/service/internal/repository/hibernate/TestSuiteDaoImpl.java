@@ -27,6 +27,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -240,5 +241,13 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 		return indexedItems;
 	}
 
-
+	@Override
+	public List<TestSuite> findAllByExecutionIds(List<Long> executionIds) {
+		if (executionIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		Query query = entityManager.createNamedQuery("TestSuite.findAllByExecutionIds");
+		query.setParameter("executionIds", executionIds);
+		return query.getResultList();
+	}
 }

@@ -35,8 +35,12 @@ public interface ExecutionStepDao extends EntityDao<ExecutionStep> {
 	 * Look for {@link ExecutionStep}, to allow statistics computation. Return a {@link MultiMap}. Key : testStepIds, Value {@link ExecutionStep}
 	 * @param testStepIds
 	 * @param iterationIds The perimeter in sense of feat 5434
-	 * @param iterationsIds 
+	 * @param iterationsIds
 	 * @return
 	 */
 	MultiMap findStepExecutionsStatus(List<Long> testCaseIds,List<Long> testStepIds);
+
+	List<Long> findAllIdsByExecutionIds(List<Long> executionIds);
+
+	void deleteAllByIds(List<Long> executionStepIds);
 }

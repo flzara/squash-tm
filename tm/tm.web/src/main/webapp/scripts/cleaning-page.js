@@ -30,7 +30,10 @@ require(["common"], function() {
 		$(function() {
 
 			$("#delete-automated-suites-and-executions").on("click", function() {
-				// send request here
+				$.ajax({
+					url: squashtm.appRoot + "administration/cleaning",
+					method: 'POST'
+				});
 			});
 
 		});

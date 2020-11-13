@@ -60,6 +60,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
+import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
@@ -84,6 +85,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -101,6 +103,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
@@ -115,7 +118,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000; // timeout as milliseconds
 
+	public static final long DEFAULT_SUITE_SAVING_DURATION_IN_SECONDS = 30; // seconds
+
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
+
 
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
@@ -131,6 +137,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private ExecutionDao executionDao;
+
+	@Inject
+	private AutomatedExecutionExtenderDao automatedExecutionExtenderDao;
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinder;
@@ -161,7 +170,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -448,6 +456,33 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		autoSuiteDao.delete(suite);
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	private void deleteAutomatedSuites(List<String> automatedSuiteIds) {
+		List<Long> executionIds = executionDao.findAllIdsByAutomatedSuiteIds(automatedSuiteIds);
+		if (executionIds.isEmpty()) {
+			return;
+		}
+		List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(executionIds);
+		deletionHandler.bulkDeleteExecutions(executions);
+		autoSuiteDao.deleteAllByIds(automatedSuiteIds);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void cleanOldSuites() {
+		LocalDateTime limitDateTime = LocalDateTime.now().minusSeconds(DEFAULT_SUITE_SAVING_DURATION_IN_SECONDS);
+
+		List<String> oldAutomatedSuiteIds = autoSuiteDao.getOldAutomatedSuiteIds(limitDateTime);
+		if (oldAutomatedSuiteIds.isEmpty()) {
+			return;
+		}
+		List<List<String>> automatedSuiteIdPartitions = Lists.partition(oldAutomatedSuiteIds, 10);
+		automatedSuiteIdPartitions.forEach(automatedSuiteIdPartition -> {
+			deleteAutomatedSuites(automatedSuiteIdPartition);
+			entityManager.flush();
+			entityManager.clear();
+		});
+	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)

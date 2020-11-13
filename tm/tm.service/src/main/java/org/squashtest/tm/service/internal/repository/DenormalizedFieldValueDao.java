@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
@@ -41,6 +42,7 @@ public interface DenormalizedFieldValueDao extends JpaRepository<DenormalizedFie
 
 	String PARAM_ENTITY_TYPE = "entityType";
 	String PARAM_ENTITY_ID = "entityId";
+	String PARAM_ENTITY_IDS = "entityIds";
 
 	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
 
@@ -82,4 +84,8 @@ public interface DenormalizedFieldValueDao extends JpaRepository<DenormalizedFie
 	@Query
 	long countDenormalizedFields(@Param(PARAM_ENTITY_ID) long entityId, @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
 
+	@Query
+	@Modifying
+	@EmptyCollectionGuard
+	void deleteAllForEntities(@Param(PARAM_ENTITY_IDS) Collection<Long> entityIds, @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
 }

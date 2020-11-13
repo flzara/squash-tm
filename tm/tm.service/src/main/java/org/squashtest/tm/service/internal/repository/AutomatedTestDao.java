@@ -33,7 +33,7 @@ public interface AutomatedTestDao {
 	 * Will persist this test if really new, or return the persisted instance
 	 * if this test already exists. Due to this the calling code should always
 	 * rely on the returned instance of AutomatedTest.
-	 * 
+	 *
 	 * @param newTest
 	 */
 	AutomatedTest persistOrAttach(AutomatedTest newTest);
@@ -42,7 +42,7 @@ public interface AutomatedTestDao {
 	/**
 	 * Will remove the test from the database, if and only if no TestCase nor AutomatedExecutionExtender
 	 * still refer to it.
-	 * 
+	 *
 	 * @param test
 	 */
 	void removeIfUnused(AutomatedTest test);
@@ -50,7 +50,7 @@ public interface AutomatedTestDao {
 
 	/**
 	 * returns how many test cases and/or executions reference an AutomatedTest (given its id)
-	 * 
+	 *
 	 * @param testId
 	 * @return
 	 */
@@ -59,7 +59,7 @@ public interface AutomatedTestDao {
 
 	/**
 	 * Will look for AutomatedTests that aren't referenced by anything and will remove them from the repository
-	 * 
+	 *
 	 */
 	void pruneOrphans();
 
@@ -81,7 +81,7 @@ public interface AutomatedTestDao {
 
 	/**
 	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() )
-	 * 
+	 *
 	 * @param extenderIds
 	 * @return
 	 */
@@ -89,10 +89,11 @@ public interface AutomatedTestDao {
 
 	/**
 	 * Same than {@link #findAllByExtenderIds(List)}, but with the extenders themselves instead of their ids.
-	 * 
+	 *
 	 * @param extenders
 	 * @return
 	 */
 	List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders);
 
+	List<AutomatedTest> findAll();
 }

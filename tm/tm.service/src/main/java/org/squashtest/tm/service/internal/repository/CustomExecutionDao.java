@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.List;
 
@@ -81,5 +82,14 @@ public interface CustomExecutionDao {
 	 */
 	List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
 
+	/**
+	 * Given a list of AutomatedSuite ids, finds the corresponding Execution ids.
+	 * @param automatedExecutionIds
+	 * @return All Execution ids contained in the AutomatedSuites which ids were given as parameter.
+	 */
+	@EmptyCollectionGuard
+    List<Long> findAllIdsByAutomatedSuiteIds(List<String> automatedExecutionIds);
 
+	@EmptyCollectionGuard
+	List<Execution> findAllWithTestPlanItemByIds(List<Long> executionIds);
 }

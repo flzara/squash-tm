@@ -149,7 +149,10 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		}
 	}
 
-
+	@Override
+	public void deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType holderType, Collection<Long> holderIds) {
+		denormalizedFieldValueDao.deleteAllForEntities(holderIds, holderType);
+	}
 
 	@Override
 	public List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder) {

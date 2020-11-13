@@ -22,46 +22,57 @@ package org.squashtest.tm.service.internal.denormalizedField;
 
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 
+import java.util.Collection;
+
 
 /**
- * That interface should remain private to this bundle. The reason is that the methods will not be secured. 
- * 
+ * That interface should remain private to this bundle. The reason is that the methods will not be secured.
+ *
  * @author mpagnon
  *
  */
 public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldValueManager {
 
-	
+
 	/**
 	 * Will create all the denormalized field values for one entity.
-	 * 
+	 *
 	 * @param source : the {@link BoundEntity} from which the destination is created
 	 * @param destination : the {@link DenormalizedFieldHolder} newly created
-	 * 
+	 *
 	 */
 	void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination);
-	
-	
+
+
 	/**
 	 * will delete all the denormalized field values for one entity
-	 * 
+	 *
 	 * @param entity
 	 */
 	void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity);
 
+	/**
+	 * Delete all DenormalizedFieldValues given a DenormalizedFieldHolderType and a Collection of ids.
+	 * @param holderType
+	 * @param holderIds
+	 */
+	void deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType holderType, Collection<Long> holderIds);
+
 
 	/**
-	 * Will create the custom field values of all the execution steps in that execution in a lot. 
-	 * If some execution steps come from call steps that belong to a different project, 
+	 * Will create the custom field values of all the execution steps in that execution in a lot.
+	 * If some execution steps come from call steps that belong to a different project,
 	 * will apply the reordering as requested and implemented in {@link #createAllDenormalizedFieldValues(ActionTestStep, ExecutionStep, Project)}
 	 *
 	 * @param execution
 	 */
 	void createAllDenormalizedFieldValuesForSteps(Execution execution);
+
 }

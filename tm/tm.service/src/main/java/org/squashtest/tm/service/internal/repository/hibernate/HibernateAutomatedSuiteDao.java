@@ -45,10 +45,14 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.squashtest.tm.domain.campaign.QIteration.iteration;
@@ -379,4 +383,24 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	}
 
+	@Override
+	public List<String> getOldAutomatedSuiteIds(LocalDateTime limitDateTime) {
+		Instant limitInstant = limitDateTime.atZone(ZoneId.systemDefault()).toInstant();
+		Date limitDate = Date.from(limitInstant);
+
+		Query fetchQuery = em.createNamedQuery("AutomatedSuite.findOldAutomatedSuiteIds");
+		fetchQuery.setParameter("limitDate", limitDate);
+		List<String> oldAutomatedSuites = fetchQuery.getResultList();
+		return oldAutomatedSuites;
+	}
+
+	@Override
+	public void deleteAllByIds(List<String> automatedSuiteIds) {
+		if (automatedSuiteIds.isEmpty()) {
+			return;
+		}
+		Query deleteQuery = em.createNamedQuery("AutomatedSuite.deleteAllByIds");
+		deleteQuery.setParameter("automatedSuiteIds", automatedSuiteIds);
+		deleteQuery.executeUpdate();
+	}
 }

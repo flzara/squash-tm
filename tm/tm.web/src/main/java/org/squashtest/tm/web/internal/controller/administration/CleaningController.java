@@ -23,16 +23,29 @@ package org.squashtest.tm.web.internal.controller.administration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+
+import javax.inject.Inject;
 
 @Controller
 @RequestMapping("/administration/cleaning")
 public class CleaningController {
 
+	@Inject
+	private AutomatedSuiteManagerService automatedSuiteManagerService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCleaningPage() {
 		ModelAndView mav = new ModelAndView("page/administration/cleaning");
 		return mav;
+	}
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST)
+	public void cleanAutomatedSuitesAndExecutions() {
+		automatedSuiteManagerService.cleanOldSuites();
 	}
 
 }
