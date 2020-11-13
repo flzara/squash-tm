@@ -74,6 +74,11 @@
 			exclude: ["common"]
 		},
 		{
+			name: "cleaning-page",
+			include: ["jquery", "squash.translator", "app/ws/squashtm.workspace"],
+			exclude: ["common"]
+		},
+		{
 			name: "advanced-search-input",
 			include: ["search/advanced-search-input", "app/ws/squashtm.workspace"],
 			exclude: ["common"]
