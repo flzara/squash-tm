@@ -28,6 +28,7 @@ import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -178,6 +179,10 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	 * - Fetch CTPIs that need to be reordered
 	 * - Remove all affected CTPIs (those that are effectively deleted and those that need reordering)
 	 * - Re-insert the CTPIs that need reordering with their new position.
+	 *
+	 * Note: You'll see awkward temporary tables (tempCTPI, tempITPI,...) here and there. These are needed
+	 * for MySQL which disallow updates where the updated table appears in a sub-select unless we give it
+	 * an alias.
 	 */
 	@Override
 	public void removeCampaignTestPlanInboundReferences(List<Long> testCasesToRemove) {
@@ -202,9 +207,11 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	private SelectConditionStep<Record1<Long>> getAffectedCampaigns(List<Long> testCasesToRemove) {
+		Table<?> tempCTPI = DSL.selectFrom(CAMPAIGN_TEST_PLAN_ITEM).asTable();
+
 		return DSL.select(CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID)
-			.from(CAMPAIGN_TEST_PLAN_ITEM)
-			.where(CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID.in(testCasesToRemove));
+			.from(tempCTPI)
+			.where(tempCTPI.field("TEST_CASE_ID").in(testCasesToRemove));
 	}
 
 	private void deleteAffectedCampaignItems(List<Long> testCasesToRemove) {
@@ -257,25 +264,35 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	private Select<Record1<Long>> getIterationTestPlanItemsToReorder(Select<Record1<Long>> itemIdsToRemove) {
-		Select<Record1<Long>> affectedIterationIds = DSL
-			.select(ITEM_TEST_PLAN_LIST.ITERATION_ID)
-			.from(ITEM_TEST_PLAN_LIST)
-			.join(ITERATION_TEST_PLAN_ITEM)
-			.on(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.eq(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID))
-			.where(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.in(itemIdsToRemove));
+		final String ITERATION_ID = "ITERATION_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPItem = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+		final Table<?> tempITPList = DSL.selectFrom(ITEM_TEST_PLAN_LIST).asTable();
 
-		return DSL.select(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID)
-			.from(ITERATION_TEST_PLAN_ITEM)
-			.join(ITEM_TEST_PLAN_LIST).on(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
-			.where(ITEM_TEST_PLAN_LIST.ITERATION_ID.in(affectedIterationIds))
-			.and(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.notIn(itemIdsToRemove));
+		Select<Record1<Long>> affectedIterationIds = DSL
+			.select(tempITPList.field(ITERATION_ID, Long.class))
+			.from(tempITPList)
+			.join(tempITPItem)
+			.on(tempITPList.field(ITEM_TEST_PLAN_ID, Long.class).eq(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class)))
+			.where(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class).in(itemIdsToRemove));
+
+		return DSL.select(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPItem)
+			.join(tempITPList).on(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class)
+				.eq(tempITPList.field(ITEM_TEST_PLAN_ID, Long.class)))
+			.where(tempITPList.field(ITERATION_ID, Long.class).in(affectedIterationIds))
+			.and(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class).notIn(itemIdsToRemove));
 	}
 
 	private Select<Record1<Long>> getIterationTestPlanItemsWithoutExecution(List<Long> testCaseIds) {
-		return DSL.select(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID)
-			.from(ITERATION_TEST_PLAN_ITEM)
-			.where(ITERATION_TEST_PLAN_ITEM.TCLN_ID.in(testCaseIds))
-			.and(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.notIn(
+		final String TCLN_ID = "TCLN_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPI = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+
+		return DSL.select(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPI)
+			.where(tempITPI.field(TCLN_ID, Long.class).in(testCaseIds))
+			.and(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class).notIn(
 				DSL.selectDistinct(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID).from(ITEM_TEST_PLAN_EXECUTION)));
 	}
 
@@ -296,11 +313,15 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	private void nullifyReferencedTestCaseForExecutedITPIs(List<Long> testCasesToRemove) {
-		Select<Record1<Long>> itemsToRemoveWithExecutions = DSL
-			.select(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID)
-			.from(ITERATION_TEST_PLAN_ITEM)
-			.where(ITERATION_TEST_PLAN_ITEM.TCLN_ID.in(testCasesToRemove))
-			.and(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.in(
+		final String TCLN_ID = "TCLN_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPI = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+
+		final Select<Record1<Long>> itemsToRemoveWithExecutions = DSL
+			.select(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPI)
+			.where(tempITPI.field(TCLN_ID, Long.class).in(testCasesToRemove))
+			.and(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class).in(
 				DSL.selectDistinct(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID).from(ITEM_TEST_PLAN_EXECUTION)));
 
 		org.jooq.Query nullifyQuery = DSL.update(ITERATION_TEST_PLAN_ITEM)
