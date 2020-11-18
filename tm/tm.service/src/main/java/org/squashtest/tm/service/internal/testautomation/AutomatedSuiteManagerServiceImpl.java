@@ -118,7 +118,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000; // timeout as milliseconds
 
-	public static final long DEFAULT_SUITE_SAVING_DURATION_IN_SECONDS = 30; // seconds
+	public static final long DEFAULT_SUITE_SAVING_DURATION_IN_DAYS = 30; // days
 
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
 
@@ -470,7 +470,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void cleanOldSuites() {
-		LocalDateTime limitDateTime = LocalDateTime.now().minusSeconds(DEFAULT_SUITE_SAVING_DURATION_IN_SECONDS);
+		LocalDateTime limitDateTime = LocalDateTime.now().minusDays(DEFAULT_SUITE_SAVING_DURATION_IN_DAYS);
 
 		List<String> oldAutomatedSuiteIds = autoSuiteDao.getOldAutomatedSuiteIds(limitDateTime);
 		if (oldAutomatedSuiteIds.isEmpty()) {
