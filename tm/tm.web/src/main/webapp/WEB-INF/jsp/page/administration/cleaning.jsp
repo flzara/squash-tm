@@ -86,3 +86,18 @@
     </div>
   </jsp:attribute>
 </layout:info-page-layout>
+
+<f:message var="warningPopupTitle" key="label.CleaningAutomatedSuites" />
+<f:message var="warningPopupContent" key="dialog.clean-automated-suites.message" />
+<f:message var="confirmLabel" key="label.Confirm" />
+<f:message var="cancelLabel" key="label.Cancel" />
+<div id="clean-automated-suites-popup" class="popup-dialog not-displayed" title="${warningPopupTitle}">
+
+  <comp:notification-pane type="warning" txtcontent="${warningPopupContent}"/>
+
+  <div class="popup-dialog-buttonpane">
+    <input class="confirm" type="button" value="${confirmLabel}" />
+    <input class="cancel" type="button" value="${cancelLabel}" />
+  </div>
+
+</div>

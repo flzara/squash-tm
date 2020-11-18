@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "app/ws/squashtm.workspace"], function($) {
+	require(["jquery", "app/ws/squashtm.workspace", "jquery.squash.confirmdialog"], function($) {
 		"use strict";
 		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 			var token = $("meta[name='_csrf']").attr("content");
@@ -29,11 +29,22 @@ require(["common"], function() {
 
 		$(function() {
 
-			$("#delete-automated-suites-and-executions").on("click", function() {
+			var warningPopup = $('#clean-automated-suites-popup');
+			warningPopup.confirmDialog();
+
+			warningPopup.on('confirmdialogconfirm', function () {
 				$.ajax({
 					url: squashtm.appRoot + "administration/cleaning",
 					method: 'POST'
 				});
+			});
+
+			warningPopup.on('confirmdialogcancel', function () {
+				warningPopup.confirmDialog('close');
+			});
+
+			$("#delete-automated-suites-and-executions").on("click", function() {
+				warningPopup.confirmDialog('open');
 			});
 
 		});
