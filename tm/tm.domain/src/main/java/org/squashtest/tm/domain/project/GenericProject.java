@@ -190,6 +190,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 
 	private boolean useTreeStructureInScmRepo = true;
 
+	private Integer automatedSuitesLifetime;
+
 	public GenericProject() {
 		super();
 	}
@@ -529,7 +531,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	public void setAllowAutomationWorkflow(boolean allowAutomationWorkflow) {
 		this.allowAutomationWorkflow = allowAutomationWorkflow;
 	}
-	
+
 	public ScmRepository getScmRepository() {
 		return scmRepository;
 	}
@@ -566,5 +568,12 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	}
 	public void setBddScriptLanguage(BddScriptLanguage bddScriptLanguage) {
 		this.bddScriptLanguage = bddScriptLanguage;
+	}
+
+	public Integer getAutomatedSuitesLifetime() {
+		return automatedSuitesLifetime;
+	}
+	public void setAutomatedSuitesLifetime(Integer automatedSuitesLifetime) {
+		this.automatedSuitesLifetime = automatedSuitesLifetime;
 	}
 }
