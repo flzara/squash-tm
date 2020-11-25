@@ -54,70 +54,6 @@ public interface ScmServerCredentialsService {
 
 
 	/**
-	 * Changes the authentication policy for this server. If the chosen policy is
-	 * APP_LEVEL be sure to {@link #storeCredentials(long, ManageableCredentials)} too.
-	 *
-	 * @param serverId
-	 * @param policy
-	 */
-	void changeAuthenticationPolicy(long serverId, AuthenticationPolicy policy);
-
-
-	/**
-	 * Changes the authentication protocol. Be warned that doing this will automatically
-	 * remove the authentication configuration and app-level credentials (since they target
-	 * the former protocol)
-	 *
-	 * @param serverId
-	 * @param protocol
-	 */
-	void changeAuthenticationProtocol(long serverId, AuthenticationProtocol protocol);
-
-	/**
-	 * Says whether the StoredCredentials service is properly configured
-	 *
-	 *  @see StoredCredentialsManager#isSecretConfigured()
-	 *
-	 * @return
-	 */
-	boolean isCredentialsServiceAvailable();
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#storeAppLevelCredentials(long, ManageableCredentials)
-	 * @param serverId
-	 * @param credentials
-	 */
-	void storeCredentials(long serverId, ManageableCredentials credentials);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#storeServerAuthConfiguration(long, ServerAuthConfiguration)
-	 * @param serverId
-	 * @param conf
-	 */
-	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#findAppLevelCredentials(long)
-	 * @param serverId
-	 * @return
-	 */
-	ManageableCredentials findCredentials(long serverId);
-
-	/**
-	 *
-	 * @See {@link StoredCredentialsManager#findServerAuthConfiguration(long)
-	 * @param serverId
-	 * @return
-	 */
-	ServerAuthConfiguration findAuthConfiguration(long serverId);
-
-
-	/**
 	 * Tests whether the given credentials are valid for the given server.
 	 * The method exits normally if the credentials are valid.
 	 *
@@ -130,19 +66,4 @@ public interface ScmServerCredentialsService {
 	// Note : the exceptions thrown here belong to the BugTracker domain, they should be replaced with
 	// exceptions from the ThirdPartyServer domain once the exception family exists
 	void testCredentials(long serverId, ManageableCredentials credentials);
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#deleteAppLevelCredentials(long)
-	 * @param serverId
-	 */
-	void deleteCredentials(long serverId);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
-	 * @param serverId
-	 */
-	void deleteAuthConfiguration(long serverId);
 }

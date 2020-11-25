@@ -23,6 +23,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
@@ -48,7 +49,9 @@ class StartTestExecutionIT extends Specification {
 	def setup() {
 		// server reference conf
 		def stubPort = System.getProperty("stubTaServer.webapp.port")
-		server = new TestAutomationServer("server", new URL("http://localhost:${stubPort}/stub-ta-server"), "login", "password")
+		server = new TestAutomationServer()
+		server.setName("server");
+		server.setUrl("http://localhost:${stubPort}/stub-ta-server")
 		// project conf
 		project.server >> server
 		project.jobName >> "fancy job"
@@ -60,19 +63,23 @@ class StartTestExecutionIT extends Specification {
 		AutomatedTest test = Mock()
 		test.fullName >> "fancy test"
 		exec.getAutomatedTest() >> test
+		BasicAuthenticationCredentials credentials = Mock()
+		credentials.username >> "login"
+		credentials.password >> "password"
 
 		buildDef.project >> project
 		buildDef.parameterizedExecutions >> [
 			new Couple(exec, [batman: "leatherpants"])
 		]
+		buildDef.credentials >> credentials
 
 	}
 
 
 	def mockHttpClientProvider(httpClient) {
 		HttpClientProvider res = Mock()
-		res.getClientFor(_) >> httpClient
-		res.getRequestFactoryFor(_) >> new HttpComponentsClientHttpRequestFactory(httpClient);
+		res.getClientFor(_ as TestAutomationServer, _ as String, _ as String) >> httpClient
+		res.getRequestFactoryFor(_ as TestAutomationServer, _ as String, _ as String) >> new HttpComponentsClientHttpRequestFactory(httpClient);
 
 		return res
 	}

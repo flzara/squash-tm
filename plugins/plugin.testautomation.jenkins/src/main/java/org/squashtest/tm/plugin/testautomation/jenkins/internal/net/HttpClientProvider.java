@@ -42,8 +42,10 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /*
@@ -109,21 +111,26 @@ public class HttpClientProvider {
          * the regular credentials when an user execute the test, and this code does not shield the app from both event happening
          * simultaneously.
          */
-	public CloseableHttpClient getClientFor(TestAutomationServer server) {
+	public CloseableHttpClient getClientFor(TestAutomationServer server, String login, String password) {
 
-		URL baseURL = server.getBaseURL();
+		URL baseURL = null;
 
-		credentialsProvider.setCredentials(
-			new AuthScope(baseURL.getHost(), baseURL.getPort(), AuthScope.ANY_REALM),
-			new UsernamePasswordCredentials(server.getLogin(), server.getPassword()));
+		try {
+			baseURL = new URL(server.getUrl());
 
+			credentialsProvider.setCredentials(
+				new AuthScope(baseURL.getHost(), baseURL.getPort(), AuthScope.ANY_REALM),
+				new UsernamePasswordCredentials(login, password));
+		} catch (MalformedURLException e) {
+			throw new TestAutomationException(e);
+		}
 
 		return client;
 
 	}
 
-	public ClientHttpRequestFactory getRequestFactoryFor(TestAutomationServer server) {
-		getClientFor(server);
+	public ClientHttpRequestFactory getRequestFactoryFor(TestAutomationServer server, String login, String password) throws TestAutomationException{
+		getClientFor(server, login, password);
 		return requestFactory;
 	}
 

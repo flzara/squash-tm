@@ -58,7 +58,7 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 		if (LOGGER.isErrorEnabled()) {
 			LOGGER.error(
 					"TestAutomationConnector : the task 'fetch test list' failed for project '" + project.getLabel()
-					+ "' on server '" + project.getServer().getBaseURL() + "', caused by :", thrownException);
+					+ "' on server '" + project.getServer().getUrl() + "', caused by :", thrownException);
 		}
 		return new TestAutomationProjectContent(project, thrownException);
 	}

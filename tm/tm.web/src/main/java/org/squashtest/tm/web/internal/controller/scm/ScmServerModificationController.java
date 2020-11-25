@@ -40,6 +40,7 @@ import org.squashtest.tm.service.scmserver.ScmServerCredentialsService;
 import org.squashtest.tm.service.scmserver.ScmServerManagerService;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
+import org.squashtest.tm.service.thirdpartyserver.ThirdPartyServerCredentialsService;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementBean;
 import org.squashtest.tm.web.internal.controller.thirdpartyserver.ThirdPartyServerCredentialsManagementHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -94,6 +95,8 @@ public class ScmServerModificationController {
 	private ScmRepositoryManagerService scmRepositoryManager;
 	@Inject
 	private ScmServerCredentialsService credentialsService;
+	@Inject
+	private ThirdPartyServerCredentialsService thirdPartyServerCredentialsService;
 	@Inject
 	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
 
@@ -157,14 +160,14 @@ public class ScmServerModificationController {
 	@RequestMapping(value = "/authentication-protocol", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
 	public void changeAuthProtocol(@PathVariable(SERVER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationProtocol protocol){
-		credentialsService.changeAuthenticationProtocol(bugtrackerId, protocol);
+		thirdPartyServerCredentialsService.changeAuthenticationProtocol(bugtrackerId, protocol);
 	}
 
 
 	@RequestMapping(value = "/authentication-protocol/configuration", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void saveAuthConfiguration(@PathVariable(SERVER_ID) long bugtrackerId,  @Valid @RequestBody ServerAuthConfiguration configuration){
-		credentialsService.storeAuthConfiguration(bugtrackerId, configuration);
+		thirdPartyServerCredentialsService.storeAuthConfiguration(bugtrackerId, configuration);
 	}
 
 
@@ -172,7 +175,7 @@ public class ScmServerModificationController {
 	@RequestMapping(value = "/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void storeCredentials(@PathVariable(SERVER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
-		credentialsService.storeCredentials(bugtrackerId, credentials);
+		thirdPartyServerCredentialsService.storeCredentials(bugtrackerId, credentials);
 	}
 
 

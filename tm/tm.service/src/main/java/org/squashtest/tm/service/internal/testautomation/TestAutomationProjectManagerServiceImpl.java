@@ -22,19 +22,27 @@ package org.squashtest.tm.service.internal.testautomation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
+import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
+import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationServerNoCredentialsException;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -42,7 +50,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
@@ -63,6 +74,17 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
+
+	@Inject
+	private CredentialsProvider credentialsProvider;
+
+	@Inject
+	private MessageSource i18nHelper;
+
+	private String getMessage(String i18nKey) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return i18nHelper.getMessage(i18nKey, null, locale);
+	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -112,8 +134,8 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
 	}
-	
-	
+
+
 
 	@Override
 	public void changeCanRunGherking(long projectId, boolean canRunGherkin) {
@@ -152,9 +174,41 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
-		connector.checkCredentials(server);
+
+		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(server);
+		Supplier<TestAutomationServerNoCredentialsException> throwIfNull = () -> {
+			throw new TestAutomationServerNoCredentialsException(
+				String.format(
+					getMessage("message.testAutomationServer.noCredentials"),
+					server.getName()));
+		};
+		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
+
+		AuthenticationProtocol protocol = credentials.getImplementedProtocol();
+		if(!connector.supports(protocol)) {
+			throw new UnsupportedAuthenticationModeException(protocol.toString());
+		}
+
 		try {
-			return connector.listProjectsOnServer(server);
+			connector.checkCredentials(server, credentials);
+			return connector.listProjectsOnServer(server, credentials);
+		} catch (TestAutomationException ex) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("Test Automation : failed to list projects on server : ", ex);
+			}
+			throw ex;
+		}
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, String login, String password) {
+
+		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
+		try {
+			connector.checkCredentials(server, login, password);
+
+			return connector.listProjectsOnServer(server, login, password);
 		} catch (TestAutomationException ex) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("Test Automation : failed to list projects on server : ", ex);

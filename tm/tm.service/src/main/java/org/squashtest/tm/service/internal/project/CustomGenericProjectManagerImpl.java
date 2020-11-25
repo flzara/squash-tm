@@ -523,10 +523,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		/* We don't want to manipulate the Persistent TestAutomationServer,
 		so we create a Copy of it before setting the login and password. */
 		TestAutomationServer transientServer = server.createCopy();
-		transientServer.setLogin(login);
-		transientServer.setPassword(password);
 
-		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(transientServer);
+		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(transientServer, login, password);
 		Collection<String> alreadyBoundProjectsJobNames = genericProjectDao.findBoundTestAutomationProjectJobNames(projectId);
 		Iterator<TestAutomationProject> it = availableTaProjects.iterator();
 		while(it.hasNext()) {

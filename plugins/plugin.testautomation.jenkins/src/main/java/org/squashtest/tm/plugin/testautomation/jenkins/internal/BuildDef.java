@@ -21,6 +21,7 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -41,16 +42,18 @@ import java.util.Map;
  */
 public class BuildDef {
 	private final TestAutomationProject project;
+	private final BasicAuthenticationCredentials credentials;
 	private final Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions;
 	private final String node;
 
 
-	public BuildDef(@NotNull TestAutomationProject project,
+	public BuildDef(@NotNull TestAutomationProject project, BasicAuthenticationCredentials credentials,
 			@NotNull List<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions, String node) {
 		super();
 		this.project = project;
 		this.parameterizedExecutions = Collections.unmodifiableList(parameterizedExecutions);
 		this.node = node;
+		this.credentials = credentials;
 	}
 
 	/**
@@ -79,5 +82,9 @@ public class BuildDef {
 
 	public String getNode(){
 		return node;
+	}
+
+	public BasicAuthenticationCredentials getCredentials() {
+		return credentials;
 	}
 }

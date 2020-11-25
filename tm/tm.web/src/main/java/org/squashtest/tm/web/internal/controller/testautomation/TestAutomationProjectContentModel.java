@@ -152,14 +152,14 @@ public class TestAutomationProjectContentModel {
 	public static final class TestAutomationServerModel {
 		private Long id;
 		private String name;
-		private URL baseURL;
+		private String url;
 		private String kind;
 		private boolean manualSlaveSelection;
 
 		public TestAutomationServerModel(TestAutomationServer server) {
 			this.id = server.getId();
 			this.name = server.getName();
-			this.baseURL = server.getBaseURL();
+			this.url = server.getUrl();
 			this.kind = server.getKind();
 			this.manualSlaveSelection = server.isManualSlaveSelection();
 		}
@@ -180,12 +180,12 @@ public class TestAutomationProjectContentModel {
 			this.name = name;
 		}
 
-		public URL getBaseURL() {
-			return baseURL;
+		public String getUrl() {
+			return url;
 		}
 
-		public void setBaseURL(URL baseURL) {
-			this.baseURL = baseURL;
+		public void setUrl(String url) {
+			this.url = url;
 		}
 
 		public String getKind() {

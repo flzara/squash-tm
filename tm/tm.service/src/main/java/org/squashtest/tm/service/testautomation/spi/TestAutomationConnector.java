@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.testautomation.spi;
 
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -35,27 +37,39 @@ public interface TestAutomationConnector {
 
 	/**
 	 * A String indicating which kind of connector it is
-	 * 
+	 *
 	 * @return
 	 */
 	String getConnectorKind();
 
 	/**
-	 * Checks that the given server configuration (including credentials) actually works.
-	 * 
+	 * Checks that the given server configuration with given credentials actually works.
+	 *
 	 * @param server
+	 * @param login
+	 * @param password
 	 * @return true if the credentials work, false otherwise
 	 */
-	boolean checkCredentials(TestAutomationServer server);
+	boolean checkCredentials(TestAutomationServer server, String login, String password) throws TestAutomationException;
+
+	/**
+	 * Checks that the given server configuration with given credentials actually works.
+	 *
+	 * @param server
+	 * @param credentials
+	 * @return true if the credentials work, false otherwise
+	 */
+	boolean checkCredentials(TestAutomationServer server, Credentials credentials) throws TestAutomationException;
 
 	/**
 	 * <p>
-	 * Given a server (that contains everything you need to connect it), returns the collection of
+	 * Given a server and credentials as login and password, returns the collection of
 	 * {@link TestAutomationProject} that it hosts.
 	 * </p>
-	 * 
-	 * 
+	 *
 	 * @param server
+	 * @param login
+	 * @param password
 	 * @return a Collection that may never be null if success
 	 * @throws ServerConnectionFailed
 	 *             if could not connect to the server
@@ -69,17 +83,41 @@ public interface TestAutomationConnector {
 	 * @throws TestAutomationException
 	 *             for anything that doesn't fit the exceptions above.
 	 */
-	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) throws ServerConnectionFailed,
+	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, String login, String password) throws ServerConnectionFailed,
 	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException;
+
+	/**
+	 * <p>
+	 * Given a server and credentials, returns the collection of
+	 * {@link TestAutomationProject} that it hosts.
+	 * </p>
+	 *
+	 * @param server
+	 * @param credentials
+	 * @return a Collection that may never be null if success
+	 * @throws ServerConnectionFailed
+	 *             if could not connect to the server
+	 * @throws AccessDenied
+	 *             if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException
+	 *             if the server replied something that is not suitable for a response or otherwise replied not nicely
+	 * @throws NotFoundException
+	 *             if the server could not find its projects
+	 * @Throws BadConfiguration if something went wrong due to the configuration
+	 * @throws TestAutomationException
+	 *             for anything that doesn't fit the exceptions above.
+	 */
+	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, Credentials credentials) throws ServerConnectionFailed,
+		AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException;
 
 	/**
 	 * <p>
 	 * Given a project (that contains everything you need to connect it), returns the collection of
 	 * {@link AutomatedTest} that it contains
 	 * </p>
-	 * 
+	 *
 	 * @param project
-	 * 
+	 *
 	 * @return a Collection possibly empty but never null of TestAutomationTest if success
 	 * @throws ServerConnectionFailed
 	 *             if could not connect to the server
@@ -101,17 +139,17 @@ public interface TestAutomationConnector {
 	 * Given a bunch of tests, must tell the remote server to execute them. These particular executions of those tests
 	 * are grouped and must be identifiable by a reference.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * That method must return immediately after initiating the test start sequence, it must not wait for their
 	 * completion. However it may possibly start a background task to oversee the remote executions from here.
 	 * </p>
-	 * 
+	 *
 	 * @param tests
 	 *            the tests that must be executed
 	 * @param externalId
 	 *            a reference that index the resulting executions of those tests
-	 * 
+	 *
 	 * @throws ServerConnectionFailed
 	 *             if could not connect to the server
 	 * @throws AccessDenied
@@ -132,7 +170,7 @@ public interface TestAutomationConnector {
 	 * <p>
 	 * Will build and return the URL to access to the given test automation project's.
 	 * </P>
-	 * 
+	 *
 	 * @param testAutomationProject
 	 *            : the {@link TestAutomationProject} we want the URL of
 	 * @return : the URL for the given {@link TestAutomationProject}
@@ -141,9 +179,22 @@ public interface TestAutomationConnector {
 
 	/**
 	 * Will say, depending on the tests ecosystems if the execution order of the given test list is guaranteed.
-	 * 
+	 *
 	 * @param tests
 	 * @return true if the test list execution order is guaranteed.
 	 */
 	boolean testListIsOrderGuaranteed(Collection<AutomatedTest> tests);
+
+	/**
+	 * Tells whether this connector supports the given {@link AuthenticationProtocol}.
+	 * @param protocol The authentication protocol.
+	 * @return True if the given protocol is supported. False otherwise.
+	 */
+	boolean supports(AuthenticationProtocol protocol);
+
+	/**
+	 * Get an Array of the AuthenticationProtocols supported by this TestAutomationConnector.
+	 * @return An Array containing all the supported AuthenticationProtocols of this TestAutomationServer
+	 */
+	AuthenticationProtocol[] getSupportedProtocols();
 }

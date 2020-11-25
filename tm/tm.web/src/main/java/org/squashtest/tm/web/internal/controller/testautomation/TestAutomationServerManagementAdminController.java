@@ -142,7 +142,7 @@ public class TestAutomationServerManagementAdminController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
-			res.put(BASE_URL_KEY, HtmlUtils.htmlEscape(item.getBaseURL().toString()));
+			res.put(BASE_URL_KEY, HtmlUtils.htmlEscape(item.getName()));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, formatUsername(HtmlUtils.htmlEscape(auditable.getCreatedBy())));
 			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, formatUsername(HTMLCleanupUtils.escapeOrDefault(auditable.getLastModifiedBy(), null)));
 			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY,

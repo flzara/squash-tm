@@ -22,6 +22,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
@@ -47,23 +48,25 @@ public class OptimisticTestList {
 	private HttpClientProvider clientProvider;
 	private TestAutomationProject project;
 	private JsonParser parser = new JsonParser();
+	private BasicAuthenticationCredentials basicAuthenticationCredentials;
 
 
-	public OptimisticTestList(HttpClientProvider clientProvider, TestAutomationProject project) {
+	public OptimisticTestList(HttpClientProvider clientProvider, TestAutomationProject project, BasicAuthenticationCredentials basicAuthenticationCredentials) {
 		super();
 		this.clientProvider = clientProvider;
 		this.project = project;
+		this.basicAuthenticationCredentials = basicAuthenticationCredentials;
 	}
 
 	public Collection<AutomatedTest> run() {
 
-		CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
+		CloseableHttpClient client = clientProvider.getClientFor(project.getServer(), basicAuthenticationCredentials.getUsername(), String.valueOf(basicAuthenticationCredentials.getPassword()));
 
 		HttpGet method = new HttpRequestFactory().newGetJsonTestList(project);
 
 		try {
 			String response = RequestExecutor.getInstance().execute(client, method);
-			
+
 			TestListElement testList = parser.getTestListFromJson(response);
 
 
