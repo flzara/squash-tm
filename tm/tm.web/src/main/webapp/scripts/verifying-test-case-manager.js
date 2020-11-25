@@ -140,7 +140,7 @@ require([ "common" ], function() {
 					return;
 				}
 				tree.jstree('deselect_all');
-				$.cookie("jstree_verif_open", $.cookie("jstree_open"),{ path: '/squash/requirement-versions/'});
+				$.cookie("jstree_verif_open", $.cookie("jstree_open"),{ path: squashtm.app.contextRoot + 'requirement-versions/'});
 				bind(ids).success(function(data){
 					showAddSummary(data);
 					table().refresh();

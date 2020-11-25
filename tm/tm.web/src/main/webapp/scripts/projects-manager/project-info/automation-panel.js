@@ -349,35 +349,33 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 			},
 
 			changeBddImplTechnology: function (value) {
-				var projectId = this.projectId;
-				this.doChangeBddImplTechnology(projectId, value)
+				this.doChangeBddImplTechnology(value)
 					.error(function (xhr, error) {
 						console.log(error);
 					});
 			},
 
 			changeBddScriptLanguage: function (value) {
-				var projectId = this.projectId;
-				this.doChangeBddScriptLanguage(projectId, value)
+				this.doChangeBddScriptLanguage(value)
 					.error(function (xhr, error) {
 						console.log(error);
 					});
 			},
 
-			doChangeBddImplTechnology: function (projectId, value) {
+			doChangeBddImplTechnology: function (value) {
 				return $.ajax({
 					method: 'POST',
-					url: "/squash/generic-projects/" + projectId + "/bdd-impl-technology",
+					url: this.changeUrl + "/bdd-impl-technology",
 					data: {
 						bddImplTechnology: value
 					}
 				});
 			},
 
-			doChangeBddScriptLanguage: function (projectId, value) {
+			doChangeBddScriptLanguage: function (value) {
 				return $.ajax({
 					method: 'POST',
-					url: "/squash/generic-projects/" + projectId + "/bdd-script-language",
+					url: this.changeUrl + "/bdd-script-language",
 					data: {
 						bddScriptLanguage: value
 					}

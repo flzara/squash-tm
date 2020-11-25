@@ -731,6 +731,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 					},
 
 					_initScmUrlCell : function (scmUrlCell, data) {
+						var self = this;
 						var entityId = data["entity-id"];
 						var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
 
@@ -748,7 +749,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						scmUrlCell.on('keyup', function (event) {
 							// not perform autocomplete if arrows are pressed
 							if (!_.contains([37, 38, 39, 40], event.which)) {
-								var self = this;
 								var searchInput = $(event.currentTarget).find('input');
 								searchInput.autocomplete();
 								self.performAutocomplete(searchInput);
@@ -784,7 +784,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							source: function(request, response) {
 								$.ajax({
 									type: 'GET',
-									url: '/squash/scm-repositories/autocomplete',
+									url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
 									data: {
 										searchInput: searchInputValue
 									},
