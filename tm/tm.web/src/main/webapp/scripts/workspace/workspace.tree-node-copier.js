@@ -67,11 +67,11 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 		var store = function(data) {
 
 			var jsonData = JSON.stringify(data);
-			
-			if(this.pathname == "/squash/requirement-workspace/") {
-				storage.set('reqToTc-copy-nodes', jsonData, {path: "/squash/test-case-workspace"});
+
+			if(this.pathname === squashtm.app.contextRoot + "requirement-workspace/") {
+				storage.set('reqToTc-copy-nodes', jsonData, {path: squashtm.app.contextRoot + "test-case-workspace"});
 			}
-			
+
 			storage.set('squash-copy-nodes', jsonData);
 		};
 
