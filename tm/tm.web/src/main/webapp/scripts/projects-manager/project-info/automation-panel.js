@@ -31,9 +31,9 @@
  - availableBddScriptLanguages : the map of bdd script languages available
  - chosenBddScriptLanguage : the current bdd script language of the project
  */
-define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog",
+define(["jquery", "backbone", "handlebars", "jeditable.simpleJEditable", "jeditable.selectJEditable", "./AddTAProjectsDialog",
 		"./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "app/pubsub", "workspace.event-bus", "squashtable", "jquery.squash.formdialog"],
-	function ($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub, eventBus) {
+	function ($, Backbone, Handlebars, SimpleJEditable, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub, eventBus) {
 		// *************************************** ConfirmChangePopup **********************************************
 		var ConfirmChangePopup = Backbone.View.extend({
 
@@ -212,6 +212,8 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				this.chosenBddScriptLanguage = conf.chosenBddScriptLanguage;
 				this.bddScriptLanguageSelector = this.initBddScriptLanguageSelect();
 
+				this.initAutomatedSuitesLifetimeEditable();
+
 				this.automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
 				this.automationWorkflowPopup.on("formdialogconfirm", function () {
 					self.changeAutomationWorkflow(self.workflowSelector.getSelectedOption());
@@ -379,6 +381,15 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					data: {
 						bddScriptLanguage: value
 					}
+				});
+			},
+
+			initAutomatedSuitesLifetimeEditable : function() {
+				var self = this;
+				var component = $('#automated-suites-lifetime');
+				new SimpleJEditable({
+					targetUrl: self.changeUrl,
+					component: component
 				});
 			},
 

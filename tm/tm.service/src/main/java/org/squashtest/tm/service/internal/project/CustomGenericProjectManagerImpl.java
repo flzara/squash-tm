@@ -41,6 +41,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition;
@@ -1338,5 +1339,26 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			throw new IllegalArgumentException("No language other than English can be set for a Robot project.");
 		}
 		genericProject.setBddScriptLanguage(newBddScriptLanguage);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public Integer changeAutomatedSuitesLifetime(long projectId, String rawLifetime) {
+		Integer lifetime;
+		try {
+			if (StringUtils.isBlank(rawLifetime)) {
+				lifetime = null;
+			} else {
+				lifetime = new Integer(rawLifetime);
+				if (lifetime < 0) {
+					throw new IllegalArgumentException();
+				}
+			}
+		} catch (IllegalArgumentException ex) {
+			throw new WrongLifetimeFormatException(ex);
+		}
+		GenericProject genericProject = genericProjectDao.getOne(projectId);
+		genericProject.setAutomatedSuitesLifetime(lifetime);
+		return lifetime;
 	}
 }
