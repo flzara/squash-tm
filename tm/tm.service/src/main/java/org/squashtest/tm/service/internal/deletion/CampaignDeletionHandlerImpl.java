@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.deletion;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
@@ -57,9 +58,11 @@ import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -67,6 +70,8 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,6 +88,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	private static final String CAMPAIGNS_TYPE = "campaigns";
 	private static final String EXTENDED_DELETE = "EXTENDED_DELETE";
+	public static final int BIND_VARIABLES_LIMIT = 30000;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignDeletionHandlerImpl.class);
 
@@ -100,6 +106,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private TestSuiteDao suiteDao;
+
+	@Inject
+	private ExecutionDao executionDao;
 
 	@Inject
 	private ExecutionStepDao executionStepDao;
@@ -124,6 +133,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private CustomTestSuiteModificationService customTestSuiteModificationService;
+
+	@Inject
+	private IterationTestPlanDao testPlanItemDao;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -556,30 +571,47 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 
 	@Override
-	public void bulkDeleteExecutions(List<Execution> executions) {
-		List<Long> executionIds = executions.stream()
-			.map(Execution::getId)
-			.collect(Collectors.toList());
+	public void bulkDeleteExecutions(List<Long> executionIds) {
+		List<ExternalContentCoordinates> pairContentIDListIDSteps = new ArrayList<>();
+		List<ExternalContentCoordinates> pairContentIDListIDExec = new ArrayList<>();
 
-		List<ExternalContentCoordinates> pairContentIDListIDSteps = deleteExecSteps(executionIds);
-		List<ExternalContentCoordinates> pairContentIDListIDExec = attachmentManager.getListPairContentIDListIDForExecutionIds(executionIds);
+		List<List<Long>> executionIdPartitions = Lists.partition(executionIds, BIND_VARIABLES_LIMIT);
 
-		List<TestSuite> testSuites = suiteDao.findAllByExecutionIds(executionIds);
+		List<TestSuite> testSuites = new ArrayList<>();
+		List<IterationTestPlanItem>  iterationTestPlanItems = new ArrayList<>();
 
-		for (Execution execution : executions) {
-			IterationTestPlanItem testPlanItem = execution.getTestPlan();
-			testPlanItem.getExecutions().removeIf(
-				currentExec -> currentExec.getId().equals(execution.getId()));
-			testPlanItem.updateExecutionStatus();
-			deletionDao.removeEntity(execution);
-		}
+		executionIdPartitions.forEach(automatedSuiteIdPartition -> {
+			testSuites.addAll(
+				suiteDao.findAllByExecutionIds(automatedSuiteIdPartition));
+			iterationTestPlanItems.addAll(
+				testPlanItemDao.findAllByExecutionIds(automatedSuiteIdPartition));
 
-		for (TestSuite testSuite : testSuites) {
-				customTestSuiteModificationService.updateExecutionStatus(testSuite);
-		}
+			pairContentIDListIDSteps.addAll(
+				deleteExecSteps(automatedSuiteIdPartition));
+			pairContentIDListIDExec.addAll(
+				attachmentManager.getListPairContentIDListIDForExecutionIds(automatedSuiteIdPartition));
 
-		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, executionIds);
-		customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION, executionIds);
+
+			List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(automatedSuiteIdPartition);
+			for (Execution execution : executions) {
+				// a direct deleteAll seems not possible because of the unmodifiable view EXECUTION_ISSUES_CLOSURE
+				deletionDao.removeEntity(execution);
+			}
+
+			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, automatedSuiteIdPartition);
+			customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION, automatedSuiteIdPartition);
+
+			entityManager.flush();
+			entityManager.clear();
+		});
+
+		// we don't update statuses for the moment
+//		for (IterationTestPlanItem itpi : iterationTestPlanItems) {
+//			itpi.updateExecutionStatus();
+//		}
+//		for (TestSuite testSuite : testSuites) {
+//			customTestSuiteModificationService.updateExecutionStatus(testSuite);
+//		}
 
 		List<ExternalContentCoordinates> attachmentContentToDelete =
 			Stream.concat(
@@ -587,8 +619,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				pairContentIDListIDSteps.stream())
 				.collect(Collectors.toList());
 		attachmentManager.deleteContents(attachmentContentToDelete);
-
-		autoTestDao.pruneOrphans();
 	}
 
 	/*
@@ -719,19 +749,27 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		return pairContentIDListID;
 	}
 
+	/**
+	 * Bulk delete ExecutionSteps given a List of Execution ids.
+	 * @param executionsIds ids of all Executions which ExecutionSteps must be deleted.
+	 * @return a List of ExternalContentCoordinates of all Attachments that were attached to the deleted ExecutionSteps
+	 */
 	private List<ExternalContentCoordinates> deleteExecSteps(List<Long> executionsIds) {
+		List<ExternalContentCoordinates> pairContentIDListID = new ArrayList<>();
 		List<Long> executionStepIds = executionStepDao.findAllIdsByExecutionIds(executionsIds);
-		//saving path Content for FileSystem Repository
-		List<ExternalContentCoordinates> pairContentIDListID = null;
-		if (!executionStepIds.isEmpty()) {
-			pairContentIDListID = attachmentManager.getListPairContentIDListIDForExecutionStepsIds(executionsIds);
-		} else {
-			return new ArrayList<>();
-		}
-		// now we can delete them
-		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION_STEP, executionStepIds);
-		customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION_STEP, executionStepIds);
-		executionStepDao.deleteAllByIds(executionStepIds);
+		List<List<Long>> executionStepIdPartitions = Lists.partition(executionStepIds, BIND_VARIABLES_LIMIT);
+		executionStepIdPartitions.forEach(executionStepIdPartition -> {
+			//saving path Content for FileSystem Repository
+			if (!executionStepIdPartition.isEmpty()) {
+				pairContentIDListID.addAll(attachmentManager.getListPairContentIDListIDForExecutionStepsIds(executionsIds));
+			// now we can delete them
+			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION_STEP, executionStepIdPartition);
+			customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION_STEP, executionStepIdPartition);
+			executionStepDao.deleteAllByIds(executionStepIdPartition);
+			entityManager.flush();
+			entityManager.clear();
+			}
+		});
 		return pairContentIDListID;
 	}
 

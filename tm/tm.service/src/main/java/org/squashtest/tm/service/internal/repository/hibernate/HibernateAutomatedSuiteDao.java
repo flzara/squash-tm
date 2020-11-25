@@ -23,6 +23,9 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.jooq.DSLContext;
+import org.jooq.DatePart;
+import org.jooq.Field;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -34,8 +37,10 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.jooq.domain.Tables;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -45,6 +50,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -52,9 +59,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
+import static org.jooq.impl.DSL.dateAdd;
+import static org.jooq.impl.DSL.timestampAdd;
 import static org.squashtest.tm.domain.campaign.QIteration.iteration;
 import static org.squashtest.tm.domain.campaign.QIterationTestPlanItem.iterationTestPlanItem;
 import static org.squashtest.tm.domain.campaign.QTestSuite.testSuite;
@@ -63,6 +71,13 @@ import static org.squashtest.tm.domain.execution.ExecutionStatus.RUNNING;
 import static org.squashtest.tm.domain.testautomation.QAutomatedTest.automatedTest;
 import static org.squashtest.tm.domain.testautomation.QTestAutomationProject.testAutomationProject;
 import static org.squashtest.tm.domain.testcase.QTestCase.testCase;
+import static org.squashtest.tm.jooq.domain.Tables.AUTOMATED_EXECUTION_EXTENDER;
+import static org.squashtest.tm.jooq.domain.Tables.AUTOMATED_SUITE;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_ITERATION;
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_LIBRARY_NODE;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
 
 @Repository
 public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
@@ -93,6 +108,9 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private DSLContext DSL;
 
 
 	@Override
@@ -384,14 +402,21 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	}
 
 	@Override
-	public List<String> getOldAutomatedSuiteIds(LocalDateTime limitDateTime) {
-		Instant limitInstant = limitDateTime.atZone(ZoneId.systemDefault()).toInstant();
-		Date limitDate = Date.from(limitInstant);
-
-		Query fetchQuery = em.createNamedQuery("AutomatedSuite.findOldAutomatedSuiteIds");
-		fetchQuery.setParameter("limitDate", limitDate);
-		List<String> oldAutomatedSuites = fetchQuery.getResultList();
-		return oldAutomatedSuites;
+	public List<String> getOldAutomatedSuiteIds() {
+		LocalDateTime todayLocalDateTime = LocalDateTime.now();
+		Instant todayInstant = todayLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
+		Timestamp todayTimestamp = Timestamp.from(todayInstant);
+		return DSL
+			.selectDistinct(AUTOMATED_SUITE.SUITE_ID)
+			.from(AUTOMATED_SUITE)
+			.innerJoin(AUTOMATED_EXECUTION_EXTENDER).on(AUTOMATED_SUITE.SUITE_ID.eq(AUTOMATED_EXECUTION_EXTENDER.SUITE_ID))
+			.innerJoin(ITEM_TEST_PLAN_EXECUTION).on(AUTOMATED_EXECUTION_EXTENDER.MASTER_EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
+			.innerJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.innerJoin(CAMPAIGN_ITERATION).on(Tables.ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN_LIBRARY_NODE.CLN_ID))
+			.innerJoin(PROJECT).on(CAMPAIGN_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+			.where(timestampAdd(AUTOMATED_SUITE.CREATED_ON, PROJECT.AUTOMATED_SUITES_LIFETIME, DatePart.DAY).lessThan(todayTimestamp))
+			.fetch(AUTOMATED_SUITE.SUITE_ID, String.class);
 	}
 
 	@Override

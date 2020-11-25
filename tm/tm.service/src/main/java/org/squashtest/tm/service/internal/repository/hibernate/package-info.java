@@ -238,7 +238,7 @@
 	@NamedQuery(name="IterationTestPlanItem.findAllByItemsIdWithTCAutomated",
 		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
 			" where item.id in(:itemsIds) and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
-
+	@NamedQuery(name = "IterationTestPlanItem.findAllByExecutionIds", query = "select distinct itpi from Execution exec join exec.testPlan itpi where exec.id in (:executionIds)"),
 
 	// TestSuite
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),
@@ -471,7 +471,7 @@
 
 	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
 	@NamedQuery(name ="Execution.findAllIdsByAutomatedSuiteIds", query= "select autoExec.execution.id from AutomatedSuite suite join suite.executionExtenders autoExec where suite.id in (:automatedSuiteIds)"),
-	@NamedQuery(name ="Execution.findAllWithTesPlanItemByIds", query= "select distinct exec from Execution exec join fetch exec.testPlan itpi join fetch itpi.executions where exec.id in (:executionIds)"),
+	@NamedQuery(name ="Execution.findAllWithTesPlanItemByIds", query= "select exec from Execution exec where exec.id in (:executionIds)"),
 
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
@@ -684,7 +684,6 @@
 	//AutomatedSuite
 	@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
 	+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
-	@NamedQuery(name = "AutomatedSuite.findOldAutomatedSuiteIds", query = "select suite.id from AutomatedSuite suite where suite.audit.createdOn < :limitDate"),
 	@NamedQuery(name = "AutomatedSuite.deleteAllByIds", query = "delete from AutomatedSuite suite where suite.id in (:automatedSuiteIds)"),
 
 	//AutomatedExecution

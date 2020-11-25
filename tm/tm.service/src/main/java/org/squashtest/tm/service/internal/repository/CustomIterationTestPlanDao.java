@@ -62,4 +62,7 @@ public interface CustomIterationTestPlanDao {
 	@EmptyCollectionGuard
 	List<IterationTestPlanItem> fetchForAutomatedExecutionCreation(Collection<Long> itemTestPlanIds);
 
+	@EmptyCollectionGuard
+	List<IterationTestPlanItem> findAllByExecutionIds(@Param("executionIds") Collection<Long> executionIds);
+
 }

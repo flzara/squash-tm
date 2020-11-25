@@ -62,6 +62,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
@@ -85,7 +86,6 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -117,8 +117,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000; // timeout as milliseconds
-
-	public static final long DEFAULT_SUITE_SAVING_DURATION_IN_DAYS = 30; // days
+	public static final int BIND_VARIABLES_LIMIT = 30000;
 
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
 
@@ -167,6 +166,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private ProjectDao projectDao;
+
+	@Inject
+	private AutomatedTestDao autoTestDao;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -462,21 +464,19 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		if (executionIds.isEmpty()) {
 			return;
 		}
-		List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(executionIds);
-		deletionHandler.bulkDeleteExecutions(executions);
+		deletionHandler.bulkDeleteExecutions(executionIds);
 		autoSuiteDao.deleteAllByIds(automatedSuiteIds);
+		autoTestDao.pruneOrphans();
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void cleanOldSuites() {
-		LocalDateTime limitDateTime = LocalDateTime.now().minusDays(DEFAULT_SUITE_SAVING_DURATION_IN_DAYS);
-
-		List<String> oldAutomatedSuiteIds = autoSuiteDao.getOldAutomatedSuiteIds(limitDateTime);
+		List<String> oldAutomatedSuiteIds = autoSuiteDao.getOldAutomatedSuiteIds();
 		if (oldAutomatedSuiteIds.isEmpty()) {
 			return;
 		}
-		List<List<String>> automatedSuiteIdPartitions = Lists.partition(oldAutomatedSuiteIds, 10);
+		List<List<String>> automatedSuiteIdPartitions = Lists.partition(oldAutomatedSuiteIds, BIND_VARIABLES_LIMIT);
 		automatedSuiteIdPartitions.forEach(automatedSuiteIdPartition -> {
 			deleteAutomatedSuites(automatedSuiteIdPartition);
 			entityManager.flush();
