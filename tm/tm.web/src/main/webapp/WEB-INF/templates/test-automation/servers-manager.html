@@ -118,7 +118,8 @@
                     <th th:attr="data-def='select, map=entity-index'">#</th>
                     <th th:attr="data-def='sortable, map=name, link='+@{/administration/test-automation-servers/{entity-id}}"
                       th:text="#{label.Name}">Name</th>
-                    <th th:attr="data-def='sortable, map=base-url, link-new-tab={base-url}'" th:text="#{label.Url}">URL</th>
+                    <th th:attr="data-def='sortable, map=kind'" th:text="#{label.Kind}">Kind</th>
+                    <th th:attr="data-def='sortable, map=url, link-new-tab={url}'" th:text="#{label.Url}">URL</th>
                     <th th:attr="data-def='sortable, map=created-on'" th:text="#{label.createdOn}">Créé le</th>
                     <th th:attr="data-def='sortable, map=created-by'" th:text="#{label.createdBy}">Créé par</th>
                     <th th:attr="data-def='sortable, map=last-modified-on'" th:text="#{label.lastModifiedOn}">Modifié
@@ -134,7 +135,8 @@
                     <td th:text="*{id}" class="not-displayed">1</td>
                     <td th:text="${iterStat.count}">1</td>
                     <td th:text="*{name}">TAS XX</td>
-                    <td th:text="*{baseURL}">Label XX</td>
+                    <td th:text="*{kind}">Jenkins</td>
+                    <td th:text="*{url}">Label XX</td>
                     <td th:text="${#dates.format(tas.createdOn, dateFormat)}">16/05/2014 21:00</td>
                     <td th:text="*{createdBy}">foo</td>
                     <td th:text="${#dates.format(tas.lastModifiedOn, dateFormat)}">16/05/2014 21:28</td>
@@ -165,40 +167,36 @@
             <div class="control-group">
               <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
               <div class="controls">
-                <input name="name" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
+                <input id="name" name="name" class="strprop" value="" size="50" maxlength="50" type="text" data-def="maininput" />
                 <span class="help-inline">&nbsp;</span>
               </div>
             </div>
 
+              <div class="control-group">
+                <label class="control-label" for="kind" th:text="#{label.Kind}">Type</label>
+                <div class="controls">
+                  <select id ="kind" name="kind" th:remove="all-but-first">
+                    <option th:each="kind: ${taServerKinds}" value="jenkins" th:value="${kind}" th:text="${kind}">jenkins</option>
+                    <option value="jenkins">Jenkins</option>
+                    <option value="squashAutom">Squash Autom</option>
+                  </select>
+                  <br/>
+                  <span class="help-inline">&nbsp;</span>
+                </div>
+              </div>
+
             <div class="control-group">
               <label class="control-label" for="baseUrl" th:text="#{label.Url}">URL</label>
               <div class="controls">
-                <input name="baseUrl" class="strprop" value="" size="50" maxlength="255" type="text" />
+                <input id="baseUrl" name="baseUrl" class="strprop" value="" size="50" maxlength="255" type="text" />
                 <span class="help-inline">&nbsp;</span>
                 <span class="error-message url-error"></span>
               </div>
             </div>
 
             <div class="control-group">
-              <label class="control-label" for="login" th:text="#{label.Login}">Login</label>
               <div class="controls">
-                <input name="login" class="strprop" value="" size="50" maxlength="50" type="text" />
-                <span class="help-inline">&nbsp;</span>
-                <span class="error-message login-error"></span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label class="control-label" for="password" th:text="#{label.password}">Password</label>
-              <div class="controls">
-                <input name="password" class="strprop" value="" size="50" maxlength="255" type="password" />
-                <span class="help-inline">&nbsp;</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="controls">
-                  <input name="manualSlaveSelection" class="boolprop" value="" type="checkbox" />
+                  <input id="manualSlaveSelection" name="manualSlaveSelection" class="boolprop" value="" type="checkbox" />
                 <label class="afterDisabled checkbox" for="manualSlaveSelection">
                   <span th:remove="tag" th:text="#{label.isManualSlaveSelection}">Is Manual Slave Selection</span>
                 </label>
@@ -207,7 +205,7 @@
 
             </div>
             <div class="control-group">
-              <label class="control-label" for="description" th:text="#{label.Description}">Description</label>
+              <label class="control-label" for="tas-description" th:text="#{label.Description}">Description</label>
               <div class="controls">
                 <textarea id="tas-description" name="description" class="strprop"></textarea>
                 <span class="help-inline">&nbsp;</span>

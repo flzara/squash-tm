@@ -34,6 +34,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -47,10 +48,12 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Controller for the Test automation servers management pages.
@@ -63,9 +66,10 @@ import java.util.Map;
 public class TestAutomationServerManagementAdminController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerManagementAdminController.class);
-	private static final String BASE_URL_KEY = "base-url";
-	private static final String BASE_URL_VALUE = "baseURL";
+	private static final String URL = "url";
+	private static final String KIND = "kind";
 	private static final String TEST_AUTOMATION_SERVERS = "testAutomationServers";
+	private static final String TEST_AUTOMATION_SERVER_KINDS = "taServerKinds";
 
 	@Inject
 	private TestAutomationServerManagerService testAutomationServerService;
@@ -73,13 +77,17 @@ public class TestAutomationServerManagementAdminController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	@Inject
+	private TestAutomationConnectorRegistry testAutomationConnectorRegistry;
+
 	/**
 	 * A Mapping for ta servers table sortable columns : maps the table column index to an entity property. NB: column
 	 * index is of all table's columns (displayed or not)
 	 */
 	private final DatatableMapper<String> testAutomationServerTableMapper = new NameBasedMapper(6)
 		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
-		.map(BASE_URL_KEY, BASE_URL_VALUE)
+		.map(KIND, KIND)
+		.map(URL, URL)
 		.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
 		.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
 		.map(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY, DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
@@ -103,7 +111,10 @@ public class TestAutomationServerManagementAdminController {
 			LOGGER.debug("Show test automation servers manager page");
 		}
 		List<TestAutomationServer> testAutomationServers = testAutomationServerService.findAllOrderedByName();
+		Collection<String> taServerKinds = testAutomationConnectorRegistry.listRegisteredConnectors();
+
 		model.addAttribute(TEST_AUTOMATION_SERVERS, testAutomationServers);
+		model.addAttribute(TEST_AUTOMATION_SERVER_KINDS, taServerKinds);
 
 		return "test-automation/servers-manager.html";
 	}
@@ -142,7 +153,8 @@ public class TestAutomationServerManagementAdminController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, HtmlUtils.htmlEscape(item.getName()));
-			res.put(BASE_URL_KEY, HtmlUtils.htmlEscape(item.getName()));
+			res.put(KIND, item.getKind());
+			res.put(URL, HtmlUtils.htmlEscape(item.getUrl()));
 			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, formatUsername(HtmlUtils.htmlEscape(auditable.getCreatedBy())));
 			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_KEY, formatUsername(HTMLCleanupUtils.escapeOrDefault(auditable.getLastModifiedBy(), null)));
 			res.put(DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_KEY,

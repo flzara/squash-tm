@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -78,7 +79,8 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		if (nameInUse != null) {
 			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), server.getName());
 		}
-
+		// authentication policy : for now TestAutomationServer only supports APP_LEVEL
+		server.setAuthenticationPolicy(AuthenticationPolicy.APP_LEVEL);
 		// else we can persist it.
 		serverDao.save(server);
 	}

@@ -49,7 +49,8 @@
   <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 	squashtm.pageConfiguration = {
-		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/"http://localhost/taserver"
+		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/"http://localhost/taserver",
+    authConf: /*[[${authConf}]]*/
 	};
 	/*]]>*/
 
@@ -143,23 +144,16 @@
                 <div class="display-table-row">
                   <label for="ta-server-url" th:text="#{label.URL}">URL</label>
                   <div class="display-table-cell">
-                    <span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
-                    <a id="ta-server-url-link" target="blank" th:href="${server.baseURL}"
+                    <span id="ta-server-url" th:text="${server.url}">http://localhost</span>
+                    <a id="ta-server-url-link" target="blank" th:href="${server.url}"
                        th:text="'['+#{label.BrowseTo}+']'"></a>
                     <span class="error-message url-error"></span>
                   </div>
                 </div>
 
                 <div class="display-table-row">
-                  <label for="ta-server-login" th:text="#{label.Login}">Login</label>
-                  <div id="ta-server-login" class="display-table-cell" th:text="${server.login}">username</div>
-                  <span class="error-message login-error"></span>
-                </div>
-
-                <div class="display-table-row">
-                  <label for="ta-server-password" th:text="#{label.Password}">Password</label>
-                  <div id="ta-server-password" class="display-table-cell" style="font-weight: bold;"
-                       th:text="${server.password}"></div>
+                  <label for="ta-server-kind" th:text="#{label.Kind}">Kind</label>
+                  <div id="ta-server-kind" class="display-table-cell" th:text="${server.kind}">jenkins</div>
                 </div>
 
                 <div class="display-table-row">
@@ -183,6 +177,15 @@
 
           </div>
 
+          <!-- ------------------------------------------------------------------------------------
+          Credentials management
+          ------------------------------------------------------------------------------------- -->
+
+          <div th:replace="servers/third-party-server.frags :: credentials-manager(${authConf})"/>
+
+          <!-- ------------------------------------------------------------------------------------
+            /Credentials management
+          ------------------------------------------------------------------------------------- -->
 
         </div>
 
@@ -203,7 +206,7 @@
 <!--    ====================================POPUPS======================================================  -->
 <!--    	RENAME POPUP -->
 <div id="rename-ta-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
-  <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label>
+  <label for="rename-ta-server-input" th:text="#{ label.Rename }">Rename</label>
   <input type="text" id="rename-ta-server-input" maxlength="255" size="50"/>
   <br/>
   <span class="error-message name-error"></span>

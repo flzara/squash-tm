@@ -131,7 +131,7 @@ public interface TestAutomationConnector {
 	 * @throws TestAutomationException
 	 *             for anything that doesn't fit the exceptions above.
 	 */
-	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
+	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project, String username) throws ServerConnectionFailed,
 	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException;
 
 	/**

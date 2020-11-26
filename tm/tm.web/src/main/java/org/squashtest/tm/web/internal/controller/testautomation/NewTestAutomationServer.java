@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.WrongUrlException;
 

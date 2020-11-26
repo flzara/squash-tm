@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) Henix, henix.fr
  *
@@ -18,40 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, StringUtil) {
+package org.squashtest.tm.service.testautomation;
 
-	function isBlank(val) {
-		return StringUtil.isBlank(val);
-	}
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
-	/*
-	 * Defines the model for a new Custom Field
+public interface TestAutomationServerCredentialsService {
+	/**
+	 * Returns the authentication protocols supported by the underlying connector
+	 *
+	 * @param server
+	 * @return
 	 */
-	var NewTestAutomationServerModel = Backbone.Model.extend({
-		url : squashtm.app.contextRoot + "test-automation-servers/new",
-		defaults : {
-			name : "",
-			kind:"jenkins",
-			baseUrl : "",
-			description : "",
-			manualSlaveSelection : false
-		},
-
-		validateAll : function() {
-			var attrs = this.attributes, errors = null;
-
-			if (isBlank(attrs.name)) {
-				errors = errors || {};
-				errors.name = "message.notBlank";
-			}
-			if (isBlank(attrs.baseUrl)) {
-				errors = errors || {};
-				errors.baseUrl = "message.notBlank";
-			}
-
-			return errors;
-		}
-
-	});
-	return NewTestAutomationServerModel;
-});
+	AuthenticationProtocol[] getSupportedProtocols(TestAutomationServer server);
+}

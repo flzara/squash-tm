@@ -52,6 +52,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestF
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
@@ -59,6 +60,7 @@ import org.squashtest.tm.service.testautomation.spi.TestAutomationServerNoCreden
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -187,13 +189,15 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	@Override
-	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws
+	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project, String username) throws
 		TestAutomationException {
 
+		initializeCredentialsCache(username);
 		BasicAuthenticationCredentials basicCredentials = getAutomationServerCredentials(project.getServer());
 
 		// first we try an optimistic approach
 		try {
+
 			OptimisticTestList otl = new OptimisticTestList(clientProvider, project, basicCredentials);
 			return otl.run();
 		}
@@ -215,6 +219,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 			return processor.getResult();
 
+		} finally {
+			LOGGER.debug("TestAutomationJenkinsCOnnector : completed test fetching for autoamtion project '{}'", project.getLabel());
+			credentialsProvider.unloadCache();
 		}
 
 	}
@@ -368,6 +375,18 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		public TestAutomationProjectMalformedURLException(String projectUrl, Exception e) {
 			super("The test automation project url : " + projectUrl + ", is malformed", e);
 		}
+
+	}
+
+
+	// will create the user credentials and store them into the credentials provider
+	private void initializeCredentialsCache(String username){
+
+		LOGGER.debug("TestAutomationJenkinsConnector : initializing the credentials cache");
+
+		UserCredentialsCache credentials = new UserCredentialsCache(username);
+
+		credentialsProvider.restoreCache(credentials);
 
 	}
 

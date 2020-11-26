@@ -40,6 +40,12 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  *     Deadlines imposes us to loan that technical debt (based on good code hopefully).
  *     Remember that this is temporary and you should not copy/paste it again.
  * </p>
+ *
+ * <p>
+ *     Edit AGU 26/11/2020: following introduction of TestAutomationServer as ThirdPartyServer,
+ *     all methods which only deals with ThirdPartyServer (and not a specification like ScmServer) have been moved to
+ *     {@link org.squashtest.tm.service.thirdpartyserver.ThirdPartyServerCredentialsService}
+ * </p>
  */
 public interface ScmServerCredentialsService {
 

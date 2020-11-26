@@ -58,10 +58,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			this.$("input:text.strprop").each(function() {
 				this.value = model.get(this.name);
 			});
-			this.$("input:password.strprop").each(function() {
-				this.value = model.get(this.name);
-			});
-			this.$("input:password.strprop").each(function() {
+			this.$("select").each(function() {
 				this.value = model.get(this.name);
 			});
 			this.$("input:checkbox.boolprop").each(function() {
@@ -82,6 +79,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			// model prop which name matches the textbox name
 			"blur input:text.strprop" : "changeStrProp",
 			"blur input:password.strprop" : "changeStrProp",
+			"change select" : "changeStrProp",
 			// "change textarea" : "updateCKEModelAttr",
 			// did not work because of _CKE instances (cf method
 			// configureCKEs to see how manual binding is done.

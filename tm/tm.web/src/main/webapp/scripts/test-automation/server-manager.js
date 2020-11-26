@@ -20,9 +20,9 @@
  */
 require([ "common" ], function() {
 
-	require([ "jquery", "app/pubsub", "jeditable.simpleJEditable", "squash.configmanager", "app/ws/squashtm.workspace",
+	require([ "jquery", "app/pubsub", "jeditable.simpleJEditable", "squash.configmanager", "third-party-server/credentials-manager", "app/ws/squashtm.workspace",
 			"jquery.squash.togglepanel", "jquery.squash.formdialog", "jquery.squash.jedpassword",
-			"jquery.squash.jeditable" ], function($, pubsub, SimpleJEditable, confman) {
+			"jquery.squash.jeditable" ], function($, pubsub, SimpleJEditable, confman, CredentialManagerView) {
 
 		// ********** function declarations *****************
 
@@ -59,16 +59,6 @@ require([ "common" ], function() {
 				}
 			});
 
-			new SimpleJEditable({
-				targetUrl : url + '/login',
-				componentId : "ta-server-login"
-			});
-
-			$("#ta-server-password").jedpassword(url + '/password', {
-				name : 'value'
-			});
-			$("#ta-server-password").addClass("editable");
-
 			var richEditSettings = confman.getJeditableCkeditor();
 			richEditSettings.url = url + '/description';
 			$("#ta-server-description").richEditable(richEditSettings).addClass("editable");
@@ -83,6 +73,12 @@ require([ "common" ], function() {
 					}
 				});
 			});
+
+			// ******* authentication ***********
+			var authConf = $.extend({}, squashtm.pageConfiguration.authConf);
+			authConf.entityUrl = squashtm.pageConfiguration.url;
+
+			new CredentialManagerView({ conf: authConf });
 		}
 
 		// the only popup for now is the rename dialog
