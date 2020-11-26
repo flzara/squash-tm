@@ -21,10 +21,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 
-	<TEST_AUTOMATION_SERVER NAME="Roberto-1" SERVER_ID="-1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
-<TEST_AUTOMATION_SERVER NAME="new name" SERVER_ID="-2" BASE_URL="http://www.roberto2.com" LOGIN="roberto2" PASSWORD="passroberto2" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="Roberto-1" URL="http://www.roberto.com"/>
+	<TEST_AUTOMATION_SERVER SERVER_ID="-1" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-2" NAME="new name" URL="http://www.roberto2.com"/>
+<TEST_AUTOMATION_SERVER SERVER_ID="-2" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
 
 </dataset>

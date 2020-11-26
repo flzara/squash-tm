@@ -44,9 +44,7 @@ class TestAutomationServerDaoIT extends DbunitDaoSpecification {
 		then :
 		res.id==-1L
 		res.name == "Roberto-1"
-		res.baseURL.equals(new URL("http://www.roberto.com"))
-		res.login == "roberto"
-		res.password == "passroberto"
+		res.url == "http://www.roberto.com"
 		res.kind=="jenkins"
 
 	}
@@ -61,9 +59,7 @@ class TestAutomationServerDaoIT extends DbunitDaoSpecification {
 		then :
 		res.id==-1L
 		res.name == "Roberto-1"
-		res.baseURL.equals(new URL("http://www.roberto.com"))
-		res.login == "roberto"
-		res.password == "passroberto"
+		res.url == "http://www.roberto.com"
 		res.kind=="jenkins"
 
 	}

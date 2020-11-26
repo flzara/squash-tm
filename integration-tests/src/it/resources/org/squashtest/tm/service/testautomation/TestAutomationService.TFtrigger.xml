@@ -23,7 +23,8 @@
 -->
 <!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
-    	<TEST_AUTOMATION_SERVER NAME="Roberto-1" SERVER_ID="-1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins" CREATED_BY="Axel" CREATED_ON="2014-05-15"/>
+      <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="Roberto-1" URL="http://www.roberto.com"/>
+    	<TEST_AUTOMATION_SERVER SERVER_ID="-1" KIND="jenkins" CREATED_BY="Axel" CREATED_ON="2014-05-15"/>
 
         <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
 

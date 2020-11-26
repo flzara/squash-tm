@@ -116,31 +116,6 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 		tas.description == newDesc
 	}
 
-
-	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
-	def "should change login" (){
-		given :
-		def serverId = -1L
-		def newLogin = "newLogin"
-		when :
-		service.changeLogin(serverId, newLogin)
-		then:
-		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
-		tas.login == newLogin
-	}
-
-	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
-	def "should change password" (){
-		given :
-		def serverId = -1L
-		def newPassword = "password"
-		when :
-		service.changePassword(serverId, newPassword)
-		then:
-		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
-		tas.password == newPassword
-	}
-
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should change name" (){
 		given :

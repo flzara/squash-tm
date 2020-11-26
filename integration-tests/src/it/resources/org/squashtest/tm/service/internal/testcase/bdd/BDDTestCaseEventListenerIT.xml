@@ -26,12 +26,12 @@
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
 
   <!-- CONFIGURATION FOR PROJECT 1 -->
-  <TEST_AUTOMATION_SERVER NAME="Automation_Server_1" SERVER_ID="-1" BASE_URL="http://myautomserver.fr"
-                          LOGIN="squash" PASSWORD="squash" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
+  <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="Automation_Server_1" URL="http://myautomserver.fr"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-1" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
 
-  <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="GitHub" URL="http://github.com/myuser"/>
-  <SCM_SERVER SERVER_ID="-1" KIND="git" />
-  <SCM_REPOSITORY SCM_REPOSITORY_ID="-1" SERVER_ID="-1" REPOSITORY_PATH="my/path" WORKING_BRANCH="master" NAME="myrepo" />
+  <THIRD_PARTY_SERVER SERVER_ID="-2" NAME="GitHub" URL="http://github.com/myuser"/>
+  <SCM_SERVER SERVER_ID="-2" KIND="git" />
+  <SCM_REPOSITORY SCM_REPOSITORY_ID="-1" SERVER_ID="-2" REPOSITORY_PATH="my/path" WORKING_BRANCH="master" NAME="myrepo" />
 
   <PROJECT PROJECT_ID="-1" TA_SERVER_ID="-1" SCM_REPOSITORY_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_BY="admin" CREATED_ON="2020-02-01" NAME="Project_1" />
 
@@ -61,12 +61,12 @@
 
 
   <!-- CONFIGURATION FOR PROJECT 2 -->
-  <TEST_AUTOMATION_SERVER NAME="Automation_Server_2" SERVER_ID="-2" BASE_URL="http://myautomserver2.fr"
-                          LOGIN="squash" PASSWORD="squash" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
+  <THIRD_PARTY_SERVER SERVER_ID="-3" NAME="Automation_Server_2" URL="http://myautomserver2.fr"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-3" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
   <!--  Condition 3 verification : A Project connected to a Scm Repository -->
-  <PROJECT PROJECT_ID="-2" TA_SERVER_ID="-2" ATTACHMENT_LIST_ID="-1" CREATED_BY="admin" CREATED_ON="2020-02-01" NAME="Project_2" />
+  <PROJECT PROJECT_ID="-2" TA_SERVER_ID="-3" ATTACHMENT_LIST_ID="-1" CREATED_BY="admin" CREATED_ON="2020-02-01" NAME="Project_2" />
 
-  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-2" TM_PROJECT_ID="-2" SERVER_ID="-2" CAN_RUN_GHERKIN="true"
+  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-2" TM_PROJECT_ID="-2" SERVER_ID="-3" CAN_RUN_GHERKIN="true"
                            LABEL="Test_Automation_Project_2" REMOTE_NAME="myJob2" />
 
   <!-- TEST CASES IN PROJECT 2-->
@@ -76,17 +76,17 @@
   <AUTOMATION_REQUEST AUTOMATION_REQUEST_ID="-5" REQUEST_STATUS="READY_TO_TRANSMIT" TEST_CASE_ID="-5" PROJECT_ID="-2"/>
 
   <!-- CONFIGURATION FOR PROJECT 3 -->
-  <TEST_AUTOMATION_SERVER NAME="Automation_Server_3" SERVER_ID="-3" BASE_URL="http://myautomserver3.fr"
-                          LOGIN="squash" PASSWORD="squash" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
+  <THIRD_PARTY_SERVER SERVER_ID="-4" NAME="Automation_Server_3" URL="http://myautomserver3.fr"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-4" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
 
-  <THIRD_PARTY_SERVER SERVER_ID="-2" NAME="GitHub2" URL="http://github.com/myuser2"/>
-  <SCM_SERVER SERVER_ID="-2" KIND="git" />
-  <SCM_REPOSITORY SCM_REPOSITORY_ID="-2" SERVER_ID="-2" REPOSITORY_PATH="my/path/2" WORKING_BRANCH="master" NAME="myrepo2" />
+  <THIRD_PARTY_SERVER SERVER_ID="-5" NAME="GitHub2" URL="http://github.com/myuser2"/>
+  <SCM_SERVER SERVER_ID="-5" KIND="git" />
+  <SCM_REPOSITORY SCM_REPOSITORY_ID="-2" SERVER_ID="-5" REPOSITORY_PATH="my/path/2" WORKING_BRANCH="master" NAME="myrepo2" />
 
   <!--  Condition 4 verification : A Project connected to no Gherkinable Automation Project -->
-  <PROJECT PROJECT_ID="-3" TA_SERVER_ID="-3" SCM_REPOSITORY_ID="-2" ATTACHMENT_LIST_ID="-1" NAME="Project_3" CREATED_BY="admin" CREATED_ON="2020-02-01" />
+  <PROJECT PROJECT_ID="-3" TA_SERVER_ID="-4" SCM_REPOSITORY_ID="-2" ATTACHMENT_LIST_ID="-1" NAME="Project_3" CREATED_BY="admin" CREATED_ON="2020-02-01" />
 
-  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-3" TM_PROJECT_ID="-3" SERVER_ID="-3" CAN_RUN_GHERKIN="false"
+  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-3" TM_PROJECT_ID="-3" SERVER_ID="-4" CAN_RUN_GHERKIN="false"
                            LABEL="Test_Automation_Project_3" REMOTE_NAME="myJob3" />
 
   <!-- TEST CASES IN PROJECT 3 -->
@@ -96,16 +96,16 @@
   <AUTOMATION_REQUEST AUTOMATION_REQUEST_ID="-6" REQUEST_STATUS="READY_TO_TRANSMIT" TEST_CASE_ID="-6" PROJECT_ID="-3"/>
 
   <!-- CONFIGURATION FOR PROJECT 4 -->
-  <TEST_AUTOMATION_SERVER NAME="Automation_Server_4" SERVER_ID="-4" BASE_URL="http://myautomserver4.fr"
-                          LOGIN="squash" PASSWORD="squash" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
+  <THIRD_PARTY_SERVER SERVER_ID="-6" NAME="Automation_Server_4" URL="http://myautomserver4.fr"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-6" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2020-02-02" />
 
-  <THIRD_PARTY_SERVER SERVER_ID="-3" NAME="GitHub3" URL="http://github.com/myuser3"/>
-  <SCM_SERVER SERVER_ID="-3" KIND="git" />
-  <SCM_REPOSITORY SCM_REPOSITORY_ID="-3" SERVER_ID="-3" REPOSITORY_PATH="my/path/3" WORKING_BRANCH="master" NAME="myrepo3" />
+  <THIRD_PARTY_SERVER SERVER_ID="-7" NAME="GitHub3" URL="http://github.com/myuser3"/>
+  <SCM_SERVER SERVER_ID="-7" KIND="git" />
+  <SCM_REPOSITORY SCM_REPOSITORY_ID="-3" SERVER_ID="-7" REPOSITORY_PATH="my/path/3" WORKING_BRANCH="master" NAME="myrepo3" />
 
-  <PROJECT PROJECT_ID="-4" TA_SERVER_ID="-4" SCM_REPOSITORY_ID="-3" ATTACHMENT_LIST_ID="-1" NAME="Project_4" CREATED_BY="admin" CREATED_ON="2020-02-01" />
+  <PROJECT PROJECT_ID="-4" TA_SERVER_ID="-6" SCM_REPOSITORY_ID="-3" ATTACHMENT_LIST_ID="-1" NAME="Project_4" CREATED_BY="admin" CREATED_ON="2020-02-01" />
 
-  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-4" TM_PROJECT_ID="-4" SERVER_ID="-4" CAN_RUN_GHERKIN="true"
+  <TEST_AUTOMATION_PROJECT TA_PROJECT_ID="-4" TM_PROJECT_ID="-4" SERVER_ID="-6" CAN_RUN_GHERKIN="true"
                            LABEL="Test_Automation_Project_4" REMOTE_NAME="myJob4" />
 
   <!-- TEST CASES IN PROJECT 4 -->
