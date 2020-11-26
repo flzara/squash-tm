@@ -233,7 +233,6 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 
 	}
 
-	@Ignore
 	@DataSet("TestAutomationService.deleteOldAutomatedSuites.xml")
 	def "Should delete all old automated suites according to project configuration"() {
 		when: "for each iteration, create one new automated suite with their new automated execution extenders "

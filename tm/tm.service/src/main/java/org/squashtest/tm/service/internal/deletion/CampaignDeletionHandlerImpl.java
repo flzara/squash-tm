@@ -581,8 +581,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		Set<Long>  itpiIds = new HashSet<>();
 
 		executionIdPartitions.forEach(executionIdPartition -> {
-			itpiIds.addAll(
-				testPlanItemDao.findAllIdsByExecutionIds(executionIdPartition));
 			testSuiteIds.addAll(
 				suiteDao.findAllIdsByExecutionIds(executionIdPartition));
 
@@ -592,13 +590,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				attachmentManager.getListPairContentIDListIDForExecutionIds(executionIdPartition));
 
 
-			List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(executionIdPartition);
+			List<Execution> executions = executionDao.findAllWithTestPlanWithExecutionsItemByIds(executionIdPartition);
 			for (Execution execution : executions) {
 				// a direct deleteAll seems not possible because of the unmodifiable view EXECUTION_ISSUES_CLOSURE
 				IterationTestPlanItem testPlanItem = execution.getTestPlan();
 				deletionDao.removeEntity(execution);
 				testPlanItem.getExecutions().removeIf(
 					currentExec -> currentExec.getId().equals(execution.getId()));
+				testPlanItem.updateExecutionStatus();
 			}
 
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, executionIdPartition);
@@ -608,10 +607,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			entityManager.clear();
 		});
 
-		List<IterationTestPlanItem> iterationTestPlanItems = testPlanItemDao.findAllByIds(itpiIds);
-		for (IterationTestPlanItem itpi : iterationTestPlanItems) {
-			itpi.updateExecutionStatus();
-		}
 		List<TestSuite> testSuites = suiteDao.findAllByIds(testSuiteIds);
 		for (TestSuite testSuite : testSuites) {
 			customTestSuiteModificationService.updateExecutionStatus(testSuite);
