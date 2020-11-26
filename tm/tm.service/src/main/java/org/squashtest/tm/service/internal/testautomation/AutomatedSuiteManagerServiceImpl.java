@@ -72,6 +72,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
@@ -467,6 +468,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		deletionHandler.bulkDeleteExecutions(executionIds);
 		autoSuiteDao.deleteAllByIds(automatedSuiteIds);
 		autoTestDao.pruneOrphans();
+	}
+
+	@Override
+	public AutomationDeletionCount countOldAutomatedSuitesAndExecutions() {
+		return autoSuiteDao.countOldAutomatedSuitesAndExecutions();
 	}
 
 	@Override

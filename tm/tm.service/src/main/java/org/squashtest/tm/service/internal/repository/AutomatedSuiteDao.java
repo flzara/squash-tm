@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -166,4 +167,6 @@ public interface AutomatedSuiteDao {
 	List<String> getOldAutomatedSuiteIds();
 
 	void deleteAllByIds(List<String> automatedExecutionIds);
+
+	AutomationDeletionCount countOldAutomatedSuitesAndExecutions();
 }

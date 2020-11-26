@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 
 import javax.inject.Inject;
 
@@ -40,6 +41,12 @@ public class CleaningController {
 	public ModelAndView showCleaningPage() {
 		ModelAndView mav = new ModelAndView("page/administration/cleaning");
 		return mav;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	public AutomationDeletionCount getOldAutomatedSuitesAndExecutionsCount() {
+		return automatedSuiteManagerService.countOldAutomatedSuitesAndExecutions();
 	}
 
 	@ResponseBody

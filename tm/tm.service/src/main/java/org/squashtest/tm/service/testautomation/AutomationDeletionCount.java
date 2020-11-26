@@ -18,18 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.project;
+package org.squashtest.tm.service.testautomation;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
+public class AutomationDeletionCount {
 
-public class WrongLifetimeFormatException extends ActionException {
+	long oldAutomatedSuiteCount;
+	long oldAutomatedExecutionCount;
 
-	public WrongLifetimeFormatException(Exception cause) {
-		super(cause);
+	public AutomationDeletionCount(long oldAutomatedSuiteCount, long oldAutomatedExecutionCount) {
+		this.oldAutomatedSuiteCount = oldAutomatedSuiteCount;
+		this.oldAutomatedExecutionCount = oldAutomatedExecutionCount;
 	}
 
-	@Override
-	public String getI18nKey() {
-		return "squashtm.action.exception.wrong-lifetime-format";
+	public long getOldAutomatedSuiteCount() {
+		return oldAutomatedSuiteCount;
 	}
+	public void setOldAutomatedSuiteCount(long oldAutomatedSuiteCount) {
+		this.oldAutomatedSuiteCount = oldAutomatedSuiteCount;
+	}
+
+	public long getOldAutomatedExecutionCount() {
+		return oldAutomatedExecutionCount;
+	}
+	public void setOldAutomatedExecutionCount(long oldAutomatedExecutionCount) {
+		this.oldAutomatedExecutionCount = oldAutomatedExecutionCount;
+	}
+
 }

@@ -315,6 +315,19 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 			ChronoUnit.MILLIS.between(startTime, endTime) < 1000
 	}
 
+	@DataSet("TestAutomationService.deleteOldAutomatedSuites.xml")
+	def "Should count the old automated suites and the automated execution extenders according to the project configuration"() {
+			given: "for each iteration, create one new automated suite with their new automated execution extenders"
+				service.createFromIterationTestPlan(-1L)
+				service.createFromIterationTestPlan(-2L)
+				service.createFromIterationTestPlan(-3L)
+			when:
+				AutomationDeletionCount resultCount = service.countOldAutomatedSuitesAndExecutions()
+			then:
+				resultCount.getOldAutomatedSuiteCount() == 21
+				resultCount.getOldAutomatedExecutionCount() == 84
+	}
+
 	def "Should not throw any Exception if no old automated suites are to delete"() {
 		given: "an empty dataset"
 		when:

@@ -88,12 +88,34 @@
 </layout:info-page-layout>
 
 <f:message var="warningPopupTitle" key="label.CleaningAutomatedSuites" />
-<f:message var="warningPopupContent" key="dialog.clean-automated-suites.message" />
+<f:message var="warningContent" key="dialog.clean-automated-suites.warning" />
+<f:message var="informationContent" key="dialog.clean-automated-suites.information" />
+<f:message var="automatedSuites" key="tabs.label.automated-suites" />
+<f:message var="automatedExecutions" key="label.automatedExecution" />
+<f:message var="confirmQuestion" key="dialog.label.delete-node.label.confirm" />
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <div id="clean-automated-suites-popup" class="popup-dialog not-displayed" title="${warningPopupTitle}">
 
-  <comp:notification-pane type="warning" txtcontent="${warningPopupContent}"/>
+  <div class="display-table-row">
+    <div class="display-table-cell warning-cell">
+      <div class="generic-warning-signal"></div>
+    </div>
+      <div class="generic-warning-main display-table-cell" style="padding-top:20px">
+        <span><c:out value="${warningContent}" /></span>
+        <br/>
+        <br/>
+        <span><c:out value="${informationContent}" /></span>
+        <br/>
+        <br/>
+        <span><c:out value="${automatedSuites}" /> : </span><span id="automated-suites-count"></span>
+        <br/>
+        <span><c:out value="${automatedExecutions}" /> : </span><span id="automated-executions-count"></span>
+        <br/>
+        <br/>
+        <span><c:out value="${confirmQuestion}" /></span>
+      </div>
+  </div>
 
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="${confirmLabel}" />

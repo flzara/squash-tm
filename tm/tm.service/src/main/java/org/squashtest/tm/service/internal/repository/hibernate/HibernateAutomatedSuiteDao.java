@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.jooq.domain.Tables;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -61,6 +62,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.dateAdd;
 import static org.jooq.impl.DSL.timestampAdd;
 import static org.squashtest.tm.domain.campaign.QIteration.iteration;
@@ -402,6 +405,31 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	}
 
 	@Override
+	public AutomationDeletionCount countOldAutomatedSuitesAndExecutions() {
+		LocalDateTime todayLocalDateTime = LocalDateTime.now();
+		Instant todayInstant = todayLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
+		Timestamp todayTimestamp = Timestamp.from(todayInstant);
+		return DSL
+			.select(
+				countDistinct(AUTOMATED_SUITE.SUITE_ID),
+				countDistinct(AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID))
+			.from(AUTOMATED_SUITE)
+			.leftJoin(AUTOMATED_EXECUTION_EXTENDER).on(AUTOMATED_SUITE.SUITE_ID.eq(AUTOMATED_EXECUTION_EXTENDER.SUITE_ID))
+			.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(AUTOMATED_EXECUTION_EXTENDER.MASTER_EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.leftJoin(CAMPAIGN_ITERATION).on(Tables.ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.leftJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN_LIBRARY_NODE.CLN_ID))
+			.leftJoin(PROJECT).on(CAMPAIGN_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+			.where(timestampAdd(AUTOMATED_SUITE.CREATED_ON, PROJECT.AUTOMATED_SUITES_LIFETIME, DatePart.DAY).lessThan(todayTimestamp))
+			.fetchOne()
+			.map(record -> new AutomationDeletionCount(
+					record.get(countDistinct(AUTOMATED_SUITE.SUITE_ID))
+						.longValue(),
+					record.get(countDistinct(AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID))
+						.longValue()));
+	}
+
+	@Override
 	public List<String> getOldAutomatedSuiteIds() {
 		LocalDateTime todayLocalDateTime = LocalDateTime.now();
 		Instant todayInstant = todayLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
@@ -409,12 +437,12 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return DSL
 			.selectDistinct(AUTOMATED_SUITE.SUITE_ID)
 			.from(AUTOMATED_SUITE)
-			.innerJoin(AUTOMATED_EXECUTION_EXTENDER).on(AUTOMATED_SUITE.SUITE_ID.eq(AUTOMATED_EXECUTION_EXTENDER.SUITE_ID))
-			.innerJoin(ITEM_TEST_PLAN_EXECUTION).on(AUTOMATED_EXECUTION_EXTENDER.MASTER_EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
-			.innerJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
-			.innerJoin(CAMPAIGN_ITERATION).on(Tables.ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
-			.innerJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN_LIBRARY_NODE.CLN_ID))
-			.innerJoin(PROJECT).on(CAMPAIGN_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
+			.leftJoin(AUTOMATED_EXECUTION_EXTENDER).on(AUTOMATED_SUITE.SUITE_ID.eq(AUTOMATED_EXECUTION_EXTENDER.SUITE_ID))
+			.leftJoin(ITEM_TEST_PLAN_EXECUTION).on(AUTOMATED_EXECUTION_EXTENDER.MASTER_EXECUTION_ID.eq(ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID))
+			.leftJoin(ITEM_TEST_PLAN_LIST).on(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID.eq(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID))
+			.leftJoin(CAMPAIGN_ITERATION).on(Tables.ITEM_TEST_PLAN_LIST.ITERATION_ID.eq(CAMPAIGN_ITERATION.ITERATION_ID))
+			.leftJoin(CAMPAIGN_LIBRARY_NODE).on(CAMPAIGN_ITERATION.CAMPAIGN_ID.eq(CAMPAIGN_LIBRARY_NODE.CLN_ID))
+			.leftJoin(PROJECT).on(CAMPAIGN_LIBRARY_NODE.PROJECT_ID.eq(PROJECT.PROJECT_ID))
 			.where(timestampAdd(AUTOMATED_SUITE.CREATED_ON, PROJECT.AUTOMATED_SUITES_LIFETIME, DatePart.DAY).lessThan(todayTimestamp))
 			.fetch(AUTOMATED_SUITE.SUITE_ID, String.class);
 	}
