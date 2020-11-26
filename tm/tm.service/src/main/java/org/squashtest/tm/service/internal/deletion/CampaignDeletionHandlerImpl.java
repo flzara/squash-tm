@@ -577,41 +577,45 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		List<List<Long>> executionIdPartitions = Lists.partition(executionIds, BIND_VARIABLES_LIMIT);
 
-		List<TestSuite> testSuites = new ArrayList<>();
-		List<IterationTestPlanItem>  iterationTestPlanItems = new ArrayList<>();
+		Set<Long> testSuiteIds = new HashSet<>();
+		Set<Long>  itpiIds = new HashSet<>();
 
-		executionIdPartitions.forEach(automatedSuiteIdPartition -> {
-			testSuites.addAll(
-				suiteDao.findAllByExecutionIds(automatedSuiteIdPartition));
-			iterationTestPlanItems.addAll(
-				testPlanItemDao.findAllByExecutionIds(automatedSuiteIdPartition));
+		executionIdPartitions.forEach(executionIdPartition -> {
+			itpiIds.addAll(
+				testPlanItemDao.findAllIdsByExecutionIds(executionIdPartition));
+			testSuiteIds.addAll(
+				suiteDao.findAllIdsByExecutionIds(executionIdPartition));
 
 			pairContentIDListIDSteps.addAll(
-				deleteExecSteps(automatedSuiteIdPartition));
+				deleteExecSteps(executionIdPartition));
 			pairContentIDListIDExec.addAll(
-				attachmentManager.getListPairContentIDListIDForExecutionIds(automatedSuiteIdPartition));
+				attachmentManager.getListPairContentIDListIDForExecutionIds(executionIdPartition));
 
 
-			List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(automatedSuiteIdPartition);
+			List<Execution> executions = executionDao.findAllWithTestPlanItemByIds(executionIdPartition);
 			for (Execution execution : executions) {
 				// a direct deleteAll seems not possible because of the unmodifiable view EXECUTION_ISSUES_CLOSURE
+				IterationTestPlanItem testPlanItem = execution.getTestPlan();
 				deletionDao.removeEntity(execution);
+				testPlanItem.getExecutions().removeIf(
+					currentExec -> currentExec.getId().equals(execution.getId()));
 			}
 
-			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, automatedSuiteIdPartition);
-			customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION, automatedSuiteIdPartition);
+			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(DenormalizedFieldHolderType.EXECUTION, executionIdPartition);
+			customValueService.deleteAllCustomFieldValues(BindableEntity.EXECUTION, executionIdPartition);
 
 			entityManager.flush();
 			entityManager.clear();
 		});
 
-		// we don't update statuses for the moment
-//		for (IterationTestPlanItem itpi : iterationTestPlanItems) {
-//			itpi.updateExecutionStatus();
-//		}
-//		for (TestSuite testSuite : testSuites) {
-//			customTestSuiteModificationService.updateExecutionStatus(testSuite);
-//		}
+		List<IterationTestPlanItem> iterationTestPlanItems = testPlanItemDao.findAllByIds(itpiIds);
+		for (IterationTestPlanItem itpi : iterationTestPlanItems) {
+			itpi.updateExecutionStatus();
+		}
+		List<TestSuite> testSuites = suiteDao.findAllByIds(testSuiteIds);
+		for (TestSuite testSuite : testSuites) {
+			customTestSuiteModificationService.updateExecutionStatus(testSuite);
+		}
 
 		List<ExternalContentCoordinates> attachmentContentToDelete =
 			Stream.concat(

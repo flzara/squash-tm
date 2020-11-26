@@ -78,9 +78,16 @@ public class IterationTestPlanDaoImpl implements CustomIterationTestPlanDao {
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findAllByExecutionIds(Collection<Long> executionIds) {
-		Query query = entityManager.createNamedQuery("IterationTestPlanItem.findAllByExecutionIds");
+	public List<Long> findAllIdsByExecutionIds(Collection<Long> executionIds) {
+		Query query = entityManager.createNamedQuery("IterationTestPlanItem.findAllIdsByExecutionIds");
 		query.setParameter("executionIds", executionIds);
+		return query.getResultList();
+	}
+
+	@Override
+	public List<IterationTestPlanItem> findAllByIds(Collection<Long> itpiIds) {
+		Query query = entityManager.createNamedQuery("IterationTestPlanItem.findAllByIds");
+		query.setParameter("itpiIds", itpiIds);
 		return query.getResultList();
 	}
 

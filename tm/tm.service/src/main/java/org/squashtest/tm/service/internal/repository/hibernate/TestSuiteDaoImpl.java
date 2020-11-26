@@ -41,6 +41,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,12 +243,22 @@ public class TestSuiteDaoImpl implements CustomTestSuiteDao {
 	}
 
 	@Override
-	public List<TestSuite> findAllByExecutionIds(List<Long> executionIds) {
+	public List<Long> findAllIdsByExecutionIds(List<Long> executionIds) {
 		if (executionIds.isEmpty()) {
 			return new ArrayList<>();
 		}
-		Query query = entityManager.createNamedQuery("TestSuite.findAllByExecutionIds");
+		Query query = entityManager.createNamedQuery("TestSuite.findAllIdsByExecutionIds");
 		query.setParameter("executionIds", executionIds);
+		return query.getResultList();
+	}
+
+	@Override
+	public List<TestSuite> findAllByIds(Collection<Long> suiteIds) {
+		if (suiteIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		Query query = entityManager.createNamedQuery("TestSuite.findAllByIds");
+		query.setParameter("suiteIds", suiteIds);
 		return query.getResultList();
 	}
 }
