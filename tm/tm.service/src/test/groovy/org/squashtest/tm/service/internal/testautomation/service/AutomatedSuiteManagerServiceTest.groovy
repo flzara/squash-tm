@@ -256,8 +256,12 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		AutomatedSuite suite = new AutomatedSuite()
 		suite.id = "12345"
 
-		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins")
-		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc")
+		TestAutomationServer serverJenkins = new TestAutomationServer("jenkins")
+		serverJenkins.setName("thejenkins")
+		serverJenkins.setUrl("http://jenkins-ta")
+		TestAutomationServer serverQC = new TestAutomationServer("qc")
+		serverQC.setName("theQC")
+		serverQC.setUrl("http://qc-ta")
 
 		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
 		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)
@@ -518,8 +522,12 @@ class ExtenderSorterTest extends Specification {
 		AutomatedSuite suite = new AutomatedSuite()
 		suite.id = "12345"
 
-		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins")
-		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc")
+		TestAutomationServer serverJenkins = new TestAutomationServer("jenkins")
+		serverJenkins.setName("thejenkins")
+		serverJenkins.setUrl("http://jenkins-ta")
+		TestAutomationServer serverQC = new TestAutomationServer("qc")
+		serverQC.setName("theQC")
+		serverQC.setUrl("http://qc-ta")
 
 		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
 		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)

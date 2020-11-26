@@ -22,6 +22,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
 import org.springframework.http.client.ClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
@@ -39,15 +40,19 @@ class StartTestExecutionTest extends Specification {
 	TestAutomationProject project = Mock()
 	HttpClientProvider clientProvider = Mock()
 	HttpRequestFactory httpRequestFactory = Mock()
-        
+	BasicAuthenticationCredentials credentials = Mock()
+
 	StartTestExecution ste
 
 
 	def setup() {
 
-                clientProvider.getRequestFactoryFor(_) >> Mock(ClientHttpRequestFactory)
-        
+                clientProvider.getRequestFactoryFor(_, _, _) >> Mock(ClientHttpRequestFactory)
+
 		buildDef.project >> project
+		buildDef.credentials >> credentials
+		credentials.username >> "username"
+		credentials.password >> "password"
 
 		ste = new StartTestExecution(buildDef, clientProvider, httpRequestFactory, "EXTERNAL-ID")
 	}

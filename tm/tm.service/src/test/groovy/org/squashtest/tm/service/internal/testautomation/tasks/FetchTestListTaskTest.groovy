@@ -45,12 +45,14 @@ class FetchTestListTaskTest extends Specification {
 		TestAutomationConnector connector = Mock()
 		TestAutomationConnectorRegistry registry = Mock()
 
+		String username = "admin"
+
 
 		registry.getConnectorForKind(_) >> connector
-		connector.listTestsInProject(project) >> allTests
+		connector.listTestsInProject(project, username) >> allTests
 
 		when :
-		def task = new FetchTestListTask(registry, project)
+		def task = new FetchTestListTask(registry, project, username)
 		def res = task.call();
 
 		then :
@@ -68,12 +70,12 @@ class FetchTestListTaskTest extends Specification {
 		and :
 		project.getServer() >> server
 		project.getJobName() >> "project"
-		server.getBaseURL() >> new URL("http://www.mike.com")
+		server.getUrl() >> new URL("http://www.mike.com")
 
 		Exception ex = new Exception()
 
 		when :
-		def task = new FetchTestListTask(null, project)
+		def task = new FetchTestListTask(null, project, "admin")
 		def res = task.buildFailedResult(ex)
 
 		then :
