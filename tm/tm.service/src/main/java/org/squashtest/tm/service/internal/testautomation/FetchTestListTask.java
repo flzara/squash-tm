@@ -36,19 +36,22 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 
 	private TestAutomationConnectorRegistry connectorRegistry;
 	private TestAutomationProject project;
+	private String username;
 
-	public FetchTestListTask(TestAutomationConnectorRegistry connectorRegistry, TestAutomationProject project) {
+	public FetchTestListTask(TestAutomationConnectorRegistry connectorRegistry, TestAutomationProject project, String username) {
 		super();
 		this.connectorRegistry = connectorRegistry;
 		this.project = project;
+		this.username = username;
 	}
 
 	@Override
 	public TestAutomationProjectContent call() throws Exception {
+
 		TestAutomationServer server = project.getServer();
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
-		Collection<AutomatedTest> allTests = connector.listTestsInProject(project);
+		Collection<AutomatedTest> allTests = connector.listTestsInProject(project, username);
 		boolean orderGuaranteed = connector.testListIsOrderGuaranteed(allTests);
 		return new TestAutomationProjectContent(project, allTests, orderGuaranteed);
 	}
