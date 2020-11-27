@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.service.internal.servers.ManageableTokenAuthCredentials;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
@@ -137,8 +138,8 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/credentials", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
-	public void storeCredentials(@PathVariable(SERVER_ID) long bugtrackerId ,@RequestBody ManageableCredentials credentials){
-		credentialsService.storeCredentials(bugtrackerId, credentials);
+	public void storeCredentials(@PathVariable(SERVER_ID) long testAutomationServerId ,@RequestBody ManageableCredentials credentials){
+		credentialsService.storeCredentials(testAutomationServerId, credentials);
 	}
 	// **************************** /credentials management ******************************
 

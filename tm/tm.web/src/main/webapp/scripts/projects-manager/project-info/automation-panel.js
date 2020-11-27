@@ -595,8 +595,8 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				this.table.refresh();
 			},
 			// when the select jeditable popup completes we change the server's select-jeditable status accordingly.
-			_onChangeServerComplete: function (newServerId) {
-				this.selectServer.setValue(newServerId);
+			_onChangeServerComplete: function (newServer) {
+				this.selectServer.setValue(newServer.serverId);
 				this.table.refresh();
 				var $addBlock = this.$el.find(".ta-projects-block");
 				if (parseInt(newServerId, 10) === 0) {

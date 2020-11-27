@@ -34,7 +34,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.core.scm.api.exception.ScmNoCredentialsException;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
@@ -60,7 +59,6 @@ import org.squashtest.tm.service.testautomation.spi.TestAutomationServerNoCreden
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;

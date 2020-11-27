@@ -25,25 +25,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
-import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -81,6 +71,16 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		}
 		// authentication policy : for now TestAutomationServer only supports APP_LEVEL
 		server.setAuthenticationPolicy(AuthenticationPolicy.APP_LEVEL);
+
+		//authentication protocol: set according to server kind
+		switch (server.getKind()){
+			case "squashAutom":
+				server.setAuthenticationProtocol(AuthenticationProtocol.TOKEN_AUTH);
+				break;
+			case "jenkins":
+			default:
+				server.setAuthenticationProtocol(AuthenticationProtocol.BASIC_AUTH);
+		}
 		// else we can persist it.
 		serverDao.save(server);
 	}
@@ -154,20 +154,6 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), newName);
 		}
 	}
-
-//	@Override
-//	@PreAuthorize(HAS_ROLE_ADMIN)
-//	public void changeLogin(long serverId, String login) {
-//		TestAutomationServer server = serverDao.getOne(serverId);
-//		server.setLogin(login);
-//	}
-//
-//	@Override
-//	@PreAuthorize(HAS_ROLE_ADMIN)
-//	public void changePassword(long serverId, String password) {
-//		TestAutomationServer server = serverDao.getOne(serverId);
-//		server.setPassword(password);
-//	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)

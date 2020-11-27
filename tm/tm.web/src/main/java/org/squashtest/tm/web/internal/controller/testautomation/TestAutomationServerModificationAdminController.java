@@ -38,7 +38,6 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Locale;
 
 import static org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.retrieveAsteriskedPassword;
@@ -57,9 +56,6 @@ public class TestAutomationServerModificationAdminController {
 
 	@Inject
 	private ThirdPartyServerCredentialsManagementHelper credentialsBeanHelper;
-
-	@Inject
-	private TestAutomationConnectorRegistry testAutomationConnectorRegistry;
 
 
 	@RequestMapping(method = RequestMethod.GET)

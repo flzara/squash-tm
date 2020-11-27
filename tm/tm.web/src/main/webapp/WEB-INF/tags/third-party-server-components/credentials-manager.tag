@@ -236,6 +236,15 @@
 				</div>
 				</script>
 
+  <script id="token-creds-template" type="text/x-handlebars-template">
+    <div class="tbl">
+      <div>
+        <label><f:message key="label.Token"/></label>
+        <input type="password" value="${asteriskedPassword}" data-bind="token">
+      </div>
+    </div>
+  </script>
+
 	<script id="messagepane-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
 				    <div class="display-table-cell warning-cell">

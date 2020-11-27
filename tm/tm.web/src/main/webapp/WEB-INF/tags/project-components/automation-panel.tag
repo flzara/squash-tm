@@ -141,7 +141,7 @@
       <%-- =================================== projects block =============================================================== --%>
 
       <f:message var="addTAProjectLabel" key="title.associateJob"  />
-      <c:if test="${ empty project.testAutomationServer}">
+      <c:if test="${ empty project.testAutomationServer || project.testAutomationServer.kind != 'jenkins'}">
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
 

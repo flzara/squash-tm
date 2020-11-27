@@ -18,22 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.json;
+package org.squashtest.tm.domain.servers;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
-import org.squashtest.tm.service.internal.servers.ManageableTokenAuthCredentials;
-import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
+public class TokenAuthCredentials implements Credentials{
 
-@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.NAME, property="type")
-@JsonSubTypes({
-	@Type(name="BASIC_AUTH", value=ManageableBasicAuthCredentials.class),
-	@Type(name="OAUTH_1A", value=UserOAuth1aToken.class),
-	@Type(name = "TOKEN_AUTH", value = ManageableTokenAuthCredentials.class)
-})
-public interface ManageableCredentialsMixin {
+	private String token = "";
 
+	public TokenAuthCredentials(){super();}
+
+	public TokenAuthCredentials(String token){
+		super();
+		this.token = token;
+	}
+
+	@Override
+	public AuthenticationProtocol getImplementedProtocol() {
+		return AuthenticationProtocol.TOKEN_AUTH;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 }
