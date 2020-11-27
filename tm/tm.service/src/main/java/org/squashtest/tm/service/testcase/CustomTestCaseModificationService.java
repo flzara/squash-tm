@@ -141,6 +141,14 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void updateKeywordTestStep(long testStepId, String updatedWord);
 
 	/**
+	 * Updates the {@link KeywordTestStep} of given id with given Word and given action word id
+	 * @param testStepId The id of the KeywordTestStep to update
+	 * @param updatedWord The updated Word of the ActionWord
+	 * @param actionWordId The given action word id to bind the KeywordTestStep
+	 */
+	void updateKeywordTestStep(long testStepId, @NotNull String updatedWord, long actionWordId);
+
+	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.
 	 *
 	 * @param parentTestCaseId

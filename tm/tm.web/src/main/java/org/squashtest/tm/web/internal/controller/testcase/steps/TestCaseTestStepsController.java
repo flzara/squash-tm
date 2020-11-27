@@ -383,6 +383,20 @@ public class TestCaseTestStepsController {
 		return actionWord;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/{stepId}/duplicated-action", method = RequestMethod.GET, params = {"projectId", "inputActionWord"})
+	public Map<String, Long> findAllDuplicatedActionWithProject(@PathVariable long stepId, @RequestParam long projectId, @RequestParam String inputActionWord) {
+		return actionWordService.findAllDuplicatedActionWithProjectWithChangingToken(projectId, stepId, inputActionWord);
+	}
+
+	@RequestMapping(value = "/{stepId}/action-word-with-id")
+	@ResponseBody
+	public String changeStepActionWordWithId(@PathVariable long stepId, @RequestParam("actionWord") String actionWord, @RequestParam("actionWordId") long actionWordId) {
+		testCaseModificationService.updateKeywordTestStep(stepId, actionWord, actionWordId);
+		LOGGER.trace("TestCaseModificationController : updated action word for step {} with action word id {}", stepId, actionWordId);
+		return actionWord;
+	}
+
 	@RequestMapping(value = "/{stepId}/action-word-html", method = RequestMethod.GET)
 	@ResponseBody
 	public String getActionWordHtml(@PathVariable long stepId) {
