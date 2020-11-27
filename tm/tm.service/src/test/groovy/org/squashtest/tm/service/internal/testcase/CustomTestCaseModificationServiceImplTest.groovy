@@ -270,6 +270,38 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 	}
 
+	def "should find test case and add a keyword step with action word id at specific index"() {
+		given:
+		long parentTestCaseId = 2
+		KeywordTestCase parentTestCase = new KeywordTestCase()
+
+		and:
+		def firstStep = new KeywordTestStep(GIVEN, createBasicActionWord("first"))
+		def secondStep = new KeywordTestStep(THEN, createBasicActionWord("second"))
+		parentTestCase.addStep(firstStep)
+		parentTestCase.addStep(secondStep)
+
+		and:
+		def actionWordId = 3
+		def actionWord = Mock(ActionWord)
+		actionWord.id >> actionWordId
+		actionWord.actionWordParams >> []
+		actionWord.fragments >> [new ActionWordText("between")]
+
+		and:
+		actionWordDao.getOne(actionWordId) >> actionWord
+		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+
+		when:
+		service.addKeywordTestStep(parentTestCaseId, "WHEN", "between", actionWordId,1)
+
+		then:
+		1 * testStepDao.persist(_)
+		parentTestCase.getSteps().size() == 3
+		parentTestCase.getSteps()[1].actionWord.id == 3
+
+	}
+
 	def "should find test case and add a keyword step with new action word at index position"() {
 		given:
 		long parentTestCaseId = 2

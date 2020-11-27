@@ -152,6 +152,7 @@ import static org.squashtest.tm.service.security.Authorizations.WRITE_TESTSTEP_O
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
+	private static final int STEP_FIRST_POS = 0;
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
@@ -361,6 +362,29 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String word, @NotNull Long actionWordId, int index) {
+		ActionWord actionWord = actionWordDao.getOne(actionWordId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
+
+		Keyword inputKeyword = Keyword.valueOf(keyword);
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
+		parser.createActionWordFromKeywordTestStep(word.trim());
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+
+		KeywordTestStep newTestStep = new KeywordTestStep();
+		newTestStep.setKeyword(inputKeyword);
+		newTestStep.setTestCase(parentTestCase);
+
+		if (index == STEP_FIRST_POS) {
+			index = STEP_LAST_POS;
+		}
+
+		return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
@@ -497,7 +521,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		//replace invalid chars with _ and return it
 		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
-
 
 	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues, int index) {
 		newTestStep.setActionWord(inputActionWord);

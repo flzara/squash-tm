@@ -88,11 +88,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @RequestMapping("/test-cases/{testCaseId}/steps")
 public class TestCaseTestStepsController {
 
-	/**
-	 *
-	 */
 	private static final String TEST_CASE = "testCase";
-
 	private static final String TEST_CASE_ = "test case ";
 
 	@Inject
@@ -268,6 +264,21 @@ public class TestCaseTestStepsController {
 		} else {
 			step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		}
+		return step.getId();
+	}
+
+	@PostMapping(value = "/add-keyword-test-step-with-action-word-id", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStepWithActionWordId(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		validateDto(keywordTestStepDto);
+
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		int index = keywordTestStepDto.getIndex();
+		long actionWordId = keywordTestStepDto.getActionWordId();
+
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord, actionWordId, index);
+
 		return step.getId();
 	}
 

@@ -21,8 +21,19 @@
 package org.squashtest.tm.service.actionword;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface ActionWordService {
 	Collection<String> findAllMatchingActionWords(long projectId, String searchInput);
+
+	/**
+	 * This method retrieves all duplicated action word for the inputActionWord, with its project name
+	 * Only returns a result if any duplicated action word in other projects than the current one
+	 * Else returns an empty map.
+	 * @param currentProjectId the project id of the current project
+	 * @param inputActionWord the action word which the user wants to add
+	 * @return a map where the key is the project name and the value the action word id
+	 */
+	Map<String, Long> findAllDuplicatedActionWithProject(long currentProjectId, String inputActionWord);
 	String changeDescription(long actionWordId, String newDescription);
 }
