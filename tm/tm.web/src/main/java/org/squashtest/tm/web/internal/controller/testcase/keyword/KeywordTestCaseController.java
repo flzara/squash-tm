@@ -33,6 +33,7 @@ import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/keyword-test-cases")
@@ -53,6 +54,12 @@ public class KeywordTestCaseController {
 		@RequestParam Long projectId,
 		@RequestParam String searchInput) {
 		return actionWordService.findAllMatchingActionWords(projectId, searchInput);
+	}
+
+	@ResponseBody
+	@RequestMapping("/duplicated-action")
+	public Map<String, Long> findAllDuplicatedActionWithProject(@RequestParam long projectId, @RequestParam String inputActionWord) {
+		return actionWordService.findAllDuplicatedActionWithProject(projectId, inputActionWord);
 	}
 
 	@ResponseBody

@@ -30,6 +30,7 @@ require(["common"], function() {
 		$(function() {
 
 			var warningPopup = $('#clean-automated-suites-popup');
+
 			warningPopup.confirmDialog();
 
 			warningPopup.on('confirmdialogconfirm', function () {
@@ -44,6 +45,15 @@ require(["common"], function() {
 			});
 
 			$("#delete-automated-suites-and-executions").on("click", function() {
+				$.ajax({
+					url: squashtm.appRoot + "administration/cleaning/count",
+					method: 'GET'
+				}).then(function(automationDeletionCount) {
+					var suiteCount = automationDeletionCount.oldAutomatedSuiteCount;
+					var execCount = automationDeletionCount.oldAutomatedExecutionCount;
+					$('#automated-suites-count').text(suiteCount);
+					$('#automated-executions-count').text(execCount);
+				});
 				warningPopup.confirmDialog('open');
 			});
 

@@ -238,7 +238,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 						source: function(request, response) {
 							$.ajax({
 								type: 'GET',
-								url: '/squash/scm-repositories/autocomplete',
+								url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
 								data: {
 									searchInput: searchInputValue
 								},

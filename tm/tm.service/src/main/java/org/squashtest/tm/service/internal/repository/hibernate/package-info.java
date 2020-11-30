@@ -239,7 +239,6 @@
 		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
 			" where item.id in(:itemsIds) and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
-
 	// TestSuite
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),
 	@NamedQuery(name = "TestSuite.countStatusesForUser", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.user user where ts.id = :id and  user.login = :login group by tp.executionStatus"),
@@ -251,7 +250,8 @@
 	@NamedQuery(name = "TestSuite.findProjectIdBySuiteId", query = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
 
 	@NamedQuery(name = "TestSuite.findPlannedTestCasesIds", query = "select distinct tc.id from TestSuite ts join ts.testPlan tpi join tpi.referencedTestCase tc where ts.id = ?1"),
-	@NamedQuery(name = "TestSuite.findAllByExecutionIds", query = "select distinct ts from Execution exec inner join exec.testPlan testPlan inner join testPlan.testSuites ts where exec.id in (:executionIds)"),
+	@NamedQuery(name = "TestSuite.findAllIdsByExecutionIds", query = "select distinct ts.id from Execution exec inner join exec.testPlan testPlan inner join testPlan.testSuites ts where exec.id in (:executionIds)"),
+	@NamedQuery(name = "TestSuite.findAllByIds", query = "select distinct ts from TestSuite ts where ts.id in (:suiteIds)"),
 
 	//TestCase
 	@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
@@ -471,7 +471,7 @@
 
 	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
 	@NamedQuery(name ="Execution.findAllIdsByAutomatedSuiteIds", query= "select autoExec.execution.id from AutomatedSuite suite join suite.executionExtenders autoExec where suite.id in (:automatedSuiteIds)"),
-	@NamedQuery(name ="Execution.findAllWithTesPlanItemByIds", query= "select distinct exec from Execution exec join fetch exec.testPlan itpi join fetch itpi.executions where exec.id in (:executionIds)"),
+	@NamedQuery(name ="Execution.findAllWithTesPlanItemWithExecutionsByIds", query= "select distinct exec from Execution exec join exec.testPlan itpi join itpi.executions where exec.id in (:executionIds)"),
 
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
@@ -684,7 +684,6 @@
 	//AutomatedSuite
 	@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
 	+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
-	@NamedQuery(name = "AutomatedSuite.findOldAutomatedSuiteIds", query = "select suite.id from AutomatedSuite suite where suite.audit.createdOn < :limitDate"),
 	@NamedQuery(name = "AutomatedSuite.deleteAllByIds", query = "delete from AutomatedSuite suite where suite.id in (:automatedSuiteIds)"),
 
 	//AutomatedExecution

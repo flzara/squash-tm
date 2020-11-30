@@ -225,6 +225,7 @@ public class ProjectAdministrationController {
 		mav.addObject("useTreeStructureInScmRepo", adminProject.useTreeStructureInScmRepo());
 		mav.addObject("availableTAServers", availableTAServers);
 		mav.addObject("availableScmServers", availableScmServers);
+		mav.addObject("automatedSuitesLifetime", adminProject.getAutomatedSuitesLifetime());
 		// attachment panel
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 

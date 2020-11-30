@@ -140,9 +140,16 @@ public interface AutomatedSuiteManagerService {
 	void delete(String automatedSuiteId);
 
 	/**
-	 * Clean all AutomatedSuites which are older than a specific age.
+	 * Clean all AutomatedSuites which are older than the lifetime configured in their project.
 	 */
 	void cleanOldSuites();
+
+	/**
+	 * Count the number of AutomatedSuites and AutomatedExecutions which are older than the lifetime configured in their
+	 * project.
+	 * @return An AutomationDeletionCount containing old suites count and old executions count.
+	 */
+	AutomationDeletionCount countOldAutomatedSuitesAndExecutions();
 
 	/**
 	 * Given the id of an {@link AutomatedSuite}, returns its content as tests grouped by projects.

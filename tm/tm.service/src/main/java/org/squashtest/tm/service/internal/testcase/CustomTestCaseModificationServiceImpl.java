@@ -152,6 +152,7 @@ import static org.squashtest.tm.service.security.Authorizations.WRITE_TESTSTEP_O
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
+	private static final int STEP_FIRST_POS = 0;
 	private static final int STEP_LAST_POS = -1;
 	private static final Long NO_ACTIVE_MILESTONE_ID = -9000L;
 	private static final String WRITE_AS_AUTOMATION = "WRITE_AS_AUTOMATION";
@@ -361,6 +362,29 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType = TestCase.class)
+	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String word, @NotNull Long actionWordId, int index) {
+		ActionWord actionWord = actionWordDao.getOne(actionWordId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(parentTestCaseId);
+
+		Keyword inputKeyword = Keyword.valueOf(keyword);
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
+		parser.createActionWordFromKeywordTestStep(word.trim());
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+
+		KeywordTestStep newTestStep = new KeywordTestStep();
+		newTestStep.setKeyword(inputKeyword);
+		newTestStep.setTestCase(parentTestCase);
+
+		if (index == STEP_FIRST_POS) {
+			index = STEP_LAST_POS;
+		}
+
+		return addActionWordToKeywordTestStep(newTestStep, actionWord, parentTestCase, parameterValues, index);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_PARENT_TC_OR_ROLE_ADMIN)
+	@PreventConcurrent(entityType = TestCase.class)
 	public KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index) {
 		Keyword inputKeyword = newTestStep.getKeyword();
 		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
@@ -498,7 +522,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return replacedSpacesWithUnderscores.replaceAll("[^\\w-]", "_");
 	}
 
-
 	private KeywordTestStep addActionWordToKeywordTestStep(KeywordTestStep newTestStep, ActionWord inputActionWord, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues, int index) {
 		newTestStep.setActionWord(inputActionWord);
 		testStepDao.persist(newTestStep);
@@ -572,6 +595,31 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
+	@Override
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
+	public void updateKeywordTestStep(long testStepId, @NotNull String updatedWord, long actionWordId) {
+		ActionWord actionWord = actionWordDao.getOne(actionWordId);
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(testStep.getTestCase().getId());
+
+		String trimmedWord = updatedWord.trim();
+		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
+		parser.createActionWordFromKeywordTestStep(trimmedWord);
+		List<ActionWordParameterValue> parameterValues = parser.getParameterValues();
+		String token = testStep.getActionWord().getToken();
+		String inputToken = actionWord.getToken();
+		if (! inputToken.equals(token)) {
+			//remove all action word parameter values
+			List<ActionWordParameterValue> valueList = testStep.getParamValues();
+			if (! valueList.isEmpty()) {
+				valueList.clear();
+			}
+			updateKeywordTestStepWithExistingActionWord(parentTestCase, testStep, actionWord, parameterValues);
+		} else {
+			updateActionWordWithoutChangingToken(testStep, parentTestCase, parameterValues);
+		}
+	}
+
 	private void updateActionWordWithNotNullInput(long testStepId, String updatedWord, KeywordTestStep testStep, KeywordTestCase parentTestCase, String token) {
 		String trimmedWord = updatedWord.trim();
 		KeywordTestStepActionWordParser parser = new KeywordTestStepActionWordParser();
@@ -582,13 +630,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			LOGGER.debug("changing step #{} action word to '{}'", testStepId, inputActionWord.createWord());
 		}
 		if (!inputToken.equals(token)) {
-			updateActionWordWithoutChangingToken(testStep, parentTestCase, inputActionWord, parameterValues, inputToken);
+			updateActionWordWithChangingToken(testStep, parentTestCase, inputActionWord, parameterValues, inputToken);
 		} else {
-			updateActionWordWithChangingToken(testStep, parentTestCase, parameterValues);
+			updateActionWordWithoutChangingToken(testStep, parentTestCase, parameterValues);
 		}
 	}
 
-	private void updateActionWordWithoutChangingToken(
+	private void updateActionWordWithChangingToken(
 		KeywordTestStep testStep,
 		KeywordTestCase parentTestCase,
 		ActionWord inputActionWord,
@@ -614,7 +662,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-	private void updateActionWordWithChangingToken(KeywordTestStep testStep, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues) {
+	private void updateActionWordWithoutChangingToken(KeywordTestStep testStep, KeywordTestCase parentTestCase, List<ActionWordParameterValue> parameterValues) {
 		List<ActionWordParameterValue> values = reorderParamValuesFromTestStepIfNeeded(testStep);
 
 		for (int i = 0; i < values.size(); i++) {

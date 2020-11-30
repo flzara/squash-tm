@@ -320,4 +320,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void changeBddImplTechnology(long projectId, String bddImplTechnology);
 
 	void changeBddScriptLanguage(long projectId, String bddScriptLanguage);
+
+	Integer changeAutomatedSuitesLifetime(long projectId, String lifetime);
 }

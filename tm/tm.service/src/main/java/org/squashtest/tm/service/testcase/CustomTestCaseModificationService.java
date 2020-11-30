@@ -85,11 +85,22 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String actionWord, int index);
 
 	/**
+	 * Inserts the given {@link KeywordTestStep} at the index value of the {@link TestCase} identified by the given id, with the given action word id.
+	 * @param parentTestCaseId The id of the parent TestCase
+	 * @param keyword The new step Keyword
+	 * @param actionWord The step ActionWord
+	 * @param actionWordId The step ActionWord id to bind the keyword test step
+	 * @param index Position of the keywordTestStep in the testCase
+	 * @return The created KeywordTestStep
+	 */
+	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, @NotNull String keyword, @NotNull String actionWord, @NotNull Long actionWordId, int index);
+
+	/**
 	 * Inserts the given {@link KeywordTestStep} inserted at the index value in the {@link TestCase} identified by the given id.
 	 * @param parentTestCaseId The id of the parent TestCase
 	 * @param newTestStep The new KeywordTestStep
 	 * @param index Position of the keywordTestStep in the testCase
-	 * @return
+	 * @return The created KeywordTestStep
 	 */
 	KeywordTestStep addKeywordTestStep(@Id long parentTestCaseId, KeywordTestStep newTestStep, int index);
 
@@ -128,6 +139,14 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param updatedWord The updated Word of the ActionWord
 	 */
 	void updateKeywordTestStep(long testStepId, String updatedWord);
+
+	/**
+	 * Updates the {@link KeywordTestStep} of given id with given Word and given action word id
+	 * @param testStepId The id of the KeywordTestStep to update
+	 * @param updatedWord The updated Word of the ActionWord
+	 * @param actionWordId The given action word id to bind the KeywordTestStep
+	 */
+	void updateKeywordTestStep(long testStepId, @NotNull String updatedWord, long actionWordId);
 
 	/**
 	 * Inserts the given step in last position of the test script of the test case identified by the given id.

@@ -802,7 +802,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						source: function(request, response) {
 							$.ajax({
 								type: 'GET',
-								url: '/squash/scm-repositories/autocomplete',
+								url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
 								data: {
 									searchInput: searchInputValue
 								},

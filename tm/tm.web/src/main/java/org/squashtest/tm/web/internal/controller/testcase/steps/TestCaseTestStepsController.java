@@ -88,11 +88,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @RequestMapping("/test-cases/{testCaseId}/steps")
 public class TestCaseTestStepsController {
 
-	/**
-	 *
-	 */
 	private static final String TEST_CASE = "testCase";
-
 	private static final String TEST_CASE_ = "test case ";
 
 	@Inject
@@ -271,6 +267,21 @@ public class TestCaseTestStepsController {
 		return step.getId();
 	}
 
+	@PostMapping(value = "/add-keyword-test-step-with-action-word-id", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStepWithActionWordId(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		validateDto(keywordTestStepDto);
+
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		int index = keywordTestStepDto.getIndex();
+		long actionWordId = keywordTestStepDto.getActionWordId();
+
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord, actionWordId, index);
+
+		return step.getId();
+	}
+
 	private void validateDto(@RequestBody KeywordTestStepModel keywordTestStepDto) throws BindException {
 		BindingResult validation = new BeanPropertyBindingResult(keywordTestStepDto, "add-keyword-test-step");
 		KeywordTestStepModelValidator validator = new KeywordTestStepModelValidator(internationalizationHelper);
@@ -369,6 +380,20 @@ public class TestCaseTestStepsController {
 	public String changeStepActionWord(@PathVariable long stepId, @RequestParam(VALUE) String actionWord) {
 		testCaseModificationService.updateKeywordTestStep(stepId, actionWord);
 		LOGGER.trace("TestCaseModificationController : updated action word for step {}", stepId);
+		return actionWord;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{stepId}/duplicated-action", method = RequestMethod.GET, params = {"projectId", "inputActionWord"})
+	public Map<String, Long> findAllDuplicatedActionWithProject(@PathVariable long stepId, @RequestParam long projectId, @RequestParam String inputActionWord) {
+		return actionWordService.findAllDuplicatedActionWithProjectWithChangingToken(projectId, stepId, inputActionWord);
+	}
+
+	@RequestMapping(value = "/{stepId}/action-word-with-id")
+	@ResponseBody
+	public String changeStepActionWordWithId(@PathVariable long stepId, @RequestParam("actionWord") String actionWord, @RequestParam("actionWordId") long actionWordId) {
+		testCaseModificationService.updateKeywordTestStep(stepId, actionWord, actionWordId);
+		LOGGER.trace("TestCaseModificationController : updated action word for step {} with action word id {}", stepId, actionWordId);
 		return actionWord;
 	}
 

@@ -650,6 +650,41 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an action word id to test case at a specific index"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ", -33L, 1)
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -33
+		actionWord.createWord() == "hello"
+		actionWord.token == "T-hello-"
+		!actionWord.getKeywordTestSteps().isEmpty()
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 1
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "hello"
+		text1.id != null
+		text1.actionWord == actionWord
+
+		and:
+		def testCase = createdKeywordTestStep.getTestCase()
+		def testCaseSteps = testCase.getSteps()
+		testCaseSteps.size() == 3
+		testCaseSteps[1].keyword == Keyword.AND
+		testCaseSteps[1].actionWord == actionWord
+
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
 	def "should add a keyword test step with a new action word containing parameters to test case"() {
 		when:
 		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  today is  \"Friday\"\"\".   ")

@@ -91,5 +91,5 @@ public interface CustomExecutionDao {
     List<Long> findAllIdsByAutomatedSuiteIds(List<String> automatedExecutionIds);
 
 	@EmptyCollectionGuard
-	List<Execution> findAllWithTestPlanItemByIds(List<Long> executionIds);
+	List<Execution> findAllWithTestPlanWithExecutionsItemByIds(List<Long> executionIds);
 }

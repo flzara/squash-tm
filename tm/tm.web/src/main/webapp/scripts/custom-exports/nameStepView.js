@@ -85,7 +85,7 @@ define(["jquery", "backbone", "underscore", "workspace.routing", "app/squash.han
        * So we need to put the good path to avoid two jstree_select cookies with differents path.
        */
       getCookiePath : function () {
-      	var path = "/squash/custom-report-workspace";
+      	var path = squashtm.app.contextRoot + "custom-report-workspace";
       	if (is.ie() || is.firefox()) {
       		path = path + "/";
       	}

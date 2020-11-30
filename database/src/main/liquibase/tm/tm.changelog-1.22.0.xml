@@ -1380,7 +1380,14 @@
 
       select setval('third_party_server_server_id_seq', (select max(SERVER_ID) from THIRD_PARTY_SERVER));
     </sql>
+  </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-808-automated-suites-lifetime" author="jlor">
+    <addColumn tableName="PROJECT">
+      <column name="AUTOMATED_SUITES_LIFETIME" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
   </changeSet>
 
 </databaseChangeLog>

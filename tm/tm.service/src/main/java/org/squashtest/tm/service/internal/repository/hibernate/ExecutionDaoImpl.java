@@ -266,8 +266,8 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 	}
 
 	@Override
-	public List<Execution> findAllWithTestPlanItemByIds(List<Long> executionIds) {
-		Query fetchQuery = entityManager.createNamedQuery("Execution.findAllWithTesPlanItemByIds");
+	public List<Execution> findAllWithTestPlanWithExecutionsItemByIds(List<Long> executionIds) {
+		Query fetchQuery = entityManager.createNamedQuery("Execution.findAllWithTesPlanItemWithExecutionsByIds");
 		fetchQuery.setParameter("executionIds", executionIds);
 		return fetchQuery.getResultList();
 	}

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -96,6 +97,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
@@ -469,7 +471,20 @@ public class GenericProjectController {
 		projectManager.changeBddScriptLanguage(projectId, bddScriptLanguage);
 	}
 
-	/* ------- Scm Serves & Repositories ------ */
+	/* ------- Automated Suites Lifetime ------- */
+
+	@ResponseBody
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=automated-suites-lifetime", VALUE})
+	public String changeAutomatedSuitesLifetime(@PathVariable long projectId, @RequestParam(VALUE) String automatedSuitesLifetime) {
+		Integer newLifetime = projectManager.changeAutomatedSuitesLifetime(projectId, automatedSuitesLifetime);
+		if (Objects.isNull(newLifetime)) {
+			return Strings.EMPTY;
+		} else {
+			return String.valueOf(newLifetime);
+		}
+	}
+
+	/* ------- Scm Servers & Repositories ------ */
 
 	@RequestMapping(value = PROJECT_ID_URL + "/scm-repository", method = RequestMethod.POST)
 	@ResponseBody

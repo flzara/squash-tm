@@ -35,6 +35,8 @@ public class KeywordTestStepModel {
 
 	private int index;
 
+	private Long actionWordId;
+
 	public String getKeyword() {
 		return keyword;
 	}
@@ -57,6 +59,14 @@ public class KeywordTestStepModel {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public Long getActionWordId() {
+		return actionWordId;
+	}
+
+	public void setActionWordId(Long actionWordId) {
+		this.actionWordId = actionWordId;
 	}
 
 	public static class KeywordTestStepModelValidator implements Validator {
