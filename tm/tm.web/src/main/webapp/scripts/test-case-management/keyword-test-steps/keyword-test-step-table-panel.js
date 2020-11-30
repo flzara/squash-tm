@@ -489,7 +489,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 							} else {
 								self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
 							}
-						})
+						});
 				} else {
 					self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
 				}
