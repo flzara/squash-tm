@@ -57,23 +57,25 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					data: {
 						serverId: this.newSelectedId
 					}
-				}).done(function () {
+				}).done(function (newServer) {
 					// trigger confirm success event with active selected id
-					self.trigger("confirmChangeServerPopup.confirm.success", [self.newSelectedId]);
+					self.trigger("confirmChangeServerPopup.confirm.success", newServer);
 					self.selectedId = self.newSelectedId;
 					self.newSelectedId = null;
 					self.close();
 				}).fail(function (wtf) {
 					WTF.handleJsonResponseError(wtf);
 					// trigger confirm fail event with active selected id
-					self.trigger("confirmChangeServerPopup.confirm.fail", [self.selectedId]);
+					var mockAutomationServer = {"id": self.selectedId};
+					self.trigger("confirmChangeServerPopup.confirm.fail", mockAutomationServer);
 					self.newSelectedId = null;
 				});
 			},
 			cancel: function () {
 				var self = this;
 				// trigger cancel event with active selected id
-				this.trigger("confirmChangeServerPopup.cancel", [self.selectedId]);
+				var mockAutomationServer = {"id": self.selectedId};
+				this.trigger("confirmChangeServerPopup.cancel", mockAutomationServer);
 				self.newSelectedId = null;
 				this.close();
 			},
@@ -596,14 +598,24 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 			},
 			// when the select jeditable popup completes we change the server's select-jeditable status accordingly.
 			_onChangeServerComplete: function (newServer) {
-				this.selectServer.setValue(newServer.serverId);
-				this.table.refresh();
 				var $addBlock = this.$el.find(".ta-projects-block");
-				if (parseInt(newServerId, 10) === 0) {
+				if(newServer === null || newServer.id === 0){
+					this.selectServer.setValue('0');
 					$addBlock.hide();
 				} else {
-					$addBlock.show();
+					this.selectServer.setValue(newServer.id.toString());
+					switch (newServer.kind){
+						case 'jenkins':
+							$addBlock.show();
+							break;
+						case 'squashAutom':
+							$addBlock.hide();
+							break;
+					}
+
 				}
+
+				this.table.refresh();
 			},
 
 			initSelect: function (conf) {

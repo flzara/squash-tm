@@ -93,7 +93,7 @@
 
 			<%-- Test Automation structure --%>
 		<c:if test="${!allowAutomationWorkflow}">
-      <c:if test="${testCase.project.testAutomationEnabled}">
+      <c:if test="${testCase.project.legacyTestAutomationEnabled}">
         <tc:testcase-test-automation testCase="${testCase}"
                        canModify="${writable}"/>
       </c:if>

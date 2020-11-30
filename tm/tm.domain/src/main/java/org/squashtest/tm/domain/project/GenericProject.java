@@ -358,8 +358,20 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 		}
 	}
 
+	/**
+	 * Tells whether or not the project is link to a test automation server
+	 * @return
+	 */
 	public boolean isTestAutomationEnabled() {
 		return testAutomationServer != null;
+	}
+
+	/**
+	 * Tells whether or not the project is link to a legacy type test automation server
+	 * @return
+	 */
+	public boolean isLegacyTestAutomationEnabled() {
+		return testAutomationServer != null && testAutomationServer.getKind().equals( "jenkins");
 	}
 
 	public TestAutomationServer getTestAutomationServer() {
@@ -529,7 +541,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder, Bo
 	public void setAllowAutomationWorkflow(boolean allowAutomationWorkflow) {
 		this.allowAutomationWorkflow = allowAutomationWorkflow;
 	}
-	
+
 	public ScmRepository getScmRepository() {
 		return scmRepository;
 	}

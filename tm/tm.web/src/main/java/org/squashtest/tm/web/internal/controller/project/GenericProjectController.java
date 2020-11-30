@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -62,6 +63,7 @@ import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
@@ -133,6 +135,9 @@ public class GenericProjectController {
 
 	@Inject
 	private ProjectDao projectDao;
+
+	@Inject
+	private TestAutomationServerManagerService testAutomationServerManagerService;
 
 	@Inject
 	private TaskExecutor taskExecutor;
@@ -391,11 +396,15 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
 	@ResponseBody
-	public Long bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
+	public TestAutomationServer bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 										 @RequestParam("serverId") long serverId) {
-		Long finalServerId = serverId == 0 ? null : serverId;
-		projectManager.bindTestAutomationServer(projectId, finalServerId);
-		return serverId;
+		if(serverId == 0){
+			projectManager.bindTestAutomationServer(projectId, null);
+			return null;
+		} else {
+			projectManager.bindTestAutomationServer(projectId, serverId);
+			return testAutomationServerManagerService.findById(serverId);
+		}
 	}
 
 	// filtering and sorting not supported for now
