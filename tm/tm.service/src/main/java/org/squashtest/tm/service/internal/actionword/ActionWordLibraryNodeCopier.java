@@ -31,16 +31,23 @@ import java.util.List;
 @Component
 public class ActionWordLibraryNodeCopier {
 
+	public boolean simulateCopyNodes(List<ActionWordLibraryNode> nodes, ActionWordLibraryNode target) {
+		for (ActionWordLibraryNode node : nodes) {
+			if (target.childNameAlreadyUsed(node.getName())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public List<ActionWordLibraryNode> copyNodes(List<ActionWordLibraryNode> nodes, ActionWordLibraryNode target) {
 		List<ActionWordLibraryNode> copiedNodes = new ArrayList();
 		for (ActionWordLibraryNode node : nodes) {
-			ActionWordLibraryNode copy = createFirstLayerCopy(node, target);
-			// check naming conflict only for first layer - throw an Exception for the moment
-			if (target.childNameAlreadyUsed(node.getName())) {
-				throw new UnsupportedOperationException("Only copy/past without name conflict is supported so far.");
+			if (!target.childNameAlreadyUsed(node.getName())) {
+				ActionWordLibraryNode copy = createFirstLayerCopy(node, target);
+				target.addChild(copy);
+				copiedNodes.add(copy);
 			}
-			target.addChild(copy);
-			copiedNodes.add(copy);
 		}
 		return copiedNodes;
 	}
@@ -76,4 +83,5 @@ public class ActionWordLibraryNodeCopier {
 		copy.setEntity(treeEntity);
 		copy.setEntityType(node.getEntityType());
 	}
+
 }

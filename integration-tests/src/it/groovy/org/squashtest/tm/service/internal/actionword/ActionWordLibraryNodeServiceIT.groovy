@@ -172,12 +172,19 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "simulateCopyNodes(List<Long>, long) - Should find no action words with the same token and return true"() {
+		expect:
+			actionWordLibraryNodeService.simulateCopyNodes([-2L, -3L, -4L], -7L)
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
 	def "copyNodes(List<Long>, long) - Should copy three action word nodes into an empty library"() {
 		when:
-			actionWordLibraryNodeService.copyNodes([-2L, -3L, -4L], -7L)
+			def nodeList = actionWordLibraryNodeService.copyNodes([-2L, -3L, -4L], -7L)
 			em.flush()
 			em.clear()
 		then:
+			nodeList.size() == 3
 			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
 			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
 			children.size() == 3
@@ -206,13 +213,22 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "simulateCopyNodes(List<Long>, long) - Should find an action word with the same token and return false"() {
+		expect:
+			! actionWordLibraryNodeService.simulateCopyNodes([-2L], -5L)
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
 	def "copyNodes(List<Long>, long) - Should try to copy an action word node with an existing name into a library"() {
 		when:
-			actionWordLibraryNodeService.copyNodes([-2L], -5L)
+			def nodeList = actionWordLibraryNodeService.copyNodes([-2L], -5L)
 			em.flush()
 			em.clear()
 		then:
-			thrown UnsupportedOperationException
+			nodeList.isEmpty()
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -5L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 1
 	}
 
 }

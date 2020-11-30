@@ -75,6 +75,14 @@ public interface ActionWordLibraryNodeService {
 	ActionWordLibraryNode createNewNode(Long parentId, ActionWordTreeEntity entity) throws DuplicateNameException;
 
 	/**
+	 * Simulate the copy of the ActionWordLibraryNodes matching the ids in the List into the target with the given id.
+	 * @param nodeIds
+	 * @param targetId
+	 * @return True if all node can be copied. False if at least one node cannot be copied because another ActionWord
+	 * with the same token already exists in the same Project.
+	 */
+	boolean simulateCopyNodes(List<Long> nodeIds, long targetId);
+	/**
 	 * Copy the ActionWordLibraryNodes matching the ids in the list into the target with the given id.
 	 * @param nodeIds the ids of ActionWordLibraryNodes to copy
 	 * @param targetId the id of the target container

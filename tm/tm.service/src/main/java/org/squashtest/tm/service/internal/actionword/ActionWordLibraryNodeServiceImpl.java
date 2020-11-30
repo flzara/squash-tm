@@ -31,11 +31,9 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.actionword.CannotDeleteActionWordException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParentNodeTypeException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.internal.customreport.CRLNCopier;
 import org.squashtest.tm.service.internal.repository.ActionWordDao;
 import org.squashtest.tm.service.internal.repository.ActionWordLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -99,6 +97,13 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 
 		ActionWordLibraryNode newNode = new ActionWordLibraryNodeBuilder(parentNode, entity).build();
 		return actionWordLibraryNodeDao.save(newNode);
+	}
+
+	@Override
+	public boolean simulateCopyNodes(List<Long> nodeIds, long targetId) {
+		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
+		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
+		return nodeCopier.simulateCopyNodes(nodes, target);
 	}
 
 	@Override
