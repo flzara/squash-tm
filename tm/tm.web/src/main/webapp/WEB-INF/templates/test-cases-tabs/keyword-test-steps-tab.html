@@ -121,6 +121,28 @@
   </div>
   <!-- ==================== /Remove Keyword Test Step Row Dialog ==================== -->
 
+  <!-- ==================== Duplicated Action Dialog ==================== -->
+  <div id="duplicated-action-dialog" class="not-displayed popup-dialog" th:title="#{dialog.duplicated-action.keyword-test-step.title}">
+    <span style="font-weight: bold" th:text="#{dialog.duplicated-action.keyword-test-step.message}">action already exists in other projects</span>
+    <div id="duplicated-action-projects"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Duplicated Action Dialog ==================== -->
+
+  <!-- ==================== Duplicated Action Keyword Test Step Dialog ==================== -->
+  <div id="test-step-duplicated-action-dialog" class="not-displayed popup-dialog" th:title="#{dialog.duplicated-action.keyword-test-step.title}">
+    <span style="font-weight: bold" th:text="#{dialog.duplicated-action.keyword-test-step.message}">action already exists in other projects</span>
+    <div id="test-step-duplicated-action-projects"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Duplicated Action Keyword Test Step Dialog ==================== -->
+
   <!-- ==================== Preview Generated Script Dialog ==================== -->
   <div id="preview-generated-script-dialog" class="not-displayed popup-dialog" th:title="#{dialog.keyword-test-case.generated-script.preview}">
     <div class="display-table-row">

@@ -1700,7 +1700,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		def param1 = new ActionWordParameterValue("5")
-		long parentTestCaseId = 2
+		long parentTestCaseId = -2L
 		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def step = Mock(KeywordTestStep) {
 			getActionWord() >> actionWord
@@ -1731,7 +1731,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		and:
-		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
+		actionWordLibraryNodeService.findNodeFromEntity(_) >> awLibraryNode
 
 		when:
 		service.updateKeywordTestStepWithNewActionWord(parentTestCase, step, newActionWord, _)
@@ -1744,9 +1744,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should update the action word of a keyword step with an existing action by adding a parameter"() {
 		given:
 		def project = Mock(Project)
-		project.getId() >> 1L
+		project.getId() >> -1L
 		and:
-		long parentTestCaseId = 2
+		long parentTestCaseId = -2L
 		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		parentTestCase.notifyAssociatedWithProject(project)
 		and:
@@ -1780,12 +1780,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		and:
-		keywordTestStepDao.findById(10L) >> step
-		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		keywordTestStepDao.findById(_) >> step
+		keywordTestCaseDao.getOne(_) >> parentTestCase
 		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 
 		when:
-		service.updateKeywordTestStep(10L, "I have <number> apples")
+		service.updateKeywordTestStep(-10L, "I have <number> apples")
 
 		then:
 		1 * step.setActionWord(existingActionWord)
@@ -1795,14 +1795,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	def "should update the action word of a keyword step with an existing action by adding a text"() {
 		given:
 		def project = Mock(Project)
-		project.getId() >> 1L
+		project.getId() >> -1L
 		and:
 		def actionWord = Mock(ActionWord) {
 			getId() >> -77L
 			getToken() >> "TP-I am - -"
 		}
 
-		long parentTestCaseId = 2
+		long parentTestCaseId = -2L
 		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
 		def step = Mock(KeywordTestStep) {
 			getActionWord() >> actionWord
@@ -1810,7 +1810,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 			getParamValues() >> ["18"]
 		}
 		def awLibraryNode = Mock(ActionWordLibraryNode)
-		awLibraryNode.getId() >> 4L
+		awLibraryNode.getId() >> -4L
 		def awLibrary = Mock(ActionWordLibrary)
 
 		and:
@@ -1837,16 +1837,65 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		}
 
 		and:
-		keywordTestStepDao.findById(10L) >> step
-		keywordTestCaseDao.getOne(parentTestCaseId) >> parentTestCase
+		keywordTestStepDao.findById(_) >> step
+		keywordTestCaseDao.getOne(_) >> parentTestCase
 		actionWordDao.findByTokenInProjects(_, _) >> [existingActionWord]
 		actionWordLibraryNodeService.findNodeFromEntity(awLibrary) >> awLibraryNode
 
 		when:
-		service.updateKeywordTestStep(10L, "I am 18 years old")
+		service.updateKeywordTestStep(-10L, "I am 18 years old")
 
 		then:
 		1 * step.setActionWord(existingActionWord)
+		1 * actionWordParamValueDao.persist(_)
+	}
+
+	def "should update the action word of a keyword test step with modifying token and with a given action word id"() {
+		given:
+		def project = Mock(Project)
+		project.getId() >> 1L
+
+		and:
+		def inputFragments = new ArrayList<ActionWordFragment>()
+		def actionWordText1 = new ActionWordText("I am ")
+		def actionWordText2 = new ActionWordText(" years old.")
+		def actionWordParams = new ArrayList<ActionWordParameter>()
+		def actionWordParam1 = new ActionWordParameter("param1", "18")
+		actionWordParams.add(actionWordParam1)
+		inputFragments.addAll([actionWordText1, actionWordParam1, actionWordText2])
+
+		def duplicatedActionWord = Mock(ActionWord) {
+			getId() >> -78L
+			getToken() >> "TPT-I am - years old.-"
+			getFragments() >> inputFragments
+			getActionWordParams() >> actionWordParams
+		}
+
+		def actionWord = Mock(ActionWord) {
+			getId() >> -77L
+			getToken() >> "TP-I am - -"
+		}
+
+		long parentTestCaseId = -2L
+		def parentTestCase = new MockKeywordTestCase(parentTestCaseId)
+		def step = Mock(KeywordTestStep) {
+			getActionWord() >> actionWord
+			getTestCase() >> parentTestCase
+			getParamValues() >> ["18"]
+		}
+
+		parentTestCase.notifyAssociatedWithProject(project)
+
+		and:
+		actionWordDao.getOne(_) >> duplicatedActionWord
+		keywordTestStepDao.findById(_) >> step
+		keywordTestCaseDao.getOne(_) >> parentTestCase
+
+		when:
+		service.updateKeywordTestStep(-10L, "I am 18 years old.", -78L)
+
+		then:
+		1 * step.setActionWord(duplicatedActionWord)
 		1 * actionWordParamValueDao.persist(_)
 	}
 

@@ -108,6 +108,48 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 			});
 		}
 
+		function _initDuplicatedAction(conf) {
+			var duplicatedActionDialog = $("#duplicated-action-dialog");
+			duplicatedActionDialog.formDialog();
+			duplicatedActionDialog.on('formdialogopen', function() {
+				$('#duplicated-action-projects').empty();
+			});
+			duplicatedActionDialog.on('formdialogconfirm', function() {
+				var inputKeyword = $('#keyword-input').val();
+				var targetTestStepIndex = -1;
+				var $table = $(".test-steps-table");
+				var selectedIds = $table.squashTable().getSelectedIds();
+				if(selectedIds.length > 0){
+					var idTargetStep = selectedIds[selectedIds.length - 1];
+					targetTestStepIndex = $table.squashTable().getDataById(idTargetStep)["step-index"];
+				}
+				var inputActionWord = $('#action-word-input').val();
+				var actionWordId = $('input[name="duplicatedAction"]:checked').val();
+				var objectData = {
+					keyword: inputKeyword,
+					actionWord: inputActionWord,
+					index: targetTestStepIndex,
+					actionWordId: actionWordId
+				};
+				$.ajax(
+					{
+						type: 'POST',
+						url: conf.urls.testCaseStepsUrl + "/add-keyword-test-step-with-action-word-id",
+						contentType: 'application/json',
+						data: JSON.stringify(objectData)
+					})
+					.done(function (testStepId) {
+						conf.stepsTablePanel.refresh();
+						conf.stepsTablePanel.cleanInputs();
+						eventBus.trigger('testStepsTable.stepAdded');
+					});
+				$(this).formDialog('close');
+			});
+			duplicatedActionDialog.on('formdialogcancel', function() {
+				$(this).formDialog('close');
+			});
+		}
+
 
 		/*
 		 * needs :
@@ -116,6 +158,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 		 * conf.urls.testCaseStepsUrl
 		 * conf.testCaseId
 		 * conf.stepsTablePanel
+		 * conf.isAutocompleteActive
 		 */
 		return {
 			init: function (conf) {
@@ -123,6 +166,9 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'underscore', 'jqu
 					_initDeleteStep(conf);
 				}
 				_initPreviewScript(conf);
+				if (conf.isAutocompleteActive) {
+					_initDuplicatedAction(conf);
+				}
 			}
 		};
 

@@ -77,6 +77,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 			conf.testCaseId = this.settings.testCaseId;
 			conf.permissions.writable = this.settings.permissions.isWritable;
 			conf.stepsTablePanel = this;
+			conf.isAutocompleteActive = this.settings.isAutocompleteActive;
 			popups.init(conf);
 
 			// refresh the steps table when a parameter is renamed
@@ -300,6 +301,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 		},
 
 		addKeywordTestStepFromButton: function () {
+			var self = this;
 			var targetTestStepIndex = -1;
 			var $table = $(".test-steps-table");
 			var selectedIds = $table.squashTable().getSelectedIds();
@@ -310,8 +312,19 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 
 			$(".action-word-input-error").text('');
 			var inputActionWord = this.actionWordInput.val();
-			this.addKeywordTestStep(inputActionWord, targetTestStepIndex);
-			this.initTableStyle();
+			if (this.settings.isAutocompleteActive) {
+				self.retrieveAllDuplicatedActionWithProject(inputActionWord)
+					.done(function(data) {
+						if (Object.keys(data).length > 0) {
+							self.generateDuplicatedActionDialog(data);
+						} else {
+							self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+						}
+				});
+			} else {
+				self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+			}
+			self.initTableStyle();
 		},
 
 		addKeywordTestStep: function (inputActionWord, index) {
@@ -322,8 +335,34 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 			var inputKeyword = this.keywordInput.val();
 			this.doAddKeywordTestStep(inputKeyword, inputActionWord, index)
 				.done(function (testStepId) {
-					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
+					self.afterKeywordTestStepAdd(testStepId);
 				});
+		},
+
+		retrieveAllDuplicatedActionWithProject: function(inputActionWord) {
+			var projectId = this.settings.projectId;
+			return $.ajax({
+				type: 'GET',
+				url: squashtm.app.contextRoot + "keyword-test-cases/duplicated-action",
+				contentType: 'application/json',
+				data: {
+					projectId: projectId,
+					inputActionWord: inputActionWord
+				}
+			});
+		},
+
+		retrieveAllDuplicatedActionWithProjectInTestStep: function(stepId, inputActionWord) {
+			var projectId = this.settings.projectId;
+			return $.ajax({
+				type: 'GET',
+				url: this.settings.testCaseUrl + "/steps/" + stepId + "/duplicated-action",
+				contentType: 'application/json',
+				data: {
+					projectId: projectId,
+					inputActionWord: inputActionWord
+				}
+			});
 		},
 
 		isInputActionWordBlank: function (inputActionWord) {
@@ -341,10 +380,11 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 				keyword: keyword,
 				actionWord: actionWord,
 				index: index
-			};return $.ajax(
+			};
+			return $.ajax(
 			{
 				type: 'POST',
-				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step",
+				url: this.settings.testCaseUrl + "/steps/add-keyword-test-step",
 				contentType: 'application/json',
 				data: JSON.stringify(objectData)
 			});
@@ -362,6 +402,16 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 
 		deleteSelectedTestSteps: function () {
 			$("#delete-keyword-test-step-dialog").formDialog('open');
+		},
+
+		generateDuplicatedActionDialog: function(data) {
+			$('#duplicated-action-dialog').formDialog('open');
+			Object.keys(data).sort().forEach(function(key) {
+				$('#duplicated-action-projects').append('' +
+					'<div style="padding:2px"><input type="radio" id="duplicated-action-'+data[key]+'" name="duplicatedAction" value="'+data[key]+'">' +
+					'<label for="duplicated-action-'+data[key]+'">'+key+'</label></div>');
+			});
+			$('input[name="duplicatedAction"]:first').attr('checked', true);
 		},
 
 		makeTableUrls: function (conf) {
@@ -401,7 +451,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 				source: function(request, response) {
 					$.ajax({
 						type: 'GET',
-						url: '/squash/keyword-test-cases/autocomplete',
+						url: squashtm.app.contextRoot + 'keyword-test-cases/autocomplete',
 						data: {
 							projectId: projectId,
 							searchInput: searchInputValue
@@ -428,21 +478,83 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 				var td = this,
 						row = td.parentNode,
 						rowModel = table.fnGetData(row),
-						actionWordCell = $(row).find('td.step-action-word'),
 						stepId = rowModel['entity-id'],
-						actionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
+						actionWordCell = $(row).find('td.step-action-word');
 
+				if (self.settings.isAutocompleteActive) {
+					self.retrieveAllDuplicatedActionWithProjectInTestStep(stepId, value)
+						.done(function(data) {
+							if (Object.keys(data).length > 0) {
+								self.initDuplicatedActionInTestStep(data, baseUrl, value, stepId, editableSettings, actionWordCell);
+							} else {
+								self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
+							}
+						})
+				} else {
+					self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
+				}
+			};
+		},
+
+		initDuplicatedActionInTestStep: function(data, baseUrl, value, stepId, editableSettings, actionWordCell) {
+			var self = this;
+			var duplicatedActionDialog = $("#test-step-duplicated-action-dialog");
+			duplicatedActionDialog.formDialog();
+
+			duplicatedActionDialog.on('formdialogopen', function() {
+				$('#test-step-duplicated-action-projects').empty();
+				Object.keys(data).sort().forEach(function(key) {
+					$('#test-step-duplicated-action-projects').append('' +
+						'<div style="padding:2px"><input type="radio" id="test-step-duplicated-action-'+data[key]+'" name="testStepDuplicatedAction" value="'+data[key]+'">' +
+						'<label for="test-step-duplicated-action-'+data[key]+'">'+key+'</label></div>');
+				});
+				$('input[name="testStepDuplicatedAction"]:first').attr('checked', true);
+			});
+
+			duplicatedActionDialog.on('formdialogconfirm', function() {
+				var actionWordId = $('input[name="testStepDuplicatedAction"]:checked').val();
 				$.ajax({
-					url: actionWordUrl,
-					type: 'POST',
-					data: { value: value }
+					type: 'GET',
+					url: baseUrl + '/steps/' + stepId + '/action-word-with-id',
+					contentType: 'application/json',
+					data: {
+						actionWord: value,
+						actionWordId: actionWordId
+					}
 				}).done(function() {
 					self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
 					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
 				}).fail(function() {
 					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
 				});
-			};
+				$(this).formDialog('close');
+			});
+
+			duplicatedActionDialog.on('formdialogcancel', function() {
+				$(this).formDialog('close');
+			});
+
+			duplicatedActionDialog.on("formdialogclose", function() {
+				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+			});
+
+			duplicatedActionDialog.formDialog('open');
+		},
+
+		doModifyActionWord: function(baseUrl, value, stepId, editableSettings, actionWordCell) {
+			var self = this;
+			var actionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
+
+			$.ajax({
+				url: actionWordUrl,
+				type: 'POST',
+				data: { value: value }
+			}).done(function() {
+				self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
+				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+			}).fail(function() {
+				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+			});
 		},
 
 		renderActionWordCell: function(baseUrl, stepId, actionWordCell) {
