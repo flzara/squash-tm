@@ -163,7 +163,7 @@
                   </div>
                 </div>
 
-                <div class="display-table-row" style="text-align: center;">
+                <div th:if="${server.kind =='jenkins'}" class="display-table-row" style="text-align: center;">
                   <input id="ta-server-manual-selection" type="checkbox" th:checked="${server.manualSlaveSelection}"
                          style="margin-top: 5px"/>
                   <div th:text="#{label.isManualSlaveSelection}" class="display-table-cell">Pick a slave
