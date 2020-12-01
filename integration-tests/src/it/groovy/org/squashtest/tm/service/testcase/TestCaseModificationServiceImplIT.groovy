@@ -1249,6 +1249,40 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the docstring of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		and:
+		def updatedDocstring = """Product (string)
+Price (in euro)"""
+
+		when:
+		service.updateKeywordTestStepDocstring(stepId, updatedDocstring)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.docstring == updatedDocstring
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the comment of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		and:
+		def updatedComment = """Products are from France.
+Prices are all with taxes."""
+
+		when:
+		service.updateKeywordTestStepComment(stepId, updatedComment)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.comment == updatedComment
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
 	def "should update the action word of a keyword test step with same token but new parameter values"() {
 		given:
 		def stepId = -19L

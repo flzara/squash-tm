@@ -584,6 +584,30 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
+	public void updateKeywordTestStepDocstring(long testStepId, String updatedDocstring) {
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		if (updatedDocstring != null && !updatedDocstring.equals(testStep.getDocstring())) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} docstring to '{}'", testStepId, updatedDocstring);
+			}
+			testStep.setDocstring(updatedDocstring);
+		}
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
+	public void updateKeywordTestStepComment(long testStepId, String updatedComment) {
+		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
+		if (updatedComment != null && !updatedComment.equals(testStep.getComment())) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("changing step #{} comment to '{}'", testStepId, updatedComment);
+			}
+			testStep.setComment(updatedComment);
+		}
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TESTSTEP_OR_ROLE_ADMIN)
 	public void updateKeywordTestStep(long testStepId, String updatedWord) {
 		KeywordTestStep testStep = keywordTestStepDao.findById(testStepId);
 		KeywordTestCase parentTestCase = keywordTestCaseDao.getOne(testStep.getTestCase().getId());

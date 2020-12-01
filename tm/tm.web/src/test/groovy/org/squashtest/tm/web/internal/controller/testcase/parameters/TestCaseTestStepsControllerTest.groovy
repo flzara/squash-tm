@@ -214,6 +214,8 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-action-word"         : 'hello',
 				"toggle-step-details"	   : null,
 				"step-datatable"		   : null,
+				"step-docstring"		   : null,
+				"step-comment"			   : null,
 				"step-action-word-unstyled": 'hello'
 			],
 			[
@@ -224,6 +226,8 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-action-word"   		: 'how are <span style=\"color: blue;\">you</span> ?',
 				"toggle-step-details"	   : null,
 				"step-datatable"		   : null,
+				"step-docstring"		   : null,
+				"step-comment"			   : null,
 				"step-action-word-unstyled" : 'how are "you" ?'
 			]]
 

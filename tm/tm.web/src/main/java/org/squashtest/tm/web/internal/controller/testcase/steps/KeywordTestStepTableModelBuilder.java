@@ -42,7 +42,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 	@Override
 	protected Object buildItemData(TestStep step) {
 		KeywordTestStep keywordTestStep = (KeywordTestStep) step;
-		Map<String, String> item = new HashMap<>(8);
+		Map<String, String> item = new HashMap<>(10);
 		item.put("entity-id", step.getId().toString());
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
@@ -51,6 +51,8 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
 		item.put("toggle-step-details", null);
 		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : null);
+		item.put("step-docstring", keywordTestStep.getDocstring() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDocstring()) : null);
+		item.put("step-comment", keywordTestStep.getComment() != null ? HtmlUtils.htmlEscape(keywordTestStep.getComment()) : null);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

@@ -411,28 +411,28 @@ public class TestCaseTestStepsController {
 		return keywordTestStep.writeTestStepActionWordScript(true);
 	}
 
-	@RequestMapping(value = "/{stepId}/details", method = RequestMethod.GET)
-	public ModelAndView getKeywordStepDetails(@PathVariable long stepId) {
-
-		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-
-		ModelAndView mav = new ModelAndView("fragment/test-steps/keyword-step-details");
-
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(keywordTestStep.getTestCase());
-
-		mav.addObject("datatable", keywordTestStep.getDatatable());
-		mav.addObject("entity-id", stepId);
-		mav.addObject("milestoneConf", milestoneConf);
-		return mav;
-
-	}
-
 	@RequestMapping(value = "/{stepId}/datatable", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
 	public String changeKeywordStepDatatable(@PathVariable long stepId, @RequestParam(VALUE) String datatable) {
 		testCaseModificationService.updateKeywordTestStepDatatable(stepId, datatable);
 		LOGGER.trace("TestCaseModificationController : updated datatable for step {}", stepId);
 		return HtmlUtils.htmlEscape(datatable);
+	}
+
+	@RequestMapping(value = "/{stepId}/docstring", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepDocstring(@PathVariable long stepId, @RequestParam(VALUE) String docstring) {
+		testCaseModificationService.updateKeywordTestStepDocstring(stepId, docstring);
+		LOGGER.trace("TestCaseModificationController : updated docstring for step {}", stepId);
+		return HtmlUtils.htmlEscape(docstring);
+	}
+
+	@RequestMapping(value = "/{stepId}/comment", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepComment(@PathVariable long stepId, @RequestParam(VALUE) String comment) {
+		testCaseModificationService.updateKeywordTestStepComment(stepId, comment);
+		LOGGER.trace("TestCaseModificationController : updated comment for step {}", stepId);
+		return HtmlUtils.htmlEscape(comment);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

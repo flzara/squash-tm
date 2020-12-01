@@ -74,6 +74,16 @@ public class KeywordTestStep extends TestStep {
 	@Type(type = "org.hibernate.type.TextType")
 	private String datatable;
 
+	@Lob
+	@Column(name = "DOCSTRING")
+	@Type(type = "org.hibernate.type.TextType")
+	private String docstring;
+
+	@Lob
+	@Column(name = "COMMENT")
+	@Type(type = "org.hibernate.type.TextType")
+	private String comment;
+
 	@Transient
 	private boolean hasTCParam = false;
 
@@ -233,5 +243,21 @@ public class KeywordTestStep extends TestStep {
 
 	public void setDatatable(String datatable) {
 		this.datatable = datatable;
+	}
+
+	public String getDocstring() {
+		return docstring;
+	}
+
+	public void setDocstring(String docstring) {
+		this.docstring = docstring;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 }

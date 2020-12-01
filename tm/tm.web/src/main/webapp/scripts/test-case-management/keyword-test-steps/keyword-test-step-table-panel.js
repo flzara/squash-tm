@@ -124,9 +124,13 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 				toggleRows : {
 					'td.toggle-row': function (table, jqold, jqnew) {
 
-						var data = table.fnGetData(jqold.get(0));
-						var datatable = data['step-datatable'] != null ? data['step-datatable'] : "";
-						var datatableLabel = translator.get('testcase.bdd.step.datatable.label');
+						var data = table.fnGetData(jqold.get(0)),
+							  datatable = data['step-datatable'] != null ? data['step-datatable'] : "",
+							  datatableLabel = translator.get('testcase.bdd.step.datatable.label'),
+								docstring = data['step-docstring'] != null ? data['step-docstring'] : "",
+								docstringLabel = translator.get('testcase.bdd.step.docstring.label'),
+								comment = data['step-comment'] != null ? data['step-comment'] : "",
+								commentLabel = translator.get('testcase.bdd.step.comment.label');
 
 						jqnew.html(
 							'<td colspan="2"></td>' +
@@ -135,34 +139,22 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 									'<label class="control-label display-table-cell" style="vertical-align:top;">'+datatableLabel+'</label>'+
 									'<span class="display-table-cell step-datatable" style="white-space: pre-line">'+datatable+'</span>'+
 								'</div>' +
+								'<div class="display-table-row controls control-group">' +
+								'<label class="control-label display-table-cell" style="vertical-align:top;">'+docstringLabel+'</label>'+
+								'<span class="display-table-cell step-docstring" style="white-space: pre-line">'+docstring+'</span>'+
+								'</div>' +
+								'<div class="display-table-row controls control-group">' +
+								'<label class="control-label display-table-cell" style="vertical-align:top;">'+commentLabel+'</label>'+
+								'<span class="display-table-cell step-comment" style="white-space: pre-line">'+comment+'</span>'+
+								'</div>' +
 							'</td>' +
 							'<td colspan="2"></td>'
 						);
 
 						if (settings.permissions.isWritable) {
-
-							var textEditSettings = confman.getStdJeditable();
-							textEditSettings.url = settings.testCaseUrl + '/steps/' + data['entity-id'] + '/datatable';
-							textEditSettings.type = "textarea";
-							textEditSettings.rows = 10;
-							textEditSettings.cols = 80;
-							textEditSettings.onsubmit = function(settings, original) {
-								var area = $('textarea', original);
-								data['step-datatable'] = $(jqnew.find('textarea')[0]).val();
-							};
-
-							jqnew.find('.step-datatable').customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
-							jqnew.find('.step-datatable').on('click', function() {
-								var $area = $(jqnew.find('textarea')[0]);
-								if ($area.val() !== '') {
-									$area.val(StringUtil.unescape($area.val()));
-								} else {
-									if (data['step-datatable'] == null || data['step-datatable'] === '') {
-										var defaultValue = translator.get('testcase.bdd.step.datatable.default-value');
-										$area.val(defaultValue);
-									}
-								}
-							});
+							self.initDatatableEditable(data, jqnew);
+							self.initDocstringEditable(data, jqnew);
+							self.initCommentEditable(data, jqnew);
 						}
 					}
 				}
@@ -261,9 +253,12 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 			rows.forEach(function(row) {
 				var $row = $(row),
 					toggleCell = $row.find('td.toggle-row'),
-					rowModel = table.fnGetData($row);
+					rowModel = table.fnGetData($row),
+					hasDetails = (rowModel['step-datatable'] != null && rowModel['step-datatable'] !== '') ||
+						(rowModel['step-docstring'] != null && rowModel['step-docstring'] !== '') ||
+						(rowModel['step-comment'] != null && rowModel['step-comment'] !== '');
 
-				if (rowModel['step-datatable'] != null && rowModel['step-datatable'] !== '' && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
+				if (hasDetails && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
 					$(toggleCell.find('span')[1]).click();
 				}
 			});
@@ -586,6 +581,42 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 			return $.ajax({
 				url: actionWordUnstyledUrl,
 				type: 'GET'
+			});
+		},
+
+		initDatatableEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'datatable');
+		},
+
+		initDocstringEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'docstring');
+		},
+
+		initCommentEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'comment');
+		},
+
+		doInitDetailsEditable: function(data, jqnew, type) {
+			var textEditSettings = confman.getStdJeditable();
+			textEditSettings.url = this.settings.testCaseUrl + '/steps/' + data['entity-id'] + '/' + type;
+			textEditSettings.type = "textarea";
+			textEditSettings.rows = 10;
+			textEditSettings.cols = 80;
+			textEditSettings.onsubmit = function(settings, original) {
+				data['step-'+type] = $(jqnew.find('textarea')[0]).val();
+			};
+
+			jqnew.find('.step-'+type).customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
+			jqnew.find('.step-'+type).on('click', function() {
+				var $area = $(jqnew.find('textarea')[0]);
+				if ($area.val() !== '') {
+					$area.val(StringUtil.unescape($area.val()));
+				} else if (type === 'datatable') {
+					if (data['step-datatable'] == null || data['step-datatable'] === '') {
+						var defaultValue = translator.get('testcase.bdd.step.datatable.default-value');
+						$area.val(defaultValue);
+					}
+				}
 			});
 		}
 	});
