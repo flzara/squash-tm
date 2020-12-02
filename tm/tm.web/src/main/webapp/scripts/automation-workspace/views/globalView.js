@@ -583,7 +583,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							var tcId = datas[idx]["entity-id"];
 							var scmUrl = datas[idx]["scm-url"];
 							var automatedTestReference = datas[idx]["automated-test-reference"];
-							if(scmUrl === "" || automatedTestReference === ""){
+							if(scmUrl === "" || scmUrl === null || automatedTestReference === "" || automatedTestReference === null){
 								ids.push(tcId);
 							}
 						});

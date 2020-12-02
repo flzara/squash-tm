@@ -579,7 +579,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							var tcId = datas[idx]["entity-id"];
 							var scmUrl = datas[idx]["scm-url"];
 							var automatedTestReference = datas[idx]["automated-test-reference"];
-							if(scmUrl === "" || automatedTestReference === ""){
+							if(scmUrl === "" || scmUrl === null || automatedTestReference === "" || automatedTestReference === null){
 								ids.push(tcId);
 							}
 						});
@@ -731,7 +731,6 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 					},
 
 					_initScmUrlCell : function (scmUrlCell, data) {
-						var self = this;
 						var entityId = data["entity-id"];
 						var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
 
@@ -751,7 +750,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							if (!_.contains([37, 38, 39, 40], event.which)) {
 								var searchInput = $(event.currentTarget).find('input');
 								searchInput.autocomplete();
-								self.performAutocomplete(searchInput);
+								performAutocomplete(searchInput);
 							}
 						});
 					},
@@ -771,34 +770,34 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						automatedTestReferenceCellEditable.onblur = 'cancel';
 
 						automatedTestReferenceCell.editable(url, automatedTestReferenceCellEditable);
-					},
-
-					performAutocomplete: function (searchInput) {
-						searchInput.autocomplete('close');
-						searchInput.autocomplete('disable');
-
-						var searchInputValue = searchInput.val();
-
-						searchInput.autocomplete({
-							delay : 500,
-							source: function(request, response) {
-								$.ajax({
-									type: 'GET',
-									url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
-									data: {
-										searchInput: searchInputValue
-									},
-									success: function(data) {
-										response(data);
-									}
-								});
-							},
-							minLength: 1
-						});
-						searchInput.autocomplete('enable');
 					}
-
-
         });
+
+
+			function performAutocomplete (searchInput) {
+				searchInput.autocomplete('close');
+				searchInput.autocomplete('disable');
+
+				var searchInputValue = searchInput.val();
+
+				searchInput.autocomplete({
+					delay : 500,
+					source: function(request, response) {
+						$.ajax({
+							type: 'GET',
+							url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
+							data: {
+								searchInput: searchInputValue
+							},
+							success: function(data) {
+								response(data);
+							}
+						});
+					},
+					minLength: 1
+				});
+				searchInput.autocomplete('enable');
+			}
+
         return View;
     });
