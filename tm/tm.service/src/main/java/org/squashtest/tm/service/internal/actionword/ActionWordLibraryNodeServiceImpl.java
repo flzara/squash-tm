@@ -67,6 +67,9 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	@Inject
 	private ActionWordLibraryNodeCopier nodeCopier;
 
+	@Inject
+	private ActionWordLibraryNodeMover nodeMover;
+
 	@Override
 	public ActionWordLibraryNode findActionWordLibraryNodeById(Long nodeId) {
 		return actionWordLibraryNodeDao.getOne(nodeId);
@@ -113,6 +116,13 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
 		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
 		return nodeCopier.copyNodes(nodes, target);
+	}
+
+	@Override
+	public void moveNodes(List<Long> nodeIds, long targetId) {
+		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
+		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
+		nodeMover.moveNodes(nodes,target);
 	}
 
 	@Override

@@ -188,26 +188,26 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
 			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
 			children.size() == 3
-			children.every {
-				it.getId() != null
-				! it.getName().isEmpty()
-				it.getLibrary().getId() == -3L
-				it.getParent() == targetLibraryNode
-				it.getChildren().isEmpty()
-				it.getEntityType() == ACTION_WORD
+			children.each {
+				assert it.getId() != null
+				assert ! it.getName().isEmpty()
+				assert it.getLibrary().getId() == -3L
+				assert it.getParent() == targetLibraryNode
+				assert it.getChildren().isEmpty()
+				assert it.getEntityType() == ACTION_WORD
 
 				ActionWord aw = it.getEntity()
-				aw.getId() != null
-				! aw.getName().isEmpty()
-				! aw.getDescription().isEmpty()
-				aw.getProject().getId() == -3L
-				aw.getKeywordTestSteps().size() == 0
-				! aw.generateToken().isEmpty()
+				assert aw.getId() != null
+				assert ! aw.getName().isEmpty()
+				assert ! aw.getDescription().isEmpty()
+				assert aw.getProject().getId() == -3L
+				assert aw.getKeywordTestSteps().size() == 0
+				assert ! aw.generateToken().isEmpty()
 				List<ActionWordFragment> fragments = aw.getFragments()
-				! fragments.isEmpty()
-				fragments.every {
-					it.getId() != null
-					it.getActionWord() == aw
+				assert ! fragments.isEmpty()
+				fragments.each {
+					assert it.getId() != null
+					assert it.getActionWord() == aw
 				}
 			}
 	}
@@ -226,6 +226,58 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 			em.clear()
 		then:
 			nodeList.isEmpty()
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -5L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 1
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "moveNodes(List<Long, long) - Should move three action word nodes into an empty library"() {
+		when:
+			actionWordLibraryNodeService.moveNodes([-2L, -3L, -4L], -7L)
+			em.flush()
+			em.clear()
+		then:
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 3
+			children.each {
+				assert it.getId() != null
+				assert ! it.getName().isEmpty()
+				assert it.getLibrary().getId() == -3L
+				assert it.getParent() == targetLibraryNode
+				assert it.getChildren().isEmpty()
+				assert it.getEntityType() == ACTION_WORD
+
+				ActionWord aw = it.getEntity()
+				assert aw != null
+				assert aw.getId() != null
+				assert ! aw.getName().isEmpty()
+				assert ! aw.getDescription().isEmpty()
+				assert aw.getProject().getId() == -3L
+				assert ! aw.generateToken().isEmpty()
+				List<ActionWordFragment> fragments = aw.getFragments()
+				assert ! fragments.isEmpty()
+				fragments.each {
+					assert it.getId() != null
+					assert it.getActionWord() == aw
+				}
+			}
+			def actionWord1 = (ActionWord) children.find {it.id == -2L }.getEntity()
+			actionWord1.getKeywordTestSteps().size() == 1
+			def actionWord2 = (ActionWord) children.find {it.id == -3L }.getEntity()
+			actionWord2.getKeywordTestSteps().size() == 1
+			def actionWord3 = (ActionWord) children.find {it.id == -4L }.getEntity()
+			actionWord3.getKeywordTestSteps().size() == 0
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "moveNodes(List<Long, long) - Should try to move an action word node with an existing name into a library"() {
+		when:
+			actionWordLibraryNodeService.moveNodes([-2L], -5L)
+			em.flush()
+			em.clear()
+		then:
 			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -5L)
 			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
 			children.size() == 1

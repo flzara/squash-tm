@@ -91,6 +91,13 @@ public interface ActionWordLibraryNodeService {
 	List<ActionWordLibraryNode> copyNodes(List<Long> nodeIds, long targetId);
 
 	/**
+	 * Move the ActionWordLibraryNodes matching the ids in the list into the target with the given id.
+	 * @param nodeIds the ids of the ActionWordLibraryNodes to move
+	 * @param targetId the id of the target container
+	 */
+	void moveNodes(List<Long> nodeIds, long targetId);
+
+	/**
 	 * Given an ActionWord which Fragments were modified, rename its corresponding ActionWordLibraryNode.
 	 * @param actionWord the given ActionWord
 	 */
