@@ -1375,7 +1375,6 @@
 
   </changeSet>
 
-
   <changeSet author="aguilhem" id="tm-1.22.0-SQUASH-1975-automation-server-migration-4-postgres" dbms="postgresql">
     <comment>For PostGre, remove the autoincrement on server_id and reset the sequence for third_party_server</comment>
 
@@ -1393,6 +1392,15 @@
         <constraints nullable="true" />
       </column>
     </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2032-fix-null-description-in-requirement" author="jlor">
+    <comment>Replace null descriptions by empty strings in requirements</comment>
+    <sql>
+      update RESOURCE
+      set DESCRIPTION = ''
+      where DESCRIPTION is NULL;
+    </sql>
   </changeSet>
 
 </databaseChangeLog>
