@@ -49,6 +49,8 @@ public class CucumberScriptWriter implements BddScriptWriter {
 	private static final String VERTICAL_BAR = "|";
 	private static final String ACROBAT_CHAR = "@";
 	private static final String SCRIPT_LANGUAGE_LABEL = "# language: "; // SQUASH-1184
+	private static final String COMMENT_MARKER = "#";
+	private static final String DOCSTRING_MARKER = "\"\"\"";
 
 	private boolean hasTCParamInTestCase = false;
 
@@ -183,6 +185,8 @@ public class CucumberScriptWriter implements BddScriptWriter {
 		String internationalizedKeywordScript = messageSource.getMessage(testStep.getKeyword().i18nKeywordNameKey(), null, locale);
 		String actionWordScript = testStep.writeTestStepActionWordScript(escapeArrows);
 		String dataTable = testStep.getDatatable();
+		String docstring = testStep.getDocstring();
+		String comment = testStep.getComment();
 		builder
 			.append(internationalizedKeywordScript)
 			.append(SPACE_CHAR)
@@ -195,6 +199,31 @@ public class CucumberScriptWriter implements BddScriptWriter {
 					dataTable.replaceAll(
 						NEW_LINE_CHAR,
 						NEW_LINE_CHAR + TRIPLE_TAB_CHAR));
+		}
+		if(!StringUtils.isBlank(docstring)) {
+			builder
+				.append(NEW_LINE_CHAR)
+				.append(TRIPLE_TAB_CHAR)
+				.append(DOCSTRING_MARKER)
+				.append(NEW_LINE_CHAR)
+				.append(TRIPLE_TAB_CHAR)
+				.append(
+					docstring.replaceAll(
+						NEW_LINE_CHAR,
+						NEW_LINE_CHAR + TRIPLE_TAB_CHAR))
+				.append(NEW_LINE_CHAR)
+				.append(TRIPLE_TAB_CHAR)
+				.append(DOCSTRING_MARKER);
+		}
+		if(!StringUtils.isBlank(comment)) {
+			builder
+				.append(NEW_LINE_CHAR)
+				.append(TRIPLE_TAB_CHAR)
+				.append(COMMENT_MARKER)
+				.append(
+					comment.replaceAll(
+						NEW_LINE_CHAR,
+						NEW_LINE_CHAR + TRIPLE_TAB_CHAR + COMMENT_MARKER));
 		}
 		return builder.toString();
 	}

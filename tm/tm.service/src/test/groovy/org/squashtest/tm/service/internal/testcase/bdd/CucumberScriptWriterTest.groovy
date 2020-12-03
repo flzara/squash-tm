@@ -84,7 +84,7 @@ Feature: Disconnection test
 		Then I am dîsconnect&d"""
 	}
 
-	def "Should generate a Gherkin script with test steps containing datatables from a KeywordTestCase"() {
+	def "Should generate a Gherkin script with test steps containing details from a KeywordTestCase"() {
 		given:
 		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("User list test")
@@ -96,11 +96,25 @@ Feature: Disconnection test
 | users |
 | teams |"""
 		)
+		step1.setDocstring(
+"""Takes an user.
+Takes a team."""
+		)
+		step1.setComment("")
+
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("the following users are listed"))
 		step2.setDatatable(
 """| username | mail |
 | martin4 | martin4@gmail.com |
 | damien2 | damien2@gmail.com |"""
+		)
+		step2.setDocstring(
+"""Takes an username.
+Takes a mail."""
+		)
+		step2.setComment(
+"""usernames are in uppercase.
+Mails are all at henix.fr"""
 		)
 		keywordTestCase.addStep(step1)
 		keywordTestCase.addStep(step2)
@@ -117,10 +131,20 @@ Feature: User list test
 			| tabName |
 			| users |
 			| teams |
+			\"\"\"
+			Takes an user.
+			Takes a team.
+			\"\"\"
 		Then the following users are listed
 			| username | mail |
 			| martin4 | martin4@gmail.com |
-			| damien2 | damien2@gmail.com |"""
+			| damien2 | damien2@gmail.com |
+			\"\"\"
+			Takes an username.
+			Takes a mail.
+			\"\"\"
+			#usernames are in uppercase.
+			#Mails are all at henix.fr"""
 	}
 
 	def "Should generate a Gherkin script with test steps containing null and empty datatables from a KeywordTestCase"() {
