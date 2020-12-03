@@ -412,7 +412,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	private void addKeywordStepDatatable(String keywordStepDatatable) {
-		if (! keywordStepDatatable.isEmpty()) {
+		if (keywordStepDatatable != null && ! keywordStepDatatable.isEmpty()) {
 			String datatable = "<br/>" +
 				keywordStepDatatable.replaceAll("\n", "<br/>");
 			this.action += datatable;
@@ -420,7 +420,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	private void addKeywordStepDocstring(String keywordStepDocstring) {
-		if (! keywordStepDocstring.isEmpty()) {
+		if (keywordStepDocstring != null && ! keywordStepDocstring.isEmpty()) {
 			String docstring = "<br/>" + KEYWORD_DOCSTRING_MARKER + "</br>" +
 				keywordStepDocstring.replaceAll("\n", "<br/>");
 			this.action += docstring + "<br/>" + KEYWORD_DOCSTRING_MARKER;
@@ -428,7 +428,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	private void addKeywordStepComment(String keywordStepComment) {
-		if (! keywordStepComment.isEmpty()) {
+		if (keywordStepComment != null && ! keywordStepComment.isEmpty()) {
 			String comment = "<br/>" + KEYWORD_COMMENT_MARKER +
 				keywordStepComment.replaceAll("\n", "<br/>" + KEYWORD_COMMENT_MARKER);
 			this.action += comment;

@@ -126,19 +126,13 @@
       </column>
 
       <!-- SQUASH-1476 - Add DATATABLE column in KEYWORD_TEST_STEP table -->
-      <column name="DATATABLE" type="TEXT" defaultValue="" remarks="A keyword test step datatable">
-        <constraints nullable="false" />
-      </column>
+      <column name="DATATABLE" type="TEXT" remarks="A keyword test step datatable" />
 
       <!-- SQUASH-1498 - Add DOCSTRING column in KEYWORD_TEST_STEP table -->
-      <column name="DOCSTRING" type="TEXT" defaultValue="" remarks="A keyword test step docstring">
-        <constraints nullable="false" />
-      </column>
+      <column name="DOCSTRING" type="TEXT" remarks="A keyword test step docstring" />
 
       <!-- SQUASH-1503 - Add COMMENT column in KEYWORD_TEST_STEP table -->
-      <column name="COMMENT" type="TEXT" defaultValue="" remarks="A keyword test step comment">
-        <constraints nullable="false" />
-      </column>
+      <column name="COMMENT" type="TEXT" remarks="A keyword test step comment" />
     </createTable>
 
     <createIndex tableName="KEYWORD_TEST_STEP" indexName="idx_fk_keyword_test_step_action_word">

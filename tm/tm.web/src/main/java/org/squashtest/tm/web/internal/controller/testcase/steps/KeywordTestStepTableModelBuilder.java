@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
 	@Override
 	protected Object buildItemData(TestStep step) {
@@ -50,9 +52,9 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-action-word", actionWordWithParamValues);
 		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
 		item.put("toggle-step-details", null);
-		item.put("step-datatable", HtmlUtils.htmlEscape(keywordTestStep.getDatatable()));
-		item.put("step-docstring", HtmlUtils.htmlEscape(keywordTestStep.getDocstring()));
-		item.put("step-comment", HtmlUtils.htmlEscape(keywordTestStep.getComment()));
+		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : EMPTY);
+		item.put("step-docstring", keywordTestStep.getDocstring() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDocstring()) : EMPTY);
+		item.put("step-comment", keywordTestStep.getComment() != null ? HtmlUtils.htmlEscape(keywordTestStep.getComment()) : EMPTY);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}
