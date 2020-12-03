@@ -263,9 +263,7 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 			})
 			automatedTestDao.findAll().size() == 3
 		when:
-			def startTime = LocalDateTime.now()
 			service.cleanOldSuites()
-			def endTime = LocalDateTime.now()
 		then:
 			em.flush()
 			em.clear()
@@ -311,7 +309,6 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 					it.executionStatus == ExecutionStatus.BLOCKED
 			})
 			automatedTestDao.findAll().size() == 3
-			ChronoUnit.MILLIS.between(startTime, endTime) < 1000
 	}
 
 	@DataSet("TestAutomationService.deleteOldAutomatedSuites.xml")
