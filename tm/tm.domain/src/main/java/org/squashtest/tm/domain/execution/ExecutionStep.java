@@ -94,6 +94,9 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String KEYWORD_PARAM_PATTERN = ACTION_WORD_OPEN_GUILLEMET + "([A-Za-z0-9_-]{1,255})" + ACTION_WORD_CLOSE_GUILLEMET;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
+	private static final String KEYWORD_DOCSTRING_MARKER = "\"\"\"";
+	private static final String KEYWORD_COMMENT_MARKER = "#";
+
 	static {
 		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.UNTESTABLE);
@@ -403,10 +406,32 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	private void addKeywordStepDetails(KeywordTestStep keywordStep) {
-		if (keywordStep.getDatatable() != null) {
-			String details = "<br/>" +
-				keywordStep.getDatatable().replaceAll("\n", "<br/>");
-			this.action += details;
+		addKeywordStepDatatable(keywordStep.getDatatable());
+		addKeywordStepDocstring(keywordStep.getDocstring());
+		addKeywordStepComment(keywordStep.getComment());
+	}
+
+	private void addKeywordStepDatatable(String keywordStepDatatable) {
+		if (keywordStepDatatable != null) {
+			String datatable = "<br/>" +
+				keywordStepDatatable.replaceAll("\n", "<br/>");
+			this.action += datatable;
+		}
+	}
+
+	private void addKeywordStepDocstring(String keywordStepDocstring) {
+		if (keywordStepDocstring != null) {
+			String docstring = "<br/>" + KEYWORD_DOCSTRING_MARKER + "</br>" +
+				keywordStepDocstring.replaceAll("\n", "<br/>");
+			this.action += docstring + "<br/>" + KEYWORD_DOCSTRING_MARKER;
+		}
+	}
+
+	private void addKeywordStepComment(String keywordStepComment) {
+		if (keywordStepComment != null) {
+			String comment = "<br/>" + KEYWORD_COMMENT_MARKER +
+				keywordStepComment.replaceAll("\n", "<br/>" + KEYWORD_COMMENT_MARKER);
+			this.action += comment;
 		}
 	}
 
