@@ -278,7 +278,7 @@
         SELECT SERVER_ID from THIRD_PARTY_SERVER where NAME = 'server1'
       </sqlCheck>
 
-      <sqlCheck expectedResult="32">
+      <sqlCheck expectedResult="44">
         SELECT max(SERVER_ID) from TEST_AUTOMATION_SERVER
       </sqlCheck>
 
@@ -286,11 +286,11 @@
         SELECT TA_SERVER_ID from PROJECT where PROJECT_ID = '3'
       </sqlCheck>
 
-      <sqlCheck expectedResult="32">
+      <sqlCheck expectedResult="44">
         SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '2'
       </sqlCheck>
 
-      <sqlCheck expectedResult="32">
+      <sqlCheck expectedResult="44">
         SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '3'
       </sqlCheck>
 
