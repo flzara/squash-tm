@@ -36,17 +36,18 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 	def "should build an item data from a KeywordTestStep"() {
 		given:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> -68L
-		testStep.getKeyword() >> Keyword.GIVEN
+		def testStep = initKeywordTestStep(-68L, Keyword.GIVEN)
+
 		def actionWord1 = Mock(ActionWord)
 		ActionWordText text1 = new ActionWordText("goodbye")
 		List<ActionWordFragment> fragments1 = new ArrayList<>()
 		fragments1.add(text1)
 		actionWord1.getFragments() >> fragments1
 		testStep.getActionWord() >> actionWord1
+
 		when:
 		Map<String, String> resultItem1 = builder.buildItemData(testStep)
+
 		then:
 		resultItem1.get("step-index") == "0"
 		resultItem1.get("step-keyword") == "GIVEN"
@@ -56,9 +57,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 	def "should build a raw model from 2 KeywordTestStep"() {
 		given:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> -99L
-		testStep.getKeyword() >> Keyword.GIVEN
+		def testStep = initKeywordTestStep(-99L, Keyword.GIVEN)
 
 		def actionWord = Mock(ActionWord)
 		ActionWordText text = new ActionWordText("hello ")
@@ -76,9 +75,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		testStep.getParamValues() >> values
 
 		and:
-		def testStep2 = Mock(KeywordTestStep)
-		testStep2.getId() >> -77L
-		testStep2.getKeyword() >> Keyword.THEN
+		def testStep2 = initKeywordTestStep(-77L, Keyword.THEN)
 
 		def actionWord2 = Mock(ActionWord)
 		ActionWordText text2 = new ActionWordText("goodbye")
@@ -89,6 +86,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 		when:
 		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)
+
 		then:
 		resultCollection.size() == 2
 		def item1 = resultCollection[0]
@@ -107,9 +105,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 	def "should build a raw model from 2 KeywordTestStep in which there is an Actionword with a Parameter associated with Test Case parameter"() {
 		given:
-		def testStep = Mock(KeywordTestStep)
-		testStep.getId() >> -99L
-		testStep.getKeyword() >> Keyword.GIVEN
+		def testStep = initKeywordTestStep(-99L, Keyword.GIVEN)
 
 		def actionWord = Mock(ActionWord)
 		ActionWordText text = new ActionWordText("hello ")
@@ -127,9 +123,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		testStep.getParamValues() >> values
 
 		and:
-		def testStep2 = Mock(KeywordTestStep)
-		testStep2.getId() >> -77L
-		testStep2.getKeyword() >> Keyword.THEN
+		def testStep2 = initKeywordTestStep(-77L, Keyword.THEN)
 
 		def actionWord2 = Mock(ActionWord)
 		ActionWordText text2 = new ActionWordText("goodbye")
@@ -140,6 +134,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 
 		when:
 		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)
+
 		then:
 		resultCollection.size() == 2
 		def item1 = resultCollection[0]
@@ -154,6 +149,18 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		item2.get("step-keyword") == "THEN"
 		item2.get("step-action-word") == "goodbye"
 		item2.get(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY) == null
+	}
+
+	def initKeywordTestStep(id, keyword) {
+		def testStep = Mock(KeywordTestStep) {
+			getId() >> id
+			getKeyword() >> keyword
+			getDatatable() >> ""
+			getDocstring() >> ""
+			getComment() >> ""
+		}
+
+		return testStep;
 	}
 
 	class MockActionWordParameter extends  ActionWordParameter {

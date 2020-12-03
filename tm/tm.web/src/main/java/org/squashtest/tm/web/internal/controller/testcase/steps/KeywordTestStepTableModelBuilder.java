@@ -50,9 +50,9 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-action-word", actionWordWithParamValues);
 		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
 		item.put("toggle-step-details", null);
-		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : null);
-		item.put("step-docstring", keywordTestStep.getDocstring() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDocstring()) : null);
-		item.put("step-comment", keywordTestStep.getComment() != null ? HtmlUtils.htmlEscape(keywordTestStep.getComment()) : null);
+		item.put("step-datatable", HtmlUtils.htmlEscape(keywordTestStep.getDatatable()));
+		item.put("step-docstring", HtmlUtils.htmlEscape(keywordTestStep.getDocstring()));
+		item.put("step-comment", HtmlUtils.htmlEscape(keywordTestStep.getComment()));
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
 	}

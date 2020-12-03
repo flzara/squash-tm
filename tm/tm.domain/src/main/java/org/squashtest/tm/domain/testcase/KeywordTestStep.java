@@ -72,17 +72,17 @@ public class KeywordTestStep extends TestStep {
 	@Lob
 	@Column(name = "DATATABLE")
 	@Type(type = "org.hibernate.type.TextType")
-	private String datatable;
+	private String datatable = "";
 
 	@Lob
 	@Column(name = "DOCSTRING")
 	@Type(type = "org.hibernate.type.TextType")
-	private String docstring;
+	private String docstring = "";
 
 	@Lob
 	@Column(name = "COMMENT")
 	@Type(type = "org.hibernate.type.TextType")
-	private String comment;
+	private String comment = "";
 
 	@Transient
 	private boolean hasTCParam = false;

@@ -213,9 +213,9 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"empty-delete-holder"	   : null,
 				"step-action-word"         : 'hello',
 				"toggle-step-details"	   : null,
-				"step-datatable"		   : null,
-				"step-docstring"		   : null,
-				"step-comment"			   : null,
+				"step-datatable"		   : '',
+				"step-docstring"		   : '',
+				"step-comment"			   : '',
 				"step-action-word-unstyled": 'hello'
 			],
 			[
@@ -225,9 +225,9 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"empty-delete-holder"		: null,
 				"step-action-word"   		: 'how are <span style=\"color: blue;\">you</span> ?',
 				"toggle-step-details"	   : null,
-				"step-datatable"		   : null,
-				"step-docstring"		   : null,
-				"step-comment"			   : null,
+				"step-datatable"		   : '',
+				"step-docstring"		   : '',
+				"step-comment"			   : '',
 				"step-action-word-unstyled" : 'how are "you" ?'
 			]]
 
