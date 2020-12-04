@@ -567,8 +567,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private CustomFieldValuesForExec fetchCustomFieldValues(Collection<AutomatedExecutionExtender> extenders) {
 		Map<Long, List<CustomFieldValue>> testCaseCfv = fetchTestCaseCfv(extenders);
 		Map<Long, List<CustomFieldValue>> iterationCfv = fetchIterationCfv(extenders);
-		Map<Long, List<CustomFieldValue>> campaignCfv = fetchTestCaseCfv(extenders);
-		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestCaseCfv(extenders);
+		Map<Long, List<CustomFieldValue>> campaignCfv = fetchCampaignCfv(extenders);
+		Map<Long, List<CustomFieldValue>> testSuiteCfv = fetchTestSuiteCfv(extenders);
 		return new CustomFieldValuesForExec(testCaseCfv, iterationCfv, campaignCfv, testSuiteCfv);
 	}
 
@@ -592,14 +592,14 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	private Map<Long, List<CustomFieldValue>> fetchCampaignCfv(Collection<AutomatedExecutionExtender> extenders) {
-		List<Campaign> iterations = extenders.stream()
+		List<Campaign> campaigns = extenders.stream()
 			.map(extender -> extender
 				.getExecution()
 				.getTestPlan()
 				.getIteration()
 				.getCampaign())
 			.collect(Collectors.toList());
-		return customFieldValueFinder.findAllCustomFieldValues(iterations).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
+		return customFieldValueFinder.findAllCustomFieldValues(campaigns).stream().collect(Collectors.groupingBy(CustomFieldValue::getBoundEntityId));
 	}
 
 	private Map<Long, List<CustomFieldValue>> fetchTestSuiteCfv(Collection<AutomatedExecutionExtender> extenders) {
