@@ -60,8 +60,8 @@ public class RobotScriptWriter implements BddScriptWriter {
 		StringBuilder stringBuilder = new StringBuilder();
 		boolean needToIncludeTfLibrary =
 			!testCase.getDatasets().isEmpty() && testCase.containsStepsUsingTcParam();
+		appendSettingsTable(stringBuilder, needToIncludeTfLibrary);
 		appendTestCasesTable(stringBuilder, testCase.getName(), testCase.getSteps(), needToIncludeTfLibrary);
-		prependSettingsTable(stringBuilder, needToIncludeTfLibrary);
 		return stringBuilder.toString();
 	}
 
@@ -77,6 +77,14 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 		stringBuilder.append("*** Test Cases ***\n");
 		stringBuilder.append(testCaseName);
+		stringBuilder.append(
+			buildParamLines(steps, needToIncludeTfLibrary));
+		stringBuilder.append(
+			buildStepsLines(steps));
+
+	}
+
+	private StringBuilder buildStepsLines(List<TestStep> steps) {
 		StringBuilder stepBuilder = new	StringBuilder();
 		if(!steps.isEmpty()) {
 			stepBuilder.append(NEW_LINE_CHAR);
@@ -90,26 +98,35 @@ public class RobotScriptWriter implements BddScriptWriter {
 			}
 			stepBuilder.deleteCharAt(stepBuilder.length() - 1);
 		}
-		if(needToIncludeTfLibrary) {
-			StringBuilder paramBuilder = new StringBuilder();
-			steps
-				.stream()
-				.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
-				.filter(distinctByKey(ActionWordParameterValue::getValue))
-				.forEach(paramValue -> {
-					if(paramValue.isLinkedToTestCaseParam()) {
-						String value = paramValue.getValue();
-						String paramName = value.substring(1, value.length()-1);
-						paramBuilder.append(NEW_LINE_CHAR);
-						paramBuilder.append("\t${" + paramName + "} =\tGet Test Param\tDS_" + paramName);
-					}
-				});
-			paramBuilder.append(NEW_LINE_CHAR);
-			stringBuilder.append(paramBuilder);
-		}
-		stringBuilder.append(stepBuilder);
+		return stepBuilder;
 	}
 
+	private StringBuilder buildParamLines(List<TestStep> steps, boolean needToIncludeTfLibrary) {
+		StringBuilder paramBuilder = new StringBuilder();
+		if(needToIncludeTfLibrary) {
+			paramBuilder.append(
+				buildTestCaseParametersLines(steps));
+		}
+		return paramBuilder;
+	}
+
+	private StringBuilder buildTestCaseParametersLines(List<TestStep> steps) {
+		StringBuilder testCaseParamBuilder = new StringBuilder();
+		steps
+			.stream()
+			.flatMap(step -> ((KeywordTestStep) step).getParamValues().stream())
+			.filter(distinctByKey(ActionWordParameterValue::getValue))
+			.forEach(paramValue -> {
+				if(paramValue.isLinkedToTestCaseParam()) {
+					String value = paramValue.getValue();
+					String paramName = value.substring(1, value.length()-1);
+					testCaseParamBuilder.append(NEW_LINE_CHAR);
+					testCaseParamBuilder.append("\t${" + paramName + "} =\tGet Test Param\tDS_" + paramName);
+				}
+			});
+		testCaseParamBuilder.append(NEW_LINE_CHAR);
+		return testCaseParamBuilder;
+	}
 	/**
 	 * Predicate used to filter a stream by distinct attribute.
 	 */
@@ -126,15 +143,15 @@ public class RobotScriptWriter implements BddScriptWriter {
 	 * @param stringBuilder string builder
 	 * @param includeSquashTfLibrary whether the tf library has to be included in the script
 	 */
-	private void prependSettingsTable(StringBuilder stringBuilder, boolean includeSquashTfLibrary) {
-		StringBuilder prependBuilder = new StringBuilder();
-		prependBuilder.append("*** Settings ***\n");
-		prependBuilder.append("Resource\tsquash_resources.resource\n");
+	private void appendSettingsTable(StringBuilder stringBuilder, boolean includeSquashTfLibrary) {
+		StringBuilder settingsBuilder = new StringBuilder();
+		settingsBuilder.append("*** Settings ***\n");
+		settingsBuilder.append("Resource\tsquash_resources.resource\n");
 		if(includeSquashTfLibrary) {
-			prependBuilder.append("Library\t\tsquash_tf.TFParamService\n");
+			settingsBuilder.append("Library\t\tsquash_tf.TFParamService\n");
 		}
-		prependBuilder.append(NEW_LINE_CHAR);
-		stringBuilder.insert(0, prependBuilder);
+		settingsBuilder.append(NEW_LINE_CHAR);
+		stringBuilder.append(settingsBuilder);
 	}
 
 	/**
