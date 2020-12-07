@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.testautomation;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -39,6 +41,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import java.net.URL;
 import java.util.ArrayList;
@@ -81,7 +84,7 @@ import java.util.Set;
 })
 @Entity
 @Auditable
-public class AutomatedSuite implements HasExecutionStatus {
+public class AutomatedSuite implements HasExecutionStatus, AttachmentHolder {
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -119,6 +122,10 @@ public class AutomatedSuite implements HasExecutionStatus {
 	@ManyToOne
 	@JoinColumn(name = "TEST_SUITE_ID")
 	private TestSuite testSuite;
+
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	/**
 	 * it's transient because we do not want to persist neither do we want to compute it too often.
@@ -232,5 +239,10 @@ public class AutomatedSuite implements HasExecutionStatus {
 
 	public void setResultURL(URL resultURL) {
 		this.resultURL = resultURL;
+	}
+
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 }

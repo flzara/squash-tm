@@ -1404,4 +1404,71 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment" author="aguilhem">
+    <comment>Give possibility to AUTOMATED_SUITE to have ATTACHMENT</comment>
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+              remarks="foreign key to ATTACHMENT_LIST, entity dealing with attachment.">
+        <constraints nullable="true"
+                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_automates_suite_attachment_list" />
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment-2" author="aguilhem">
+    <comment>Create one attachment list for each automated suite</comment>
+    <sql>
+      <![CDATA[
+
+      -- attachments, step 1 :
+      -- create a ranking table, akin to what would ROW_NUMBER() order by id desc would say
+
+      create table ASUITE_RANK as
+      select asuite.suite_id, count(asuite2.suite_id)  as ranking
+      from AUTOMATED_SUITE asuite,
+      AUTOMATED_SUITE asuite2
+      where asuite.suite_id <= asuite2.suite_id
+      group by asuite.suite_id
+      order by ranking asc;
+
+
+      -- attachments, step 2 :
+      -- create a table that pairs suite ids with predictable, consecutive attachment_list_ids using the rank
+      -- calculated earlier
+
+      create table ASUITE_ATTACHLIST_PAIRING as
+      select asuite.suite_id, (select max(al.attachment_list_id) from ATTACHMENT_LIST al) + asuite.ranking as attachment_list_id
+      from ASUITE_RANK asuite;
+
+
+      -- attachments, step 3 :
+      -- insert the attachment lists and update fk in the automated suite
+      insert into ATTACHMENT_LIST(ATTACHMENT_LIST_ID)
+      select pair.attachment_list_id from ASUITE_ATTACHLIST_PAIRING pair;
+
+
+      update AUTOMATED_SUITE asuite
+      set ATTACHMENT_LIST_ID = (select pair.attachment_list_id from ASUITE_ATTACHLIST_PAIRING pair where pair.suite_id = asuite.suite_id);
+
+      -- attachments, step 4 and final :
+      -- drop the temporary tables
+
+      drop table ASUITE_ATTACHLIST_PAIRING;
+
+      drop table ASUITE_RANK;
+
+    ]]>
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment-3" author="aguilhem" dbms="postgresql">
+    <comment>reset postgresql sequence</comment>
+
+    <sql>
+      select setval('attachment_list_attachment_list_id_seq', (select MAX(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
+    </sql>
+
+  </changeSet>
+
 </databaseChangeLog>

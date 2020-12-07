@@ -32,6 +32,7 @@
     <include file="tm.data-1.22.0-SQUASH-794.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-1975.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-2032.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-2106.xml" relativeToChangelogFile="true" />
 
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml"
@@ -305,6 +306,15 @@
       </sqlCheck>
     </preConditions>
     <comment>Check requirement descriptions are not null</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment" author="aguilhem">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where ATTACHMENT_LIST_ID is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check automated suites have attachment list</comment>
   </changeSet>
 
 </databaseChangeLog>
