@@ -42,7 +42,7 @@ class RobotScriptWriterTest extends Specification {
 	Project project = new Project()
 
 	/* ----- Test Case Script ----- */
-	def "Should generate a Robot script without test steps from a KeywordTestCase"() {
+	def "without test steps"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Disconnection test")
@@ -58,7 +58,7 @@ Resource	squash_resources.resource
 Disconnection test"""
 	}
 
-	def "Should generate a Robot script with test steps containing only text from a KeywordTestCase"() {
+	def "with only text from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Disconnection test")
@@ -85,7 +85,7 @@ Disconnection test
 	Then I am dîsconnect&d"""
 	}
 
-	def "Should generate a Robot script with test steps containing parameter value as free text from a KeywordTestCase"() {
+	def "with parameter value as free text from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -121,7 +121,7 @@ Daily test
 	}
 
 	@Unroll
-	def "Should generate a Robot script with test steps containing parameter value as a number from a KeywordTestCase"() {
+	def "with parameter value as a number"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -155,7 +155,7 @@ Daily test
 			word << ["10", "10.5", "10,5", "-10.5", "-10,5"]
 	}
 
-	def "Should generate a Robot script with test steps containing parameter associated with a TC param as value from a KeywordTestCase but no dataset"() {
+	def "with TC param but no dataset"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -191,7 +191,7 @@ Daily test
 	Then I am working"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with dataset but no param between <>"() {
+	def "with dataset but no param between <>"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -237,7 +237,7 @@ Daily test
 	Then I am working"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 1 param between <>"() {
+	def "with 1 dataset and 1 param between <>"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -285,7 +285,7 @@ Daily test
 	Then I am working"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 1 param between <> without escaping the arrow symbols"() {
+	def "with 1 dataset and 1 param between <> without escaping the arrow symbols"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -333,7 +333,7 @@ Daily test
 	Then I am working"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <>"() {
+	def "with 1 dataset and 2 param between <>"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Daily test")
@@ -388,7 +388,7 @@ Daily test
 	Then I am working"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <> with values as number"() {
+	def "with 1 dataset and 2 param between <> with values as number"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Count test")
@@ -462,7 +462,7 @@ Count test
 	Then I still have \${left} tickets"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 dataset and 2 param between <> used twice"() {
+	def "with 1 dataset and 2 param between <> used twice"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("Working test")
@@ -533,7 +533,7 @@ Working test
 	Then I work at \${time} in \${place}"""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 datatable"() {
+	def "with 1 datatable"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()
 			keywordTestCase.setName("User table test")
@@ -565,7 +565,7 @@ User table test
 	Then I can see the users "\${datatable_1}\""""
 	}
 
-	def "Should generate a Robot script with test steps from a KeywordTestCase with 2 datatables"() {
+	def "with 2 datatables"() {
 		given:
 		KeywordTestCase keywordTestCase = new KeywordTestCase()
 		keywordTestCase.setName("User table test")
@@ -610,7 +610,7 @@ User table test
 
 	/* ----- Test Step Script Generation ----- */
 
-	def "Should generate a step script with no parameters"() {
+	def "step script with no parameters"() {
 		given:
 			KeywordTestStep step = new KeywordTestStep(
 				Keyword.GIVEN,
@@ -622,7 +622,7 @@ User table test
 
 	}
 
-	def "Should generate a step script with a parameter value as free text"() {
+	def "step script with a parameter value as free text"() {
 		given:
 			def fragment1 = new ActionWordText("It is ")
 			def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
@@ -639,7 +639,7 @@ User table test
 			result == "When It is \"10 o'clock\""
 	}
 
-	def "Should generate a step script with two side by side parameters valued as free text"() {
+	def "step script with two side by side parameters valued as free text"() {
 		given:
 			def fragment1 = new ActionWordText("I am in ")
 			def fragment2 = new ActionWordParameterMock(-1L, "param1", "Paris")
@@ -661,7 +661,7 @@ User table test
 	}
 
 	@Unroll
-	def "Should generate a step script with a parameter value as a number"() {
+	def "step script with a parameter value as a number"() {
 		given:
 			def fragment1 = new ActionWordText("It is ")
 			def fragment2 = new ActionWordParameterMock(-1L, "param1", "12 o'clcock")
@@ -680,7 +680,7 @@ User table test
 			number << ["10", "10.5", "10,5", "-10.5", "-10,5"]
 	}
 
-	def "Should generate a step script with several parameters"() {
+	def "step script with several parameters"() {
 		given:
 			def fragment1 = new ActionWordText("it is ")
 			def fragment2 = new ActionWordParameterMock(-1L, "param1", "12")
@@ -708,7 +708,7 @@ User table test
 			result == "Then it is \"9\" o'clock in \"London\" with a \${weather} weather."
 	}
 
-	def "Should generate a step script using a datatable"() {
+	def "step script using a datatable"() {
 		given:
 			def fragment1 = new ActionWordText("the following users are listed")
 			ActionWord actionWord = new ActionWord([fragment1] as List)
