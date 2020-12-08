@@ -105,10 +105,10 @@ define(
 			var count = 0;
 
 			if (resultURLList !== null){
-				count = count + resultURLList.length
+				count = count + resultURLList.length;
 			}
 			if(attachmentList !== null){
-				count = count + attachmentList.length
+				count = count + attachmentList.length;
 			}
 			return count;
 		}
@@ -120,7 +120,7 @@ define(
 				resultUrl = resultUrlList[0];
 			} else {
 				var baseUrl = squashtm.app.contextRoot + "attach-list/" + attachmentListId + "/attachments";
-				resultUrl = baseUrl + "/download/" + attachmentList[0].id
+				resultUrl = baseUrl + "/download/" + attachmentList[0].id;
 			}
 			var resultLink = $('<a>', {'text': resultMessage, 'href': resultUrl, 'target': '_blank'});
 			$row.find('.result-display').empty().append(resultLink);
