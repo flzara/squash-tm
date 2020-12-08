@@ -179,7 +179,6 @@ public class CucumberScriptWriter implements BddScriptWriter {
 		builder.insert(0, subBuilder);
 	}
 
-	@Override
 	public String writeBddStepScript(KeywordTestStep testStep, MessageSource messageSource, Locale locale, boolean escapeArrows) {
 		StringBuilder builder = new StringBuilder();
 		String internationalizedKeywordScript = messageSource.getMessage(testStep.getKeyword().i18nKeywordNameKey(), null, locale);

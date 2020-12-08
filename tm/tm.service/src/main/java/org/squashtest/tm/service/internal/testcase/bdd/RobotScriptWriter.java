@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
@@ -30,14 +32,20 @@ import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 public class RobotScriptWriter implements BddScriptWriter {
 
@@ -45,6 +53,11 @@ public class RobotScriptWriter implements BddScriptWriter {
 	private static final char SPACE_CHAR = ' ';
 	private static final char NEW_LINE_CHAR = '\n';
 	private static final char DOUBLE_QUOTE_CHAR = '\"';
+
+	private static final String DATATABLE_PARAM_FORMAT = "${datatable_%s}";
+	private static final String DATATABLE_ROW_PARAM_FORMAT = "${row_%s_%s}";
+	private static final String CREATE_LIST_KEYWORD = "Create List";
+
 
 	/**
 	 * The implementation for Robot Framework
@@ -86,11 +99,15 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 	private StringBuilder buildStepsLines(List<TestStep> steps) {
 		StringBuilder stepBuilder = new	StringBuilder();
+		int dataTableCounter = 1;
 		if(!steps.isEmpty()) {
 			stepBuilder.append(NEW_LINE_CHAR);
 			for (TestStep step : steps) {
 				KeywordTestStep keywordStep = (KeywordTestStep) step;
-				String stepScript = writeBddStepScript(keywordStep,null, null, false);
+				String stepScript = writeBddStepScript(keywordStep, dataTableCounter);
+				if (nonNull(keywordStep.getDatatable()) && !Strings.isBlank(keywordStep.getDatatable())) {
+					dataTableCounter++;
+				}
 				stepBuilder
 					.append(TAB_CHAR)
 					.append(stepScript)
@@ -103,9 +120,17 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 	private StringBuilder buildParamLines(List<TestStep> steps, boolean needToIncludeTfLibrary) {
 		StringBuilder paramBuilder = new StringBuilder();
-		if(needToIncludeTfLibrary) {
+		if (needToIncludeTfLibrary) {
 			paramBuilder.append(
 				buildTestCaseParametersLines(steps));
+		}
+		boolean usesDataTables = steps.stream()
+			.anyMatch(step -> {
+				String dataTable = ((KeywordTestStep) step).getDatatable();
+				return nonNull(dataTable) && !Strings.isBlank(dataTable); });
+		if (usesDataTables) {
+			paramBuilder.append(
+				buildDatatableParametersLines(steps));
 		}
 		return paramBuilder;
 	}
@@ -127,6 +152,64 @@ public class RobotScriptWriter implements BddScriptWriter {
 		testCaseParamBuilder.append(NEW_LINE_CHAR);
 		return testCaseParamBuilder;
 	}
+
+	private StringBuilder buildDatatableParametersLines(List<TestStep> steps) {
+		int tableNumber = 1;
+		StringBuilder datatableParamBuilder = new StringBuilder();
+		for (TestStep step : steps) {
+			String datatable = ((KeywordTestStep) step).getDatatable();
+			if (nonNull(datatable) && !Strings.isBlank(datatable)) {
+				StringBuilder tableVariableBuilder = new StringBuilder();
+				tableVariableBuilder
+					.append(TAB_CHAR)
+					.append(String.format(DATATABLE_PARAM_FORMAT, tableNumber))
+					.append('=')
+					.append(TAB_CHAR)
+					.append(CREATE_LIST_KEYWORD);
+				List<List<String>> rows = extractRowsFromDataTable(datatable);
+				int rowNumber = 1;
+				for (List<String> row : rows) {
+					StringBuilder rowVariableBuilder = new StringBuilder();
+					rowVariableBuilder
+						.append(TAB_CHAR)
+						.append(String.format(DATATABLE_ROW_PARAM_FORMAT, tableNumber, rowNumber))
+						.append('=')
+						.append(TAB_CHAR)
+						.append(CREATE_LIST_KEYWORD);
+					tableVariableBuilder
+						.append(TAB_CHAR)
+						.append(String.format(DATATABLE_ROW_PARAM_FORMAT, tableNumber, rowNumber));
+					for (String content : row) {
+						rowVariableBuilder
+							.append(TAB_CHAR)
+							.append(content);
+					}
+					datatableParamBuilder.append(NEW_LINE_CHAR).append(rowVariableBuilder);
+					rowNumber++;
+				}
+				datatableParamBuilder.append(NEW_LINE_CHAR).append(tableVariableBuilder);
+				tableNumber++;
+			}
+		}
+		datatableParamBuilder.append(NEW_LINE_CHAR);
+		return datatableParamBuilder;
+	}
+
+	private List<List<String>> extractRowsFromDataTable(String datatableAsString) {
+		String[] rowsAsString = datatableAsString.split("\n");
+		List<List<String>> dataTable = new ArrayList<>(rowsAsString.length);
+		for (String rowAsString : rowsAsString) {
+			String[] rowParts = rowAsString.split("\\|");
+			List<String> dataRow =
+				Arrays.stream(rowParts)
+					.filter(part -> !Strings.isBlank(part))
+					.map(part -> part.trim())
+					.collect(Collectors.toList());
+			dataTable.add(dataRow);
+		}
+		return dataTable;
+	}
+
 	/**
 	 * Predicate used to filter a stream by distinct attribute.
 	 */
@@ -154,32 +237,30 @@ public class RobotScriptWriter implements BddScriptWriter {
 		stringBuilder.append(settingsBuilder);
 	}
 
-	/**
-	 * Implementation for Robot Framework
-	 * <li>does not need any translation: MessageSource and Locale is not used and null is safe</li>
-	 * <li>does not escape arrow symbols: escapeArrows is not used</li>
-	 * @param testStep test step
-	 * @param messageSource the message source for potential translation
-	 * @param locale
-	 * @param escapeArrows whether to escape arrow symbols
-	 * @return
-	 */
-	@Override
-	public String writeBddStepScript(KeywordTestStep testStep, MessageSource messageSource, Locale locale, boolean escapeArrows) {
+	public String writeBddStepScript(KeywordTestStep testStep, int dataTableCounter) {
 		ActionWord actionWord = testStep.getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
 		List<ActionWordParameterValue> parameterValues = testStep.getParamValues();
 
 		String keywordScript = testStep.getKeyword().getLabel();
-		String actionWordScript = generateStepScriptFromActionWordFragments(fragments, parameterValues, escapeArrows);
-		return keywordScript + SPACE_CHAR + actionWordScript;
+		String actionWordScript = generateStepScriptFromActionWordFragments(fragments, parameterValues);
+		StringBuilder stepBuilder = new StringBuilder();
+		stepBuilder.append(keywordScript).append(SPACE_CHAR).append(actionWordScript);
+		if (nonNull(testStep.getDatatable()) && !Strings.isBlank(testStep.getDatatable())) {
+			stepBuilder
+				.append(SPACE_CHAR)
+				.append(DOUBLE_QUOTE_CHAR)
+				.append(String.format(DATATABLE_PARAM_FORMAT, dataTableCounter))
+				.append(DOUBLE_QUOTE_CHAR);
+		}
+		return  stepBuilder.toString();
 	}
 
 	private String generateStepScriptFromActionWordFragments(
-		List<ActionWordFragment> fragments, List<ActionWordParameterValue> parameterValues, boolean escapeArrows) {
+		List<ActionWordFragment> fragments, List<ActionWordParameterValue> parameterValues) {
 		StringBuilder stringBuilder = new StringBuilder();
 		Consumer<ActionWordParameter> consumer =
-			parameter -> appendParamValueToGenerateScript(parameter, parameterValues, stringBuilder, escapeArrows);
+			parameter -> appendParamValueToGenerateScript(parameter, parameterValues, stringBuilder);
 		ConsumerForActionWordFragmentVisitor visitor = new ConsumerForActionWordFragmentVisitor(consumer, stringBuilder);
 
 		for(ActionWordFragment fragment : fragments) {
@@ -188,19 +269,19 @@ public class RobotScriptWriter implements BddScriptWriter {
 		return stringBuilder.toString();
 	}
 
-	private void appendParamValueToGenerateScript(ActionWordParameter parameter, List<ActionWordParameterValue> parameterValues, StringBuilder stringBuilder, boolean escapeArrows) {
+	private void appendParamValueToGenerateScript(ActionWordParameter parameter, List<ActionWordParameterValue> parameterValues, StringBuilder stringBuilder) {
 		Optional<ActionWordParameterValue> paramValue =
 			parameterValues.stream()
 				.filter(pv ->
 					pv.getActionWordParam() != null
-					&& pv.getActionWordParam().getId().equals(parameter.getId()))
+						&& pv.getActionWordParam().getId().equals(parameter.getId()))
 				.findAny();
 		paramValue.ifPresent(
-			actionWordParameterValue -> updateBuilderWithParamValue(stringBuilder, actionWordParameterValue, escapeArrows)
+			actionWordParameterValue -> updateBuilderWithParamValue(stringBuilder, actionWordParameterValue)
 		);
 	}
 
-	private void updateBuilderWithParamValue(StringBuilder stringBuilder, ActionWordParameterValue actionWordParameterValue, boolean escapeArrows) {
+	private void updateBuilderWithParamValue(StringBuilder stringBuilder, ActionWordParameterValue actionWordParameterValue) {
 		String paramValue = actionWordParameterValue.getValue();
 		if ("\"\"".equals(paramValue)) {
 			stringBuilder.append(paramValue);

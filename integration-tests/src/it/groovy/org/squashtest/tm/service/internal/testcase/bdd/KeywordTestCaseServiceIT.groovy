@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.bdd.BddImplementationTechnology
 import org.squashtest.tm.domain.testcase.KeywordTestCase
+import org.squashtest.tm.domain.testcase.KeywordTestStep
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.unitils.dbunit.annotation.DataSet
@@ -489,6 +490,32 @@ Daily test
 	Given Today is Monday
 	When It is \${time} in \${place}
 	Then I am working at \${time} in \${place}"""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-datatable.xml")
+	def "Should generate a Robot script with a test step containing a datatable"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-1L)
+			setupRobotProject(keywordTestCase)
+			String datatable = "| Henry | Dupont | henry.dupont@mail.com |\n" +
+				"| Louis | Dupond | louis.dupond@mail.com |\n" +
+				"| Charles | Martin | charles.martin@mail.com |"
+			((KeywordTestStep) keywordTestCase.getSteps().get(0)).setDatatable(datatable)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+		res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+User table test
+	\${row_1_1}=	Create List	Henry	Dupont	henry.dupont@mail.com
+	\${row_1_2}=	Create List	Louis	Dupond	louis.dupond@mail.com
+	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+
+	Given following users are listed "\${datatable_1}\""""
 	}
 
 	/* ----- File System Methods ----- */

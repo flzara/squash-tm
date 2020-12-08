@@ -533,6 +533,81 @@ Working test
 	Then I work at \${time} in \${place}"""
 	}
 
+	def "Should generate a Robot script with test steps from a KeywordTestCase with 1 datatable"() {
+		given:
+			KeywordTestCase keywordTestCase = new KeywordTestCase()
+			keywordTestCase.setName("User table test")
+			keywordTestCase.notifyAssociatedWithProject(project)
+
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I am on user page"))
+			KeywordTestStep step2 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I can see the users"))
+			step2.setDatatable("| Henry | Dupond | henry.dupond@mail.com |\n" +
+				"| Louis | Dupont | louis.dupont@mail.com |\n" +
+				"| Charles | Martin | charles.martin@mail.com |")
+
+			keywordTestCase.addStep(step1)
+			keywordTestCase.addStep(step2)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+		result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+User table test
+	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+
+	When I am on user page
+	Then I can see the users "\${datatable_1}\""""
+	}
+
+	def "Should generate a Robot script with test steps from a KeywordTestCase with 2 datatables"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("User table test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I am on user page"))
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I can see the users"))
+		step2.setDatatable("| Henry | Dupond | henry.dupond@mail.com |\n" +
+			"| Louis | Dupont | louis.dupont@mail.com |\n" +
+			"| Charles | Martin | charles.martin@mail.com |")
+		KeywordTestStep step3 = new KeywordTestStep(Keyword.AND, createBasicActionWord("I see the administrator"))
+		step3.setDatatable("| Bruce | Wayne | batman@mail.com |\n" +
+			"| Peter | Parker | spiderman@mail.com |\n" +
+			"| Clark | Kent | superman@mail.com |")
+
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		keywordTestCase.addStep(step3)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+		result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+User table test
+	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+	\${row_2_1}=	Create List	Bruce	Wayne	batman@mail.com
+	\${row_2_2}=	Create List	Peter	Parker	spiderman@mail.com
+	\${row_2_3}=	Create List	Clark	Kent	superman@mail.com
+	\${datatable_2}=	Create List	\${row_2_1}	\${row_2_2}	\${row_2_3}
+
+	When I am on user page
+	Then I can see the users "\${datatable_1}"
+	And I see the administrator "\${datatable_2}\""""
+	}
+
+
 	/* ----- Test Step Script Generation ----- */
 
 	def "Should generate a step script with no parameters"() {
@@ -541,7 +616,7 @@ Working test
 				Keyword.GIVEN,
 				createBasicActionWord("Today is Monday"))
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, null, null, true)
+			String result = robotScriptWriter.writeBddStepScript(step, 0)
 		then:
 			result == "Given Today is Monday"
 
@@ -559,7 +634,7 @@ Working test
 			List<ActionWordParameterValue> paramValues = [value]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, null, null, true)
+			String result = robotScriptWriter.writeBddStepScript(step, 0)
 		then:
 			result == "When It is \"10 o'clock\""
 	}
@@ -580,7 +655,7 @@ Working test
 			List<ActionWordParameterValue> paramValues = [value2, value3]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, null, null, true)
+			String result = robotScriptWriter.writeBddStepScript(step, 0)
 		then:
 			result == "Given I am in \"Los Angeles\"\"United States\""
 	}
@@ -598,7 +673,7 @@ Working test
 			List<ActionWordParameterValue> paramValues = [value]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, null, null, true)
+			String result = robotScriptWriter.writeBddStepScript(step, 0)
 		then:
 			result == "When It is \"${number}\""
 		where:
@@ -628,9 +703,21 @@ Working test
 			List<ActionWordParameterValue> paramValues = [value2, value4, value6]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, null, null, true)
+			String result = robotScriptWriter.writeBddStepScript(step, 0)
 		then:
 			result == "Then it is \"9\" o'clock in \"London\" with a \${weather} weather."
+	}
+
+	def "Should generate a step script using a datatable"() {
+		given:
+			def fragment1 = new ActionWordText("the following users are listed")
+			ActionWord actionWord = new ActionWord([fragment1] as List)
+			KeywordTestStep step = new KeywordTestStep(Keyword.THEN, actionWord)
+			step.setDatatable("| user1 | user1@mail.com |\n| user2 | user2@mail.com |")
+		when:
+			String result = robotScriptWriter.writeBddStepScript(step, 2)
+		then:
+			result == "Then the following users are listed \"\${datatable_2}\""
 	}
 
 
