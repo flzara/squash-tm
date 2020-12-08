@@ -86,26 +86,46 @@ define(
 		function initReportDisplay($row, data) {
 
 			var resultURLList = data['result-urls'];
+			var attachmentList = data['attachment-list'];
+			var attachmentListId = data['attachment-list-id'];
 
-			var hasOneReport = resultURLList !== null && resultURLList.length ===1;
-			var hasMultipleReport = resultURLList !== null && resultURLList.length > 1;
+			var reportsCount = countReports(resultURLList, attachmentList);
 
-			if (hasOneReport) {
-				createReportLink($row, resultURLList[0]);
-			} else if (hasMultipleReport) {
-				createReportListPopUp($row, resultURLList);
+			if (reportsCount === 1) {
+				createReportLink($row, resultURLList, attachmentList, attachmentListId);
+			} else if (reportsCount > 1) {
+				createReportListPopUp($row, resultURLList, attachmentList, attachmentListId);
 			} else {
 				$row.find('.result-display').empty().text("/");
 			}
 		}
 
-		function createReportLink($row, resultUrl) {
+		function countReports(resultURLList, attachmentList){
+			var count = 0;
+
+			if (resultURLList !== null){
+				count = count + resultURLList.length
+			}
+			if(attachmentList !== null){
+				count = count + attachmentList.length
+			}
+			return count;
+		}
+
+		function createReportLink($row, resultUrlList, attachmentList, attachmentListId) {
 			var resultMessage = translator.get('automated-suite.result.label');
+			var resultUrl;
+			if(resultUrlList !== null && resultUrlList.length === 1){
+				resultUrl = resultUrlList[0];
+			} else {
+				var baseUrl = squashtm.app.contextRoot + "attach-list/" + attachmentListId + "/attachments";
+				resultUrl = baseUrl + "/download/" + attachmentList[0].id
+			}
 			var resultLink = $('<a>', {'text': resultMessage, 'href': resultUrl, 'target': '_blank'});
 			$row.find('.result-display').empty().append(resultLink);
 		}
 
-		function createReportListPopUp($row, resultUrlList){
+		function createReportListPopUp($row, resultUrlList, attachmentList, attachmentListId){
 			var resultMessage = translator.get('automated-suite.result-list.label');
 			var resultLink = $('<a>', {'id': 'result-list', 'text': resultMessage, 'href':''});
 			$row.find('.result-display').empty().append(resultLink);
@@ -115,14 +135,31 @@ define(
 				var title = translator.get('automated-suite.result-list.title');
 
 				var listNode = $('<ul>');
-				resultUrlList.forEach(function(url){
-					var urlNode = $('<li>').append($('<a>', {'text': url, 'href': url, 'target': '_blank'}));
-					listNode.append(urlNode);
-				});
+				if (resultUrlList !== null){
+					addReports(resultUrlList, listNode);
+				}
+				if(attachmentList !== null){
+					addAttachments(attachmentList, attachmentListId, listNode);
+				}
 
 				var list = listNode.prop('outerHTML');
 
 				notification.showInfo(title + "\n" + list);
+			});
+		}
+
+		function addReports(resultUrlList, listNode){
+			resultUrlList.forEach(function(url){
+				var urlNode = $('<li>').append($('<a>', {'text': url, 'href': url, 'target': '_blank'}));
+				listNode.append(urlNode);
+			});
+		}
+
+		function addAttachments(attachmentList, attachmentListId, listNode){
+			var baseUrl = squashtm.app.contextRoot + "attach-list/" + attachmentListId + "/attachments";
+			attachmentList.forEach(function(attachment){
+				var urlNode = $('<li>').append($('<a>', {'text': attachment.name, 'href': baseUrl + "/download/" + attachment.id}));
+				listNode.append(urlNode);
 			});
 		}
 

@@ -21,7 +21,8 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
@@ -32,12 +33,13 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<AutomatedSuite> {
@@ -72,19 +74,45 @@ public class AutomatedSuiteTableModelHelper extends DataTableModelBuilder<Automa
 		res.put("status", suite.getExecutionStatus().getCanonicalStatus());
 		res.put("has-executions", !suite.getExecutionExtenders().isEmpty());
 		res.put("result-urls", getResultURLList(suite));
+		res.put("attachment-list-id", suite.getAttachmentList().getId());
+		res.put("attachment-list", getAttachmentDtos(suite));
 		return res;
 	}
 
 	private List<URL> getResultURLList(AutomatedSuite automatedSuite){
-		List<URL> urlList = new ArrayList<>();
+		return automatedSuite.getExecutionExtenders().stream()
+			.map(AutomatedExecutionExtender::getResultURL).filter(Objects::nonNull)
+			.distinct().collect(Collectors.toList());
+	}
 
-		if(automatedSuite.getResultURL() != null && !StringUtils.isBlank(automatedSuite.getResultURL().toString())){
-			urlList.add(automatedSuite.getResultURL());
-		} else {
-			urlList = automatedSuite.getExecutionExtenders().stream()
-				.map(AutomatedExecutionExtender::getResultURL).filter(Objects::nonNull)
-				.distinct().collect(Collectors.toList());
+	private Set<AttachmentDTO> getAttachmentDtos(AutomatedSuite suite){
+		Set<Attachment> suiteAttachments = suite.getAttachmentList().getAllAttachments();
+		Set<Attachment> execAttachments = new HashSet<>();
+		suite.getExecutionExtenders().forEach(execExtender -> {
+			Set<Attachment> attachments = execExtender.getExecution().getAttachmentList().getAllAttachments();
+			execAttachments.addAll(attachments);
+		});
+		Set<Attachment> allAttachments = new HashSet<>(suiteAttachments);
+		allAttachments.addAll(execAttachments);
+		return allAttachments.stream().map(attachment -> new AttachmentDTO(attachment.getId(), HtmlUtils.htmlEscape(attachment.getName()))).collect(Collectors.toSet());
+	}
+
+	private class AttachmentDTO{
+		private final Long id;
+
+		private final String name;
+
+		public AttachmentDTO(Long id, String name) {
+			this.id = id;
+			this.name = name;
 		}
-		return urlList;
+
+		public Long getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 }
