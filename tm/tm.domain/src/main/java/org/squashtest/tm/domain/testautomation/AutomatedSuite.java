@@ -132,8 +132,6 @@ public class AutomatedSuite implements HasExecutionStatus, AttachmentHolder {
 	 */
 	private transient Boolean manualSlaveSelection;
 
-	private URL resultURL;
-
 	public AutomatedSuite() {
 	}
 
@@ -231,14 +229,6 @@ public class AutomatedSuite implements HasExecutionStatus, AttachmentHolder {
 
 	public TestSuite getTestSuite() {
 		return testSuite;
-	}
-
-	public URL getResultURL() {
-		return resultURL;
-	}
-
-	public void setResultURL(URL resultURL) {
-		this.resultURL = resultURL;
 	}
 
 	@Override
