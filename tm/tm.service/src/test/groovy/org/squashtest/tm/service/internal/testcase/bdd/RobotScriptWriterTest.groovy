@@ -701,6 +701,29 @@ User table test
 	Then I can see the users "\${datatable_1}\""""
 	}
 
+	def "with 1 comment"() {
+		given:
+			KeywordTestCase keywordTestCase = new KeywordTestCase()
+			keywordTestCase.setName("Comment test")
+			keywordTestCase.notifyAssociatedWithProject(project)
+
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("I do something"))
+			step1.setComment("the action can be anything here");
+
+			keywordTestCase.addStep(step1)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+			result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Comment test
+	Given I do something
+	# the action can be anything here"""
+	}
+
 
 	/* ----- Test Step Script Generation ----- */
 

@@ -283,6 +283,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 		String dataTable = testStep.getDatatable();
 		String docString = testStep.getDocstring();
+		String comment = testStep.getComment();
 		StringBuilder stepBuilder = new StringBuilder()
 			.append(keywordScript)
 			.append(SPACE_CHAR)
@@ -298,6 +299,14 @@ public class RobotScriptWriter implements BddScriptWriter {
 				.append(DOUBLE_QUOTE_CHAR)
 				.append(String.format(DOCSTRING_PARAM_FORMAT, docStringCounter))
 				.append(DOUBLE_QUOTE_CHAR);
+		}
+		if (!isBlank(comment)) {
+			stepBuilder
+				.append(NEW_LINE_CHAR)
+				.append(TAB_CHAR)
+				.append('#')
+				.append(SPACE_CHAR)
+				.append(StringEscapeUtils.escapeJava(comment));
 		}
 		return  stepBuilder.toString();
 	}

@@ -542,6 +542,27 @@ Letter test
 	Given following letter is displayed "\${docstring_1}\""""
 	}
 
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-datatable-docstring-comment.xml")
+	def "Should generate a Robot script with a test step containing a comment"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-3L)
+			setupRobotProject(keywordTestCase)
+			String comment = "the action can be anything here"
+			((KeywordTestStep) keywordTestCase.getSteps().get(0)).setComment(comment)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+			"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Comment test
+	Given I do something
+	# the action can be anything here"""
+	}
+
+
 	/* ----- File System Methods ----- */
 
 	@Unroll("Should create a file name for #bddTechnology")
