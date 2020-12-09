@@ -556,10 +556,10 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 User table test
-	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
-	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
-	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
-	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+	\${row_1_1} =	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2} =	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3} =	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1} =	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
 
 	When I am on user page
 	Then I can see the users "\${datatable_1}\""""
@@ -593,14 +593,14 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 User table test
-	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
-	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
-	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
-	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
-	\${row_2_1}=	Create List	Bruce	Wayne	batman@mail.com
-	\${row_2_2}=	Create List	Peter	Parker	spiderman@mail.com
-	\${row_2_3}=	Create List	Clark	Kent	superman@mail.com
-	\${datatable_2}=	Create List	\${row_2_1}	\${row_2_2}	\${row_2_3}
+	\${row_1_1} =	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2} =	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3} =	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1} =	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+	\${row_2_1} =	Create List	Bruce	Wayne	batman@mail.com
+	\${row_2_2} =	Create List	Peter	Parker	spiderman@mail.com
+	\${row_2_3} =	Create List	Clark	Kent	superman@mail.com
+	\${datatable_2} =	Create List	\${row_2_1}	\${row_2_2}	\${row_2_3}
 
 	When I am on user page
 	Then I can see the users "\${datatable_1}"
@@ -629,7 +629,7 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 Letter test
-	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+	\${docstring_1} =	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
 
 	Given following letter is displayed "\${docstring_1}\""""
 	}
@@ -662,8 +662,8 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 Letter test
-	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
-	\${docstring_2}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Tuesday.\\n\\n\\tYour friend, John.
+	\${docstring_1} =	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+	\${docstring_2} =	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Tuesday.\\n\\n\\tYour friend, John.
 
 	Given following letter is displayed "\${docstring_1}\"
 	And following letter is displayed "\${docstring_2}\""""
@@ -692,10 +692,10 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 User table test
-	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
-	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
-	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
-	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+	\${row_1_1} =	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2} =	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3} =	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1} =	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
 
 	When I am on user page
 	Then I can see the users "\${datatable_1}\""""

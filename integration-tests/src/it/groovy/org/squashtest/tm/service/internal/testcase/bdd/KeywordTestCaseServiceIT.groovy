@@ -510,10 +510,10 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 User table test
-	\${row_1_1}=	Create List	Henry	Dupont	henry.dupont@mail.com
-	\${row_1_2}=	Create List	Louis	Dupond	louis.dupond@mail.com
-	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
-	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+	\${row_1_1} =	Create List	Henry	Dupont	henry.dupont@mail.com
+	\${row_1_2} =	Create List	Louis	Dupond	louis.dupond@mail.com
+	\${row_1_3} =	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1} =	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
 
 	Given following users are listed "\${datatable_1}\""""
 	}
@@ -537,7 +537,7 @@ Resource	squash_resources.resource
 
 *** Test Cases ***
 Letter test
-	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+	\${docstring_1} =	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
 
 	Given following letter is displayed "\${docstring_1}\""""
 	}

@@ -177,6 +177,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 				StringBuilder tableVariableBuilder = new StringBuilder()
 					.append(TAB_CHAR)
 					.append(String.format(DATATABLE_PARAM_FORMAT, tableNumber))
+					.append(SPACE_CHAR)
 					.append(EQUAL_CHAR)
 					.append(TAB_CHAR)
 					.append(CREATE_LIST_KEYWORD);
@@ -186,6 +187,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 					StringBuilder rowVariableBuilder = new StringBuilder()
 						.append(TAB_CHAR)
 						.append(String.format(DATATABLE_ROW_PARAM_FORMAT, tableNumber, rowNumber))
+						.append(SPACE_CHAR)
 						.append(EQUAL_CHAR)
 						.append(TAB_CHAR)
 						.append(CREATE_LIST_KEYWORD);
@@ -219,6 +221,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 				docStringParamBuilder
 					.append(TAB_CHAR)
 					.append(String.format(DOCSTRING_PARAM_FORMAT, docStringCounter))
+					.append(SPACE_CHAR)
 					.append(EQUAL_CHAR)
 					.append(TAB_CHAR)
 					.append(SET_VARIABLE_KEYWORD)
