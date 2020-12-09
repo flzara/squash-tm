@@ -1403,7 +1403,7 @@
       <column name="ATTACHMENT_LIST_ID" type="BIGINT"
               remarks="foreign key to ATTACHMENT_LIST, entity dealing with attachment.">
         <constraints nullable="true"
-                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_automates_suite_attachment_list" />
+                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_automated_suite_attachment_list" />
       </column>
     </addColumn>
 
@@ -1461,6 +1461,38 @@
     <sql>
       select setval('attachment_list_attachment_list_id_seq', (select MAX(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
     </sql>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2141-automated-test-technology" author="aguilhem">
+    <comment>create automated test technology table</comment>
+
+    <createTable tableName="AUTOMATED_TEST_TECHNOLOGY">
+      <column name="AT_TECHNOLOGY_ID" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="NAME" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="ACTION_PROVIDER_KEY" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <sql>
+      insert into AUTOMATED_TEST_TECHNOLOGY(NAME, ACTION_PROVIDER_KEY)
+      values ('Robot Framework', 'robotframework/execute@v1'),
+      ('Cypress', 'cypress/execute@v1'),
+      ('JUnit', 'junit/execute@v1')
+    </sql>
+
+    <addColumn tableName="TEST_CASE">
+      <column name="AUTOMATED_TEST_TECHNOLOGY" type="BIGINT"
+              remarks="foreign key to AUTOMATED_TEST_TECHNOLOGY">
+        <constraints nullable="true"
+                     references="AUTOMATED_TEST_TECHNOLOGY(AT_TECHNOLOGY_ID)" foreignKeyName="fk_test_case_automated_test_technology" />
+      </column>
+    </addColumn>
 
   </changeSet>
 

@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -138,6 +139,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	protected InfoListItem type = null;
 
+	// *************** Squash Autom automated test attributes ******************
+
 	/**
 	 * Used by Squash TF 2 to know where to find automated test case source code repository
 	 */
@@ -150,6 +153,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	@Column(name = "AUTOMATED_TEST_REFERENCE")
 	private String automatedTestReference = null;
+
+	/**
+	 * Used by Squash TF 2 to know the technology of the linked automated test
+	 */
+	@ManyToOne
+	@JoinColumn(name = "AUTOMATED_TEST_TECHNOLOGY")
+	private AutomatedTestTechnology automatedTestTechnology = null;
 
 	@NotNull
 	@Enumerated(STRING)
@@ -465,22 +475,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void setType(@NotNull InfoListItem type) {
 		this.type = type;
-	}
-
-	public String getSourceCodeRepositoryUrl() {
-		return sourceCodeRepositoryUrl;
-	}
-
-	public void setSourceCodeRepositoryUrl(String sourceCodeRepositoryUrl) {
-		this.sourceCodeRepositoryUrl = sourceCodeRepositoryUrl;
-	}
-
-	public String getAutomatedTestReference() {
-		return automatedTestReference;
-	}
-
-	public void setAutomatedTestReference(String automatedTestReference) {
-		this.automatedTestReference = automatedTestReference;
 	}
 
 	public TestCaseStatus getStatus() {
@@ -960,6 +954,30 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.uuid = uuid;
 	}
 
+	//*********************** Squash Autom Automated Test attributes section ************************//
 
+	public String getSourceCodeRepositoryUrl() {
+		return sourceCodeRepositoryUrl;
+	}
+
+	public void setSourceCodeRepositoryUrl(String sourceCodeRepositoryUrl) {
+		this.sourceCodeRepositoryUrl = sourceCodeRepositoryUrl;
+	}
+
+	public String getAutomatedTestReference() {
+		return automatedTestReference;
+	}
+
+	public void setAutomatedTestReference(String automatedTestReference) {
+		this.automatedTestReference = automatedTestReference;
+	}
+
+	public AutomatedTestTechnology getAutomatedTestTechnology() {
+		return automatedTestTechnology;
+	}
+
+	public void setAutomatedTestTechnology(AutomatedTestTechnology automatedTestTechnology) {
+		this.automatedTestTechnology = automatedTestTechnology;
+	}
 }
 

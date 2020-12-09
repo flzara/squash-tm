@@ -163,6 +163,7 @@
 	automated_execution_extender?,
 	automated_suite?,
 	automated_test?,
+	automated_test_technology?,
 	automation_request?,
 	automation_request_library?,
 	automation_request_library_content?,
@@ -432,6 +433,13 @@
 		TEST_ID CDATA #REQUIRED
 		NAME CDATA #IMPLIED
 		PROJECT_ID CDATA #IMPLIED
+		>
+
+	<!ELEMENT AUTOMATED_TEST_TECHNOLOGY EMPTY>
+	<!ATTLIST AUTOMATED_TEST_TECHNOLOGY
+		AT_TECHNOLOGY_ID CDATA #REQUIRED
+		NAME CDATA #REQUIRED
+		ACTION_PROVIDER_KEY CDATA #REQUIRED
 		>
 
 	<!ELEMENT AUTOMATION_REQUEST EMPTY>
@@ -1451,6 +1459,9 @@
 		TC_STATUS (WORK_IN_PROGRESS|UNDER_REVIEW|APPROVED|OBSOLETE|TO_BE_UPDATED) "WORK_IN_PROGRESS"
 		AUTOMATABLE "Y"
 		UUID CDATA #REQUIRED
+		SOURCE_CODE_REPOSITORY_URL CDATA #IMPLIED
+		AUTOMATED_TEST_REFERENCE CDATA #IMPLIED
+		AUTOMATED_TEST_TECHNOLOGY CDATA #IMPLIED
 		>
 
 
@@ -1544,6 +1555,7 @@
 	<!ELEMENT automated_execution_extender EMPTY>
 	<!ELEMENT automated_suite EMPTY>
 	<!ELEMENT automated_test EMPTY>
+	<!ELEMENT automated_test_technology EMPTY>
 	<!ELEMENT automation_request EMPTY>
 	<!ELEMENT automation_request_library EMPTY>
 	<!ELEMENT auth_user EMPTY>
