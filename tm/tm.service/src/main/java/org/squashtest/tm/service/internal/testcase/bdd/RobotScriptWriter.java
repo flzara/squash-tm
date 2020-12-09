@@ -223,7 +223,9 @@ public class RobotScriptWriter implements BddScriptWriter {
 					.append(TAB_CHAR)
 					.append(SET_VARIABLE_KEYWORD)
 					.append(TAB_CHAR)
-					.append(StringEscapeUtils.escapeJava(docString))
+					.append(docString
+						.replaceAll("\n", "\\\\n")
+						.replaceAll("\t", "\\\\t"))
 					.append(NEW_LINE_CHAR);
 				docStringCounter++;
 			}
@@ -306,7 +308,9 @@ public class RobotScriptWriter implements BddScriptWriter {
 				.append(TAB_CHAR)
 				.append('#')
 				.append(SPACE_CHAR)
-				.append(StringEscapeUtils.escapeJava(comment));
+				.append(comment
+					.replaceAll("\n", "\\\\n")
+					.replaceAll("\t", "\\\\t"));
 		}
 		return  stepBuilder.toString();
 	}
