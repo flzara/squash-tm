@@ -26,23 +26,30 @@ import org.squashtest.tm.domain.bdd.ActionWordParameter
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.domain.bdd.Keyword
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.KeywordTestStep
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants
 import spock.lang.Specification
 
 class KeywordTestStepTableModelBuilderTest extends Specification {
 
-	KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder()
+	PermissionEvaluationService permissionService = Mock();
+
+	KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder(permissionService)
 
 	def "should build an item data from a KeywordTestStep"() {
 		given:
 		def testStep = initKeywordTestStep(-68L, Keyword.GIVEN)
+		def project = Mock(Project)
+		project.getId() >> 4L
 
 		def actionWord1 = Mock(ActionWord)
 		ActionWordText text1 = new ActionWordText("goodbye")
 		List<ActionWordFragment> fragments1 = new ArrayList<>()
 		fragments1.add(text1)
 		actionWord1.getFragments() >> fragments1
+		actionWord1.getProject() >> project
 		testStep.getActionWord() >> actionWord1
 
 		when:
@@ -58,6 +65,8 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 	def "should build a raw model from 2 KeywordTestStep"() {
 		given:
 		def testStep = initKeywordTestStep(-99L, Keyword.GIVEN)
+		def project = Mock(Project)
+		project.getId() >> 2L
 
 		def actionWord = Mock(ActionWord)
 		ActionWordText text = new ActionWordText("hello ")
@@ -66,6 +75,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		fragments.add(text)
 		fragments.add(parameter)
 		actionWord.getFragments() >> fragments
+		actionWord.getProject() >> project
 		testStep.getActionWord() >> actionWord
 
 		List<ActionWordParameterValue> values = new ArrayList<>();
@@ -82,7 +92,11 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		List<ActionWordFragment> fragments2 = new ArrayList<>()
 		fragments2.add(text2)
 		actionWord2.getFragments() >> fragments2
+		actionWord2.getProject() >> project
 		testStep2.getActionWord() >> actionWord2
+
+		and:
+		permissionService.hasRoleOrPermissionOnObject(_,_,_,_) >> false
 
 		when:
 		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)
@@ -106,6 +120,8 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 	def "should build a raw model from 2 KeywordTestStep in which there is an Actionword with a Parameter associated with Test Case parameter"() {
 		given:
 		def testStep = initKeywordTestStep(-99L, Keyword.GIVEN)
+		def project = Mock(Project)
+		project.getId() >> 4L
 
 		def actionWord = Mock(ActionWord)
 		ActionWordText text = new ActionWordText("hello ")
@@ -114,6 +130,7 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		fragments.add(text)
 		fragments.add(parameter)
 		actionWord.getFragments() >> fragments
+		actionWord.getProject() >> project
 		testStep.getActionWord() >> actionWord
 
 		List<ActionWordParameterValue> values = new ArrayList<>();
@@ -130,7 +147,11 @@ class KeywordTestStepTableModelBuilderTest extends Specification {
 		List<ActionWordFragment> fragments2 = new ArrayList<>()
 		fragments2.add(text2)
 		actionWord2.getFragments() >> fragments2
+		actionWord2.getProject() >> project
 		testStep2.getActionWord() >> actionWord2
+
+		and:
+		permissionService.hasRoleOrPermissionOnObject(_,_,_,_) >> false
 
 		when:
 		List<Object> resultCollection = builder.buildRawModel([testStep, testStep2], 1)

@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.customfield.CustomFieldHelper
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.web.internal.controller.testcase.steps.KeywordTestStepModel
@@ -54,12 +55,14 @@ class TestCaseTestStepsControllerTest extends Specification {
 	HttpServletRequest request = Mock()
 	InternationalizationHelper messageSource = Mock()
 	CustomFieldHelperService cufHelperService = Mock()
+	PermissionEvaluationService permissionService = Mock()
 
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
 		controller.internationalizationHelper = messageSource
 		controller.cufHelperService = cufHelperService
+		controller.permissionService = permissionService
 	}
 
 
@@ -151,11 +154,15 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 	def "should build table model for keyword test case steps"() {
 		given:
+		def project = Mock(Project)
+		project.getId() >> -24L
+
 		def actionWord1 = Mock(ActionWord)
 		ActionWordText text1 = new ActionWordText("hello")
 		List<ActionWordFragment> fragments1 = new ArrayList<>()
 		fragments1.add(text1)
 		actionWord1.getFragments() >> fragments1
+		actionWord1.getProject() >> project
 
 		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, actionWord1)
 		List<ActionWordParameterValue> paramValues1 = new ArrayList<>()
@@ -174,6 +181,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		fragments2.add(parameter)
 		fragments2.add(text3)
 		actionWord2.getFragments() >> fragments2
+		actionWord2.getProject() >> project
 
 		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, actionWord2)
 		List<ActionWordParameterValue> paramValues2 = new ArrayList<>()
@@ -200,6 +208,9 @@ class TestCaseTestStepsControllerTest extends Specification {
 		PagedCollectionHolder<List<ActionTestStep>> holder = new SinglePageCollectionHolder<List<ActionTestStep>>([step1, step2])
 		testCaseModificationService.findStepsByTestCaseIdFiltered(7L, _) >> holder
 
+		and:
+		permissionService.hasRoleOrPermissionOnObject(_,_,_,_) >> false
+
 		when:
 		def res = controller.getKeywordTestStepTableModel(7L, params)
 
@@ -216,6 +227,8 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-datatable"		   : '',
 				"step-docstring"		   : '',
 				"step-comment"			   : '',
+				"step-action-word-url"	   : null,
+				"action-word-id"		   : '',
 				"step-action-word-unstyled": 'hello'
 			],
 			[
@@ -228,6 +241,8 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"step-datatable"		   : '',
 				"step-docstring"		   : '',
 				"step-comment"			   : '',
+				"step-action-word-url"	   : null,
+				"action-word-id"		   : '',
 				"step-action-word-unstyled" : 'how are "you" ?'
 			]]
 

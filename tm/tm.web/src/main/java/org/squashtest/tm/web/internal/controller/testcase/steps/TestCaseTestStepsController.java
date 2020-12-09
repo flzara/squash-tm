@@ -57,6 +57,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
@@ -114,6 +115,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
@@ -186,14 +190,12 @@ public class TestCaseTestStepsController {
 	@RequestMapping(value = "/keyword-test-step-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getKeywordTestStepTableModel (@PathVariable long testCaseId, DataTableDrawParameters params) {
-		TestCase testCase = testCaseModificationService.findById(testCaseId);
-
 		Paging filter = new DataTablePaging(params);
 
 		PagedCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 			testCaseId, filter);
 		// generate the model
-		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder(permissionService);
 		return builder.buildDataModel(holder, params.getsEcho());
 
 	}
@@ -236,7 +238,7 @@ public class TestCaseTestStepsController {
 		model.addAttribute("projectId", keywordTestCase.getProject().getId());
 
 		//create keyword test step table model
-		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder(permissionService);
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
@@ -395,20 +397,6 @@ public class TestCaseTestStepsController {
 		testCaseModificationService.updateKeywordTestStep(stepId, actionWord, actionWordId);
 		LOGGER.trace("TestCaseModificationController : updated action word for step {} with action word id {}", stepId, actionWordId);
 		return actionWord;
-	}
-
-	@RequestMapping(value = "/{stepId}/action-word-html", method = RequestMethod.GET)
-	@ResponseBody
-	public String getActionWordHtml(@PathVariable long stepId) {
-		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return new KeywordTestStepTableModelBuilder().createActionWordWithParamValues(keywordTestStep);
-	}
-
-	@RequestMapping(value = "/{stepId}/action-word-unstyled", method = RequestMethod.GET)
-	@ResponseBody
-	public String getActionWordUnstyled(@PathVariable long stepId) {
-		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return keywordTestStep.writeTestStepActionWordScript(true);
 	}
 
 	@RequestMapping(value = "/{stepId}/datatable", method = RequestMethod.POST, params = {VALUE})

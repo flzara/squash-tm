@@ -148,7 +148,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 								'<span class="display-table-cell step-comment" style="white-space: pre-line">'+comment+'</span>'+
 								'</div>' +
 							'</td>' +
-							'<td colspan="2"></td>'
+							'<td colspan="3"></td>'
 						);
 
 						if (settings.permissions.isWritable) {
@@ -199,12 +199,24 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 							sClass: 'centered toggle-row',
 							sWidth: '2em'
 						}, {
-							bVisible: true,
+							bVisible: settings.isAutocompleteActive,
 							bSortable: false,
 							aTargets: [5],
+							mDataProp: "step-action-word-url",
+							sClass: 'step-action-word-url',
+							sWidth: '3em'
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [6],
 							mDataProp: 'empty-delete-holder',
 							sClass: 'centered ' + deleteClass,
 							sWidth: '2em'
+						}, {
+							bVisible: false,
+							bSortable: false,
+							aTargets: [7],
+							mDataProp: "action-word-id"
 						}
 					],
 					aaData: settings.stepData,
@@ -215,14 +227,14 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 						rows.forEach(function(row) {
 							var $row = $(row),
 								  keywordCell = $row.find('td.step-keyword'),
-									actionWordCell = $row.find('td.step-action-word');
+									actionWordCell = $row.find('td.step-action-word'),
+									rowModel = table.fnGetData($row);
 
 							keywordCell.text(settings.keywordMap[keywordCell.text()]);
 							if (settings.permissions.isWritable) {
 								// keyword editable configuration
 								var sconf = confman.getJeditableSelect();
 								sconf.data = settings.keywordMap;
-								var rowModel = table.fnGetData($row);
 								var keywordUrl = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/keyword';
 								keywordCell.editable(keywordUrl, sconf);
 
@@ -232,6 +244,20 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 								actionWordCell.editable(postModifyActionWordFunction, edconf);
 
 								self.manageAutocompleteOnActionWordCell(actionWordCell, settings, $row);
+							}
+
+							if (settings.isAutocompleteActive) {
+								var actionWordUrlCell = $row.find('td.step-action-word-url');
+								if (rowModel['action-word-id'] === '') {
+									actionWordUrlCell.text('');
+								} else {
+									actionWordUrlCell.addClass('icon-action-word');
+									actionWordUrlCell.tooltip = "Accéder à la bibliothèque d'actions";
+									actionWordUrlCell.css('cursor', 'pointer');
+									actionWordUrlCell.on('click', function() {
+										document.location.href = squashtm.app.contextRoot + "action-words/" + rowModel['action-word-id'] + "/info";
+									});
+								}
 							}
 						});
 					}
@@ -469,29 +495,31 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 
 		postModifyActionWordFunction: function(baseUrl, table) {
 			var self = this;
-			return function(value, editableSettings) {
+			return function(value) {
 				var td = this,
 						row = td.parentNode,
 						rowModel = table.fnGetData(row),
-						stepId = rowModel['entity-id'],
-						actionWordCell = $(row).find('td.step-action-word');
+						stepId = rowModel['entity-id'];
 
 				if (self.settings.isAutocompleteActive) {
 					self.retrieveAllDuplicatedActionWithProjectInTestStep(stepId, value)
 						.done(function(data) {
 							if (Object.keys(data).length > 0) {
-								self.initDuplicatedActionInTestStep(data, baseUrl, value, stepId, editableSettings, actionWordCell);
+								self.initDuplicatedActionInTestStep(data, baseUrl, value, stepId);
 							} else {
-								self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
+								self.doModifyActionWord(baseUrl, value, stepId);
 							}
+						})
+						.fail(function() {
+							self.refresh();
 						});
 				} else {
-					self.doModifyActionWord(baseUrl, value, stepId, editableSettings, actionWordCell);
+					self.doModifyActionWord(baseUrl, value, stepId);
 				}
 			};
 		},
 
-		initDuplicatedActionInTestStep: function(data, baseUrl, value, stepId, editableSettings, actionWordCell) {
+		initDuplicatedActionInTestStep: function(data, baseUrl, value, stepId) {
 			var self = this;
 			var duplicatedActionDialog = $("#test-step-duplicated-action-dialog");
 			duplicatedActionDialog.formDialog();
@@ -517,10 +545,9 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 						actionWordId: actionWordId
 					}
 				}).done(function() {
-					self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
-					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+					self.refresh();
 				}).fail(function() {
-					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+					self.refresh();
 				});
 				$(this).formDialog('close');
 			});
@@ -530,57 +557,24 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 			});
 
 			duplicatedActionDialog.on("formdialogclose", function() {
-				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+				self.refresh();
 			});
 
 			duplicatedActionDialog.formDialog('open');
 		},
 
-		doModifyActionWord: function(baseUrl, value, stepId, editableSettings, actionWordCell) {
-			var self = this;
-			var actionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
+		doModifyActionWord: function(baseUrl, value, stepId) {
+			var self = this,
+					modifyActionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
 
 			$.ajax({
-				url: actionWordUrl,
+				url: modifyActionWordUrl,
 				type: 'POST',
 				data: { value: value }
 			}).done(function() {
-				self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
-				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
+				self.refresh();
 			}).fail(function() {
-				self.renderActionWordCell(baseUrl, stepId, actionWordCell);
-			});
-		},
-
-		renderActionWordCell: function(baseUrl, stepId, actionWordCell) {
-			this.getActionWordHtmlFormat(baseUrl, stepId)
-				.done(function(actionWordHtml) {
-					actionWordCell.html(actionWordHtml);
-				});
-		},
-
-		saveNewActionWordInSettings: function(baseUrl, stepId, editableSettings) {
-			this.getActionWordUnstyledFormat(baseUrl, stepId)
-				.done(function(actionWordUnstyled) {
-					editableSettings.data = actionWordUnstyled;
-				});
-		},
-
-		// with html tags for parameters
-		getActionWordHtmlFormat: function(baseUrl, stepId) {
-			var actionWordHtmlUrl = baseUrl + '/steps/' + stepId + '/action-word-html';
-			return $.ajax({
-				url: actionWordHtmlUrl,
-				type: 'GET'
-			});
-		},
-
-		// ex: I have some "apples", the format to display when modifying
-		getActionWordUnstyledFormat: function(baseUrl, stepId) {
-			var actionWordUnstyledUrl = baseUrl + '/steps/' + stepId + '/action-word-unstyled';
-			return $.ajax({
-				url: actionWordUnstyledUrl,
-				type: 'GET'
+				self.refresh();
 			});
 		},
 
