@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase.bdd;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -56,7 +54,9 @@ public class RobotScriptWriter implements BddScriptWriter {
 
 	private static final String DATATABLE_PARAM_FORMAT = "${datatable_%s}";
 	private static final String DATATABLE_ROW_PARAM_FORMAT = "${row_%s_%s}";
+	private static final String DOCSTRING_PARAM_FORMAT = "${docstring_%s}";
 	private static final String CREATE_LIST_KEYWORD = "Create List";
+	private static final String SET_VARIABLE_KEYWORD = "Set Variable";
 
 
 	/**
@@ -100,13 +100,16 @@ public class RobotScriptWriter implements BddScriptWriter {
 	private StringBuilder buildStepsLines(List<TestStep> steps) {
 		StringBuilder stepBuilder = new	StringBuilder();
 		int dataTableCounter = 1;
+		int docStringCounter = 1;
 		if(!steps.isEmpty()) {
 			stepBuilder.append(NEW_LINE_CHAR);
 			for (TestStep step : steps) {
 				KeywordTestStep keywordStep = (KeywordTestStep) step;
-				String stepScript = writeBddStepScript(keywordStep, dataTableCounter);
+				String stepScript = writeBddStepScript(keywordStep, dataTableCounter, docStringCounter);
 				if (nonNull(keywordStep.getDatatable()) && !Strings.isBlank(keywordStep.getDatatable())) {
 					dataTableCounter++;
+				} else if (Strings.isBlank(keywordStep.getDatatable()) && !Strings.isBlank(keywordStep.getDocstring())) {
+					docStringCounter++;
 				}
 				stepBuilder
 					.append(TAB_CHAR)
@@ -131,6 +134,16 @@ public class RobotScriptWriter implements BddScriptWriter {
 		if (usesDataTables) {
 			paramBuilder.append(
 				buildDatatableParametersLines(steps));
+		}
+		boolean usesDocStrings = steps.stream()
+			.anyMatch(step -> {
+				String dataTable = ((KeywordTestStep) step).getDatatable();
+				String docString = ((KeywordTestStep) step).getDocstring();
+				return Strings.isBlank(dataTable) && !Strings.isBlank(docString);
+			});
+		if (usesDocStrings) {
+			paramBuilder.append(
+				buildDocStringParametersLines(steps));
 		}
 		return paramBuilder;
 	}
@@ -195,6 +208,29 @@ public class RobotScriptWriter implements BddScriptWriter {
 		return datatableParamBuilder;
 	}
 
+	private StringBuilder buildDocStringParametersLines(List<TestStep> steps) {
+		int docStringCounter = 1;
+		StringBuilder docStringParamBuilder = new StringBuilder()
+			.append(NEW_LINE_CHAR);
+		for (TestStep step : steps) {
+			String dataTable = ((KeywordTestStep) step).getDatatable();
+			String docString = ((KeywordTestStep) step).getDocstring();
+			if (Strings.isBlank(dataTable) && !Strings.isBlank(docString)) {
+				docStringParamBuilder
+					.append(TAB_CHAR)
+					.append(String.format(DOCSTRING_PARAM_FORMAT, docStringCounter))
+					.append('=')
+					.append(TAB_CHAR)
+					.append(SET_VARIABLE_KEYWORD)
+					.append(TAB_CHAR)
+					.append(StringEscapeUtils.escapeJava(docString))
+					.append(NEW_LINE_CHAR);
+					docStringCounter++;
+			}
+		}
+		return docStringParamBuilder;
+	}
+
 	private List<List<String>> extractRowsFromDataTable(String datatableAsString) {
 		String[] rowsAsString = datatableAsString.split("\n");
 		List<List<String>> dataTable = new ArrayList<>(rowsAsString.length);
@@ -237,7 +273,7 @@ public class RobotScriptWriter implements BddScriptWriter {
 		stringBuilder.append(settingsBuilder);
 	}
 
-	public String writeBddStepScript(KeywordTestStep testStep, int dataTableCounter) {
+	public String writeBddStepScript(KeywordTestStep testStep, int dataTableCounter, int docStringCounter) {
 		ActionWord actionWord = testStep.getActionWord();
 		List<ActionWordFragment> fragments = actionWord.getFragments();
 		List<ActionWordParameterValue> parameterValues = testStep.getParamValues();
@@ -251,6 +287,11 @@ public class RobotScriptWriter implements BddScriptWriter {
 				.append(SPACE_CHAR)
 				.append(DOUBLE_QUOTE_CHAR)
 				.append(String.format(DATATABLE_PARAM_FORMAT, dataTableCounter))
+				.append(DOUBLE_QUOTE_CHAR);
+		} else if (Strings.isBlank(testStep.getDatatable()) && !Strings.isBlank(testStep.getDocstring())) {
+			stepBuilder.append(SPACE_CHAR)
+				.append(DOUBLE_QUOTE_CHAR)
+				.append(String.format(DOCSTRING_PARAM_FORMAT, docStringCounter))
 				.append(DOUBLE_QUOTE_CHAR);
 		}
 		return  stepBuilder.toString();

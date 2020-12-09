@@ -607,6 +607,100 @@ User table test
 	And I see the administrator "\${datatable_2}\""""
 	}
 
+	def "with 1 docstring"() {
+		given:
+			KeywordTestCase keywordTestCase = new KeywordTestCase()
+			keywordTestCase.setName("Letter test")
+			keywordTestCase.notifyAssociatedWithProject(project)
+
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("following letter is displayed"))
+			step1.setDocstring("\tDear Jack,\n" +
+				"I have arrived in London this morning. Everything went well!\n" +
+				"Looking forward to seeing you on Friday.\n" +
+				"\n\tYour friend, John.")
+
+			keywordTestCase.addStep(step1)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+			result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Letter test
+	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+
+	Given following letter is displayed "\${docstring_1}\""""
+	}
+
+	def "with 2 docstrings"() {
+		given:
+			KeywordTestCase keywordTestCase = new KeywordTestCase()
+			keywordTestCase.setName("Letter test")
+			keywordTestCase.notifyAssociatedWithProject(project)
+
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("following letter is displayed"))
+			step1.setDocstring("\tDear Jack,\n" +
+				"I have arrived in London this morning. Everything went well!\n" +
+				"Looking forward to seeing you on Friday.\n" +
+				"\n\tYour friend, John.")
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.AND, createBasicActionWord("following letter is displayed"))
+		step2.setDocstring("\tDear Jack,\n" +
+			"I have arrived in London this morning. Everything went well!\n" +
+			"Looking forward to seeing you on Tuesday.\n" +
+			"\n\tYour friend, John.")
+
+			keywordTestCase.addStep(step1)
+			keywordTestCase.addStep(step2)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+			result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Letter test
+	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+	\${docstring_2}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Tuesday.\\n\\n\\tYour friend, John.
+
+	Given following letter is displayed "\${docstring_1}\"
+	And following letter is displayed "\${docstring_2}\""""
+	}
+
+	def "with both datatable and docstring on 1 step"() {
+		given:
+			KeywordTestCase keywordTestCase = new KeywordTestCase()
+			keywordTestCase.setName("User table test")
+			keywordTestCase.notifyAssociatedWithProject(project)
+
+			KeywordTestStep step1 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("I am on user page"))
+			KeywordTestStep step2 = new KeywordTestStep(Keyword.THEN, createBasicActionWord("I can see the users"))
+			step2.setDatatable("| Henry | Dupond | henry.dupond@mail.com |\n" +
+				"| Louis | Dupont | louis.dupont@mail.com |\n" +
+				"| Charles | Martin | charles.martin@mail.com |")
+			step2.setDocstring("\tDear Mommy,\nI am fine, thank You!\n\tYour Son.")
+			keywordTestCase.addStep(step1)
+			keywordTestCase.addStep(step2)
+		when:
+			String result = robotScriptWriter.writeBddScript(keywordTestCase, null, true)
+		then:
+			result ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+User table test
+	\${row_1_1}=	Create List	Henry	Dupond	henry.dupond@mail.com
+	\${row_1_2}=	Create List	Louis	Dupont	louis.dupont@mail.com
+	\${row_1_3}=	Create List	Charles	Martin	charles.martin@mail.com
+	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
+
+	When I am on user page
+	Then I can see the users "\${datatable_1}\""""
+	}
+
 
 	/* ----- Test Step Script Generation ----- */
 
@@ -616,7 +710,7 @@ User table test
 				Keyword.GIVEN,
 				createBasicActionWord("Today is Monday"))
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 0)
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 0)
 		then:
 			result == "Given Today is Monday"
 
@@ -634,7 +728,7 @@ User table test
 			List<ActionWordParameterValue> paramValues = [value]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 0)
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 0)
 		then:
 			result == "When It is \"10 o'clock\""
 	}
@@ -655,7 +749,7 @@ User table test
 			List<ActionWordParameterValue> paramValues = [value2, value3]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 0)
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 0)
 		then:
 			result == "Given I am in \"Los Angeles\"\"United States\""
 	}
@@ -673,7 +767,7 @@ User table test
 			List<ActionWordParameterValue> paramValues = [value]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 0)
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 0)
 		then:
 			result == "When It is \"${number}\""
 		where:
@@ -703,7 +797,7 @@ User table test
 			List<ActionWordParameterValue> paramValues = [value2, value4, value6]
 			step.setParamValues(paramValues)
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 0)
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 0)
 		then:
 			result == "Then it is \"9\" o'clock in \"London\" with a \${weather} weather."
 	}
@@ -715,9 +809,21 @@ User table test
 			KeywordTestStep step = new KeywordTestStep(Keyword.THEN, actionWord)
 			step.setDatatable("| user1 | user1@mail.com |\n| user2 | user2@mail.com |")
 		when:
-			String result = robotScriptWriter.writeBddStepScript(step, 2)
+			String result = robotScriptWriter.writeBddStepScript(step, 2, 0)
 		then:
 			result == "Then the following users are listed \"\${datatable_2}\""
+	}
+
+	def "step script using a docstring"() {
+		given:
+			def fragment1 = new ActionWordText("the following letter is displayed")
+			ActionWord actionWord = new ActionWord([fragment1] as List)
+			KeywordTestStep step = new KeywordTestStep(Keyword.THEN, actionWord)
+			step.setDocstring("\tDear Santa,\n I want a lot of present this year.")
+		when:
+			String result = robotScriptWriter.writeBddStepScript(step, 0, 2)
+		then:
+			result == "Then the following letter is displayed \"\${docstring_2}\""
 	}
 
 

@@ -492,7 +492,7 @@ Daily test
 	Then I am working at \${time} in \${place}"""
 	}
 
-	@DataSet("KeywordTestCaseServiceIT.test-case-with-step-containing-datatable.xml")
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-datatable-docstring-comment.xml")
 	def "Should generate a Robot script with a test step containing a datatable"() {
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-1L)
@@ -516,6 +516,30 @@ User table test
 	\${datatable_1}=	Create List	\${row_1_1}	\${row_1_2}	\${row_1_3}
 
 	Given following users are listed "\${datatable_1}\""""
+	}
+
+	@DataSet("KeywordTestCaseServiceIT.test-case-with-datatable-docstring-comment.xml")
+	def "Should generate a Robot script with a test step containing a docstring"() {
+		given:
+			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-2L)
+			setupRobotProject(keywordTestCase)
+			String docString = "\tDear Jack,\n" +
+				"I have arrived in London this morning. Everything went well!\n" +
+				"Looking forward to seeing you on Friday.\n" +
+				"\n\tYour friend, John."
+			((KeywordTestStep) keywordTestCase.getSteps().get(0)).setDocstring(docString)
+		when:
+			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
+		then:
+			res ==
+"""*** Settings ***
+Resource	squash_resources.resource
+
+*** Test Cases ***
+Letter test
+	\${docstring_1}=	Set Variable	\\tDear Jack,\\nI have arrived in London this morning. Everything went well!\\nLooking forward to seeing you on Friday.\\n\\n\\tYour friend, John.
+
+	Given following letter is displayed "\${docstring_1}\""""
 	}
 
 	/* ----- File System Methods ----- */
