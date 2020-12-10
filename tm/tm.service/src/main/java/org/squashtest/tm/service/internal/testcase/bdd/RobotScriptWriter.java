@@ -306,14 +306,15 @@ public class RobotScriptWriter implements BddScriptWriter {
 				.append(DOUBLE_QUOTE_CHAR);
 		}
 		if (!isBlank(comment)) {
-			stepBuilder
-				.append(NEW_LINE_CHAR)
-				.append(TAB_CHAR)
-				.append('#')
-				.append(SPACE_CHAR)
-				.append(comment
-					.replaceAll("\n", "\\\\n")
-					.replaceAll("\t", "\\\\t"));
+			String[] commentLines = comment.split("\n");
+			for (String commentLine : commentLines) {
+				stepBuilder
+					.append(NEW_LINE_CHAR)
+					.append(TAB_CHAR)
+					.append('#')
+					.append(SPACE_CHAR)
+					.append(commentLine);
+			}
 		}
 		return  stepBuilder.toString();
 	}

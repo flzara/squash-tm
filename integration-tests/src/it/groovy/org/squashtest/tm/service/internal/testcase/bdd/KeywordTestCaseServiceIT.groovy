@@ -547,7 +547,7 @@ Letter test
 		given:
 			KeywordTestCase keywordTestCase = keywordTestCaseFinder.findById(-3L)
 			setupRobotProject(keywordTestCase)
-			String comment = "the action can be anything here"
+			String comment = "the action can be anything here\nANYTHING !"
 			((KeywordTestStep) keywordTestCase.getSteps().get(0)).setComment(comment)
 		when:
 			def res = keywordTestCaseService.writeScriptFromTestCase(keywordTestCase, true)
@@ -559,7 +559,8 @@ Resource	squash_resources.resource
 *** Test Cases ***
 Comment test
 	Given I do something
-	# the action can be anything here"""
+	# the action can be anything here
+	# ANYTHING !"""
 	}
 
 

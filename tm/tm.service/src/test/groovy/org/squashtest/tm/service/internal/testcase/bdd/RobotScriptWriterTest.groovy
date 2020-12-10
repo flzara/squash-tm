@@ -708,7 +708,7 @@ User table test
 			keywordTestCase.notifyAssociatedWithProject(project)
 
 			KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("I do something"))
-			step1.setComment("the action can be anything here");
+			step1.setComment("the action can be anything here\nANYTHING !");
 
 			keywordTestCase.addStep(step1)
 		when:
@@ -721,7 +721,8 @@ Resource	squash_resources.resource
 *** Test Cases ***
 Comment test
 	Given I do something
-	# the action can be anything here"""
+	# the action can be anything here
+	# ANYTHING !"""
 	}
 
 
