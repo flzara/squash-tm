@@ -32,11 +32,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest;
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService;
 import org.squashtest.tm.service.tf.AutomationRequestFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -82,6 +84,9 @@ public class AutomationWorkspaceController {
 	@Inject
 	private ConfigurationService configurationService;
 
+	@Inject
+	private AutomatedTestTechnologyFinderService automatedTestTechnologyFinderService;
+
 	private final DatatableMapper<String> automationRequestMapper = new NameBasedMapper()
 		.map(DataTableModelConstants.PROJECT_NAME_KEY, "testCase.project.name")
 		.map("reference", "testCase.reference")
@@ -101,7 +106,8 @@ public class AutomationWorkspaceController {
 	    .map("uuid", "testCase.uuid")
 		.map("listScriptConflict", "testCase.automationRequest.conflictAssociation")
 		.map("scm-url", "testCase.sourceCodeRepositoryUrl")
-		.map("automated-test-reference", "testCase.automatedTestReference");
+		.map("automated-test-reference", "testCase.automatedTestReference")
+		.map("automated-test-technology", "testCase.automatedTestTechnology");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale) {
@@ -136,6 +142,9 @@ public class AutomationWorkspaceController {
 		model.addAttribute("autoReqStatusesTraitment", autoReqStatusesTraitment);
 
 		model.addAttribute("autoReqStatuses", automReqStatuses);
+
+		List<AutomatedTestTechnology> automatedTestTechnologies = automatedTestTechnologyFinderService.getAllAvailableAutomatedTestTechnology();
+		model.addAttribute("automatedTestTechnologies", automatedTestTechnologies);
 
 		// License information
 		String userLicenseInformation = configurationService.findConfiguration(ConfigurationService.Properties.ACTIVATED_USER_EXCESS);

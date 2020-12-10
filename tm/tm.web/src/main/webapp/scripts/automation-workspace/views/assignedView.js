@@ -90,18 +90,23 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [8],
                         "mDataProp": "status"
                     }, {
+												"bSortable": true,
+												"aTargets": [9],
+												"mDataProp": "automated-test-technology",
+												"sClass": "automated-test-technology"
+											}, {
 						"bSortable": true,
-						"aTargets": [9],
+						"aTargets": [10],
 						"mDataProp": "scm-url",
 						"sClass": "scm-url"
 					},{
 						"bSortable": true,
-						"aTargets": [10],
+						"aTargets": [11],
 						"mDataProp": "automated-test-reference",
 						"sClass": "automated-test-reference"
 					},{
                         "bSortable": true,
-                        "aTargets": [11],
+                        "aTargets": [12],
                         "mDataProp": "script",
                         "sClass": "assigned-script",
 						"mRender": function (data, type, row) {
@@ -118,19 +123,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						}
 					}, {
 						"bSortable": false,
-						"aTargets": [12],
+						"aTargets": [13],
 						"mDataProp": "uuid"
 					}, {
                         "bSortable": true,
-                        "aTargets": [13],
+                        "aTargets": [14],
                         "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [14],
+                        "aTargets": [15],
                         "mDataProp": "assigned-on"
                     }, {
                         "bSortable": false,
-                        "aTargets": [15],
+                        "aTargets": [16],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -140,10 +145,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "writableAutom",
                         "bVisible": false,
-                        "aTargets": [16]
+                        "aTargets": [17]
                     }, {
                         "bSortable": false,
-                        "aTargets": [17],
+                        "aTargets": [18],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -168,11 +173,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [18]
+                        "aTargets": [19]
                     }, {
 						"mDataProp": "listScriptConflict",
 						"bVisible": false,
-						"aTargets": [19]
+						"aTargets": [20]
 					}],
                     "bFilter": true,
 
@@ -579,7 +584,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 							var tcId = datas[idx]["entity-id"];
 							var scmUrl = datas[idx]["scm-url"];
 							var automatedTestReference = datas[idx]["automated-test-reference"];
-							if(scmUrl === "" || scmUrl === null || automatedTestReference === "" || automatedTestReference === null){
+							var automatedTestTechnology = datas[idx]["automated-test-technology"];
+							if(scmUrl === "" || scmUrl === null || automatedTestReference === "" || automatedTestReference === null
+								|| automatedTestTechnology === "" || automatedTestTechnology === null){
 								ids.push(tcId);
 							}
 						});
@@ -708,24 +715,29 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 					_initSquashTF2Fields : function ($row, data) {
 						var scmUrlCell = $row.find('.scm-url');
 						var automatedTestReferenceCell = $row.find('.automated-test-reference');
-						var isGherkinOrBDD = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase()
-							|| data['format'].toLowerCase() === translator.get('test-case.format.keyword').toLowerCase();
+						var automatedTestTechnologyCell = $row.find('.automated-test-technology');
 
-						if (data['writable'] && !isGherkinOrBDD) {
+						if (data['writableAutom']) {
 
 							this._initScmUrlCell(scmUrlCell, data);
 
 							this._initAutomatedTestReferenceCell(automatedTestReferenceCell, data);
 
+							this._initAutomatedTestTechnologyCell(automatedTestTechnologyCell, data);
+
 						} else {
 							scmUrlCell.css({ 'color': 'gray', 'font-style': 'italic' });
 							automatedTestReferenceCell.css({ 'color': 'gray', 'font-style': 'italic' });
+							automatedTestTechnologyCell.css({ 'color': 'gray', 'font-style': 'italic' });
 
 							if (scmUrlCell.text() === '' || scmUrlCell.text() === null) {
 								scmUrlCell.text('-');
 							}
 							if (automatedTestReferenceCell.text() === '' || automatedTestReferenceCell.text() === null) {
 								automatedTestReferenceCell.text('-');
+							}
+							if (automatedTestTechnologyCell.text() === '' || automatedTestReferenceCell.text() === null) {
+								automatedTestTechnologyCell.text('-');
 							}
 						}
 					},
@@ -770,6 +782,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 						automatedTestReferenceCellEditable.onblur = 'cancel';
 
 						automatedTestReferenceCell.editable(url, automatedTestReferenceCellEditable);
+					},
+
+					_initAutomatedTestTechnologyCell : function (automatedTestTechnologyCell, data) {
+						var entityId = data["entity-id"];
+						var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+
+						var automatedTestTechnologyCellEditable = confman.getJeditableSelect();
+						automatedTestTechnologyCell.attr("id", "test-case-automated-test-technology");
+						automatedTestTechnologyCellEditable.params = {
+							"id": "test-case-automated-test-technology"
+						};
+						automatedTestTechnologyCellEditable.data = confman.toJeditableSelectFormat(squashtm.app.automatedTestTechnologies);
+						automatedTestTechnologyCellEditable.onblur = 'cancel';
+
+						automatedTestTechnologyCell.editable(url, automatedTestTechnologyCellEditable);
 					}
         });
 
