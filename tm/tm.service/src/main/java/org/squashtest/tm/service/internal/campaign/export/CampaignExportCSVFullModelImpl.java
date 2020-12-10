@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.squashtest.tm.jooq.domain.Tables.ACTION_TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.CALL_TEST_STEP;
@@ -849,7 +850,10 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				// find a suitable execution step
 				if (itp.getLatestExecution() != null) {
 					exec = itp.getLatestExecution();
-					List<ExecutionStepDto> steps = new ArrayList<>(exec.getSteps().values());
+					List<ExecutionStepDto> steps = exec.getSteps().values()
+						.stream()
+						.sorted(Comparator.comparingInt(ExecutionStepDto::getStepOrder))
+						.collect(Collectors.toList());
 
 					int stepsSize = steps.size();
 					stepIndex++;
