@@ -1483,7 +1483,8 @@
       insert into AUTOMATED_TEST_TECHNOLOGY(NAME, ACTION_PROVIDER_KEY)
       values ('Robot Framework', 'robotframework/execute@v1'),
       ('Cypress', 'cypress/execute@v1'),
-      ('JUnit', 'junit/execute@v1')
+      ('JUnit', 'junit/execute@v1'),
+      ('Cucumber', 'cucumber/execute@v1')
     </sql>
 
     <addColumn tableName="TEST_CASE">
