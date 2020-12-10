@@ -30,6 +30,9 @@
     <include file="tm.data-1.22.0-SQUASH-167.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-421.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-794.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-1975.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-2032.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-2106.xml" relativeToChangelogFile="true" />
 
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="../../../main/liquibase/tm/tm.changelog-1.22.0.xml"
@@ -268,6 +271,50 @@
       </sqlCheck>
     </preConditions>
     <comment>Check that no Cuf value options/Cuf value is left when its associated requirement/test case/campaign folder is deleted</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server" author="aguilhem">
+    <preConditions>
+      <sqlCheck expectedResult="31">
+        SELECT SERVER_ID from THIRD_PARTY_SERVER where NAME = 'server1'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT max(SERVER_ID) from TEST_AUTOMATION_SERVER
+      </sqlCheck>
+
+      <sqlCheck expectedResult="31">
+        SELECT TA_SERVER_ID from PROJECT where PROJECT_ID = '3'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '2'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '3'
+      </sqlCheck>
+
+    </preConditions>
+    <comment>Check that test automation server are now third party server</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2032-fix-null-description-in-requirements" author="jlor">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from RESOURCE where DESCRIPTION is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check requirement descriptions are not null</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment" author="aguilhem">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where ATTACHMENT_LIST_ID is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check automated suites have attachment list</comment>
   </changeSet>
 
 </databaseChangeLog>

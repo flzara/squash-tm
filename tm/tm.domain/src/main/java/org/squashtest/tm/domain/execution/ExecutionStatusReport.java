@@ -40,6 +40,8 @@ public class ExecutionStatusReport {
 		for (ExecutionStatus status : ExecutionStep.LEGAL_EXEC_STATUS) {
 			statusCount.put(status, 0);
 		}
+		//SQUASH-1722
+		statusCount.put(ExecutionStatus.RUNNING, 0);
 	}
 
 	int getTotal() {

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.hibernate.annotations.Type;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
@@ -35,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -67,6 +69,21 @@ public class KeywordTestStep extends TestStep {
 	@OneToMany(mappedBy = "keywordTestStep", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ActionWordParameterValue> paramValues = new ArrayList<>();
 
+	@Lob
+	@Column(name = "DATATABLE")
+	@Type(type = "org.hibernate.type.TextType")
+	private String datatable = "";
+
+	@Lob
+	@Column(name = "DOCSTRING")
+	@Type(type = "org.hibernate.type.TextType")
+	private String docstring = "";
+
+	@Lob
+	@Column(name = "COMMENT")
+	@Type(type = "org.hibernate.type.TextType")
+	private String comment = "";
+
 	@Transient
 	private boolean hasTCParam = false;
 
@@ -88,6 +105,7 @@ public class KeywordTestStep extends TestStep {
 	public TestStep createCopy() {
 		KeywordTestStep copied = new KeywordTestStep(this.getKeyword(), this.getActionWord());
 		copyTestStepParamValues(copied);
+		copyTestStepDetails(copied);
 		return copied;
 	}
 
@@ -98,6 +116,10 @@ public class KeywordTestStep extends TestStep {
 			newValue.setKeywordTestStep(copied);
 			copied.addParamValues(newValue);
 		}
+	}
+
+	private void copyTestStepDetails(KeywordTestStep copied) {
+		copied.setDatatable(this.getDatatable());
 	}
 
 	@Override
@@ -215,4 +237,27 @@ public class KeywordTestStep extends TestStep {
 		this.paramValues.add(value);
 	}
 
+	public String getDatatable() {
+		return datatable;
+	}
+
+	public void setDatatable(String datatable) {
+		this.datatable = datatable;
+	}
+
+	public String getDocstring() {
+		return docstring;
+	}
+
+	public void setDocstring(String docstring) {
+		this.docstring = docstring;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 }

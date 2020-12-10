@@ -51,7 +51,6 @@ import java.util.Locale;
 @RequestMapping("/iterations/{iterationId}/automated-suite")
 public class IterationAutomatedSuiteManagerController {
 
-	private static final String ITERATION_ID = "iterationId";
 	private static final String AUTOMATED_SUITE_ID = "automatedSuiteId";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationAutomatedSuiteManagerController.class);

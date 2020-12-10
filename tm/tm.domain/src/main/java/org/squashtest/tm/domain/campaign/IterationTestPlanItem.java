@@ -307,14 +307,12 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		execution.setAutomatedExecutionExtender(extender);
 
 		return execution;
-
 	}
 
 	private void checkExecutable() throws TestPlanItemNotExecutableException {
 		if (!isExecutableThroughIteration()) {
 			throw new TestPlanItemNotExecutableException("Test case referenced by this item was deleted");
 		}
-
 	}
 
 	public boolean isAutomated() {

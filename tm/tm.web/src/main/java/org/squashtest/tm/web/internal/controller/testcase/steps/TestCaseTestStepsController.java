@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bdd.Keyword;
@@ -55,6 +57,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.internal.dto.CustomFieldJsonConverter;
 import org.squashtest.tm.service.internal.dto.CustomFieldModel;
 import org.squashtest.tm.service.internal.repository.KeywordTestStepDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseFinder;
@@ -86,11 +89,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 @RequestMapping("/test-cases/{testCaseId}/steps")
 public class TestCaseTestStepsController {
 
-	/**
-	 *
-	 */
 	private static final String TEST_CASE = "testCase";
-
 	private static final String TEST_CASE_ = "test case ";
 
 	@Inject
@@ -116,6 +115,9 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
@@ -188,14 +190,12 @@ public class TestCaseTestStepsController {
 	@RequestMapping(value = "/keyword-test-step-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getKeywordTestStepTableModel (@PathVariable long testCaseId, DataTableDrawParameters params) {
-		TestCase testCase = testCaseModificationService.findById(testCaseId);
-
 		Paging filter = new DataTablePaging(params);
 
 		PagedCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 			testCaseId, filter);
 		// generate the model
-		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder(permissionService);
 		return builder.buildDataModel(holder, params.getsEcho());
 
 	}
@@ -238,7 +238,7 @@ public class TestCaseTestStepsController {
 		model.addAttribute("projectId", keywordTestCase.getProject().getId());
 
 		//create keyword test step table model
-		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder();
+		KeywordTestStepTableModelBuilder builder = new KeywordTestStepTableModelBuilder(permissionService);
 		Collection<Object> stepData = builder.buildRawModel(steps, 1);
 		model.addAttribute("isAutocompleteActive", nonNull(actionWordService));
 		model.addAttribute("stepData", stepData);
@@ -266,6 +266,21 @@ public class TestCaseTestStepsController {
 		} else {
 			step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord);
 		}
+		return step.getId();
+	}
+
+	@PostMapping(value = "/add-keyword-test-step-with-action-word-id", consumes = "application/json")
+	@ResponseBody
+	public Long addKeywordTestStepWithActionWordId(@RequestBody KeywordTestStepModel keywordTestStepDto, @PathVariable long testCaseId) throws BindException {
+		validateDto(keywordTestStepDto);
+
+		String keyword = keywordTestStepDto.getKeyword();
+		String actionWord = keywordTestStepDto.getActionWord();
+		int index = keywordTestStepDto.getIndex();
+		long actionWordId = keywordTestStepDto.getActionWordId();
+
+		KeywordTestStep step = testCaseModificationService.addKeywordTestStep(testCaseId, keyword, actionWord, actionWordId, index);
+
 		return step.getId();
 	}
 
@@ -370,18 +385,42 @@ public class TestCaseTestStepsController {
 		return actionWord;
 	}
 
-	@RequestMapping(value = "/{stepId}/action-word-html", method = RequestMethod.GET)
 	@ResponseBody
-	public String getActionWordHtml(@PathVariable long stepId) {
-		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return new KeywordTestStepTableModelBuilder().createActionWordWithParamValues(keywordTestStep);
+	@RequestMapping(value = "/{stepId}/duplicated-action", method = RequestMethod.GET, params = {"projectId", "inputActionWord"})
+	public Map<String, Long> findAllDuplicatedActionWithProject(@PathVariable long stepId, @RequestParam long projectId, @RequestParam String inputActionWord) {
+		return actionWordService.findAllDuplicatedActionWithProjectWithChangingToken(projectId, stepId, inputActionWord);
 	}
 
-	@RequestMapping(value = "/{stepId}/action-word-unstyled", method = RequestMethod.GET)
+	@RequestMapping(value = "/{stepId}/action-word-with-id")
 	@ResponseBody
-	public String getActionWordUnstyled(@PathVariable long stepId) {
-		KeywordTestStep keywordTestStep = keywordTestStepDao.findById(stepId);
-		return keywordTestStep.writeTestStepActionWordScript(true);
+	public String changeStepActionWordWithId(@PathVariable long stepId, @RequestParam("actionWord") String actionWord, @RequestParam("actionWordId") long actionWordId) {
+		testCaseModificationService.updateKeywordTestStep(stepId, actionWord, actionWordId);
+		LOGGER.trace("TestCaseModificationController : updated action word for step {} with action word id {}", stepId, actionWordId);
+		return actionWord;
+	}
+
+	@RequestMapping(value = "/{stepId}/datatable", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepDatatable(@PathVariable long stepId, @RequestParam(VALUE) String datatable) {
+		testCaseModificationService.updateKeywordTestStepDatatable(stepId, datatable);
+		LOGGER.trace("TestCaseModificationController : updated datatable for step {}", stepId);
+		return HtmlUtils.htmlEscape(datatable);
+	}
+
+	@RequestMapping(value = "/{stepId}/docstring", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepDocstring(@PathVariable long stepId, @RequestParam(VALUE) String docstring) {
+		testCaseModificationService.updateKeywordTestStepDocstring(stepId, docstring);
+		LOGGER.trace("TestCaseModificationController : updated docstring for step {}", stepId);
+		return HtmlUtils.htmlEscape(docstring);
+	}
+
+	@RequestMapping(value = "/{stepId}/comment", method = RequestMethod.POST, params = {VALUE})
+	@ResponseBody
+	public String changeKeywordStepComment(@PathVariable long stepId, @RequestParam(VALUE) String comment) {
+		testCaseModificationService.updateKeywordTestStepComment(stepId, comment);
+		LOGGER.trace("TestCaseModificationController : updated comment for step {}", stepId);
+		return HtmlUtils.htmlEscape(comment);
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

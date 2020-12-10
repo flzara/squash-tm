@@ -384,7 +384,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 		// or null if none defined for that protocol
 		viewMap : {
 			'BASIC_AUTH': null,
-			'OAUTH_1A': null
+			'OAUTH_1A': null,
+			'TOKEN_AUTH': null
 		}
 
 	});
@@ -408,7 +409,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			// backbone models aren't defined yet
 			authConfMap : {
 				'BASIC_AUTH': null,
-				'OAUTH_1A' : null
+				'OAUTH_1A' : null,
+				'TOKEN_AUTH': null
 			},
 			policy : null,		// selected policy
 
@@ -417,7 +419,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			// backbone models aren't defined yet
 			credentialsMap : {
 				'BASIC_AUTH' : null,
-				'OAUTH_1A': null
+				'OAUTH_1A': null,
+				'TOKEN_AUTH': null
 			}
 		},
 
@@ -429,11 +432,13 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 					requestTokenUrl: remoteUrl,
 					accessTokenUrl: remoteUrl,
 					userAuthorizationUrl: remoteUrl
-				})
+				}),
+				'TOKEN_AUTH': new Backbone.Model()
 			});
 			this.set('credentialsMap', {
 				'BASIC_AUTH' : new BasicAuthCredsModel(),
-				'OAUTH_1A': new OAuthCredsModel()
+				'OAUTH_1A': new OAuthCredsModel(),
+				'TOKEN_AUTH': new TokenAuthCredsModel()
 			});
 
 		},
@@ -539,7 +544,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		viewMap: {
 			'BASIC_AUTH': null,
-			'OAUTH_1A': OAuthConfView
+			'OAUTH_1A': OAuthConfView,
+			'TOKEN_AUTH': null
 		},
 
 
@@ -611,6 +617,12 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 	});
 
+	var TokenAuthCredentialsView = BaseTemplatedView.extend({
+		el: '#srv-auth-creds-form',
+
+		template: loadTemplate("#token-creds-template")
+	});
+
 
 	// -------------- credentials models --------------
 
@@ -627,6 +639,12 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 			tokenSecret: ""
 		}
 	});
+
+			var TokenAuthCredsModel = BaseModel.extend({
+				defaults: {
+					token: ""
+				}
+			});
 
 
 	// ------- main policy panel view ----------------
@@ -646,7 +664,8 @@ define(['jquery', 'backbone', 'underscore', 'handlebars', 'app/ws/squashtm.notif
 
 		viewMap: {
 			'BASIC_AUTH': BasicAuthCredentialsView,
-			'OAUTH_1A': OAuthCredentialsView
+			'OAUTH_1A': OAuthCredentialsView,
+			'TOKEN_AUTH': TokenAuthCredentialsView
 		},
 
 

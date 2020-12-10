@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 
@@ -40,7 +41,7 @@ public class TestAutomationConnectorRegistry {
 
 	@Autowired(required = false)
 	private Collection<TestAutomationConnector> connectors = Collections.emptyList();
-	
+
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
@@ -53,7 +54,7 @@ public class TestAutomationConnectorRegistry {
 
 	public TestAutomationConnector getConnectorForKind(String kind) {
 		TestAutomationConnector connector = availableConnectors.get(kind);
-		
+
 		if (connector == null) {
 			UnknownConnectorKind ex = new UnknownConnectorKind("TestAutomationConnector : unknown kind '" + kind + "'");
 			ex.addArg(kind);
@@ -62,23 +63,39 @@ public class TestAutomationConnectorRegistry {
 		return connector;
 	}
 
+	/**
+	 * Create a TestAutomationConnector suitable for the given TestAutomationServer. Since only a TestAutomationServer is given, the connector is
+	 * restricted to features related to the Server (i.e. supported AuthenticationProtocols).
+	 * @param taServer The TestAutomationServer to interact with.
+	 * @return The suitable TestAutomationConnector for the given TestAutomationServer.
+	 */
+	public TestAutomationConnector createConnector(TestAutomationServer taServer) {
+		String kind = taServer.getKind();
+		LOGGER.debug("Creating connector for Test Autoamtion Server of kind '{}'.", kind);
+		TestAutomationConnector testAutomationConnector = availableConnectors.get(kind);
+		if(testAutomationConnector == null) {
+			throw new IllegalArgumentException("No registered TestAutomationConnector is of type '" + kind + "'.");
+		}
+		return testAutomationConnector;
+	}
+
 
 	/**
 	 * Registers a new kind of connector connector.
-	 * 
+	 *
 	 * @param provider
 	 */
 	@PostConstruct
 	public void registerConnector() {
 		for (TestAutomationConnector connector : connectors) {
 			String kind = connector.getConnectorKind();
-			
+
 			if (kind == null) {
 				throw new IllegalArgumentException("TestAutomationConnector : kind is undefined");
 			}
-			
+
 			LOGGER.info("Registering connector for test automation platforms of kind '{}'", kind);
-			
+
 			availableConnectors.put(kind, connector);
 		}
 	}

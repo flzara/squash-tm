@@ -60,7 +60,9 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
+import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
@@ -70,6 +72,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuiteCreationSpecification;
 import org.squashtest.tm.service.testautomation.model.AutomatedSuitePreview;
@@ -101,6 +104,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_ITERATION_OR_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.EXECUTE_TS_OR_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
@@ -114,8 +118,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000; // timeout as milliseconds
+	public static final int BIND_VARIABLES_LIMIT = 30000;
 
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
+
 
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
@@ -131,6 +137,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private ExecutionDao executionDao;
+
+	@Inject
+	private AutomatedExecutionExtenderDao automatedExecutionExtenderDao;
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinder;
@@ -159,9 +168,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	@Inject
 	private ProjectDao projectDao;
 
+	@Inject
+	private AutomatedTestDao autoTestDao;
+
 	@PersistenceContext
 	private EntityManager entityManager;
-
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -448,6 +459,36 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		autoSuiteDao.delete(suite);
 	}
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	private void deleteAutomatedSuites(List<String> automatedSuiteIds) {
+		List<Long> executionIds = executionDao.findAllIdsByAutomatedSuiteIds(automatedSuiteIds);
+		if (executionIds.isEmpty()) {
+			return;
+		}
+		deletionHandler.bulkDeleteExecutions(executionIds);
+		autoSuiteDao.deleteAllByIds(automatedSuiteIds);
+		autoTestDao.pruneOrphans();
+	}
+
+	@Override
+	public AutomationDeletionCount countOldAutomatedSuitesAndExecutions() {
+		return autoSuiteDao.countOldAutomatedSuitesAndExecutions();
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void cleanOldSuites() {
+		List<String> oldAutomatedSuiteIds = autoSuiteDao.getOldAutomatedSuiteIds();
+		if (oldAutomatedSuiteIds.isEmpty()) {
+			return;
+		}
+		List<List<String>> automatedSuiteIdPartitions = Lists.partition(oldAutomatedSuiteIds, BIND_VARIABLES_LIMIT);
+		automatedSuiteIdPartitions.forEach(automatedSuiteIdPartition -> {
+			deleteAutomatedSuites(automatedSuiteIdPartition);
+			entityManager.flush();
+			entityManager.clear();
+		});
+	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)

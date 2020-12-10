@@ -859,7 +859,7 @@ DenormalizedFieldHolder, BoundEntity {
 		} else if (report.allOf(ExecutionStatus.SUCCESS, ExecutionStatus.UNTESTABLE, ExecutionStatus.SETTLED)) {
 			newStatus = ExecutionStatus.SUCCESS;
 
-		} else if (report.anyOf(ExecutionStatus.SUCCESS, ExecutionStatus.SETTLED)) {
+		} else if (report.anyOf(ExecutionStatus.SUCCESS, ExecutionStatus.SETTLED, ExecutionStatus.RUNNING)) {
 			newStatus = ExecutionStatus.RUNNING;
 
 		}

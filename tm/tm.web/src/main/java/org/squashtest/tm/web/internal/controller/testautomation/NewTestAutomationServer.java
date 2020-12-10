@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.WrongUrlException;
 
@@ -35,12 +36,11 @@ public class NewTestAutomationServer extends TestAutomationServer {
 	private String baseUrl;
 
 	public TestAutomationServer createTransientEntity() {
-		TestAutomationServer res = new TestAutomationServer();
-		res.setBaseURL(getBaseURLAsURL());
+		TestAutomationServer res = new TestAutomationServer(getKind());
+		checkUrlFormat();
+		res.setUrl(baseUrl);
 		res.setName(getName());
 		res.setDescription(getDescription());
-		res.setLogin(getLogin());
-		res.setPassword(getPassword());
 		res.setManualSlaveSelection(isManualSlaveSelection());
 		return res;
 	}
@@ -53,9 +53,9 @@ public class NewTestAutomationServer extends TestAutomationServer {
 		return baseUrl;
 	}
 
-	private URL getBaseURLAsURL() {
+	private void checkUrlFormat() {
 		try {
-			return new URL(baseUrl);
+			new URL(baseUrl);
 		} catch (MalformedURLException mue) {
 			throw new WrongUrlException("baseUrl", mue);
 		}

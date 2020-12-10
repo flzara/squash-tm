@@ -84,6 +84,94 @@ Feature: Disconnection test
 		Then I am dîsconnect&d"""
 	}
 
+	def "Should generate a Gherkin script with test steps containing details from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("User list test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("the following tabs are displayed"))
+		step1.setDatatable(
+"""| tabName |
+| users |
+| teams |"""
+		)
+		step1.setDocstring(
+"""Takes an user.
+Takes a team."""
+		)
+		step1.setComment("")
+
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("the following users are listed"))
+		step2.setDatatable(
+"""| username | mail |
+| martin4 | martin4@gmail.com |
+| damien2 | damien2@gmail.com |"""
+		)
+		step2.setDocstring(
+"""Takes an username.
+Takes a mail."""
+		)
+		step2.setComment(
+"""usernames are in uppercase.
+Mails are all at henix.fr"""
+		)
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		when:
+		4 * messageSource.getMessage(*_) >>> ["Then", "Then", "Scenario: ", "Feature: "]
+		String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+		then:
+		result ==
+			"""# language: en
+Feature: User list test
+
+	Scenario: User list test
+		Then the following tabs are displayed
+			| tabName |
+			| users |
+			| teams |
+			\"\"\"
+			Takes an user.
+			Takes a team.
+			\"\"\"
+		Then the following users are listed
+			| username | mail |
+			| martin4 | martin4@gmail.com |
+			| damien2 | damien2@gmail.com |
+			\"\"\"
+			Takes an username.
+			Takes a mail.
+			\"\"\"
+			#usernames are in uppercase.
+			#Mails are all at henix.fr"""
+	}
+
+	def "Should generate a Gherkin script with test steps containing null and empty datatables from a KeywordTestCase"() {
+		given:
+		KeywordTestCase keywordTestCase = new KeywordTestCase()
+		keywordTestCase.setName("User list test")
+		keywordTestCase.notifyAssociatedWithProject(project)
+
+		KeywordTestStep step1 = new KeywordTestStep(Keyword.GIVEN, createBasicActionWord("the following tabs are displayed"))
+		step1.setDatatable("")
+		KeywordTestStep step2 = new KeywordTestStep(Keyword.WHEN, createBasicActionWord("the following users are listed"))
+		step2.setDatatable(null)
+		keywordTestCase.addStep(step1)
+		keywordTestCase.addStep(step2)
+		when:
+		4 * messageSource.getMessage(*_) >>> ["Then", "Then", "Scenario: ", "Feature: "]
+		String result = cucumberScriptWriter.writeBddScript(keywordTestCase, messageSource, true)
+		then:
+		result ==
+			"""# language: en
+Feature: User list test
+
+	Scenario: User list test
+		Then the following tabs are displayed
+		Then the following users are listed"""
+	}
+
 	def "Should generate a Gherkin script with test steps containing parameter value as free text from a KeywordTestCase"() {
 		given:
 			KeywordTestCase keywordTestCase = new KeywordTestCase()

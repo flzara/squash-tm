@@ -408,7 +408,9 @@ th.width-tenperc, td.width-tenperc {
 	background-repeat : no-repeat;
 	display : inline;
 }
-
+.icon-action-word{
+	background-image: url(../images/Icon_ActionWord.png); 	/** sprite-ref: sprites-icons; */
+}
 .icon-test-case{
 	background-image : url(../images/Icon_Tree_TestCase.png);	/** sprite-ref: sprites-icons; */
 }

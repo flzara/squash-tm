@@ -95,6 +95,14 @@ public class ActionWordParameter extends ActionWordFragment {
 		}
 	}
 
+	@Override
+	public ActionWordFragment createCopy() {
+		ActionWordParameter copy = new ActionWordParameter();
+		copy.setName(this.getName());
+		copy.setDefaultValue(this.getDefaultValue());
+		return copy;
+	}
+
 	public String getName() {
 		return name;
 	}

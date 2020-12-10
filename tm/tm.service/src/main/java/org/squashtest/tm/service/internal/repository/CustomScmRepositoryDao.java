@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,4 +35,11 @@ public interface CustomScmRepositoryDao {
 	 * @return A Map of Test Case Sets mapped by ScmRepository
 	 */
 	Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds);
+
+
+	/**
+	 * Find URLs of the repositories declared in the application.
+	 * @return the list of scm repositories' URL declared in the application.
+	 */
+	List<String> findDeclaredScmRepositoriesUrl();
 }

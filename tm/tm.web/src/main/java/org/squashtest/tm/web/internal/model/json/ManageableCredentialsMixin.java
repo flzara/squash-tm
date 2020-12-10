@@ -25,12 +25,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import org.squashtest.tm.service.internal.servers.ManageableBasicAuthCredentials;
+import org.squashtest.tm.service.internal.servers.ManageableTokenAuthCredentials;
 import org.squashtest.tm.service.internal.servers.UserOAuth1aToken;
 
 @JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, use=Id.NAME, property="type")
 @JsonSubTypes({
 	@Type(name="BASIC_AUTH", value=ManageableBasicAuthCredentials.class),
-	@Type(name="OAUTH_1A", value=UserOAuth1aToken.class)
+	@Type(name="OAUTH_1A", value=UserOAuth1aToken.class),
+	@Type(name = "TOKEN_AUTH", value = ManageableTokenAuthCredentials.class)
 })
 public interface ManageableCredentialsMixin {
 

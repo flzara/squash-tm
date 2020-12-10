@@ -26,9 +26,12 @@
 
 	<!-- test automation servers  -->
 
-	<TEST_AUTOMATION_SERVER NAME="Roberto-1" SERVER_ID="-1" BASE_URL="http://www.roberto.com" LOGIN="roberto" PASSWORD="passroberto" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
-	<TEST_AUTOMATION_SERVER NAME="Mike-1"    SERVER_ID="-2" BASE_URL="http://www.mike.com" LOGIN="mike" PASSWORD="passmike" KIND="something-else" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
-	<TEST_AUTOMATION_SERVER NAME="Roberto-2" SERVER_ID="-3" BASE_URL="http://www.roberto.com" LOGIN="roberto_user" PASSWORD="passroberto_user" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-1" NAME="Roberto-1" URL="http://www.roberto.com"/>
+	<TEST_AUTOMATION_SERVER SERVER_ID="-1" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-2" NAME="Mike-1" URL="http://www.mike.com"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-2" KIND="something-else" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
+  <THIRD_PARTY_SERVER SERVER_ID="-3" NAME="Roberto-2" URL="http://www.roberto.com"/>
+  <TEST_AUTOMATION_SERVER SERVER_ID="-3" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2014-05-15"/>
 
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>

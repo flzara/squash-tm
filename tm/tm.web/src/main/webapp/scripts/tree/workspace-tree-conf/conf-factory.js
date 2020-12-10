@@ -36,8 +36,20 @@
  * }
  *
  */
-define(["jquery", "./common-conf", "./w-testcase-conf", "./w-requirement-conf", "./w-campaign-conf", "./w-customreport-conf"],
-	function ($, genCommon, genTC, genReq, genCamp, genCustomReport) {
+define(["jquery",
+		"./common-conf",
+		"./w-testcase-conf",
+		"./w-requirement-conf",
+		"./w-campaign-conf",
+		"./w-customreport-conf",
+		'./w-actionword-conf'],
+	function ($,
+						genCommon,
+						genTC,
+						genReq,
+						genCamp,
+						genCustomReport,
+						genActionWord) {
 		"use strict";
 
 		return {
@@ -57,6 +69,9 @@ define(["jquery", "./common-conf", "./w-testcase-conf", "./w-requirement-conf", 
 						break;
 					case 'custom-report'    :
 						specificConf = genCustomReport.generate(settings);
+						break;
+					case 'action-word' :
+						specificConf = genActionWord.generate(settings);
 						break;
 				}
 

@@ -33,15 +33,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.service.internal.servers.ManageableTokenAuthCredentials;
+import org.squashtest.tm.service.servers.ManageableCredentials;
+import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.service.thirdpartyserver.ThirdPartyServerCredentialsService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 // XSS OK
 @Controller
@@ -52,6 +60,10 @@ public class TestAutomationServerController {
 
 	@Inject
 	private TestAutomationServerManagerService service;
+
+	@Inject
+	private ThirdPartyServerCredentialsService credentialsService;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
 	@RequestMapping(value = "/{serverId}/name", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
@@ -84,27 +96,52 @@ public class TestAutomationServerController {
 		return newURL;
 	}
 
-	@RequestMapping(value = "/{serverId}/login", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
+//	@RequestMapping(value = "/{serverId}/login", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
+//	@ResponseBody
+//	public String changeLogin(@PathVariable(SERVER_ID) long serverId,
+//							  @RequestParam(JEditablePostParams.VALUE) String newLogin) {
+//		if (LOGGER.isDebugEnabled()) {
+//			LOGGER.debug("Change login for test automation server of id #{}", serverId);
+//		}
+//		service.changeLogin(serverId, newLogin);
+//		return newLogin;
+//	}
+//
+//	@RequestMapping(value = "/{serverId}/password", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
+//	@ResponseBody
+//	public String changePassword(@PathVariable(SERVER_ID) long serverId,
+//								 @RequestParam(JEditablePostParams.VALUE) String newPassword) {
+//		if (LOGGER.isDebugEnabled()) {
+//			LOGGER.debug("Change password for test automation server of id #{}", serverId);
+//		}
+//		service.changePassword(serverId, newPassword);
+//		return newPassword;
+//	}
+
+	// **************************** credentials management ******************************
+
+
+	@RequestMapping(value = "/{serverId}/authentication-protocol", method = RequestMethod.POST, params = VALUE)
 	@ResponseBody
-	public String changeLogin(@PathVariable(SERVER_ID) long serverId,
-							  @RequestParam(JEditablePostParams.VALUE) String newLogin) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Change login for test automation server of id #{}", serverId);
-		}
-		service.changeLogin(serverId, newLogin);
-		return newLogin;
+	public void changeAuthProtocol(@PathVariable(SERVER_ID) long bugtrackerId, @RequestParam(VALUE) AuthenticationProtocol protocol){
+		credentialsService.changeAuthenticationProtocol(bugtrackerId, protocol);
 	}
 
-	@RequestMapping(value = "/{serverId}/password", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
+
+	@RequestMapping(value = "/{serverId}/authentication-protocol/configuration", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
-	public String changePassword(@PathVariable(SERVER_ID) long serverId,
-								 @RequestParam(JEditablePostParams.VALUE) String newPassword) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Change password for test automation server of id #{}", serverId);
-		}
-		service.changePassword(serverId, newPassword);
-		return newPassword;
+	public void saveAuthConfiguration(@PathVariable(SERVER_ID) long bugtrackerId,  @Valid @RequestBody ServerAuthConfiguration configuration){
+		credentialsService.storeAuthConfiguration(bugtrackerId, configuration);
 	}
+
+
+
+	@RequestMapping(value = "/{serverId}/credentials", method = RequestMethod.POST, consumes="application/json")
+	@ResponseBody
+	public void storeCredentials(@PathVariable(SERVER_ID) long testAutomationServerId ,@RequestBody ManageableCredentials credentials){
+		credentialsService.storeCredentials(testAutomationServerId, credentials);
+	}
+	// **************************** /credentials management ******************************
 
 	@RequestMapping(value = "/{serverId}/manualSelection", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody

@@ -76,6 +76,13 @@ public class ActionWordText extends ActionWordFragment {
 		visitor.visit(this);
 	}
 
+	@Override
+	public ActionWordFragment createCopy() {
+		ActionWordText copy = new ActionWordText();
+		copy.setText(this.text);
+		return copy;
+	}
+
 	public String getText() {
 		return text;
 	}

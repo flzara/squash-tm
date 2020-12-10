@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
 <dataset>
 
-  <TEST_AUTOMATION_SERVER KIND="jenkins" SERVER_ID="1000011" LOGIN="login" CREATED_ON="2014-06-04"
-    CREATED_BY="mpagnon" BASE_URL="http://localhost:8181/stub-ta-server" PASSWORD="password" NAME="name" />
+  <THIRD_PARTY_SERVER SERVER_ID="1000011" NAME="name" URL="http://localhost:8181/stub-ta-server"/>
+  <TEST_AUTOMATION_SERVER KIND="jenkins" SERVER_ID="1000011" CREATED_ON="2014-06-04"
+    CREATED_BY="mpagnon" />
 
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="100001" />
   <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="100001" TCL_ID="100001" />

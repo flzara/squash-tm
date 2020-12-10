@@ -28,6 +28,8 @@ define(["jquery", "jquery.squash.jeditable",
 				$(".rich-editable").richEditable();
 
 				$(".text-editable").textEditable();
+
+				$(".custom-text-editable").customTextEditable();
 			}
 		};
 	});

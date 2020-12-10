@@ -84,6 +84,8 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 */
 	OperationReport deleteIterations(List<Long> targetIds);
 
+	void bulkDeleteExecutions(List<Long> executionIds);
+
 	/**
 	 * That method should delete the test plan item. It will remove the executions along with the test plan item.
 	 *
@@ -128,9 +130,9 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**
-	 * Will delete the test suites. If removeFromIter is false it will leave the planned test cases, executions etc untouched. If true, 
+	 * Will delete the test suites. If removeFromIter is false it will leave the planned test cases, executions etc untouched. If true,
 	 * they will also be removed unless shared with another test suite.
-	 * 
+	 *
 	 * @param removeFromIter
 	 *
 	 * @param testSuites

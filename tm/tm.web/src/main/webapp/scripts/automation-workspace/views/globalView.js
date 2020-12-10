@@ -80,8 +80,18 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         "aTargets": [9],
                         "mDataProp": "assigned-to"
                     }, {
+											"bSortable": true,
+											"aTargets": [10],
+											"mDataProp": "scm-url",
+											"sClass": "scm-url"
+										},{
+											"bSortable": true,
+											"aTargets": [11],
+											"mDataProp": "automated-test-reference",
+											"sClass": "automated-test-reference"
+										},{
                         "bSortable": true,
-                        "aTargets": [10],
+                        "aTargets": [12],
                         "mDataProp": "script",
                         "sClass": "assigned-script",
 						"mRender": function (data, type, row) {
@@ -96,21 +106,21 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
 							return hrefScript;
 						}
-                    }, {
+                    },{
                         "bSortable": false,
-                        "aTargets": [11],
+                        "aTargets": [13],
                         "mDataProp": "uuid"
                     },{
                         "bSortable": true,
-                        "aTargets": [12],
+                        "aTargets": [14],
                         "mDataProp": "transmitted-on"
                     }, {
                         "bSortable": true,
-                        "aTargets": [13],
+                        "aTargets": [15],
                         "mDataProp": "assigned-on"
                     }, {
                         "bSortable": false,
-                        "aTargets": [14],
+                        "aTargets": [16],
                         "mDataProp": "tc-id",
                         "sClass": "centered",
                         "sWidth": "2.5em",
@@ -120,10 +130,10 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "writableAutom",
                         "bVisible": false,
-                        "aTargets": [15]
+                        "aTargets": [17]
                     }, {
                         "bSortable": false,
-                        "aTargets": [16],
+                        "aTargets": [18],
                         "mDataProp": "checkbox",
                         "sClass": "centered",
                         "mRender": function (data, type, row) {
@@ -148,11 +158,11 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     }, {
                         "mDataProp": "requestId",
                         "bVisible": false,
-                        "aTargets": [17]
+                        "aTargets": [19]
                     }, {
 						"mDataProp": "listScriptConflict",
 						"bVisible": false,
-						"aTargets": [18]
+						"aTargets": [20]
 					}],
                     "bFilter": true,
 
@@ -202,6 +212,8 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                             priority.text('-');
                         }
 
+						self._initSquashTF2Fields($row, data);
+
                         edObj.buttons = function (settings, original) {
                             //first apply the original function
                             edFnButtons.call(this, settings, original);
@@ -236,9 +248,9 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                         editable.type = 'ta-picker';
                         editable.name = "path";
                         var cell = $row.find('.assigned-script');
-                        var entityId = data["entity-id"];
+						var entityId = data["entity-id"];
 
-                        var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
+						var url = squashtm.app.contextRoot + 'automation-requests/' + entityId + '/tests';
                         var isGherkinOrBDD = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase()
 																				|| data['format'].toLowerCase() === translator.get('test-case.format.keyword').toLowerCase();
                         if (data['script'] !== '-' && (data['isManual'] || data['script'] === null) && !isGherkinOrBDD && (data['listScriptConflict']===null || data['listScriptConflict'].length===1)) {
@@ -562,6 +574,22 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 return ids;
             },
 
+					getSelectedTcIdsWithNoTF2FieldsFilled: function (table) {
+						var selectedRows = table.getSelectedRows();
+						var datas = table.fnGetData();
+						var ids = [];
+						$(selectedRows).each(function (index, data) {
+							var idx = data._DT_RowIndex;
+							var tcId = datas[idx]["entity-id"];
+							var scmUrl = datas[idx]["scm-url"];
+							var automatedTestReference = datas[idx]["automated-test-reference"];
+							if(scmUrl === "" || scmUrl === null || automatedTestReference === "" || automatedTestReference === null){
+								ids.push(tcId);
+							}
+						});
+						return ids;
+					},
+
             checkScriptAutoIsAbsent: function (table) {
                 var count = 0;
                 var selectedRows = table.getSelectedRows();
@@ -666,14 +694,19 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                     if (tcIds.length === 0 || tcIds === undefined) {
                         notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                     } else {
-											self.trySquashTAScriptAssociation(tcIds).done(function(map){
-												if(Object.keys(map).length === 0){
-													self.updateStatus(domtable, "AUTOMATED");
-												} else {
-													domtable.refresh();
-													notification.showWarning(translator.get("automation.notification.script.none"));
-												}
-											});
+                    	var eligibleTcIdsToScriptAssociation = self.getSelectedTcIdsWithNoTF2FieldsFilled(domtable);
+                    	if(eligibleTcIdsToScriptAssociation.length === 0){
+												self.updateStatus(domtable, "AUTOMATED");
+											} else {
+												self.trySquashTAScriptAssociation(eligibleTcIdsToScriptAssociation).done(function(map){
+													if(Object.keys(map).length === 0){
+														self.updateStatus(domtable, "AUTOMATED");
+													} else {
+														domtable.refresh();
+														notification.showWarning(translator.get("automation.notification.script.none"));
+													}
+												});
+											}
 										}
                 });
 
@@ -688,9 +721,100 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 $("#unassigned-automation-button").on("click", function () {
                     self.actions(domtable, "automation-requests/unassigned");
                 });
-            }
+            },
+
+						_initSquashTF2Fields : function ($row, data) {
+							var scmUrlCell = $row.find('.scm-url');
+							var automatedTestReferenceCell = $row.find('.automated-test-reference');
+							var isGherkinOrBDD = data['format'].toLowerCase() === translator.get('test-case.format.gherkin').toLowerCase()
+								|| data['format'].toLowerCase() === translator.get('test-case.format.keyword').toLowerCase();
+
+							if (data['writable'] && !isGherkinOrBDD) {
+
+								this._initScmUrlCell(scmUrlCell, data);
+
+								this._initAutomatedTestReferenceCell(automatedTestReferenceCell, data);
+
+							} else {
+								scmUrlCell.css({ 'color': 'gray', 'font-style': 'italic' });
+								automatedTestReferenceCell.css({ 'color': 'gray', 'font-style': 'italic' });
+
+								if (scmUrlCell.text() === '' || scmUrlCell.text() === null) {
+									scmUrlCell.text('-');
+								}
+								if (automatedTestReferenceCell.text() === '' || automatedTestReferenceCell.text() === null) {
+									automatedTestReferenceCell.text('-');
+								}
+							}
+						},
+
+					_initScmUrlCell : function (scmUrlCell, data) {
+						var entityId = data["entity-id"];
+						var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+
+						scmUrlCell.css({ "font-style": "italic" });
+						var scmUrlCellEditable = confman.getStdJeditable();
+						scmUrlCell.attr("id", "test-case-source-code-repository-url");
+						scmUrlCellEditable.params = {
+							"id": "test-case-source-code-repository-url"
+						};
+						scmUrlCellEditable.maxlength = 255;
+						scmUrlCellEditable.onblur = 'cancel';
+
+						scmUrlCell.editable(url, scmUrlCellEditable);
+
+						scmUrlCell.on('keyup', function (event) {
+							// not perform autocomplete if arrows are pressed
+							if (!_.contains([37, 38, 39, 40], event.which)) {
+								var searchInput = $(event.currentTarget).find('input');
+								searchInput.autocomplete();
+								performAutocomplete(searchInput);
+							}
+						});
+					},
+
+					_initAutomatedTestReferenceCell : function (automatedTestReferenceCell, data) {
+						var entityId = data["entity-id"];
+						var url = squashtm.app.contextRoot + 'test-cases/' + entityId;
+
+						automatedTestReferenceCell.css({ "font-style": "italic" });
+
+						var automatedTestReferenceCellEditable = confman.getStdJeditable();
+						automatedTestReferenceCell.attr("id", "test-case-automated-test-reference");
+						automatedTestReferenceCellEditable.params = {
+							"id": "test-case-automated-test-reference"
+						};
+						automatedTestReferenceCellEditable.maxlength = 255;
+						automatedTestReferenceCellEditable.onblur = 'cancel';
+
+						automatedTestReferenceCell.editable(url, automatedTestReferenceCellEditable);
+					}
         });
 
-        return View;
+        function performAutocomplete (searchInput) {
+					searchInput.autocomplete('close');
+					searchInput.autocomplete('disable');
+
+					var searchInputValue = searchInput.val();
+
+					searchInput.autocomplete({
+						delay : 500,
+						source: function(request, response) {
+							$.ajax({
+								type: 'GET',
+								url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
+								data: {
+									searchInput: searchInputValue
+								},
+								success: function(data) {
+									response(data);
+								}
+							});
+						},
+						minLength: 1
+					});
+					searchInput.autocomplete('enable');
+				}
+		return View;
     });
 

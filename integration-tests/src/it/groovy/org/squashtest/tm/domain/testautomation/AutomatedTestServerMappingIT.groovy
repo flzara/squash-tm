@@ -28,17 +28,19 @@ class AutomatedTestServerMappingIT extends DbunitMappingSpecification {
 	def "should persist a new AutomatedTestServer"(){
 
 		given :
-		URL baseUrl = new URL("http://www.squashtest.com/")
+		String baseUrl = "http://www.squashtest.com/"
 
 		and :
-		TestAutomationServer server = new TestAutomationServer("myserver", baseUrl, "bob", "robert", "jenkins")
+		TestAutomationServer server = new TestAutomationServer("jenkins")
+		server.setName("myserver")
+		server.setUrl(baseUrl)
 
 		when :
 		persistFixture server
 		def server2 = doInTransaction({it.get(TestAutomationServer.class, server.id)})
 
 		then :
-		server2.baseURL.equals(server.baseURL)
+		server2.url.equals(server.url)
 
 		cleanup :
 		deleteFixture server

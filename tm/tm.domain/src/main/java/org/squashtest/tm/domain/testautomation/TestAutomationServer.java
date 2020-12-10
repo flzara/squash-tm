@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testautomation;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.servers.ThirdPartyServer;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -53,43 +55,10 @@ import java.net.URL;
 })
 @Entity
 @Auditable
-public class TestAutomationServer implements Identified{
+@PrimaryKeyJoinColumn(name = "SERVER_ID")
+public class TestAutomationServer extends ThirdPartyServer implements Identified{
 
 	private static final String DEFAULT_KIND = "jenkins";
-
-	/**
-	 * this is the ID (technical information)
-	 *
-	 */
-	@Id
-	@Column(name = "SERVER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_automation_server_server_id_seq")
-	@SequenceGenerator(name = "test_automation_server_server_id_seq", sequenceName = "test_automation_server_server_id_seq", allocationSize = 1)
-	private Long id;
-
-	@Column(unique=true)
-	private String name;
-
-	/**
-	 * This is the url where to reach the server.
-	 */
-	@Column
-	private URL baseURL ;
-
-	/**
- * The login that the TM server should use when dealing with the remote TA server.
-	 */
-	@Column
-	@Size(min = 0, max = 50)
-	private String login;
-
-	/**
-	 * The password to be used with the login above
-	 */
-	//TODO : eeer... clear password in the database ?
-	@Column
-	@Size(max = 255)
-	private String password;
 
 	/**
 	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
@@ -108,75 +77,23 @@ public class TestAutomationServer implements Identified{
 		super();
 	}
 
-	public TestAutomationServer(String name){
-		super();
-		this.name = name;
-	}
-
-	public TestAutomationServer(Long id){
-		super();
-		this.id = id;
-	}
-
-	public TestAutomationServer(String name, URL baseURL, String login, String password) {
-		this(name);
-		this.baseURL = baseURL;
-		this.login = login;
-		this.password = password;
-	}
-
-	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
-		this(name, baseURL, login, password);
-		this.kind = kind;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(@NotNull String name) {
-		this.name = name;
-	}
-
-	public URL getBaseURL() {
-		return baseURL;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
 	public String getKind() {
 		return kind;
 	}
 
+	public TestAutomationServer(String kind){
+		this.kind = kind;
+	}
+
 	@Override
-	public String toString(){
-		if (baseURL!=null){
-			return baseURL.toExternalForm();
-		}
-		return super.toString();
-	}
-
-	public void setBaseURL(URL baseURL) {
-		this.baseURL = baseURL;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("TestAutomationServer{");
+		sb.append("id=").append(getId());
+		sb.append(", name='").append(getName()).append('\'');
+		sb.append(", url='").append(getUrl()).append('\'');
+		sb.append(", kind='").append(kind).append('\'');
+		sb.append('}');
+		return sb.toString();
 	}
 
 	public boolean isManualSlaveSelection() {
@@ -196,8 +113,9 @@ public class TestAutomationServer implements Identified{
 	}
 
 	public TestAutomationServer createCopy() {
-		TestAutomationServer testAutomationServerCopy = new TestAutomationServer(
-				this.getName(), this.getBaseURL(), this.getLogin(), this.getPassword(), this.getKind());
+		TestAutomationServer testAutomationServerCopy = new TestAutomationServer(this.getKind());
+		testAutomationServerCopy.setName(this.getName());
+		testAutomationServerCopy.setUrl(this.getUrl());
 		testAutomationServerCopy.setDescription(this.getDescription());
 		testAutomationServerCopy.setManualSlaveSelection(this.isManualSlaveSelection());
 		return testAutomationServerCopy;

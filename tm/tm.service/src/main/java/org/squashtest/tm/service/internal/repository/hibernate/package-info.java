@@ -239,7 +239,6 @@
 		query="select distinct item from IterationTestPlanItem item join item.referencedTestCase tc join tc.automationRequest ar join tc.project project" +
 			" where item.id in(:itemsIds) and tc.automatable = 'Y' and tc.automatedTest is not null and ar.requestStatus = 'AUTOMATED' and project.allowAutomationWorkflow = true"),
 
-
 	// TestSuite
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),
 	@NamedQuery(name = "TestSuite.countStatusesForUser", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.user user where ts.id = :id and  user.login = :login group by tp.executionStatus"),
@@ -251,6 +250,8 @@
 	@NamedQuery(name = "TestSuite.findProjectIdBySuiteId", query = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
 
 	@NamedQuery(name = "TestSuite.findPlannedTestCasesIds", query = "select distinct tc.id from TestSuite ts join ts.testPlan tpi join tpi.referencedTestCase tc where ts.id = ?1"),
+	@NamedQuery(name = "TestSuite.findAllIdsByExecutionIds", query = "select distinct ts.id from Execution exec inner join exec.testPlan testPlan inner join testPlan.testSuites ts where exec.id in (:executionIds)"),
+	@NamedQuery(name = "TestSuite.findAllByIds", query = "select distinct ts from TestSuite ts where ts.id in (:suiteIds)"),
 
 	//TestCase
 	@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
@@ -268,7 +269,7 @@
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByAutomationRequestIds", query = "select tc from TestCase tc join fetch tc.automationRequest ar inner join fetch ar.project pr where ar.id in (:requestIds)"),
 	@NamedQuery(name = "testCase.findTestCaseByUuid", query = "select tc from TestCase tc where tc.uuid = :uuid"),
-	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr inner join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.class = TestCase"),
+	@NamedQuery(name = "testCase.findAllByIdsWithProject", query = "select tc from TestCase tc inner join fetch tc.project pr left outer join fetch pr.testAutomationProjects where tc.id in (:tcIds) and tc.class = TestCase"),
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
 	 *  name of the class, because the client code assumes this will be the
@@ -469,12 +470,16 @@
 	@NamedQuery(name = "Execution.findOriginalStepIds", query = "select st.id from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
 
 	@NamedQuery(name ="Execution.removeDfv", query= "delete from DenormalizedFieldValue dfv where dfv.id = :dfvId"),
+	@NamedQuery(name ="Execution.findAllIdsByAutomatedSuiteIds", query= "select autoExec.execution.id from AutomatedSuite suite join suite.executionExtenders autoExec where suite.id in (:automatedSuiteIds)"),
+	@NamedQuery(name ="Execution.findAllWithTesPlanItemWithExecutionsByIds", query= "select distinct exec from Execution exec join exec.testPlan itpi join itpi.executions where exec.id in (:executionIds)"),
 
 	//ExecutionStep
 	@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 	@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
 	@NamedQuery(name = "ExecutionStep.replaceStatus", query = "update ExecutionStep set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
+	@NamedQuery(name = "ExecutionStep.findAllIdsByExecutionIds", query = "select step.id from Execution exec join exec.steps step where exec.id in (:executionIds)"),
+	@NamedQuery(name = "ExecutionStep.deleteAllByIds", query = "delete from ExecutionStep step where step.id in (:executionStepIds)"),
 
 	//Generic Project
 	@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
@@ -676,10 +681,10 @@
 						"inner join Requirement.project Project " +
 						"where TestCase.id in (:testCaseIds) "),
 
-
 	//AutomatedSuite
 	@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
 	+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
+	@NamedQuery(name = "AutomatedSuite.deleteAllByIds", query = "delete from AutomatedSuite suite where suite.id in (:automatedSuiteIds)"),
 
 	//AutomatedExecution
 	@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ?1 and ex.automatedTest.name = ?2 and ex.automatedTest.project.jobName = ?3"),
@@ -687,6 +692,7 @@
 	//AutomatedTest
 	@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 	@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
+	@NamedQuery(name = "AutomatedTest.findAll", query = "from AutomatedTest"),
 
 	//CustomField
 	@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "

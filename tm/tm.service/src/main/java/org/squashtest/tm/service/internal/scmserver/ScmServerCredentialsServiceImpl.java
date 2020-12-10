@@ -25,14 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.tm.domain.scm.ScmServer;
-import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.service.internal.repository.ScmServerDao;
 import org.squashtest.tm.service.scmserver.ScmServerCredentialsService;
 import org.squashtest.tm.service.servers.ManageableCredentials;
-import org.squashtest.tm.service.servers.ServerAuthConfiguration;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
 
 import javax.inject.Inject;
@@ -55,55 +53,8 @@ public class ScmServerCredentialsServiceImpl implements ScmServerCredentialsServ
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public boolean isCredentialsServiceAvailable() {
-		return credentialsManager.isSecretConfigured();
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void storeCredentials(long serverId, ManageableCredentials credentials) {
-		credentialsManager.storeAppLevelCredentials(serverId, credentials);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public ManageableCredentials findCredentials(long serverId) {
-		return credentialsManager.findAppLevelCredentials(serverId);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void deleteCredentials(long serverId) {
-		credentialsManager.deleteAppLevelCredentials(serverId);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticationProtocol[] getSupportedProtocols(ScmServer server) {
 		return scmConnectorRegistry.createConnector(server).getSupportedProtocols();
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void changeAuthenticationPolicy(long serverId, AuthenticationPolicy policy) {
-		ThirdPartyServer tracker = serverDao.getOne(serverId);
-		tracker.setAuthenticationPolicy(policy);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void changeAuthenticationProtocol(long serverId, AuthenticationProtocol protocol) {
-		ThirdPartyServer tracker = serverDao.getOne(serverId);
-		tracker.setAuthenticationProtocol(protocol);
-
-		credentialsManager.deleteAppLevelCredentials(serverId);
-		credentialsManager.deleteServerAuthConfiguration(serverId);
 	}
 
 
@@ -121,27 +72,6 @@ public class ScmServerCredentialsServiceImpl implements ScmServerCredentialsServ
 
 		// TODO : tester avec le vrai connecteur
 		// no exception thrown here
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf) {
-		credentialsManager.storeServerAuthConfiguration(serverId, conf);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public ServerAuthConfiguration findAuthConfiguration(long serverId) {
-		return credentialsManager.findServerAuthConfiguration(serverId);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void deleteAuthConfiguration(long serverId) {
-		credentialsManager.deleteServerAuthConfiguration(serverId);
 	}
 
 }

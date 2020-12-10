@@ -82,14 +82,14 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		    var name = $("#chart-name").val();
 		    this.model.set("name",name );
 		},
-		
+
 		/**
 		 * IE and FF add a trailing / to cookies...
 		 * Chrome don't...
 		 * So we need to put the good path to avoid two jstree_select cookies with differents path.
 		 */
 		getCookiePath : function () {
-			var path = "/squash/custom-report-workspace";
+			var path = squashtm.app.contextRoot + "custom-report-workspace";
 			if(is.ie()||is.firefox()){
 				path = path + "/";
 			}

@@ -1386,7 +1386,7 @@ define(["jquery",
 		var clickCallback = function (loader) {
 			"use strict";
 			return function () {
-				var jqspan = $(this),
+				var jqspan = $(this).prev().length === 0 ? $(this).next() : $(this),
 					icon = jqspan.prev(),
 					ltr = jqspan.parents('tr').get(0);
 
@@ -1424,7 +1424,7 @@ define(["jquery",
 				// click handler (executed one time only).
 				var loader = toggleSettings[selector];
 
-				this.on('click', selector + '>div> span.toggle-row-label', clickCallback(loader));
+				this.on('click', selector + '>div> span', clickCallback(loader));
 			}
 		}
 	}

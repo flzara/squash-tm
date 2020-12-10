@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import org.squashtest.tm.domain.servers.AuthenticationProtocol
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationProjectManagerServiceImpl
+import org.squashtest.tm.service.servers.CredentialsProvider
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 import spock.lang.Specification
 
@@ -32,12 +35,16 @@ class TestAutomationProjectManagerServiceTest extends Specification {
 
 	TestAutomationConnectorRegistry connectorRegistry
 
+	CredentialsProvider credentialsProvider
+
 	TestAutomationProjectManagerServiceImpl service
 
 	def setup(){
 		connectorRegistry = Mock()
+		credentialsProvider = Mock()
 		service = new TestAutomationProjectManagerServiceImpl()
 		service.connectorRegistry = connectorRegistry
+		service.credentialsProvider = credentialsProvider
 	}
 
 	def "should return a list of projects refering to a server object"(){
@@ -49,13 +56,20 @@ class TestAutomationProjectManagerServiceTest extends Specification {
 
 		and :
 		TestAutomationConnector connector = Mock()
-		connector.listProjectsOnServer(_) >> [ proj1, proj2, proj3 ]
+		connector.listProjectsOnServer(_, _) >> [ proj1, proj2, proj3 ]
+		connector.supports(AuthenticationProtocol.BASIC_AUTH) >> true
 
 		and :
 		connectorRegistry.getConnectorForKind(_) >> connector
 
+		BasicAuthenticationCredentials credentials = new BasicAuthenticationCredentials("admin", "password".toCharArray())
+
+		credentialsProvider.getAppLevelCredentials(_) >> Optional.of(credentials)
+
 		and :
-		def server = new TestAutomationServer("myserver", new URL("http://www.toto.com"), "toto", "toto", "jenkins")
+		def server = new TestAutomationServer("jenkins")
+		server.setName("myserver")
+		server.setUrl("http://www.toto.com")
 
 		when :
 		def res = service.listProjectsOnServer(server)

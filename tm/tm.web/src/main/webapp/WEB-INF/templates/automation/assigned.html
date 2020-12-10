@@ -29,11 +29,11 @@
           style="float:right"></button>
       </div>
       <div>
-        <div style="float: right;">       
+        <div style="float: right;">
           <button id="workinprogress-automation-button" class="tf green" th:title="#{automation.label.progress}" th:text="#{automation.label.progress}"></button>
           <button id="rejected-automation-button" class="tf green" th:title="#{automation.label.rejected}" th:text="#{automation.label.rejected}"></button>
           <button id="unassigned-automation-button" class="tf green button-icon" th:title="#{automation.label.disaseembled}"><span class="tf-icon user-deactivated"></span></button>
-          
+
         </div>
       </div>
     </div>
@@ -65,10 +65,12 @@
             <th th:text="#{automation.datatable.headers.createdby}" class="no-user-select tp-th-filter tp-th-createdby"></th>
             <th th:text="#{automation.datatable.headers.priority}" class="no-user-select tp-th-filter tp-th-priority"></th>
             <th th:text="#{automation.datatable.headers.status}" class="no-user-select tp-th-filter tp-th-status"></th>
+            <th th:text="#{automation.datatable.headers.scmurl}" class="scm-url"></th>
+            <th th:text="#{automation.datatable.headers.automatedtestreference}" class="automated-test-reference"></th>
             <th th:text="#{automation.datatable.headers.script}" class="assigned-script"></th>
             <th th:text="#{automation.datatable.headers.uuid}" class="no-user-select tp-th-filter tp-th-uuid"></th>
             <th th:text="#{automation.datatable.headers.transmittedon}" class="no-user-select tp-th-filter tp-th-transmittedon"></th>
-            <th th:text="#{automation.datatable.headers.assignedon}"></th>            
+            <th th:text="#{automation.datatable.headers.assignedon}"></th>
             <th class="no-user-select"></th>
             <th class="no-user-select"></th>
             <th></th>

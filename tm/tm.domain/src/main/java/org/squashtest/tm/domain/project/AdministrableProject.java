@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.domain.project;
 
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+
+import java.util.Objects;
+
 /**
  * Dto to decorate a generic project with functional informations such as "deletable" or is "template".
  * @author mpagnon
@@ -102,4 +106,13 @@ public class AdministrableProject {
 	}
 
 	public AutomationWorkflowType getAutomationWorkflowType() { return project.getAutomationWorkflowType(); }
+
+    public String getAutomatedSuitesLifetime() {
+		Integer automatedSuitesLifetime = project.getAutomatedSuitesLifetime();
+		if (Objects.isNull(automatedSuitesLifetime)) {
+			return StringUtils.EMPTY;
+		} else {
+			return String.valueOf(automatedSuitesLifetime);
+		}
+    }
 }

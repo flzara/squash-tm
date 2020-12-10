@@ -24,6 +24,8 @@ import org.squashtest.tm.domain.actionword.ActionWordLibrary;
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode;
 import org.squashtest.tm.domain.actionword.ActionWordTreeEntity;
 import org.squashtest.tm.domain.bdd.ActionWord;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.deletion.OperationReport;
 
@@ -51,6 +53,19 @@ public interface ActionWordLibraryNodeService {
 	 */
 	ActionWord findActionWordByNodeId(Long nodeId);
 	/**
+	 * Find the {@link ActionWordLibraryNode} linked to a {@link ActionWordTreeEntity}.
+	 * @param actionWordTreeEntity The ActionWordTreeEntity
+	 * @return The requested ActionWordLibraryNode
+	 */
+	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
+	/**
+	 * Get an Action word (not Library) Node path relative to its library/project
+	 * @param nodeId current node id
+	 * @return Action word node path
+	 */
+	String findActionWordLibraryNodePathById(Long nodeId);
+
+	/**
 	 * Add a new {@link ActionWordLibraryNode}.
 	 * The caller is responsible for giving a not null, named {@link ActionWordTreeEntity}.
 	 * The service will persist the entity, create and persist the node and make links.
@@ -58,27 +73,40 @@ public interface ActionWordLibraryNodeService {
 	 * @return The created node.
 	 */
 	ActionWordLibraryNode createNewNode(Long parentId, ActionWordTreeEntity entity) throws DuplicateNameException;
+
 	/**
-	 * Find the {@link ActionWordLibraryNode} linked to a {@link ActionWordTreeEntity}.
-	 * @param actionWordTreeEntity The ActionWordTreeEntity
-	 * @return The requested ActionWordLibraryNode
+	 * Simulate the copy of the ActionWordLibraryNodes matching the ids in the List into the target with the given id.
+	 * @param nodeIds
+	 * @param targetId
+	 * @return True if all node can be copied. False if at least one node cannot be copied because another ActionWord
+	 * with the same token already exists in the same Project.
 	 */
-	ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity);
+	boolean simulateCopyNodes(List<Long> nodeIds, long targetId);
+	/**
+	 * Copy the ActionWordLibraryNodes matching the ids in the list into the target with the given id.
+	 * @param nodeIds the ids of ActionWordLibraryNodes to copy
+	 * @param targetId the id of the target container
+	 * @return a list of the created ActionWordLibraryNodes
+	 */
+	List<ActionWordLibraryNode> copyNodes(List<Long> nodeIds, long targetId);
+
+	/**
+	 * Move the ActionWordLibraryNodes matching the ids in the list into the target with the given id.
+	 * @param nodeIds the ids of the ActionWordLibraryNodes to move
+	 * @param targetId the id of the target container
+	 */
+	void moveNodes(List<Long> nodeIds, long targetId);
+
 	/**
 	 * Given an ActionWord which Fragments were modified, rename its corresponding ActionWordLibraryNode.
 	 * @param actionWord the given ActionWord
 	 */
 	void renameNodeFromActionWord(ActionWord actionWord);
+
 	/**
 	 * Delete one/many {@link ActionWordLibraryNode}
 	 * @param nodeIds Node Ids to be deleted
 	 */
 	OperationReport delete(List<Long> nodeIds);
 
-	/**
-	 * Get an Action word (not Library) Node path relative to its library/project
-	 * @param nodeId current node id
-	 * @return Action word node path
-	 */
-	String findActionWordLibraryNodePathById(Long nodeId);
 }

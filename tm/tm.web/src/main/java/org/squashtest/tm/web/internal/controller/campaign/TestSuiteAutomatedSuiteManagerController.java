@@ -51,7 +51,6 @@ import java.util.Locale;
 @RequestMapping("/test-suites/{suiteId}/automated-suite")
 public class TestSuiteAutomatedSuiteManagerController {
 
-	private static final String TEST_SUITE_ID = "suiteId";
 	private static final String AUTOMATED_SUITE_ID = "automatedSuiteId";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteAutomatedSuiteManagerController.class);

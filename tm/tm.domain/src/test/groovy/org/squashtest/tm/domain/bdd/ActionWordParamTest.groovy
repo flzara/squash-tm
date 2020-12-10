@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.bdd
 
+import org.assertj.core.util.Lists
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterNameException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -68,5 +69,21 @@ class ActionWordParamTest extends Specification {
 		where:
 		defaultValue << ["a b\"c1 24",
 						 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+	}
+
+	def "should create a copy of an ActionWordParam"() {
+		given:
+			def source = new ActionWordParameter("name", "Johnny")
+			source.setId(6L)
+		and:
+			def actionWord = new ActionWord([source])
+			source.setActionWord(actionWord)
+		when:
+			ActionWordParameter copy = source.createCopy()
+		then:
+			copy.getId() == null
+			copy.getActionWord() == null
+			copy.getName() == "name"
+			copy.getDefaultValue() == "Johnny"
 	}
 }

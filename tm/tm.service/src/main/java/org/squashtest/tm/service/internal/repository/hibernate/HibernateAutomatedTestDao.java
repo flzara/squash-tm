@@ -59,8 +59,11 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 		}
 	}
 
-
-
+	@Override
+	public List<AutomatedTest> findAll() {
+		Query query = em.createNamedQuery("AutomatedTest.findAll");
+		return query.getResultList();
+	}
 
 	@Override
 	public void removeIfUnused(AutomatedTest test) {

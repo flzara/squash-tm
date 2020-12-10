@@ -292,6 +292,16 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		return attachmentDao.getListPairContentIDListIDForExecutionSteps(executionStepsIds);
 	}
 
+	@Override
+	public List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionStepsIds(List<Long> executionStepsIds) {
+		return attachmentDao.getListPairContentIDListIDForExecutionSteps(executionStepsIds);
+	}
+
+	@Override
+	public List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionIds(List<Long> executionStepsIds) {
+		return attachmentDao.getListPairContentIDListIDForExecutions(executionStepsIds);
+	}
+
 	private List<Long[]> constructList(Long contentID, Long ListId) {
 		List<Long[]> result = new ArrayList<>();
 		Long[] tab = new Long[2];

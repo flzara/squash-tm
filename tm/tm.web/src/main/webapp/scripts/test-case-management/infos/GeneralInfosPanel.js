@@ -85,6 +85,32 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 							}
 						});
 
+						this.sourceCodeRepositoryUrlEditable = new SimpleJEditable({
+							targetUrl :this.settings.urls.testCaseUrl,
+							componentId : "test-case-source-code-repository-url",
+							jeditableSettings : {
+								maxlength : 255
+							}
+						});
+
+						this.sourceCodeRepositoryInput = $('#test-case-source-code-repository-url');
+
+						this.sourceCodeRepositoryInput.on('keyup', function (event) {
+							// not perform autocomplete if arrows are pressed
+							if (!_.contains([37, 38, 39, 40], event.which)) {
+								var searchInput = $(event.currentTarget).find('input');
+								searchInput.autocomplete();
+								self.performAutocomplete(searchInput);
+							}
+						});
+
+						this.automatedTestReference = new SimpleJEditable({
+							targetUrl :this.settings.urls.testCaseUrl,
+							componentId : "test-case-automated-test-reference",
+							jeditableSettings : {
+								maxlength : 255
+							}
+						});
 
 						this.statusEditable = new SelectJEditable({
 							target : this.postStatus,
@@ -199,6 +225,31 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "app/util/St
 						}
 					}
 					return result;
+				},
+
+				performAutocomplete: function (searchInput) {
+					searchInput.autocomplete('close');
+					searchInput.autocomplete('disable');
+
+					var searchInputValue = searchInput.val();
+
+					searchInput.autocomplete({
+						delay : 500,
+						source: function(request, response) {
+							$.ajax({
+								type: 'GET',
+								url: squashtm.app.contextRoot + 'scm-repositories/autocomplete',
+								data: {
+									searchInput: searchInputValue
+								},
+								success: function(data) {
+									response(data);
+								}
+							});
+						},
+						minLength: 1
+					});
+					searchInput.autocomplete('enable');
 				}
 
 			});

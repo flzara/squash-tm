@@ -40,6 +40,12 @@ import org.squashtest.tm.service.servers.StoredCredentialsManager;
  *     Deadlines imposes us to loan that technical debt (based on good code hopefully).
  *     Remember that this is temporary and you should not copy/paste it again.
  * </p>
+ *
+ * <p>
+ *     Edit AGU 26/11/2020: following introduction of TestAutomationServer as ThirdPartyServer,
+ *     all methods which only deals with ThirdPartyServer (and not a specification like ScmServer) have been moved to
+ *     {@link org.squashtest.tm.service.thirdpartyserver.ThirdPartyServerCredentialsService}
+ * </p>
  */
 public interface ScmServerCredentialsService {
 
@@ -51,70 +57,6 @@ public interface ScmServerCredentialsService {
 	 * @return
 	 */
 	AuthenticationProtocol[] getSupportedProtocols(ScmServer server);
-
-
-	/**
-	 * Changes the authentication policy for this server. If the chosen policy is
-	 * APP_LEVEL be sure to {@link #storeCredentials(long, ManageableCredentials)} too.
-	 *
-	 * @param serverId
-	 * @param policy
-	 */
-	void changeAuthenticationPolicy(long serverId, AuthenticationPolicy policy);
-
-
-	/**
-	 * Changes the authentication protocol. Be warned that doing this will automatically
-	 * remove the authentication configuration and app-level credentials (since they target
-	 * the former protocol)
-	 *
-	 * @param serverId
-	 * @param protocol
-	 */
-	void changeAuthenticationProtocol(long serverId, AuthenticationProtocol protocol);
-
-	/**
-	 * Says whether the StoredCredentials service is properly configured
-	 *
-	 *  @see StoredCredentialsManager#isSecretConfigured()
-	 *
-	 * @return
-	 */
-	boolean isCredentialsServiceAvailable();
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#storeAppLevelCredentials(long, ManageableCredentials)
-	 * @param serverId
-	 * @param credentials
-	 */
-	void storeCredentials(long serverId, ManageableCredentials credentials);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#storeServerAuthConfiguration(long, ServerAuthConfiguration)
-	 * @param serverId
-	 * @param conf
-	 */
-	void storeAuthConfiguration(long serverId, ServerAuthConfiguration conf);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#findAppLevelCredentials(long)
-	 * @param serverId
-	 * @return
-	 */
-	ManageableCredentials findCredentials(long serverId);
-
-	/**
-	 *
-	 * @See {@link StoredCredentialsManager#findServerAuthConfiguration(long)
-	 * @param serverId
-	 * @return
-	 */
-	ServerAuthConfiguration findAuthConfiguration(long serverId);
 
 
 	/**
@@ -130,19 +72,4 @@ public interface ScmServerCredentialsService {
 	// Note : the exceptions thrown here belong to the BugTracker domain, they should be replaced with
 	// exceptions from the ThirdPartyServer domain once the exception family exists
 	void testCredentials(long serverId, ManageableCredentials credentials);
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#deleteAppLevelCredentials(long)
-	 * @param serverId
-	 */
-	void deleteCredentials(long serverId);
-
-
-	/**
-	 *
-	 * @see StoredCredentialsManager#deleteServerAuthConfiguration(long)
-	 * @param serverId
-	 */
-	void deleteAuthConfiguration(long serverId);
 }

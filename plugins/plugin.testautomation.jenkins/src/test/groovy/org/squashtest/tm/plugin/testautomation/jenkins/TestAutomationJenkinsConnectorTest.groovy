@@ -34,7 +34,7 @@ class TestAutomationJenkinsConnectorTest extends Specification {
 
 		and:
 		TestAutomationServer server = new TestAutomationServer();
-		server.setBaseURL(new URL(baseUrl))
+		server.setUrl(baseUrl)
 		TestAutomationProject testAutomationProject = new TestAutomationProject(jobName,"label", server);
 
 		when:

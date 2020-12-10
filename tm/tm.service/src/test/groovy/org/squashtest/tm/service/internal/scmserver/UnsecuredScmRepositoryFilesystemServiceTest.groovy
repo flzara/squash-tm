@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
+import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Ignore
@@ -51,9 +52,11 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	private KeywordTestCaseService keywordTestCaseService = Mock(KeywordTestCaseService)
 
-	private PathService pathService = Mock(PathService);
+	private PathService pathService = Mock(PathService)
 
-	private ApplicationEventPublisher eventPublisher = Mock(ApplicationEventPublisher);
+	private ApplicationEventPublisher eventPublisher = Mock(ApplicationEventPublisher)
+
+	private TestCaseModificationService testCaseModificationService = Mock(TestCaseModificationService)
 
 	private MessageSource messageSource = Mock(MessageSource);
 
@@ -69,6 +72,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		service.eventPublisher = eventPublisher
 		service.keywordTestCaseService = keywordTestCaseService
 		service.messageSource = messageSource
+		service.testCaseModificationService = testCaseModificationService
 
 		def server = Mock(ScmServer)
 		server.getUrl() >> "http://github.com"
@@ -516,6 +520,8 @@ go home quickly before someone notices that the ITs are broken"""
 		service.createOrUpdateScriptFile(scm, [updateTc, newTc, keywordTc])
 
 		then:
+		3 * testCaseModificationService.changeSourceCodeRepositoryUrl(_, _)
+		3 * testCaseModificationService.changeAutomatedTestReference(_, _)
 		File newScript = new File(scm.workingFolder, "123_yes_test_case.feature")
 		File updateScript = new File(scm.workingFolder, "456_lame_pun.feature")
 		File keywordTcScript = new File(scm.workingFolder, "777_keyword_test_case.feature")

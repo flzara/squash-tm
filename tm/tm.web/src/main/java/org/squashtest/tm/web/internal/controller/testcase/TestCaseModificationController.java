@@ -48,6 +48,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
@@ -134,6 +135,8 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -566,6 +569,36 @@ public class TestCaseModificationController {
 		testCaseModificationService.changeType(testCaseId, type);
 		InfoListItem newType = infoListItemService.findByCode(type);
 		return formatInfoItem(newType, locale);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-source-code-repository-url", VALUE}, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String changeSourceCodeRepositoryUrl(@RequestParam(VALUE)String testCaseSourceCodeRepositoryUrl, @PathVariable long testCaseId) throws MalformedURLException {
+
+		testCaseSourceCodeRepositoryUrl = testCaseSourceCodeRepositoryUrl.substring(0, Math.min(testCaseSourceCodeRepositoryUrl.length(), 255));
+		if(!testCaseSourceCodeRepositoryUrl.isEmpty()){
+			//Checking if string has URL format
+			UrlUtils.toUrl(testCaseSourceCodeRepositoryUrl);
+		}
+		testCaseModificationService.changeSourceCodeRepositoryUrl(testCaseId, testCaseSourceCodeRepositoryUrl);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated git repository url to " + testCaseSourceCodeRepositoryUrl);
+		}
+
+		return HtmlUtils.htmlEscape(testCaseSourceCodeRepositoryUrl);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automated-test-reference", VALUE}, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String changeAutomatedTestReference(@RequestParam(VALUE) String testCaseAutomatetedTestReference, @PathVariable long testCaseId) {
+
+		testCaseAutomatetedTestReference = testCaseAutomatetedTestReference.substring(0, Math.min(testCaseAutomatetedTestReference.length(), 255));
+		testCaseModificationService.changeAutomatedTestReference(testCaseId, testCaseAutomatetedTestReference);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated automated test reference to " + testCaseAutomatetedTestReference);
+		}
+
+		return HtmlUtils.htmlEscape(testCaseAutomatetedTestReference);
 	}
 
 	@ResponseBody

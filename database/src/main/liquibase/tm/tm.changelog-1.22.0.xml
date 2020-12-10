@@ -124,6 +124,15 @@
       <column name="KEYWORD" type="java.sql.Types.VARCHAR(20)" remarks="A keyword test step keyword">
         <constraints nullable="false" />
       </column>
+
+      <!-- SQUASH-1476 - Add DATATABLE column in KEYWORD_TEST_STEP table -->
+      <column name="DATATABLE" type="TEXT" remarks="A keyword test step datatable" />
+
+      <!-- SQUASH-1498 - Add DOCSTRING column in KEYWORD_TEST_STEP table -->
+      <column name="DOCSTRING" type="TEXT" remarks="A keyword test step docstring" />
+
+      <!-- SQUASH-1503 - Add COMMENT column in KEYWORD_TEST_STEP table -->
+      <column name="COMMENT" type="TEXT" remarks="A keyword test step comment" />
     </createTable>
 
     <createIndex tableName="KEYWORD_TEST_STEP" indexName="idx_fk_keyword_test_step_action_word">
@@ -851,13 +860,6 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.22.0-SQUASH-797" author="aguilhem">
-    <comment>Adds result url field to the automated suites</comment>
-    <addColumn tableName="AUTOMATED_SUITE">
-      <column name="RESULT_URL" type="java.sql.Types.VARCHAR(300)" remarks="urls longer than 300 chars should go to hell"/>
-    </addColumn>
-  </changeSet>
-
   <changeSet id="tm-1.22.0-SQUASH-306-create-closure-table" author="mqtran">
     <!-- CLOSURE -->
     <comment>
@@ -1217,6 +1219,249 @@
         AND rf.RLN_ID is null
       );
     </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1466-test-case-source-code-repository-url" author="akatz">
+    <addColumn tableName="TEST_CASE">
+      <column name="SOURCE_CODE_REPOSITORY_URL" type="VARCHAR(255)" remarks="The url of the source code repository where the test lies">
+        <constraints nullable="true" />
+      </column>
+      <column name="AUTOMATED_TEST_REFERENCE" type="VARCHAR(255)" remarks="The path to the test">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server-migration-1" author="aguilhem">
+    <comment>Preparation for data migration</comment>
+
+    <createTable tableName="MIG_SQUASH_1975">
+      <column name="OLD_ID" type="BIGINT">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="NEW_ID" type="BIGINT">
+      </column>
+    </createTable>
+
+    <dropForeignKeyConstraint baseTableName="TEST_AUTOMATION_PROJECT" constraintName="fk_ta_project_ta_server"/>
+    <dropForeignKeyConstraint baseTableName="PROJECT" constraintName="tm_project_ta_server"/>
+
+    <sql>
+      INSERT INTO MIG_SQUASH_1975 (OLD_ID, NEW_ID)
+      SELECT TEST_AUTOMATION_SERVER.SERVER_ID, max(THIRD_PARTY_SERVER.SERVER_ID)+TEST_AUTOMATION_SERVER.SERVER_ID as NEW_ID
+      FROM TEST_AUTOMATION_SERVER, THIRD_PARTY_SERVER
+      GROUP BY TEST_AUTOMATION_SERVER.SERVER_ID
+      ORDER BY TEST_AUTOMATION_SERVER.SERVER_ID;
+
+      INSERT INTO THIRD_PARTY_SERVER (SERVER_ID, NAME, URL, AUTH_POLICY, AUTH_PROTOCOL)
+      SELECT MIG_SQUASH_1975.NEW_ID, TEST_AUTOMATION_SERVER.NAME, TEST_AUTOMATION_SERVER.BASE_URL, 'APP_LEVEL', 'BASIC_AUTH'
+      FROM TEST_AUTOMATION_SERVER
+      INNER JOIN MIG_SQUASH_1975 on MIG_SQUASH_1975.OLD_ID = TEST_AUTOMATION_SERVER.SERVER_ID
+      ORDER BY TEST_AUTOMATION_SERVER.SERVER_ID;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server-migration-2-postgres" author="aguilhem" dbms="postgresql">
+    <comment>Transform Test Automation Server to Third Party Server</comment>
+
+    <sql>
+      UPDATE TEST_AUTOMATION_SERVER
+      SET SERVER_ID = mig.NEW_ID
+      FROM MIG_SQUASH_1975 mig
+      WHERE SERVER_ID = mig.OLD_ID;
+
+      UPDATE TEST_AUTOMATION_PROJECT
+      SET SERVER_ID = mig.NEW_ID
+      FROM MIG_SQUASH_1975 mig
+      WHERE SERVER_ID = mig.OLD_ID;
+
+      UPDATE PROJECT
+      SET TA_SERVER_ID = mig.NEW_ID
+      FROM MIG_SQUASH_1975 mig
+      WHERE TA_SERVER_ID = mig.OLD_ID
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server-migration-2-mysql" author="aguilhem" dbms="mysql">
+    <comment>Transform Test Automation Server to Third Party Server</comment>
+
+    <sql>
+      UPDATE TEST_AUTOMATION_SERVER ta_server
+      INNER JOIN MIG_SQUASH_1975 mig
+      ON ta_server.SERVER_ID = mig.OLD_ID
+      SET ta_server.SERVER_ID = mig.NEW_ID;
+
+      UPDATE TEST_AUTOMATION_PROJECT ta_proj
+      INNER JOIN MIG_SQUASH_1975 mig
+      ON ta_proj.SERVER_ID = mig.OLD_ID
+      SET ta_proj.SERVER_ID = mig.NEW_ID;
+
+      UPDATE PROJECT proj
+      INNER JOIN MIG_SQUASH_1975 mig
+      ON proj.TA_SERVER_ID = mig.OLD_ID
+      SET proj.TA_SERVER_ID = mig.NEW_ID;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server-migration-2-h2" author="aguilhem" dbms="h2">
+    <comment>Transform Test Automation Server to Third Party Server</comment>
+
+    <sql>
+      UPDATE TEST_AUTOMATION_SERVER ta_server
+      SET ta_server.SERVER_ID =
+      (select mig.NEW_ID
+      from MIG_SQUASH_1975 mig
+      where ta_server.SERVER_ID = mig.OLD_ID);
+
+      UPDATE TEST_AUTOMATION_PROJECT ta_proj
+      SET ta_proj.SERVER_ID =
+      (select mig.NEW_ID
+      from MIG_SQUASH_1975 mig
+      where ta_proj.SERVER_ID = mig.OLD_ID);
+
+      UPDATE PROJECT proj
+      SET proj.TA_SERVER_ID =
+      (select mig.NEW_ID
+      from MIG_SQUASH_1975 mig
+      where proj.TA_SERVER_ID = mig.OLD_ID);
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server-migration-3" author="aguilhem">
+    <comment>Finalisation of test automation server data migration</comment>
+
+    <dropUniqueConstraint constraintName="UNI_AUTOTEST_SERVER" tableName="TEST_AUTOMATION_SERVER"/>
+    <dropColumn tableName="TEST_AUTOMATION_SERVER" columnName="NAME"/>
+    <dropColumn tableName="TEST_AUTOMATION_SERVER" columnName="BASE_URL"/>
+    <dropColumn tableName="TEST_AUTOMATION_SERVER" columnName="LOGIN"/>
+    <dropColumn tableName="TEST_AUTOMATION_SERVER" columnName="PASSWORD"/>
+
+    <addForeignKeyConstraint baseColumnNames="SERVER_ID" baseTableName="TEST_AUTOMATION_PROJECT"
+                             referencedColumnNames="SERVER_ID" referencedTableName="TEST_AUTOMATION_SERVER"
+                             constraintName="fk_ta_project_ta_server"/>
+
+    <addForeignKeyConstraint baseColumnNames="TA_SERVER_ID" baseTableName="PROJECT"
+                             referencedColumnNames="SERVER_ID" referencedTableName="TEST_AUTOMATION_SERVER"
+                             constraintName="tm_project_ta_server" />
+
+    <addForeignKeyConstraint baseTableName="TEST_AUTOMATION_SERVER" baseColumnNames="SERVER_ID"
+                             referencedTableName="THIRD_PARTY_SERVER" referencedColumnNames="SERVER_ID"
+                             constraintName="fk_test_automation_server_third_party_server" onDelete="CASCADE"/>
+
+    <dropTable tableName="MIG_SQUASH_1975"/>
+  </changeSet>
+
+  <changeSet author="aguilhem" id="tm-1.22.0-SQUASH-1975-automation-server-migration-4-h2" dbms="h2">
+    <comment>For H2, remove the autoincrement on server_id</comment>
+    <sql>
+      alter table TEST_AUTOMATION_SERVER alter column SERVER_ID BIGINT NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet author="aguilhem" id="tm-1.22.0-SQUASH-1975-automation-server-migration-4-mysql" dbms="mysql">
+    <comment>For Mysql / Maria DB, remove the autoincrement on server_id</comment>
+
+    <sql>
+      set foreign_key_checks=0;
+      alter table TEST_AUTOMATION_SERVER modify column SERVER_ID BIGINT not null;
+      set foreign_key_checks=1;
+    </sql>
+
+  </changeSet>
+
+  <changeSet author="aguilhem" id="tm-1.22.0-SQUASH-1975-automation-server-migration-4-postgres" dbms="postgresql">
+    <comment>For PostGre, remove the autoincrement on server_id and reset the sequence for third_party_server</comment>
+
+    <sql>
+      alter table TEST_AUTOMATION_SERVER alter column SERVER_ID drop default;
+      drop sequence if exists test_automation_server_server_id_seq;
+
+      select setval('third_party_server_server_id_seq', (select max(SERVER_ID) from THIRD_PARTY_SERVER));
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-808-automated-suites-lifetime" author="jlor">
+    <addColumn tableName="PROJECT">
+      <column name="AUTOMATED_SUITES_LIFETIME" type="INT">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2032-fix-null-description-in-requirement" author="jlor">
+    <comment>Replace null descriptions by empty strings in requirements</comment>
+    <sql>
+      update RESOURCE
+      set DESCRIPTION = ''
+      where DESCRIPTION is NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment" author="aguilhem">
+    <comment>Give possibility to AUTOMATED_SUITE to have ATTACHMENT</comment>
+    <addColumn tableName="AUTOMATED_SUITE">
+      <column name="ATTACHMENT_LIST_ID" type="BIGINT"
+              remarks="foreign key to ATTACHMENT_LIST, entity dealing with attachment.">
+        <constraints nullable="true"
+                     references="ATTACHMENT_LIST(ATTACHMENT_LIST_ID)" foreignKeyName="fk_automates_suite_attachment_list" />
+      </column>
+    </addColumn>
+
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment-2" author="aguilhem">
+    <comment>Create one attachment list for each automated suite</comment>
+    <sql>
+      <![CDATA[
+
+      -- attachments, step 1 :
+      -- create a ranking table, akin to what would ROW_NUMBER() order by id desc would say
+
+      create table ASUITE_RANK as
+      select asuite.suite_id, count(asuite2.suite_id)  as ranking
+      from AUTOMATED_SUITE asuite,
+      AUTOMATED_SUITE asuite2
+      where asuite.suite_id <= asuite2.suite_id
+      group by asuite.suite_id
+      order by ranking asc;
+
+
+      -- attachments, step 2 :
+      -- create a table that pairs suite ids with predictable, consecutive attachment_list_ids using the rank
+      -- calculated earlier
+
+      create table ASUITE_ATTACHLIST_PAIRING as
+      select asuite.suite_id, (select max(al.attachment_list_id) from ATTACHMENT_LIST al) + asuite.ranking as attachment_list_id
+      from ASUITE_RANK asuite;
+
+
+      -- attachments, step 3 :
+      -- insert the attachment lists and update fk in the automated suite
+      insert into ATTACHMENT_LIST(ATTACHMENT_LIST_ID)
+      select pair.attachment_list_id from ASUITE_ATTACHLIST_PAIRING pair;
+
+
+      update AUTOMATED_SUITE asuite
+      set ATTACHMENT_LIST_ID = (select pair.attachment_list_id from ASUITE_ATTACHLIST_PAIRING pair where pair.suite_id = asuite.suite_id);
+
+      -- attachments, step 4 and final :
+      -- drop the temporary tables
+
+      drop table ASUITE_ATTACHLIST_PAIRING;
+
+      drop table ASUITE_RANK;
+
+    ]]>
+    </sql>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment-3" author="aguilhem" dbms="postgresql">
+    <comment>reset postgresql sequence</comment>
+
+    <sql>
+      select setval('attachment_list_attachment_list_id_seq', (select MAX(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
+    </sql>
+
   </changeSet>
 
 </databaseChangeLog>

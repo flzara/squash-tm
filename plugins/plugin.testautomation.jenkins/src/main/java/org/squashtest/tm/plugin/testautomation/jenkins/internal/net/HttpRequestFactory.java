@@ -94,12 +94,12 @@ public class HttpRequestFactory {
 		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
 
-	public HttpGet newCheckCredentialsMethod(TestAutomationServer server) {
+	public HttpGet newCheckCredentialsMethod(TestAutomationServer server, String login, String password) {
 		URIBuilder builder = buildApiPath(server);
 
 		HttpGet method = new HttpGet(build(builder));
 
-		String logPass = server.getLogin() + ":" + server.getPassword();
+		String logPass = login + ":" + password;
 		String auth = new String(Base64.encodeBase64(logPass.getBytes()));
 
 		method.addHeader("Authorization", "Basic " + auth);
@@ -179,7 +179,7 @@ public class HttpRequestFactory {
 
 	private URIBuilder uriBuilder(TestAutomationServer server) {
 		try {
-			return new URIBuilder(server.getBaseURL().toURI());
+			return new URIBuilder(new URI(server.getUrl()));
 		} catch (URISyntaxException ex) {
 			throw handleUriException(ex);
 		}

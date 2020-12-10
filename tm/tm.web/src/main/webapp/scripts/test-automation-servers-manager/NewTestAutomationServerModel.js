@@ -31,9 +31,8 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 		url : squashtm.app.contextRoot + "test-automation-servers/new",
 		defaults : {
 			name : "",
+			kind:"jenkins",
 			baseUrl : "",
-			login : "",
-			password : "",
 			description : "",
 			manualSlaveSelection : false
 		},
@@ -44,14 +43,6 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			if (isBlank(attrs.name)) {
 				errors = errors || {};
 				errors.name = "message.notBlank";
-			}
-			if (isBlank(attrs.login)) {
-				errors = errors || {};
-				errors.login = "message.notBlank";
-			}
-			if (isBlank(attrs.password)) {
-				errors = errors || {};
-				errors.password = "message.notBlank";
 			}
 			if (isBlank(attrs.baseUrl)) {
 				errors = errors || {};

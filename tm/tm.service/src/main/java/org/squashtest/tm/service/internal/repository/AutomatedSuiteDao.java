@@ -30,12 +30,14 @@ import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.AutomationDeletionCount;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 
-public interface AutomatedSuiteDao{
+public interface AutomatedSuiteDao {
 
 	void delete(AutomatedSuite suite);
 
@@ -156,4 +158,15 @@ public interface AutomatedSuiteDao{
 	long countSuitesByTestSuiteId(Long suiteId, ColumnFiltering filter);
 
 	ExecutionStatusReport getStatusReport(String uuid);
+
+	/**
+	 * Get all ids of old AutomatedSuites which must be deleted.
+	 * An old AutomatedSuite is an AutomatedSuite which lifetime is greater than
+	 * the parameter automatedSuitesLifetime configured in its Project.
+	 */
+	List<String> getOldAutomatedSuiteIds();
+
+	void deleteAllByIds(List<String> automatedExecutionIds);
+
+	AutomationDeletionCount countOldAutomatedSuitesAndExecutions();
 }

@@ -28,6 +28,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.ExternalContentCoordinates;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.List;
 import java.util.Set;
@@ -69,4 +70,8 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 
 	@Query("select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(Attachment.attachmentList.id,Attachment.content.id) from ExecutionStep exec inner join  exec.attachmentList attachmentList inner join attachmentList.attachments Attachment where exec.id in (:ids)")
 	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutionSteps(@Param("ids") List<Long> executionStepsIds);
+
+	@EmptyCollectionGuard
+	@Query("select new org.squashtest.tm.domain.attachment.ExternalContentCoordinates(Attachment.attachmentList.id,Attachment.content.id) from Execution exec inner join exec.attachmentList attachmentList inner join attachmentList.attachments Attachment where exec.id in (:ids)")
+	List<ExternalContentCoordinates> getListPairContentIDListIDForExecutions(@Param("ids") List<Long> executionIds);
 }

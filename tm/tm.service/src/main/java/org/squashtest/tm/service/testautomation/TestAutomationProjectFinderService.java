@@ -37,11 +37,11 @@ public interface TestAutomationProjectFinderService {
 	 * Given the name of a server, will return the list of project currently available on it. The credentials will be
 	 * tested on the fly.
 	 * </p>
-	 * 
+	 *
 	 * @param serverURL
 	 * @param login
 	 * @param password
-	 * 
+	 *
 	 * @return a collection of projects hosted on that server
 	 * @throws AccessDenied
 	 *             if the given credentials are invalid
@@ -50,7 +50,7 @@ public interface TestAutomationProjectFinderService {
 
 	/**
 	 * see {@link #listProjectsOnServer(URL, String, String)}, using its ID for argument
-	 * 
+	 *
 	 * @param server
 	 * @return
 	 */
@@ -58,15 +58,25 @@ public interface TestAutomationProjectFinderService {
 
 	/**
 	 * see {@link #listProjectsOnServer(URL, String, String)}, using a {@link TestAutomationServer} for argument
-	 * 
+	 *
 	 * @param server
 	 * @return
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
 
 	/**
+	 * Will list {@link TestAutomationProject} available on the given {@link TestAutomationServer}. Credentials use for connection to the server will be the one given as parameters.
+	 *
+	 * @param server : the {@link TestAutomationServer} to get the {@link TestAutomationProject} of
+	 * @param login : the login to use for connection with the {@link TestAutomationServer}
+	 * @param password : the password to use for connection with the {@link TestAutomationServer}
+	 * @return : the collection of {@link TestAutomationProject} available on the given {@link TestAutomationServer}
+	 */
+	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, String login, String password);
+
+	/**
 	 * Will return the ta-project urls mapped by their jobName.
-	 * 
+	 *
 	 * @param collection
 	 *            : the {@link TestAutomationProject} to get the urls of
 	 * @return : a map with
@@ -77,7 +87,7 @@ public interface TestAutomationProjectFinderService {
 	 */
 	Map<String, URL> findProjectUrls(Collection<TestAutomationProject> collection);
 	/**
-	 * 
+	 *
 	 * @param projectId
 	 * @return  <code>true</code> if the project have been executed, <code>false</code> otherwise
 	 */

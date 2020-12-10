@@ -138,6 +138,18 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TC_TYPE")
 	protected InfoListItem type = null;
 
+	/**
+	 * Used by Squash TF 2 to know where to find automated test case source code repository
+	 */
+	@Column(name = "SOURCE_CODE_REPOSITORY_URL")
+	@org.hibernate.validator.constraints.URL
+	private String sourceCodeRepositoryUrl = null;
+
+	/**
+	 * Used by Squash TF 2 to know where to find the automated test in automation project
+	 */
+	@Column(name = "AUTOMATED_TEST_REFERENCE")
+	private String automatedTestReference = null;
 
 	@NotNull
 	@Enumerated(STRING)
@@ -455,6 +467,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.type = type;
 	}
 
+	public String getSourceCodeRepositoryUrl() {
+		return sourceCodeRepositoryUrl;
+	}
+
+	public void setSourceCodeRepositoryUrl(String sourceCodeRepositoryUrl) {
+		this.sourceCodeRepositoryUrl = sourceCodeRepositoryUrl;
+	}
+
+	public String getAutomatedTestReference() {
+		return automatedTestReference;
+	}
+
+	public void setAutomatedTestReference(String automatedTestReference) {
+		this.automatedTestReference = automatedTestReference;
+	}
+
 	public TestCaseStatus getStatus() {
 		return status;
 	}
@@ -522,7 +550,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @return
 	 */
 	protected boolean isActuallyAutomated() {
-		return getProject().isTestAutomationEnabled() && automatedTest != null;
+		return (getProject().isTestAutomationEnabled() && automatedTest != null)
+			|| (sourceCodeRepositoryUrl != null && !StringUtils.isBlank(sourceCodeRepositoryUrl) && !StringUtils.isBlank(automatedTestReference));
 	}
 
 	// ***************** (detached) custom field section *************

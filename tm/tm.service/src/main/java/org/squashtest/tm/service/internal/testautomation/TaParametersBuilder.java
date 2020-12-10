@@ -263,8 +263,12 @@ public class TaParametersBuilder implements ParametersBuilder {
 	private void addTestCase(TestCase testCase) {
 		String value = testCase.getReference();
 		String uuid = testCase.getUuid();
+		String scrUrl = testCase.getSourceCodeRepositoryUrl();
+		String autoTestRef = testCase.getAutomatedTestReference();
 		nullSafePut("TC_REFERENCE", value);
 		params.put("TC_UUID", uuid);
+		nullSafePut("TC_SOURCE_CODE_REPOSITORY_URL", scrUrl);
+		nullSafePut("TC_AUTOMATED_TEST_REFERENCE", autoTestRef);
 	}
 
 	private void nullSafePut(String key, String value) {

@@ -27,7 +27,9 @@ import org.squashtest.tm.domain.bdd.BddScriptLanguage
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.NameAlreadyInUseException
+import org.squashtest.tm.service.internal.project.WrongLifetimeFormatException
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -119,7 +121,7 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 			genericProjectFinder.findById(-1L).bddScriptLanguage == BddScriptLanguage.SPANISH
 	}
 
-	def "#changeBddScriptLanguage(long, String) - Should throw an IllegalArgumentException"() {
+	def "#changeBddScriptLanguage(long, String) - Should throw an IllegalArgumentException because a Robot project cannot be configured in another language than English"() {
 		given:
 			def project = genericProjectFinder.findById(-1L)
 			project.setBddScriptLanguage(BddScriptLanguage.ENGLISH)
@@ -128,5 +130,32 @@ class CustomGenericProjectManagerImplIT extends DbunitServiceSpecification {
 			customGenericProjectManager.changeBddScriptLanguage(-1L, "GERMAN")
 		then:
 			thrown IllegalArgumentException
+	}
+
+	@Unroll
+	def "#changeAutomatedSuitesLifetime(long, String) - Should change the project AutomatedSuitesLifetime"() {
+		when:
+			"setup"
+		then:
+			genericProjectFinder.findById(-1L).automatedSuitesLifetime == 0
+		when:
+			customGenericProjectManager.changeAutomatedSuitesLifetime(-1L, lifetime) == expectedResult
+		then:
+			genericProjectFinder.findById(-1L).automatedSuitesLifetime == expectedResult
+		where:
+			lifetime | expectedResult
+			""		 | null
+			"365"	 | 365
+	}
+
+	@Unroll
+	def "#changeAutomatedSuitesLifetime(long, String) - Should throw an IllegalArgumentException because the input value is not a positive integer"() {
+		when:
+			customGenericProjectManager.changeAutomatedSuitesLifetime(-1L, lifetime)
+		then:
+			thrown WrongLifetimeFormatException
+		where:
+			lifetime << ["-4125", "999888777666", "lifetime"]
+
 	}
 }

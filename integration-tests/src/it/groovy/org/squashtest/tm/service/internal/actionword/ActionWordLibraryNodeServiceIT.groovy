@@ -25,6 +25,7 @@ import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.actionword.ActionWordLibraryNode
 import org.squashtest.tm.domain.actionword.ActionWordTreeDefinition
 import org.squashtest.tm.domain.bdd.ActionWord
+import org.squashtest.tm.domain.bdd.ActionWordFragment
 import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService
@@ -35,6 +36,8 @@ import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+
+import static org.squashtest.tm.domain.actionword.ActionWordTreeDefinition.ACTION_WORD
 
 @DataSet
 @Transactional
@@ -96,7 +99,7 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 			node != null
 			node.id == -2L
 			node.name == "press the red button"
-			node.entityType == ActionWordTreeDefinition.ACTION_WORD
+			node.entityType == ACTION_WORD
 
 			node.children != null
 			node.children.size() == 0
@@ -167,4 +170,117 @@ class ActionWordLibraryNodeServiceIT extends DbunitServiceSpecification {
 		-6L				| "another project/another day"
 		-7L				| "another project/\"param1\" + \"param2\" = \"param3\""
 	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "simulateCopyNodes(List<Long>, long) - Should find no action words with the same token and return true"() {
+		expect:
+			actionWordLibraryNodeService.simulateCopyNodes([-2L, -3L, -4L], -7L)
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "copyNodes(List<Long>, long) - Should copy three action word nodes into an empty library"() {
+		when:
+			def nodeList = actionWordLibraryNodeService.copyNodes([-2L, -3L, -4L], -7L)
+			em.flush()
+			em.clear()
+		then:
+			nodeList.size() == 3
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 3
+			children.each {
+				assert it.getId() != null
+				assert ! it.getName().isEmpty()
+				assert it.getLibrary().getId() == -3L
+				assert it.getParent() == targetLibraryNode
+				assert it.getChildren().isEmpty()
+				assert it.getEntityType() == ACTION_WORD
+
+				ActionWord aw = it.getEntity()
+				assert aw.getId() != null
+				assert ! aw.getName().isEmpty()
+				assert ! aw.getDescription().isEmpty()
+				assert aw.getProject().getId() == -3L
+				assert aw.getKeywordTestSteps().size() == 0
+				assert ! aw.generateToken().isEmpty()
+				List<ActionWordFragment> fragments = aw.getFragments()
+				assert ! fragments.isEmpty()
+				fragments.each {
+					assert it.getId() != null
+					assert it.getActionWord() == aw
+				}
+			}
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "simulateCopyNodes(List<Long>, long) - Should find an action word with the same token and return false"() {
+		expect:
+			! actionWordLibraryNodeService.simulateCopyNodes([-2L], -5L)
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "copyNodes(List<Long>, long) - Should try to copy an action word node with an existing name into a library"() {
+		when:
+			def nodeList = actionWordLibraryNodeService.copyNodes([-2L], -5L)
+			em.flush()
+			em.clear()
+		then:
+			nodeList.isEmpty()
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -5L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 1
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "moveNodes(List<Long, long) - Should move three action word nodes into an empty library"() {
+		when:
+			actionWordLibraryNodeService.moveNodes([-2L, -3L, -4L], -7L)
+			em.flush()
+			em.clear()
+		then:
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -7L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 3
+			children.each {
+				assert it.getId() != null
+				assert ! it.getName().isEmpty()
+				assert it.getLibrary().getId() == -3L
+				assert it.getParent() == targetLibraryNode
+				assert it.getChildren().isEmpty()
+				assert it.getEntityType() == ACTION_WORD
+
+				ActionWord aw = it.getEntity()
+				assert aw != null
+				assert aw.getId() != null
+				assert ! aw.getName().isEmpty()
+				assert ! aw.getDescription().isEmpty()
+				assert aw.getProject().getId() == -3L
+				assert ! aw.generateToken().isEmpty()
+				List<ActionWordFragment> fragments = aw.getFragments()
+				assert ! fragments.isEmpty()
+				fragments.each {
+					assert it.getId() != null
+					assert it.getActionWord() == aw
+				}
+			}
+			def actionWord1 = (ActionWord) children.find {it.id == -2L }.getEntity()
+			actionWord1.getKeywordTestSteps().size() == 1
+			def actionWord2 = (ActionWord) children.find {it.id == -3L }.getEntity()
+			actionWord2.getKeywordTestSteps().size() == 1
+			def actionWord3 = (ActionWord) children.find {it.id == -4L }.getEntity()
+			actionWord3.getKeywordTestSteps().size() == 0
+	}
+
+	@DataSet("ActionWordLibraryNodeServiceCopyNodeIT.xml")
+	def "moveNodes(List<Long, long) - Should try to move an action word node with an existing name into a library"() {
+		when:
+			actionWordLibraryNodeService.moveNodes([-2L], -5L)
+			em.flush()
+			em.clear()
+		then:
+			ActionWordLibraryNode targetLibraryNode = findEntity(ActionWordLibraryNode.class, -5L)
+			List<ActionWordLibraryNode> children = targetLibraryNode.getChildren()
+			children.size() == 1
+	}
+
 }

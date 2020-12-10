@@ -26,7 +26,9 @@ package org.squashtest.tm.domain.servers;
 public enum AuthenticationProtocol {
 
 	BASIC_AUTH(BasicAuthenticationCredentials.class),
-	OAUTH_1A(OAuth1aCredentials.class);
+	OAUTH_1A(OAuth1aCredentials.class),
+	TOKEN_AUTH(TokenAuthCredentials.class)
+	;
 
 	private Class<? extends Credentials> implementation;
 

@@ -38,6 +38,7 @@
 <c:url var="milestoneUrl"             value="/administration/milestones" />
 <c:url var="reqLinkTypeUrl"           value="/administration/requirement-link-types" />
 <c:url var="configUrl"                value="/administration/config" />
+<c:url var="cleaningUrl"              value="/administration/cleaning" />
 <c:url var="logfileUrl"               value="/administration/log-file" />
 
 <c:set var="userLicenseInformation"   value="${userLicenseInformation}" />
@@ -202,6 +203,11 @@
             <a href="${ configUrl }" class="unstyledLink ">
               <span id="config-admin" class="admin-section-icon admin-config-icon-small"></span>
               <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span>
+            </a>
+
+            <a href="${ cleaningUrl }" class="unstyledLink">
+              <span id="cleaning-admin" class="admin-section-icon admin-cleaning-icon-small"></span>
+              <span class="admin-section-label"><f:message key="label.Cleaning" /></span>
             </a>
 
             <a href="${ logfileUrl }" class="unstyledLink ">

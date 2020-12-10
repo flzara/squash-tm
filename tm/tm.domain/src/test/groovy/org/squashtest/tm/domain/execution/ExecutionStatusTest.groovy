@@ -188,6 +188,7 @@ class ExecutionStatusTest extends Specification {
 		[SETTLED, UNTESTABLE]       | SETTLED
 		[UNTESTABLE]                | UNTESTABLE
 		[SUCCESS, SETTLED, READY] 	| RUNNING
+		[RUNNING, RUNNING, RUNNING] | RUNNING
 	}
 
 	def "should never invoke resolveStatus on non canon status when using plublic methods"(){

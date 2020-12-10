@@ -301,4 +301,29 @@ class ScmRepositoryManagerServiceTest extends Specification {
 			1 * scmRepositoryDao.releaseScmRepositoriesFromProjects(repoIds)
 			1 * scmRepositoryDao.deleteByIds(repoIds)
 	}
+
+	def "#findMatchingScmRepositoriesUrl(String) - [Nominal] - Should find matching scm repository's URL"() {
+		given: "Mock data"
+			String searchInput = "myrepository"
+			List<String> repositoriesUrl = ["http://github.com/myrepository", "http://bitbucket.com/hisrepository"]
+		and: "Mock Dao Method"
+			scmRepositoryDao.findDeclaredScmRepositoriesUrl() >> repositoriesUrl
+		when:
+			List<String> result = scmRepositoryManagerService.findMatchingScmRepositoriesUrl(searchInput)
+		then:
+		result.size() == 1
+		result[0] == "http://github.com/myrepository"
+	}
+
+	def "#findMatchingScmRepositoriesUrl(String) - [Empty] - Should find no matching scm repository's URL"() {
+		given: "Mock data"
+		String searchInput = "herrepository"
+		List<String> repositoriesUrl = ["http://github.com/myrepository", "http://bitbucket.com/hisrepository"]
+		and: "Mock Dao Method"
+		scmRepositoryDao.findDeclaredScmRepositoriesUrl() >> repositoriesUrl
+		when:
+		List<String> result = scmRepositoryManagerService.findMatchingScmRepositoriesUrl(searchInput)
+		then:
+		result.size() == 0
+	}
 }

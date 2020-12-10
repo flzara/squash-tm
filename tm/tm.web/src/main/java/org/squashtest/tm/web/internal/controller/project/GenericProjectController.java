@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -52,6 +53,7 @@ import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -62,6 +64,7 @@ import org.squashtest.tm.service.internal.project.ProjectHelper;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
@@ -94,6 +97,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
@@ -133,6 +137,9 @@ public class GenericProjectController {
 
 	@Inject
 	private ProjectDao projectDao;
+
+	@Inject
+	private TestAutomationServerManagerService testAutomationServerManagerService;
 
 	@Inject
 	private TaskExecutor taskExecutor;
@@ -391,11 +398,15 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
 	@ResponseBody
-	public Long bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
+	public TestAutomationServer bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 										 @RequestParam("serverId") long serverId) {
-		Long finalServerId = serverId == 0 ? null : serverId;
-		projectManager.bindTestAutomationServer(projectId, finalServerId);
-		return serverId;
+		if(serverId == 0){
+			projectManager.bindTestAutomationServer(projectId, null);
+			return null;
+		} else {
+			projectManager.bindTestAutomationServer(projectId, serverId);
+			return testAutomationServerManagerService.findById(serverId);
+		}
 	}
 
 	// filtering and sorting not supported for now
@@ -460,7 +471,20 @@ public class GenericProjectController {
 		projectManager.changeBddScriptLanguage(projectId, bddScriptLanguage);
 	}
 
-	/* ------- Scm Serves & Repositories ------ */
+	/* ------- Automated Suites Lifetime ------- */
+
+	@ResponseBody
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {"id=automated-suites-lifetime", VALUE})
+	public String changeAutomatedSuitesLifetime(@PathVariable long projectId, @RequestParam(VALUE) String automatedSuitesLifetime) {
+		Integer newLifetime = projectManager.changeAutomatedSuitesLifetime(projectId, automatedSuitesLifetime);
+		if (Objects.isNull(newLifetime)) {
+			return Strings.EMPTY;
+		} else {
+			return String.valueOf(newLifetime);
+		}
+	}
+
+	/* ------- Scm Servers & Repositories ------ */
 
 	@RequestMapping(value = PROJECT_ID_URL + "/scm-repository", method = RequestMethod.POST)
 	@ResponseBody

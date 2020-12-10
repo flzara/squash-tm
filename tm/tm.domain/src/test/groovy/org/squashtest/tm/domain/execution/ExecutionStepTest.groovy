@@ -54,10 +54,12 @@ class ExecutionStepTest extends Specification {
 		given:
 		def fragmentText = new ActionWordText("hello")
 		KeywordTestStep keywordTestStep = new KeywordTestStep(Keyword.GIVEN, new ActionWord([fragmentText] as List))
+		keywordTestStep.setDatatable("""| product | price |
+| Expresso | 0.40 |""")
 		when:
 		ExecutionStep execStep = new ExecutionStep(keywordTestStep)
 		then:
-		execStep.action == "GIVEN hello"
+		execStep.action == "GIVEN hello<br/>| product | price |<br/>| Expresso | 0.40 |"
 		execStep.referencedTestStep == keywordTestStep
 	}
 

@@ -65,7 +65,11 @@
             style="float: left;">
     	preview
     </button>
-    <span class="group" th:if="${isWritable}">
+    <button id="show-details-button"
+            class="button" th:text="#{label.ShowDetails}" th:title="#{label.ShowDetails}">
+      show details
+    </button>
+    <span th:if="${isWritable}">
 			<button id="delete-all-steps-button"
               data-icon="ui-icon-trash"
               class="button"
@@ -86,7 +90,10 @@
           <th>#</th>
           <th th:text="#{label.Keyword}"> </th>
           <th th:utext="#{label.action}"> </th>
+          <th> </th> <!-- show details -->
+          <th> </th> <!-- action word url -->
           <th> </th> <!-- delete -->
+          <th class="not-displayed">action word id (masked)</th>
         </tr>
       </thead>
       <tbody>
@@ -115,6 +122,28 @@
     </div>
   </div>
   <!-- ==================== /Remove Keyword Test Step Row Dialog ==================== -->
+
+  <!-- ==================== Duplicated Action Dialog ==================== -->
+  <div id="duplicated-action-dialog" class="not-displayed popup-dialog" th:title="#{dialog.duplicated-action.keyword-test-step.title}">
+    <span style="font-weight: bold" th:text="#{dialog.duplicated-action.keyword-test-step.message}">action already exists in other projects</span>
+    <div id="duplicated-action-projects"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Duplicated Action Dialog ==================== -->
+
+  <!-- ==================== Duplicated Action Keyword Test Step Dialog ==================== -->
+  <div id="test-step-duplicated-action-dialog" class="not-displayed popup-dialog" th:title="#{dialog.duplicated-action.keyword-test-step.title}">
+    <span style="font-weight: bold" th:text="#{dialog.duplicated-action.keyword-test-step.message}">action already exists in other projects</span>
+    <div id="test-step-duplicated-action-projects"></div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+  <!-- ==================== /Duplicated Action Keyword Test Step Dialog ==================== -->
 
   <!-- ==================== Preview Generated Script Dialog ==================== -->
   <div id="preview-generated-script-dialog" class="not-displayed popup-dialog" th:title="#{dialog.keyword-test-case.generated-script.preview}">

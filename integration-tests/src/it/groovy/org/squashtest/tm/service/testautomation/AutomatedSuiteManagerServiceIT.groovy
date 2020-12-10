@@ -28,15 +28,33 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.core.foundation.lang.Couple
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao
+import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao
+import org.squashtest.tm.service.internal.repository.CustomFieldDao
+import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao
+import org.squashtest.tm.service.internal.repository.ExecutionDao
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
+import org.squashtest.tm.service.internal.repository.TestSuiteDao
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @NotThreadSafe
 @UnitilsSupport
@@ -46,8 +64,32 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 	@Inject
 	AutomatedSuiteManagerService service
 
-        @Inject
-        IterationTestPlanDao itpiDao
+	@Inject
+	AutomatedSuiteDao automatedSuiteDao
+
+	@Inject
+	AutomatedExecutionExtenderDao automatedExecutionExtenderDao
+
+	@Inject
+	IterationTestPlanDao itpiDao
+
+	@Inject
+	ExecutionDao executionDao
+
+	@Inject
+	ExecutionStepDao executionStepDao
+
+	@Inject
+	CustomFieldValueDao customFieldValueDao
+
+	@Inject
+	DenormalizedFieldValueDao denormalizedFieldValueDao
+
+	@Inject
+	TestSuiteDao suiteDao
+
+	@Inject
+	AutomatedTestDao automatedTestDao;
 
 	@DataSet("TestAutomationService.sandbox.xml")
 	def "should return executions associated to an automated test suite given its id"(){
@@ -189,6 +231,105 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		pagedSuites.pagedItems[0].getId() == "123"
 		pagedSuites.pagedItems[0].executionExtenders.size() == 3
 
+	}
+
+	@DataSet("TestAutomationService.deleteOldAutomatedSuites.xml")
+	def "Should delete all old automated suites according to project configuration"() {
+		when: "for each iteration, create one new automated suite with their new automated execution extenders "
+			service.createFromIterationTestPlan(-1L)
+			service.createFromIterationTestPlan(-2L)
+			service.createFromIterationTestPlan(-3L)
+		then:
+			List<IterationTestPlanItem> itemsBefore = itpiDao.findAll()
+			itemsBefore.size() == 12
+			itemsBefore.every({
+				it.getExecutions().size() == 11
+			})
+			itemsBefore.each {
+				it.setExecutionStatus(ExecutionStatus.BLOCKED)
+			}
+			def automatedSuites = automatedSuiteDao.findAll()
+			automatedSuites.size() == 33
+			automatedExecutionExtenderDao.count() == 132
+			List<Execution> executionsBefore = executionDao.findAll()
+			executionsBefore.size() == 120 + 12
+			executionStepDao.findAll().size() == 9
+			customFieldValueDao.count() == 9 + 12
+			denormalizedFieldValueDao.count() == 6 + 12
+			List<TestSuite> suitesBefore = suiteDao.findAll()
+			suitesBefore.size() == 3
+			suitesBefore.every({
+				it.executionStatus == ExecutionStatus.BLOCKED
+			})
+			automatedTestDao.findAll().size() == 3
+		when:
+			service.cleanOldSuites()
+		then:
+			em.flush()
+			em.clear()
+			// P1 keeps all suites, P2 keeps nothing, P3 only keeps new ones
+			List<IterationTestPlanItem> itemsAfter = itpiDao.findAll()
+			itemsAfter.size() == 12
+			def itemsInProject1 = itemsAfter.findAll({it.project.id == -1L })
+			itemsInProject1.every {
+				it.executions.size() == 11
+			}
+			def itemsInProject2 = itemsAfter.findAll({it.project.id == -2L})
+			itemsInProject2.every {
+				it.executions.size() == 0
+			}
+			def itemsInProject3 = itemsAfter.findAll({it.project.id == -3L})
+			itemsInProject3.every {
+				it.executions.size() == 1
+			}
+			automatedSuiteDao.findAll().size() == 11 + 1
+			automatedExecutionExtenderDao.findAll().size() == 44 + 4
+			List<Execution> executionsAfter = executionDao.findAll()
+			executionsAfter.size() == 44 + 4
+			def executionsAfterFromProject1 = executionsAfter.findAll({ it.project.id == -1L })
+			executionsAfterFromProject1.size() == 44
+			executionsAfterFromProject1.any {
+				it.steps.size() == 3
+			}
+			def executionsAfterFromProject2 = executionsAfter.findAll({ it.project.id == -2L })
+			executionsAfterFromProject2.isEmpty()
+			def executionsAfterFromProject3 = executionsAfter.findAll({ it.project.id == -3L })
+			executionsAfterFromProject3.size() == 4
+			executionsAfterFromProject3.every({
+				it.steps.size() == 0
+			})
+			def executionStepsAfter = executionStepDao.findAll()
+			executionStepsAfter.size() == 3
+			customFieldValueDao.count() == 5 + 8
+			denormalizedFieldValueDao.count() == 2 + 8
+			List<TestSuite> suitesAfter = suiteDao.findAll()
+			suitesAfter.size() == 3
+			suitesAfter.every({
+				it.executionStatus == ExecutionStatus.READY ||
+					it.executionStatus == ExecutionStatus.BLOCKED
+			})
+			automatedTestDao.findAll().size() == 3
+	}
+
+	@DataSet("TestAutomationService.deleteOldAutomatedSuites.xml")
+	def "Should count the old automated suites and the automated execution extenders according to the project configuration"() {
+			given: "for each iteration, create one new automated suite with their new automated execution extenders"
+				service.createFromIterationTestPlan(-1L)
+				service.createFromIterationTestPlan(-2L)
+				service.createFromIterationTestPlan(-3L)
+			when:
+				AutomationDeletionCount resultCount = service.countOldAutomatedSuitesAndExecutions()
+			then:
+				resultCount.getOldAutomatedSuiteCount() == 21
+				resultCount.getOldAutomatedExecutionCount() == 84
+	}
+
+	def "Should not throw any Exception if no old automated suites are to delete"() {
+		given: "an empty dataset"
+		when:
+			service.cleanOldSuites()
+		then:
+			noExceptionThrown()
 	}
 }
 

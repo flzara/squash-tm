@@ -31,7 +31,6 @@ import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.actionword.CannotDeleteActionWordException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParentNodeTypeException;
 import org.squashtest.tm.service.actionword.ActionWordLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -42,6 +41,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +63,12 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 
 	@Inject
 	private AWLNDeletionHandler deletionHandler;
+
+	@Inject
+	private ActionWordLibraryNodeCopier nodeCopier;
+
+	@Inject
+	private ActionWordLibraryNodeMover nodeMover;
 
 	@Override
 	public ActionWordLibraryNode findActionWordLibraryNodeById(Long nodeId) {
@@ -97,6 +103,29 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 	}
 
 	@Override
+	public boolean simulateCopyNodes(List<Long> nodeIds, long targetId) {
+		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
+		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
+		return nodeCopier.simulateCopyNodes(nodes, target);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.actionword.ActionWordLibraryNode', 'WRITE')"
+		+ OR_HAS_ROLE_ADMIN)
+	public List<ActionWordLibraryNode> copyNodes(List<Long> nodeIds, long targetId) {
+		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
+		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
+		return nodeCopier.copyNodes(nodes, target);
+	}
+
+	@Override
+	public void moveNodes(List<Long> nodeIds, long targetId) {
+		List<ActionWordLibraryNode> nodes = actionWordLibraryNodeDao.findAllById(nodeIds);
+		ActionWordLibraryNode target = actionWordLibraryNodeDao.getOne(targetId);
+		nodeMover.moveNodes(nodes,target);
+	}
+
+	@Override
 	public ActionWordLibraryNode findNodeFromEntity(ActionWordTreeEntity actionWordTreeEntity) {
 		return actionWordLibraryNodeDao.findNodeFromEntity(actionWordTreeEntity);
 	}
@@ -125,13 +154,17 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 
 	@Override
 	public OperationReport delete(List<Long> nodeIds) {
+		List<Long> nodeIdsToDelete = new ArrayList<>();
 		for (Long id : nodeIds) {
 			TreeLibraryNode node = actionWordLibraryNodeDao.getOne(id);
 			checkNodeIsNull(node);
 			checkPermission(new SecurityCheckableObject(node, "DELETE"));
-			checkTestStepAssociation(node);
+			//SQUASH-1702
+			if (! hasTestStepAssociation(node)) {
+				nodeIdsToDelete.add(id);
+			}
 		}
-		return deletionHandler.deleteNodes(nodeIds);
+		return deletionHandler.deleteNodes(nodeIdsToDelete);
 	}
 
 	@Override
@@ -164,13 +197,11 @@ public class ActionWordLibraryNodeServiceImpl implements ActionWordLibraryNodeSe
 		}
 	}
 
-	private void checkTestStepAssociation(TreeLibraryNode node) {
+	private boolean hasTestStepAssociation(TreeLibraryNode node) {
 		Long entityId = node.getEntityId();
 		ActionWord actionWord = actionWordDao.getOne(entityId);
 		Set<KeywordTestStep> testStepSet = actionWord.getKeywordTestSteps();
-		if (!testStepSet.isEmpty()){
-			throw new CannotDeleteActionWordException("Action word is currently in used by some test steps");
-		}
+		return !testStepSet.isEmpty();
 	}
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {

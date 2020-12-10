@@ -31,9 +31,9 @@
  - availableBddScriptLanguages : the map of bdd script languages available
  - chosenBddScriptLanguage : the current bdd script language of the project
  */
-define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog",
+define(["jquery", "backbone", "handlebars", "jeditable.simpleJEditable", "jeditable.selectJEditable", "./AddTAProjectsDialog",
 		"./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "app/pubsub", "workspace.event-bus", "squashtable", "jquery.squash.formdialog"],
-	function ($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub, eventBus) {
+	function ($, Backbone, Handlebars, SimpleJEditable, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator, pubsub, eventBus) {
 		// *************************************** ConfirmChangePopup **********************************************
 		var ConfirmChangePopup = Backbone.View.extend({
 
@@ -57,23 +57,25 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 					data: {
 						serverId: this.newSelectedId
 					}
-				}).done(function () {
+				}).done(function (newServer) {
 					// trigger confirm success event with active selected id
-					self.trigger("confirmChangeServerPopup.confirm.success", [self.newSelectedId]);
+					self.trigger("confirmChangeServerPopup.confirm.success", newServer);
 					self.selectedId = self.newSelectedId;
 					self.newSelectedId = null;
 					self.close();
 				}).fail(function (wtf) {
 					WTF.handleJsonResponseError(wtf);
 					// trigger confirm fail event with active selected id
-					self.trigger("confirmChangeServerPopup.confirm.fail", [self.selectedId]);
+					var mockAutomationServer = {"id": self.selectedId};
+					self.trigger("confirmChangeServerPopup.confirm.fail", mockAutomationServer);
 					self.newSelectedId = null;
 				});
 			},
 			cancel: function () {
 				var self = this;
 				// trigger cancel event with active selected id
-				this.trigger("confirmChangeServerPopup.cancel", [self.selectedId]);
+				var mockAutomationServer = {"id": self.selectedId};
+				this.trigger("confirmChangeServerPopup.cancel", mockAutomationServer);
 				self.newSelectedId = null;
 				this.close();
 			},
@@ -212,6 +214,8 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				this.chosenBddScriptLanguage = conf.chosenBddScriptLanguage;
 				this.bddScriptLanguageSelector = this.initBddScriptLanguageSelect();
 
+				this.initAutomatedSuitesLifetimeEditable();
+
 				this.automationWorkflowPopup = $("#automation-workflow-popup").formDialog();
 				this.automationWorkflowPopup.on("formdialogconfirm", function () {
 					self.changeAutomationWorkflow(self.workflowSelector.getSelectedOption());
@@ -349,38 +353,45 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 			},
 
 			changeBddImplTechnology: function (value) {
-				var projectId = this.projectId;
-				this.doChangeBddImplTechnology(projectId, value)
+				this.doChangeBddImplTechnology(value)
 					.error(function (xhr, error) {
 						console.log(error);
 					});
 			},
 
 			changeBddScriptLanguage: function (value) {
-				var projectId = this.projectId;
-				this.doChangeBddScriptLanguage(projectId, value)
+				this.doChangeBddScriptLanguage(value)
 					.error(function (xhr, error) {
 						console.log(error);
 					});
 			},
 
-			doChangeBddImplTechnology: function (projectId, value) {
+			doChangeBddImplTechnology: function (value) {
 				return $.ajax({
 					method: 'POST',
-					url: "/squash/generic-projects/" + projectId + "/bdd-impl-technology",
+					url: this.changeUrl + "/bdd-impl-technology",
 					data: {
 						bddImplTechnology: value
 					}
 				});
 			},
 
-			doChangeBddScriptLanguage: function (projectId, value) {
+			doChangeBddScriptLanguage: function (value) {
 				return $.ajax({
 					method: 'POST',
-					url: "/squash/generic-projects/" + projectId + "/bdd-script-language",
+					url: this.changeUrl + "/bdd-script-language",
 					data: {
 						bddScriptLanguage: value
 					}
+				});
+			},
+
+			initAutomatedSuitesLifetimeEditable : function() {
+				var self = this;
+				var component = $('#automated-suites-lifetime');
+				new SimpleJEditable({
+					targetUrl: self.changeUrl,
+					component: component
 				});
 			},
 
@@ -595,15 +606,25 @@ define(["jquery", "backbone", "handlebars", "jeditable.selectJEditable", "./AddT
 				this.table.refresh();
 			},
 			// when the select jeditable popup completes we change the server's select-jeditable status accordingly.
-			_onChangeServerComplete: function (newServerId) {
-				this.selectServer.setValue(newServerId);
-				this.table.refresh();
+			_onChangeServerComplete: function (newServer) {
 				var $addBlock = this.$el.find(".ta-projects-block");
-				if (parseInt(newServerId, 10) === 0) {
+				if(newServer === null || newServer.id === 0){
+					this.selectServer.setValue('0');
 					$addBlock.hide();
 				} else {
-					$addBlock.show();
+					this.selectServer.setValue(newServer.id.toString());
+					switch (newServer.kind){
+						case 'jenkins':
+							$addBlock.show();
+							break;
+						case 'squashAutom':
+							$addBlock.hide();
+							break;
+					}
+
 				}
+
+				this.table.refresh();
 			},
 
 			initSelect: function (conf) {

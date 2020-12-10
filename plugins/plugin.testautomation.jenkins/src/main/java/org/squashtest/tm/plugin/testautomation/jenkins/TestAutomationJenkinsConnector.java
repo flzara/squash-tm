@@ -26,11 +26,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.squashtest.csp.core.bugtracker.core.UnsupportedAuthenticationModeException;
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -44,9 +50,12 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientPr
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import org.squashtest.tm.service.servers.CredentialsProvider;
+import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationServerNoCredentialsException;
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 import javax.inject.Inject;
@@ -56,8 +65,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static org.squashtest.tm.domain.servers.AuthenticationProtocol.BASIC_AUTH;
 
 @Service("plugin.testautomation.jenkins.connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector {
@@ -66,6 +80,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	private static final String CONNECTOR_KIND = "jenkins";
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
+
+	private final static String GIVEN_PROTOCOL_NOT_SUPPORTED = "The given protocol %s is not supported.";
 
 	@Inject
 	private TaskScheduler taskScheduler;
@@ -76,6 +92,17 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	@Inject
 	private HttpRequestFactory requestFactory;
+
+	@Inject
+	private CredentialsProvider credentialsProvider;
+
+	@Inject
+	private MessageSource i18nHelper;
+
+	private String getMessage(String i18nKey) {
+		Locale locale = LocaleContextHolder.getLocale();
+		return i18nHelper.getMessage(i18nKey, null, locale);
+	}
 
 	@Value("${tm.test.automation.pollinterval.millis}")
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
@@ -90,11 +117,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	@Override
-	public boolean checkCredentials(TestAutomationServer server) {
+	public boolean checkCredentials(TestAutomationServer server, String login, String password) throws TestAutomationException{
 
-		CloseableHttpClient client = clientProvider.getClientFor(server);
+		CloseableHttpClient client = clientProvider.getClientFor(server, login, password);
 
-		HttpGet credCheck = requestFactory.newCheckCredentialsMethod(server);
+		HttpGet credCheck = requestFactory.newCheckCredentialsMethod(server, login, password);
 
 		requestExecutor.execute(client, credCheck);
 
@@ -104,10 +131,26 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	@Override
-	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
+	public boolean checkCredentials(TestAutomationServer server, Credentials credentials) throws TestAutomationException{
+
+		BasicAuthenticationCredentials basicCredentials = (BasicAuthenticationCredentials) credentials;
+
+		CloseableHttpClient client = clientProvider.getClientFor(server, basicCredentials.getUsername(), String.valueOf(basicCredentials.getPassword()));
+
+		HttpGet credCheck = requestFactory.newCheckCredentialsMethod(server,basicCredentials.getUsername(), String.valueOf(basicCredentials.getPassword()));
+
+		requestExecutor.execute(client, credCheck);
+
+		// if everything went fine, we may return true. Or else let the exception go.
+		return true;
+
+	}
+
+	@Override
+	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, String login, String password)
 		throws TestAutomationException {
 
-		CloseableHttpClient client = clientProvider.getClientFor(server);
+		CloseableHttpClient client = clientProvider.getClientFor(server, login, password);
 
 		HttpGet getJobsMethod = requestFactory.newGetJobsMethod(server);
 
@@ -123,12 +166,37 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	@Override
-	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws
+	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server, Credentials credentials)
+		throws TestAutomationException {
+
+		BasicAuthenticationCredentials basicCredentials = (BasicAuthenticationCredentials) credentials;
+
+		CloseableHttpClient client = clientProvider.getClientFor(server, basicCredentials.getUsername(), String.valueOf(basicCredentials.getPassword()));
+
+		HttpGet getJobsMethod = requestFactory.newGetJobsMethod(server);
+
+		String response = requestExecutor.execute(client, getJobsMethod);
+
+		try {
+			return jsonParser.readJobListFromJson(response);
+		} catch (UnreadableResponseException ex) {
+			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
+				+ "' returned malformed response : ", ex);
+		}
+
+	}
+
+	@Override
+	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project, String username) throws
 		TestAutomationException {
+
+		initializeCredentialsCache(username);
+		BasicAuthenticationCredentials basicCredentials = getAutomationServerCredentials(project.getServer());
 
 		// first we try an optimistic approach
 		try {
-			OptimisticTestList otl = new OptimisticTestList(clientProvider, project);
+
+			OptimisticTestList otl = new OptimisticTestList(clientProvider, project, basicCredentials);
 			return otl.run();
 		}
 
@@ -136,7 +204,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		catch (Exception ex) {// NOSONAR the exception is handled
 			LOGGER.error("Error while fetching job list for project {}.",project);
 			LOGGER.error(ex.toString());
-			CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
+			CloseableHttpClient client = clientProvider.getClientFor(project.getServer(), basicCredentials.getUsername(), String.valueOf(basicCredentials.getPassword()));
 
 			FetchTestListBuildProcessor processor = new FetchTestListBuildProcessor();
 
@@ -149,6 +217,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 			return processor.getResult();
 
+		} finally {
+			LOGGER.debug("TestAutomationJenkinsCOnnector : completed test fetching for autoamtion project '{}'", project.getLabel());
+			credentialsProvider.unloadCache();
 		}
 
 	}
@@ -190,7 +261,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 				// fetch the name of the slave node if any
 				Couple<AutomatedExecutionExtender, Map<String, Object>> firstEntry = entry.getValue().get(0);
 
-				jobDefs.add(new BuildDef(entry.getKey(), entry.getValue(), firstEntry.getA1().getNodeName()));
+				TestAutomationServer automationServer = entry.getKey().getServer();
+
+				BasicAuthenticationCredentials credentials = getAutomationServerCredentials(automationServer);
+
+				jobDefs.add(new BuildDef(entry.getKey(), credentials, entry.getValue(), firstEntry.getA1().getNodeName()));
 			}
 		}
 		return jobDefs;
@@ -205,6 +280,23 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 
 		return execsByProject;
+	}
+
+	private BasicAuthenticationCredentials getAutomationServerCredentials(TestAutomationServer automationServer){
+		Optional<Credentials> maybeCredentials = credentialsProvider.getAppLevelCredentials(automationServer);
+		Supplier<TestAutomationServerNoCredentialsException> throwIfNull = () -> {
+			throw new TestAutomationServerNoCredentialsException(
+				String.format(
+					getMessage("message.testAutomationServer.noCredentials"),
+					automationServer.getName()));
+		};
+		Credentials credentials = maybeCredentials.orElseThrow(throwIfNull);
+
+		AuthenticationProtocol protocol = credentials.getImplementedProtocol();
+		if(!this.supports(protocol)) {
+			throw new UnsupportedAuthenticationModeException(protocol.toString());
+		}
+		return (BasicAuthenticationCredentials) credentials;
 	}
 
 	/**
@@ -239,9 +331,27 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		return true;
 	}
 
+	@Override
+	public boolean supports(AuthenticationProtocol authenticationProtocol) {
+		switch(authenticationProtocol) {
+			case BASIC_AUTH:
+				return true;
+			case OAUTH_1A:
+				return false;
+			default:
+				throw new IllegalArgumentException(
+					String.format(GIVEN_PROTOCOL_NOT_SUPPORTED, authenticationProtocol.toString()));
+		}
+	}
+
+	@Override
+	public AuthenticationProtocol[] getSupportedProtocols() {
+		return new AuthenticationProtocol[]{BASIC_AUTH};
+	}
+
 	public static String getJobPath(TestAutomationProject testAutomationProject) {
 		TestAutomationServer server = testAutomationProject.getServer();
-		String baseUrl = server.getBaseURL().toString();
+		String baseUrl = server.getUrl();
 		String jobName = getJobSubPath(testAutomationProject);
 		return baseUrl + jobName;
 	}
@@ -263,6 +373,18 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		public TestAutomationProjectMalformedURLException(String projectUrl, Exception e) {
 			super("The test automation project url : " + projectUrl + ", is malformed", e);
 		}
+
+	}
+
+
+	// will create the user credentials and store them into the credentials provider
+	private void initializeCredentialsCache(String username){
+
+		LOGGER.debug("TestAutomationJenkinsConnector : initializing the credentials cache");
+
+		UserCredentialsCache credentials = new UserCredentialsCache(username);
+
+		credentialsProvider.restoreCache(credentials);
 
 	}
 

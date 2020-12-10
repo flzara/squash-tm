@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator", "squashtable"],
-	function ($, Backbone, _, confman, eventBus, popups, StringUtil, translator) {
+define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.configmanager", 'workspace.event-bus', "./popups", "app/util/StringUtil", "squash.translator", "squashtable"],
+	function ($, Backbone, _, basic, confman, eventBus, popups, StringUtil, translator) {
 
 	var KeywordTestStepTablePanel = Backbone.View.extend({
 
@@ -32,7 +32,11 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			this.settings = options.settings;
 			var urls = this.makeTableUrls(this.settings);
 			this.initKeywordTestStepTable(this.settings);
-			this.initTableStyle(this.settings);
+			if (this.settings.permissions.isWritable) {
+				this.initTableStyle(this.settings);
+			}
+			this.initTableDetails();
+			this.basicInit();
 			this.actionWordInput = $('#action-word-input');
 			this.keywordInput = $('#keyword-input');
 
@@ -73,23 +77,30 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			conf.testCaseId = this.settings.testCaseId;
 			conf.permissions.writable = this.settings.permissions.isWritable;
 			conf.stepsTablePanel = this;
+			conf.isAutocompleteActive = this.settings.isAutocompleteActive;
 			popups.init(conf);
 
 			// refresh the steps table when a parameter is renamed
 			eventBus.onContextual('parameter.name.update', self.refresh);
 		},
 
+		basicInit : function() {
+			basic.init();
+
+		},
+
 		events: {
 			"click #add-keyword-test-step-btn": "addKeywordTestStepFromButton",
 			"click #delete-all-steps-button": "deleteSelectedTestSteps",
-			"click #preview-generated-script-button": "generateScript"
+			"click #preview-generated-script-button": "generateScript",
+			"click #show-details-button": "initTableDetails"
 		},
 
 		initKeywordTestStepTable: function (settings) {
 			var self = this,
 				  table = $("#keyword-test-step-table"),
 				  postModifyActionWordFunction = self.postModifyActionWordFunction(settings.testCaseUrl, table),
-					dragClass = '', deleteClass = '', squashSettings = '';
+					dragClass = '', deleteClass = '', squashSettings = {};
 
 			if (settings.permissions.isWritable) {
 				dragClass = 'drag-handle';
@@ -108,6 +119,48 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 					}
 				};
 			}
+
+			var moreSettings = {
+				toggleRows : {
+					'td.toggle-row': function (table, jqold, jqnew) {
+
+						var data = table.fnGetData(jqold.get(0)),
+							  datatable = data['step-datatable'] != null ? data['step-datatable'] : "",
+							  datatableLabel = translator.get('testcase.bdd.step.datatable.label'),
+								docstring = data['step-docstring'] != null ? data['step-docstring'] : "",
+								docstringLabel = translator.get('testcase.bdd.step.docstring.label'),
+								comment = data['step-comment'] != null ? data['step-comment'] : "",
+								commentLabel = translator.get('testcase.bdd.step.comment.label');
+
+						jqnew.html(
+							'<td colspan="2"></td>' +
+							'<td colspan="1">'+
+								'<div class="display-table-row controls control-group">' +
+									'<label class="control-label display-table-cell" style="vertical-align:top;">'+datatableLabel+'</label>'+
+									'<span class="display-table-cell step-datatable" style="white-space: pre-line">'+datatable+'</span>'+
+								'</div>' +
+								'<div class="display-table-row controls control-group">' +
+								'<label class="control-label display-table-cell" style="vertical-align:top;">'+docstringLabel+'</label>'+
+								'<span class="display-table-cell step-docstring" style="white-space: pre-line">'+docstring+'</span>'+
+								'</div>' +
+								'<div class="display-table-row controls control-group">' +
+								'<label class="control-label display-table-cell" style="vertical-align:top;">'+commentLabel+'</label>'+
+								'<span class="display-table-cell step-comment" style="white-space: pre-line">'+comment+'</span>'+
+								'</div>' +
+							'</td>' +
+							'<td colspan="3"></td>'
+						);
+
+						if (settings.permissions.isWritable) {
+							self.initDatatableEditable(data, jqnew);
+							self.initDocstringEditable(data, jqnew);
+							self.initCommentEditable(data, jqnew);
+						}
+					}
+				}
+			};
+
+			$.extend(squashSettings, moreSettings);
 
 			table.squashTable(
 				{
@@ -142,9 +195,28 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 							bVisible: true,
 							bSortable: false,
 							aTargets: [4],
+							mDataProp: "toggle-step-details",
+							sClass: 'centered toggle-row',
+							sWidth: '2em'
+						}, {
+							bVisible: settings.isAutocompleteActive,
+							bSortable: false,
+							aTargets: [5],
+							mDataProp: "step-action-word-url",
+							sClass: 'step-action-word-url',
+							sWidth: '3em'
+						}, {
+							bVisible: true,
+							bSortable: false,
+							aTargets: [6],
 							mDataProp: 'empty-delete-holder',
 							sClass: 'centered ' + deleteClass,
 							sWidth: '2em'
+						}, {
+							bVisible: false,
+							bSortable: false,
+							aTargets: [7],
+							mDataProp: "action-word-id"
 						}
 					],
 					aaData: settings.stepData,
@@ -155,14 +227,14 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 						rows.forEach(function(row) {
 							var $row = $(row),
 								  keywordCell = $row.find('td.step-keyword'),
-									actionWordCell = $row.find('td.step-action-word');
+									actionWordCell = $row.find('td.step-action-word'),
+									rowModel = table.fnGetData($row);
 
 							keywordCell.text(settings.keywordMap[keywordCell.text()]);
 							if (settings.permissions.isWritable) {
 								// keyword editable configuration
 								var sconf = confman.getJeditableSelect();
 								sconf.data = settings.keywordMap;
-								var rowModel = table.fnGetData($row);
 								var keywordUrl = settings.testCaseUrl + '/steps/' + rowModel['entity-id'] + '/keyword';
 								keywordCell.editable(keywordUrl, sconf);
 
@@ -173,6 +245,20 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 								self.manageAutocompleteOnActionWordCell(actionWordCell, settings, $row);
 							}
+
+							if (settings.isAutocompleteActive) {
+								var actionWordUrlCell = $row.find('td.step-action-word-url');
+								if (rowModel['action-word-id'] === '') {
+									actionWordUrlCell.text('');
+								} else {
+									actionWordUrlCell.addClass('icon-action-word');
+									actionWordUrlCell.tooltip = "Accéder à la bibliothèque d'actions";
+									actionWordUrlCell.css('cursor', 'pointer');
+									actionWordUrlCell.on('click', function() {
+										document.location.href = squashtm.app.contextRoot + "action-words/" + rowModel['action-word-id'] + "/info";
+									});
+								}
+							}
 						});
 					}
 				}, squashSettings);
@@ -180,18 +266,49 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		// SQUASH-1450
 		initTableStyle: function(settings) {
-			if (settings.permissions.isWritable) {
+			if ($($('.action-word-input-error')[0]).text() === "") {
 				$('.table-tab-wrap').css('margin-top', '25px');
+			} else {
+				$('.table-tab-wrap').css('margin-top', '48px');
 			}
+		},
+
+		initTableDetails: function() {
+			var table = $("#keyword-test-step-table").squashTable();
+			var rows = table.fnGetNodes();
+			rows.forEach(function(row) {
+				var $row = $(row),
+					toggleCell = $row.find('td.toggle-row'),
+					rowModel = table.fnGetData($row),
+					hasDetails = (rowModel['step-datatable'] != null && rowModel['step-datatable'] !== '') ||
+						(rowModel['step-docstring'] != null && rowModel['step-docstring'] !== '') ||
+						(rowModel['step-comment'] != null && rowModel['step-comment'] !== '');
+
+				if (hasDetails && $(toggleCell.find('span')[0]).hasClass('small-right-arrow')) {
+					$(toggleCell.find('span')[1]).click();
+				}
+			});
 		},
 
 		stepDropHandlerFactory: function(dropUrl) {
 			var self = this;
 			return function stepHandler(dropData) {
+				dropData.newIndex = self.calculateRealNewIndex(dropData.newIndex);
 				$.post(dropUrl, dropData, function() {
 					self.refresh();
 				});
 			};
+		},
+
+		calculateRealNewIndex: function(rowIndex) {
+			var rows = $("#keyword-test-step-table tr");
+			var detailsRowNumber = 0;
+			for (var i = 1 ; i <= rowIndex ; i++) {
+				if ($(rows[i]).attr('role') !== 'row') {
+					detailsRowNumber++;
+				}
+			}
+			return parseInt(rowIndex - detailsRowNumber);
 		},
 
 		refresh: function () {
@@ -205,6 +322,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 		},
 
 		addKeywordTestStepFromButton: function () {
+			var self = this;
 			var targetTestStepIndex = -1;
 			var $table = $(".test-steps-table");
 			var selectedIds = $table.squashTable().getSelectedIds();
@@ -215,7 +333,19 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 			$(".action-word-input-error").text('');
 			var inputActionWord = this.actionWordInput.val();
-			this.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+			if (this.settings.isAutocompleteActive) {
+				self.retrieveAllDuplicatedActionWithProject(inputActionWord)
+					.done(function(data) {
+						if (Object.keys(data).length > 0) {
+							self.generateDuplicatedActionDialog(data);
+						} else {
+							self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+						}
+				});
+			} else {
+				self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+			}
+			self.initTableStyle();
 		},
 
 		addKeywordTestStep: function (inputActionWord, index) {
@@ -226,8 +356,34 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 			var inputKeyword = this.keywordInput.val();
 			this.doAddKeywordTestStep(inputKeyword, inputActionWord, index)
 				.done(function (testStepId) {
-					self.afterKeywordTestStepAdd(testStepId, inputActionWord);
+					self.afterKeywordTestStepAdd(testStepId);
 				});
+		},
+
+		retrieveAllDuplicatedActionWithProject: function(inputActionWord) {
+			var projectId = this.settings.projectId;
+			return $.ajax({
+				type: 'GET',
+				url: squashtm.app.contextRoot + "keyword-test-cases/duplicated-action",
+				contentType: 'application/json',
+				data: {
+					projectId: projectId,
+					inputActionWord: inputActionWord
+				}
+			});
+		},
+
+		retrieveAllDuplicatedActionWithProjectInTestStep: function(stepId, inputActionWord) {
+			var projectId = this.settings.projectId;
+			return $.ajax({
+				type: 'GET',
+				url: this.settings.testCaseUrl + "/steps/" + stepId + "/duplicated-action",
+				contentType: 'application/json',
+				data: {
+					projectId: projectId,
+					inputActionWord: inputActionWord
+				}
+			});
 		},
 
 		isInputActionWordBlank: function (inputActionWord) {
@@ -246,9 +402,10 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				actionWord: actionWord,
 				index: index
 			};
-			return $.ajax({
+			return $.ajax(
+			{
 				type: 'POST',
-				url: "/squash/test-cases/" + this.settings.testCaseId + "/steps/add-keyword-test-step",
+				url: this.settings.testCaseUrl + "/steps/add-keyword-test-step",
 				contentType: 'application/json',
 				data: JSON.stringify(objectData)
 			});
@@ -266,6 +423,16 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		deleteSelectedTestSteps: function () {
 			$("#delete-keyword-test-step-dialog").formDialog('open');
+		},
+
+		generateDuplicatedActionDialog: function(data) {
+			$('#duplicated-action-dialog').formDialog('open');
+			Object.keys(data).sort().forEach(function(key) {
+				$('#duplicated-action-projects').append('' +
+					'<div style="padding:2px"><input type="radio" id="duplicated-action-'+data[key]+'" name="duplicatedAction" value="'+data[key]+'">' +
+					'<label for="duplicated-action-'+data[key]+'">'+key+'</label></div>');
+			});
+			$('input[name="duplicatedAction"]:first').attr('checked', true);
 		},
 
 		makeTableUrls: function (conf) {
@@ -305,7 +472,7 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 				source: function(request, response) {
 					$.ajax({
 						type: 'GET',
-						url: '/squash/keyword-test-cases/autocomplete',
+						url: squashtm.app.contextRoot + 'keyword-test-cases/autocomplete',
 						data: {
 							projectId: projectId,
 							searchInput: searchInputValue
@@ -328,56 +495,122 @@ define(["jquery", "backbone", "underscore", "squash.configmanager", 'workspace.e
 
 		postModifyActionWordFunction: function(baseUrl, table) {
 			var self = this;
-			return function(value, editableSettings) {
+			return function(value) {
 				var td = this,
 						row = td.parentNode,
 						rowModel = table.fnGetData(row),
-						actionWordCell = $(row).find('td.step-action-word'),
-						stepId = rowModel['entity-id'],
-						actionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
+						stepId = rowModel['entity-id'];
 
-				$.ajax({
-					url: actionWordUrl,
-					type: 'POST',
-					data: { value: value }
-				}).done(function() {
-					self.saveNewActionWordInSettings(baseUrl, stepId, editableSettings);
-					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
-				}).fail(function() {
-					self.renderActionWordCell(baseUrl, stepId, actionWordCell);
-				});
+				if (self.settings.isAutocompleteActive) {
+					self.retrieveAllDuplicatedActionWithProjectInTestStep(stepId, value)
+						.done(function(data) {
+							if (Object.keys(data).length > 0) {
+								self.initDuplicatedActionInTestStep(data, baseUrl, value, stepId);
+							} else {
+								self.doModifyActionWord(baseUrl, value, stepId);
+							}
+						})
+						.fail(function() {
+							self.refresh();
+						});
+				} else {
+					self.doModifyActionWord(baseUrl, value, stepId);
+				}
 			};
 		},
 
-		renderActionWordCell: function(baseUrl, stepId, actionWordCell) {
-			this.getActionWordHtmlFormat(baseUrl, stepId)
-				.done(function(actionWordHtml) {
-					actionWordCell.html(actionWordHtml);
+		initDuplicatedActionInTestStep: function(data, baseUrl, value, stepId) {
+			var self = this;
+			var duplicatedActionDialog = $("#test-step-duplicated-action-dialog");
+			duplicatedActionDialog.formDialog();
+
+			duplicatedActionDialog.on('formdialogopen', function() {
+				$('#test-step-duplicated-action-projects').empty();
+				Object.keys(data).sort().forEach(function(key) {
+					$('#test-step-duplicated-action-projects').append('' +
+						'<div style="padding:2px"><input type="radio" id="test-step-duplicated-action-'+data[key]+'" name="testStepDuplicatedAction" value="'+data[key]+'">' +
+						'<label for="test-step-duplicated-action-'+data[key]+'">'+key+'</label></div>');
 				});
+				$('input[name="testStepDuplicatedAction"]:first').attr('checked', true);
+			});
+
+			duplicatedActionDialog.on('formdialogconfirm', function() {
+				var actionWordId = $('input[name="testStepDuplicatedAction"]:checked').val();
+				$.ajax({
+					type: 'GET',
+					url: baseUrl + '/steps/' + stepId + '/action-word-with-id',
+					contentType: 'application/json',
+					data: {
+						actionWord: value,
+						actionWordId: actionWordId
+					}
+				}).done(function() {
+					self.refresh();
+				}).fail(function() {
+					self.refresh();
+				});
+				$(this).formDialog('close');
+			});
+
+			duplicatedActionDialog.on('formdialogcancel', function() {
+				$(this).formDialog('close');
+			});
+
+			duplicatedActionDialog.on("formdialogclose", function() {
+				self.refresh();
+			});
+
+			duplicatedActionDialog.formDialog('open');
 		},
 
-		saveNewActionWordInSettings: function(baseUrl, stepId, editableSettings) {
-			this.getActionWordUnstyledFormat(baseUrl, stepId)
-				.done(function(actionWordUnstyled) {
-					editableSettings.data = actionWordUnstyled;
-				});
-		},
+		doModifyActionWord: function(baseUrl, value, stepId) {
+			var self = this,
+					modifyActionWordUrl = baseUrl + '/steps/' + stepId + '/action-word';
 
-		// with html tags for parameters
-		getActionWordHtmlFormat: function(baseUrl, stepId) {
-			var actionWordHtmlUrl = baseUrl + '/steps/' + stepId + '/action-word-html';
-			return $.ajax({
-				url: actionWordHtmlUrl,
-				type: 'GET'
+			$.ajax({
+				url: modifyActionWordUrl,
+				type: 'POST',
+				data: { value: value }
+			}).done(function() {
+				self.refresh();
+			}).fail(function() {
+				self.refresh();
 			});
 		},
 
-		// ex: I have some "apples", the format to display when modifying
-		getActionWordUnstyledFormat: function(baseUrl, stepId) {
-			var actionWordUnstyledUrl = baseUrl + '/steps/' + stepId + '/action-word-unstyled';
-			return $.ajax({
-				url: actionWordUnstyledUrl,
-				type: 'GET'
+		initDatatableEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'datatable');
+		},
+
+		initDocstringEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'docstring');
+		},
+
+		initCommentEditable: function(data, jqnew) {
+			this.doInitDetailsEditable(data, jqnew, 'comment');
+		},
+
+		doInitDetailsEditable: function(data, jqnew, type) {
+			var textEditSettings = confman.getStdJeditable();
+			textEditSettings.url = this.settings.testCaseUrl + '/steps/' + data['entity-id'] + '/' + type;
+			textEditSettings.type = "textarea";
+			textEditSettings.rows = 10;
+			textEditSettings.cols = 80;
+			textEditSettings.onsubmit = function(settings, original) {
+				data['step-'+type] = $(jqnew.find('textarea')[0]).val();
+			};
+
+			jqnew.find('.step-'+type).customTextEditable(textEditSettings).addClass("editable").addClass("custom-text-editable");
+			jqnew.find('.step-'+type).on('click', function() {
+				var $area = $(jqnew.find('textarea')[0]);
+				if ($area.val() !== '') {
+					$area.val(StringUtil.unescape($area.val()));
+				} else if (type === 'datatable') {
+					if (data['step-datatable'] == null || data['step-datatable'] === '') {
+						var defaultValue = translator.get('testcase.bdd.step.datatable.default-value');
+						$area.val(defaultValue);
+					}
+				}
 			});
 		}
 	});

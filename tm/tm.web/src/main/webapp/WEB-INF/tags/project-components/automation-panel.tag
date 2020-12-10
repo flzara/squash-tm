@@ -68,6 +68,7 @@
 
 <c:set var="chosenBddImplTechnology" value="${chosenBddImplTechnology}" />
 <c:set var="chosenBddScriptLanguage" value="${chosenBddScriptLanguage}" />
+<c:set var="currentAutomatedSuitesLifetime" value="${automatedSuitesLifetime}" />
 
 <comp:toggle-panel id="test-automation-management-panel" titleKey="project.testauto.panel.title" open="true">
 
@@ -100,6 +101,22 @@
           <div id="project-bdd-script-language-select" style="display: inline;">
             <c:out value="${availableBddScriptLanguages[chosenBddScriptLanguage]}" />
           </div>
+        </div>
+      </div>
+    </div>
+
+    <br/>
+
+    <!-- Automated Suites Lifetime -->
+    <div id="project-automated-suites-lifetime" class="display-table">
+      <div class="display-table-row">
+        <div class="display-table-cell">
+          <label class="display-table-cell">
+            <f:message key="label.project.automated-suites-lifetime" />
+          </label>
+        </div>
+        <div id="project-automated-suites-lifetime-editable-container" class="display-table-cell">
+          <span id="automated-suites-lifetime"><c:out value="${currentAutomatedSuitesLifetime}"/></span>
         </div>
       </div>
     </div>
@@ -141,7 +158,7 @@
       <%-- =================================== projects block =============================================================== --%>
 
       <f:message var="addTAProjectLabel" key="title.associateJob"  />
-      <c:if test="${ empty project.testAutomationServer}">
+      <c:if test="${ empty project.testAutomationServer || project.testAutomationServer.kind != 'jenkins'}">
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
 

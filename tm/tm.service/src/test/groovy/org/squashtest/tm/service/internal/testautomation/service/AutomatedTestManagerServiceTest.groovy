@@ -123,11 +123,14 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		given :
 		// has to mock a lot of things because of the logging
+		TestAutomationServer server = new TestAutomationServer("jenkins")
+		server.setName("main server")
+		server.setUrl("http://testauto.org")
 		TestAutomationProject project = new TestAutomationProject(
 			"main job",
-			new TestAutomationServer("main server", new URL("http://testauto.org"), "admin", "admin")
+			server
 		)
-		FetchTestListTask task = new FetchTestListTask(connectorRegistry, project)
+		FetchTestListTask task = new FetchTestListTask(connectorRegistry, project, "admin")
 
 		and :
 		Exception ex = new Exception()

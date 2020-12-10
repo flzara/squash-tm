@@ -25,7 +25,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
@@ -41,6 +40,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
 import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
+import org.squashtest.tm.domain.servers.TokenAuthCredentials;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -401,12 +401,31 @@ public final class BugTrackerControllerHelper {
 
 	// SQUASH-1305
 	public static String retrieveAsteriskedPassword(AuthenticationProtocol bugtrackerAuthProtocol, ManageableCredentials credentials) {
-		return BASIC_AUTH.equals(bugtrackerAuthProtocol) && credentials != null ? retrieveAsterikedBasicAuthPassword(credentials) : EMPTY;
+		String result = EMPTY;
+		if(credentials != null){
+			switch (bugtrackerAuthProtocol){
+				case BASIC_AUTH:
+					result = retrieveAsterikedBasicAuthPassword(credentials);
+					break;
+				case TOKEN_AUTH:
+					result = retrieveAsterikedTokenAuthToken(credentials);
+					break;
+				default:
+					break;
+			}
+		}
+
+		return result;
 	}
 
 	private static String retrieveAsterikedBasicAuthPassword(ManageableCredentials credentials) {
 		BasicAuthenticationCredentials basicAuthCreds = (BasicAuthenticationCredentials) credentials;
 		return StringUtils.repeat(ASTERISK_LABEL, basicAuthCreds.getPassword().length);
+	}
+
+	private static String retrieveAsterikedTokenAuthToken(ManageableCredentials credentials) {
+		TokenAuthCredentials tokenAuthCreds = (TokenAuthCredentials) credentials;
+		return StringUtils.repeat(ASTERISK_LABEL, tokenAuthCreds.getToken().length());
 	}
 
 

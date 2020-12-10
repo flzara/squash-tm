@@ -1471,6 +1471,10 @@ div.information-panel p {
 	background-image :url(../images/Button_Config_small.png); /** sprite-ref: sprites-icons; */
 }
 
+.admin-cleaning-icon-small{
+	background-image: url(../images/Button_Cleaning_small.png);
+}
+
 .admin-logfile-icon-small{
 	background-image :url(../images/Button_Log_small.png);
 }
@@ -2053,8 +2057,8 @@ button.tf {
 }
 
 .tf.button-icon {
-	height: 26px; 
-	width: 26px; 
+	height: 26px;
+	width: 26px;
 	padding: 5px;
 	vertical-align: middle;
 }
@@ -2067,12 +2071,12 @@ button.tf {
 }
 
 .tf-icon.user-deactivated{
-	background-image: url(../images/icon-user-deactivated.png); 
+	background-image: url(../images/icon-user-deactivated.png);
 }
 
 .tf-icon.user-active{
 	background-image: url(../images/icon-user-active.png);
-} 
+}
 
 button.tf-sm {
 	font-size: 9px;

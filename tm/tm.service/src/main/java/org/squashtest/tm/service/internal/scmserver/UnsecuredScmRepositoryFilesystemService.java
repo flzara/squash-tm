@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
 import org.squashtest.tm.domain.scm.ScmRepository;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
@@ -39,6 +40,7 @@ import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 
 import javax.inject.Inject;
@@ -70,6 +72,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 
 	@Inject
 	private KeywordTestCaseService keywordTestCaseService;
+
+	@Inject
+	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
 	private MessageSource messageSource;
@@ -108,6 +113,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 						// at this point the file is created without error
 						// lets fill the file with the script content
 						printToFile(testFile, testCase);
+						updateTestCaseAutomatedScriptInformation(testCase, testFile, manifest);
 					}
 					return null;
 				}
@@ -457,6 +463,22 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		} else {
 			throw new IOException("file with path " + sourceFile + " could not be move/renamed to file with path " + targetFile);
 		}
+	}
+
+	private void updateTestCaseAutomatedScriptInformation(TestCase testCase, File testCaseFile, ScmRepositoryManifest manifest) {
+		String scmServerURL = manifest.getScm().getScmServer().getUrl();
+		String sourceCodeRepositoryUrl;
+		if(scmServerURL.endsWith("/")){
+			sourceCodeRepositoryUrl = String.format("%s%s", scmServerURL, manifest.getScm().getName());
+		} else {
+			sourceCodeRepositoryUrl = String.format("%s/%s", scmServerURL, manifest.getScm().getName());
+		}
+
+		String automatedTestReference = String.format("%s/%s", manifest.getScm().getWorkingFolderPath(), manifest.getRelativePath(testCaseFile));
+
+		testCaseModificationService.changeAutomatedTestReference(testCase.getId(), PathUtils.cleanMultipleSlashes(automatedTestReference));
+		testCaseModificationService.changeSourceCodeRepositoryUrl(testCase.getId(), sourceCodeRepositoryUrl);
+
 	}
 
 }

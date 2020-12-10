@@ -60,6 +60,7 @@ import java.util.Set;
 
 @NamedQueries(value = {
 		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
+		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntities", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query = "from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntities", query = "select dfv from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),

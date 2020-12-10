@@ -29,7 +29,9 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface CustomTestSuiteDao {
 
@@ -73,4 +75,7 @@ public interface CustomTestSuiteDao {
 
 	ExecutionStatusReport getStatusReport(Long id);
 
+    List<Long> findAllIdsByExecutionIds(List<Long> executionIds);
+
+	List<TestSuite> findAllByIds(Collection<Long> suiteIds);
 }

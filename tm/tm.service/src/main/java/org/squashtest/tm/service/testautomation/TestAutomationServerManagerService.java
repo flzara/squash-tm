@@ -38,7 +38,7 @@ public interface TestAutomationServerManagerService {
 
 	/**
 	 * Will persist a new {@link TestAutomationServer}.
-	 * 
+	 *
 	 * @param server
 	 *            : the server to persist
 	 * @throws NonUniqueEntityException
@@ -55,7 +55,7 @@ public interface TestAutomationServerManagerService {
 	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
 	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
 	 * </p>
-	 * 
+	 *
 	 * @param serverId
 	 */
 	void deleteServer(long serverId);
@@ -65,7 +65,7 @@ public interface TestAutomationServerManagerService {
 	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
 	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
 	 * </p>
-	 * 
+	 *
 	 * @param serverId
 	 */
 	void deleteServer(List<Long> serverId);
@@ -80,7 +80,7 @@ public interface TestAutomationServerManagerService {
 
 	/**
 	 * Will change the name of the server.
-	 * 
+	 *
 	 * @param serverId
 	 *            : id of the {@link TestAutomationServer} to change the name of
 	 * @param newName
@@ -90,9 +90,9 @@ public interface TestAutomationServerManagerService {
 	 */
 	void changeName(long serverId, String newName);
 
-	void changeLogin(long serverId, String login);
-
-	void changePassword(long serverId, String password);
+//	void changeLogin(long serverId, String login);
+//
+//	void changePassword(long serverId, String password);
 
 	void changeDescription(long serverId, String description);
 

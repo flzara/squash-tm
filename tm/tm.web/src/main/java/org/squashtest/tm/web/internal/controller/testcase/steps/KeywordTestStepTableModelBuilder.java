@@ -21,13 +21,16 @@
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.actionword.ConsumerForActionWordFragmentVisitor;
 import org.squashtest.tm.domain.bdd.ActionWord;
 import org.squashtest.tm.domain.bdd.ActionWordFragment;
 import org.squashtest.tm.domain.bdd.ActionWordParameter;
 import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.KeywordTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
@@ -37,19 +40,34 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<TestStep> {
+
+	private PermissionEvaluationService permissionService;
+
 	@Override
 	protected Object buildItemData(TestStep step) {
 		KeywordTestStep keywordTestStep = (KeywordTestStep) step;
-		Map<String, String> item = new HashMap<>(4);
+		Map<String, String> item = new HashMap<>(12);
 		item.put("entity-id", step.getId().toString());
 		item.put("step-index", String.valueOf(getCurrentIndex()));
 		item.put("step-keyword", String.valueOf(keywordTestStep.getKeyword()));
 		String actionWordWithParamValues = createActionWordWithParamValues(keywordTestStep);
 		item.put("step-action-word", actionWordWithParamValues);
 		item.put("step-action-word-unstyled", keywordTestStep.writeTestStepActionWordScript(true));
+		item.put("toggle-step-details", null);
+		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : EMPTY);
+		item.put("step-docstring", keywordTestStep.getDocstring() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDocstring()) : EMPTY);
+		item.put("step-comment", keywordTestStep.getComment() != null ? HtmlUtils.htmlEscape(keywordTestStep.getComment()) : EMPTY);
+		item.put("action-word-id", retrieveActionWordIdIfReadable(keywordTestStep.getActionWord()));
+		item.put("step-action-word-url", null);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
+	}
+
+	public KeywordTestStepTableModelBuilder(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 	public String createActionWordWithParamValues(KeywordTestStep keywordTestStep) {
@@ -85,5 +103,14 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		builder.append("<span style=\"color: blue;\">")
 			.append(replaceHTMLCharactersStr)
 			.append("</span>");
+	}
+
+	private String retrieveActionWordIdIfReadable(ActionWord actionWord) {
+		return isProjectReadable(actionWord.getProject().getId()) ? actionWord.getId().toString() : EMPTY;
+	}
+
+	private boolean isProjectReadable(Long projectId) {
+		return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", projectId,
+			Project.class.getName());
 	}
 }

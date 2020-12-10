@@ -257,4 +257,18 @@ public class ExecutionDaoImpl implements CustomExecutionDao {
 		return crit.list();
 	}
 
+	@Override
+	public List<Long> findAllIdsByAutomatedSuiteIds(List<String> automatedSuiteIds) {
+		Query fetchQuery = entityManager.createNamedQuery("Execution.findAllIdsByAutomatedSuiteIds");
+		fetchQuery.setParameter("automatedSuiteIds", automatedSuiteIds);
+		List<Long> executionsIds = fetchQuery.getResultList();
+		return executionsIds;
+	}
+
+	@Override
+	public List<Execution> findAllWithTestPlanWithExecutionsItemByIds(List<Long> executionIds) {
+		Query fetchQuery = entityManager.createNamedQuery("Execution.findAllWithTesPlanItemWithExecutionsByIds");
+		fetchQuery.setParameter("executionIds", executionIds);
+		return fetchQuery.getResultList();
+	}
 }

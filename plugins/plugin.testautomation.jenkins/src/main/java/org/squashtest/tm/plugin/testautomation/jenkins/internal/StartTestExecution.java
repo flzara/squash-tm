@@ -91,7 +91,7 @@ public class StartTestExecution {
 		this.externalId = externalId;
 
 		this.template = new RestTemplate(clientProvider.getRequestFactoryFor(
-			buildDef.getProject().getServer()));
+			buildDef.getProject().getServer(), buildDef.getCredentials().getUsername(), String.valueOf(buildDef.getCredentials().getPassword())));
 	}
 
 	public void run() {
@@ -153,7 +153,7 @@ public class StartTestExecution {
 
 		try{
 			LOGGER.trace("fetching CSRF jenkins crumb");
-			URI uri = new URI(server.getBaseURL()+"/crumbIssuer/api/json");
+			URI uri = new URI(server.getUrl()+"/crumbIssuer/api/json");
 			LOGGER.trace("crumb found");
 			return template.getForObject(uri, JenkinsCrumb.class);
 		}
@@ -170,7 +170,7 @@ public class StartTestExecution {
 		catch(URISyntaxException ex){
 			if (LOGGER.isErrorEnabled()){
 				LOGGER.error("cannot fetch crumb from server '"+
-					server.getBaseURL()+
+					server.getUrl()+
 					"' due to URI syntax exception. Is the server URL correct ?");
 			}
 			throw new RuntimeException(ex);
@@ -184,14 +184,14 @@ public class StartTestExecution {
 		TestAutomationServer server = project.getServer();
 		String jobSubPath = getJobSubPath(project);
 		try{
-			URI base = new URI(server.getBaseURL().toString());
+			URI base = new URI(server.getUrl());
 			return new URIBuilder(base)
 				.setPath(base.getPath()+ jobSubPath +"/build")
 				.build();
 		}
 		catch(URISyntaxException use){
 			LOGGER.error("cannot execute build for job {} hosted on server {}. Job Sub path is {}. due to URI syntax exception. Is the server URL correct ?",
-				project.getJobName(), project.getServer().getBaseURL(), jobSubPath
+				project.getJobName(), project.getServer().getUrl(), jobSubPath
 			);
 			throw new RuntimeException(use);
 		}

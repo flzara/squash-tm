@@ -641,7 +641,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		} else if (report.allOf(SUCCESS,  UNTESTABLE, SETTLED)) {
 			newStatus = SUCCESS;
 
-		} else if (report.anyOf(SUCCESS,  SETTLED)) {
+		} else if (report.anyOf(SUCCESS,  SETTLED, RUNNING)) {
 			newStatus = RUNNING;
 
 		}

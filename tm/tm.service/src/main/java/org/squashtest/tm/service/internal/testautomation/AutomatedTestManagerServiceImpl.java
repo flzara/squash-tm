@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCaseKind;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
@@ -143,10 +144,12 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 			LOGGER.trace("projects are : {}", projectNames);
 		}
 
+		String username = UserContextHolder.getUsername();
+
 		// 1 : prepare and submit all the tasks
 		Collection<FetchTestListFuture> futures = projects.stream()
 													// prepare the tasks
-												  	.map(project -> new FetchTestListTask(connectorRegistry, project))
+												  	.map(project -> new FetchTestListTask(connectorRegistry, project, username))
 													// submit the tasks
 													.map(executor::sumbitFetchTestListTask)
 													// gather the futures

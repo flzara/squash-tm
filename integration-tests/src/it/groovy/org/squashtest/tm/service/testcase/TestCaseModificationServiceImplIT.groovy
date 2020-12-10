@@ -219,6 +219,30 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		tc.reference == tcNewRef
 	}
 
+	def "should change a test case source code repository URL"() {
+		given:
+		def tcNewSourceCodeRepositoryUrl ="http://test"
+
+		when:
+		service.changeSourceCodeRepositoryUrl(testCaseId, tcNewSourceCodeRepositoryUrl)
+		def tc = service.findById(testCaseId)
+
+		then:
+		tc.sourceCodeRepositoryUrl == tcNewSourceCodeRepositoryUrl
+	}
+
+	def "should change a test case automated test reference"() {
+		given:
+		def tcNewRef = "the new ref"
+
+		when:
+		service.changeAutomatedTestReference(testCaseId, tcNewRef)
+		def tc = service.findById(testCaseId)
+
+		then:
+		tc.automatedTestReference == tcNewRef
+	}
+
 	@DataSet("TestCaseModificationServiceImplIT.should update a test step action.xml")
 	def "should update a test step action "() {
 		given:
@@ -603,6 +627,41 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		ActionWord actionWord = createdKeywordTestStep.actionWord
 		actionWord.id != null
+		actionWord.createWord() == "hello"
+		actionWord.token == "T-hello-"
+		!actionWord.getKeywordTestSteps().isEmpty()
+
+		def fragments = actionWord.getFragments()
+		fragments.size() == 1
+		def f1 = fragments.get(0)
+		f1.class.is(ActionWordText)
+		def text1 = (ActionWordText) f1
+		text1.getText() == "hello"
+		text1.id != null
+		text1.actionWord == actionWord
+
+		and:
+		def testCase = createdKeywordTestStep.getTestCase()
+		def testCaseSteps = testCase.getSteps()
+		testCaseSteps.size() == 3
+		testCaseSteps[1].keyword == Keyword.AND
+		testCaseSteps[1].actionWord == actionWord
+
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.keyword test cases.xml")
+	def "should add a keyword test step with an action word id to test case at a specific index"() {
+		when:
+		KeywordTestStep createdKeywordTestStep = service.addKeywordTestStep(-4L, "AND", "  hello    ", -33L, 1)
+
+		then:
+		createdKeywordTestStep != null
+		createdKeywordTestStep.id != null
+
+		Keyword.AND == createdKeywordTestStep.keyword
+
+		ActionWord actionWord = createdKeywordTestStep.actionWord
+		actionWord.id == -33
 		actionWord.createWord() == "hello"
 		actionWord.token == "T-hello-"
 		!actionWord.getKeywordTestSteps().isEmpty()
@@ -1173,6 +1232,57 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the datatable of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		and:
+		def updatedDatatable = """| product | price |
+| Expresso | 0.40 |"""
+
+		when:
+		service.updateKeywordTestStepDatatable(stepId, updatedDatatable)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.datatable == updatedDatatable
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the docstring of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		and:
+		def updatedDocstring = """Product (string)
+Price (in euro)"""
+
+		when:
+		service.updateKeywordTestStepDocstring(stepId, updatedDocstring)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.docstring == updatedDocstring
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the comment of a keyword test step"() {
+		given:
+		def stepId = -18L
+
+		and:
+		def updatedComment = """Products are from France.
+Prices are all with taxes."""
+
+		when:
+		service.updateKeywordTestStepComment(stepId, updatedComment)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.comment == updatedComment
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
 	def "should update the action word of a keyword test step with same token but new parameter values"() {
 		given:
 		def stepId = -19L
@@ -1205,6 +1315,25 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		step.actionWord.token == "T-I have apples-"
 		step.actionWord.fragments.size() == 1
 		step.actionWord.fragments[0].text == "I have apples"
+		step.testCase.parameters.size() == 0
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should update keyword test steps.xml")
+	def "should update the action word of a keyword test step with modifying token and with a given action word id"() {
+		given:
+		def stepId = -19L
+		def actionWordId = -126
+
+		when:
+		service.updateKeywordTestStep(stepId, "hello", actionWordId)
+
+		then:
+		KeywordTestStep step = findEntity(KeywordTestStep.class, stepId)
+		step.paramValues.size() == 0
+		step.actionWord.id == -126
+		step.actionWord.token == "T-hello-"
+		step.actionWord.fragments.size() == 1
+		step.actionWord.fragments[0].text == "hello"
 		step.testCase.parameters.size() == 0
 	}
 

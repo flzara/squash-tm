@@ -24,6 +24,7 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.project.QProject;
@@ -35,22 +36,32 @@ import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.CustomScmRepositoryDao;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
+import static org.squashtest.tm.jooq.domain.Tables.THIRD_PARTY_SERVER;
+import static org.squashtest.tm.jooq.domain.Tables.SCM_REPOSITORY;
 
 public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScmRepositoryDaoImpl.class);
 
+	private static final String URL_SEPARATOR = "/";
+
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private DSLContext dsl;
 
 	@Override
 	public Map<ScmRepository, Set<TestCase>> findScriptedAndKeywordTestCasesGroupedByRepoById(Collection<Long> testCaseIds) {
@@ -82,6 +93,26 @@ public class ScmRepositoryDaoImpl implements CustomScmRepositoryDao {
 				groupBy(scm).as(set(testCase))
 			);
 
+	}
+
+	@Override
+	public List<String> findDeclaredScmRepositoriesUrl() {
+		List<String> repositoriesUrl = new ArrayList<>();
+
+		dsl.select(THIRD_PARTY_SERVER.URL, SCM_REPOSITORY.NAME)
+			.from(SCM_REPOSITORY)
+			.innerJoin(THIRD_PARTY_SERVER).on(SCM_REPOSITORY.SERVER_ID.eq(THIRD_PARTY_SERVER.SERVER_ID))
+			.fetch()
+			.forEach(r -> {
+				String scmUrl = r.get(THIRD_PARTY_SERVER.URL);
+				String repoName = r.get(SCM_REPOSITORY.NAME);
+				if(scmUrl.endsWith(URL_SEPARATOR)){
+					repositoriesUrl.add(scmUrl.concat(repoName));
+				} else {
+					repositoriesUrl.add(scmUrl.concat(URL_SEPARATOR).concat(repoName));
+				}
+			});
+		return repositoriesUrl;
 	}
 
 	/**
