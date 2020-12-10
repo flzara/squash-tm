@@ -43,26 +43,7 @@
 	<jsp:attribute name="body">
 	<div id="test-case-autom-attributes-table" class="display-table">
 
-			<%-- Test Automation structure --%>
-    <div class="display-table-row">
-      <label for="test-case-automated-test-technology" class="display-table-cell">
-        <f:message key="test-case.automated-test-technology.label" />
-      </label>
-      <div class="display-table-cell">
-        <span id="test-case-automated-test-technology"><c:out value="${ testCase.automatedTestTechnology.name }" escapeXml="true"/></span>
-      </div>
-    </div>
-    <div class="display-table-row">
-        <label class="display-table-cell" for="test-case-source-code-repository-url"><f:message
-          key="test-case.source-code-repository-url.label"/></label>
-        <div class="display-table-cell" id="test-case-source-code-repository-url"><c:out value="${ testCase.sourceCodeRepositoryUrl }" escapeXml="true"/></div>
-      </div>
-      <div class="display-table-row">
-        <label class="display-table-cell" for="test-case-automated-test-reference"><f:message
-          key="test-case.automated-test-reference.label"/></label>
-        <div class="display-table-cell" id="test-case-automated-test-reference"><c:out value="${ testCase.automatedTestReference }" escapeXml="true"/></div>
-      </div>
-			<%--/Test Automation structure --%>
+    <tc:testcase-squashautom testCase="${testCase}" writable="${writable}"/>
 
 	</div>
 	</jsp:attribute>

@@ -124,6 +124,7 @@
 
     <c:if test="${ hasProjectWithTaServer ==true }">
          <tc:testcase-test-automation testCase="${testCase}"  canModify="${writable}"/>
+         <tc:testcase-squashautom testCase="${testCase}" writable="${writable}"/>
     </c:if>
    <div class="display-table-row test-case-remote-automation-request-block">
          <label class="display-table-cell" for="automation-last-transmitted-on">

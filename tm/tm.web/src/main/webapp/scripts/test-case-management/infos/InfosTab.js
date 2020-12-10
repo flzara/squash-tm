@@ -22,16 +22,16 @@ define([ "jquery", "backbone", "underscore",
          "./GeneralInfosPanel",
          "./PrerequisitePanel",
          "./AutomationPanel",
-         "./AutomatedTestAttributesPanel",
          "../../test-automation/testcase-test-automation",
+				 "../../test-automation/testcase-squashautom",
          "../../verified-requirements/TestCaseVerifiedRequirementsPanel",
          "bugtracker/bugtracker-panel",
          "workspace.event-bus",
          "squash.translator",
          "custom-field-values",
          "squashtable"], function($,
-		Backbone, _, GeneralInfosPanel, PrerequisitePanel, AutomationPanel, AutomatedTestAttributesPanel, testcaseTestAutomation,
-		TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator, cufvalues) {
+		Backbone, _, GeneralInfosPanel, PrerequisitePanel, AutomationPanel, testcaseTestAutomation,
+		testcaseSquashAutom, TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator, cufvalues) {
 
 
 	var InfoTab = Backbone.View.extend({
@@ -61,11 +61,6 @@ define([ "jquery", "backbone", "underscore",
 				settings : this.settings,
 				parentTab : this
 			});
-
-			this.automatedTestAttributesPanel = new AutomatedTestAttributesPanel({
-				settings : this.settings,
-				parentTab : this
-			})
 
 			// test automation
 			this._initTestAutomation();
@@ -137,6 +132,13 @@ define([ "jquery", "backbone", "underscore",
 				testcaseTestAutomation.init(conf);
 
 			}
+
+			var confSquashAutom = {
+				canModify	: this.settings.writable,
+				testCaseUrl : this.settings.urls.testCaseUrl,
+				automatedTestTechnologies : this.settings.automatedTestTechnologies
+			};
+			testcaseSquashAutom.init(confSquashAutom);
 
 		},
 

@@ -139,12 +139,18 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.tran
 
 						$('.test-case-remote-automation-request-block').show();
 						$("#script-auto-remote-automation-request").show();
+						$("#automated-test-technology-remote-automation-request").show();
+						$("#test-case-source-code-repository-url-remote-automation-request").show();
+						$("#test-case-automated-test-reference-remote-automation-request").show();
 						$("#automation-request-status-label").hide();
 						$("#automation-request-status").hide();
 
 					} else {
 						$('.test-case-remote-automation-request-block').hide();
 						$("#script-auto-remote-automation-request").hide();
+						$("#automated-test-technology-remote-automation-request").hide();
+						$("#test-case-source-code-repository-url-remote-automation-request").hide();
+						$("#test-case-automated-test-reference-remote-automation-request").hide();
 						$("#automation-request-status").show();
 						$("#automation-request-status-label").show();
 					}
