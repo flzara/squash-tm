@@ -131,4 +131,39 @@ class MilestoneDaoIT extends DbunitDaoSpecification {
 		expect:
 		milestoneDao.isAttachmentListBoundToLockedMilestone(-7L)
 	}
+
+	def "isAttachmentBoundToLockedMilestone(long) - Should not find any milestone blocking a test case attachment modification"() {
+		expect:
+		!milestoneDao.isAttachmentBoundToLockedMilestone(-1L)
+	}
+	/* The Attachment belongs to a TestCase bound to a Planned|Locked Milestone */
+	def "isAttachmentBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a test case attachment modification"() {
+		expect:
+		milestoneDao.isAttachmentBoundToLockedMilestone(-2L)
+	}
+	/* The Attachment belongs to a TestCase verifying a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isAttachmentBoundToLockedMilestone(long) - Should find a locked milestone indirectly blocking a test case attachment modification"() {
+		expect:
+		milestoneDao.isAttachmentBoundToLockedMilestone(-3L)
+	}
+
+	def "isAttachmentBoundToLockedMilestone(long) - Should not find any milestone blocking a requirement version attachment modification"() {
+		expect:
+		!milestoneDao.isAttachmentBoundToLockedMilestone(-4L)
+	}
+	/* The Attachment belongs to a RequirementVersion bound to a Planned|Locked Milestone */
+	def "isAttachmentBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a requirement version attachment modification"() {
+		expect:
+		milestoneDao.isAttachmentBoundToLockedMilestone(-5L)
+	}
+
+	def "isAttachmentBoundToLockedMilestone(long) - Should not find any milestone blocking a campaign attachment modification"() {
+		expect:
+		!milestoneDao.isAttachmentBoundToLockedMilestone(-6L)
+	}
+	/* The Attachment belongs to a Campaign bound to a Planned|Locked Milestone */
+	def "isAttachmentBoundToLockedMilestone(long) - Should find a locked milestone directly blocking a campaign attachment modification"() {
+		expect:
+		milestoneDao.isAttachmentBoundToLockedMilestone(-7L)
+	}
 }
