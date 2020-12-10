@@ -21,27 +21,41 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.type.IntegerType;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
+import org.jooq.DSLContext;
+import org.jooq.Record1;
+import org.jooq.Result;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.jooq.domain.tables.records.CampaignTestPlanItemRecord;
+import org.squashtest.tm.jooq.domain.tables.records.ItemTestPlanListRecord;
+import org.squashtest.tm.jooq.domain.tables.records.TestSuiteTestPlanItemRecord;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
 import javax.inject.Inject;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.squashtest.tm.jooq.domain.Tables.CAMPAIGN_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
+import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
+import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.TEST_SUITE_TEST_PLAN_ITEM;
 
 
 /*
@@ -64,6 +78,9 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	@Inject
 	private DataSourceProperties dataSourceProperties;
+
+	@Inject
+	protected DSLContext DSL;
 
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
@@ -157,142 +174,237 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		return Collections.emptyList();
 	}
 
-	@Override
 	/*
-	 * we're bound to use sql since hql offers no solution here.
+	 * Cleanup in Campaign test plans prior to test case deletion.
 	 *
-	 * that method will perform the following :
+	 * Because we have unique key constraints and we need to batch update CTPIs to update their order, we'll proceed
+	 * like so :
+	 * - Fetch CTPIs that need to be reordered
+	 * - Remove all affected CTPIs (those that are effectively deleted and those that need reordering)
+	 * - Re-insert the CTPIs that need reordering with their new position.
 	 *
-	 * - update the order of all campaign item test plan ranked after the ones we're about to delete - delete the
-	 * campaign item test plans.
-	 *
-	 * Also, because MySQL do not support sub queries selecting from the table being updated we have to proceed with the
-	 * awkward treatment that follows :
-	 */
-	public void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds) {
-
-		if (!testCaseIds.isEmpty()) {
-			String campaignUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN;
-			String url = dataSourceProperties.getUrl();
-			if (url.contains(DATABASE_LABEL_POSTGRESQL)) {
-				campaignUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLANFORPOSTGRESQL;
-			}
-			// we must reorder the campaign_item_test_plans
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET, campaignUpdateQuery,
-				testCaseIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS);
-
-		}
-
-	}
-
-	/*
-	 * same comment than for HibernateTestCaseDeletionDao#removeCallingCampaignItemTestPlan
-	 *
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao#removeOrSetNullCallingIterationItemTestPlan(java
-	 * .util.List)
+	 * Note: You'll see awkward temporary tables (tempCTPI, tempITPI,...) here and there. These are needed
+	 * for MySQL which disallow updates where the updated table appears in a sub-select unless we give it
+	 * an alias.
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCaseIds) {
+	public void removeCampaignTestPlanInboundReferences(List<Long> testCasesToRemove) {
+		if (testCasesToRemove.isEmpty()) { return; }
 
-		if (!testCaseIds.isEmpty()) {
-			SQLQuery query1 = getSession().createSQLQuery(
-					NativeQueries.TESTCASE_SQL_SELECTCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS);
-			query1.addScalar("item_test_plan_id", LongType.INSTANCE);
-			query1.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
-			List<Long> itpHavingExecIds = query1.list();
-
-			SQLQuery query2 = getSession().createSQLQuery(
-					NativeQueries.TESTCASE_SQL_SELECTCALLINGITERATIONITEMTESTPLANHAVINGNOEXECUTIONS);
-			query2.addScalar("item_test_plan_id", LongType.INSTANCE);
-			query2.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
-			List<Long> itpHavingNoExecIds = query2.list();
-
-			setNullCallingIterationItemTestPlanHavingExecutions(itpHavingExecIds);
-			removeCallingIterationItemTestPlanHavingNoExecutions(itpHavingNoExecIds);
-		}
-
+		Map<Long, Result<CampaignTestPlanItemRecord>> itemsToReorderByCampaignId = fetchCampaignItemsToReorder(testCasesToRemove);
+		deleteAffectedCampaignItems(testCasesToRemove);
+		batchInsertReorderedCampaignItems(itemsToReorderByCampaignId);
 	}
 
-	private void setNullCallingIterationItemTestPlanHavingExecutions(List<Long> itpHavingExecIds) {
-		if (!itpHavingExecIds.isEmpty()) {
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS,
-				ITP_HAVING_EXEC_IDS, itpHavingExecIds);
-		}
+	private Map<Long, Result<CampaignTestPlanItemRecord>> fetchCampaignItemsToReorder(List<Long> testCasesToRemove) {
+		SelectConditionStep<Record1<Long>> affectedCampaigns = getAffectedCampaigns(testCasesToRemove);
+		Select<Record1<Long>> itemIdsToRemove = DSL.select(CAMPAIGN_TEST_PLAN_ITEM.CTPI_ID)
+			.from(CAMPAIGN_TEST_PLAN_ITEM)
+			.where(CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID.in(testCasesToRemove));
+
+		return DSL.selectFrom(CAMPAIGN_TEST_PLAN_ITEM)
+			.where(CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID.in(affectedCampaigns))
+			.and(CAMPAIGN_TEST_PLAN_ITEM.CTPI_ID.notIn(itemIdsToRemove))
+			.orderBy(CAMPAIGN_TEST_PLAN_ITEM.TEST_PLAN_ORDER)
+			.fetchGroups(CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID);
 	}
 
-	private void removeCallingIterationItemTestPlanHavingNoExecutions(List<Long> itpHavingNoExecIds) {
-		if (!itpHavingNoExecIds.isEmpty()) {
+	private SelectConditionStep<Record1<Long>> getAffectedCampaigns(List<Long> testCasesToRemove) {
+		Table<?> tempCTPI = DSL.selectFrom(CAMPAIGN_TEST_PLAN_ITEM).asTable();
 
-			String testSuiteUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER;
-			String iterationUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER;
-			String url = dataSourceProperties.getUrl();
-			if (url.contains(DATABASE_LABEL_POSTGRESQL)) {
-				testSuiteUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDERFORPOSTGRESQL;
-				iterationUpdateQuery = NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDERFORPOSTGRESQL;
-			}
-
-			// reorder the test plans for test suites and remove the elements before update
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET, testSuiteUpdateQuery,
-				itpHavingNoExecIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS);
-
-			// reorder the test plans for iterations and remove the elements before update
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET, iterationUpdateQuery,
-				itpHavingNoExecIds, NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST, ITP_HAVING_NO_EXEC_IDS);
-
-			// remove the elements themselves
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN, ITP_HAVING_NO_EXEC_IDS,
-					itpHavingNoExecIds);
-		}
+		return DSL.select(CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID)
+			.from(tempCTPI)
+			.where(tempCTPI.field("TEST_CASE_ID").in(testCasesToRemove));
 	}
 
-	@SuppressWarnings("unchecked")
-	private void reorderTestPlan(String selectOffsetQuery, String updateOrderQuery, List<Long> removedItems, String deleteQueryString, String deleteParamName) {
-
-		Query query0 = getSession().createSQLQuery(selectOffsetQuery);
-		query0.setParameterList("removedItemIds1", removedItems);
-		query0.setParameterList("removedItemIds2", removedItems);
-		List<Object[]> pairIdOffset = query0.list();
-
-		Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
-
-		// Feat 7183 - remove the elements from their collection before the update because of unique constraints
-		if (deleteQueryString != null && !deleteQueryString.isEmpty()) {
-			executeDeleteSQLQuery(deleteQueryString, deleteParamName, removedItems);
-		}
-
-		for (Entry<Integer, List<Long>> offsetEntry : mapOffsets.entrySet()) {
-			Query query = getSession().createSQLQuery(updateOrderQuery);
-			query.setParameter("offset", offsetEntry.getKey(), IntegerType.INSTANCE);
-			query.setParameterList("reorderedItemIds", offsetEntry.getValue(), LongType.INSTANCE);
-			query.executeUpdate();
-		}
-
+	private void deleteAffectedCampaignItems(List<Long> testCasesToRemove) {
+		executeWithinHibernateSession(DSL
+			.delete(CAMPAIGN_TEST_PLAN_ITEM)
+			.where(CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID.in(getAffectedCampaigns(testCasesToRemove))));
 	}
 
-	private Map<Integer, List<Long>> buildMapOfOffsetAndIds(List<Object[]> list) {
-		Map<Integer, List<Long>> result = new HashMap<>();
+	private void batchInsertReorderedCampaignItems(Map<Long, Result<CampaignTestPlanItemRecord>> groupedItemsToReorder) {
+		groupedItemsToReorder.values().forEach(records -> IntStream
+			.range(0, records.size())
+			.forEach(position -> {
+				CampaignTestPlanItemRecord record = records.get(position);
+				record.setTestPlanOrder(position);
+				record.changed(true);	// We need to set this flag to avoid 'null' columns...
+			}));
 
-		for (Object[] pair : list) {
-			Integer offset = ((BigInteger) pair[1]).intValue();
+		DSL.batchInsert(
+			groupedItemsToReorder.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList())
+		).execute();
+	}
 
-			// we skip if the offset is 0
-			if (offset == 0) {
-				continue;
-			}
+	/*
+	 * The process to update an iteration test plan due to test cases removal is similar to the one used for campaign
+	 * test plans (see note for removeCampaignTestPlanInboundReferences). We need to reorder Iteration TPIs and Test
+	 * Suite TPIs that are affected by the test cases deletion. We'll do this in-memory by first fetching items that
+	 * need reordering, deleting all affected items, and reinsert items with a new order.
+	 */
+	@Override
+	public void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCasesToRemove) {
 
-			if (!result.containsKey(offset)) {
-				result.put(offset, new LinkedList<Long>());
-			}
-
-			result.get(offset).add(((BigInteger) pair[0]).longValue());
+		if (testCasesToRemove.isEmpty()) {
+			return;
 		}
 
-		return result;
+		Select<Record1<Long>> itemIdsToRemove = getIterationTestPlanItemsWithoutExecution(testCasesToRemove);
+		Select<Record1<Long>> itemIdsToReorder = getIterationTestPlanItemsToReorder(itemIdsToRemove);
 
+		Map<Long, Result<ItemTestPlanListRecord>> itemsByIteration = fetchIterationItemsToReorder(itemIdsToReorder);
+		Map<Long, Result<TestSuiteTestPlanItemRecord>> itemsByTestSuite = fetchTestSuiteItemsToReorder(itemIdsToRemove);
+
+		deleteAffectedIterationTestPlanItemsAndBindings(itemIdsToRemove, itemIdsToReorder);
+
+		batchInsertReorderedIterationItems(itemsByIteration);
+		batchInsertReorderedTestSuiteItems(itemsByTestSuite);
+		nullifyReferencedTestCaseForExecutedITPIs(testCasesToRemove);
+	}
+
+	private Select<Record1<Long>> getIterationTestPlanItemsToReorder(Select<Record1<Long>> itemIdsToRemove) {
+		final String ITERATION_ID = "ITERATION_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPItem = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+		final Table<?> tempITPList = DSL.selectFrom(ITEM_TEST_PLAN_LIST).asTable();
+
+		Select<Record1<Long>> affectedIterationIds = DSL
+			.select(tempITPList.field(ITERATION_ID, Long.class))
+			.from(tempITPList)
+			.join(tempITPItem)
+			.on(tempITPList.field(ITEM_TEST_PLAN_ID, Long.class).eq(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class)))
+			.where(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class).in(itemIdsToRemove));
+
+		return DSL.select(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPItem)
+			.join(tempITPList).on(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class)
+				.eq(tempITPList.field(ITEM_TEST_PLAN_ID, Long.class)))
+			.where(tempITPList.field(ITERATION_ID, Long.class).in(affectedIterationIds))
+			.and(tempITPItem.field(ITEM_TEST_PLAN_ID, Long.class).notIn(itemIdsToRemove));
+	}
+
+	private Select<Record1<Long>> getIterationTestPlanItemsWithoutExecution(List<Long> testCaseIds) {
+		final String TCLN_ID = "TCLN_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPI = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+
+		return DSL.select(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPI)
+			.where(tempITPI.field(TCLN_ID, Long.class).in(testCaseIds))
+			.and(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class).notIn(
+				DSL.selectDistinct(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID).from(ITEM_TEST_PLAN_EXECUTION)));
+	}
+
+	private Map<Long, Result<ItemTestPlanListRecord>> fetchIterationItemsToReorder(Select<Record1<Long>> itemIdsToReorder) {
+		return DSL
+			.selectFrom(ITEM_TEST_PLAN_LIST)
+			.where(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.in(itemIdsToReorder))
+			.orderBy(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ORDER)
+			.fetchGroups(ITEM_TEST_PLAN_LIST.ITERATION_ID);
+	}
+
+	private Map<Long, Result<TestSuiteTestPlanItemRecord>> fetchTestSuiteItemsToReorder(Select<Record1<Long>> itemIdsToRemove) {
+		return DSL
+			.selectFrom(TEST_SUITE_TEST_PLAN_ITEM)
+			.where(TEST_SUITE_TEST_PLAN_ITEM.TPI_ID.notIn(itemIdsToRemove))
+			.orderBy(TEST_SUITE_TEST_PLAN_ITEM.TEST_PLAN_ORDER)
+			.fetchGroups(TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID);
+	}
+
+	private void nullifyReferencedTestCaseForExecutedITPIs(List<Long> testCasesToRemove) {
+		final String TCLN_ID = "TCLN_ID";
+		final String ITEM_TEST_PLAN_ID = "ITEM_TEST_PLAN_ID";
+		final Table<?> tempITPI = DSL.selectFrom(ITERATION_TEST_PLAN_ITEM).asTable();
+
+		final Select<Record1<Long>> itemsToRemoveWithExecutions = DSL
+			.select(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class))
+			.from(tempITPI)
+			.where(tempITPI.field(TCLN_ID, Long.class).in(testCasesToRemove))
+			.and(tempITPI.field(ITEM_TEST_PLAN_ID, Long.class).in(
+				DSL.selectDistinct(ITEM_TEST_PLAN_EXECUTION.ITEM_TEST_PLAN_ID).from(ITEM_TEST_PLAN_EXECUTION)));
+
+		org.jooq.Query nullifyQuery = DSL.update(ITERATION_TEST_PLAN_ITEM)
+			.set(ITERATION_TEST_PLAN_ITEM.TCLN_ID, (Long) null)
+			.where(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.in(itemsToRemoveWithExecutions));
+
+		// We don't use executeWithinHibernateSession because the type information for the 'null' parameter
+		// would be lost, causing a SQL error
+		NativeQuery<?> nativeQuery = getSession().createNativeQuery(nullifyQuery.getSQL());
+		List<Object> bindValues = nullifyQuery.getBindValues();
+
+		nativeQuery.setParameter(1, null, LongType.INSTANCE);
+
+		for (int i = 1; i < bindValues.size(); i++) {
+			nativeQuery.setParameter(i + 1, bindValues.get(i));
+		}
+
+		nativeQuery.executeUpdate();
+	}
+
+	private void deleteAffectedIterationTestPlanItemsAndBindings(Select<Record1<Long>> itemIdsToRemove, Select<Record1<Long>> itemIdsToReorder) {
+		// Delete all test plan items
+		executeWithinHibernateSession(DSL.deleteFrom(TEST_SUITE_TEST_PLAN_ITEM));
+
+		// Delete all iteration test plan items that need to be reordered
+		executeWithinHibernateSession(DSL.deleteFrom(ITEM_TEST_PLAN_LIST)
+			.where(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.in(itemIdsToReorder)));
+
+		// Delete all item test plan lists for ITPIs that are removed
+		executeWithinHibernateSession(DSL.deleteFrom(ITEM_TEST_PLAN_LIST)
+			.where(ITEM_TEST_PLAN_LIST.ITEM_TEST_PLAN_ID.in(itemIdsToRemove)));
+
+		// Delete all iteration test plan items that are removed
+		executeWithinHibernateSession(DSL.deleteFrom(ITERATION_TEST_PLAN_ITEM)
+			.where(ITERATION_TEST_PLAN_ITEM.ITEM_TEST_PLAN_ID.in(itemIdsToRemove)));
+	}
+
+	private void batchInsertReorderedTestSuiteItems(Map<Long, Result<TestSuiteTestPlanItemRecord>> itemsByTestSuite) {
+		itemsByTestSuite.values().forEach(records -> IntStream
+			.range(0, records.size())
+			.forEach(position -> {
+				TestSuiteTestPlanItemRecord record = records.get(position);
+				record.setTestPlanOrder(position);
+				record.changed(true);
+			}));
+
+		DSL.batchInsert(
+			itemsByTestSuite.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList())
+		).execute();
+	}
+
+	private void batchInsertReorderedIterationItems(Map<Long, Result<ItemTestPlanListRecord>> itemsByIteration) {
+		itemsByIteration.values().forEach(records -> IntStream
+			.range(0, records.size())
+			.forEach(position -> {
+				ItemTestPlanListRecord record = records.get(position);
+				record.setItemTestPlanOrder(position);
+				record.changed(true);
+			}));
+
+		DSL.batchInsert(
+			itemsByIteration.values()
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList())
+		).execute();
+	}
+
+	private void executeWithinHibernateSession(org.jooq.Query jooqQuery) {
+		NativeQuery<?> nativeQuery = getSession().createNativeQuery(jooqQuery.getSQL());
+		List<Object> bindValues = jooqQuery.getBindValues();
+
+		for (int i = 0; i < bindValues.size(); i++) {
+			nativeQuery.setParameter(i + 1, bindValues.get(i));
+		}
+
+		nativeQuery.executeUpdate();
 	}
 
 	@Override

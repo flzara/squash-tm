@@ -27,6 +27,7 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.requirement.Requirement
@@ -276,7 +277,78 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		itp2.referencedTestCase == null
 	}
 
+	/*
+	 * This test set corresponds to a bug where TC deletion fails because of reordered ITPIs on Postgres 9.6 (and possibly
+	 * other versions).
+	 */
+	@DataSet("NodeDeletionHandlerTest.should update iteration test plan after TC deletion.xml")
+	def "should update iteration test plan after TC deletion"(){
+		when :
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-1L, -3L])
 
+		then :
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -12L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -14L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -22L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -24L)
+
+		// ITPIs were kept because they have executions
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -11L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -21L)
+
+		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -13L)
+		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -23L)
+
+		def itpi1 = findEntity(IterationTestPlanItem.class, -11L)
+		itpi1.referencedTestCase == null
+
+		def itpi2 = findEntity(IterationTestPlanItem.class, -14L)
+		itpi2.referencedTestCase != null
+
+		def it1 = findEntity(Iteration.class, -153L)
+		it1.testPlans.size() == 3
+		it1.testPlans[0].id == -11L
+		it1.testPlans[1].id == -14L
+		it1.testPlans[2].id == -12L
+
+		def it2 = findEntity(Iteration.class, -2L)
+		it2.testPlans.size() == 3
+		it2.testPlans[0].id == -22L
+		it2.testPlans[1].id == -24L
+		it2.testPlans[2].id == -21L
+
+		it2.testSuites.size() == 2
+
+		def ts1 = findEntity(TestSuite.class, -1L)
+		ts1.testPlan.size() == 2
+		ts1.testPlan[0].id == -24L
+		ts1.testPlan[1].id == -22L
+
+		def ts2 = findEntity(TestSuite.class, -2L)
+		ts2.testPlan.size() == 2
+		ts2.testPlan[0].id == -21L
+		ts2.testPlan[1].id == -24L
+
+		def it3 = findEntity(Iteration.class, -3L)
+		it3.testPlans.size() == 4
+		it3.testPlans[0].id == -32L
+		it3.testPlans[1].id == -33L
+		it3.testPlans[2].id == -34L
+		it3.testPlans[3].id == -31L
+	}
+
+	@DataSet("NodeDeletionHandlerTest.should update iteration test plan after TC deletion.xml")
+	def "should remove test case reference without reordering test plans for ITPI with execution"(){
+		when :
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-4L])
+
+		then :
+		def itpi = findEntity(IterationTestPlanItem.class, -14L)
+		itpi != null
+		itpi.referencedTestCase == null
+
+		! found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -34L)
+	}
 
 	@DataSet("NodeDeletionDaoTest.should disassociate exec steps.xml")
 	def "should disassociate a test step from calling exec steps"(){
@@ -322,13 +394,65 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		def c2 = findEntity(Campaign.class, -2L)
 		def c3 = findEntity(Campaign.class, -3L)
 
-		c1.testPlan.size() ==2
-		c2.testPlan.size() ==2
-		c3.testPlan.size() ==2
+		c1.testPlan.size() == 2
+		c2.testPlan.size() == 2
+		c3.testPlan.size() == 2
 
 		c1.testPlan.containsExactlyIds([-11L, -14L])
 		c2.testPlan.containsExactlyIds([-24L, -21L])
 		c3.testPlan.containsExactlyIds([-31L, -34L])
+	}
+
+	/*
+	 * This test set corresponds to a bug where TC deletion fails because of reordered CTPIs on Postgres 9.6 (and possibly
+	 * other versions).
+	 */
+	@DataSet("NodeDeletionDaoTest.should update campaign test plan after TC deletion.xml")
+	def "should update campaign test plan after TC deletion"(){
+
+		when :
+		deletionDao.removeCampaignTestPlanInboundReferences([-2L])
+
+		then :
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -12L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -13L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -14L)
+
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -11L)
+
+		def c1 = findEntity(Campaign.class, -1L)
+		c1.testPlan.size() == 3
+		c1.testPlan[0].id == -13L
+		c1.testPlan[1].id == -12L
+		c1.testPlan[2].id == -14L
+
+		def c2 = findEntity(Campaign.class, -2L)
+		c2.testPlan.size() == 3
+		c2.testPlan[0].id == -24L
+		c2.testPlan[1].id == -23L
+		c2.testPlan[2].id == -21L
+
+		def c3 = findEntity(Campaign.class, -3L)
+		c3.testPlan.size() == 3
+		c3.testPlan[0].id == -31L
+		c3.testPlan[1].id == -33L
+		c3.testPlan[2].id == -34L
+	}
+
+	@DataSet("NodeDeletionDaoTest.should update campaign test plan after TC deletion.xml")
+	def "should delete all campaign item test plans"(){
+
+		when :
+		deletionDao.removeCampaignTestPlanInboundReferences([-1, -2L, -3L, -4L])
+
+		then :
+		def c1 = findEntity(Campaign.class, -1L)
+		def c2 = findEntity(Campaign.class, -2L)
+		def c3 = findEntity(Campaign.class, -3L)
+
+		c1.testPlan.isEmpty()
+		c2.testPlan.isEmpty()
+		c3.testPlan.isEmpty()
 	}
 
 
