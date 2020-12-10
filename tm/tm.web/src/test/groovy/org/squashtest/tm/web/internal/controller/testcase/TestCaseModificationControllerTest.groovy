@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.audit.AuditableMixin
 import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -32,6 +33,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
@@ -77,6 +79,8 @@ class TestCaseModificationControllerTest extends Specification {
 
 	CustomFieldHelperService cufHelperService = Mock()
 
+	AutomatedTestTechnologyFinderService automatedTestTechnologyFinderService = Mock()
+
 	org.squashtest.tm.web.testutils.MockFactory mockFactory = new MockFactory()
 	MilestoneUIConfigurationService milestoneConfigurer = Mock()
 
@@ -108,6 +112,9 @@ class TestCaseModificationControllerTest extends Specification {
 
 		controller.infoListBuilder = infoListBuilder
 		controller.milestoneConfService = milestoneConfigurer
+
+		setUpAutomatedTestTechnologyFinder()
+		controller.automatedTestTechnologyFinder = automatedTestTechnologyFinderService
 	}
 
 	def mockCallingTestCaseService(){
@@ -147,6 +154,11 @@ class TestCaseModificationControllerTest extends Specification {
 
 	def setupAttachmentHelper(){
 		attachmHelper.findPagedAttachments(_) >> Mock(DataTableModel)
+	}
+
+	def setUpAutomatedTestTechnologyFinder(){
+		AutomatedTestTechnology mockedTech = new AutomatedTestTechnology(id: 1, name: "Robot Framework")
+		automatedTestTechnologyFinderService.getAllAvailableAutomatedTestTechnology() >> [mockedTech]
 	}
 
 

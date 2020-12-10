@@ -203,6 +203,12 @@
                                  writable="${writable}"/>
       </c:if>
 
+          <c:if test="${!allowAutomationWorkflow}">
+            <tc:test-case-autom-attributes testCase="${testCase}"
+                                     writable="${writable}"/>
+          </c:if>
+
+
         <%----------------------------------- Prerequisites -----------------------------------------------%>
       <c:if test="${!scripted && !isKeywordTest}">
         <tc:test-case-prerequisites testCase="${testCase}"/>
@@ -278,6 +284,7 @@
           testCaseTypes: ${json:serialize(testCaseTypes)},
           testCaseStatusComboJson: ${testCaseStatusComboJson},
           automReqStatusComboJson: ${automReqStatusComboJson},
+          automatedTestTechnologies: ${json:serialize(automatedTestTechnologies)},
           importanceAuto: ${testCase.importanceAuto},
           testCaseId: ${testCase.id},
           callingTestCases: ${json:serialize(callingTestCasesModel.aaData)},

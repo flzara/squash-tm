@@ -31,7 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.core.foundation.lang.Wrapped;
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology;
 import org.squashtest.tm.domain.scm.ScmRepository;
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology;
 import org.squashtest.tm.domain.testcase.KeywordTestCase;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -40,6 +42,7 @@ import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.testcase.event.TestCaseGherkinLocationChangeEvent;
 import org.squashtest.tm.service.scmserver.ScmRepositoryFilesystemService;
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest;
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService;
 
@@ -79,6 +82,9 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 	@Inject
 	private MessageSource messageSource;
 
+	@Inject
+	private AutomatedTestTechnologyFinderService automatedTestTechnologyFinderService;
+
 	@Override
 	public void createWorkingFolderIfAbsent(ScmRepository scm) {
 		File workingFolder = scm.getWorkingFolder();
@@ -113,6 +119,7 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 						// at this point the file is created without error
 						// lets fill the file with the script content
 						printToFile(testFile, testCase);
+						//Update Squash Autom related fields
 						updateTestCaseAutomatedScriptInformation(testCase, testFile, manifest);
 					}
 					return null;
@@ -479,6 +486,19 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		testCaseModificationService.changeAutomatedTestReference(testCase.getId(), PathUtils.cleanMultipleSlashes(automatedTestReference));
 		testCaseModificationService.changeSourceCodeRepositoryUrl(testCase.getId(), sourceCodeRepositoryUrl);
 
+		BddImplementationTechnology bddImplementationTechnology = testCase.getProject().getBddImplementationTechnology();
+		AutomatedTestTechnology technology = null;
+		switch (bddImplementationTechnology){
+			case ROBOT:
+				technology = automatedTestTechnologyFinderService.findByName("Robot Framework");
+				break;
+			case CUCUMBER:
+				technology = automatedTestTechnologyFinderService.findByName("Cucumber");
+				break;
+		}
+		if(technology != null){
+			testCaseModificationService.changeAutomatedTestTechnology(testCase.getId(), technology.getId());
+		}
 	}
 
 }

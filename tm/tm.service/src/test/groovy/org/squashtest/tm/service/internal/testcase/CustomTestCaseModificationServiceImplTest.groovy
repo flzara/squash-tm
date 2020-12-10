@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.customfield.RawValue
 import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.KeywordTestCase
@@ -61,6 +62,7 @@ import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestM
 import org.squashtest.tm.service.internal.testcase.event.TestCaseNameChangeEvent
 import org.squashtest.tm.service.internal.testcase.event.TestCaseReferenceChangeEvent
 import org.squashtest.tm.service.project.ProjectFinder
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService
 import org.squashtest.tm.service.testcase.DatasetModificationService
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.testutils.MockFactory
@@ -93,6 +95,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	TestStepDao testStepDao = Mock()
 	UnsecuredAutomatedTestManagerService taService = Mock()
+	AutomatedTestTechnologyFinderService testTechnologyFinderService = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -119,6 +122,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.actionWordLibraryNodeService = actionWordLibraryNodeService
 		service.datasetModificationService = datasetModificationService
 		service.projectFinder = projectFinder
+		service.automatedTestTechnologyFinderService = testTechnologyFinderService
 	}
 
 	def createBasicActionWord(String singleFragment) {
@@ -1430,6 +1434,30 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		1 * tc.setAutomatedTestReference("reref")
 
 		1 * testCaseDao.findById(10L) >> tc
+	}
+
+	def "should change the automated test technology of a test case"() {
+
+		given:
+		def tc = Mock(TestCase) {
+			getId() >> 10L
+		}
+
+		def tech = Mock(AutomatedTestTechnology){
+			getId() >> 2L
+			getName() >> "Robot Framework"
+		}
+
+		when:
+		service.changeAutomatedTestTechnology(10L, 2L)
+
+		then:
+		1 * testCaseDao.findById(10L) >> tc
+
+		1 * testTechnologyFinderService.findById(2L) >> tech
+
+		1 * tc.setAutomatedTestTechnology(tech)
+
 	}
 
 	def "should change the importance of a test case"() {

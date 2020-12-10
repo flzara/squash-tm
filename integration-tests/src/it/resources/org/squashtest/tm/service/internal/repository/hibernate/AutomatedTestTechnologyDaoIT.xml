@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+
+  <AUTOMATED_TEST_TECHNOLOGY AT_TECHNOLOGY_ID="-1" NAME="Robot Framework" ACTION_PROVIDER_KEY="robotframework/execute@v1"/>
+  <AUTOMATED_TEST_TECHNOLOGY AT_TECHNOLOGY_ID="-2" NAME="Cypress" ACTION_PROVIDER_KEY="cypress/execute@v1"/>
+
+</dataset>

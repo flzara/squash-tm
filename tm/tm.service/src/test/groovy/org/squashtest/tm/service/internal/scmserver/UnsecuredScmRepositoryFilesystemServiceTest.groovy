@@ -23,9 +23,11 @@ package org.squashtest.tm.service.internal.scmserver
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.bdd.BddImplementationTechnology
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.scm.ScmRepository
 import org.squashtest.tm.domain.scm.ScmServer
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology
 import org.squashtest.tm.domain.testcase.KeywordTestCase
 import org.squashtest.tm.domain.testcase.ScriptedTestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -34,6 +36,7 @@ import org.squashtest.tm.domain.tf.automationrequest.AutomationRequest
 import org.squashtest.tm.domain.tf.automationrequest.AutomationRequestStatus
 import org.squashtest.tm.service.internal.library.PathService
 import org.squashtest.tm.service.scmserver.ScmRepositoryManifest
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.bdd.KeywordTestCaseService
 import org.squashtest.tm.service.testutils.MockFactory
@@ -58,7 +61,9 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 
 	private TestCaseModificationService testCaseModificationService = Mock(TestCaseModificationService)
 
-	private MessageSource messageSource = Mock(MessageSource);
+	private MessageSource messageSource = Mock(MessageSource)
+
+	private AutomatedTestTechnologyFinderService automatedTestTechnologyFinderService = Mock(AutomatedTestTechnologyFinderService)
 
 	@Shared
 	private ScmRepository scm = new MockFactory().mockScmRepository(10L, "scmtest_", "squash"){
@@ -73,6 +78,7 @@ class UnsecuredScmRepositoryFilesystemServiceTest extends Specification{
 		service.keywordTestCaseService = keywordTestCaseService
 		service.messageSource = messageSource
 		service.testCaseModificationService = testCaseModificationService
+		service.automatedTestTechnologyFinderService = automatedTestTechnologyFinderService
 
 		def server = Mock(ScmServer)
 		server.getUrl() >> "http://github.com"
@@ -467,6 +473,7 @@ go home quickly before someone notices that the ITs are broken"""
 			isUseTreeStructureInScmRepo() >> false
 			getScmRepository() >> scmRepo
 			getBddScriptLanguage() >> ENGLISH
+			getBddImplementationTechnology() >> BddImplementationTechnology.CUCUMBER
 		}
 
 		ScriptedTestCase newTc = Mock(ScriptedTestCase){
@@ -522,6 +529,10 @@ go home quickly before someone notices that the ITs are broken"""
 		then:
 		3 * testCaseModificationService.changeSourceCodeRepositoryUrl(_, _)
 		3 * testCaseModificationService.changeAutomatedTestReference(_, _)
+		3 * testCaseModificationService.changeAutomatedTestTechnology(_, _)
+		3 * automatedTestTechnologyFinderService.findByName("Cucumber") >> Mock(AutomatedTestTechnology){
+			getId() >> 1L
+		}
 		File newScript = new File(scm.workingFolder, "123_yes_test_case.feature")
 		File updateScript = new File(scm.workingFolder, "456_lame_pun.feature")
 		File keywordTcScript = new File(scm.workingFolder, "777_keyword_test_case.feature")

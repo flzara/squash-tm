@@ -243,6 +243,20 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		tc.automatedTestReference == tcNewRef
 	}
 
+	@DataSet("TestCaseModificationServiceImplIT.should change a test case automated test technology.xml")
+	def "should change a test case automated test technology"() {
+		given:
+		def newTechId = -2L
+		when:
+		service.changeAutomatedTestTechnology(testCaseId, newTechId)
+
+		def tc = service.findById(testCaseId)
+
+		then:
+		tc.automatedTestTechnology.id == newTechId
+		tc.automatedTestTechnology.name == "Cypress"
+	}
+
 	@DataSet("TestCaseModificationServiceImplIT.should update a test step action.xml")
 	def "should update a test step action "() {
 		given:

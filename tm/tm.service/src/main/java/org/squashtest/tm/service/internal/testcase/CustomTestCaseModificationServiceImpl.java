@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -106,6 +107,7 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
@@ -254,6 +256,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private ProjectFinder projectFinder;
 
+	@Inject
+	private AutomatedTestTechnologyFinderService automatedTestTechnologyFinderService;
+
 
 	/* *************** TestCase section ***************************** */
 
@@ -311,6 +316,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		LOGGER.debug("changing test case #{} automated test reference from '{}' to '{}' ", testCase.getId(), testCase.getAutomatedTestReference(), automatedTestReference);
 
 		testCase.setAutomatedTestReference(automatedTestReference);
+	}
+
+	@Override
+	public void changeAutomatedTestTechnology(long testCaseId, long automatedTestTechnologyId) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+
+		AutomatedTestTechnology technology = automatedTestTechnologyFinderService.findById(automatedTestTechnologyId);
+
+		LOGGER.debug("changing test case #{} automated test technology to '{}' ", testCase.getId(), technology.getName());
+
+		testCase.setAutomatedTestTechnology(technology);
 	}
 
 	@Override

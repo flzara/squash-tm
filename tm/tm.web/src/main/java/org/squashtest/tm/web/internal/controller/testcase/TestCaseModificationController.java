@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -63,6 +64,7 @@ import org.squashtest.tm.domain.project.AutomationWorkflowType;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationStatus;
+import org.squashtest.tm.domain.testautomation.AutomatedTestTechnology;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -96,6 +98,7 @@ import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testautomation.AutomatedTestTechnologyFinderService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.scripted.ScriptedTestCaseFinder;
@@ -136,7 +139,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -146,6 +148,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
@@ -245,6 +248,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private ProjectDao projectDao;
+
+	@Inject
+	private AutomatedTestTechnologyFinderService automatedTestTechnologyFinder;
 
 	/**
 	 * Returns the fragment html view of test case
@@ -353,6 +359,9 @@ public class TestCaseModificationController {
 		//hasProjectWithTaServer
 
 		mav.addObject("hasProjectWithTaServer", (testCase.getProject().getTestAutomationServer()!= null ? true : false));
+
+		//Squash Autom available AutomatedTestTechnology
+		mav.addObject("automatedTestTechnologies", automatedTestTechnologyFinder.getAllAvailableAutomatedTestTechnology());
 
 		// RemoteAutomationRequestExtender
 		String workflowType = testCase.getProject().getAutomationWorkflowType().getI18nKey();
@@ -590,15 +599,24 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automated-test-reference", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String changeAutomatedTestReference(@RequestParam(VALUE) String testCaseAutomatetedTestReference, @PathVariable long testCaseId) {
+	public String changeAutomatedTestReference(@RequestParam(VALUE) String testCaseAutomatedTestReference, @PathVariable long testCaseId) {
 
-		testCaseAutomatetedTestReference = testCaseAutomatetedTestReference.substring(0, Math.min(testCaseAutomatetedTestReference.length(), 255));
-		testCaseModificationService.changeAutomatedTestReference(testCaseId, testCaseAutomatetedTestReference);
+		testCaseAutomatedTestReference = testCaseAutomatedTestReference.substring(0, Math.min(testCaseAutomatedTestReference.length(), 255));
+		testCaseModificationService.changeAutomatedTestReference(testCaseId, testCaseAutomatedTestReference);
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated automated test reference to " + testCaseAutomatetedTestReference);
+			LOGGER.trace(TEST_SPACE_CASE + testCaseId + ": updated automated test reference to " + testCaseAutomatedTestReference);
 		}
 
-		return HtmlUtils.htmlEscape(testCaseAutomatetedTestReference);
+		return HtmlUtils.htmlEscape(testCaseAutomatedTestReference);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = {"id=test-case-automated-test-technology", VALUE}, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String changeAutomatedTestTechnology(@RequestParam(VALUE) long testCaseAutomatedTestTechnologyId, @PathVariable long testCaseId) {
+
+		testCaseModificationService.changeAutomatedTestTechnology(testCaseId, testCaseAutomatedTestTechnologyId);
+
+		return Long.toString(testCaseAutomatedTestTechnologyId);
 	}
 
 	@ResponseBody
@@ -1079,6 +1097,5 @@ public class TestCaseModificationController {
 			return internationalizationHelper.internationalize(SQUASHTM_NODATA, locale);
 		}
 	}
-
 
 }

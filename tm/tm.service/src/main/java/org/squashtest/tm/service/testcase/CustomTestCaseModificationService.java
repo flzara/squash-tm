@@ -63,6 +63,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void changeAutomatedTestReference(long testCaseId, String automatedTestReference);
 
+	void changeAutomatedTestTechnology(long testCaseId, long automatedTestTechnologyId);
+
 	void changeImportance(long testCaseId, TestCaseImportance importance);
 
 	/**
