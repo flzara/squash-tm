@@ -352,8 +352,7 @@
     The following script will insert the new ACL_CLASS (the action word library).
 
     Then it will batch insert in ACL_GROUP_PERMISSION, for each user profile,
-    the same permission for action word libraries than it enjoys for the test case libraries
-    except for delete permission (8) which is just for project manager (5).
+    the same permission for action word libraries than it enjoys for the test case libraries.
     -->
     <sql>
       insert into ACL_CLASS(ID, CLASSNAME)
@@ -362,7 +361,7 @@
       insert into ACL_GROUP_PERMISSION(ACL_GROUP_ID, PERMISSION_MASK, CLASS_ID)
       select AGP2.ACL_GROUP_ID, AGP2.PERMISSION_MASK, 8
       from ACL_GROUP_PERMISSION AGP2
-      where (CLASS_ID = 3 and PERMISSION_MASK != 8) or (CLASS_ID = 3 and ACL_GROUP_ID = 5);
+      where CLASS_ID = 3;
     </sql>
 
     <comment>Add foreign key to the library in a project</comment>
