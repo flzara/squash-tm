@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 
 import javax.validation.constraints.NotNull;
 
@@ -33,9 +35,9 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 /**
  * Requirement Version mangement related services.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.RequirementVersionManagerService", entity = RequirementVersion.class)
@@ -51,8 +53,9 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changeReference(long requirementVersionId, @NotNull String reference);
 
+	@CheckLockedMilestone(entityType = RequirementVersion.class)
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
+	void changeStatus(@Id long requirementVersionId, @NotNull RequirementStatus status);
 
 
 }

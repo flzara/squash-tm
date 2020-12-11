@@ -1068,6 +1068,190 @@
 	@NamedQuery(name="AutomationRequest.updateConflictAssociation", query = "UPDATE AutomationRequest ar SET ar.conflictAssociation = :conflictAssociation WHERE ar.testCase.id = :testCaseId"),
 
 
+	// Locked Milestones
+	@NamedQuery(name = "Milestone.findLockedMilestonesForTestStep",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+					"(select directMilestone.id " +
+					"from TestStep ts " +
+					"inner join ts.testCase tc " +
+					"inner join tc.milestones directMilestone " +
+					"where ts.id = :stepId " +
+					"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select indirectMilestone.id " +
+					"from TestStep ts " +
+					"inner join ts.testCase tc " +
+					"inner join tc.requirementVersionCoverages rvc " +
+					"inner join rvc.verifiedRequirementVersion rv " +
+					"inner join rv.milestones indirectMilestone " +
+					"where ts.id = :stepId " +
+					"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForParameter",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directMilestone.id " +
+				"from Parameter p " +
+				"inner join p.testCase tc " +
+				"inner join tc.milestones directMilestone " +
+				"where p.id = :paramId " +
+				"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectMilestone.id " +
+				"from Parameter p " +
+				"inner join p.testCase tc " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectMilestone " +
+				"where p.id = :paramId " +
+				"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForDataset",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directMilestone.id " +
+				"from Dataset ds " +
+				"inner join ds.testCase tc " +
+				"inner join tc.milestones directMilestone " +
+				"where ds.id = :datasetId " +
+				"and directMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectMilestone.id " +
+				"from Dataset ds " +
+				"inner join ds.testCase tc " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectMilestone " +
+				"where ds.id = :datasetId " +
+				"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForDatasetParamValue",
+	query =
+		"select m.id " +
+			"from Milestone m " +
+			"where m.id in " +
+			"(select directMilestone.id " +
+			"from DatasetParamValue dspv " +
+			"inner join dspv.dataset ds " +
+			"inner join ds.testCase tc " +
+			"inner join tc.milestones directMilestone " +
+			"where dspv.id = :datasetParamValueId " +
+			"and directMilestone.status in (:statuses)) " +
+			"or m.id in " +
+			"(select indirectMilestone.id " +
+			"from DatasetParamValue dspv " +
+			"inner join dspv.dataset ds " +
+			"inner join ds.testCase tc " +
+			"inner join tc.requirementVersionCoverages rvc " +
+			"inner join rvc.verifiedRequirementVersion rv " +
+			"inner join rv.milestones indirectMilestone " +
+			"where dspv.id = :datasetParamValueId " +
+			"and indirectMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForAttachmentList",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+				"(select directTestCaseMilestone.id " +
+				"from TestCase tc " +
+				"inner join tc.attachmentList al " +
+				"inner join tc.milestones directTestCaseMilestone " +
+				"where al.id = :attachmentListId " +
+				"and directTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select indirectTestCaseMilestone.id " +
+				"from TestCase tc " +
+				"inner join tc.attachmentList al " +
+				"inner join tc.requirementVersionCoverages rvc " +
+				"inner join rvc.verifiedRequirementVersion rv " +
+				"inner join rv.milestones indirectTestCaseMilestone " +
+				"where al.id = :attachmentListId " +
+				"and indirectTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select requirementMilestone.id " +
+				"from RequirementVersion rv " +
+				"inner join rv.attachmentList al " +
+				"inner join rv.milestones requirementMilestone " +
+				"where al.id = :attachmentListId " +
+				"and requirementMilestone.status in (:statuses)) " +
+				"or m.id in " +
+				"(select campaignMilestone.id " +
+				"from Campaign c " +
+				"inner join c.attachmentList al " +
+				"inner join c.milestones campaignMilestone " +
+				"where al.id = :attachmentListId " +
+				"and campaignMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForAttachment",
+		query =
+			"select m.id " +
+				"from Milestone m " +
+				"where m.id in " +
+					"(select directTestCaseMilestone.id " +
+					"from TestCase tc " +
+					"inner join tc.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join tc.milestones directTestCaseMilestone " +
+					"where a.id = :attachmentId " +
+					"and directTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select indirectTestCaseMilestone.id " +
+					"from TestCase tc " +
+					"inner join tc.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join tc.requirementVersionCoverages rvc " +
+					"inner join rvc.verifiedRequirementVersion rv " +
+					"inner join rv.milestones indirectTestCaseMilestone " +
+					"where a.id = :attachmentId " +
+					"and indirectTestCaseMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select requirementMilestone.id " +
+					"from RequirementVersion rv " +
+					"inner join rv.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join rv.milestones requirementMilestone " +
+					"where a.id = :attachmentId " +
+					"and requirementMilestone.status in (:statuses)) " +
+				"or m.id in " +
+					"(select campaignMilestone.id " +
+					"from Campaign c " +
+					"inner join c.attachmentList al " +
+					"inner join al.attachments a " +
+					"inner join c.milestones campaignMilestone " +
+					"where a.id = :attachmentId " +
+					"and campaignMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirementVersion",
+		query = "select m.id " +
+			"from RequirementVersion rv " +
+			"inner join rv.milestones m " +
+			"where rv.id = :requirementVersionId " +
+			"and m.status in (:statuses)"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirements",
+		query = "select m.id " +
+			"from Requirement req " +
+			"inner join req.resource res " +
+			"inner join res.milestones m " +
+			"where req.id in (:requirementIds) " +
+			"and m.status in (:statuses)"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirement",
+		query = "select m.id " +
+			"from Requirement req " +
+			"inner join req.resource res " +
+			"inner join res.milestones m " +
+			"where req.id = :requirementId " +
+			"and m.status in (:statuses)"),
+
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

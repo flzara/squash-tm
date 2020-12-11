@@ -24,7 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.internal.repository.ScriptedTestCaseDao;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinStepGenerator;
 import org.squashtest.tm.service.internal.testcase.scripted.gherkin.GherkinTestCaseParser;
@@ -42,7 +45,8 @@ public class ScriptedTestCaseServiceImpl implements ScriptedTestCaseService {
 	private ScriptedTestCaseDao scriptedTestCaseDao;
 
 	@Override
-	public void updateTcScript(Long testCaseId, String script) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void updateTcScript(@Id Long testCaseId, String script) {
 		ScriptedTestCase scriptedTestCase = scriptedTestCaseDao.getOne(testCaseId);
 		scriptedTestCase.setScript(script);
 		//Audit on test case... No way to write 3 triggers for only one method call

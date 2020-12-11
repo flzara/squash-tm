@@ -27,29 +27,18 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CustomMilestoneDao {
+
 	interface HolderConsumer {
 		void consume(MilestoneHolder holder);
 	}
 
 	List<Long> findAllMilestoneIds();
-	
-	List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds);
-	
 
+	List<Long> findMilestoneIdsForUsers(Collection<Long> partyIds);
 
 	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
-
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneDeletable(long testCaseId);
-
-	// check whether some milestone could block the deletion of this test case
-	// the said milestone could also be inherited by verified requirements
-	// hence this specific method
-	boolean isTestCaseMilestoneModifiable(long testCaseId);
 
 	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
 
@@ -95,4 +84,39 @@ public interface CustomMilestoneDao {
 
 	void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId);
 
+	/**
+	 * Check whether some milestone could block the deletion of this test case.
+	 * The said milestone could also be inherited by verified requirements hence this specific method.
+	 * @param testCaseId
+	 * @return Whether the TestCase with the given id is deletable.
+	 */
+	boolean isTestCaseMilestoneDeletable(long testCaseId);
+
+	/**
+	 * Check whether some milestone could block the modification of this test case.
+	 * The said milestone could also be inherited by verified requirements hence this specific method.
+	 * @param testCaseId
+	 * @return Whether the TestCase with the given id is modifiable.
+	 */
+	boolean isTestCaseMilestoneModifiable(long testCaseId);
+
+	boolean areTestCasesBoundToLockedMilestone(Collection<Long> testCaseIds);
+
+	boolean isTestStepBoundToLockedMilestone(long testStepId);
+
+	boolean isParameterBoundToLockedMilestone(long paramId);
+
+	boolean isDatasetBoundToLockedMilestone(long datasetId);
+
+	boolean isDatasetParamValueBoundToLockedMilestone(long datasetParamValueId);
+
+	boolean isAttachmentListBoundToLockedMilestone(long attachmentListId);
+
+	boolean isAttachmentBoundToLockedMilestone(long id);
+
+	boolean isRequirementVersionBoundToLockedMilestone(long id);
+
+	boolean areRequirementsBoundToLockedMilestone(Collection<Long> ids);
+
+	boolean isRequirementBoundToLockedMilestone(long id);
 }

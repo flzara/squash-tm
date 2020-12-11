@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
@@ -64,7 +66,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void persist(Dataset dataset, long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void persist(Dataset dataset, @Id long testCaseId) {
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(testCaseId, dataset.getName());
 
 		if (sameName != null) {
@@ -100,7 +103,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 
 	@Override
-	public void removeById(long datasetId) {
+	@CheckLockedMilestone(entityType = Dataset.class)
+	public void removeById(@Id long datasetId) {
 		Optional<Dataset> optDatadataset = this.datasetDao.findById(datasetId);
 		if (optDatadataset.isPresent()){
 			remove(optDatadataset.get());
@@ -116,7 +120,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void changeName(long datasetId, String newName) {
+	@CheckLockedMilestone(entityType = Dataset.class)
+	public void changeName(@Id long datasetId, String newName) {
 
 		Dataset dataset = datasetDao.getOne(datasetId);
 		Dataset sameName = datasetDao.findByTestCaseIdAndName(dataset.getTestCase().getId(), dataset.getName());
@@ -128,7 +133,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void changeParamValue(long datasetParamValueId, String value) {
+	@CheckLockedMilestone(entityType = DatasetParamValue.class)
+	public void changeParamValue(@Id long datasetParamValueId, String value) {
 		DatasetParamValue paramValue = datasetParamValueDao.getOne(datasetParamValueId);
 		paramValue.setParamValue(value);
 	}

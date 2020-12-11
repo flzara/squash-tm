@@ -32,6 +32,10 @@ import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseVisitor;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.CheckLockedMilestones;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -90,7 +94,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#addNewParameterToTestCase(Parameter, long)
 	 */
 	@Override
-	public void addNewParameterToTestCase(Parameter parameter, long testCaseId) {
+	@CheckLockedMilestone(entityType = TestCase.class)
+	public void addNewParameterToTestCase(Parameter parameter, @Id long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		IsScriptedTestCaseVisitor testCaseVisitor = new IsScriptedTestCaseVisitor();
 		if (testCaseVisitor.isScripted()) {
@@ -110,7 +115,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#addNewParameterToTestCase(Parameter, long)
 	 */
 	@Override
-	public void changeName(long parameterId, String newName) {
+	@CheckLockedMilestone(entityType = Parameter.class)
+	public void changeName(@Id long parameterId, String newName) {
 		Parameter parameter = parameterDao.getOne(parameterId);
 		parameter.setName(newName);
 	}
@@ -119,7 +125,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#changeDescription(long, String)
 	 */
 	@Override
-	public void changeDescription(long parameterId, String newDescription) {
+	@CheckLockedMilestone(entityType = Parameter.class)
+	public void changeDescription(@Id long parameterId, String newDescription) {
 
 		Parameter parameter = parameterDao.getOne(parameterId);
 		parameter.setDescription(newDescription);
@@ -137,7 +144,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#removeAllByTestCaseIds(List)
 	 */
 	@Override
-	public void removeAllByTestCaseIds(List<Long> testCaseIds) {
+	public void removeAllByTestCaseIds(@Ids List<Long> testCaseIds) {
 		// note : hibernate bulk delete don't care of cascade delete so we have to remove the values by ourselves
 		this.parameterDao.removeAllValuesByTestCaseIds(testCaseIds);
 		this.parameterDao.removeAllByTestCaseIds(testCaseIds);
@@ -147,7 +154,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#removeById(long)
 	 */
 	@Override
-	public void removeById(long parameterId) {
+	@CheckLockedMilestone(entityType = Parameter.class)
+	public void removeById(@Id long parameterId) {
 		Optional<Parameter> optParameter = parameterDao.findById(parameterId);
 		if (optParameter.isPresent()){
 			this.parameterDao.delete(optParameter.get());
@@ -158,7 +166,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 * @see ParameterModificationService#createParamsForStep(long)
 	 */
 	@Override
-	public void createParamsForStep(long stepId) {
+	@CheckLockedMilestone(entityType = TestStep.class)
+	public void createParamsForStep(@Id long stepId) {
 		TestStep step = testStepDao.findById(stepId);
 		createParamsForStep(step);
 	}

@@ -42,6 +42,8 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion.PropertiesSetter;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -184,7 +186,8 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Override
 	@PreAuthorize(WRITE_REQVERSION_OR_ROLE_ADMIN)
-	public void rename(long requirementVersionId, String newName) {
+	@CheckLockedMilestone(entityType = RequirementVersion.class)
+	public void rename(@Id long requirementVersionId, String newName) {
 		RequirementVersion v = requirementVersionDao.getOne(requirementVersionId);
 
 		/*
