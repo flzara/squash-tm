@@ -58,6 +58,8 @@ import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationExcepti
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.CheckLockedMilestone;
+import org.squashtest.tm.service.annotation.CheckLockedMilestones;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -413,6 +415,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize(CREATE_REQUIREMENT_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
+	@CheckLockedMilestone(entityType = Requirement.class)
 	public Requirement addRequirementToRequirement(@Id long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds) {
 
 		Requirement parent = requirementDao.findById(requirementId);
@@ -449,8 +452,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= SOURCE_NODES_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
-			)
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)})
+	@CheckLockedMilestone(entityType = Requirement.class)
 	public List<Requirement> copyNodesToRequirement(@Id(REQUIREMENT_ID) long requirementId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds) {
 		PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
 		makeCopierStrategy(pasteStrategy);
@@ -461,8 +464,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
-			)
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)})
+	@CheckLockedMilestone(entityType = Requirement.class)
 	public void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds) {
 		if (nodeIds.length == 0) {
 			return;
@@ -480,8 +483,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
-			)
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)})
+	@CheckLockedMilestone(entityType = Requirement.class)
 	public void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds, int position) {
 		if (nodeIds.length == 0) {
 			return;
@@ -1003,8 +1006,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	@PreventConcurrents(
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetIds", coercer=RLNAndParentIdsCoercerForList.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetIds", coercer=RequirementLibraryIdsCoercerForList.class)}
-			)
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetIds", coercer=RequirementLibraryIdsCoercerForList.class)})
+	@CheckLockedMilestones(entityType = Requirement.class)
 	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds) {
 		return super.deleteNodes(targetIds);
 	}

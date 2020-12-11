@@ -28,21 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
-import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 import javax.inject.Inject;
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * This aspect manages {@linkplain CheckLockedMilestone} annotation.
@@ -71,6 +63,12 @@ public class CheckLockedMilestoneAspect {
 
 		boolean isEntityBoundToLockedMilestone;
 		switch (entityType.getSimpleName()) {
+			case "Requirement":
+				isEntityBoundToLockedMilestone = milestoneDao.isRequirementBoundToLockedMilestone(id);
+				break;
+			case "RequirementVersion":
+				isEntityBoundToLockedMilestone = milestoneDao.isRequirementVersionBoundToLockedMilestone(id);
+				break;
 			case "TestCase":
 				isEntityBoundToLockedMilestone = milestoneDao.isTestCaseMilestoneModifiable(id);
 				break;
@@ -114,6 +112,9 @@ public class CheckLockedMilestoneAspect {
 
 		boolean areEntitiesBoundToLockedMilestone;
 		switch (entityType.getSimpleName()) {
+			case "Requirement":
+				areEntitiesBoundToLockedMilestone = milestoneDao.areRequirementsBoundToLockedMilestone(ids);
+				break;
 			case "TestCase":
 				areEntitiesBoundToLockedMilestone = milestoneDao.areTestCasesBoundToLockedMilestone(ids);
 				break;

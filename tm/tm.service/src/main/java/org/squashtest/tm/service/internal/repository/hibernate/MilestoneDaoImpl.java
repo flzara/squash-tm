@@ -502,4 +502,27 @@ public class MilestoneDaoImpl implements CustomMilestoneDao {
 		return !query.getResultList().isEmpty();
 	}
 
+	@Override
+	public boolean isRequirementVersionBoundToLockedMilestone(long requirementVersionId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForRequirementVersion");
+		query.setParameter("requirementVersionId", requirementVersionId);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
+
+	@Override
+	public boolean areRequirementsBoundToLockedMilestone(Collection<Long> requirementIds) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForRequirements");
+		query.setParameter("requirementIds", requirementIds);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
+
+	@Override
+	public boolean isRequirementBoundToLockedMilestone(long requirementId) {
+		Query query = entityManager.createNamedQuery("Milestone.findLockedMilestonesForRequirement");
+		query.setParameter("requirementId", requirementId);
+		query.setParameter("statuses", MILESTONE_LOCKING_STATUSES);
+		return !query.getResultList().isEmpty();
+	}
 }

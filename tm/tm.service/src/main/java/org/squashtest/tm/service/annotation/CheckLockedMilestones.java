@@ -43,5 +43,5 @@ public @interface CheckLockedMilestones {
 	/**
 	 * Class of the {@linkplain MilestoneMember} which is modified by the annotated method.
 	 */
-	Class<? extends MilestoneMember> entityType();
+	Class entityType();
 }

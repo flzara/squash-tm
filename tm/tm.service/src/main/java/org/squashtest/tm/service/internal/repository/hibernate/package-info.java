@@ -1227,7 +1227,30 @@
 					"inner join al.attachments a " +
 					"inner join c.milestones campaignMilestone " +
 					"where a.id = :attachmentId " +
-					"and campaignMilestone.status in (:statuses))")
+					"and campaignMilestone.status in (:statuses))"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirementVersion",
+		query = "select m.id " +
+			"from RequirementVersion rv " +
+			"inner join rv.milestones m " +
+			"where rv.id = :requirementVersionId " +
+			"and m.status in (:statuses)"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirements",
+		query = "select m.id " +
+			"from Requirement req " +
+			"inner join req.resource res " +
+			"inner join res.milestones m " +
+			"where req.id in (:requirementIds) " +
+			"and m.status in (:statuses)"),
+
+	@NamedQuery(name = "Milestone.findLockedMilestonesForRequirement",
+		query = "select m.id " +
+			"from Requirement req " +
+			"inner join req.resource res " +
+			"inner join res.milestones m " +
+			"where req.id = :requirementId " +
+			"and m.status in (:statuses)"),
 
 })
 //@formatter:on

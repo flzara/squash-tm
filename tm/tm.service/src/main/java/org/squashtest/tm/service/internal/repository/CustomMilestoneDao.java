@@ -113,4 +113,10 @@ public interface CustomMilestoneDao {
 	boolean isAttachmentListBoundToLockedMilestone(long attachmentListId);
 
 	boolean isAttachmentBoundToLockedMilestone(long id);
+
+	boolean isRequirementVersionBoundToLockedMilestone(long id);
+
+	boolean areRequirementsBoundToLockedMilestone(Collection<Long> ids);
+
+	boolean isRequirementBoundToLockedMilestone(long id);
 }

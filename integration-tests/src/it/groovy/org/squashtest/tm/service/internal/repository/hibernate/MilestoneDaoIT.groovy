@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.repository.MilestoneDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
@@ -166,4 +168,52 @@ class MilestoneDaoIT extends DbunitDaoSpecification {
 		expect:
 		milestoneDao.isAttachmentBoundToLockedMilestone(-7L)
 	}
+
+	def "isRequirementVersionBoundToLockedMilestone(long) - Should not find any milestone blocking a requirement version modification"() {
+		expect:
+		!milestoneDao.isRequirementVersionBoundToLockedMilestone(-2L)
+	}
+	def "isRequirementVersionBoundToLockedMilestone(long) - Should find a locked milestone blocking a requirement version modification"() {
+		expect:
+		milestoneDao.isRequirementVersionBoundToLockedMilestone(-1L)
+	}
+
+	def "isRequirementBoundToLockedMilestone(long) - Should not find any milestone blocking a requirement modification"() {
+		given:
+		setupRequirementsAndVersions()
+		expect:
+		!milestoneDao.isRequirementBoundToLockedMilestone(-2L)
+	}
+	def "isRequirementBoundToLockedMilestone(long) - Should find a locked milestone blocking a requirement modification"() {
+		given:
+		setupRequirementsAndVersions()
+		expect:
+		milestoneDao.isRequirementBoundToLockedMilestone(-1L)
+	}
+
+	def "areRequirementsBoundToLockedMilestone(Collection<long>) - Should not find any milestone blocking requirements modification"() {
+		given:
+		setupRequirementsAndVersions()
+		expect:
+		!milestoneDao.areRequirementsBoundToLockedMilestone([-2L])
+	}
+	def "areRequirementsBoundToLockedMilestone(Collection<long>) - Should find a locked milestone blocking requirements modification"() {
+		given:
+		setupRequirementsAndVersions()
+		expect:
+		milestoneDao.areRequirementsBoundToLockedMilestone([-1L, -2L])
+	}
+
+	def linkRequirementAndVersion(requirementId, versionId) {
+		Requirement requirement = findEntity(Requirement.class, requirementId)
+		RequirementVersion version = findEntity(RequirementVersion.class, versionId)
+		version.setRequirement(requirement)
+		requirement.setCurrentVersion(version)
+	}
+
+	def setupRequirementsAndVersions() {
+		linkRequirementAndVersion(-1L, -1L)
+		linkRequirementAndVersion(-2L, -2L)
+	}
+
 }
