@@ -1,3 +1,24 @@
+--
+--     This file is part of the Squashtest platform.
+--     Copyright (C) Henix, henix.fr
+--
+--     See the NOTICE file distributed with this work for additional
+--     information regarding copyright ownership.
+--
+--     This is free software: you can redistribute it and/or modify
+--     it under the terms of the GNU Lesser General Public License as published by
+--     the Free Software Foundation, either version 3 of the License, or
+--     (at your option) any later version.
+--
+--     this software is distributed in the hope that it will be useful,
+--     but WITHOUT ANY WARRANTY; without even the implied warranty of
+--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--     GNU Lesser General Public License for more details.
+--
+--     You should have received a copy of the GNU Lesser General Public License
+--     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+--
+
 Insert into ATTACHMENT_LIST(ATTACHMENT_LIST_ID) values 
  (1), 
  (2), 
@@ -780,8 +801,8 @@ Insert into ITERATION(ITERATION_ID, DELETED_ON, DESCRIPTION, NAME, CREATED_BY, C
  (7, null, '', 'IT_1', 'nf', '2011-05-25 09:37:37.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 467), 
  (8, null, '', 'IT_2_2011.06.02', 'guest_tpl', '2011-05-30 14:46:05.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 492), 
  (11, null, '<p>\n\tsdfsqfsdfsdqfsdqf</p>\n', 'sdqfsdqfsdqf', 'guest_tpl', '2011-05-31 09:31:07.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 506), 
- (12, null, '<p>\n\tdsfsqfdfsd</p>\n', 'Itération 3', 'guest_tpl', '2011-05-31 09:48:19.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 515), 
- (13, null, '', 'Itération 4', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 520), 
+ (12, null, '<p>\n\tdsfsqfdfsd</p>\n', 'Itï¿½ration 3', 'guest_tpl', '2011-05-31 09:48:19.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 515), 
+ (13, null, '', 'Itï¿½ration 4', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 520), 
  (14, null, '<p>\n\tFirefox</p>\n', 'IT5', 'guest_tpl', '2011-05-31 14:46:35.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 532), 
  (9, null, '', 'IT1', 'guest_t1', '2011-05-31 07:46:14.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 494),
  (10, null, '', 'IT2', 'guest_t1', '2011-05-31 07:48:30.0', 'guest_tpl', '2011-06-22 12:11:39.0', false, null, false, null, null, null, 495);
@@ -1313,11 +1334,11 @@ Insert into REQUIREMENT_LIBRARY_NODE(RLN_ID, DELETED_ON, DESCRIPTION, NAME, CREA
  (172, null, '<p>\n\tAn <strong>Admin</strong> must enter his login and password then click on <span>VALIDATE</span> to enter <span _fck_bookmark=\"1\"></span><u><strong><span><span><span _fck_bookmark=\"1\"></span></span></span></strong></u><span><span _fck_bookmark=\"1\"></span><span _fck_bookmark=\"1\"> </span><strong><u>NX Pet Shop Back Office</u></strong></span>.</p>\n', 'Navigation', 'nf', '2011-05-24 14:54:07.0', 'nf', '2011-05-24 15:30:30.0', 3), 
  (173, null, '<p>\n\tThe graphic interface of the New user form screen is composed by <em><span>twelve </span></em><strong>(12) </strong>elements :</p>\n<ol>\n\t<li>\n\t\tA block with label <span>User information</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>User ID :</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>New password :</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>Repeat password :</span></li>\n\t<li>\n\t\tA block with label <span>Account </span><span>information</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>First name :</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>Last name :</span></li>\n\t<li>\n\t\tInside it : a text box with label <span>Email :</span></li>\n\t<li>\n\t\tA block with label <span>Profile Information</span></li>\n\t<li>\n\t\tInside it : one combo box labelled <span>Profile :</span></li>\n\t<li>\n\t\tInside it : one combo box labelled <span>Favorite category :</span></li>\n\t<li>\n\t\tA button <span>SUBMIT</span></li>\n</ol>\n', 'Interface - New profile form', 'nf', '2011-05-24 15:03:51.0', 'nf', '2011-05-24 15:30:35.0', 3), 
  (174, null, '<p>\n\tThe combo box <span>Profile :</span> contains two profiles:</p>\n<ol>\n\t<li>\n\t\tbanker</li>\n\t<li>\n\t\tadministrator</li>\n</ol>\n', 'Profile available', 'nf', '2011-05-24 15:23:41.0', 'nf', '2011-05-24 15:30:51.0', 3), 
- (175, null, '', '01 - Bibliothèque de modèles', 'guest_tpl', '2011-05-30 13:54:51.0', 'guest_tpl', '2011-05-30 13:58:48.0', 4), 
- (176, null, '<p>\n\tLa bibliothque doit contenir tous les modles dactes</p>\n', 'La bibliothèque doit contenir tous les modèles d''actes', 'guest_tpl', '2011-05-30 13:58:31.0', null, null, 4), 
- (177, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modèles d’actes ne peuvent être modifiés', 'guest_tpl', '2011-05-31 07:50:11.0', null, null, 4), 
- (178, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modèles d’actes ne peuvent être modifiés', 'guest_tpl', '2011-05-31 08:04:45.0', null, null, 4), 
- (179, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modèles d’actes ne peuvent être modifiés', 'guest_tpl', '2011-05-31 08:04:55.0', 'guest_tpl', '2011-05-31 09:25:33.0', 4), 
+ (175, null, '', '01 - Bibliothï¿½que de modï¿½les', 'guest_tpl', '2011-05-30 13:54:51.0', 'guest_tpl', '2011-05-30 13:58:48.0', 4), 
+ (176, null, '<p>\n\tLa bibliothque doit contenir tous les modles dactes</p>\n', 'La bibliothï¿½que doit contenir tous les modï¿½les d''actes', 'guest_tpl', '2011-05-30 13:58:31.0', null, null, 4), 
+ (177, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modï¿½les dï¿½actes ne peuvent ï¿½tre modifiï¿½s', 'guest_tpl', '2011-05-31 07:50:11.0', null, null, 4), 
+ (178, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modï¿½les dï¿½actes ne peuvent ï¿½tre modifiï¿½s', 'guest_tpl', '2011-05-31 08:04:45.0', null, null, 4), 
+ (179, null, '<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"172\">\n\t<colgroup>\n\t\t<col width=\"172\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"41\">\n\t\t\t<td class=\"xl63\" height=\"41\" width=\"172\">\n\t\t\t\tLes modles dactes ne peuvent tre modifis</td>\n\t\t</tr>\n\t</tbody>\n</table>\n<p>\n\t</p>\n', 'Les modï¿½les dï¿½actes ne peuvent ï¿½tre modifiï¿½s', 'guest_tpl', '2011-05-31 08:04:55.0', 'guest_tpl', '2011-05-31 09:25:33.0', 4), 
  (180, null, '', 'test', 'guest_tpl', '2011-06-09 12:05:38.0', null, null, 5), 
  (181, null, '<p>\n\thqeheqh</p>\n', 'testreq', 'guest_tpl', '2011-06-20 10:15:40.0', 'guest_tpl', '2011-06-20 12:26:03.0', 5);
 
@@ -1331,7 +1352,7 @@ Insert into CAMPAIGN_LIBRARY_NODE(CLN_ID, DELETED_ON, DESCRIPTION, NAME, CREATED
  (7, null, '<p>\n\t<a href=\"http://www.google.fr\">http://www.google.fr</a></p>\n', 'test', 'guest_t1', '2011-05-25 08:08:25.0', '2011-06-22 12:11:39.0', 'guest_tpl', 5), 
  (8, null, '<p>\n\tQualification of <span><u><strong>NX Pet Store</strong></u></span> v1.0</p>\n', 'Test main features for NX Pet Store', 'nf', '2011-05-25 09:33:31.0', '2011-05-25 09:35:42.0', 'nf', 1), 
  (9, null, '<p>\n\tQualification of <span><u><strong>NX Pet Store Back Office</strong></u></span> v1.0</p>\n', 'Test main features for NX Pet Store Back v1.0', 'nf', '2011-05-25 09:34:33.0', '2011-05-25 09:37:18.0', 'nf', 3), 
- (10, null, '', 'Campagnes de pré-qualif', 'guest_tpl', '2011-05-30 14:27:44.0', null, null, 4), 
+ (10, null, '', 'Campagnes de prï¿½-qualif', 'guest_tpl', '2011-05-30 14:27:44.0', null, null, 4), 
  (11, null, '', 'Livraison 1.1', 'guest_tpl', '2011-05-30 14:27:57.0', null, null, 4), 
  (12, null, '', 'Tests d''acceptation', 'guest_tpl', '2011-05-30 14:28:35.0', null, null, 4), 
  (13, null, '<p>\n\tCamapagne de tests dacceptation des livraisons</p>\n', 'zzzCampagne Tests d''acceptation de livraison', 'guest_tpl', '2011-05-30 14:29:18.0', '2011-06-09 12:05:02.0', 'guest_tpl', 4), 
@@ -1541,18 +1562,18 @@ Insert into TEST_CASE_LIBRARY_NODE(TCLN_ID, DELETED_ON, DESCRIPTION, NAME, CREAT
  (195, null, '', 'totot', 'guest_t1', '2011-05-25 14:20:08.0', 'guest_t1', '2011-05-25 14:21:33.0', 5), 
  (196, '2011-06-08 10:35:51.0', '', 'totot', 'guest_t1', '2011-05-25 14:21:37.0', null, null, 5), 
  (197, null, '<p>\n\tCeci est un test :</p>\n<ul>\n\t<li hasattached=\"true\">\n\t\tSe connecter</li>\n\t<li>\n\t\tLog</li>\n\t<li>\n\t\tMdp</li>\n\t<li hasattached=\"true\">\n\t\ttttt</li>\n\t<li hasattached=\"true\">\n\t\ttest333333</li>\n\t<li>\n\t\ttest2</li>\n</ul>\n', 'Test0002', 'guest_t1', '2011-05-25 14:41:23.0', 'guest_t1', '2011-06-12 12:20:43.0', 5), 
- (198, null, '<p>\n\tTous les cas de tests associs  la fonctionnalits Bibliothque de modles dactes</p>\n', 'Bibliothèque de modèles d''actes', 'guest_tpl', '2011-05-30 13:59:56.0', null, null, 4), 
- (199, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-30 14:00:53.0', 'guest_tpl', '2011-05-30 14:06:07.0', 4), 
- (200, null, '<p>\n\tRecherche dun modle dacte inexistant pour afficher le message Aucun rsultat na t trouv pour ces critres</p>\n', 'Rechercher un modèle d'' acte inexistant', 'guest_tpl', '2011-05-30 14:35:50.0', 'guest_tpl', '2011-05-30 14:37:05.0', 4);
+ (198, null, '<p>\n\tTous les cas de tests associs  la fonctionnalits Bibliothque de modles dactes</p>\n', 'Bibliothï¿½que de modï¿½les d''actes', 'guest_tpl', '2011-05-30 13:59:56.0', null, null, 4), 
+ (199, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-30 14:00:53.0', 'guest_tpl', '2011-05-30 14:06:07.0', 4), 
+ (200, null, '<p>\n\tRecherche dun modle dacte inexistant pour afficher le message Aucun rsultat na t trouv pour ces critres</p>\n', 'Rechercher un modï¿½le d'' acte inexistant', 'guest_tpl', '2011-05-30 14:35:50.0', 'guest_tpl', '2011-05-30 14:37:05.0', 4);
 
 Insert into TEST_CASE_LIBRARY_NODE(TCLN_ID, DELETED_ON, DESCRIPTION, NAME, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON, PROJECT_ID) values 
  (201, null, '', 'Formulaire de recherche', 'guest_tpl', '2011-05-31 08:23:47.0', null, null, 4), 
- (202, null, '<p>\n\tRecherche dun modle dacte inexistant pour afficher le message Aucun rsultat na t trouv pour ces critres</p>\n', 'Rechercher un modèle d'' acte inexistant', 'guest_tpl', '2011-05-31 08:24:13.0', null, null, 4), 
- (203, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 08:24:13.0', null, null, 4), 
+ (202, null, '<p>\n\tRecherche dun modle dacte inexistant pour afficher le message Aucun rsultat na t trouv pour ces critres</p>\n', 'Rechercher un modï¿½le d'' acte inexistant', 'guest_tpl', '2011-05-31 08:24:13.0', null, null, 4), 
+ (203, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 08:24:13.0', null, null, 4), 
  (204, null, '<p>\n\tbla bla</p>\n<p>\n\tbla</p>\n', 'essai eric', 'guest_t1', '2011-06-01 15:24:26.0', 'guest_t1', '2011-06-11 10:34:20.0', 5), 
  (205, '2011-06-09 08:51:01.0', '', 'dossier2', 'guest_t1', '2011-06-09 08:44:08.0', null, null, 5), 
  (206, null, '', 'second dossier', 'guest_t1', '2011-06-16 14:11:44.0', null, null, 5), 
- (207, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modèle d''acte', 'guest_tpl', '2011-06-19 21:26:42.0', null, null, 4), 
+ (207, null, '<p>\n\tRechercher un modle dacte et lafficher en mode dition pour crer un nouvel acte bas sur ce modle.</p>\n', 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-06-19 21:26:42.0', null, null, 4), 
  (208, null, '', 'tc#2', 'guest_t2', '2011-06-20 09:33:01.0', null, null, 4), 
  (209, null, '', 'tc#3', 'guest_tpl', '2011-06-22 08:21:06.0', null, null, 4);
 
@@ -2344,16 +2365,16 @@ Insert into ITEM_TEST_PLAN(ITEM_TEST_PLAN_ID, EXECUTION_STATUS, LAST_EXECUTED_BY
  (34, 'BLOQUED', null, null, 155, '211_Create a new user', 'guest_t1', '2011-05-25 08:11:46.0', null, null), 
  (35, 'READY', null, null, 183, '01_Administrator connects', 'nf', '2011-05-25 09:37:37.0', null, null), 
  (36, 'READY', null, null, 187, '02_Create a new profile', 'nf', '2011-05-25 09:37:37.0', null, null), 
- (37, 'RUNNING', 'guest_tpl', '2011-06-15 11:14:46.0', 199, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-30 14:46:05.0', 'guest_tpl', '2011-06-15 11:14:49.0'), 
+ (37, 'RUNNING', 'guest_tpl', '2011-06-15 11:14:46.0', 199, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-30 14:46:05.0', 'guest_tpl', '2011-06-15 11:14:49.0'), 
  (38, 'READY', null, null, 194, 'toto', 'guest_t1', '2011-05-31 07:48:30.0', null, null), 
- (39, 'FAILURE', 'guest_tpl', '2011-05-31 09:38:03.0', 199, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 09:31:07.0', 'guest_tpl', '2011-05-31 09:38:03.0'), 
- (40, 'FAILURE', 'guest_tpl', '2011-05-31 09:51:18.0', 199, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 09:48:19.0', 'guest_tpl', '2011-05-31 09:51:18.0'), 
- (41, 'SUCCESS', 'guest_tpl', '2011-05-31 12:06:44.0', 199, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-05-31 12:06:44.0'), 
- (42, 'FAILURE', 'guest_tpl', '2011-05-31 12:07:33.0', 202, 'Rechercher un modèle d'' acte inexistant', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-05-31 12:07:33.0'), 
- (43, 'READY', null, null, 203, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 12:05:47.0', null, null), 
- (44, 'READY', null, null, 199, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 14:46:34.0', null, null), 
- (45, 'READY', null, null, 202, 'Rechercher un modèle d'' acte inexistant', 'guest_tpl', '2011-05-31 14:46:34.0', null, null), 
- (46, 'READY', null, null, 203, 'Rechercher un modèle d''acte', 'guest_tpl', '2011-05-31 14:46:34.0', null, null);
+ (39, 'FAILURE', 'guest_tpl', '2011-05-31 09:38:03.0', 199, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 09:31:07.0', 'guest_tpl', '2011-05-31 09:38:03.0'), 
+ (40, 'FAILURE', 'guest_tpl', '2011-05-31 09:51:18.0', 199, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 09:48:19.0', 'guest_tpl', '2011-05-31 09:51:18.0'), 
+ (41, 'SUCCESS', 'guest_tpl', '2011-05-31 12:06:44.0', 199, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-05-31 12:06:44.0'), 
+ (42, 'FAILURE', 'guest_tpl', '2011-05-31 12:07:33.0', 202, 'Rechercher un modï¿½le d'' acte inexistant', 'guest_tpl', '2011-05-31 12:05:47.0', 'guest_tpl', '2011-05-31 12:07:33.0'), 
+ (43, 'READY', null, null, 203, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 12:05:47.0', null, null), 
+ (44, 'READY', null, null, 199, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 14:46:34.0', null, null), 
+ (45, 'READY', null, null, 202, 'Rechercher un modï¿½le d'' acte inexistant', 'guest_tpl', '2011-05-31 14:46:34.0', null, null), 
+ (46, 'READY', null, null, 203, 'Rechercher un modï¿½le d''acte', 'guest_tpl', '2011-05-31 14:46:34.0', null, null);
 
 Insert into EXECUTION(EXECUTION_ID, TCLN_ID, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON, DESCRIPTION, NAME, EXECUTION_MODE, EXECUTION_STATUS, LAST_EXECUTED_BY, LAST_EXECUTED_ON, ATTACHMENT_LIST_ID, ISSUE_LIST_ID) values 
  (1, 1, 'nf', '2011-05-13 10:48:11.0', null, null, null, 'hfhfh', 'MANUAL', 'READY', null, null, 7, 79), 
@@ -2383,19 +2404,19 @@ Insert into EXECUTION(EXECUTION_ID, TCLN_ID, CREATED_BY, CREATED_ON, LAST_MODIFI
  (25, 148, 'guest_t1', '2011-05-26 19:53:26.0', 'guest_t1', '2011-05-26 19:55:35.0', null, '112_Connection with a user account', 'MANUAL', 'RUNNING', 'guest_t1', '2011-05-26 19:55:35.0', 478, 121), 
  (26, 148, 'guest_t1', '2011-05-26 19:58:11.0', null, null, null, '112_Connection with a user account', 'MANUAL', 'READY', null, null, 483, 126), 
  (27, 194, 'guest_t1', '2011-05-31 07:48:45.0', null, null, null, 'toto', 'MANUAL', 'READY', null, null, 496, 127), 
- (28, 199, 'guest_tpl', '2011-05-31 08:40:05.0', 'guest_tpl', '2011-05-31 09:17:23.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:17:23.0', 505, 131), 
- (29, 199, 'guest_tpl', '2011-05-31 09:34:43.0', 'guest_tpl', '2011-05-31 09:35:11.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-05-31 09:35:11.0', 510, 135), 
- (30, 199, 'guest_tpl', '2011-05-31 09:37:54.0', 'guest_tpl', '2011-05-31 09:38:03.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:38:03.0', 514, 139), 
- (31, 199, 'guest_tpl', '2011-05-31 09:50:53.0', 'guest_tpl', '2011-05-31 09:51:18.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:51:18.0', 519, 143), 
- (32, 199, 'guest_tpl', '2011-05-31 12:06:26.0', 'guest_tpl', '2011-05-31 12:06:44.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-05-31 12:06:44.0', 524, 147), 
- (33, 202, 'guest_tpl', '2011-05-31 12:07:21.0', 'guest_tpl', '2011-05-31 12:07:33.0', null, 'Rechercher un modèle d'' acte inexistant', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 12:07:33.0', 527, 150), 
- (34, 203, 'guest_tpl', '2011-05-31 12:07:56.0', null, null, null, 'Rechercher un modèle d''acte', 'MANUAL', 'READY', null, null, 531, 154), 
+ (28, 199, 'guest_tpl', '2011-05-31 08:40:05.0', 'guest_tpl', '2011-05-31 09:17:23.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:17:23.0', 505, 131), 
+ (29, 199, 'guest_tpl', '2011-05-31 09:34:43.0', 'guest_tpl', '2011-05-31 09:35:11.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-05-31 09:35:11.0', 510, 135), 
+ (30, 199, 'guest_tpl', '2011-05-31 09:37:54.0', 'guest_tpl', '2011-05-31 09:38:03.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:38:03.0', 514, 139), 
+ (31, 199, 'guest_tpl', '2011-05-31 09:50:53.0', 'guest_tpl', '2011-05-31 09:51:18.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 09:51:18.0', 519, 143), 
+ (32, 199, 'guest_tpl', '2011-05-31 12:06:26.0', 'guest_tpl', '2011-05-31 12:06:44.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-05-31 12:06:44.0', 524, 147), 
+ (33, 202, 'guest_tpl', '2011-05-31 12:07:21.0', 'guest_tpl', '2011-05-31 12:07:33.0', null, 'Rechercher un modï¿½le d'' acte inexistant', 'MANUAL', 'FAILURE', 'guest_tpl', '2011-05-31 12:07:33.0', 527, 150), 
+ (34, 203, 'guest_tpl', '2011-05-31 12:07:56.0', null, null, null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'READY', null, null, 531, 154), 
  (35, 62, 'guest_tpl', '2011-06-01 10:14:36.0', null, null, null, '01_Banker connects', 'MANUAL', 'READY', null, null, 533, 155), 
  (36, 77, 'guest_tpl', '2011-06-01 12:34:00.0', null, null, null, '07_Banker checks payments successful', 'MANUAL', 'READY', null, null, 534, 156), 
- (37, 199, 'guest_tpl', '2011-06-01 12:34:20.0', 'guest_tpl', '2011-06-01 12:36:26.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-06-01 12:36:26.0', 538, 160), 
- (38, 199, 'guest_tpl', '2011-06-14 11:20:10.0', null, null, null, 'Rechercher un modèle d''acte', 'MANUAL', 'READY', null, null, 545, 164), 
- (39, 199, 'guest_tpl', '2011-06-15 05:52:15.0', null, null, null, 'Rechercher un modèle d''acte', 'MANUAL', 'READY', null, null, 549, 168), 
- (40, 199, 'guest_tpl', '2011-06-15 11:14:16.0', 'guest_tpl', '2011-06-15 11:14:49.0', null, 'Rechercher un modèle d''acte', 'MANUAL', 'RUNNING', 'guest_tpl', '2011-06-15 11:14:46.0', 553, 172), 
+ (37, 199, 'guest_tpl', '2011-06-01 12:34:20.0', 'guest_tpl', '2011-06-01 12:36:26.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-06-01 12:36:26.0', 538, 160), 
+ (38, 199, 'guest_tpl', '2011-06-14 11:20:10.0', null, null, null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'READY', null, null, 545, 164), 
+ (39, 199, 'guest_tpl', '2011-06-15 05:52:15.0', null, null, null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'READY', null, null, 549, 168), 
+ (40, 199, 'guest_tpl', '2011-06-15 11:14:16.0', 'guest_tpl', '2011-06-15 11:14:49.0', null, 'Rechercher un modï¿½le d''acte', 'MANUAL', 'RUNNING', 'guest_tpl', '2011-06-15 11:14:46.0', 553, 172), 
  (41, 194, 'guest_t1', '2011-06-16 11:19:01.0', null, null, null, 'toto', 'MANUAL', 'READY', null, null, 554, 173), 
  (42, 194, 'guest_t1', '2011-06-16 11:19:42.0', null, null, null, 'toto', 'MANUAL', 'READY', null, null, 555, 174), 
  (43, 93, 'guest_tpl', '2011-06-17 15:56:13.0', 'guest_tpl', '2011-06-17 15:57:11.0', null, 'Test0002', 'MANUAL', 'SUCCESS', 'guest_tpl', '2011-06-17 15:57:11.0', 558, 177), 
