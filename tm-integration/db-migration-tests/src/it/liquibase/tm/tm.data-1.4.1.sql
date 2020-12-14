@@ -1,24 +1,3 @@
---
---     This file is part of the Squashtest platform.
---     Copyright (C) Henix, henix.fr
---
---     See the NOTICE file distributed with this work for additional
---     information regarding copyright ownership.
---
---     This is free software: you can redistribute it and/or modify
---     it under the terms of the GNU Lesser General Public License as published by
---     the Free Software Foundation, either version 3 of the License, or
---     (at your option) any later version.
---
---     this software is distributed in the hope that it will be useful,
---     but WITHOUT ANY WARRANTY; without even the implied warranty of
---     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---     GNU Lesser General Public License for more details.
---
---     You should have received a copy of the GNU Lesser General Public License
---     along with this software.  If not, see <http://www.gnu.org/licenses/>.
---
-
 insert into CUSTOM_FIELD (CF_ID, FIELD_TYPE, NAME, LABEL, OPTIONAL, DEFAULT_VALUE, INPUT_TYPE, CODE) values
 (1, 'CF', 'cuf-text1', 'cuf-Text1', false, 'defaultt1', 'PLAIN_TEXT', 't1'),
 (2, 'CF', 'cuf-text2', 'cuf-text2', true, '', 'PLAIN_TEXT', 't2'),
@@ -68,7 +47,7 @@ insert into CUSTOM_FIELD_VALUE (CFV_ID, BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_
 
 --
 -- CUF binding for test-cases on project 4
--- 
+--
 
 INSERT INTO CUSTOM_FIELD_BINDING (CFB_ID, CF_ID, BOUND_ENTITY, BOUND_PROJECT_ID, POSITION) VALUES
 (6, 1, 'TEST_CASE', 4, 1);
@@ -113,7 +92,7 @@ INSERT INTO TEST_CASE_LIBRARY_NODE (TCLN_ID, DELETED_ON, DESCRIPTION, NAME, CREA
 (217, NULL, '<p>Lord of the Rings</p>', 'JDD-TC03', 'gandalf', '1965-08-18 00:00:00', NULL, NULL, 4, 784),
 (218, NULL, '<p>The Silmarillion</p>', 'JDD-TC02', 'gandalf', '1985-08-17 00:00:00', NULL, NULL, 4, 788),
 (219, NULL, '<p>LOTR</p>', 'JDD-TC01', 'gandalf', '1985-08-17 00:00:00', NULL, NULL, 4, 792);
- 
+
 INSERT INTO TEST_CASE_FOLDER (TCLN_ID) VALUES
 (215);
 
@@ -216,23 +195,23 @@ INSERT INTO ITERATION_TEST_SUITE (ITERATION_ID, TEST_SUITE_ID) VALUES
 (11, 4);
 
 
-UPDATE ITERATION_TEST_PLAN_ITEM 
+UPDATE ITERATION_TEST_PLAN_ITEM
 SET TEST_SUITE = 1
 WHERE ITEM_TEST_PLAN_ID in (2,4,8,9,11);
 
-UPDATE ITERATION_TEST_PLAN_ITEM 
+UPDATE ITERATION_TEST_PLAN_ITEM
 SET TEST_SUITE = 2
 WHERE ITEM_TEST_PLAN_ID in (3,5,6,7,10);
 
-UPDATE ITERATION_TEST_PLAN_ITEM 
+UPDATE ITERATION_TEST_PLAN_ITEM
 SET TEST_SUITE = 5
 WHERE ITEM_TEST_PLAN_ID in (13,14,20);
 
-UPDATE ITERATION_TEST_PLAN_ITEM 
+UPDATE ITERATION_TEST_PLAN_ITEM
 SET TEST_SUITE = 3
 WHERE ITEM_TEST_PLAN_ID in (22,24,28);
 
-UPDATE ITERATION_TEST_PLAN_ITEM 
+UPDATE ITERATION_TEST_PLAN_ITEM
 SET TEST_SUITE = 4
 WHERE ITEM_TEST_PLAN_ID = 39;
 

@@ -1,29 +1,8 @@
---
---     This file is part of the Squashtest platform.
---     Copyright (C) Henix, henix.fr
---
---     See the NOTICE file distributed with this work for additional
---     information regarding copyright ownership.
---
---     This is free software: you can redistribute it and/or modify
---     it under the terms of the GNU Lesser General Public License as published by
---     the Free Software Foundation, either version 3 of the License, or
---     (at your option) any later version.
---
---     this software is distributed in the hope that it will be useful,
---     but WITHOUT ANY WARRANTY; without even the implied warranty of
---     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---     GNU Lesser General Public License for more details.
---
---     You should have received a copy of the GNU Lesser General Public License
---     along with this software.  If not, see <http://www.gnu.org/licenses/>.
---
-
-Insert into CAMPAIGN_LIBRARY(CL_ID) values 
+Insert into CAMPAIGN_LIBRARY(CL_ID) values
 (6);
-Insert into REQUIREMENT_LIBRARY(RL_ID) values 
+Insert into REQUIREMENT_LIBRARY(RL_ID) values
  (6);
-Insert into TEST_CASE_LIBRARY(TCL_ID) values 
+Insert into TEST_CASE_LIBRARY(TCL_ID) values
  (6);
 insert into PROJECT (NAME, ACTIVE, CREATED_BY, CREATED_ON, CL_ID, TCL_ID, RL_ID)
 values ('squashtest', true, 'squash_it', '2011-09-21', 6,6,6);
@@ -32,7 +11,7 @@ insert into ACL_OBJECT_IDENTITY (IDENTITY, CLASS_ID)
 values (1, 1);
 
 insert into CORE_USER (LOGIN, FIRST_NAME, LAST_NAME, EMAIL, CREATED_BY, CREATED_ON)
-values 
+values
 ('Project.Manager','Project.Manager','Project.Manager','Project.Manager','squash_it', '2011-09-21'),
 ('Test.Editor','Test.Editor','Test.Editor','Test.Editor','squash_it', '2011-09-21'),
 ('Test.Runner','Test.Runner','Test.Runner','Test.Runner','squash_it', '2011-09-21'),

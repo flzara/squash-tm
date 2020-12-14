@@ -1,24 +1,3 @@
---
---     This file is part of the Squashtest platform.
---     Copyright (C) Henix, henix.fr
---
---     See the NOTICE file distributed with this work for additional
---     information regarding copyright ownership.
---
---     This is free software: you can redistribute it and/or modify
---     it under the terms of the GNU Lesser General Public License as published by
---     the Free Software Foundation, either version 3 of the License, or
---     (at your option) any later version.
---
---     this software is distributed in the hope that it will be useful,
---     but WITHOUT ANY WARRANTY; without even the implied warranty of
---     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---     GNU Lesser General Public License for more details.
---
---     You should have received a copy of the GNU Lesser General Public License
---     along with this software.  If not, see <http://www.gnu.org/licenses/>.
---
-
 
 -- info lists and info list items
 
@@ -391,7 +370,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (5, '
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (79, 5, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (1, 80, 5, 'EQUALS');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
         (1,'2');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (19, 5, 'NONE', 0);
@@ -498,7 +477,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (17, 
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (66, 17, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (2, 94, 17, 'NOT_NULL');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
         (2,'FALSE');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (54, 17, 'NONE', 0);
@@ -511,7 +490,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (18, 
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (66, 18, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (3, 94, 18, 'NOT_NULL');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
         (3,'TRUE');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (54, 18, 'NONE', 0);

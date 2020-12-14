@@ -1,24 +1,3 @@
---
---     This file is part of the Squashtest platform.
---     Copyright (C) Henix, henix.fr
---
---     See the NOTICE file distributed with this work for additional
---     information regarding copyright ownership.
---
---     This is free software: you can redistribute it and/or modify
---     it under the terms of the GNU Lesser General Public License as published by
---     the Free Software Foundation, either version 3 of the License, or
---     (at your option) any later version.
---
---     this software is distributed in the hope that it will be useful,
---     but WITHOUT ANY WARRANTY; without even the implied warranty of
---     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---     GNU Lesser General Public License for more details.
---
---     You should have received a copy of the GNU Lesser General Public License
---     along with this software.  If not, see <http://www.gnu.org/licenses/>.
---
-
 /*
 Create a user then add it to the core_group project manager
 */
@@ -32,7 +11,7 @@ insert into CORE_GROUP_MEMBER(PARTY_ID, GROUP_ID) values((select max(PARTY_ID) f
 
 
 /*
- * create one user that will be project manager on multiple projects 3 and 6. 
+ * create one user that will be project manager on multiple projects 3 and 6.
  */
 insert into CORE_PARTY values(DEFAULT);
 insert into CORE_USER(PARTY_ID, LOGIN, FIRST_NAME, LAST_NAME, EMAIL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
@@ -41,23 +20,23 @@ values ((select max(PARTY_ID) from CORE_PARTY), 'Myiku', 'Myiku', 'Myiku', 'Myik
 insert into ACL_RESPONSIBILITY_SCOPE_ENTRY(PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 values ((select max(PARTY_ID) from CORE_PARTY), 5, (select ID from ACL_OBJECT_IDENTITY where IDENTITY=3 and CLASS_ID=1 )),
 		((select max(PARTY_ID) from CORE_PARTY), 5, (select ID from ACL_OBJECT_IDENTITY where IDENTITY=6 and CLASS_ID=1 ));
-		
-		
+
+
 /*
- *create a team, that will be project manager on project 5 and add one user to it * 
+ *create a team, that will be project manager on project 5 and add one user to it *
  */
-		
+
 insert into CORE_PARTY values(DEFAULT);
-insert into CORE_TEAM(PARTY_ID, NAME, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)	
+insert into CORE_TEAM(PARTY_ID, NAME, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
 values ((select max(PARTY_ID) from CORE_PARTY), 'The A Team', 'admin', '2013-10-21', NULL, NULL);
-		
+
 insert into ACL_RESPONSIBILITY_SCOPE_ENTRY(PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 values  ((select max(PARTY_ID) from CORE_PARTY), 5,  (select ID from ACL_OBJECT_IDENTITY where IDENTITY=5 and CLASS_ID=1 ));
 
-		
+
 insert into CORE_PARTY values(DEFAULT);
 insert into CORE_USER(PARTY_ID, LOGIN, FIRST_NAME, LAST_NAME, EMAIL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
-values ((select max(PARTY_ID) from CORE_PARTY), 'Robertu', 'Robertu', 'Robertu', 'Robertu@Robertu.com', true, 'admin', '2013-10-21', NULL, NULL);		
+values ((select max(PARTY_ID) from CORE_PARTY), 'Robertu', 'Robertu', 'Robertu', 'Robertu@Robertu.com', true, 'admin', '2013-10-21', NULL, NULL);
 
 insert into CORE_TEAM_MEMBER(TEAM_ID, USER_ID)
 values ((select max(PARTY_ID) from CORE_TEAM), (select max(PARTY_ID) from CORE_USER));
@@ -65,25 +44,25 @@ values ((select max(PARTY_ID) from CORE_TEAM), (select max(PARTY_ID) from CORE_U
 
 /*
  * Create a user that will be member of team 3 AND ALSO direct project manager of project 1
- * 
+ *
  */
 insert into CORE_PARTY values(DEFAULT);
 insert into CORE_USER(PARTY_ID, LOGIN, FIRST_NAME, LAST_NAME, EMAIL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
-values ((select max(PARTY_ID) from CORE_PARTY), 'Garyu', 'Garyu', 'Garyu', 'Garyu@Garyu.com', true, 'admin', '2013-10-21', NULL, NULL);	
+values ((select max(PARTY_ID) from CORE_PARTY), 'Garyu', 'Garyu', 'Garyu', 'Garyu@Garyu.com', true, 'admin', '2013-10-21', NULL, NULL);
 
 insert into CORE_TEAM_MEMBER(TEAM_ID, USER_ID)
 values ((select max(PARTY_ID) from CORE_TEAM), (select max(PARTY_ID) from CORE_USER));
 
 insert into ACL_RESPONSIBILITY_SCOPE_ENTRY(PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID)
 values ((select max(PARTY_ID) from CORE_PARTY), 5,  (select ID from ACL_OBJECT_IDENTITY where IDENTITY=1 and CLASS_ID=1 ));
-		
+
 
 /*
  * Create some more users whose purpose is to be deactivated any, we'll test that they're wiped out
  */
 insert into CORE_PARTY values(DEFAULT);
 insert into CORE_USER(PARTY_ID, LOGIN, FIRST_NAME, LAST_NAME, EMAIL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
-values ((select max(PARTY_ID) from CORE_PARTY), 'deactivated joe', 'deactivated joe', 'deactivated joe', 'deactivated joe@deactivated.com', true, 'admin', '2013-10-21', NULL, NULL);	
+values ((select max(PARTY_ID) from CORE_PARTY), 'deactivated joe', 'deactivated joe', 'deactivated joe', 'deactivated joe@deactivated.com', true, 'admin', '2013-10-21', NULL, NULL);
 
 insert into CORE_GROUP_MEMBER(PARTY_ID, GROUP_ID) values((select max(PARTY_ID) from CORE_PARTY), 2);
 insert into AUTH_USER(LOGIN, PASSWORD, ACTIVE) values('deactivated joe', 'aaa', false);
@@ -91,7 +70,7 @@ insert into AUTH_USER(LOGIN, PASSWORD, ACTIVE) values('deactivated joe', 'aaa', 
 
 insert into CORE_PARTY values(DEFAULT);
 insert into CORE_USER(PARTY_ID, LOGIN, FIRST_NAME, LAST_NAME, EMAIL, ACTIVE, CREATED_BY, CREATED_ON, LAST_MODIFIED_BY, LAST_MODIFIED_ON)
-values ((select max(PARTY_ID) from CORE_PARTY), 'deactivated jane', 'deactivated jane', 'deactivated jane', 'deactivated jane@deactivated.com', false, 'admin', '2013-10-21', NULL, NULL);	
+values ((select max(PARTY_ID) from CORE_PARTY), 'deactivated jane', 'deactivated jane', 'deactivated jane', 'deactivated jane@deactivated.com', false, 'admin', '2013-10-21', NULL, NULL);
 
 insert into CORE_GROUP_MEMBER(PARTY_ID, GROUP_ID) values((select max(PARTY_ID) from CORE_PARTY), 2);
 insert into AUTH_USER(LOGIN,PASSWORD, ACTIVE) values('deactivated jane', 'aaa', false);

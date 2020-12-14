@@ -1,24 +1,3 @@
---
---     This file is part of the Squashtest platform.
---     Copyright (C) Henix, henix.fr
---
---     See the NOTICE file distributed with this work for additional
---     information regarding copyright ownership.
---
---     This is free software: you can redistribute it and/or modify
---     it under the terms of the GNU Lesser General Public License as published by
---     the Free Software Foundation, either version 3 of the License, or
---     (at your option) any later version.
---
---     this software is distributed in the hope that it will be useful,
---     but WITHOUT ANY WARRANTY; without even the implied warranty of
---     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---     GNU Lesser General Public License for more details.
---
---     You should have received a copy of the GNU Lesser General Public License
---     along with this software.  If not, see <http://www.gnu.org/licenses/>.
---
-
 /*
 Create table to store ids of entities to delete
 */
@@ -60,7 +39,7 @@ where DELETED_ON is not null
 /* Add iterations from deleted campaign */
 insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
 select 'ITERATION', CI.ITERATION_ID
-from CAMPAIGN_ITERATION CI 
+from CAMPAIGN_ITERATION CI
 where CI.CAMPAIGN_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'CLN')
 and CI.ITERATION_ID not in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'ITERATION')
 ;
@@ -103,7 +82,7 @@ select 'ISSUE_LIST', E.ISSUE_LIST_ID
 from EXECUTION E,  ENTITIES_TO_DELETE ETD
 where E.EXECUTION_ID = ETD.ENTITY_ID
 and ETD.ENTITY_NAME = 'EXECUTION'
-;			
+;
 
 insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
 select 'ATTACHMENT_LIST', E.ATTACHMENT_LIST_ID
@@ -117,7 +96,7 @@ and ETD.ENTITY_NAME = 'EXECUTION'
 insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
 select 'EXECUTION_STEP', EES.EXECUTION_STEP_ID
 from  EXECUTION_EXECUTION_STEPS EES, ENTITIES_TO_DELETE ETD
-where EES.EXECUTION_ID =  ETD.ENTITY_ID 
+where EES.EXECUTION_ID =  ETD.ENTITY_ID
 and  ETD.ENTITY_NAME = 'EXECUTION'
 ;
 
@@ -239,7 +218,7 @@ where ITERATION_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAM
 /* Campaign block */
 /* --------------- */
 
-delete from CAMPAIGN_TEST_PLAN_ITEM 
+delete from CAMPAIGN_TEST_PLAN_ITEM
 where CAMPAIGN_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'CLN')
 ;
 
@@ -259,7 +238,7 @@ delete from CAMPAIGN_FOLDER
 where CLN_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'CLN')
 ;
 
-delete from CAMPAIGN 
+delete from CAMPAIGN
 where CLN_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'CLN')
 ;
 
@@ -405,7 +384,7 @@ and BOUND_ENTITY_TYPE = 'TEST_STEP'
 delete from ATTACHMENT
 where ATTACHMENT_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'ATTACHMENT' )
 ;
-		
+
 delete from ATTACHMENT_CONTENT
 where ATTACHMENT_CONTENT_ID in (select ENTITY_ID from ENTITIES_TO_DELETE where ENTITY_NAME = 'ATTACHMENT_CONTENT' )
 ;

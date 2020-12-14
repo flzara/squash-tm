@@ -20,7 +20,6 @@
     <module>core</module>
     <module>tm</module>
     <module>plugins</module>
-    <module>tm-integration</module>
   </modules>
 
   <properties>
@@ -704,7 +703,6 @@
         <module>integration-tests</module>
       </modules>
     </profile>
-
 
     <profile>
 
