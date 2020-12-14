@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
+    <version>2.0.0.IT26-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tm-integration</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <db.resources.dir>${project.build.directory}/db</db.resources.dir>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>squashtest-tm-database</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <!--
+      Here we fully define the execution of a few mojos as pluginManagement -> that way they still need to be explicitly
+      invoked in the children modules (as a documentation), while significantly reducing the boilerplate.
+    -->
+    <pluginManagement>
+      <plugins>
+        <!-- ====================
+          Run configuration check
+        ========================-->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>enforce-configuration</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <!--
+                Setting phase to 'none' in this master pom.
+
+                Sub modules should redeclare the enforcer plugin at phase 'validate',
+                but there is no need to redeclare the configuration.
+               -->
+              <phase>none</phase>
+              <configuration>
+                <rules>
+                  <requireProperty>
+                    <property>liquibase.driver</property>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>liquibase.url</property>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>liquibase.username</property>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>liquibase.password</property>
+                  </requireProperty>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <!-- ====================
+          /Run configuration check
+        ========================-->
+
+        <!-- ====================
+          fetch the database generation module
+        ========================-->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>pull-database-resources</id>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <phase>generate-resources</phase>
+              <configuration>
+                <!-- attached = false, because we don't need them included in the maven job as resource (we just want them to sit in the target directory) -->
+                <attached>false</attached>
+                <resourceBundles>
+                  <resourceBundle>org.squashtest.tm:squashtest-tm-database:${project.version}</resourceBundle>
+                </resourceBundles>
+                <outputDirectory>${db.resources.dir}</outputDirectory>
+              </configuration>
+            </execution>
+
+          </executions>
+        </plugin>
+        <!-- ====================
+          /fetch the database generation module
+        ========================-->
+
+      </plugins>
+    </pluginManagement>
+
+  </build>
+
+</project>
