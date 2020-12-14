@@ -4,11 +4,14 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>2.0.0.IT26-SNAPSHOT</version>
+    <version>1.22.0.RC2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm-integration</artifactId>
   <packaging>pom</packaging>
+  <modules>
+    <module>integration-tests</module>
+  </modules>
 
   <properties>
     <db.resources.dir>${project.build.directory}/db</db.resources.dir>

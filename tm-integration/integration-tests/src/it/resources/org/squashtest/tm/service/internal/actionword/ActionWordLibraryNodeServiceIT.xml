@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+
+  <ACTION_WORD_LIBRARY AWL_ID="-1" />
+  <PROJECT PROJECT_ID="-1" AWL_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-01-02" CREATED_BY="admin" NAME="action word project"/>
+
+  <ACTION_WORD ACTION_WORD_ID="-1" PROJECT_ID="-1" TOKEN="T-press the red button-"
+               CREATED_ON="2020-05-15" CREATED_BY="admin"  />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-1" ACTION_WORD_ID="-1" FRAGMENT_ORDER="0" />
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-1" TEXT="press the red button" />
+
+  <ACTION_WORD ACTION_WORD_ID="-2" PROJECT_ID="-1" TOKEN="TP-Today is -"
+               CREATED_ON="2020-08-06" CREATED_BY="admin"  />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-2" ACTION_WORD_ID="-2" FRAGMENT_ORDER="0" />
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-2" TEXT="Today is " />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-3" ACTION_WORD_ID="-2" FRAGMENT_ORDER="1"/>
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-3" NAME="param1" DEFAULT_VALUE="Monday"/>
+
+  <ACTION_WORD ACTION_WORD_ID="-3" PROJECT_ID="-1" TOKEN="TPTP-I have - of -"
+               CREATED_ON="2020-08-06" CREATED_BY="admin"  />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-4" ACTION_WORD_ID="-3" FRAGMENT_ORDER="0" />
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-4" TEXT="I have " />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-5" ACTION_WORD_ID="-3" FRAGMENT_ORDER="1"/>
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-5" NAME="number" DEFAULT_VALUE="0"/>
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-6" ACTION_WORD_ID="-3" FRAGMENT_ORDER="2" />
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-6" TEXT=" of " />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-7" ACTION_WORD_ID="-3" FRAGMENT_ORDER="3"/>
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-7" NAME="fruit" DEFAULT_VALUE="apple"/>
+
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-1" NAME="action word project" ENTITY_TYPE="LIBRARY" ENTITY_ID="-1" AWL_ID="-1" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-2" NAME="press the red button" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-1" AWL_ID="-1" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-3" NAME="today is &quot;param1&quot;" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-2" AWL_ID="-1" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-4" NAME="I have &quot;number&quot; of &quot;fruit&quot;" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-3" AWL_ID="-1" />
+
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-2" CONTENT_ORDER="0" />
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-3" CONTENT_ORDER="1" />
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-4" CONTENT_ORDER="2" />
+
+
+  <!--  another project  -->
+  <ACTION_WORD_LIBRARY AWL_ID="-2" />
+  <PROJECT PROJECT_ID="-2" AWL_ID="-2" ATTACHMENT_LIST_ID="-1" CREATED_ON="2020-08-06" CREATED_BY="admin" NAME="another project"/>
+
+  <ACTION_WORD ACTION_WORD_ID="-4" PROJECT_ID="-2" TOKEN="T-another day-"
+               CREATED_ON="2020-08-06" CREATED_BY="admin"  />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-8" ACTION_WORD_ID="-4" FRAGMENT_ORDER="0" />
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-8" TEXT="another day" />
+
+  <ACTION_WORD ACTION_WORD_ID="-5" PROJECT_ID="-2" TOKEN="PTPTP- + - = -"
+               CREATED_ON="2020-08-06" CREATED_BY="admin"  />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-9" ACTION_WORD_ID="-5" FRAGMENT_ORDER="0" />
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-9" NAME="param1" DEFAULT_VALUE="0"/>
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-10" ACTION_WORD_ID="-5" FRAGMENT_ORDER="1"/>
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-10" TEXT=" + " />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-11" ACTION_WORD_ID="-5" FRAGMENT_ORDER="2" />
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-11" NAME="param2" DEFAULT_VALUE="0"/>
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-12" ACTION_WORD_ID="-5" FRAGMENT_ORDER="3"/>
+  <ACTION_WORD_TEXT ACTION_WORD_FRAGMENT_ID="-12" TEXT=" = " />
+  <ACTION_WORD_FRAGMENT ACTION_WORD_FRAGMENT_ID="-13" ACTION_WORD_ID="-5" FRAGMENT_ORDER="4" />
+  <ACTION_WORD_PARAMETER ACTION_WORD_FRAGMENT_ID="-13" NAME="param3" DEFAULT_VALUE="0"/>
+
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-5" NAME="another project" ENTITY_TYPE="LIBRARY" ENTITY_ID="-2" AWL_ID="-2" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-6" NAME="another day" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-4" AWL_ID="-2" />
+  <ACTION_WORD_LIBRARY_NODE AWLN_ID="-7" NAME="&quot;param1&quot; + &quot;param2&quot; = &quot;param3&quot;" ENTITY_TYPE="ACTION_WORD" ENTITY_ID="-5" AWL_ID="-2" />
+
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-5" DESCENDANT_ID="-6" CONTENT_ORDER="0" />
+  <AWLN_RELATIONSHIP ANCESTOR_ID="-5" DESCENDANT_ID="-7" CONTENT_ORDER="1" />
+</dataset>

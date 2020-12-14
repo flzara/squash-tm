@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-5"/>
+
+<REQUIREMENT_LIBRARY RL_ID="-1" ATTACHMENT_LIST_ID="-1"/>
+<PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-1" CREATED_ON="2012-05-06" CREATED_BY="dbuni" NAME="" RL_ID="-1"/>
+
+<CUSTOM_FIELD LABEL="" CODE="" FIELD_TYPE="CF" NAME="cuf" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1"/>
+<CUSTOM_FIELD_BINDING BOUND_ENTITY="REQUIREMENT_VERSION" CFB_ID="-1" POSITION="1" BOUND_PROJECT_ID="-1" CF_ID="-1"/>
+
+<RESOURCE CREATED_BY="dbunit" RES_ID="-13" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-2" NAME=""/>
+<SIMPLE_RESOURCE RES_ID="-13"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-13" PROJECT_ID="-1"/>
+<REQUIREMENT_FOLDER RLN_ID="-13" RES_ID="-13"/>
+<REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="-13" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
+
+<RESOURCE CREATED_BY="dbunit" RES_ID="-10" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-3" NAME=""/>
+<REQUIREMENT_VERSION RES_ID="-10"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-10" PROJECT_ID="-1"/>
+<REQUIREMENT RLN_ID="-10"  CURRENT_VERSION_ID="-10" />
+<RLN_RELATIONSHIP DESCENDANT_ID="-10" ANCESTOR_ID="-13" CONTENT_ORDER="0"/>
+
+<RESOURCE CREATED_BY="dbunit" RES_ID="-20" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-4" NAME="requirement20"   />
+<REQUIREMENT_VERSION RES_ID="-20"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-20" PROJECT_ID="-1"/>
+<REQUIREMENT RLN_ID="-20" CURRENT_VERSION_ID="-20"/>
+<RLN_RELATIONSHIP DESCENDANT_ID="-20" ANCESTOR_ID="-13" CONTENT_ORDER="1"/>
+
+<RESOURCE CREATED_BY="dbunit" RES_ID="-30" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-5" NAME="requirement30"/>
+<REQUIREMENT_VERSION RES_ID="-30"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-30" PROJECT_ID="-1"/>
+<REQUIREMENT RLN_ID="-30" CURRENT_VERSION_ID="-30"/>
+<RLN_RELATIONSHIP DESCENDANT_ID="-30" ANCESTOR_ID="-13" CONTENT_ORDER="2"/>
+
+</dataset>

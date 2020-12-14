@@ -1,0 +1,34 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+
+<dataset>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-1" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj1" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-2" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj2" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-3" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj3" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-4" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj4" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-5" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj5" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-6" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj6" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+	<PROJECT PROJECT_ID="-7" CREATED_ON="2011-10-17" CREATED_BY="it" NAME="proj7" ACTIVE="1" ATTACHMENT_LIST_ID="-1"/>
+</dataset>

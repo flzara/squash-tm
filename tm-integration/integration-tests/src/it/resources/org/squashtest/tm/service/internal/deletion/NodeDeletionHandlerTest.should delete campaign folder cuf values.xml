@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+	depends on NodeDeletionDao.general.dbsetup.xml
+
+ -->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+
+	<!--  ============================ ATTACHMENT LIST =============================================== -->
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+
+	<!--  =================================== CUSTOM FIELD =========================================== -->
+
+	<CUSTOM_FIELD CF_ID="-1" FIELD_TYPE="CF" NAME="CUF1" LABEL="CUF1" OPTIONAL="true" DEFAULT_VALUE="Monday" INPUT_TYPE="PLAIN_TEXT" CODE="CUF1" />
+	<CUSTOM_FIELD CF_ID="-2" FIELD_TYPE="CF" NAME="CUF2" LABEL="CUF2" OPTIONAL="true" DEFAULT_VALUE="false" INPUT_TYPE="CHECKBOX" CODE="CUF2" />
+	<CUSTOM_FIELD CF_ID="-3" FIELD_TYPE="SSF" NAME="CUF3" LABEL="CUF3" OPTIONAL="true" DEFAULT_VALUE="" INPUT_TYPE="DROPDOWN_LIST" CODE="CUF3" />
+	<CUSTOM_FIELD CF_ID="-4" FIELD_TYPE="RTF" NAME="CUF4" LABEL="CUF4" OPTIONAL="false" INPUT_TYPE="RICH_TEXT" CODE="CUF4" LARGE_DEFAULT_VALUE="&lt;p&gt;&lt;strong&gt;Hello &lt;/strong&gt;&lt;span style=&quot;color:#16a085&quot;&gt;word&lt;/span&gt;&lt;/p&gt;"/>
+	<CUSTOM_FIELD CF_ID="-5" FIELD_TYPE="CF" NAME="CUF5" LABEL="CUF5" OPTIONAL="true" DEFAULT_VALUE="2020-12-12" INPUT_TYPE="DATE_PICKER" CODE="CUF5" />
+	<CUSTOM_FIELD CF_ID="-6" FIELD_TYPE="MSF" NAME="CUF6" LABEL="CUF6" OPTIONAL="true" DEFAULT_VALUE="Tag1" INPUT_TYPE="TAG" CODE="CUF6" />
+	<CUSTOM_FIELD CF_ID="-7" FIELD_TYPE="NUM" NAME="CUF7" LABEL="CUF7" OPTIONAL="false" DEFAULT_VALUE="100" INPUT_TYPE="NUMERIC" CODE="CUF7" NUMERIC_DEFAULT_VALUE="100.00000"/>
+
+  <!--  =================================== CUSTOM FIELD OPTION ==================================== -->
+  <CUSTOM_FIELD_OPTION CF_ID="-3" CODE="OP1" LABEL="OP1" POSITION="0" COLOUR="#000000"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-3" CODE="OP2" LABEL="OP2" POSITION="1" COLOUR="#ff0000"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-3" CODE="OP3" LABEL="OP3" POSITION="2" COLOUR="#008000"/>
+  <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="bba549ea3c3e1c2c150367ed96a3c7" LABEL="Tag2" />
+  <CUSTOM_FIELD_OPTION CF_ID="-6" CODE="f05801192d401c7241945320071268" LABEL="Tag1" />
+
+  <!-- ==================================== LIBRARY ================================================ -->
+
+	<CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-1" CL_ID="-1"/>
+
+	<!-- ==================================== PROJECT ================================================ -->
+
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2020-08-19" CL_ID="-1" ATTACHMENT_LIST_ID="-1"/>
+
+	<!-- ==================================== CUSTOM FIELD BINDING =================================== -->
+
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-1" CF_ID="-1" BOUND_PROJECT_ID="-1" POSITION="1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-2" CF_ID="-2" BOUND_PROJECT_ID="-1" POSITION="2"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-3" CF_ID="-3" BOUND_PROJECT_ID="-1" POSITION="3"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-4" CF_ID="-4" BOUND_PROJECT_ID="-1" POSITION="4"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-5" CF_ID="-5" BOUND_PROJECT_ID="-1" POSITION="5"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-6" CF_ID="-6" BOUND_PROJECT_ID="-1" POSITION="6"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN_FOLDER" CFB_ID="-7" CF_ID="-7" BOUND_PROJECT_ID="-1" POSITION="7"/>
+
+	<!-- ==================================== LIBRARY NODE =========================================== -->
+
+	<CAMPAIGN_LIBRARY_NODE CLN_ID="-1" NAME="Campaign folder" CREATED_BY="IT" CREATED_ON="2020-08-19" ATTACHMENT_LIST_ID="-2" PROJECT_ID="-1"/>
+
+	<!-- ==================================== FOLDER ================================================= -->
+
+	<CAMPAIGN_FOLDER CLN_ID="-1" />
+
+	<!-- ==================================== CUSTOM FIELD VALUE ===================================== -->
+
+	<CUSTOM_FIELD_VALUE CFV_ID="-1" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-1" VALUE="Monday" FIELD_TYPE="CF" CF_ID="-1"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-2" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-2" VALUE="true" FIELD_TYPE="CF" CF_ID="-2"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-3" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-3" VALUE="OP2" FIELD_TYPE="CF" CF_ID="-3"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-4" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-4" LARGE_VALUE="&lt;p&gt;&lt;strong&gt;Hello &lt;/strong&gt;&lt;span style=&quot;color:#16a085&quot;&gt;word&lt;/span&gt;&lt;/p&gt;" FIELD_TYPE="RTF" CF_ID="-4"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-5" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-5" VALUE="2020-08-20" FIELD_TYPE="CF" CF_ID="-5"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-6" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-6" FIELD_TYPE="TAG" CF_ID="-6"/>
+	<CUSTOM_FIELD_VALUE CFV_ID="-7" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="CAMPAIGN_FOLDER" CFB_ID="-7" VALUE="1000" FIELD_TYPE="NUM" NUMERIC_VALUE="1000.00000" CF_ID="-7"/>
+
+  <!-- ==================================== CUSTOM FIELD VALUE OPTION ============================== -->
+
+  <CUSTOM_FIELD_VALUE_OPTION CFV_ID="-6" LABEL="Tag1" POSITION="0"/>
+  <CUSTOM_FIELD_VALUE_OPTION CFV_ID="-6" LABEL="Tag2" POSITION="1"/>
+
+</dataset>

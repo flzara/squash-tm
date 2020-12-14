@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+	<!--  definition of the requirements -->
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	
+	<RESOURCE RES_ID="-1" NAME="requirement 1" CREATED_ON="2010-02-01" CREATED_BY="creator 1"  ATTACHMENT_LIST_ID="-1"/>
+	<REQUIREMENT_VERSION RES_ID="-1"/>
+	
+	<RESOURCE RES_ID="-2" NAME="requirement 2" CREATED_ON="2010-02-01" CREATED_BY="creator 1"  ATTACHMENT_LIST_ID="-1"/>
+	<REQUIREMENT_VERSION RES_ID="-2"/>
+	
+	
+	<!--  now history for requirement 1 -->
+	<!--  the events are declared here by, but are not ordered by date. The app should sort them by date.-->
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-11" REQ_VERSION_ID="-1" EVENT_DATE="2010-02-01" AUTHOR="creator 1"/>
+	<REQUIREMENT_CREATION EVENT_ID="-11"/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-12" REQ_VERSION_ID="-1" EVENT_DATE="2010-06-03" AUTHOR="editor 12"/>
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="-12" NEW_VALUE="NX-1" PROPERTY_NAME="reference"/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-13" REQ_VERSION_ID="-1" EVENT_DATE="2010-08-04" AUTHOR="editor 13"/>
+	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="-13" NEW_VALUE="description for requirement 1" PROPERTY_NAME="description"/>	
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-14" REQ_VERSION_ID="-1" EVENT_DATE="2010-04-02" AUTHOR="editor 11"/>
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="-14" OLD_VALUE="UNDEFINED" NEW_VALUE="MAJOR" PROPERTY_NAME="citicality"/>
+	
+	
+	<!--  now history for requirement 2 -->
+	<!--  that requirement was created before requirement 1, and updates where intertwined with it. When
+	asked to load all events for multiple requirements, it should group them by requirement and sort them by date.-->
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-21" REQ_VERSION_ID="-2" EVENT_DATE="2010-01-01" AUTHOR="creator 2"/>
+	<REQUIREMENT_CREATION EVENT_ID="-21"/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-22" REQ_VERSION_ID="-2" EVENT_DATE="2010-05-03" AUTHOR="editor 22"/>
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="-22" NEW_VALUE="NX-1" PROPERTY_NAME="reference"/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-23" REQ_VERSION_ID="-2" EVENT_DATE="2010-09-05" AUTHOR="editor 24"/>
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="-23" OLD_VALUE="UNDEFINED" NEW_VALUE="MAJOR" PROPERTY_NAME="citicality"/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-24" REQ_VERSION_ID="-2" EVENT_DATE="2010-07-04" AUTHOR="editor 23"/>
+	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="-24" NEW_VALUE="description for requirement 1" PROPERTY_NAME="description"/>		
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="-25" REQ_VERSION_ID="-2" EVENT_DATE="2010-03-02" AUTHOR="editor 21"/>
+	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="-25" NEW_VALUE="description for requirement 1" PROPERTY_NAME="description"/>			
+	
+</dataset>

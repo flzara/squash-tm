@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This file is part of the Squashtest platform. Copyright (C) 2010 - 2012 Henix, henix.fr See the NOTICE file distributed 
+  with this work for additional information regarding copyright ownership. This is free software: you can redistribute it and/or 
+  modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 
+  3 of the License, or (at your option) any later version. this software is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+  GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License 
+  along with this software. If not, see <http://www.gnu.org/licenses/>. -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432" />
+  <PROJECT PROJECT_ID="-1" NAME="project 1" ACTIVE="TRUE" CREATED_BY="groovy" CREATED_ON="2010-01-01" CL_ID="-1"
+    TCL_ID="-1" RL_ID="-1" ATTACHMENT_LIST_ID="-432" />
+
+
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-997" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-997" TCL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-998" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-998" CL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-431" />
+  <PROJECT PROJECT_ID="-2" NAME="project 2" ACTIVE="TRUE" CREATED_BY="GROOVY" CREATED_ON="2010-01-01" CL_ID="-2"
+    TCL_ID="-2" RL_ID="-2" ATTACHMENT_LIST_ID="-431" />
+    
+    <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+<RESOURCE CREATED_BY="dbunit" RES_ID="-1" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-1" NAME=""/>
+<SIMPLE_RESOURCE RES_ID="-1"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-1" PROJECT_ID="-1"/>
+<REQUIREMENT_FOLDER RLN_ID="-1" RES_ID="-1"/>
+<REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="-1" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
+
+    <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2"/>
+<RESOURCE CREATED_BY="dbunit" RES_ID="-10" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="-2" NAME="requirement10" />
+<REQUIREMENT_VERSION RES_ID="-10" CATEGORY="6"/>
+<REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="-10" PROJECT_ID="-1"/>
+<REQUIREMENT RLN_ID="-10" CURRENT_VERSION_ID="-10"/>
+<RLN_RELATIONSHIP DESCENDANT_ID="-10" ANCESTOR_ID="-1" CONTENT_ORDER="0"/>
+
+  
+<!--   <requirement_library /> -->
+<!--   <requirement_library_node /> -->
+<!--   <requirement_library_content /> -->
+<!--   <rln_relationship /> -->
+<!--   <rln_relationship_closure /> -->
+<!--   <resource /> -->
+<!--   <simple_resource /> -->
+<!--   <requirement_version /> -->
+<!--   <requirement /> -->
+<!--   <requirement_folder /> -->
+<!--   <requirement_audit_event /> -->
+<!--   <requirement_creation /> -->
+<!--   <requirement_large_property_change /> -->
+<!--   <requirement_property_change /> -->
+
+<!--   <test_step /> -->
+<!--   <action_test_step /> -->
+<!--   <call_test_step /> -->
+<!--   <test_case_steps /> -->
+<!--   <test_case_folder /> -->
+<!--   <tcln_relationship /> -->
+<!--   <test_case_library_content /> -->
+<!--   <iteration /> -->
+<!--   <test_suite /> -->
+<!--   <iteration_test_suite /> -->
+<!--   <test_suite_test_plan_item /> -->
+<!--   <iteration_test_plan_item /> -->
+<!--   <item_test_plan_list /> -->
+  
+</dataset>

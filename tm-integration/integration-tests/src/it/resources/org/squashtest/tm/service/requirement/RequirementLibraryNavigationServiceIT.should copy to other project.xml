@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-5"/>
+
+  <REQUIREMENT_LIBRARY RL_ID="-1" ATTACHMENT_LIST_ID="-5"/>
+  <REQUIREMENT_LIBRARY RL_ID="-2" ATTACHMENT_LIST_ID="-5"/>
+
+  <PROJECT PROJECT_ID="-1" ATTACHMENT_LIST_ID="-5" CREATED_ON="2012-05-05" CREATED_BY="dbunit" NAME="" RL_ID="-1"/>
+  <PROJECT PROJECT_ID="-2" ATTACHMENT_LIST_ID="-5" CREATED_ON="2012-01-01" CREATED_BY="dbunit" NAME="" RL_ID="-2"/>
+
+  <CUSTOM_FIELD LABEL="" CODE="" FIELD_TYPE="CF" NAME="cuf1" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1" />
+  <CUSTOM_FIELD_BINDING CFB_ID="-8" CF_ID="-1" BOUND_ENTITY="REQUIREMENT_FOLDER" POSITION="1" BOUND_PROJECT_ID="-1"/>
+  <CUSTOM_FIELD_BINDING CFB_ID="-9" CF_ID="-1" BOUND_ENTITY="REQUIREMENT_FOLDER" POSITION="1" BOUND_PROJECT_ID="-2"/>
+
+  <CUSTOM_FIELD LABEL="" CODE="" FIELD_TYPE="CF" NAME="cuf2" INPUT_TYPE="PLAIN_TEXT" CF_ID="-2"/>
+  <CUSTOM_FIELD_BINDING BOUND_ENTITY="REQUIREMENT_FOLDER" CFB_ID="-10" POSITION="2" BOUND_PROJECT_ID="-1" CF_ID="-2"/>
+
+  <CUSTOM_FIELD LABEL="" CODE="" FIELD_TYPE="CF" NAME="cuf3" INPUT_TYPE="PLAIN_TEXT" CF_ID="-3" DEFAULT_VALUE="Monday"/>
+  <CUSTOM_FIELD_BINDING BOUND_ENTITY="REQUIREMENT_FOLDER" CFB_ID="-11" POSITION="2" BOUND_PROJECT_ID="-2" CF_ID="-3"/>
+
+  <!-- RESOURCES -->
+  <RESOURCE RES_ID="-1" NAME="FOLDER 1" CREATED_BY="ADMIN" CREATED_ON="2020-08-19" ATTACHMENT_LIST_ID="-5"/>
+  <SIMPLE_RESOURCE RES_ID="-1"/>
+  <RESOURCE RES_ID="-2" NAME="FOLDER 2" CREATED_BY="ADMIN" CREATED_ON="2020-08-19" ATTACHMENT_LIST_ID="-5"/>
+  <SIMPLE_RESOURCE RES_ID="-2"/>
+
+  <!-- REQUIREMENT FOLDER 1 -->
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="-1" CREATED_BY="ADMIN" CREATED_ON="2020-08-18" PROJECT_ID="-1" LAST_MODIFIED_BY="ADMIN" LAST_MODIFIED_ON="2020-08-18"/>
+  <REQUIREMENT_FOLDER RLN_ID="-1" RES_ID="-1"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="-1" CONTENT_ID="-1" CONTENT_ORDER="0"/>
+  <CUSTOM_FIELD_VALUE CFV_ID="-8" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="REQUIREMENT_FOLDER" CFB_ID="-8" VALUE="requirement-1-cuf1" FIELD_TYPE="CF"/>
+  <CUSTOM_FIELD_VALUE CFV_ID="-10" BOUND_ENTITY_ID="-1" BOUND_ENTITY_TYPE="REQUIREMENT_FOLDER" CFB_ID="-10" VALUE="requirement-1-cuf2" FIELD_TYPE="CF"/>
+
+  <!-- REQUIREMENT FOLDER 2 -->
+  <REQUIREMENT_LIBRARY_NODE RLN_ID="-2" CREATED_BY="ADMIN" CREATED_ON="2020-08-18" PROJECT_ID="-2" LAST_MODIFIED_BY="ADMIN" LAST_MODIFIED_ON="2020-08-18"/>
+  <REQUIREMENT_FOLDER RLN_ID="-2" RES_ID="-2"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="-2" CONTENT_ID="-2" CONTENT_ORDER="0"/>
+  <CUSTOM_FIELD_VALUE CFV_ID="-9" BOUND_ENTITY_ID="-2" BOUND_ENTITY_TYPE="REQUIREMENT_FOLDER" CFB_ID="-9" VALUE="requirement-2-cuf1" FIELD_TYPE="CF"/>
+  <CUSTOM_FIELD_VALUE CFV_ID="-11" BOUND_ENTITY_ID="-2" BOUND_ENTITY_TYPE="REQUIREMENT_FOLDER" CFB_ID="-11" VALUE="requirement-2-cuf3" FIELD_TYPE="CF"/>
+
+</dataset>

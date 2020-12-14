@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-123"/>
+  <RESOURCE CREATED_BY="DBU" CREATED_ON="2012-01-02" RES_ID="-1" NAME="a folder" ATTACHMENT_LIST_ID="-123"/>
+  <SIMPLE_RESOURCE RES_ID="-1"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-1" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT_FOLDER RLN_ID="-1" RES_ID="-1"/>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10"/>
+  <RESOURCE RES_ID="-10" NAME="req 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="-10" />
+  <REQUIREMENT_VERSION RES_ID="-10" REFERENCE="a reference"/>
+  <REQUIREMENT_LIBRARY_NODE CREATED_BY="DBU" RLN_ID="-10" CREATED_ON="2010-02-01"/>
+  <REQUIREMENT RLN_ID="-10" CURRENT_VERSION_ID="-10"/>
+  <RLN_RELATIONSHIP DESCENDANT_ID="-10" ANCESTOR_ID="-1" CONTENT_ORDER="0"/>
+
+  <test_case_library_node/>
+  <test_case/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <test_case_library_content/>
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <attachment_content/>
+  <attachment/>
+</dataset>

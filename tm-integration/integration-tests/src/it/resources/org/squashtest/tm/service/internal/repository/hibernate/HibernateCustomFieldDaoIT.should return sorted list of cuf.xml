@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
+
+<dataset>
+	<CUSTOM_FIELD CODE="aa" LABEL="aa" FIELD_TYPE="CF" NAME="" INPUT_TYPE="CHECKBOX" CF_ID="-1"/>
+	<CUSTOM_FIELD CODE="dd" LABEL="dd" FIELD_TYPE="CF" NAME="" INPUT_TYPE="DATE_PICKER" CF_ID="-2"/>
+	<CUSTOM_FIELD CODE="cc" LABEL="cc" FIELD_TYPE="CF" NAME="" INPUT_TYPE="PLAIN_TEXT" CF_ID="-3"/>
+	<CUSTOM_FIELD CODE="vv" LABEL="vv" FIELD_TYPE="SSF" NAME="" INPUT_TYPE="DROPDOWN_LIST" CF_ID="-4" DEFAULT_VALUE="copper"/>
+</dataset>

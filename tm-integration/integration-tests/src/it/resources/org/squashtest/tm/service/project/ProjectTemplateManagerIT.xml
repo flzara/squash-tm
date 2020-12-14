@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+  <PROJECT PROJECT_ID="-1" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="ONE" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-1" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-997" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-997" TCL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-998" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-998" CL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-999" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-999" RL_ID="-2" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+  <PROJECT PROJECT_ID="-2" TCL_ID="-2" CL_ID="-2" RL_ID="-2" NAME="TWO" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-2" PROJECT_TYPE="T" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3997" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-3997" TCL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3998" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-3998" CL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3999" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-3999" RL_ID="-3" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+  <PROJECT PROJECT_ID="-3" TCL_ID="-3" CL_ID="-3" RL_ID="-3" NAME="THREE" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-3" />
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-41" />
+  <TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-41" TCL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-42" />
+  <CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-43" />
+  <REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-43" RL_ID="-4" />
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40" />
+  <PROJECT PROJECT_ID="-4" TCL_ID="-1" CL_ID="-1" RL_ID="-1" NAME="FOUR" CREATED_BY="DBU" CREATED_ON="2010-02-01"
+    ATTACHMENT_LIST_ID="-40" PROJECT_TYPE="T" />
+</dataset>

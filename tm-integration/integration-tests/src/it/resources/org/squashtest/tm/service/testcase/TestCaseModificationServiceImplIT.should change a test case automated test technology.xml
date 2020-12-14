@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.22.0.dtd">
+<dataset>
+  <AUTOMATED_TEST_TECHNOLOGY AT_TECHNOLOGY_ID="-1" NAME="Robot Framework" ACTION_PROVIDER_KEY="robotframework/execute@v1"/>
+  <AUTOMATED_TEST_TECHNOLOGY AT_TECHNOLOGY_ID="-2" NAME="Cypress" ACTION_PROVIDER_KEY="cypress/execute@v1"/>
+
+  <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-18"/>
+
+  <PROJECT PROJECT_ID="-18" ATTACHMENT_LIST_ID="-18" CREATED_ON="2020-01-21" CREATED_BY="IT" NAME="PROJECT 1"/>
+
+  <TEST_CASE_LIBRARY_NODE TCLN_ID="-1" PROJECT_ID="-18" CREATED_ON="2020-01-21" CREATED_BY="IT" NAME="" ATTACHMENT_LIST_ID="-18" />
+  <TEST_CASE TCLN_ID="-1" VERSION="1" UUID="44d63d7e-11dd-44b0-b584-565b6f791f18" PREREQUISITE="" AUTOMATED_TEST_TECHNOLOGY="-1"/>
+
+
+
+</dataset>

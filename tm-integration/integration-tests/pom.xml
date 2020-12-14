@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>tm-integration</artifactId>
+    <version>1.22.0.RC2-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>squashtest-integration-tests</artifactId>
+  <packaging>pom</packaging>
+  <name>squash-tm-integration-tests</name>
+
+  <description>Library of Squash TM integration tests. This module is not supposed to be part of the main build i.e. you have to
+    run it explicitly</description>
+
+  <properties>
+
+    <!--
+     this is the argument lines for maven-failsafe-plugin.
+     It is declared this way to make it work with jacoco,
+     see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
+     -->
+    <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+
+    <!--
+      Unitils properties, many are copies from Liquibase properties.
+    -->
+    <database.changelog>${db.resources.dir}/global.changelog-master.xml</database.changelog>
+    <database.drivername>${liquibase.driver}</database.drivername>
+    <database.metadata>org.dbunit.database.DefaultMetadataHandler</database.metadata>
+    <database.password>${liquibase.password}</database.password>
+    <database.schemaName>public</database.schemaName>
+    <database.url>${liquibase.url}</database.url>
+    <database.username>${liquibase.username}</database.username>
+
+    <db.skip>false</db.skip>
+
+    <!--
+      has to override locally because this version is necessary for compiling IT sources.
+      However setting it in the parent pom would crash the compilation of core.api.
+    -->
+    <!--groovy-eclipse-batch.version>2.4.15-01</groovy-eclipse-batch.version-->
+    <hibernate.sql.formatted>false</hibernate.sql.formatted>
+    <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
+    <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>squashtest-tm-database</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>database.h2.fragment</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- ====== /SPOCK-SPRING-TEST BRIDGE ====== -->
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- ====== /HIBERNATE SUPPORT ====== -->
+
+    <!-- ====== SQUASHTEST ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.service</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <testSourceDirectory>src/it/groovy</testSourceDirectory>
+
+    <testResources>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>src/it/resources</directory>
+        <excludes>
+          <exclude>**/import/**</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <targetPath>${project.build.testOutputDirectory}/import</targetPath>
+        <filtering>false</filtering>
+        <directory>src/it/resources/import</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+
+      <!-- ====================
+        Run configuration check (see parent pom)
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-configuration</id>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Run configuration check
+      ========================-->
+
+      <!-- ====================
+        fetch the database generation module
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+      </plugin>
+      <!-- ====================
+        /fetch the database generation module
+      ========================-->
+
+      <!-- ====================
+        Generate the database
+      ========================-->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-database</id>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <skip>${db.skip}</skip>
+              <dropFirst>true</dropFirst>
+              <changeLogFile>${database.changelog}</changeLogFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Generate the database
+      ========================-->
+
+      <!-- ====================
+        Tests and resources preprocessing
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <!--
+              Using the alternate version because the test wouldn't compile
+              due to a bug in Eclipse jdt (I lost the reference, sorry)
+            -->
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>${groovy-eclipse-batch.alternate.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <dependencies>
+          <!-- workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1077375 -->
+          <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-filtering</artifactId>
+            <version>1.3</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>it-resources</id>
+            <goals>
+              <goal>testResources</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <filtering>true</filtering>
+                  <directory>src/it/resources</directory>
+                  <excludes>
+                    <exclude>**/import/**</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <targetPath>${project.build.testOutputDirectory}/import</targetPath>
+                  <filtering>false</filtering>
+                  <directory>src/it/resources/import</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        Tests and resources preprocessing
+      ========================-->
+
+      <!-- ====================
+        Integration tests execution
+      ========================-->
+      <plugin>
+        <!--  disabling surefire inherited from parent, because it should not run tests :
+      		that's the job of maven-failsafe-plugin
+      	 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+
+          <!--
+            Don't configure 'argLine' here ! Please use the <argLine> defined in the <properties> section
+            An explanation will be supplied there
+          -->
+
+        </configuration>
+
+        <dependencies>
+          <dependency>
+            <groupId>org.squashtest.tm</groupId>
+            <artifactId>core.aspect</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.squashtest.tm</groupId>
+            <artifactId>database.h2.fragment</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <phase>integration-test</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- ====================
+        Integration tests execution
+      ========================-->
+
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <!-- ======================
+      Database profiles
+    ======================= -->
+
+    <profile>
+      <!-- h2 profile, enabled by default -->
+      <id>h2</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>database</name>
+          <value>h2</value>
+        </property>
+      </activation>
+
+      <properties>
+        <database.dialect>h2</database.dialect>
+        <database.drivername>${liquibase.driver}</database.drivername>
+        <database.typefactory>org.dbunit.ext.h2.H2DataTypeFactory</database.typefactory>
+        <hibernate.dialect>org.squashtest.tm.domain.jpql.H2EnhancedDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
+        <jooq.sql.dialect>H2</jooq.sql.dialect>
+        <liquibase.driver>org.h2.Driver</liquibase.driver>
+        <liquibase.password>sa</liquibase.password>
+        <liquibase.url>jdbc:h2:${project.build.directory}/database/h2-database</liquibase.url>
+        <liquibase.username>sa</liquibase.username>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <!--
+                  Unitils is picky regarding the URL format.Part of the
+                  URL is expanded from the Maven property 'project.build.directory', which would use backslashes
+                  as separator under windows. This plugin replaces them with forwardslashes.
+                -->
+                <id>fix-h2-url</id>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>database.url</name>
+                  <value>${liquibase.url}</value>
+                  <regex>\\</regex>
+                  <replacement>/</replacement>
+                  <!-- no match ? must already be correct then -->
+                  <failIfNoMatch>false</failIfNoMatch>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+    <profile>
+      <!-- mysql profile -->
+      <id>mysql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>mysql</value>
+        </property>
+      </activation>
+
+      <properties>
+
+        <database.dialect>mysql</database.dialect>
+        <database.drivername>${liquibase.driver}</database.drivername>
+        <database.metadata>org.dbunit.ext.mysql.MySqlMetadataHandler</database.metadata>
+        <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
+        <hibernate.dialect>org.squashtest.tm.domain.jpql.MySQLEnhancedDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>false</hibernate.new_generator_mappings>
+        <jooq.sql.dialect>MYSQL</jooq.sql.dialect>
+        <liquibase.driver>com.mysql.jdbc.Driver</liquibase.driver>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <!--
+          The schemaName for MySQL databases is different : the database IS the schema.
+          Because of this, 'database.schemaName' is not 'public', but the last part of the jdbc url path.
+          For instance :jdbc:mysql://localhost:/squashtest -> schemaname is 'squashtest'.
+         -->
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>database.schemaName</name>
+                  <value>${liquibase.url}</value>
+                  <!--
+                    Captures the character sequence between the last '/' (url path)
+                    and a question mark (query parameters), that may or may not be present.
+
+                    Then replaces the whole string by the captured group.
+                  -->
+                  <regex>.*/([^\?]*).*</regex>
+                  <replacement>$1</replacement>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+    <profile>
+      <!-- postgresql profile -->
+      <id>postgresql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>postgresql</value>
+        </property>
+      </activation>
+
+      <properties>
+
+        <database.dialect>postgresql</database.dialect>
+        <database.drivername>${liquibase.driver}</database.drivername>
+        <database.metadata>org.dbunit.database.DefaultMetadataHandler</database.metadata>
+        <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
+        <hibernate.dialect>org.squashtest.tm.domain.jpql.PostgresEnhancedDialect</hibernate.dialect>
+        <hibernate.new_generator_mappings>true</hibernate.new_generator_mappings>
+        <jooq.sql.dialect>POSTGRES</jooq.sql.dialect>
+        <liquibase.driver>org.postgresql.Driver</liquibase.driver>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- ======================
+      /Database profiles
+    ======================= -->
+
+    <profile>
+      <id>skip-database</id>
+      <activation>
+        <property>
+          <name>database.nocreate</name>
+        </property>
+      </activation>
+
+      <properties>
+        <db.skip>true</db.skip>
+      </properties>
+
+    </profile>
+
+    <profile>
+      <id>verbose</id>
+      <properties>
+        <hibernate.sql.formatted>true</hibernate.sql.formatted>
+        <hibernate.sql.verbosity>DEBUG</hibernate.sql.verbosity>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>integration</id>
+      <activation>
+        <property>
+          <name>stage</name>
+          <value>integration</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <!--
+             Configuration of Failsafe reports, that will make it look like Surefire.
+              It helps the sonar plugin to correctly integrate the integration test results.
+            -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+            </configuration>
+          </plugin>
+
+        </plugins>
+      </build>
+
+    </profile>
+  </profiles>
+
+</project>

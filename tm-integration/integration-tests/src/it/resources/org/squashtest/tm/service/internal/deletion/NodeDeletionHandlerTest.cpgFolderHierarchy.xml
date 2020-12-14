@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'  ?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
+<dataset>
+
+	<!--  =========================== custom fields ==================================================== -->
+	
+	<CUSTOM_FIELD CODE="s" LABEL="s" FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1"/>
+	<CUSTOM_FIELD CODE="ss" LABEL="ss" FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="-2"/>	
+	<CUSTOM_FIELD CODE="sss" LABEL="" FIELD_TYPE="CF" NAME="special iter" INPUT_TYPE="PLAIN_TEXT" CF_ID="-3"/>	
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="-987" TCL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="-988" CL_ID="-1"/>
+	
+		<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-40"/>
+	<PROJECT PROJECT_ID="-1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="-1" RL_ID="-1" TCL_ID="-1" ATTACHMENT_LIST_ID="-40"/>
+
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN" CFB_ID="-1" POSITION="1" CF_ID="-1" BOUND_PROJECT_ID="-1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="CAMPAIGN" CFB_ID="-2" POSITION="2" CF_ID="-2" BOUND_PROJECT_ID="-1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="ITERATION" CFB_ID="-3" POSITION="1" CF_ID="-3" BOUND_PROJECT_ID="-1"/>
+
+			 
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-11"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-12"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-22"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-21"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-31"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-32"/>
+	
+			 
+			 
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-11" NAME="folder1" ATTACHMENT_LIST_ID="-11" PROJECT_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-12" NAME="cpg1" ATTACHMENT_LIST_ID="-12" PROJECT_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-21" NAME="folder2" ATTACHMENT_LIST_ID="-21" PROJECT_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-22" NAME="cpg2" ATTACHMENT_LIST_ID="-22" PROJECT_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-31" NAME="cpg3" ATTACHMENT_LIST_ID="-31" PROJECT_ID="-1"/>
+	<CAMPAIGN_LIBRARY_NODE CREATED_ON="2011-08-23" CREATED_BY="IT" CLN_ID="-32" NAME="cpg4" ATTACHMENT_LIST_ID="-32" PROJECT_ID="-1"/>
+	
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-12"/>
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-22"/>
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-31"/>
+	<CAMPAIGN ACTUAL_START_AUTO="false" ACTUAL_END_AUTO="false" CLN_ID="-32"/>
+	
+	
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-12" CFV_ID="-121" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-12" CFV_ID="-122" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-2" />
+
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-22" CFV_ID="-221" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-22" CFV_ID="-222" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-2" />	
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-31" CFV_ID="-311" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-31" CFV_ID="-312" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-2" />
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-32" CFV_ID="-321" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-32" CFV_ID="-322" BOUND_ENTITY_TYPE="CAMPAIGN" CFB_ID="-2" />
+	
+	
+	<CAMPAIGN_FOLDER CLN_ID="-11"/>
+	<CAMPAIGN_FOLDER CLN_ID="-21"/>
+	
+	<CAMPAIGN_LIBRARY_CONTENT CONTENT_ID="-11" LIBRARY_ID="-1" CONTENT_ORDER="0"/>
+	<CAMPAIGN_LIBRARY_CONTENT CONTENT_ID="-12" LIBRARY_ID="-1" CONTENT_ORDER="1"/>
+	
+	<CLN_RELATIONSHIP DESCENDANT_ID="-21" ANCESTOR_ID="-11" CONTENT_ORDER="0"/>
+	<CLN_RELATIONSHIP DESCENDANT_ID="-22" ANCESTOR_ID="-11" CONTENT_ORDER="1"/>
+	<CLN_RELATIONSHIP DESCENDANT_ID="-31" ANCESTOR_ID="-21" CONTENT_ORDER="0"/>
+	<CLN_RELATIONSHIP DESCENDANT_ID="-32" ANCESTOR_ID="-21" CONTENT_ORDER="1"/>
+	
+	
+	<test_case_library_node/>
+	<test_case/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+
+</dataset>
+
