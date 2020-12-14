@@ -12,13 +12,19 @@
   <name>squashtest-tm-database</name>
 
   <description>Squash TM database definition script. This module produces a jar which is to be used as a "remote
-    resource" by poms which need to provision / update a database model (if confised, search for
+    resource" by poms which need to provision / update a database model (if confused, search for
     "maven-remote-resource-plugin")</description>
 
   <properties>
+
+    <!--
+      Note : the database connection properties are defined in the profiles, near the end of the pom
+    -->
+
     <incremental.updates.changelog>src/main/liquibase/global.changelog-incremental-updates.xml</incremental.updates.changelog>
     <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
     <migration-test.changelog>src/test/liquibase/global.changelog-migration-test.xml</migration-test.changelog>
+
   </properties>
 
   <dependencyManagement>
@@ -33,25 +39,8 @@
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <build>
+
     <resources>
       <resource>
         <directory>src/main/liquibase</directory>
@@ -59,19 +48,214 @@
       <resource>
         <directory>src/main/script</directory>
       </resource>
+      <resource>
+        <targetPath>../dbdoc</targetPath>
+        <filtering>true</filtering>
+        <directory>src/main/dbdoc</directory>
+      </resource>
     </resources>
 
-    <testResources>
-      <testResource>
-        <directory>src/test/liquibase</directory>
-      </testResource>
-    </testResources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-maven-plugin</artifactId>
+          <configuration>
+            <dropFirst>true</dropFirst>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
     <plugins>
-      <!--
-        IMPORTANT : Plugin declaration order dictates their execution order. In this particular case, execution order
-        does matter. Be aware of this before moving xml sections around.
-      -->
+
+      <!-- ====================
+        Syntax check
+      ========================-->
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+
+          <!--
+          Check that the changeset have no content that would upset a Postgresql database
+          -->
+          <execution>
+            <id>check-postgres-compliance</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <source>${pom.basedir}/src/build/script/VerifyPostgreChangelogs.groovy</source>
+            </configuration>
+          </execution>
+
+          <!--
+           Check that the tablenames are all uppercase (except those who should not)
+          -->
+          <execution>
+            <id>check-tablenames-uppercase</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <source>${pom.basedir}/src/build/script/VerifyUpperCaseInScript.groovy</source>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <!-- ====================
+        /Syntax check
+      ========================-->
+
+      <!-- ====================
+        Run configuration check
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-configuration</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>liquibase.driver</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>liquibase.url</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>liquibase.username</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>liquibase.password</property>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Run configuration check
+      ========================-->
+
+      <!-- ====================
+        Run against DB
+      ========================-->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+
+        <!--
+          The database connection properties are set in the profiles, settings.xml etc
+         -->
+        <executions>
+          <execution>
+            <!-- Run the master changelog against the database  -->
+            <id>check-fullinstall-changelog</id>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <changeLogFile>${master.changelog}</changeLogFile>
+            </configuration>
+          </execution>
+
+          <execution>
+            <!-- Run the incremental updates against the database -->
+            <id>check-incremental-updates</id>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <changeLogFile>${incremental.updates.changelog}</changeLogFile>
+            </configuration>
+          </execution>
+        </executions>
+
+      </plugin>
+      <!-- ====================
+        /Run against DB
+      ========================-->
+
+      <!-- ====================
+        Generate database documentation
+      ========================-->
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <configuration>
+          <transformationSets>
+            <transformationSet>
+              <dir>${project.build.directory}/dbdoc</dir>
+              <includes>
+                <include>dbdoc.html</include>
+              </includes>
+              <stylesheet>${project.build.directory}/dbdoc/dbdoc_style.xsl</stylesheet>
+            </transformationSet>
+          </transformationSets>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>8.7</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>transform-dbdoc</id>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- ====================
+        /Generate database documentation
+      ========================-->
+
+      <!-- ====================
+        Package
+      ========================-->
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- TODO : currently doesn't work, me is disappointed -->
+            <id>package-dbdoc</id>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/generated-resources/xml/xslt</directory>
+                  <targetPath>dbdoc</targetPath>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
@@ -93,459 +277,96 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
+      <!-- ====================
+        /Package
+      ========================-->
 
-        <executions>
-          <execution>
-            <id>process-changelogs</id>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-          <execution>
-            <id>process-test-changelogs</id>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-            <phase>pre-integration-test</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <!-- Performs full import in H2 -->
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>creates-h2-database</id>
-            <goals>
-              <goal>update</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${master.changelog}</changeLogFile>
-              <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:mem:squash</url>
-              <username>sa</username>
-              <password>sa</password>
-            </configuration>
-          </execution>
-
-          <execution>
-            <!-- Performs data migration in H2 -->
-            <id>test-h2-data-migration</id>
-            <goals>
-              <goal>update</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${migration-test.changelog}</changeLogFile>
-              <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:${project.build.directory}/database/data-migration</url>
-              <username>sa</username>
-              <password>sa</password>
-            </configuration>
-          </execution>
-
-
-          <execution>
-            <!-- Performs incremental updates in h2 -->
-            <id>test-h2-incremental-updates</id>
-            <goals>
-              <goal>update</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${incremental.updates.changelog}</changeLogFile>
-              <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:${project.build.directory}/database/data-migration</url>
-              <username>sa</username>
-              <password>sa</password>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-h2-sample-database</id>
-            <goals>
-              <goal>update</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <dropFirst>true</dropFirst>
-              <changeLogFile>${project.build.outputDirectory}/sample/sample-db.changelog.xml</changeLogFile>
-              <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:mem:squash-sample</url>
-              <username>sa</username>
-              <password>sa</password>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>verify-postgre-changelogs</id>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <source>${pom.basedir}/src/it/script/VerifyPostgreChangelogs.groovy</source>
-            </configuration>
-          </execution>
-          <execution>
-            <id>verify-upper-case</id>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <source>${pom.basedir}/src/it/script/VerifyUpperCaseInScript.groovy</source>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
-  <issueManagement>
-    <system>mantis</system>
-  </issueManagement>
-
   <profiles>
+
+    <!-- ======================
+      Database profiles
+    ======================= -->
     <profile>
-      <id>acceptance-tests</id>
+      <!-- h2 profile, enabled by default -->
+      <id>h2</id>
       <activation>
+        <activeByDefault>true</activeByDefault>
         <property>
-          <name>stage</name>
-          <value>integration</value>
+          <name>database</name>
+          <value>h2</value>
         </property>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-versions</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireProperty>
-                      <property>liquibase.mysql.url</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.mysql.username</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.mysql.password</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.postgres.url</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.postgres.username</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.postgres.password</property>
-                    </requireProperty>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
 
-          <plugin>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <executions>
-              <!-- Performs full import in MySQL -->
-              <execution>
-                <id>create-mysql-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>prepare-package</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>com.mysql.jdbc.Driver</driver>
-                  <url>${liquibase.mysql.url}</url>
-                  <username>${liquibase.mysql.username}</username>
-                  <password>${liquibase.mysql.password}</password>
-                </configuration>
-              </execution>
+      <properties>
+        <liquibase.driver>org.h2.Driver</liquibase.driver>
+        <liquibase.password>sa</liquibase.password>
+        <liquibase.url>jdbc:h2:${project.build.directory}/database/h2-database</liquibase.url>
+        <liquibase.username>sa</liquibase.username>
+      </properties>
 
-              <!-- Performs data migration in MySQL -->
-              <execution>
-                <id>test-mysql-data-migration</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${migration-test.changelog}</changeLogFile>
-                  <driver>com.mysql.jdbc.Driver</driver>
-                  <url>${liquibase.mysql.url}</url>
-                  <username>${liquibase.mysql.username}</username>
-                  <password>${liquibase.mysql.password}</password>
-                </configuration>
-              </execution>
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
 
-              <!-- Performs full import in PostgreSQL -->
-              <execution>
-                <id>create-posgres-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>prepare-package</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>org.postgresql.Driver</driver>
-                  <url>${liquibase.postgres.url}</url>
-                  <username>${liquibase.postgres.username}</username>
-                  <password>${liquibase.postgres.password}</password>
-                </configuration>
-              </execution>
-
-              <!-- Performs data migration in PostgresSQL -->
-              <execution>
-                <id>test-postgres-data-migration</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${migration-test.changelog}</changeLogFile>
-                  <driver>org.postgresql.Driver</driver>
-                  <url>${liquibase.postgres.url}</url>
-                  <username>${liquibase.postgres.username}</username>
-                  <password>${liquibase.postgres.password}</password>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <profile>
-      <id>mysql.update</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-versions</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireProperty>
-                      <property>user</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>pwd</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>db</property>
-                    </requireProperty>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>create-mysql-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>compile</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>com.mysql.jdbc.Driver</driver>
-                  <url>jdbc:mysql://${db}</url>
-                  <username>${user}</username>
-                  <password>${pwd}</password>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+      <!-- mysql profile -->
+      <id>mysql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>mysql</value>
+        </property>
+      </activation>
+
+      <properties>
+        <liquibase.driver>com.mysql.jdbc.Driver</liquibase.driver>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
     </profile>
 
     <profile>
-      <id>postgres.update</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-versions</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireProperty>
-                      <property>user</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>pwd</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>db</property>
-                    </requireProperty>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>create-postgres-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>compile</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>org.postgresql.Driver</driver>
-                  <url>jdbc:postgres://${db}</url>
-                  <username>${user}</username>
-                  <password>${pwd}</password>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
+      <!-- postgresql profile -->
       <id>postgresql</id>
       <activation>
         <property>
-          <name>stage</name>
-          <value>integration</value>
+          <name>database</name>
+          <value>postgresql</value>
         </property>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-versions</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireProperty>
-                      <property>liquibase.postgres.url</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.postgres.username</property>
-                    </requireProperty>
-                    <requireProperty>
-                      <property>liquibase.postgres.password</property>
-                    </requireProperty>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
 
-          <plugin>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <executions>
-              <!-- Performs full import in PostgreSQL -->
-              <execution>
-                <id>create-posgres-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>prepare-package</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>org.postgresql.Driver</driver>
-                  <url>${liquibase.postgres.url}</url>
-                  <username>${liquibase.postgres.username}</username>
-                  <password>${liquibase.postgres.password}</password>
-                </configuration>
-              </execution>
+      <properties>
+        <liquibase.driver>org.postgresql.Driver</liquibase.driver>
+      </properties>
 
-              <!-- Performs data migration in PostgresSQL -->
-              <execution>
-                <id>test-postgres-data-migration</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${migration-test.changelog}</changeLogFile>
-                  <driver>org.postgresql.Driver</driver>
-                  <url>${liquibase.postgres.url}</url>
-                  <username>${liquibase.postgres.username}</username>
-                  <password>${liquibase.postgres.password}</password>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <!-- There are no junit tests -->
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
+
+    <!-- ======================
+      /Database profiles
+    ======================= -->
+
   </profiles>
 </project>

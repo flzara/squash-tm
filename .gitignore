@@ -9,7 +9,6 @@ bin/
 **/*.bak
 **/*.versionsBackup
 data/integration-tests/logs
-build/
 .idea/
 .metadata/
 *.swp
