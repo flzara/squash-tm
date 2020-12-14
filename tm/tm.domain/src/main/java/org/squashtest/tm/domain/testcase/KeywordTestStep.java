@@ -120,6 +120,8 @@ public class KeywordTestStep extends TestStep {
 
 	private void copyTestStepDetails(KeywordTestStep copied) {
 		copied.setDatatable(this.getDatatable());
+		copied.setDocstring(this.getDocstring());
+		copied.setComment(this.getComment());
 	}
 
 	@Override
