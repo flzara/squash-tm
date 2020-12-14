@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <include file="tm.data-1.4.0.xml" relativeToChangelogFile="true" />
+
+
+
+<!-- =================================================================================================================== -->
+<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
+		<include file="${db.resources.dir}/tm/tm.changelog-1.4.1.xml" relativeToChangelogFile="true" />
+<!-- =================================================================================================================== -->
+
+	<changeSet id="tm-1.4.1.issue-1864-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.importance &lt;&gt; 'LOW'
+				and exe.importance &lt;&gt; 'HIGH'
+				and exe.importance &lt;&gt; 'MEDIUM'
+				and exe.importance &lt;&gt; 'VERY_HIGH'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has valid data for tc importance</comment>
+	</changeSet>
+	<changeSet id="tm-1.4.1.issue-1864-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.tc_type &lt;&gt; 'COMPLIANCE_TESTING'
+				and exe.tc_type &lt;&gt; 'CORRECTION_TESTING'
+				and exe.tc_type &lt;&gt; 'END_TO_END_TESTING'
+				and exe.tc_type &lt;&gt; 'EVOLUTION_TESTING'
+				and exe.tc_type &lt;&gt; 'PARTNER_TESTING'
+				and exe.tc_type &lt;&gt; 'REGRESSION_TESTING'
+				and exe.tc_type &lt;&gt; 'UNDEFINED'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has valid data for tc type</comment>
+	</changeSet>
+	<changeSet id="tm-1.4.1.issue-1864-test-03" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.tc_nature &lt;&gt; 'ATDD'
+				and exe.tc_nature &lt;&gt; 'BUSINESS_TESTING'
+				and exe.tc_nature &lt;&gt; 'FUNCTIONAL_TESTING'
+				and exe.tc_nature &lt;&gt; 'NON_FUNCTIONAL_TESTING'
+				and exe.tc_nature &lt;&gt; 'PERFORMANCE_TESTING'
+				and exe.tc_nature &lt;&gt; 'SECURITY_TESTING'
+				and exe.tc_nature &lt;&gt; 'UNDEFINED'
+				and exe.tc_nature &lt;&gt; 'USER_TESTING'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has data valid for tc nature</comment>
+	</changeSet>
+	<changeSet id="tm-1.4.1.issue-1864-test-04" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.tc_status &lt;&gt; 'APPROVED'
+				and  exe.tc_status &lt;&gt; 'OBSOLETE'
+				and exe.tc_status &lt;&gt; 'TO_BE_UPDATED'
+				and exe.tc_status &lt;&gt; 'UNDER_REVIEW'
+				and exe.tc_status &lt;&gt; 'WORK_IN_PROGRESS'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has valid data for tc status</comment>
+	</changeSet>
+</databaseChangeLog>

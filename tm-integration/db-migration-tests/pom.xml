@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>tm-integration</artifactId>
+    <version>1.22.0.RC2-SNAPSHOT</version>
+  </parent>
+  <artifactId>migration-tests</artifactId>
+  <packaging>pom</packaging>
+
+  <description>Itegration tests for the Database. The purpose is to verify that the incremental changes won't break existing data.
+    We do so by interspersing actual changesets and data injection, and by checking that changeset application still run
+    well and running assertions on the modified data.</description>
+
+  <properties>
+    <!-- override the changelog (see parent pom) -->
+    <database.changelog>${project.build.testOutputDirectory}/global.changelog-migration-test.xml</database.changelog>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>squashtest-tm-database</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <!-- ====================
+          Run configuration check
+        ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-configuration</id>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Run configuration check
+      ========================-->
+
+      <!-- ====================
+        fetch the database generation module (see parent pom)
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+      </plugin>
+      <!-- ====================
+        /fetch the database generation module
+      ========================-->
+
+
+      <!-- ====================
+        Process the test files
+      ========================-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process-liquibase-files</id>
+            <goals>
+              <goal>testResources</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/it/liquibase</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Process the test files
+      ========================-->
+
+
+      <!-- ====================
+        Run the changelog against the db
+      ========================-->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>migration-tests</id>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <dropFirst>true</dropFirst>
+              <changeLogFile>${database.changelog}</changeLogFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====================
+        /Run the changelog against the db
+      ========================-->
+
+    </plugins>
+
+  </build>
+
+  <profiles>
+
+    <!-- ======================
+      Database profiles
+    ======================= -->
+
+    <profile>
+      <!-- h2 profile, enabled by default -->
+      <id>h2</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>database</name>
+          <value>h2</value>
+        </property>
+      </activation>
+
+      <properties>
+        <liquibase.driver>org.h2.Driver</liquibase.driver>
+        <liquibase.password>sa</liquibase.password>
+        <liquibase.url>jdbc:h2:${project.build.directory}/database/h2-database</liquibase.url>
+        <liquibase.username>sa</liquibase.username>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+    </profile>
+
+    <profile>
+      <!-- mysql profile -->
+      <id>mysql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>mysql</value>
+        </property>
+      </activation>
+
+      <properties>
+        <liquibase.driver>com.mysql.jdbc.Driver</liquibase.driver>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+    </profile>
+
+    <profile>
+      <!-- postgresql profile -->
+      <id>postgresql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>postgresql</value>
+        </property>
+      </activation>
+
+      <properties>
+        <liquibase.driver>org.postgresql.Driver</liquibase.driver>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- ======================
+      /Database profiles
+    ======================= -->
+
+  </profiles>
+
+</project>

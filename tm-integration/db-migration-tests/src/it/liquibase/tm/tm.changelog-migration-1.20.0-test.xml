@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <!-- also used for testing TM-224 -->
+ <include file="tm.data-1.20.0-TM-220.xml" relativeToChangelogFile="true" />
+ <include file="tm.data-1.20.0-TM-13.xml" relativeToChangelogFile="true" />
+ <include file="tm.data-1.20.0-TM-503.xml" relativeToChangelogFile="true" />
+
+  <!-- tests for charts migration for TM 282 -->
+  <include file="tm.data-1.20.0-TM-282.xml" relativeToChangelogFile="true" />
+
+
+
+  <!-- ========================================INCLUDE CHANGELOG================================================ -->
+  <include file="${db.resources.dir}/tm/tm.changelog-1.20.0.xml"
+           relativeToChangelogFile="true" />
+  <!-- ========================================================================================================= -->
+
+  <!-- Testing TM 220 -->
+
+  <changeSet id="tm-1.20.0-TM-220" author="agu" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="6">
+        select count(*) from CORE_PARTY_AUTHORITY
+        where AUTHORITY = 'ROLE_TF_FUNCTIONAL_TESTER';
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+
+  <!-- Testing TM 282 -->
+
+  <changeSet id="tm-1.20.0-TM-282-test1" author="bsiri">
+    <!-- checks that all new entries into QUERY_X_COLUMNS are available -->
+
+    <preConditions>
+      <sqlCheck expectedResult="27">
+        select count(*) from QUERY_PROJECTION_COLUMN where PROJECTION_RANK = 0;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="27">
+        select count(*) from QUERY_AGGREGATION_COLUMN;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="21">
+        select count(*) from QUERY_ORDERING_COLUMN where ORDER_RANK = 0;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="21">
+        select count(*) from QUERY_ORDERING_COLUMN where ORDER_RANK = 1;
+      </sqlCheck>
+
+
+      <sqlCheck expectedResult="3">
+        select count(*) from QUERY_FILTER_COLUMN;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="3">
+        select count(*) from QUERY_FILTER_VALUES;
+      </sqlCheck>
+
+    </preConditions>
+
+  </changeSet>
+
+
+
+  <changeSet id="tm-1.20.0-TM-282-test2" author="bsiri">
+    <!--
+      checks that all referential data in tables CHART_X_COLUMN et al. are gone, and
+      that the user-defined chart is still there.
+    -->
+
+    <preConditions>
+      <!-- first, check that there is only one record left in each tables -->
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_AXIS_COLUMN;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_FILTER;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_FILTER_VALUES;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_MEASURE_COLUMN;
+      </sqlCheck>
+
+      <!-- now check that those record point to chart_definition -->
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_AXIS_COLUMN where chart_definition_id = -1;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_FILTER where chart_definition_id = -1;
+      </sqlCheck>
+
+      <sqlCheck expectedResult="1">
+        select count(*) from CHART_MEASURE_COLUMN where chart_definition_id = -1;
+      </sqlCheck>
+
+    </preConditions>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-282-test3" author="jprioux">
+
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        select count(*) from CORE_CONFIG where str_key like 'lastindexing.%';
+      </sqlCheck>
+
+    </preConditions>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-test-uuid" author="amk" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from TEST_CASE where UUID IS NULL
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that there are no null value for uuid  </comment>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-13-test-conflict-association" author="amk" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATION_REQUEST where conflict_association IS NOT NULL
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that there are no null value for conflict_association  </comment>
+  </changeSet>
+
+
+  <changeSet id="tm-1.20.0-TM-13-test-isManual" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from AUTOMATION_REQUEST where IS_MANUAL = true
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that IS_MANUAL value have been changed according to the changeset  </comment>
+  </changeSet>
+
+  <changeSet id="tm-1.20.0-TM-503-test" author="agu">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from CAMPAIGN_TEST_PLAN_ITEM where CAMPAIGN_ID IS NULL
+      </sqlCheck>
+    </preConditions>
+    <comment>We check that there are no null value for campaign_id  </comment>
+  </changeSet>
+
+</databaseChangeLog>

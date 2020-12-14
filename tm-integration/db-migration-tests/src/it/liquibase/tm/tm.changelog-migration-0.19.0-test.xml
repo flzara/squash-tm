@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<include file="${db.resources.dir}/tm/tm.changelog-0.19.0.xml" relativeToChangelogFile="true" />
+
+	<changeSet id="check-table-CAMPAIGN_TEST_PLAN_ITEM-content-0.19.0" author="gfouquet">
+		<preConditions>
+			<!-- We check that there is no duplicate of the CAMPAIGN_ID + TEST_PLAN_ORDER -->
+			<sqlCheck expectedResult="1">
+				select max(ct)
+				from (select count(*) ct from CAMPAIGN_TEST_PLAN_ITEM group by CAMPAIGN_ID, TEST_PLAN_ORDER) counts
+	 		</sqlCheck>
+		</preConditions>
+		<comment>We check that there is no duplicate of the CAMPAIGN_ID + TEST_PLAN_ORDER</comment>
+	</changeSet>
+	<changeSet id="check-table-CAMPAIGN_TEST_PLAN_ITEM-order-0.19.1" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from (
+					select count(tp.CAMPAIGN_ID)
+					from CAMPAIGN_TEST_PLAN_ITEM tp
+					group by tp.CAMPAIGN_ID
+					having min(tp.TEST_PLAN_ORDER) > 0
+				) badplans
+	 		</sqlCheck>
+		</preConditions>
+		<comment>Campaign test plan items' order should be 0-based index</comment>
+	</changeSet>
+	<changeSet id="check-table-CAMPAIGN_TEST_PLAN_ITEM-no-deleted-assoc-0.19.2" author="gfouquet">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from CAMPAIGN_TEST_PLAN_ITEM tp
+					inner join TEST_CASE_LIBRARY_NODE tc on tp.TEST_CASE_ID = tc.TCLN_ID
+				where DELETED_ON is not null
+		 	</sqlCheck>
+		</preConditions>
+		<comment>Deleted test cases should not appear in campaign test plan</comment>
+	</changeSet>
+</databaseChangeLog>

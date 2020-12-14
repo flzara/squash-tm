@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <include file="tm.data-1.5.1.xml" relativeToChangelogFile="true" />
+
+    <include file="tm.data-1.5.1-2.xml" relativeToChangelogFile="true" />
+
+    <!-- ========================================INCLUDE CHANGELOG================================================ -->
+    <include file="${db.resources.dir}/tm/tm.changelog-1.6.0.xml"
+                 relativeToChangelogFile="true" />
+    <!-- ========================================================================================================= -->
+
+    <changeSet id="tm-1.6.0.issue-2334-test-01" author="flaurens">
+        <preConditions>
+            <sqlCheck expectedResult="this is team1">
+                select DESCRIPTION
+                from CORE_TEAM
+                where PARTY_ID = 10
+            </sqlCheck>
+        </preConditions>
+    </changeSet>
+
+    <changeSet id="tm-1.6.0.feat-1101-test-01" author="mpagnon">
+        <preConditions>
+            <or>
+                <and>
+                    <tableExists tableName="PARAMETER"/>
+                    <columnExists tableName="PARAMETER" columnName="PARAM_ID"/>
+                    <primaryKeyExists tableName="PARAMETER" primaryKeyName="pk_parameter"/>
+                    <columnExists tableName="PARAMETER" columnName="NAME"/>
+                    <columnExists tableName="PARAMETER" columnName="DESCRIPTION"/>
+                    <columnExists tableName="PARAMETER" columnName="TEST_CASE_ID"/>
+                </and>
+                <and>
+                    <dbms type="postgresql"/>
+                    <tableExists tableName="parameter"/>
+                    <columnExists tableName="parameter" columnName="param_id"/>
+                    <primaryKeyExists tableName="parameter" primaryKeyName="pk_parameter"/>
+                    <columnExists tableName="parameter" columnName="name"/>
+                    <columnExists tableName="parameter" columnName="description"/>
+                    <columnExists tableName="parameter" columnName="test_case_id"/>
+                </and>
+            </or>
+        </preConditions>
+        <comment>check table PARAMETER</comment>
+    </changeSet>
+
+    <!--changeSet id="tm-1.6.0.feat-1101-test-02" author="mpagnon">
+        <preConditions>
+            <or>
+                <and>
+                    <tableExists tableName="DATASET"/>
+                    <columnExists tableName="DATASET" columnName="DATASET_ID"/>
+                    <primaryKeyExists tableName="DATASET" primaryKeyName="pk_dataset"/>
+                    <columnExists tableName="DATASET" columnName="NAME"/>
+                    <columnExists tableName="DATASET" columnName="TEST_CASE_ID"/>
+                </and>
+                <and>
+                    <dbms type="postgresql"/>
+                    <tableExists tableName="dataset"/>
+                    <columnExists tableName="dataset" columnName="dataset_id"/>
+                    <primaryKeyExists tableName="dataset" primaryKeyName="pk_dataset"/>
+                    <columnExists tableName="dataset" columnName="name"/>
+                    <columnExists tableName="dataset" columnName="test_case_id"/>
+                </and>
+            </or>
+        </preConditions>
+        <comment>check table DATASET</comment>
+    </changeSet>
+    <changeSet id="tm-1.6.0.feat-1101-test-03" author="mpagnon">
+            <preConditions>
+                <or>
+                    <and>
+                        <tableExists tableName="DATASET_PARAM_VALUE"/>
+                        <columnExists tableName="DATASET_PARAM_VALUE" columnName="DATASET_PARAM_VALUE_ID"/>
+                        <primaryKeyExists tableName="DATASET_PARAM_VALUE" primaryKeyName="pk_dataset_param_value"/>
+                        <columnExists tableName="DATASET_PARAM_VALUE" columnName="DATASET_ID"/>
+                        <columnExists tableName="DATASET_PARAM_VALUE" columnName="PARAM_ID"/>
+                        <columnExists tableName="DATASET_PARAM_VALUE" columnName="PARAM_VALUE"/>
+                    </and>
+                      <and>
+                          <dbms type="postgresql"/>
+                          <tableExists tableName="dataset_param_value"/>
+                          <columnExists tableName="dataset_param_value" columnName="dataset_param_value_id"/>
+                          <primaryKeyExists tableName="dataset_param_value" primaryKeyName="pk_dataset_param_value"/>
+                          <columnExists tableName="dataset_param_value" columnName="dataset_id"/>
+                          <columnExists tableName="dataset_param_value" columnName="param_id"/>
+                          <columnExists tableName="dataset_param_value" columnName="param_value"/>
+                      </and>
+                  </or>
+            </preConditions>
+            <comment>check table DATASET_PARAM_VALUE</comment>
+    </changeSet-->
+    <changeSet id="tm-1.6.0.feat-1128-test-01" author="mpagnon">
+        <preConditions>
+            <or>
+                <and>
+                    <columnExists tableName="ITERATION_TEST_PLAN_ITEM" columnName="DATASET_ID"/>
+                </and>
+                <and>
+                    <dbms type="postgresql"/>
+                    <columnExists tableName="iteration_test_plan_item" columnName="dataset_id"/>
+                </and>
+            </or>
+        </preConditions>
+        <comment>check link between test plan item and dataset</comment>
+    </changeSet>
+    <changeSet id="tm-1.6.0.issue-2203-test-01" author="flaurens">
+        <preConditions>
+            <sqlCheck expectedResult="0">
+                select count(*) from CORE_TEAM_MEMBER
+            </sqlCheck>
+        </preConditions>
+        <comment>check removal of inactive users from teams</comment>
+    </changeSet>
+    <changeSet id="tm-1.6.0.issue-2203-test-02" author="flaurens">
+        <preConditions>
+            <sqlCheck expectedResult="1">
+                select count(*) from CORE_GROUP_MEMBER
+            </sqlCheck>
+        </preConditions>
+        <comment>check removal of core rights for inactive users</comment>
+    </changeSet>
+    <changeSet id="tm-1.6.0.issue-2203-test-03" author="flaurens">
+        <preConditions>
+            <sqlCheck expectedResult="0">
+                select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY
+            </sqlCheck>
+        </preConditions>
+        <comment>check removal of acl rights for inactive users</comment>
+    </changeSet>
+
+
+    <!-- =====================================================================================
+            test the fix for 2454 a first time.
+    ======================================================================================= -->
+
+    <changeSet id="tm-1.6.0.issue-2454-test" author="bsiri">
+        <preConditions>
+            <sqlCheck expectedResult="17">
+                select count(suite_id) from TEST_SUITE_TEST_PLAN_ITEM
+                where
+                (tpi_id=2 and suite_id=1 and test_plan_order=0) or
+                (tpi_id=4 and suite_id=1 and test_plan_order=1) or
+                (tpi_id=8 and suite_id=1 and test_plan_order=2) or
+                (tpi_id=9 and suite_id=1 and test_plan_order=3) or
+                (tpi_id=11 and suite_id=1 and test_plan_order=4) or
+                (tpi_id=3 and suite_id=2 and test_plan_order=0) or
+                (tpi_id=5 and suite_id=2 and test_plan_order=1) or
+                (tpi_id=6 and suite_id=2 and test_plan_order=2) or
+                (tpi_id=7 and suite_id=2 and test_plan_order=3) or
+                (tpi_id=10 and suite_id=2 and test_plan_order=4) or
+                (tpi_id=22 and suite_id=3 and test_plan_order=0) or
+                (tpi_id=24 and suite_id=3 and test_plan_order=1) or
+                (tpi_id=28 and suite_id=3 and test_plan_order=2) or
+                (tpi_id=39 and suite_id=4 and test_plan_order=0) or
+                (tpi_id=13 and suite_id=5 and test_plan_order=0) or
+                (tpi_id=14 and suite_id=5 and test_plan_order=1) or
+                (tpi_id=20 and suite_id=5 and test_plan_order=2);
+            </sqlCheck>
+        </preConditions>
+    </changeSet>
+
+    <!-- =====================================================================================
+            let's check again that multiple inclusions of the fix for 2454 won't break the data.
+            It could happen if Squash was updated to 1.5.2 first.
+    ======================================================================================= -->
+
+    <changeSet id="tm-1.6.0.issue-2454-doublexec-test.01" author="bsiri">
+        <comment>applying data</comment>
+        <sqlFile path="tm.data-1.5.1-2.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+    </changeSet>
+
+    <!--  now apply the patch again -->
+    <include file="./tm.changeset-migration-1.6.0-2454-doubleexec.xml" relativeToChangelogFile="true" />
+
+    <!--  finally make sure that we haven't f***ed up our data -->
+    <changeSet id="tm-1.6.0.issue-2454-testagain" author="bsiri">
+        <preConditions>
+            <sqlCheck expectedResult="17">
+                select count(suite_id) from TEST_SUITE_TEST_PLAN_ITEM
+                where
+                (tpi_id=2 and suite_id=1 and test_plan_order=0) or
+                (tpi_id=4 and suite_id=1 and test_plan_order=1) or
+                (tpi_id=8 and suite_id=1 and test_plan_order=2) or
+                (tpi_id=9 and suite_id=1 and test_plan_order=3) or
+                (tpi_id=11 and suite_id=1 and test_plan_order=4) or
+                (tpi_id=3 and suite_id=2 and test_plan_order=0) or
+                (tpi_id=5 and suite_id=2 and test_plan_order=1) or
+                (tpi_id=6 and suite_id=2 and test_plan_order=2) or
+                (tpi_id=7 and suite_id=2 and test_plan_order=3) or
+                (tpi_id=10 and suite_id=2 and test_plan_order=4) or
+                (tpi_id=22 and suite_id=3 and test_plan_order=0) or
+                (tpi_id=24 and suite_id=3 and test_plan_order=1) or
+                (tpi_id=28 and suite_id=3 and test_plan_order=2) or
+                (tpi_id=39 and suite_id=4 and test_plan_order=0) or
+                (tpi_id=13 and suite_id=5 and test_plan_order=0) or
+                (tpi_id=14 and suite_id=5 and test_plan_order=1) or
+                (tpi_id=20 and suite_id=5 and test_plan_order=2);
+            </sqlCheck>
+        </preConditions>
+    </changeSet>
+
+    <!-- =====================================================================================
+            test the fix for 2474 a first time.
+    ======================================================================================= -->
+
+    <changeSet id="tm-1.6.0.issue-2474-test" author="bsiri">
+        <preConditions>
+            <sqlCheck expectedResult="11">
+                select count(cfv_id) from CUSTOM_FIELD_VALUE
+                where bound_entity_type = 'TEST_STEP'
+                and bound_entity_id in (11, 10, 8, 7, 6, 50, 49, 48, 39, 34, 4);
+            </sqlCheck>
+        </preConditions>
+    </changeSet>
+</databaseChangeLog>

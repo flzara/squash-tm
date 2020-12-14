@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <include file="tm.data-1.19.0-SQTM-409.xml" relativeToChangelogFile="true" />
+
+  <!-- note : this dataset is also used for tests for SQTM-504 -->
+  <include file="tm.data-1.19.0-SQTM-510.xml" relativeToChangelogFile="true" />
+
+  <include file="tm.data-1.19.0-SQTM-543.xml" relativeToChangelogFile="true" />
+
+  <!-- ========================================INCLUDE CHANGELOG================================================ -->
+  <include file="${db.resources.dir}/tm/tm.changelog-1.19.0.xml"
+           relativeToChangelogFile="true" />
+  <!-- ========================================================================================================= -->
+
+
+  <changeSet id="tm-1.19.0-SQTM-409" author="cholc" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="13">
+          select count(*) from
+            ITERATION_TEST_SUITE
+          where
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-6 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-7 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-15 and TEST_SUITE_ID=-8 and ITERATION_TEST_SUITE_ORDER=0) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-9 and ITERATION_TEST_SUITE_ORDER=4) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-10 and ITERATION_TEST_SUITE_ORDER=3) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-11 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-12 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-16 and TEST_SUITE_ID=-13 and ITERATION_TEST_SUITE_ORDER=0)or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-14 and ITERATION_TEST_SUITE_ORDER=4) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-15 and ITERATION_TEST_SUITE_ORDER=3) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-16 and ITERATION_TEST_SUITE_ORDER=2) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-17 and ITERATION_TEST_SUITE_ORDER=1) or
+            (ITERATION_ID=-17 and TEST_SUITE_ID=-18 and ITERATION_TEST_SUITE_ORDER=0);
+      </sqlCheck>
+
+    </preConditions>
+    <comment>We check that there is no duplicate for (TEST_CASE_ID, STEP_ORDER)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-510" author="aboittiaux" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="4">
+        select count(*) from CORE_PARTY_AUTHORITY
+        where AUTHORITY = 'ROLE_TF_FUNCTIONAL_TESTER';
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-524" author="jprioux" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="2">
+        select count(*) from PROJECT
+        where not ALLOW_AUTOMATION_WORKFLOW;
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-504-test1" author="bsiri">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        select count(*)
+        from CORE_USER cu
+        where cu.login not in (
+          select au.login from AUTH_USER au
+        );
+      </sqlCheck>
+    </preConditions>
+    <comment>checking that user that had no entry in AUTH_USER (eg, pure LDAP users) now have an entry there.</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.19.0-SQTM-543-third-party-server-test-1" author="bsiri">
+    <preConditions>
+      <sqlCheck expectedResult="3">
+        select count(*) from THIRD_PARTY_SERVER
+        where (server_id=10 and name='mantis server' and url='http://mantisbt.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='BASIC_AUTH')
+        or (server_id=20 and name='redmine 3 server' and url='http://redmine.server.org' and AUTH_POLICY='APP_LEVEL' and AUTH_PROTOCOL='BASIC_AUTH')
+        or (server_id=30 and name='jira server' and url='http://jira.server.org' and AUTH_POLICY='USER' and AUTH_PROTOCOL='OAUTH_1A');
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-453-third-party-server-test-2" author="bsiri">
+    <preConditions>
+      <sqlCheck expectedResult="3">
+        select count(*) from BUGTRACKER
+        where (bugtracker_id=10 and kind='mantis')
+        or (bugtracker_id=20 and kind='redmine3')
+        or (bugtracker_id=30 and kind='jira.rest')
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+
+  <changeSet id="tm-1.19.0-SQTM-453-third-party-server-test-3" author="bsiri">
+    <preConditions>
+      <sqlCheck expectedResult="3">
+        select count(*) from STORED_CREDENTIALS
+        where (credential_id=-20 and authenticated_server=20 and content_type='CRED')
+        or (credential_id=-31 and authenticated_server=30 and content_type='CRED')
+        or (credential_id=-32 and authenticated_server=30 and content_type='CONF')
+      </sqlCheck>
+    </preConditions>
+  </changeSet>
+
+
+</databaseChangeLog>

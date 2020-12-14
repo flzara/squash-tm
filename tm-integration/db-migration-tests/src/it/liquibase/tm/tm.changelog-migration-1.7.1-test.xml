@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <include file="tm.data-1.7.0-add-automated-tests.xml" relativeToChangelogFile="true" />
+
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="${db.resources.dir}/tm/tm.changelog-1.7.1.xml"
+		relativeToChangelogFile="true" />
+	<!-- ========================================================================================================= -->
+
+	<changeSet id="tm-1.7.1.issue-2873-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) FROM EXECUTION e
+			WHERE e.execution_id NOT IN (
+				SELECT itpe.execution_id FROM ITEM_TEST_PLAN_EXECUTION itpe
+				);
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.7.1.issue-2873-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) FROM EXECUTION_STEP es
+			WHERE es.execution_step_id NOT IN (
+				SELECT ees.execution_step_id FROM EXECUTION_EXECUTION_STEPS ees
+				);
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.7.1.issue-2873-03" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) FROM ISSUE_LIST il
+			WHERE il.issue_list_id NOT IN (
+				SELECT es.issue_list_id FROM EXECUTION_STEP es
+				)
+			AND il.issue_list_id NOT IN (
+				SELECT e.issue_list_id FROM EXECUTION e
+				)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.7.1.issue-2873-04" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) FROM AUTOMATED_SUITE asuite
+			WHERE asuite.SUITE_ID NOT IN (
+				SELECT aee.SUITE_ID from AUTOMATED_EXECUTION_EXTENDER aee
+				)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+</databaseChangeLog>

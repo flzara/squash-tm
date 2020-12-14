@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <include file="tm.data-1.7.1-core-user-project-manager.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.1-remove-deleted-on.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.1-undeleted-resources-and-attachmentlist.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.1-orphan-entities.xml" relativeToChangelogFile="true" />
+
+
+  <!--  testing the dataset -->
+	<changeSet id="tm-data-1.8.0-feat-2699-test-00-1.7.0" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="2">
+				select count(*) from AUTH_USER
+				where login like 'deactivated%'
+			</sqlCheck>
+			<sqlCheck expectedResult="2">
+				select count(*) from CORE_USER
+				where login like 'deactivated%'
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2899-test-00-1.7.1" author="bsiri">
+		<preConditions>
+<!--  			count how many lists have at least one attachment : 3 are guenuine and 5 are ghost we want out of the DB.  -->
+			<sqlCheck expectedResult="23">
+				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
+				inner join ATTACHMENT_CONTENT ac on a.CONTENT_ID = ac.ATTACHMENT_CONTENT_ID
+			</sqlCheck>
+
+			<!--  count undead resources -->
+			<sqlCheck expectedResult="3">
+				select count(r.res_id) from SIMPLE_RESOURCE sr
+				inner join RESOURCE r on sr.res_id = r.res_id
+				left join REQUIREMENT_FOLDER rf on rf.res_id = sr.res_id
+				where rf.res_id is null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+
+ 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="${db.resources.dir}/tm/tm.changelog-upgrade-to-1.8.0.xml" relativeToChangelogFile="true" />
+ 	<!-- ========================================================================================================= -->
+
+	<changeSet id="tm-1.8.0.issue-2688-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+
+			<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectViewer')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+
+	<!--  check that the core_group for Users is correctly renamed -->
+	<changeSet id="tm-data-1.8.0-feat-2699-test-01-1.7.0" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="1">
+				select count(*) from CORE_GROUP
+				where ID = 2 and QUALIFIED_NAME = 'squashtest.authz.group.tm.User'
+			</sqlCheck>
+
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.tm.group.User'
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+ 	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users -->
+	<changeSet id="tm-data-1.8.0-feat-2699-test-02-1.7.0" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.authz.group.tm.ProjectManager'
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP_MEMBER where GROUP_ID = 3
+			</sqlCheck>
+			<sqlCheck expectedResult="2">
+				select cgm.GROUP_ID from CORE_GROUP_MEMBER cgm
+				inner join CORE_USER cu on cgm.PARTY_ID = cu.PARTY_ID
+				where cu.LAST_NAME = 'Bobovitch'
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+
+ 	<!--  checks that users being project leader directly or via a team on at least one concrete project have received the
+ 	personal authority ROLE_TM_PROJECT_MANAGER -->
+	<changeSet id="tm-data-1.8.0-feat-2699-test-03-1.7.0" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa
+				inner join CORE_USER cu on cu.PARTY_ID = cpa.PARTY_ID
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'
+				and cu.LOGIN in ('Myiku', 'Robertu', 'Garyu')
+			</sqlCheck>
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+ 	<!--  also check that previously deactivated users are actually deleted -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-04" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from AUTH_USER
+				where active=false	;
+			</sqlCheck>
+
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_USER
+				where active=false;
+			</sqlCheck>
+
+		</preConditions>
+
+	</changeSet>
+
+
+ 	<!--  run after the cleanup. We perform the same tests than in tm-data-1.8.0-issue-2899-test-00-1.7.1, but we expect the counts to be different -->
+	<changeSet id="tm-data-1.8.0-issue-2899-test-01-1.7.1" author="bsiri">
+		<preConditions onFailMessage="Has more than expected Attachment lists with attachments">
+ 			<!-- count how many lists have at least one attachment : only 12 remain.-->
+			<sqlCheck expectedResult="12">
+				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
+				inner join ATTACHMENT_CONTENT ac on a.CONTENT_ID = ac.ATTACHMENT_CONTENT_ID
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2899-test-02-1.7.1" author="bsiri">
+		<preConditions onFailMessage="Exists orphan simple resources">
+ 			<!--  count undead resources : not anymore ! -->
+			<sqlCheck expectedResult="0">
+				select count(r.res_id) from SIMPLE_RESOURCE sr
+				inner join RESOURCE r on sr.res_id = r.res_id
+				left join REQUIREMENT_FOLDER rf on rf.res_id = sr.res_id
+				where rf.res_id is null
+			</sqlCheck>
+			</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2899-test-03-1.7.1" author="bsiri">
+		<preConditions onFailMessage="Exists orphan attachment lists">
+ 		<!--  additional test : check that no orphan attachment list is actually left  -->
+				<sqlCheck expectedResult="0">
+					select count(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+					where al.ATTACHMENT_LIST_ID not in (
+						select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+						select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+						select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+						select ATTACHMENT_LIST_ID from EXECUTION UNION
+						select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+						select ATTACHMENT_LIST_ID from ITERATION UNION
+						select ATTACHMENT_LIST_ID from PROJECT UNION
+						select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+						select ATTACHMENT_LIST_ID from RESOURCE UNION
+						select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+						select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+						select ATTACHMENT_LIST_ID from TEST_SUITE
+					)
+					;
+				</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2933-test-01" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan requirement library nodes">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from REQUIREMENT_LIBRARY_NODE rln
+				where rln.RLN_ID not in (
+					select	DESCENDANT_ID from RLN_RELATIONSHIP UNION
+					select CONTENT_ID from REQUIREMENT_LIBRARY_CONTENT
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2933-test-02" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan requirement version">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from REQUIREMENT_VERSION
+				where REQUIREMENT_ID is null
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2933-test-03" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test-case library nodes">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from TEST_CASE_LIBRARY_NODE tcln
+				where tcln.TCLN_ID not in (
+					select DESCENDANT_ID from TCLN_RELATIONSHIP UNION
+					select CONTENT_ID from TEST_CASE_LIBRARY_CONTENT
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-04" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test step">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from TEST_STEP
+				where TEST_STEP_ID not in (
+					select STEP_ID from TEST_CASE_STEPS
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-05" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan campaign library nodes">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CAMPAIGN_LIBRARY_NODE cln
+				where cln.CLN_ID not in (
+					select DESCENDANT_ID from CLN_RELATIONSHIP UNION
+					select CONTENT_ID from CAMPAIGN_LIBRARY_CONTENT
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-06" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan iteration">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from ITERATION
+				where ITERATION_ID not in (
+					select ITERATION_ID from CAMPAIGN_ITERATION
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-07" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test suite">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from TEST_SUITE
+				where ID not in (
+					select TEST_SUITE_ID from ITERATION_TEST_SUITE
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-08" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan iteration test plan item">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from ITERATION_TEST_PLAN_ITEM
+				where ITEM_TEST_PLAN_ID not in (
+					select ITEM_TEST_PLAN_ID from ITEM_TEST_PLAN_LIST
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+
+	<changeSet id="tm-data-1.8.0-issue-2933-test-11" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan execution">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from EXECUTION e
+				where e.EXECUTION_ID not in (select EXECUTION_ID from ITEM_TEST_PLAN_EXECUTION )
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-data-1.8.0-issue-2933-test-12" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan execution step">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from EXECUTION_STEP es
+				where es.EXECUTION_STEP_ID not in (select EXECUTION_STEP_ID from EXECUTION_EXECUTION_STEPS )
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-13" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan issue list">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from ISSUE_LIST il
+				where il.ISSUE_LIST_ID not in (
+					select ISSUE_LIST_ID from EXECUTION_STEP UNION
+					select ISSUE_LIST_ID from EXECUTION
+				)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-09" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan campaign cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'CAMPAIGN'
+				and BOUND_ENTITY_ID not in (select CLN_ID from CAMPAIGN)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-10" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan iteration cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'ITERATION'
+				and BOUND_ENTITY_ID not in (select ITERATION_ID from ITERATION)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-14" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test-suite cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'TEST_SUITE'
+				and BOUND_ENTITY_ID not in (select ID from TEST_SUITE)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-15" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan requirement cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'REQUIREMENT_VERSION'
+				and BOUND_ENTITY_ID not in (select RES_ID from REQUIREMENT_VERSION)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-16" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test case cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'TEST_CASE'
+				and BOUND_ENTITY_ID not in (select TCLN_ID from TEST_CASE)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-17" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan test step cuf values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from CUSTOM_FIELD_VALUE cfv
+				where BOUND_ENTITY_TYPE = 'TEST_STEP'
+				and BOUND_ENTITY_ID not in (select TEST_STEP_ID from TEST_STEP)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-18" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan denormalized exec field values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from DENORMALIZED_FIELD_VALUE dfv
+				where DENORMALIZED_FIELD_HOLDER_TYPE = 'EXECUTION'
+				and DENORMALIZED_FIELD_HOLDER_ID not in (select EXECUTION_ID from EXECUTION)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-data-1.8.0-issue-2933-test-19" author="mpagnon">
+		<preConditions onFailMessage="Exists orphan denormalized exec_step field values">
+			<sqlCheck expectedResult="0">
+				select count(1)
+				from DENORMALIZED_FIELD_VALUE dfv
+				where DENORMALIZED_FIELD_HOLDER_TYPE = 'EXECUTION_STEP'
+				and DENORMALIZED_FIELD_HOLDER_ID not in (select EXECUTION_STEP_ID from EXECUTION_STEP)
+				;
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+</databaseChangeLog>

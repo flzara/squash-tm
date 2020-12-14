@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <include file="tm.data-1.13.1-ACL-Custom-Report.xml" relativeToChangelogFile="true" />
+
+   	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+
+	<include file="${db.resources.dir}/tm/tm.changelog-1.13.1.xml"	relativeToChangelogFile="true" />
+
+ 	<!--  now we can test them -->
+
+ 	<changeSet id="tm-1.13.1-ACL-Custom-Report-Test-01" author="jthebault">
+ 		<preConditions>
+ 			<!-- Checking that one and only one rse have been added to user 20 -->
+			<sqlCheck expectedResult="4">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20
+			</sqlCheck>
+			<!-- Checking that rse -->
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and ACL_GROUP_ID = 4 and OBJECT_IDENTITY_ID = 1
+			</sqlCheck>
+			<!-- Checking the original rse on project, should not have been modified -->
+				<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and ACL_GROUP_ID = 4 and OBJECT_IDENTITY_ID = 2
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.13.1-ACL-Custom-Report-Test-02" author="jthebault">
+ 		<preConditions>
+ 			<!-- Checking that one and only one rse have been added to user 21 -->
+			<sqlCheck expectedResult="4">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 21
+			</sqlCheck>
+			<!-- Checking that rse -->
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 21 and ACL_GROUP_ID = 5 and OBJECT_IDENTITY_ID = 1
+			</sqlCheck>
+			<!-- Checking the original rse on project, should not have been modified -->
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 21 and ACL_GROUP_ID = 5 and OBJECT_IDENTITY_ID = 2
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.13.1-ACL-Custom-Report-Test-03" author="jthebault">
+ 		<preConditions>
+ 			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 21 and ACL_GROUP_ID = 5 and OBJECT_IDENTITY_ID = 3
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and ACL_GROUP_ID = 4 and OBJECT_IDENTITY_ID = 3
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 21 and ACL_GROUP_ID = 5 and OBJECT_IDENTITY_ID = 4
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+				select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and ACL_GROUP_ID = 4 and OBJECT_IDENTITY_ID = 4
+			</sqlCheck>
+ 		</preConditions>
+ 	</changeSet>
+
+</databaseChangeLog>
+
+
+
+

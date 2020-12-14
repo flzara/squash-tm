@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="${db.resources.dir}/tm/tm.changelog-1.5.1.xml"
+		relativeToChangelogFile="true" />
+	<!-- ========================================================================================================= -->
+
+	<changeSet id="tm-1.5.0.issue-2261-test" author="mpagnon">
+		<preConditions>
+				<sqlCheck expectedResult="0">
+					select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
+					null;
+				</sqlCheck>
+		</preConditions>
+</changeSet>
+</databaseChangeLog>

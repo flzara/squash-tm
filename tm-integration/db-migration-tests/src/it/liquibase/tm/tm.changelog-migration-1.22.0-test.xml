@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!-- test sets -->
+    <include file="tm.data-1.22.0-SQUASH-167.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-421.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-794.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-1975.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-2032.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-2106.xml" relativeToChangelogFile="true" />
+
+    <!-- ========================================INCLUDE CHANGELOG================================================ -->
+    <include file="${db.resources.dir}/tm/tm.changelog-1.22.0.xml"
+           relativeToChangelogFile="true" />
+    <!-- ========================================================================================================= -->
+
+    <!-- Testing migration for ITERATION UUID in SQUASH-167 -->
+    <changeSet id="tm-1.22.0-SQUASH-167-test-uuid" author="edegenetais" dbms="mysql, postgresql, h2">
+        <preConditions>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) from ITERATION where UUID is null
+            </sqlCheck>
+        </preConditions>
+        <comment>Check that no uiteration is left without UUID</comment>
+    </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-174-update-query-filter" author="jlor">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_VALUES where FILTER_VALUE='org.squashtest.tm.domain.testcase.CallTestStep' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+      <sqlCheck expectedResult="1">
+        SELECT count(*) from QUERY_FILTER_COLUMN where QUERY_COLUMN_ID=134 and FILTER_OPERATION='IS_CLASS' and QUERY_FILTER_ID=1;
+      </sqlCheck>
+    </preConditions>
+    <comment>Check QUERY_FILTER_VALUES and QUERY_FILTER_COLUMN were successfully updated.</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-drop-temp_execution_extender_order-table" author="jlor">
+    <preConditions>
+      <not>
+        <tableExists tableName="TEMP_EXECUTION_EXTENDER_ORDER" />
+      </not>
+    </preConditions>
+    <comment>Check TEMP_EXECUTION_EXTENDER_ORDER table was successfully dropped.</comment>
+  </changeSet>
+
+  <!-- Testing migration for TEST_SUITE UUID in SQUASH-421 -->
+  <changeSet id="tm-1.22.0-SQUASH-421-test-uuid" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from ITERATION where UUID is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no test suite is left without UUID</comment>
+  </changeSet>
+
+  <!-- Testing migration for AUTOMATED_SUITE audit data in SQUASH-794 -->
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-data-not-null" author="aguilhem" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where CREATED_ON is null
+      </sqlCheck>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where CREATED_BY is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no automated is left without audit data</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value" author="aguilhem" dbms="mysql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="2011-09-29 10:37:26.0">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-29 10:37:37.0">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2011-09-30 10:37:26.0">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-30 10:37:37.0">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' audit data migration is good</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-794-test-automated-suite-audit-value-postgres" author="aguilhem" dbms="postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="2011-09-29 10:37:26+02">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-29 10:37:37+02">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-1">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="2011-09-30 10:37:26+02">
+        SELECT CREATED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT CREATED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="2011-09-30 10:37:37+02">
+        SELECT LAST_MODIFIED_ON from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+      <sqlCheck expectedResult="User-2">
+        SELECT LAST_MODIFIED_BY from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' audit data migration is good (postgres)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-795-test-automated-suite-status-value" author="aguilhem" dbms="postgresql, mysql">
+    <preConditions>
+      <sqlCheck expectedResult="RUNNING">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="FAILURE">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="BLOCKED">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '2468'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="UNTESTABLE">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1357'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="SUCCESS">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1111'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' status is good (postgres, mysql)</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-795-test-automated-suite-status-value-h2" author="aguilhem" dbms="h2">
+    <preConditions>
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1234'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '5678'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '2468'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="READY">
+        SELECT EXECUTION_STATUS from AUTOMATED_SUITE where SUITE_ID = '1357'
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that automated suites' status is good (h2, no migration)</comment>
+  </changeSet>
+
+  <!-- Testing migration for non-folder associated CUSTOM_FIELD_VALUE_OPTION/CUSTOM_FIELD_VALUE deletion in SQUASH-1284 -->
+  <changeSet id="tm-1.22.0-SQUASH-1284-cuf-value-value-option-removal" author="mqtran" dbms="mysql, postgresql, h2">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+          SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+          LEFT JOIN REQUIREMENT_FOLDER rf
+          ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+          WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+          AND rf.RLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+          SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+          LEFT JOIN REQUIREMENT_FOLDER rf
+          ON cfv.BOUND_ENTITY_ID = rf.RLN_ID
+          WHERE cfv.BOUND_ENTITY_TYPE = 'REQUIREMENT_FOLDER'
+          AND rf.RLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN CAMPAIGN_FOLDER cf
+        ON cfv.BOUND_ENTITY_ID = cf.CLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'CAMPAIGN_FOLDER'
+        AND cf.CLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE_OPTION
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
+        );
+      </sqlCheck>
+
+      <sqlCheck expectedResult="0">
+        SELECT count(*) FROM CUSTOM_FIELD_VALUE
+        WHERE CFV_ID in (
+        SELECT cfv.CFV_ID FROM CUSTOM_FIELD_VALUE cfv
+        LEFT JOIN TEST_CASE_FOLDER tcf
+        ON cfv.BOUND_ENTITY_ID = tcf.TCLN_ID
+        WHERE cfv.BOUND_ENTITY_TYPE = 'TESTCASE_FOLDER'
+        AND tcf.TCLN_ID is null
+        );
+      </sqlCheck>
+    </preConditions>
+    <comment>Check that no Cuf value options/Cuf value is left when its associated requirement/test case/campaign folder is deleted</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1975-automation-server" author="aguilhem">
+    <preConditions>
+      <sqlCheck expectedResult="31">
+        SELECT SERVER_ID from THIRD_PARTY_SERVER where NAME = 'server1'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT max(SERVER_ID) from TEST_AUTOMATION_SERVER
+      </sqlCheck>
+
+      <sqlCheck expectedResult="31">
+        SELECT TA_SERVER_ID from PROJECT where PROJECT_ID = '3'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '2'
+      </sqlCheck>
+
+      <sqlCheck expectedResult="44">
+        SELECT SERVER_ID from TEST_AUTOMATION_PROJECT where TA_PROJECT_ID = '3'
+      </sqlCheck>
+
+    </preConditions>
+    <comment>Check that test automation server are now third party server</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2032-fix-null-description-in-requirements" author="jlor">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from RESOURCE where DESCRIPTION is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check requirement descriptions are not null</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-2106-automated-suite-attachment" author="aguilhem">
+    <preConditions>
+      <sqlCheck expectedResult="0">
+        SELECT count(*) from AUTOMATED_SUITE where ATTACHMENT_LIST_ID is null
+      </sqlCheck>
+    </preConditions>
+    <comment>Check automated suites have attachment list</comment>
+  </changeSet>
+
+</databaseChangeLog>

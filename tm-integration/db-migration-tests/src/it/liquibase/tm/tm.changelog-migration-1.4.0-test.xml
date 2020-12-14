@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+     <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
+
+		<comment>We save data from ISSUE before it is migrated</comment>
+		<sql>
+			CREATE TABLE KEYVAL (
+			NAME VARCHAR(25) NULL DEFAULT NULL,
+			TOT BIGINT NULL DEFAULT 0
+			);
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('TCF'), count(*) from TEST_CASE_FOLDER;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('CF'), count(*) from CAMPAIGN_FOLDER;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('SR'), count(*) from SIMPLE_RESOURCE;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('PROJECT'), count(*) from PROJECT;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('CLIB'), count(*) from CAMPAIGN_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('RLIB'), count(*) from REQUIREMENT_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('TCLIB'), count(*) from TEST_CASE_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (NAME, TOT)
+			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
+		</sql>
+	</changeSet>
+<!-- =================================================================================================================== -->
+<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
+		<include file="${db.resources.dir}/tm/tm.changelog-1.4.0.xml" relativeToChangelogFile="true" />
+<!-- =================================================================================================================== -->
+
+	<changeSet id="1.4.0.feat-1513-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select (count(distinct actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - simpleResource.TOT - campaignFolder.TOT - testCaseFolder.TOT - project.TOT - clib.TOT - rlib.TOT - tclib.TOT)
+			from KEYVAL simpleResource, KEYVAL campaignFolder, KEYVAL testCaseFolder , KEYVAL project, KEYVAL clib , KEYVAL rlib , KEYVAL tclib , KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			where prevAttlist.NAME = 'ATTLIST'
+			and simpleResource.NAME = 'SR'
+			and campaignFolder.NAME = 'CF'
+			and testCaseFolder.NAME = 'TCF'
+			and project.NAME = 'PROJECT'
+			and clib.NAME = 'CLIB'
+			and rlib.NAME = 'RLIB'
+			and tclib.NAME = 'TCLIB'
+			group by prevAttlist.TOT , simpleResource.TOT , campaignFolder.TOT , testCaseFolder.TOT , project.TOT , clib.TOT , rlib.TOT , tclib.TOT;
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each attachable entity has a unique attachment list</comment>
+		<sql>
+			drop table KEYVAL;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1596-test-01" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				join TEST_CASE tc on tc.tcln_id = exe.tcln_id
+				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id
+				where exe.tc_description &lt;&gt; tcln.description
+				or exe.reference &lt;&gt; tc.reference
+				or exe.importance &lt;&gt; tc.importance
+				or exe.tc_nature &lt;&gt; tc.tc_nature
+				or exe.tc_type &lt;&gt; tc.tc_type
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has data for the new test case related fields</comment>
+
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1596-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.importance &lt;&gt; 'LOW'
+				and exe.importance &lt;&gt; 'HIGH'
+				and exe.importance &lt;&gt; 'MEDIUM'
+				and exe.importance &lt;&gt; 'VERY_HIGH'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has data for execution importance</comment>
+
+	</changeSet>
+</databaseChangeLog>
