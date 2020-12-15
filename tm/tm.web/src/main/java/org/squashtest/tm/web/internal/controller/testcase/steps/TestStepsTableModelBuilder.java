@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.bdd.Keyword;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
@@ -106,7 +107,14 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	@Override
 	public void visit(KeywordTestStep visited) {
-		throw new UnsupportedOperationException();
+		Map<Object, Object> item = new HashMap<>(4);
+
+		item.put(STEP_ID, visited.getId());
+		item.put("step-index", getCurrentIndex());
+		item.put("step-type", "keyword");
+		item.put("keyword-step-info", new KeywordStepInfo(visited));
+
+		lastBuiltItem = item;
 	}
 
 	@Override
@@ -240,7 +248,6 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		usingCustomFields(cufValues, DEFAULT_MAP_CAPACITY);
 	}
 
-
 	public static final class CallStepInfo {
 
 		private Long calledTcId;
@@ -284,6 +291,24 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			return paramMode;
 		}
 
+	}
+
+	public static final class KeywordStepInfo {
+		private String keywordI18nKey;
+		private String actionWord;
+
+		KeywordStepInfo(KeywordTestStep step) {
+			this.keywordI18nKey = step.getKeyword().i18nKeywordNameKey();
+			this.actionWord = step.writeTestStepActionWordScript(false);
+		}
+
+		public String getKeywordI18nKey() {
+			return keywordI18nKey;
+		}
+
+		public String getActionWord() {
+			return actionWord;
+		}
 	}
 
 }

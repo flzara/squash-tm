@@ -178,7 +178,7 @@
 		</div>
 
 
-<div th:if="!${isTcScripted}" id="prerequisite-panel" class="tab">
+<div th:if="${isTcStandard}" id="prerequisite-panel" class="tab">
 				<h4 th:text="#{generics.prerequisite.title}">Prerequisite</h4>
 				<p id="test-case-prerequisite" sq:unsafe-html="${testCase.prerequisite}">Lorem ipsum dolor sit amet,
 					consectetur adipiscing elit. Nullam felis ante, accumsan quis
@@ -222,61 +222,71 @@
 			<h3 th:text="#{tabs.label.steps}">Steps</h3>
 
 			<table id="test-steps-table" class="greystyle-table">
-				<thead>
-					<tr>
-						<th class="small">#</th>
-						<th th:text="#{table.column-header.has-attachment.label}">PJ.</th>
-						<th th:text="#{label.requirement.short}">Req.</th>
-						<th th:each="cufModel : ${cufDefinitions}"
-							th:text="${cufModel.label}">cuf</th>
-						<th th:text="#{label.Actions}">Actions</th>
-						<th th:text="#{label.ExpectedResults}">Expected results</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="step : ${stepsData}" th:object="${step}">
-						<td th:text="*{['step-index']}">1</td>
-						<td
-							th:text="*{['step-type'] == 'call' ?  '' : ['nb-attachments']}">0</td>
-						<td
-							th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
+        <thead>
+        <tr th:if="${isTcStandard}">
+          <th class="small">#</th>
+          <th th:text="#{table.column-header.has-attachment.label}">PJ.</th>
+          <th th:text="#{label.requirement.short}">Req.</th>
+          <th th:each="cufModel : ${cufDefinitions}" th:text="${cufModel.label}">cuf</th>
+          <th th:text="#{label.Actions}">Actions</th>
+          <th th:text="#{label.ExpectedResults}">Expected results</th>
+        </tr>
+        <tr th:if="${isTcKeyword}">
+          <th class="small">#</th>
+          <th th:text="#{label.Keyword}">Keyword</th>
+          <th th:text="#{label.action}">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="step : ${stepsData}" th:object="${step}">
+          <td th:text="*{['step-index']}">1</td>
+          <td th:if="${isTcStandard}" th:text="*{['step-type'] == 'call' ?  '' : ['nb-attachments']}">0</td>
+          <td th:if="${isTcStandard}" th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
 
-                        <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
-                          <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
-                            <span th:remove="tag" th:case="'DATE_PICKER'"
-                              th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
-                            <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
-                              th:remove="tag" th:case="*" th:text="*{value}">value</span>
-                        </span>
-                        </td>
+          <td th:if="${isTcStandard}" th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
+            <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
+              <span th:remove="tag" th:case="'DATE_PICKER'"
+                                  th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+              <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span>
+              <span th:remove="tag" th:case="*" th:text="*{value}">value</span>
+            </span>
+          </td>
 
-                        <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
-                        <td th:if="*{['step-type'] == 'call'}"
-                             th:with="tcname = *{['call-step-info'].calledTcName},
+          <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
+          <td th:if="*{['step-type'] == 'call'}"
+              th:with="tcname = *{['call-step-info'].calledTcName},
                                       dsname = *{
                                                   ['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.Delegate}__' :
                                                   ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :
                                                   '__#{label.callstepdataset.PickDataset}__'
                                                 }"
-                             colspan="2"
-                             th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>
+              colspan="2"
+              th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>
 
-            			<td th:if="*{['step-type'] == 'action'}"
-            				sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
-            				consectetur adipiscing elit. Nullam felis ante, accumsan quis
-            				tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
-            				tristique senectus et netus et malesuada fames ac turpis egestas.
-            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
-            			<td th:if="*{['step-type'] == 'action'}" sq:unsafe-html="*{['step-result']}">
-            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
-					</tr>
-				</tbody>
+          <td th:if="*{['step-type'] == 'keyword'}"
+              th:with="keywordI18nKey = *{['keyword-step-info'].keywordI18nKey}"
+              th:text="#{${keywordI18nKey}}">Then</td>
+
+          <td th:if="*{['step-type'] == 'keyword'}"
+              th:with="actionWord = *{['keyword-step-info'].actionWord}"
+              th:text="${actionWord}">I click on connect</td>
+
+          <td th:if="*{['step-type'] == 'action'}"
+              sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
+            consectetur adipiscing elit. Nullam felis ante, accumsan quis
+            tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
+            tristique senectus et netus et malesuada fames ac turpis egestas.
+            Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+          <td th:if="*{['step-type'] == 'action'}" sq:unsafe-html="*{['step-result']}">
+            Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+        </tr>
+        </tbody>
 			</table>
 		</div>
 		<!-- ===========================================PARAMETERS ===================================================-->
@@ -286,11 +296,10 @@
 			<table id="parameters-table" class="greystyle-table">
 					<thead>
 						<tr>
-
 							<th class="small">#</th>
 							<th th:text="#{label.Name}">Name</th>
 							<th th:text="#{label.Description}">Description</th>
-							<th th:text="#{test-case.name.label}">Cas de Test</th>
+							<th th:if="${isTcStandard}" th:text="#{test-case.name.label}">Cas de Test</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -299,7 +308,7 @@
 							<td th:text="${iterStat.count}">1</td>
 							<td th:text="*{[name]}">param_1</td>
 							<td sq:unsafe-html="*{[description]}">description</td>
-							<td th:text="*{['test-case-name']}">test case 1 (project 1)</td>
+							<td th:if="${isTcStandard}" th:text="*{['test-case-name']}">test case 1 (project 1)</td>
 						</tr>
 					</tbody>
 			</table>
@@ -373,7 +382,7 @@
 		</div>
 
 		<!-- ===========================================CALLING TEST CASES ===================================================-->
-		<div th:if="!${isTcScripted}" id="calling-test-case-tab" class="tab">
+		<div th:if="${isTcStandard}" id="calling-test-case-tab" class="tab">
 			<h3 th:text="#{test-case.calling-test-cases.panel.title}">Calling
 				test cases</h3>
 			<table id="calling-test-case-table" class="greystyle-table">

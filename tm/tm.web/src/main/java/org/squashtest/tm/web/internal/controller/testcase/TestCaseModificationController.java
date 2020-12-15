@@ -72,6 +72,7 @@ import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.GetKindTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.IsKeywordTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.IsScriptedTestCaseVisitor;
+import org.squashtest.tm.domain.testcase.IsStandardTestCaseVisitor;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ScriptedTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -870,9 +871,17 @@ public class TestCaseModificationController {
 		ModelAndView mav = new ModelAndView("print-test-case.html");
 		mav.addObject(TEST_CASE, testCase);
 
+		IsStandardTestCaseVisitor isStandardVisitor = new IsStandardTestCaseVisitor();
+		testCase.accept(isStandardVisitor);
+		mav.addObject("isTcStandard", isStandardVisitor.isStandard());
+
 		IsScriptedTestCaseVisitor isScriptedVisitor = new IsScriptedTestCaseVisitor();
 		testCase.accept(isScriptedVisitor);
 		mav.addObject("isTcScripted", isScriptedVisitor.isScripted());
+
+		IsKeywordTestCaseVisitor isKeywordVisitor = new IsKeywordTestCaseVisitor();
+		testCase.accept(isKeywordVisitor);
+		mav.addObject("isTcKeyword", isKeywordVisitor.isKeyword());
 
 		GetKindTestCaseVisitor kindVisitor = new GetKindTestCaseVisitor();
 		testCase.accept(kindVisitor);
