@@ -12,8 +12,6 @@
   <description>Squash TM domain - the business implemented by Squash</description>
 
   <properties>
-    <!-- Default jacoco dont record any coverage data -->
-    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
     <h2.driver>org.h2.Driver</h2.driver>
     <h2.url>jdbc:h2:${project.build.directory}/data/squash-tm</h2.url>
     <jooq.version>3.10.7</jooq.version>
@@ -248,23 +246,6 @@
       </plugin>
 
       <plugin>
-        <groupId>com.mysema.maven</groupId>
-        <artifactId>apt-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>querydsl-qbeans-generation</id>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>target/generated-sources/java</outputDirectory>
-              <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
         <configuration>
@@ -381,6 +362,23 @@
           </execution>
         </executions>
 
+      </plugin>
+
+      <plugin>
+        <groupId>com.mysema.maven</groupId>
+        <artifactId>apt-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>querydsl-qbeans-generation</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/generated-sources/java</outputDirectory>
+              <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>

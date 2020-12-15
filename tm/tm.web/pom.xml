@@ -32,11 +32,6 @@
 
     <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
 
-    <!-- Default jacoco dont record any coverage data -->
-    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
-    <!--<spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug-->
-    <!-- -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,postgresql,jth_postgresql</spring-boot-maven-plugin.jvmArguments>-->
-
     <war.css.dir>styles</war.css.dir>
     <wro4j-spring-boot.dir>${project.build.directory}/wro4j-spring-boot</wro4j-spring-boot.dir>
 
@@ -466,38 +461,6 @@
             <!--<jvmArguments>${spring-boot-maven-plugin.jvmArguments}</jvmArguments>-->
             <!--<layout>ZIP</layout>-->
           </configuration>
-          <!--<dependencies>-->
-          <!--<dependency>-->
-          <!--<groupId>org.springframework</groupId>-->
-          <!--<artifactId>springloaded</artifactId>-->
-          <!--<version>1.2.4.RELEASE</version>-->
-          <!--</dependency>-->
-          <!--</dependencies>-->
-        </plugin>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>com.alexnederlof</groupId>
-                    <artifactId>jasperreports-plugin</artifactId>
-                    <versionRange>[1.9,)</versionRange>
-                    <goals>
-                      <goal>jasper</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
         </plugin>
 
         <plugin>
@@ -509,27 +472,6 @@
     </pluginManagement>
 
     <plugins>
-      <!--plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-		<executions>
-          <execution>
-			<id>tm-enforce</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-			<configuration>
-			  <rules>
-				<banDuplicateClasses />
-				<findAllDuplicate>true</findAllDuplicate>
-				<requireMavenVersion>
-				  <version>3.1.0</version>
-				</requireMavenVersion>
-			  </rules>
-			</configuration>
-          </execution>
-        </executions>
-      </plugin-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

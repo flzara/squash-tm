@@ -23,6 +23,7 @@
   </modules>
 
   <properties>
+
     <!-- aspectj version - should be syncd w/ spring boot version -->
     <!-- yet we're stuck at 1.8.5 - won't compile with newer versions -->
     <aspectj.version>1.8.5</aspectj.version>
@@ -36,24 +37,30 @@
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.4.7</groovy.version>
 
-    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
-
     <jasperreports.version>6.1.1</jasperreports.version>
-    <java.version>1.8</java.version>
 
+    <java.version>1.8</java.version>
     <liquibase.version>2.0.1</liquibase.version>
 
     <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar.exclusions>**/webapp/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**, **/scripts/jquery/**, **/scripts/sinon.js, **/scripts/require.js, **/scripts/require-min.js, **/scripts/text.js, **/styles/ckeditor/**, **/styles/spectrum/**, **/styles/switchButton/**, **/styles/jqplot/**, **/styles/images/**, **/styles/jquery/**, **/styles/bootstrap*, **/org/springframework/**</sonar.exclusions>
+
+    <!--
+      Sonar properties. It is unfortunate, but the sonar-maven-plugin won't read its configuration properties elsewhere.
+    -->
+    <sonar.scm.disabled>true</sonar.scm.disabled>
     <spring-boot-maven-plugin.version>2.1.6.RELEASE</spring-boot-maven-plugin.version>
     <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
+
   </properties>
   <build>
+
     <!--
       This POM should only declare plugin mgt and plugins.
       It should not declare dependency mgt (they should be in squash-tm-bom)
@@ -117,7 +124,7 @@
           <!-- Configures groovy sources location -->
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.11</version>
+          <version>3.0.0</version>
           <executions>
             <execution>
               <id>add-source</id>
@@ -145,12 +152,14 @@
             </execution>
           </executions>
         </plugin>
+
         <plugin>
           <!-- Mostly the same as surefire, but used for integration tests -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven-failsafe-plugin.version}</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -164,6 +173,7 @@
             </systemProperties>
           </configuration>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
@@ -175,6 +185,7 @@
             </nonFilteredFileExtensions>
           </configuration>
         </plugin>
+
         <plugin>
           <groupId>org.liquibase</groupId>
           <artifactId>liquibase-maven-plugin</artifactId>
@@ -298,6 +309,7 @@
             </execution>
           </executions>
         </plugin>
+
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
@@ -316,6 +328,7 @@
           <artifactId>axistools-maven-plugin</artifactId>
           <version>1.4</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
@@ -328,6 +341,7 @@
             </dependency>
           </dependencies>
         </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -467,11 +481,6 @@
             <!-- resource modules -->
             <exclude>tools/license-resources/src/main/resources/**/*.*</exclude>
             <exclude>tools/tools-resources/src/main/resources/**/*.*</exclude>
-
-            <!-- workspace-based maven local repository -->
-            <exclude>.m2/**</exclude>
-            <exclude>.npm/**</exclude>
-
             <!-- mercurial files-->
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
@@ -531,8 +540,7 @@
             <!-- felix configuration files -->
             <exclude>**/felix.*.properties</exclude>
             <!-- SQL files used by liquibase, breaks on mysql import when licensed -->
-            <exclude>**/src/test/liquibase/**/*.sql</exclude>
-            <exclude>**/src/main/liquibase/**/*.sql</exclude>
+            <exclude>**/liquibase/**/*.sql</exclude>
             <!-- IzPack files -->
             <exclude>**/izpack/**/*.*</exclude>
             <!-- m2e generated files -->
@@ -545,7 +553,7 @@
             <!-- jasper files -->
             <exclude>**/*.jasper</exclude>
             <!-- test resources -->
-            <exclude>integration-tests/src/it/resources/**</exclude>
+            <exclude>tm-integration/integration-tests/src/it/resources/**</exclude>
             <exclude>**/*.xlsx</exclude>
             <exclude>**/*.feature</exclude>
             <!--other -->
@@ -579,6 +587,7 @@
       </plugin>
     </plugins>
   </build>
+  
   <inceptionYear>2010</inceptionYear>
   <organization>
     <name>Henix, henix.fr</name>
@@ -655,139 +664,27 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <!-- ============================================================
+
+      PROFILES
+
+  =============================================================== -->
+
   <profiles>
-    <!-- Default Squash TM dev profile -->
+
     <profile>
-      <id>dev</id>
+      <!-- profile for integration testing. It adds the module 'tm-integration' to the reactor. -->
+      <id>integration</id>
       <activation>
         <property>
-          <name>env.type</name>
-          <value>dev</value>
+          <name>stage</name>
+          <value>integration</value>
         </property>
       </activation>
-      <properties>
-        <verbose.compiler>true</verbose.compiler>
-      </properties>
-    </profile>
-
-    <!-- This profile aims to run acceptance tests without compilation and
-			units tests (if possible) -->
-    <profile>
-      <id>acceptance-tests</id>
 
       <modules>
-        <module>integration-tests</module>
+        <module>tm-integration</module>
       </modules>
-
-      <properties>
-        <skipITs>false</skipITs>
-        <skipTests>true</skipTests>
-      </properties>
-    </profile>
-
-    <profile>
-      <!-- Without this profile, mvn versions:... fails to detect "provision" module. This profile has no other use -->
-      <id>provision</id>
-
-      <modules>
-        <module>provision</module>
-      </modules>
-    </profile>
-
-    <!-- This profile aims to perform a build on the developper's machine before
-			a push. It should not run anything against mysql -->
-    <profile>
-      <id>private-build</id>
-
-      <modules>
-        <module>integration-tests</module>
-      </modules>
-    </profile>
-
-    <profile>
-
-      <!--
-        This profile sets the project up for jacoco records. It should be run in a separate build from
-        the sonar-build, because there is an issue with the build order of the integration test that would
-        make the merge of unit test and integration test execution traces impossible otherwise.
-      -->
-      <id>jacoco-records</id>
-      <activation>
-        <property>
-          <name>jacoco.records</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${jacoco-maven-plugin.version}</version>
-
-            <executions>
-              <execution>
-                <id>jacoco-prepare-ut-agent</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-
-            </executions>
-
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <!--
-        the profile sonar-build will preprocess any qualimetry-related resource before sonarqube scanner is run.
-      -->
-      <id>sonar-build</id>
-      <properties>
-        <sonar.exclusions>**/webapp/js/**, **/scripts/lib/**, **/scripts/lib/**, **/scripts/ckeditor/**, **/scripts/datatables/**, **/scripts/jquery/**, **/scripts/sinon.js, **/scripts/require.js, **/scripts/require-min.js, **/scripts/text.js, **/styles/ckeditor/**, **/styles/spectrum/**, **/styles/switchButton/**, **/styles/jqplot/**, **/styles/images/**, **/styles/jquery/**, **/styles/bootstrap*, **/org/springframework/**</sonar.exclusions>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${jacoco-maven-plugin.version}</version>
-
-            <executions>
-
-              <execution>
-                <id>jacoco-merge-it</id>
-                <goals>
-                  <goal>merge</goal>
-                </goals>
-                <phase>validate</phase>
-                <configuration>
-                  <fileSets>
-                    <fileSet>
-                      <directory>${session.executionRootDirectory}</directory>
-                      <includes>
-                        <include>integration-tests/target/jacoco-it.exec</include>
-                      </includes>
-                    </fileSet>
-                    <fileSet>
-                      <directory>${project.build.directory}</directory>
-                      <includes>
-                        <include>jacoco.exec</include>
-                      </includes>
-                    </fileSet>
-                  </fileSets>
-                  <destFile>target/jacoco.exec</destFile>
-                </configuration>
-              </execution>
-
-            </executions>
-
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <!--

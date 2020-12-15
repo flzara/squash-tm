@@ -15,7 +15,9 @@
     <skipITs>false</skipITs>
     <squash.dependencies.version>${project.version}</squash.dependencies.version>
     <stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
-    <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
+
+    <!-- The default web port will be reserved and set by build-helper:reserve-network-port (see below) -->
+    <!--stubTaServer.webapp.port>9000</stubTaServer.webapp.port-->
   </properties>
 
   <dependencyManagement>
@@ -60,22 +62,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-
-    <dependency>
-    	slf4j bridge already brought in by spring boot starter logging
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-	-->
-
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>spock-test-dependencies</artifactId>
@@ -94,37 +80,6 @@
       </resource>
     </resources>
 
-    <pluginManagement>
-      <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <versionRange>[2.1,)</versionRange>
-                    <goals>
-                      <goal>unpack</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute>
-                      <runOnIncremental>false</runOnIncremental>
-                    </execute>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
 
     <plugins>
       <plugin>
@@ -157,6 +112,22 @@
               </resources>
             </configuration>
           </execution>
+
+          <execution>
+            <id>reserve-stub-port</id>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <portNames>
+                <portName>stubTaServer.webapp.port</portName>
+              </portNames>
+              <minPortNumber>9000</minPortNumber>
+              <maxPortNumber>11000</maxPortNumber>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
