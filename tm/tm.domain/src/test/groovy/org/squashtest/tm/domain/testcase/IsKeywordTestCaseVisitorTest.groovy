@@ -21,27 +21,22 @@
 package org.squashtest.tm.domain.testcase
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class IsKeywordTestCaseVisitorTest extends Specification {
 
+	@Unroll
 	def "Should test the visitor for each type of test case"() {
 		given:
-		def standardTc = new TestCase()
-		def scriptedTc = new ScriptedTestCase()
-		def keywordTc = new KeywordTestCase()
-		and:
-		IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor()
+			IsKeywordTestCaseVisitor visitor = new IsKeywordTestCaseVisitor()
 		when:
-		scriptedTc.accept(visitor)
+			testCase.accept(visitor)
 		then:
-		!visitor.isKeyword()
-		when:
-		standardTc.accept(visitor)
-		then:
-		!visitor.isKeyword()
-		when:
-		keywordTc.accept(visitor)
-		then:
-		visitor.isKeyword()
+			visitor.isKeyword() == isKeyword
+		where:
+			testCase 				| isKeyword
+			new TestCase() 			| false
+			new ScriptedTestCase()	| false
+			new KeywordTestCase() 	| true
 	}
 }
