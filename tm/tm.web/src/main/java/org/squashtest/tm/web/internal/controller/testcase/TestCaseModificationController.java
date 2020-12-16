@@ -888,8 +888,6 @@ public class TestCaseModificationController {
 
 		mav.addObject("tcKind", kindVisitor.getKind());
 
-
-
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {
 			Project project = testCase.getProject();
@@ -947,6 +945,12 @@ public class TestCaseModificationController {
 		Collection<Object> stepsData = modelBuilder.buildRawModel(steps, 1);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
+
+		// === Script === //
+		if (isScriptedVisitor.isScripted()) {
+			ScriptedTestCase scriptedTestCase = scriptedTestCaseFinder.findById(testCase.getId());
+			mav.addObject("testCaseScript", scriptedTestCase.getScript());
+		}
 
 		// ================PARAMETERS
 		List<Parameter> parameters = parameterFinder.findAllParameters(testCaseId);

@@ -208,7 +208,7 @@
                  th:text="#{label.Script}">Script</label>
           <div class="display-table-cell" id="test-case-script">
             <!-- [Issue 7510] Replacing &lt; and &gt; characters of gherkin parameters to avoid their interpretation as markup -->
-            <p th:utext="${#strings.multipleReplace(testCase.scriptedTestCaseExtender.script, {'<', '>', '&#10;'}, {'&#10877;', '&#10878;', '&lt;br /&gt;'})}" ></p>
+            <p th:utext="${#strings.multipleReplace(testCaseScript, {'<', '>', '&#10;'}, {'&#10877;', '&#10878;', '&lt;br /&gt;'})}" ></p>
           </div>
         </div>
       </div>
