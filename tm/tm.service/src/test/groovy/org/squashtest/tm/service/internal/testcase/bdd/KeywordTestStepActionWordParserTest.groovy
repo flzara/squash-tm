@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.bdd.ActionWordText
 import org.squashtest.tm.exception.actionword.InvalidActionWordInputException
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException
 import org.squashtest.tm.exception.actionword.InvalidActionWordTextException
+import org.squashtest.tm.exception.testcase.InvalidActionWordParameterValueInStepException
 import org.squashtest.tm.exception.testcase.InvalidParameterNameException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -319,7 +320,7 @@ class KeywordTestStepActionWordParserTest extends Specification {
 		new KeywordTestStepActionWordParser().createActionWordFromKeywordTestStep(word)
 
 		then:
-		InvalidParameterNameException exception = thrown()
+		InvalidActionWordParameterValueInStepException exception = thrown()
 		exception.message == "Test case parameter name cannot be empty."
 
 		where:
@@ -331,7 +332,7 @@ class KeywordTestStepActionWordParserTest extends Specification {
 		new KeywordTestStepActionWordParser().createActionWordFromKeywordTestStep(word)
 
 		then:
-		InvalidParameterNameException exception = thrown()
+		InvalidActionWordParameterValueInStepException exception = thrown()
 		exception.message == "Test case parameter name can contain only alphanumeric, - and _ characters."
 
 		where:
@@ -344,7 +345,7 @@ class KeywordTestStepActionWordParserTest extends Specification {
 		new KeywordTestStepActionWordParser().createActionWordFromKeywordTestStep(word)
 
 		then:
-		InvalidParameterNameException exception = thrown()
+		InvalidActionWordParameterValueInStepException exception = thrown()
 		exception.message == "Test case parameter must be between < and >."
 
 		where:
