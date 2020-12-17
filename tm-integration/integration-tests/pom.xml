@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>tm-integration</artifactId>
-    <version>1.22.0.RC2-SNAPSHOT</version>
+    <version>1.22.0.RC3-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
