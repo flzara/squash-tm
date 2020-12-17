@@ -18,25 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase
+package org.squashtest.tm.domain.testcase;
 
-import spock.lang.Specification
-import spock.lang.Unroll
+import org.squashtest.tm.core.foundation.lang.Wrapped;
 
-class IsScriptedTestCaseVisitorTest extends Specification {
+/**
+ * A Visitor to know whether a TestCase is a standard one.
+ */
+public class IsStandardTestCaseVisitor implements TestCaseVisitor {
 
-	@Unroll
-	def "Should test the visitor for each type of test case"() {
-		given:
-			IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor()
-		when:
-			testCase.accept(visitor)
-		then:
-			visitor.isScripted() == isScripted
-		where:
-			testCase 				| isScripted
-			new TestCase() 			| false
-			new ScriptedTestCase()	| true
-			new KeywordTestCase() 	| false
+	private Wrapped<Boolean> isStandard = new Wrapped<>(false);
+
+	@Override
+	public void visit(TestCase testCase) {
+		isStandard.setValue(true);
+	}
+
+	@Override
+	public void visit(KeywordTestCase keywordTestCase) {
+		isStandard.setValue(false);
+	}
+
+	@Override
+	public void visit(ScriptedTestCase scriptedTestCase) {
+		isStandard.setValue(false);
+	}
+
+	public boolean isStandard() {
+		return isStandard.getValue();
 	}
 }

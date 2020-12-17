@@ -18,25 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase
+package org.squashtest.tm.exception.testcase;
 
-import spock.lang.Specification
-import spock.lang.Unroll
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-class IsScriptedTestCaseVisitorTest extends Specification {
+public class InvalidActionWordParameterValueInStepException extends ActionException {
 
-	@Unroll
-	def "Should test the visitor for each type of test case"() {
-		given:
-			IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor()
-		when:
-			testCase.accept(visitor)
-		then:
-			visitor.isScripted() == isScripted
-		where:
-			testCase 				| isScripted
-			new TestCase() 			| false
-			new ScriptedTestCase()	| true
-			new KeywordTestCase() 	| false
+	public InvalidActionWordParameterValueInStepException(String message) {
+		super(message);
 	}
+
+	@Override
+	public String getI18nKey() {
+		return "squashtm.domain.exception.steps.actionword.parameter.value.invalid.name";
+	}
+
 }

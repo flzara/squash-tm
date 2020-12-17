@@ -85,7 +85,7 @@ class KeywordTestStepTest extends Specification {
 		executionStep.action == "Given hello"
 	}
 
-	def "shoud copy a KeywordTestStep"() {
+	def "should copy a KeywordTestStep"() {
 		given:
 			ActionWord actionWord = Mock(ActionWord)
 			actionWord.getId() >> 78L
@@ -93,6 +93,9 @@ class KeywordTestStepTest extends Specification {
 			KeywordTestStep keywordTestStep = new KeywordTestStep(
 				Keyword.BUT,
 				actionWord)
+			keywordTestStep.setDatatable("| Name | Surname |\n| Bowie | David |\n| Jackson | Michael |\n| Mercury | Freddy |")
+			keywordTestStep.setDocstring("Dear John,\nI am fine.\n\nThank You!")
+			keywordTestStep.setComment("here, any action is possible")
 		when:
 			KeywordTestStep copy = keywordTestStep.createCopy()
 		then:
@@ -102,6 +105,9 @@ class KeywordTestStepTest extends Specification {
 			def copyWord = copy.actionWord
 			copyWord.getId() == originalWord.getId()
 			copyWord.createWord() == originalWord.createWord()
+			copy.getDatatable() == keywordTestStep.getDatatable()
+			copy.getDocstring() == keywordTestStep.getDocstring()
+			copy.getComment() == keywordTestStep.getComment()
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////

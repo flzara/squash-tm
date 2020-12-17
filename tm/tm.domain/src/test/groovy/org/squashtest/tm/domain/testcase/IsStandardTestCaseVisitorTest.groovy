@@ -23,20 +23,20 @@ package org.squashtest.tm.domain.testcase
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class IsScriptedTestCaseVisitorTest extends Specification {
+class IsStandardTestCaseVisitorTest extends Specification {
 
 	@Unroll
 	def "Should test the visitor for each type of test case"() {
 		given:
-			IsScriptedTestCaseVisitor visitor = new IsScriptedTestCaseVisitor()
+			IsStandardTestCaseVisitor visitor = new IsStandardTestCaseVisitor()
 		when:
 			testCase.accept(visitor)
 		then:
-			visitor.isScripted() == isScripted
+			visitor.isStandard() == isStandard
 		where:
-			testCase 				| isScripted
-			new TestCase() 			| false
-			new ScriptedTestCase()	| true
+			testCase 				| isStandard
+			new TestCase() 			| true
+			new ScriptedTestCase()	| false
 			new KeywordTestCase() 	| false
 	}
 }

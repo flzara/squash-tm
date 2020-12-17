@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.bdd.ActionWordParameterValue;
 import org.squashtest.tm.exception.actionword.InvalidActionWordInputException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordParameterValueException;
 import org.squashtest.tm.exception.actionword.InvalidActionWordTextException;
+import org.squashtest.tm.exception.testcase.InvalidActionWordParameterValueInStepException;
 import org.squashtest.tm.exception.testcase.InvalidParameterNameException;
 
 import static org.squashtest.tm.domain.bdd.ActionWord.ACTION_WORD_CLOSE_GUILLEMET;
@@ -146,7 +147,7 @@ public class KeywordTestStepActionWordParser extends ActionWordParser{
 				return CharState.TEXT;
 			case ACTION_WORD_OPEN_GUILLEMET:
 			case ACTION_WORD_DOUBLE_QUOTE:
-				throw new InvalidParameterNameException("Test case parameter must be between < and >.");
+				throw new InvalidActionWordParameterValueInStepException("Test case parameter must be between < and >.");
 			default:
 				actionWordTestCaseParamValueBuilder.append(currentChar);
 				return CharState.TC_PARAM_VALUE;
@@ -155,15 +156,15 @@ public class KeywordTestStepActionWordParser extends ActionWordParser{
 
 	private void addTestCaseParamValueIntoFragments(String tcParamValueInput) {
 		if (!tcParamValueInput.startsWith(ACTION_WORD_OPEN_GUILLEMET) || !tcParamValueInput.endsWith(ACTION_WORD_CLOSE_GUILLEMET)){
-			throw new InvalidParameterNameException("Test case parameter must be between < and >.");
+			throw new InvalidActionWordParameterValueInStepException("Test case parameter must be between < and >.");
 		}
 		String removedGuillemetStr = tcParamValueInput.substring(1, tcParamValueInput.length()-1);
 		String trimmedWord = removedGuillemetStr.trim();
 		if (trimmedWord.isEmpty()) {
-			throw new InvalidParameterNameException("Test case parameter name cannot be empty.");
+			throw new InvalidActionWordParameterValueInStepException("Test case parameter name cannot be empty.");
 		}
 		if (!trimmedWord.matches("[\\w-\\s]+")) {
-			throw new InvalidParameterNameException("Test case parameter name can contain only alphanumeric, - and _ characters.");
+			throw new InvalidActionWordParameterValueInStepException("Test case parameter name can contain only alphanumeric, - and _ characters.");
 		}
 		++paramIndex;
 		String actionWordParamValue = createParamValueFromTestCaseParamValueInput(trimmedWord);
