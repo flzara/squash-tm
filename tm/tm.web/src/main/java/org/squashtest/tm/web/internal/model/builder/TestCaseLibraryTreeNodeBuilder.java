@@ -114,7 +114,6 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			addLeafAttributes("test-case", "test-cases");
 
 			// name and title
-			builtNode.addAttr("name", visited.getName());
 			builtNode.addAttr("reference", visited.getReference());
 			builtNode.setTitle(HtmlUtils.htmlEscape(visited.getFullName()));
 
