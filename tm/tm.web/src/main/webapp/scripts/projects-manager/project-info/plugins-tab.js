@@ -233,8 +233,11 @@ define(
 				});
 
 				disabledPluginPopup.on("formdialogcancel", function () {
-					putBackButtonSwitch(btn, checked, data, event);
 					disabledPluginPopup.formDialog("close");
+				});
+
+				disabledPluginPopup.on("formdialogclose", function() {
+					putBackButtonSwitch(btn, checked, data, event);
 				});
 			}
 
