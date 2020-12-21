@@ -39,14 +39,14 @@ class ActionWordDaoIT extends DbunitDaoSpecification {
 
 	def "ActionWords implementation information should be updated after their TestCases are Transmitted"() {
 		given:
-			def updatedCucumberActionWords = [-1L, -2L, -3L, -4L]
-			def updatedRobotActionWords = [-5L, -6L, -7L]
+			def actionWordsAutomatedInCucumberProject = [-1L, -2L, -3L, -4L]
+			def actionWordsAutomatedInRobotProject = [-5L, -6L, -7L]
 			def notUpdatedActionWords = [-8L, -9L]
 		when:
 			actionWordDao.updateActionWordImplInfoFromAutomRequestIds([-1L, -2L, -3L, -4L, -5L])
 		and:
-			List<ActionWord> resCucumberActionWords = actionWordDao.findAllById(updatedCucumberActionWords)
-			List<ActionWord> resRobotActionWords = actionWordDao.findAllById(updatedRobotActionWords)
+			List<ActionWord> resCucumberActionWords = actionWordDao.findAllById(actionWordsAutomatedInCucumberProject)
+			List<ActionWord> resRobotActionWords = actionWordDao.findAllById(actionWordsAutomatedInRobotProject)
 			List<ActionWord> restNotUpdatedActionWords = actionWordDao.findAllById(notUpdatedActionWords)
 		then:
 			def currentIso9601Date = DateUtils.formatIso8601Date(new Date())

@@ -62,14 +62,14 @@ public class ActionWordDaoImpl implements CustomActionWordDao {
 			.join(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(KEYWORD_TEST_CASE.TCLN_ID))
 			.join(KEYWORD_TEST_STEP).on(KEYWORD_TEST_STEP.TEST_STEP_ID.eq(TEST_CASE_STEPS.STEP_ID))
 			.join(ACTION_WORD).on(ACTION_WORD.ACTION_WORD_ID.eq(KEYWORD_TEST_STEP.ACTION_WORD_ID))
-			.join(PROJECT).on(PROJECT.PROJECT_ID.eq(ACTION_WORD.PROJECT_ID))
+			.join(PROJECT).on(PROJECT.PROJECT_ID.eq(AUTOMATION_REQUEST.PROJECT_ID))
 			.where(AUTOMATION_REQUEST.AUTOMATION_REQUEST_ID.in(automationRequestIds))
 			.fetchGroups(PROJECT.BDD_IMPLEMENTATION_TECHNOLOGY, ACTION_WORD.ACTION_WORD_ID);
 	}
 
-	private void updateActionWordsImplInfo(Collection<Long> actionWordIds, String implemenationTechnology) {
+	private void updateActionWordsImplInfo(Collection<Long> actionWordIds, String implementationTechnology) {
 		dsl.update(ACTION_WORD)
-			.set(ACTION_WORD.LAST_IMPLEMENTATION_TECHNOLOGY, implemenationTechnology)
+			.set(ACTION_WORD.LAST_IMPLEMENTATION_TECHNOLOGY, implementationTechnology)
 			.set(ACTION_WORD.LAST_IMPLEMENTATION_DATE, DSL.currentTimestamp())
 			.where(ACTION_WORD.ACTION_WORD_ID.in(actionWordIds))
 			.execute();
