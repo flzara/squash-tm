@@ -223,7 +223,7 @@
 						</c:if>
 					</h3>
 				</td>
-		<c:if test="${execution.project.allowTcModifDuringExec() and !scripted}">
+		<c:if test="${execution.project.allowTcModifDuringExec() and !scripted and !isKeywordExecution}">
 		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''} title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
                                  </button> </td>
@@ -277,7 +277,7 @@
         </comp:toggle-panel>
       </div>
     </div>
-    
+
 		<%------------------------------ Attachments bloc ---------------------------------------------%>
 
 		<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />

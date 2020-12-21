@@ -237,7 +237,7 @@
                         data-status="SUCCESS" title="${passedTitle}">
                   <span class="ui-icon exec-status-success"></span>
                 </button>
-                <c:if test="${execution.project.allowTcModifDuringExec() and !scripted}">
+                <c:if test="${execution.project.allowTcModifDuringExec() and !scripted and !isKeywordExecution}">
                   <button id="edit-tc" style="float: right"
                           class="sq-btn std-btn ui-button control-button " ${ executionStep.referencedTestStep == null ? 'disabled="disabled"' : ''}
                           title="${modifyTcLabel}">
