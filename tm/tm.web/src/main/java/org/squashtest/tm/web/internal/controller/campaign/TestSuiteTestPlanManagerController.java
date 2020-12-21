@@ -371,7 +371,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = {"mode=manual"})
 	public String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
-		Execution newExecution = service.addExecution(itemId);
+		Execution newExecution = service.addExecution(itemId, messageSource);
 		return newExecution.getId().toString();
 
 	}

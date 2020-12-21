@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.campaign;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -127,6 +128,12 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long testPlanItemId) {
 		return iterationService.addExecution(testPlanItemId);
+	}
+
+	@Override
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public Execution addExecution(long testPlanItemId, MessageSource messageSource) {
+		return iterationService.addExecution(testPlanItemId, messageSource);
 	}
 
 	@Override

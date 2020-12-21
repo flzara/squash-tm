@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -58,6 +59,6 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 
 	Execution addExecution(long testPlanItemId);
 
-
+	Execution addExecution(long testPlanItemId, MessageSource messageSource);
 
 }
