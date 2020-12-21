@@ -1496,4 +1496,15 @@
 
   </changeSet>
 
+  <changeSet id="tm-1.22.0-SQUASH-1999-scm-repo-ids-sequence" author="jlor" dbms="postgresql">
+    <comment>reset sequence for scm repositories</comment>
+    <sql>
+      select setval(
+        'scm_repository_scm_repository_id_seq',
+        (select max(case when repo.scm_repository_id > 1 then repo.scm_repository_id else 1 end)
+        from scm_repository repo)
+      );
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

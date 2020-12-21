@@ -33,6 +33,7 @@
     <include file="tm.data-1.22.0-SQUASH-1975.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-2032.xml" relativeToChangelogFile="true" />
     <include file="tm.data-1.22.0-SQUASH-2106.xml" relativeToChangelogFile="true" />
+    <include file="tm.data-1.22.0-SQUASH-1999.xml" relativeToChangelogFile="true" />
 
     <!-- ========================================INCLUDE CHANGELOG================================================ -->
     <include file="${db.resources.dir}/tm/tm.changelog-1.22.0.xml"
@@ -315,6 +316,18 @@
       </sqlCheck>
     </preConditions>
     <comment>Check automated suites have attachment list</comment>
+  </changeSet>
+
+  <changeSet id="tm-1.22.0-SQUASH-1999-scm-repo-ids-sequence" author="jlor" dbms="postgresql">
+    <preConditions>
+      <sqlCheck expectedResult="1">
+        SELECT last_value from scm_repository_scm_repository_id_seq
+      </sqlCheck>
+      <sqlCheck expectedResult="2">
+        SELECT nextval('scm_repository_scm_repository_id_seq')
+      </sqlCheck>
+    </preConditions>
+    <comment>check scm repository sequence</comment>
   </changeSet>
 
 </databaseChangeLog>
