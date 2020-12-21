@@ -229,7 +229,7 @@ define(
 				disabledPluginPopup.one("formdialogconfirm", function () {
 					var saveConf = $("#saveConf").prop("checked");
 					disablePlugin(url, checked, btn, data, saveConf);
-					disabledPluginPopup.formDialog("close");
+					disabledPluginPopup.formDialog("destroy");
 				});
 
 				disabledPluginPopup.on("formdialogcancel", function () {
