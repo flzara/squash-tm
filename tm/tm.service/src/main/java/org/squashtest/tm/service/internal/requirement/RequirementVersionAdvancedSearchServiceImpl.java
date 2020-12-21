@@ -292,20 +292,15 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private static void createFilterCurrentVersion(ExtendedHibernateQuery<?> query, AdvancedSearchFieldModel model) {
 
 		QRequirementVersion outerVersion = requirementVersion;
-		QRequirement parent = new QRequirement("parent");
 		QRequirementVersion initVersion = new QRequirementVersion("initVersion");
-		QRequirementVersion maxVersion = new QRequirementVersion("maxVersion");
 
 		HibernateQuery<?> subquery = new ExtendedHibernateQuery<>()
-			.select(Expressions.ONE)
+			.select(initVersion.requirement.id, initVersion.versionNumber.max())
 			.from(initVersion)
-			.where(initVersion.id.eq(outerVersion.id).and(
-				initVersion.id.in(new ExtendedHibernateQuery<>().select(maxVersion.id.max())
-					.from(maxVersion)
-					.join(maxVersion.requirement, parent)
-					.where(maxVersion.status.ne(RequirementStatus.OBSOLETE)).groupBy(parent.id))
-			));
-
+			.where(initVersion.status.ne(RequirementStatus.OBSOLETE))
+			.groupBy(initVersion.requirement.id)
+			.having(initVersion.requirement.id.eq(outerVersion.requirement.id)
+				.and(initVersion.versionNumber.max().eq(outerVersion.versionNumber)));
 
 		query.where(subquery.exists());
 
