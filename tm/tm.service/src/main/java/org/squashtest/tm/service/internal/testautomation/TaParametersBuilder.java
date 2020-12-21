@@ -267,11 +267,11 @@ public class TaParametersBuilder implements ParametersBuilder {
 		String autoTestRef = testCase.getAutomatedTestReference();
 		nullSafePut("TC_REFERENCE", value);
 		params.put("TC_UUID", uuid);
-		nullSafePut("TC_SOURCE_CODE_REPOSITORY_URL", scrUrl);
-		nullSafePut("TC_AUTOMATED_TEST_REFERENCE", autoTestRef);
+		nullSafePut("AUTOM_SOURCE_CODE_REPOSITORY_URL", scrUrl);
+		nullSafePut("AUTOM_AUTOMATED_TEST_REFERENCE", autoTestRef);
 		if(testCase.getAutomatedTestTechnology() != null){
 			String automatedTestTechnologyActionProviderKey = testCase.getAutomatedTestTechnology().getActionProviderKey();
-			params.put("TC_AUTOMATED_TEST_TECHNOLOGY_ACTION_PROVIDER_KEY", automatedTestTechnologyActionProviderKey);
+			params.put("AUTOM_AUTOMATED_TEST_TECHNOLOGY_ACTION_PROVIDER_KEY", automatedTestTechnologyActionProviderKey);
 		}
 	}
 
