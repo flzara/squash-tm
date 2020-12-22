@@ -259,7 +259,7 @@ define(["jquery", "backbone", "tree", "underscore", "app/ws/squashtm.notificatio
 				var tcIds = result['eligibleTcIds'],
 						allEligible = result['areAllEligible'];
 				if (tcIds.length !== 0) {
-					var msg = translator.get('test-case.automation.transmit-all.size') + tcIds.length;
+					var msg = translator.get('test-case.automation.transmit-all.size') + ' ' + tcIds.length;
 					if (allEligible) {
 						$('#automation-request-status').text(translator.get('automation-request.request_status.TRANSMITTED'));
 						eventBus.trigger("test-case.transmitted");
