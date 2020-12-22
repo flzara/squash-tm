@@ -338,14 +338,16 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 					.done(function(data) {
 						if (Object.keys(data).length > 0) {
 							self.generateDuplicatedActionDialog(data);
+							self.initTableStyle();
 						} else {
 							self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+							self.initTableStyle();
 						}
 				});
 			} else {
 				self.addKeywordTestStep(inputActionWord, targetTestStepIndex);
+				self.initTableStyle();
 			}
-			self.initTableStyle();
 		},
 
 		addKeywordTestStep: function (inputActionWord, index) {
