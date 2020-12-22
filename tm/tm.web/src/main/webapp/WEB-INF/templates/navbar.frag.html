@@ -102,7 +102,8 @@
             </li>
           </ul>
 
-          <div th:remove="tag"
+          <div th:if="${canNavigate}"
+               th:remove="tag"
                th:each="workspacePluginIcon : ${authorizedWorkspacePluginIcons}",
                th:with="iconPath=@{/images/__${workspacePluginIcon.iconFilePath}__},
                         iconHoverPath=@{/images/__${workspacePluginIcon.iconHoverFilePath}__},
