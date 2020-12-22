@@ -60,7 +60,7 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 		item.put("step-datatable", keywordTestStep.getDatatable() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDatatable()) : EMPTY);
 		item.put("step-docstring", keywordTestStep.getDocstring() != null ? HtmlUtils.htmlEscape(keywordTestStep.getDocstring()) : EMPTY);
 		item.put("step-comment", keywordTestStep.getComment() != null ? HtmlUtils.htmlEscape(keywordTestStep.getComment()) : EMPTY);
-		item.put("action-word-id", retrieveActionWordIdIfReadable(keywordTestStep.getActionWord()));
+		item.put("action-word-id", retrieveActionWordIdIfReadable(keywordTestStep.getActionWord().getId()));
 		item.put("step-action-word-url", null);
 		item.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		return item;
@@ -105,12 +105,15 @@ public class KeywordTestStepTableModelBuilder extends DataTableModelBuilder<Test
 			.append("</span>");
 	}
 
-	private String retrieveActionWordIdIfReadable(ActionWord actionWord) {
-		return isProjectReadable(actionWord.getProject().getId()) ? actionWord.getId().toString() : EMPTY;
+	private String retrieveActionWordIdIfReadable(Long actionWordId) {
+		return isActionWordReadable(actionWordId) ? actionWordId.toString() : EMPTY;
 	}
 
-	private boolean isProjectReadable(Long projectId) {
-		return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", projectId,
-			Project.class.getName());
+	private boolean isActionWordReadable(Long actionWordId) {
+		return permissionService.hasRoleOrPermissionOnObject(
+			"ROLE_ADMIN",
+			"READ",
+			actionWordId,
+			ActionWord.class.getName());
 	}
 }
