@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.ManageableCredentials;
 import org.squashtest.tm.service.servers.StoredCredentialsManager;
@@ -49,6 +50,9 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 
 	@Inject
 	private StoredCredentialsManager storedCredentialsManager;
+
+	@Inject
+	private FeatureManager featureManager;
 
 	private final ThreadLocal<UserCredentialsCache> threadedCache = new ThreadLocal<>();
 
@@ -130,7 +134,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 		ManageableCredentials managed = storedCredentialsManager.findUserCredentials(server.getId(), currentUser());
 		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
-			result = managed.build(storedCredentialsManager, server, getCache().getUser()); 
+			result = managed.build(storedCredentialsManager, server, getCache().getUser());
 		}
 		return result;
 	}
@@ -141,7 +145,7 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 		ManageableCredentials managed = storedCredentialsManager.unsecuredFindAppLevelCredentials(server.getId());
 		if (managed != null){
 			LOGGER.trace("CredentialsProviderImpl : found in database");
-			result = managed.build(storedCredentialsManager, server, getCache().getUser()); 
+			result = managed.build(storedCredentialsManager, server, getCache().getUser());
 		}
 		return result;
 	}
@@ -214,6 +218,6 @@ public class CredentialsProviderImpl implements CredentialsProvider {
 					"none were found. This is a programming error, which means that either there is no user context, or " +
 					"that the thread was initiated in an illegal way (the credentials cache were not loaded from the session)");
 		}
-		return new UserCredentialsCache(username);
+		return new UserCredentialsCache(username, featureManager);
 	}
 }

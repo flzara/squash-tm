@@ -69,6 +69,11 @@ require(["common"], function() {
 				off_label: msg.get("label.Deactivate")
 			});
 
+			$("#autoconnect-on-connection").switchButton({
+				on_label: msg.get("label.Activate"),
+				off_label: msg.get("label.Deactivate")
+			});
+
 			$("#toggle-storage-checkbox").switchButton({
 				on_label: msg.get("label.filesystem"),
 				off_label: msg.get("label.database")
@@ -84,6 +89,24 @@ require(["common"], function() {
 
 				$.ajax({
 					url: squashtm.appRoot + "features/stack-trace",
+					method: "post",
+					data: { enabled: enabled }
+				}).fail(function() {
+					$(event.currentTarget).switchButton("option", "checked", !enabled);
+					onChangeCase.running = false;
+				}).done(function() { onChangeCase.running = false; });
+			});
+
+			$(document).on("change", "#autoconnect-on-connection", function onChangeCase(event) {
+				if (!!onChangeCase.running) {
+					return;
+				}
+				onChangeCase.running = true;
+
+				var enabled = $(event.currentTarget).prop("checked");
+
+				$.ajax({
+					url: squashtm.appRoot + "features/autoconnect-on-connection",
 					method: "post",
 					data: { enabled: enabled }
 				}).fail(function() {

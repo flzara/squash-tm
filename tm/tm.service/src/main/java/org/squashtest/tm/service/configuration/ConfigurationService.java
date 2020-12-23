@@ -35,6 +35,7 @@ public interface ConfigurationService {
 		String ACTIVATED_USER_EXCESS = "activated.user.excess";
 		String PLUGIN_LICENSE_EXPIRATION = "plugin.license.expiration";
 		String SQUASH_CALLBACK_URL = "squashtest.tm.callbackurl";
+		String AUTOCONNECT_ON_CONNECTION_ENABLED = "autoconnect.on.connection.enabled";
 	}
 
 	void createNewConfiguration(String key, String value);

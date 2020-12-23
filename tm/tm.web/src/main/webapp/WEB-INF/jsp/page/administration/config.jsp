@@ -139,6 +139,25 @@
     </c:if>
     <%-- stack trace feature --%>
 
+    <%-- autoconnect on connection feature --%>
+
+    <div id="autoconnect-config-panel" class="sq-tg expand">
+      <div class="tg-head">
+        <h3><f:message key="title.autoconnect-on-connection-enabled.config"/></h3>
+        <div class="icon-helper" title='<f:message key="autoconnect-on-connection.doc" />'> </div>
+      </div>
+      <div class="tg-body">
+        <div class="controls">
+          <c:set var="autoconnectChecked" value="${ autoconnectOnConnection ? 'checked=checked' : '' }"/>
+          <input id="autoconnect-on-connection" type="checkbox" value="enabled" ${ autoconnectChecked } />
+          <span class="help-inline">&nbsp;</span>
+
+        </div>
+      </div>
+    </div>
+
+    <%-- // autoconnect on connection feature --%>
+
     <%-- case sensitivity feature --%>
     <div id="client-config-panel" class="sq-tg expand">
       <div class="tg-head">

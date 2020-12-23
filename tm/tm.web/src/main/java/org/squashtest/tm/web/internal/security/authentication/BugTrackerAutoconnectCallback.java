@@ -40,9 +40,11 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.servers.AuthenticationPolicy;
 import org.squashtest.tm.domain.servers.AuthenticationProtocol;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.UserCredentialsCache;
@@ -84,8 +86,10 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 	private CredentialsProvider credentialsProvider;
 
 	@Inject
-	private Provider<AsynchronousBugTrackerAutoconnect> asyncProvider;
+	private FeatureManager featureManager;
 
+	@Inject
+	private Provider<AsynchronousBugTrackerAutoconnect> asyncProvider;
 
 
 	@Override
@@ -107,7 +111,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 		LOGGER.debug("BugTrackerAutoconnectCallback : initializing the credentials cache");
 
-		UserCredentialsCache credentials = new UserCredentialsCache(username);
+		UserCredentialsCache credentials = new UserCredentialsCache(username, featureManager);
 
 		session.setAttribute(UserCredentialsCachePersistenceFilter.CREDENTIALS_CACHE_SESSION_KEY, credentials);
 		credentialsProvider.restoreCache(credentials);
@@ -158,6 +162,9 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 
 		@Inject
 		private CredentialsProvider credentialsProvider;
+
+		@Inject
+		private FeatureManager featureManager;
 
 		public AsynchronousBugTrackerAutoconnect(){
 			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
@@ -263,6 +270,9 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 			if (maybeCredentials.isPresent()){
 				LOGGER.debug("BugTrackerAutoconnectCallback : found credentials from the provider");
 				credentials = maybeCredentials.get();
+			} else if (canTryUsingEvent(server)){
+				LOGGER.debug("BugTrackerAutoconnectCallback : can create the credentials using the authentication event");
+				credentials = buildFromAuthenticationEvent();
 			}
 
 			return credentials;
@@ -276,7 +286,20 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Intera
 		}
 
 
+		// for now we assume that only String credentials are suitable (as passwords),
+		// and the server is set to auth policy USER
+		private boolean canTryUsingEvent(BugTracker server){
+			return (server.getAuthenticationPolicy() == AuthenticationPolicy.USER
+				&& server.getAuthenticationProtocol() == AuthenticationProtocol.BASIC_AUTH
+				&& springsecCredentials instanceof String
+				&& featureManager.isEnabled(FeatureManager.Feature.AUTOCONNECT_ON_CONNECTION));
+		}
 
+		// for now we assume that BasicAuthentication is what we need
+		// the cast is safe thanks to canTryUsingEvent
+		private Credentials buildFromAuthenticationEvent(){
+			return new BasicAuthenticationCredentials(user, (String)springsecCredentials);
+		}
 
 
 		private void warnIfCredentialsOfWrongType(Credentials credentials, AuthenticationProtocol protocol){

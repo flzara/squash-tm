@@ -31,6 +31,7 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
 import javax.inject.Inject;
 
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.AUTOCONNECT_ON_CONNECTION_ENABLED;
 import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
 import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
 import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.STACK_TRACE_FEATURE_ENABLED;
@@ -74,6 +75,10 @@ public class FeatureManagerImpl implements FeatureManager {
 				enabled = configuration.getBoolean(STACK_TRACE_FEATURE_ENABLED);
 				break;
 
+			case AUTOCONNECT_ON_CONNECTION:
+				enabled = configuration.getBoolean(AUTOCONNECT_ON_CONNECTION_ENABLED);
+				break;
+
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to tell if it's enabled or not");
@@ -104,6 +109,10 @@ public class FeatureManagerImpl implements FeatureManager {
 				setStackTraceFeatureEnabled(enabled);
 				break;
 
+			case AUTOCONNECT_ON_CONNECTION:
+				setAutoconnectOnConnectionEnabled(enabled);
+				break;
+
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to switch its enabled status to " + enabled);
@@ -121,6 +130,10 @@ public class FeatureManagerImpl implements FeatureManager {
 	private void setStackTraceFeatureEnabled(boolean enabled) {
 		// TODO check if possible
 		configuration.set(STACK_TRACE_FEATURE_ENABLED, enabled);
+	}
+
+	private void setAutoconnectOnConnectionEnabled(boolean enabled) {
+		configuration.set(AUTOCONNECT_ON_CONNECTION_ENABLED, enabled);
 	}
 
 	private void setMilestoneFeatureEnabled(boolean enabled) {

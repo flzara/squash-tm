@@ -1507,4 +1507,12 @@
     </sql>
   </changeSet>
 
+  <changeSet id="tm-1.22.0.SQUASH-1596-autocnnect-on-connection-config" author="jprioux">
+    <comment>add system parameter for autoconnect on connection configuration</comment>
+    <insert tableName="CORE_CONFIG">
+      <column name="STR_KEY" value="autoconnect.on.connection.enabled" />
+      <column name="VALUE" value="false" />
+    </insert>
+  </changeSet>
+
 </databaseChangeLog>

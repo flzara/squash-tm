@@ -102,4 +102,12 @@ public class SquashFeatureController {
 	public void setStackTraceFeature(@RequestParam(ENABLED) boolean enabled) {
 		featureManager.setEnabled(Feature.STACK_TRACE, enabled);
 	}
+
+	@RequestMapping(value = "/autoconnect-on-connection", method = RequestMethod.POST, params = ENABLED)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Secured("ROLE_ADMIN")
+	public void setAutoconnectOnConnectionFeature(@RequestParam(ENABLED) boolean enabled) {
+		featureManager.setEnabled(Feature.AUTOCONNECT_ON_CONNECTION, enabled);
+	}
 }

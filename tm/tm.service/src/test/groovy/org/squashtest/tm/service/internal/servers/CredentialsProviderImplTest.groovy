@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials
 import org.squashtest.tm.domain.servers.Credentials
 import org.squashtest.tm.domain.servers.OAuth1aCredentials
 import org.squashtest.tm.domain.servers.ThirdPartyServer
+import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.servers.ManageableCredentials
 import org.squashtest.tm.service.servers.StoredCredentialsManager
 import org.squashtest.tm.service.servers.UserCredentialsCache
@@ -39,13 +40,15 @@ class CredentialsProviderImplTest extends Specification{
 
 	CredentialsProviderImpl provider = new CredentialsProviderImpl()
 	StoredCredentialsManager credentialsManager = Mock()
+	FeatureManager featureManager = Mock()
 
-	UserCredentialsCache cache = new UserCredentialsCache("Mike (defined by general setup)")
+	UserCredentialsCache cache = new UserCredentialsCache("Mike (defined by general setup)", featureManager)
 
 
 	def setup(){
 		provider.storedCredentialsManager = credentialsManager
 		provider.threadedCache.set(cache)
+		provider.featureManager = featureManager
 	}
 
 
@@ -114,7 +117,7 @@ class CredentialsProviderImplTest extends Specification{
 	def "should set the given user cache as the current user context cache"(){
 
 		given:
-		def newCache = new UserCredentialsCache("Bob (defined by specific setup)")
+		def newCache = new UserCredentialsCache("Bob (defined by specific setup)", featureManager)
 
 		when:
 		provider.restoreCache(newCache)
@@ -137,10 +140,10 @@ class CredentialsProviderImplTest extends Specification{
 
 		when:
 		provider.unloadCache()
-		
+
 		then:
 		provider.threadedCache.get() == null
-		
+
 	}
 
 

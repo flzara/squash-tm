@@ -23,8 +23,10 @@ package org.squashtest.tm.service.servers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.squashtest.tm.domain.servers.BasicAuthenticationCredentials;
 import org.squashtest.tm.domain.servers.Credentials;
 import org.squashtest.tm.domain.servers.ThirdPartyServer;
+import org.squashtest.tm.service.feature.FeatureManager;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -80,15 +82,26 @@ public class UserCredentialsCache implements Serializable {
 
 	private final Map<Long, Credentials> cache = new HashMap<>();
 
+	private final FeatureManager featureManager;
+
 
 	/**
 	 * @param user, must be not null
 	 */
 	public UserCredentialsCache(String user){
+		this(user, null);
+	}
+
+	/**
+	 * @param user, must be not null
+	 * @param featureManager, for autoconnect on connection feature
+	 */
+	public UserCredentialsCache(String user, FeatureManager featureManager){
 		if (user == null){
 			throw new NullArgumentException("UserCredentialsCache : username must not be null");
 		}
 		this.user = user;
+		this.featureManager = featureManager;
 	}
 
 
@@ -167,7 +180,11 @@ public class UserCredentialsCache implements Serializable {
 	 * @return
 	 */
 	private boolean isCachable(Credentials credentials){
-		return false;
+		if (featureManager.isEnabled(FeatureManager.Feature.AUTOCONNECT_ON_CONNECTION)) {
+			return BasicAuthenticationCredentials.class.isAssignableFrom(credentials.getClass());
+		} else {
+			return false;
+		}
 	}
 
 }

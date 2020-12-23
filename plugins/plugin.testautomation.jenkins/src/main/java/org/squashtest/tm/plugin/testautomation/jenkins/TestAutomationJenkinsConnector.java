@@ -50,6 +50,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientPr
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.servers.CredentialsProvider;
 import org.squashtest.tm.service.servers.UserCredentialsCache;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
@@ -98,6 +99,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	@Inject
 	private MessageSource i18nHelper;
+
+	@Inject
+	private FeatureManager featureManager;
 
 	private String getMessage(String i18nKey) {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -382,7 +386,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		LOGGER.debug("TestAutomationJenkinsConnector : initializing the credentials cache");
 
-		UserCredentialsCache credentials = new UserCredentialsCache(username);
+		UserCredentialsCache credentials = new UserCredentialsCache(username, featureManager);
 
 		credentialsProvider.restoreCache(credentials);
 

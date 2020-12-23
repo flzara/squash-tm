@@ -113,6 +113,8 @@ public class ConfigAdministrationController {
 		mav.addObject("shouldDisplayStackTraceControlPanel", stackTracePanel);
 		mav.addObject("stackTrace", features.isEnabled(Feature.STACK_TRACE));
 
+		mav.addObject("autoconnectOnConnection", features.isEnabled(Feature.AUTOCONNECT_ON_CONNECTION));
+
 		return mav;
     }
 
