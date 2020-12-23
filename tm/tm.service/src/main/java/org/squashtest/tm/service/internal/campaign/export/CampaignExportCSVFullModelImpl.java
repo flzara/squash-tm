@@ -63,6 +63,7 @@ import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_EXECUTION;
 import static org.squashtest.tm.jooq.domain.Tables.ITEM_TEST_PLAN_LIST;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION;
 import static org.squashtest.tm.jooq.domain.Tables.ITERATION_TEST_PLAN_ITEM;
+import static org.squashtest.tm.jooq.domain.Tables.KEYWORD_TEST_STEP;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_CAMPAIGN;
 import static org.squashtest.tm.jooq.domain.Tables.MILESTONE_TEST_CASE;
 import static org.squashtest.tm.jooq.domain.Tables.PROJECT;
@@ -206,6 +207,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(TEST_CASE_STEPS).on(TEST_CASE_STEPS.TEST_CASE_ID.eq(TC_ID))
 				.leftJoin(CALL_TEST_STEP).on(CALL_TEST_STEP.TEST_STEP_ID.eq(TS_ID))
 				.leftJoin(ACTION_TEST_STEP).on(ACTION_TEST_STEP.TEST_STEP_ID.eq(TS_ID))
+				.leftJoin(KEYWORD_TEST_STEP).on(KEYWORD_TEST_STEP.TEST_STEP_ID.eq(TS_ID))
 				.leftJoin(VERIFYING_STEPS.as("ts_verifying_step")).on(VERIFYING_STEPS.as("ts_verifying_step").TEST_STEP_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID))
 				.leftJoin(REQUIREMENT_VERSION_COVERAGE.as("ts_rvc")).on(TS_REQUIREMENT_VERIFIED.eq(VERIFYING_STEPS.as("ts_verifying_step").REQUIREMENT_VERSION_COVERAGE_ID))
 				.innerJoin(PROJECT).on(PROJECT_ID.eq(TEST_CASE_LIBRARY_NODE.PROJECT_ID))
@@ -228,7 +230,9 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				.leftJoin(CORE_USER).on(CORE_USER.PARTY_ID.eq(ITERATION_TEST_PLAN_ITEM.USER_ID))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_1")).on(INFO_LIST_ITEM.as("info_list_1").ITEM_ID.eq(TEST_CASE.TC_TYPE))
 				.leftJoin(INFO_LIST_ITEM.as("info_list_2")).on(INFO_LIST_ITEM.as("info_list_2").ITEM_ID.eq(TEST_CASE.TC_NATURE))
-				.where(CAMPAIGN.CLN_ID.eq(campaign.getId()).and(ES_TS_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID).or(ES_TS_ID.isNull()))) // TMSUP-1925 - Thanks to JPJ
+				.where(CAMPAIGN.CLN_ID.eq(campaign.getId())
+					.and(ES_TS_ID.eq(ACTION_TEST_STEP.TEST_STEP_ID).or(ES_TS_ID.isNull()) // TMSUP-1925 - Thanks to JPJ
+						.or(ES_TS_ID.eq(KEYWORD_TEST_STEP.TEST_STEP_ID))))
 				.orderBy(ITERATION_ID, ITPI_ID, EXECUTION_ID, ES_ORDER)
 				.fetch().iterator();
 	}
