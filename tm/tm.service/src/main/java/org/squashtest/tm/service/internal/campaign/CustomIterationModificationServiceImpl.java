@@ -438,23 +438,22 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	private void operationsAfterAddingExec(Execution execution) {
-		createCustomFieldsForExecutionAndExecutionSteps(execution);
-		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-
 		ExecutionVisitor executionVisitor = new ExecutionVisitor() {
 			@Override
 			public void visit(Execution execution) {
-				// NOOP
+				createCustomFieldsForExecutionAndExecutionSteps(execution);
+				createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 			}
 
 			@Override
 			public void visit(ScriptedExecution scriptedExecution) {
+				createCustomAndDenormalizedFieldsForExecution(scriptedExecution);
 				createExecutionStepsForScriptedTestCase(scriptedExecution);
 			}
 
 			@Override
 			public void visit(KeywordExecution keywordExecution) {
-				// NOOP
+				createCustomAndDenormalizedFieldsForExecution(keywordExecution);
 			}
 
 		};
@@ -477,13 +476,22 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		customFieldValueService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
 
+	//SQUASH-597 : no cuf in keyword step, only in execution
+	private void createCustomAndDenormalizedFieldsForExecution(Execution execution) {
+		customFieldValueService.createAllCustomFieldValues(execution, execution.getProject());
+		createDenormalizedFieldsForExecution(execution);
+	}
+
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
+		createDenormalizedFieldsForExecution(execution);
+		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
+	}
+
+	private void createDenormalizedFieldsForExecution(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
 
 		TestCase sourceTC = execution.getReferencedTestCase();
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
-		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
-
 	}
 
 	@Override

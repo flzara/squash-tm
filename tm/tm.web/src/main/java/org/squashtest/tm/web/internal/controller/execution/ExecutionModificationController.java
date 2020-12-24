@@ -175,11 +175,13 @@ public class ExecutionModificationController {
 		columnDefs = findColumnDefForSteps(execution);
 		List<CustomFieldModel> stepCufsModels = new LinkedList<>();
 
-		if (!execution.getSteps().isEmpty()) {
+		IsStandardExecutionVisitor standardExecutionVisitor = new IsStandardExecutionVisitor();
+		execution.accept(standardExecutionVisitor);
+		boolean isStandardExecution = standardExecutionVisitor.isStandard();
 
+		if (!execution.getSteps().isEmpty() && isStandardExecution) {
 			stepCufsModels.addAll(getStepDenormalizedFieldModels(execution));
 			stepCufsModels.addAll(getStepCustomFieldModels(execution));
-
 		}
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
