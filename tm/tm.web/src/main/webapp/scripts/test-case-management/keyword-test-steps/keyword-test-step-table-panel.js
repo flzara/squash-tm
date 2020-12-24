@@ -251,12 +251,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "squash.confi
 								if (rowModel['action-word-id'] === '') {
 									actionWordUrlCell.text('');
 								} else {
-									actionWordUrlCell.addClass('icon-action-word');
-									actionWordUrlCell.tooltip = "Accéder à la bibliothèque d'actions";
-									actionWordUrlCell.css('cursor', 'pointer');
-									actionWordUrlCell.on('click', function() {
-										document.location.href = squashtm.app.contextRoot + "action-words/" + rowModel['action-word-id'] + "/info";
-									});
+									var actionWordUrl = squashtm.app.contextRoot + 'action-words/' + rowModel["action-word-id"] + '/info';
+									actionWordUrlCell.append('<div class="icon-action-word" ' +
+										'style="height:25px;width:30px;cursor:pointer" ' +
+										'onclick="location.href=\''+actionWordUrl+'\'"></div>');
 								}
 							}
 						});
