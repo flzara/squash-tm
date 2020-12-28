@@ -168,7 +168,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			$('.tp-th-label .th_input').css('width', '90%');
 
 			var userCombo = table.find(".tp-th-createdby"),
-				formatCombo = table.find(".tp-th-format"),
 				statusCombo = table.find(".tp-th-status"),
 				assignedToCombo = table.find(".tp-th-assignedto"),
 				assignedTime = table.find(".tp-th-affectedon"),
@@ -178,10 +177,6 @@ define(["jquery", "jquery.squash.rangedatepicker", "squash.translator", "workspa
 			if(userCombo.length !== 0) {
 				var users = initConf.testers;
 				_createCombo(userCombo, "#filter-mode-combo", users, true);
-			}
-
-			if(formatCombo.length !== 0) {
-				_createCombo(formatCombo, "#filter-mode-combo", model.tcKinds, false);
 			}
 
 			if(statusCombo.length !== 0) {
