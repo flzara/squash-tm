@@ -42,19 +42,19 @@
 				{{/if}} <br />
 			</div>
 		</div>
-    {{#if (contains acls.perms 'WRITE')}}
 		<div class="toolbar-button-panel">
       <input type="button"
              th:attr="value=#{report.criteria.panel.button.generate.label},title=#{report.criteria.panel.button.generate.label}"
              id="generate-report-button" class="sq-btn" />
+      {{#if (contains acls.perms 'WRITE')}}
 			<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
 				id="rename-report-button" class="sq-btn" />
 			<input type="button"
 				th:attr="value=#{label.Modify},title=#{label.Modify}"
 				id="modify-report-button" class="sq-btn" />
+      {{/if}}
 		</div>
-    {{/if}}
 		<div class="unsnap"></div>
 	</div>
 
