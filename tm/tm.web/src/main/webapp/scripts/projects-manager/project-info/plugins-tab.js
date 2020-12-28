@@ -128,16 +128,24 @@ define(
 				}
 			}, {});
 
-			function updateAutomationWorkflowSelect(checked, projectId) {
+			function updateAutomationWorkflowSelect(checked, projectId, reload) {
 
 				var url = squashtm.app.contextRoot + 'generic-projects/' + projectId;
 				var method = 'POST';
 				var id = 'change-automation-workflow';
 
 				if (checked === true) {
-					$.ajax({url: url, type: method, data: {id: id, value: 'REMOTE_WORKFLOW'}});
+					$.ajax({url: url, type: method, data: {id: id, value: 'REMOTE_WORKFLOW'}}).done(function() {
+						if (reload) {
+							document.location.reload();
+						}
+				  });
 				} else {
-					$.ajax({url: url, type: method, data: {id: id, value: 'NONE'}});
+					$.ajax({url: url, type: method, data: {id: id, value: 'NONE'}}).done(function() {
+						if (reload) {
+							document.location.reload();
+						}
+					});
 				}
 
 			}
@@ -179,7 +187,7 @@ define(
 				if (checked === false) {
 					if (data['hasConf'] === true && pluginId != "squash.tm.wizard.campaignassistant") {
 						disabledPluginPopup.formDialog("open");
-						disablePluginWithConf(url, checked, btn, data);
+						disablePluginWithConf(url, checked, btn, data, pluginType);
 					} else {
 						disablePluginWithoutConf(url, checked, btn, data);
 					}
@@ -187,7 +195,7 @@ define(
 					$.ajax({url: url, type: 'POST'}).success(function () {
 						/*when we activate the plugin, we update the automation workflow list*/
 						if (pluginType == 'AUTOMATION') {
-							updateAutomationWorkflowSelect(checked, projectId);
+							updateAutomationWorkflowSelect(checked, projectId, false);
 							eventBus.trigger("project.plugin.toggled", newType);
 						}
 						data['enabled'] = true;
@@ -211,7 +219,7 @@ define(
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*when we activate or deactivate the plugin, we update the automation workflow list*/
 					if (pluginType === 'AUTOMATION') {
-						updateAutomationWorkflowSelect(checked, projectId);
+						updateAutomationWorkflowSelect(checked, projectId, true);
 						eventBus.trigger("project.plugin.toggled", newType);
 					}
 					data['enabled'] = false;
@@ -222,14 +230,16 @@ define(
 
 			}
 
-			function disablePluginWithConf(url, checked, btn, data) {
+			function disablePluginWithConf(url, checked, btn, data, pluginType) {
 				$("#saveConf").prop("checked", true);
 				var disabledPluginPopup = $("#disabled-plugin").formDialog();
 
 				disabledPluginPopup.one("formdialogconfirm", function () {
 					var saveConf = $("#saveConf").prop("checked");
 					disablePlugin(url, checked, btn, data, saveConf);
-					disabledPluginPopup.formDialog("destroy");
+					if (pluginType !== 'AUTOMATION') {
+						disabledPluginPopup.formDialog("close");
+					}
 				});
 
 				disabledPluginPopup.on("formdialogcancel", function () {
@@ -237,7 +247,7 @@ define(
 				});
 
 				disabledPluginPopup.on("formdialogclose", function() {
-					putBackButtonSwitch(btn, checked, data, event);
+					document.location.reload();
 				});
 			}
 

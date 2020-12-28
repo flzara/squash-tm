@@ -286,8 +286,16 @@ define(["jquery", "backbone", "handlebars", "jeditable.simpleJEditable", "jedita
 				/*disable the plugin with or without keeping the configuration*/
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
 					/*save change*/
-					self.manuallyTogglePluginCheckBoxButton("NONE");
-					self.saveChangeAutomationWorkflow(self.workflowSelector.getSelectedOption());
+					return $.ajax({
+						method: 'POST',
+						url: self.changeUrl,
+						data: {
+							id: 'change-automation-workflow',
+							value: self.workflowSelector.getSelectedOption()
+						}
+					}).done(function() {
+						document.location.reload();
+					});
 				});
 			},
 
@@ -421,11 +429,7 @@ define(["jquery", "backbone", "handlebars", "jeditable.simpleJEditable", "jedita
 					target: function (value) {
 						//if NONE or SQUASH : disable plugin
 						if (value !== "REMOTE_WORKFLOW" && self.chosenAutomationWorkflow === "REMOTE_WORKFLOW") {
-							if (self.pluginAutomHasConf === "true") {
-								self.manuallyTogglePluginCheckBoxButton(value);
-							} else {
-								self.disablePlugin(self, false);
-							}
+								self.disablePlugin(self, true);
 						} else {
 							self.saveChangeAutomationWorkflow(value);
 						}
