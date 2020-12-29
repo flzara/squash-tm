@@ -298,7 +298,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
 
             changeStatus: function (status, table) {
                 var tcIds = this.getSelectedTcIds(table);
-                if (tcIds.length === 0 || tcIds === undefined) {
+                if (tcIds === undefined || tcIds.length === 0) {
                     notification.showWarning(translator.get("automation.notification.selectedRow.none"));
                 } else {
                     $.ajax({
@@ -318,8 +318,7 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 }
             },
 
-			trySquashTAScriptAssociation : function (table) {
-				var tcIds = this.getSelectedTcIds(table);
+			trySquashTAScriptAssociation : function (tcIds) {
 				return $.ajax({
 							url: squashtm.app.contextRoot + 'automation-requests/associate-TA-script',
 							method: 'POST',
@@ -355,8 +354,13 @@ define(["jquery", "underscore", "backbone", "handlebars", "squash.translator", '
                 });
 
                 $("#transmitted-automation-button").on("click", function () {
-                	  self.trySquashTAScriptAssociation(domtable);
-                    self.changeStatus("TRANSMITTED", domtable);
+										var tcIds = self.getSelectedTcIds(domtable);
+										if (tcIds.length > 0) {
+                	  		self.trySquashTAScriptAssociation(tcIds);
+                    		self.changeStatus("TRANSMITTED", domtable);
+										} else {
+												notification.showWarning(translator.get("automation.notification.selectedRow.none"));
+										}
                 });
             }
 
