@@ -185,7 +185,7 @@ define(
 				var method = (btn[0].checked) ? 'POST' : 'DELETE';
 				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : selectedWAOption;
 				if (checked === false) {
-					if (data['hasConf'] === true && pluginId != "squash.tm.wizard.campaignassistant") {
+					if (data['hasConf'] === true && pluginId !== "squash.tm.wizard.campaignassistant") {
 						disabledPluginPopup.formDialog("open");
 						disablePluginWithConf(url, checked, btn, data, pluginType);
 					} else {
@@ -194,7 +194,7 @@ define(
 				} else {
 					$.ajax({url: url, type: 'POST'}).success(function () {
 						/*when we activate the plugin, we update the automation workflow list*/
-						if (pluginType == 'AUTOMATION') {
+						if (pluginType === 'AUTOMATION') {
 							updateAutomationWorkflowSelect(checked, projectId, false);
 							eventBus.trigger("project.plugin.toggled", newType);
 						}
@@ -214,6 +214,7 @@ define(
 			function disablePlugin(url, checked, btn, data, saveConf) {
 				var $row = btn.parents('tr').first();
 				var pluginType = table.fnGetData($row.get(0))['pluginType'];
+				var pluginId = table.fnGetData($row.get(0))['id'];
 				var projectId = conf.projectId;
 				var newType = (btn[0].checked) ? 'REMOTE_WORKFLOW' : btn.prop("chosenAutomationWorkflowOption");
 				$.ajax({url: url, type: 'DELETE', data: {saveConf: saveConf}}).success(function () {
@@ -221,6 +222,8 @@ define(
 					if (pluginType === 'AUTOMATION') {
 						updateAutomationWorkflowSelect(checked, projectId, true);
 						eventBus.trigger("project.plugin.toggled", newType);
+					} else if (data['hasConf'] === true) {
+						document.location.reload();
 					}
 					data['enabled'] = false;
 
@@ -237,9 +240,6 @@ define(
 				disabledPluginPopup.one("formdialogconfirm", function () {
 					var saveConf = $("#saveConf").prop("checked");
 					disablePlugin(url, checked, btn, data, saveConf);
-					if (pluginType !== 'AUTOMATION') {
-						disabledPluginPopup.formDialog("close");
-					}
 				});
 
 				disabledPluginPopup.on("formdialogcancel", function () {
