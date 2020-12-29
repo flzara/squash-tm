@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.query.Operation;
 import org.squashtest.tm.domain.query.QueryColumnPrototype;
+import org.squashtest.tm.domain.query.QueryColumnPrototypeReference;
 import org.squashtest.tm.domain.query.QueryFilterColumn;
 
 import java.util.ArrayList;
@@ -35,6 +36,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static org.squashtest.tm.domain.query.QueryColumnPrototypeReference.CAMPAIGN_ID;
 
 
 /**
@@ -121,7 +125,12 @@ class FilterPlanner {
 	}
 
 	private Map<QueryColumnPrototype, Collection<QueryFilterColumn>> findWhereFilters(){
-		Collection<QueryFilterColumn> filters = new ArrayList<>(definition.getFilterColumns());
+		//SQUASH-2181 - NPE on CAMPAIGN_ID
+		Collection<QueryFilterColumn> filters =
+			definition.getFilterColumns().stream()
+				.filter(x-> !CAMPAIGN_ID.equals(x.getColumn().getLabel())
+					|| (CAMPAIGN_ID.equals(x.getColumn().getLabel()) && x.getValues() != null && !x.getValues().isEmpty() && x.getValues().get(0) != null))
+				.collect(Collectors.toList());
 
 		CollectionUtils.filter(filters, new Predicate() {
 			@Override
