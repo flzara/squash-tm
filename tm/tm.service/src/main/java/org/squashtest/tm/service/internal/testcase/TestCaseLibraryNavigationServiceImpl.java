@@ -477,18 +477,17 @@ public class TestCaseLibraryNavigationServiceImpl
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 
 			resolveNameConflict(folder.getContentNames(), testCase, 1);
-		} else {
-			if (position != null) {
-				folder.addContent(testCase, position);
-			} else {
-				folder.addContent(testCase);
-			}
-			replaceInfoListReferences(testCase);
-			testCaseDao.safePersist(testCase);
-			List<Long> milestones = new ArrayList<>();
-			milestoneService.findAssociableMilestonesToRequirementVersion(version.getId()).forEach((e) -> milestones.add(e.getId()));
-			verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(version,testCase);
 		}
+		if (position != null) {
+			folder.addContent(testCase, position);
+		} else {
+			folder.addContent(testCase);
+		}
+		replaceInfoListReferences(testCase);
+		testCaseDao.safePersist(testCase);
+		List<Long> milestones = new ArrayList<>();
+		milestoneService.findAssociableMilestonesToRequirementVersion(version.getId()).forEach((e) -> milestones.add(e.getId()));
+		verifiedRequirementsManagerService.addVerifiedRequirementVersionsToTestCaseFromReq(version,testCase);
 	}
 
 
