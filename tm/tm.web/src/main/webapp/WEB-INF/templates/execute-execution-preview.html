@@ -141,7 +141,7 @@ documentation :
           <h3 th:text="#{label.Description}"></h3>
         </div>
         <div id="execute-informations-panel" class="tg-body is-contextual load-links-right-frame"
-         title="Informations" >
+         th:title="#{label.Description}" >
 
           <div class="display-table">
 
@@ -211,7 +211,7 @@ documentation :
       <div class="tg-head">
         <h3 th:text="#{label.Attributes}"></h3>
       </div>
-      <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Attribute">
+      <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" th:title="#{label.Attributes}">
   			<div class="display-table">
 
   		<div class="display-table-row">
@@ -303,7 +303,7 @@ documentation :
     <div class="tg-head">
       <h3 th:text="#{label.customFieldsManagement}"></h3>
     </div>
-    <div id="execution-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Exécution">
+    <div id="execution-attribute-panel" class="tg-body is-contextual load-links-right-frame" th:title="#{label.customFieldsManagement}">
       <div class="display-table">
       </div>
     </div>
