@@ -211,11 +211,14 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 		}
 
 		if (r.get(ITPI_EXECUTION) != null) {
-			itpi.addExecution(new ExecutionDto(r.get(ITPI_EXECUTION)));
-		}
-
-		if (r.get(ITPI_ISSUE) != null) {
-			itpi.addIssue(r.get(ITPI_ISSUE));
+			ExecutionDto executionDto = itpi.getExecution(r.get(ITPI_EXECUTION));
+			if (executionDto == null) {
+				executionDto = new ExecutionDto(r.get(ITPI_EXECUTION));
+			}
+			if (r.get(ITPI_ISSUE) != null) {
+				executionDto.addIssue(r.get(ITPI_ISSUE));
+			}
+			itpi.addExecution(executionDto);
 		}
 	}
 
@@ -376,6 +379,8 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 		private void populateTestCaseRowData(List<CellImpl> dataCells) {
 
 			TestCaseDto testCase = itp.getTestCase();
+			ExecutionDto execution = itp.getLatestExecution();
+
 			dataCells.add(new CellImpl(testCase.getId().toString()));
 			dataCells.add(new CellImpl(testCase.getName()));
 			dataCells.add(new CellImpl(testCase.getProjectId().toString()));
@@ -387,7 +392,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ", ",").replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
-			dataCells.add(new CellImpl(Integer.toString(itp.getIssueSet().size())));
+			dataCells.add(new CellImpl(Integer.toString(execution.getIssueSet().size())));
 			dataCells.add(new CellImpl(itp.getDataset()));
 			dataCells.add(new CellImpl(itp.getStatus()));
 			dataCells.add(new CellImpl(itp.getUserName()));

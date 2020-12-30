@@ -206,9 +206,14 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 				currentTestCase = currentItpi.getTestCase();
 
 				if (r.get(EXECUTION_ID) != null) {
-					ExecutionDto newExecution = createNewExecutionDto(r);
-
-					currentItpi.addExecution(newExecution);
+					ExecutionDto execution = currentItpi.getExecution(r.get(EXECUTION_ID));
+					if (execution == null) {
+						execution = createNewExecutionDto(r);
+					}
+					if (r.get(ITPI_ISSUE) != null) {
+						execution.addIssue(r.get(ITPI_ISSUE));
+					}
+					currentItpi.addExecution(execution);
 
 					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
 					allExecutionIds.add(r.get(EXECUTION_ID));
@@ -231,6 +236,10 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 					allExecutionIds.add(r.get(EXECUTION_ID));
 				}
 
+				if (r.get(ITPI_ISSUE) != null) {
+					currentExecution.addIssue(r.get(ITPI_ISSUE));
+				}
+
 				if (r.get(EXECUTION_STEP_ID) != null && currentExecution.getStep(r.get(EXECUTION_STEP_ID)) == null) {
 					currentExecution.addStep(new ExecutionStepDto(r.get(EXECUTION_STEP_ID), r.get(EXECUTION_STEP_STATUS)));
 				}
@@ -243,10 +252,6 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 	protected void populateItpi(Record r, ITPIDto itpi) {
 		if (r.get(TSu_NAME) != null) {
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
-		}
-
-		if (r.get(ITPI_ISSUE) != null) {
-			itpi.addIssue(r.get(ITPI_ISSUE));
 		}
 	}
 
@@ -413,6 +418,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 		private void populateTestCaseRowData(List<CellImpl> dataCells) {
 
 			TestCaseDto testCase = itp.getTestCase();
+			ExecutionDto execution = itp.getLatestExecution();
 
 			dataCells.add(new CellImpl(testCase.getName()));
 			dataCells.add(new CellImpl(testCase.getProjectName()));
@@ -423,7 +429,7 @@ public class CampaignExportCSVModelImpl extends AbstractCampaignExportCSVModel {
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
-			dataCells.add(new CellImpl(Integer.toString(itp.getIssueSet().size())));
+			dataCells.add(new CellImpl(Integer.toString(execution.getIssueSet().size())));
 			dataCells.add(new CellImpl(itp.getDataset()));
 			dataCells.add(new CellImpl(itp.getStatus()));
 			dataCells.add(new CellImpl(formatLongText(calculateSuccessRate() + " %")));

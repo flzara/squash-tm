@@ -21,11 +21,14 @@
 package org.squashtest.tm.service.internal.dto;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ExecutionDto {
 	private Long id;
 	private String status="";
+	private Set<Long> issueSet = new HashSet<>();
 	private Map<Long, ExecutionStepDto> steps = new HashMap<>();
 	private boolean automated = false;
 
@@ -45,6 +48,10 @@ public class ExecutionDto {
 		super();
 	}
 
+	public void addIssue(Long issueId){
+		issueSet.add(issueId);
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -59,6 +66,14 @@ public class ExecutionDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Set<Long> getIssueSet() {
+		return issueSet;
+	}
+
+	public void setIssueSet(Set<Long> issueSet) {
+		this.issueSet = issueSet;
 	}
 
 	public Map<Long, ExecutionStepDto> getSteps() {

@@ -278,9 +278,15 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 
 				if (r.get(EXECUTION_ID) != null) {
-					ExecutionDto newExecution = createNewExecutionDto(r);
+					ExecutionDto execution = currentItpi.getExecution(r.get(EXECUTION_ID));
+					if (execution == null) {
+						execution = createNewExecutionDto(r);
+					}
+					if (r.get(ITPI_ISSUE) != null) {
+						execution.addIssue(r.get(ITPI_ISSUE));
+					}
 
-					currentItpi.addExecution(newExecution);
+					currentItpi.addExecution(execution);
 
 					currentExecution = currentItpi.getExecution(r.get(EXECUTION_ID));
 
@@ -327,6 +333,10 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 							populateExecutionStepDto(r, currentExecutionStep);
 						}
 					}
+
+					if (r.get(ITPI_ISSUE) != null) {
+						currentExecution.addIssue(r.get(ITPI_ISSUE));
+					}
 				}
 
 
@@ -361,10 +371,6 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 	protected void populateItpi(Record r, ITPIDto itpi) {
 		if (r.get(TSu_NAME) != null) {
 			itpi.getTestSuiteSet().add(r.get(TSu_NAME));
-		}
-
-		if (r.get(ITPI_ISSUE) != null) {
-			itpi.addIssue(r.get(ITPI_ISSUE));
 		}
 	}
 
@@ -693,6 +699,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 			} else {
 
 				TestCaseDto testCase = itp.getTestCase();
+				ExecutionDto execution = itp.getLatestExecution();
 
 				cachedItpcellFixed.add(new CellImpl(testCase.getId().toString()));
 				cachedItpcellFixed.add(new CellImpl(testCase.getName()));
@@ -708,7 +715,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 				cachedItpcellFixed
 					.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
-				cachedItpcellFixed.add(new CellImpl(Integer.toString(itp.getIssueSet().size())));
+				cachedItpcellFixed.add(new CellImpl(Integer.toString(execution.getIssueSet().size())));
 				cachedItpcellFixed.add(new CellImpl(itp.getDataset()));
 
 				cachedItpcellFixed.add(new CellImpl(itp.getStatus()));

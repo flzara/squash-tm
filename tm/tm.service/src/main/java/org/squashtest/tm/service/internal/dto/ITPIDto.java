@@ -33,7 +33,7 @@ public class ITPIDto {
 	private String userName="";
 	private Date lastExecutedOn;
 	private Map<Long, ExecutionDto> executionMap = new HashMap<>();
-	private Set<Long> issueSet = new HashSet<>();
+
 	private String dataset="";
 	private Set<String> testSuiteSet = new HashSet<>();
 	private TestCaseDto testCase;
@@ -125,20 +125,8 @@ public class ITPIDto {
 		return builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
 	}
 
-	public Set<Long> getIssueSet() {
-		return issueSet;
-	}
-
-	public void setIssueSet(Set<Long> issueSet) {
-		this.issueSet = issueSet;
-	}
-
 	public void addExecution(ExecutionDto execution){
 		executionMap.put(execution.getId(), execution);
-	}
-
-	public void addIssue(Long issueId){
-		issueSet.add(issueId);
 	}
 
 	public ExecutionDto getLatestExecution() {
