@@ -486,19 +486,26 @@ public class UnsecuredScmRepositoryFilesystemService implements ScmRepositoryFil
 		testCaseModificationService.changeAutomatedTestReference(testCase.getId(), PathUtils.cleanMultipleSlashes(automatedTestReference));
 		testCaseModificationService.changeSourceCodeRepositoryUrl(testCase.getId(), sourceCodeRepositoryUrl);
 
-		BddImplementationTechnology bddImplementationTechnology = testCase.getProject().getBddImplementationTechnology();
 		AutomatedTestTechnology technology = null;
-		switch (bddImplementationTechnology){
-			case ROBOT:
-				technology = automatedTestTechnologyFinderService.findByName("Robot Framework");
-				break;
-			case CUCUMBER:
-				technology = automatedTestTechnologyFinderService.findByName("Cucumber");
-				break;
+		if(testCase instanceof KeywordTestCase){
+			BddImplementationTechnology bddImplementationTechnology = testCase.getProject().getBddImplementationTechnology();
+
+			switch (bddImplementationTechnology){
+				case ROBOT:
+					technology = automatedTestTechnologyFinderService.findByName("Robot Framework");
+					break;
+				case CUCUMBER:
+					technology = automatedTestTechnologyFinderService.findByName("Cucumber");
+					break;
+			}
+		} else if (testCase instanceof ScriptedTestCase){
+			technology = automatedTestTechnologyFinderService.findByName("Cucumber");
 		}
+
 		if(technology != null){
 			testCaseModificationService.changeAutomatedTestTechnology(testCase.getId(), technology.getId());
 		}
+
 	}
 
 }
