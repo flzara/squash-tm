@@ -154,6 +154,7 @@ class DriveNodeBuilderTest extends NodeBuildingSpecification {
 			getId()>>23L
 			getName() >> "Test case"
 			getFullName() >> "Test case"
+			getReference() >> ""
 		}
 
 		Milestone m = Mock()

@@ -189,6 +189,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.getId() >> 23L
 		tc.getName() >> "test case"
 		tc.getFullName() >> "test case"
+		tc.getReference() >> ""
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCufs() >> customFieldValues
@@ -218,6 +219,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId() >> 23L
 		tc.getName() >> "test case"
+		tc.getReference() >> ""
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCufs() >> customFieldValues
