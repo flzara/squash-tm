@@ -380,6 +380,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 
 			TestCaseDto testCase = itp.getTestCase();
 			ExecutionDto execution = itp.getLatestExecution();
+			int issueNumber = execution != null ? execution.getIssueSet().size() : 0;
 
 			dataCells.add(new CellImpl(testCase.getId().toString()));
 			dataCells.add(new CellImpl(testCase.getName()));
@@ -392,7 +393,7 @@ public class SimpleCampaignExportCSVModelImpl extends AbstractCampaignExportCSVM
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ", ",").replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
-			dataCells.add(new CellImpl(Integer.toString(execution.getIssueSet().size())));
+			dataCells.add(new CellImpl(Integer.toString(issueNumber)));
 			dataCells.add(new CellImpl(itp.getDataset()));
 			dataCells.add(new CellImpl(itp.getStatus()));
 			dataCells.add(new CellImpl(itp.getUserName()));

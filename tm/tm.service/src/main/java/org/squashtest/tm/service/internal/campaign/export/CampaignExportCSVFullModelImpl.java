@@ -700,6 +700,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 
 				TestCaseDto testCase = itp.getTestCase();
 				ExecutionDto execution = itp.getLatestExecution();
+				int issueNumber = execution != null ? execution.getIssueSet().size() : 0;
 
 				cachedItpcellFixed.add(new CellImpl(testCase.getId().toString()));
 				cachedItpcellFixed.add(new CellImpl(testCase.getName()));
@@ -715,7 +716,7 @@ public class CampaignExportCSVFullModelImpl extends AbstractCampaignExportCSVMod
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(itp.getExecutionMap().size())));
 				cachedItpcellFixed
 					.add(new CellImpl(Integer.toString(testCase.getRequirementSet().size())));
-				cachedItpcellFixed.add(new CellImpl(Integer.toString(execution.getIssueSet().size())));
+				cachedItpcellFixed.add(new CellImpl(Integer.toString(issueNumber)));
 				cachedItpcellFixed.add(new CellImpl(itp.getDataset()));
 
 				cachedItpcellFixed.add(new CellImpl(itp.getStatus()));
