@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.22.0.RELEASE</version>
+    <version>1.22.1.RC1</version>
   </parent>
 
   <artifactId>squash-tm-bom</artifactId>
@@ -37,16 +37,16 @@
     <guava.version>18.0</guava.version>
     <h2.version>1.4.187</h2.version>
 
-    <!-- 
-    	SB 2.1.6 would normally pull hibernate 5.3.10. However a bug in QueryDsl is still waiting to be resolved : 
-    	https://github.com/querydsl/querydsl/issues/2326. Until then we should forego Hibernate updates. 
-    	
+    <!--
+    	SB 2.1.6 would normally pull hibernate 5.3.10. However a bug in QueryDsl is still waiting to be resolved :
+    	https://github.com/querydsl/querydsl/issues/2326. Until then we should forego Hibernate updates.
+
     	Note that the previous upgrade lead to a different bug : https://github.com/querydsl/querydsl/issues/1917
-    	We fixed this in-house, see org.squashtest.tm.domain.jpql.FixedSessionHolders. That particular bug is 
+    	We fixed this in-house, see org.squashtest.tm.domain.jpql.FixedSessionHolders. That particular bug is
     	resolved for Hibernate 5.3.10. When we can finally upgrade, that class can be removed too.
-    	
+
     	Also, in this very pom remove the version for the dependency-management of hibernate-entitymanager.
-    	Also, when we can ready Hibernate 5.4.10, see Javassist override 
+    	Also, when we can ready Hibernate 5.4.10, see Javassist override
      -->
     <hibernate-core.version>5.2.17.Final</hibernate-core.version>
 
@@ -358,9 +358,9 @@
       </dependency>
 
       <dependency>
-        <!-- 
-      		Version override because of https://github.com/jboss-javassist/javassist/issues/194. 
-      		Initially pulled by Hibernate. The fix for the issue above is available for version 3.24.0-GA+, 
+        <!--
+      		Version override because of https://github.com/jboss-javassist/javassist/issues/194.
+      		Initially pulled by Hibernate. The fix for the issue above is available for version 3.24.0-GA+,
       		which means we can remove this version override when we can upgrade to Hibernate 5.4.10 (5.3 won't cut it yet)
       	-->
         <groupId>org.javassist</groupId>
@@ -574,16 +574,16 @@
             <artifactId>jdo-api</artifactId>
           </exclusion>
           <exclusion>
-            <!-- 
+            <!--
           		Querydsl-codegen uses an obsolete version of eclipse ecj (org.eclipse.jdt.core.compiler:ecj).
-          		We need it at compile time only (not runtime). Still at runtime, when running in Eclipse IDE it will 
-          		be loaded in place of the good one (org.eclipse.jdt:ecj) which entails JSP compilation failures 
-          		(see https://github.com/spring-projects/spring-boot/issues/14398). 
-          		
-          		This is very annoying because the final Maven dependencies are correct and a distro would run 
+          		We need it at compile time only (not runtime). Still at runtime, when running in Eclipse IDE it will
+          		be loaded in place of the good one (org.eclipse.jdt:ecj) which entails JSP compilation failures
+          		(see https://github.com/spring-projects/spring-boot/issues/14398).
+
+          		This is very annoying because the final Maven dependencies are correct and a distro would run
           		without problem because only ecj:${ecj.version} would be loaded.
-          		
-          		The solution here is to forcibly ban org.eclipse.jdt.core.compiler just because of that, and 
+
+          		The solution here is to forcibly ban org.eclipse.jdt.core.compiler just because of that, and
           		Querydsl-s apt-maven-plugin will have to settle for the jdk compiler instead.
           	-->
             <groupId>org.eclipse.jdt.core.compiler</groupId>
