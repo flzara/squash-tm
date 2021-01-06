@@ -31,13 +31,13 @@
       INSERT INTO AWLN_RELATIONSHIP_CLOSURE (ANCESTOR_ID, DESCENDANT_ID, DEPTH)
       SELECT n.awln_id, n.awln_id, 0
       FROM ACTION_WORD_LIBRARY_NODE n
-      LEFT JOIN awln_relationship_closure cl on n.awln_id = cl.ancestor_id
+      LEFT JOIN AWLN_RELATIONSHIP_CLOSURE cl on n.awln_id = cl.ancestor_id
       WHERE n.entity_type = 'LIBRARY' and cl.ancestor_id is null
       UNION
       SELECT parent.awln_id, child.awln_id, 1
       FROM ACTION_WORD_LIBRARY_NODE child
       JOIN ACTION_WORD_LIBRARY_NODE parent on child.awl_id = parent.entity_id and parent.entity_type='LIBRARY'
-      LEFT JOIN awln_relationship_closure cl on child.awln_id = cl.descendant_id and cl.depth = 1
+      LEFT JOIN AWLN_RELATIONSHIP_CLOSURE cl on child.awln_id = cl.descendant_id and cl.depth = 1
       WHERE child.entity_type = 'ACTION_WORD' and cl.ANCESTOR_ID is null;
     </sql>
   </changeSet>
