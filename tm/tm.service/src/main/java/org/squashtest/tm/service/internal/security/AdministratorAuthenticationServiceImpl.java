@@ -40,7 +40,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TF_AUTOMATION_PROGRAMMER;
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TF_FUNCTIONAL_TESTER;
 import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_PROJECT_MANAGER;
+import static org.squashtest.tm.api.security.acls.Roles.ROLE_TM_USER;
 
 @Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
@@ -186,6 +189,10 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		for (GrantedAuthority authority: authorities) {
 			if(authority.toString().equals(ROLE_TM_PROJECT_MANAGER)){
 				filteredAuthorities.add(new SimpleGrantedAuthority(ROLE_TM_PROJECT_MANAGER));
+			} else if (authority.toString().equals(ROLE_TF_FUNCTIONAL_TESTER)) {
+				filteredAuthorities.add(new SimpleGrantedAuthority(ROLE_TF_FUNCTIONAL_TESTER));
+			} else if (authority.toString().equals(ROLE_TF_AUTOMATION_PROGRAMMER)) {
+				filteredAuthorities.add(new SimpleGrantedAuthority(ROLE_TF_AUTOMATION_PROGRAMMER));
 			}
 		}
 		return filteredAuthorities;
